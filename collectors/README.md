@@ -1,15 +1,18 @@
+# Collectors
+
 ## 수집기 간단한 요구사항
 
 1. 프로그래밍 언어 무관, 자신있는 언어로 작성.
 2. 데이터 수집 작업을 실행하는 배치프로그램 작성.
-3. 각 수집기에서 필요한 환경변수는 /collectors/**/.env에 작성.
-4. collectors의 하위폴더는 방송플랫폼+데이터 수집 단위.  
+3. 데이터 저장 작업은 따로 ETL Gateway에서 진행. **(회의 필요: 각 collector에서 바로 DB또는 S3로 업로드 VS. 수집된 데이터를 처리하는 하나의 서버 생성)**
+4. 각 수집기에서 필요한 환경변수는 /collectors/**/.env에 작성.
+5. collectors의 하위폴더는 방송플랫폼+데이터 수집 단위.  
     ex. afreecatv 채팅과 방송데이터를 따로 수집해야 한다면, 따로 폴더 만들어 작성. 동시에 수집이 가능하다면 하나의 폴더에 함께 작성  
-5. API 호출 / 크롤링 / 스크래핑 / 제공되는 채팅서버에 socket 연결 등 각 플랫폼(youtube, afreeca, twitch, etc)에 맞는 방식으로.
-6. 각 언어에 맞는 linting 시스템 적극 활용 권고 (ex. nodejs -> eslint, python -> pylint)
-7. (가능하다면.. test 코드 작성.)
-8. 해당 프로그래밍 언어 런타임으로 동작할 수 있도록 Dockerfile 작성.
-9. docker run 스크립트 작성.
+6. API 호출 / 크롤링 / 스크래핑 / 제공되는 채팅서버에 socket 연결 등 각 플랫폼(youtube, afreeca, twitch, etc)에 맞는 방식으로.
+7. 각 언어에 맞는 linting 시스템 적극 활용 권고 (ex. nodejs -> eslint, python -> pylint)
+8. (가능하다면.. test 코드 작성.)
+9. 해당 프로그래밍 언어 런타임으로 동작할 수 있도록 Dockerfile 작성.
+10. docker run 스크립트 작성.
 
 ## 파일 구조
 
