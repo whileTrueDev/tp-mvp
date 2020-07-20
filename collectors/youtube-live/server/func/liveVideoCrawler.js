@@ -1,7 +1,7 @@
-// API를 통한 VideoId in live 조회. 
+// 크롤러를 이용한 VideoId  in live 조회.
 // DB의 creatorId에 대한 채널 초기화면 크롤링 후, videoId 추가하여 return.
-// Input format  : { type : 'creatorId' | 'creatorName' , value : string }
-// Output format : { creatorId, videoId }
+// Input format  : [ { type : 'creatorId' | 'creatorName' , value : string } ... ]
+// Output format : [ { creatorId, videoId } ... ]
 const cheerio = require("cheerio");
 const puppeteer = require('puppeteer');
 
@@ -24,6 +24,7 @@ const getVideo = async (item, page, liveVideoDatas) => {
 };
 
 const getLiveVideo = async (dbvalues) => {
+  console.log(`크롤링을 실시합니다. 시작 시각 : ${new Date().toLocaleString()}`);
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
@@ -34,7 +35,7 @@ const getLiveVideo = async (dbvalues) => {
   return new Promise((resolve, reject) => {
     forEachPromise(dbvalues, getVideo)
       .then(() => {
-        browser.close();
+        console.log(`크롤링을 종료합니다. 시작 시각 : ${new Date().toLocaleString()}`);
         resolve(liveVideoDatas);
       });
   });

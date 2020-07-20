@@ -79,9 +79,14 @@ const doTransacQuery = ({ connection, queryState, params }) => new Promise((reso
 const doConnectionQuery = ({ connection, queryState, params }) => new Promise((resolve, reject) => {
   connection.query(queryState, params, (err, result) => {
     if (err) {
-      reject(err);
+      reject({
+        error: error.sqlMessage,
+      });
     } else {
-      resolve(result);
+      resolve({
+        error: null,
+        result,
+      });
     }
   });
 });

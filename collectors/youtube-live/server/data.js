@@ -1,9 +1,9 @@
-interface target {
-  type: "creatorId" | "creatorName",
-  value: string //creatorId, creatorName의 실제값.
-}
+// interface target {
+//   type: "creatorId" | "creatorName",
+//   value: string //creatorId, creatorName의 실제값.
+// }
 
-const dbvalues: target[] = [
+const dbvalues = [
   { type: 'creatorId', value: 'UC-Bsa2ivAGWq7bsSPrPGFVA' },
   { type: 'creatorId', value: 'UC9KQaCA_EMobJUxZszQ4wlg' },
   { type: 'creatorId', value: 'UCRY0vKmqFmQ4XCJomWMBf-w' },
@@ -66,12 +66,4 @@ const dbids =
     'UC2untV6RHYn-FMJe1JZyi-g'
   ];
 
-
-
-const channelIds = [
-  'UCXqlds5f7B2OOs9vQuevl4A',
-  'UC8pqDEzjWIqWFHH_0mqcuZw',
-  'UCXsbYbgwmk_zbTTdwCn_1Ig'
-]
-
-module.exports = dbids;
+module.exports = dbvalues;
