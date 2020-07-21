@@ -22,12 +22,6 @@ def insert_information(dao, data):
     """
     from model.member import YoutubeOldChat
 
-    def insert(member):
-        """데이터 insert 후 커넥션 remove하는 함수
-        insert_information 함수 안에서만 사용
-        """
-        dao.add(member)
-
     if type(data) == list:
         members = list(map(
             lambda x: YoutubeOldChat(

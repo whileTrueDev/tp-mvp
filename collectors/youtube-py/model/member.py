@@ -37,6 +37,7 @@ class YoutubeOldChat(Base):
     code = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), unique=False)
     userid = Column(String(50), unique=False)
+    membership = Column(String(50), unique=False)
     userphoto = Column(String(255), unique=False)
     text = Column(Text, unique=False)
     playtime = Column(String(150), unique=False)
@@ -46,10 +47,11 @@ class YoutubeOldChat(Base):
     channelname = Column(String(50), unique=False)
     channelid = Column(String(50), unique=False)
 
-    def __init__(self, username, userid, userphoto, text, playtime,
+    def __init__(self, username, userid, membership, userphoto, text, playtime,
                  realtime, videoname, videoid, channelname, channelid):
         self.username = username
         self.userid = userid
+        self.membership = membership
         self.userphoto = userphoto
         self.text = text
         self.playtime = playtime
@@ -58,9 +60,3 @@ class YoutubeOldChat(Base):
         self.videoid = videoid
         self.channelname = channelname
         self.channelid = channelid
-
-    def __repr__(self,):
-        return """%s, %s, %s, %s, %s, %s, %s""" % (
-            self.username, self.userid,
-            self.text, self.playtime,
-            self.realtime, self.videoname, self.videoid)

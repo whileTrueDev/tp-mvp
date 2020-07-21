@@ -56,42 +56,46 @@ class Youtube:
             try:
                 html = session.get(next_url, headers=headers)
                 soup = BeautifulSoup(html.text, "lxml")
+                # print(soup.find('script', {'name': 'live_chat_polymer'}).text)
                 for scrp in soup.find_all("script"):
-                    if 'window[\"ytInitialData\"]' in scrp.text:
-                        dict_str = scrp.text.split("] = ")[1]
-                dict_str = dict_str.replace("false", "False")
-                dict_str = dict_str.replace("true", "True")
-                dict_str = dict_str.rstrip("  \n ;")
-                dics = eval(dict_str)
-                continue_url = dics["continuationContents"]["liveChatContinuation"][
-                    "continuations"][0]["liveChatReplayContinuationData"]["continuation"]
-                next_url = "http://www.youtube.com/live_chat_replay?continuation=" + continue_url
-                for samp in dics["continuationContents"]["liveChatContinuation"]["actions"]:
-                    name = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
-                        "item"]["liveChatTextMessageRenderer"]["authorName"]["simpleText"]
-                    if 'authorBadges' in samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]:
-                        membership = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"][
-                            "liveChatTextMessageRenderer"]["authorBadges"][0]['liveChatAuthorBadgeRenderer']['tooltip']
-                    user_photo = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
-                        "item"]["liveChatTextMessageRenderer"]['authorPhoto']['thumbnails'][0]["url"]
-                    if "text" in samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["message"]["runs"][0]:
-                        contents = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
-                            "item"]["liveChatTextMessageRenderer"]["message"]["runs"][0]["text"]
-                    else:
-                        contents = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"][
-                            "liveChatTextMessageRenderer"]["message"]["runs"][0]["emoji"]["shortcuts"][0]
+                    script_text = str(scrp).lstrip(
+                        '<script>').rstrip('</script>')
+                    if 'window[' in script_text:
+                        script_text = script_text.replace("false", "False").replace(
+                            "true", "True")
 
-                    play_time = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
-                        "item"]["liveChatTextMessageRenderer"]["timestampText"]["simpleText"]
-                    real_time = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
-                        "item"]["liveChatTextMessageRenderer"]["timestampUsec"]
-                    real_time = datetime(
-                        1970, 1, 1) + timedelta(milliseconds=int(real_time)/1000) + timedelta(hours=9)
-                    real_time = datetime.strftime(
-                        real_time, '%y-%m-%d %H:%M:%S')
-                    user_id = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
-                        "item"]["liveChatTextMessageRenderer"]["authorExternalChannelId"]
-                    print(name, contents, play_time, real_time)
+                        print(script_text)
+                        # print(json.loads(script_text))
+                break
+            # continue_url = dics["continuationContents"]["liveChatContinuation"][
+            #     "continuations"][0]["liveChatReplayContinuationData"]["continuation"]
+            # next_url = "http://www.youtube.com/live_chat_replay?continuation=" + continue_url
+            # for samp in dics["continuationContents"]["liveChatContinuation"]["actions"]:
+            #     name = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
+            #         "item"]["liveChatTextMessageRenderer"]["authorName"]["simpleText"]
+            #     if 'authorBadges' in samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]:
+            #         membership = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"][
+            #             "liveChatTextMessageRenderer"]["authorBadges"][0]['liveChatAuthorBadgeRenderer']['tooltip']
+            #     user_photo = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
+            #         "item"]["liveChatTextMessageRenderer"]['authorPhoto']['thumbnails'][0]["url"]
+            #     if "text" in samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"]["liveChatTextMessageRenderer"]["message"]["runs"][0]:
+            #         contents = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
+            #             "item"]["liveChatTextMessageRenderer"]["message"]["runs"][0]["text"]
+            #     else:
+            #         contents = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"]["item"][
+            #             "liveChatTextMessageRenderer"]["message"]["runs"][0]["emoji"]["shortcuts"][0]
+
+            #     play_time = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
+            #         "item"]["liveChatTextMessageRenderer"]["timestampText"]["simpleText"]
+            #     real_time = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
+            #         "item"]["liveChatTextMessageRenderer"]["timestampUsec"]
+            #     real_time = datetime(
+            #         1970, 1, 1) + timedelta(milliseconds=int(real_time)/1000) + timedelta(hours=9)
+            #     real_time = datetime.strftime(
+            #         real_time, '%y-%m-%d %H:%M:%S')
+            #     user_id = samp["replayChatItemAction"]["actions"][0]["addChatItemAction"][
+            #         "item"]["liveChatTextMessageRenderer"]["authorExternalChannelId"]
+            #     print(name, contents, play_time, real_time)
 
             except Exception as e:
                 print(e)
@@ -126,11 +130,11 @@ class Crawler:
             self.config.DB_HOST, self.config.DB_PORT,
             self.config.DB_DATABASE, self.config.DB_CHARSET
         )
-        self.dao = DBManager.init(db_url)
-        DBManager.init_db()
+        # self.dao = DBManager.init(db_url)
+        # DBManager.init_db()
 
         # ########## DB Controller Initialization ###########
-        self.db = DBController(self.dao)
+        # self.db = DBController(self.dao)
 
         # ######### Data preprocessor Initialization #######
         self.preprocessor = Preprocessor()
@@ -138,9 +142,9 @@ class Crawler:
     # Exit process
     def exit(self):
         print('Session 종료')
-        self.dao.remove()
+        # self.dao.remove()
         print('engine 종료')
-        DBManager.dispose()
+        # DBManager.dispose()
         print('정상 종료됨.')
         sys.exit()
 

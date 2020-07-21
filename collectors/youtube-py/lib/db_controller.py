@@ -14,13 +14,13 @@ class DBController:
         self.dao.commit()
         print('message data Commit Done !!')
 
-    def getVideoId(self, id):
+    def getVideoId(self, start, end):
         query = '''
         SELECT *
         FROM youtubeOldVideos
-        WHERE code > {}
-        LIMIT 100
-        '''.format(id)
+        WHERE code >= {} 
+        AND code < {}
+        '''.format(start, end)
         rows = do_query(self.dao, query)
 
         self.dao.commit()
