@@ -2,7 +2,7 @@
 require('dotenv').config(); // 환경변수를 위해. dev환경: .env 파일 / production환경: docker run의 --env-file인자로 넘김.
 const cheerio = require("cheerio");
 const puppeteer = require('puppeteer');
-const doQuery = require('./model/calculatorQuery');
+const doQuery = require('../model/calculatorQuery');
 
 
 

@@ -5,7 +5,7 @@ const loadLiveChat = require('./func/loadLiveChat');
 const liveMessageCrawler = require('./func/liveMessageCrawler');
 const loadMessage = require('./func/loadMessage');
 const pool = require('./model/connectionPool');
-
+const scheduler = require('node-schedule');
 const dbvalues = require('./data');
 //  error data format
 // {
@@ -14,7 +14,8 @@ const dbvalues = require('./data');
 //   msg : error.response.data.message
 // }
 
-// 전단.
+// 크롤링을 통해 라이브 방송 중인 videoId 수집하는 전단.
+// 약 3분 소요 => 오래걸린다.
 const front = () => new Promise((resolve, reject) => {
     getLiveVideo(dbvalues)
     .then((liveVideos) => loadLiveVideo(liveVideos))
@@ -63,4 +64,6 @@ const main = async () => {
   const b = await back();
 }
 
-main();
+scheduler.scheduleJob('0,4,8,12,16,20,24,28,32,36,40,44,48,52,56 * * * *', ()=>{
+  main();
+})

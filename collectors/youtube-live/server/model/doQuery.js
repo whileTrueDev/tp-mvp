@@ -80,7 +80,7 @@ const doConnectionQuery = ({ connection, queryState, params }) => new Promise((r
   connection.query(queryState, params, (err, result) => {
     if (err) {
       reject({
-        error: error.sqlMessage,
+        error: err.sqlMessage,
       });
     } else {
       resolve({
