@@ -43,6 +43,7 @@ const back = () => new Promise((resolve, reject) => {
       .then((mergedChats)=> loadMessage(mergedChats, connection))
       .then(()=>{
         connection.release();
+        console.log("---------------------------------------------------");
         resolve();
       })
       .catch((err)=>{

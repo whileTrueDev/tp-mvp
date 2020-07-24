@@ -25,6 +25,7 @@ const loadMessage = (mergedChats, connection) => {
   return new Promise((resolve, reject)=>{
     doConnectionQuery({ connection, queryState: InsertQuery, params: [] })
       .then(()=>{
+        console.log(`저장된 채팅 수 : ${mergedChats.length}`);
         resolve();
       })
       .catch((error)=>{

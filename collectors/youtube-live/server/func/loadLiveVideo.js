@@ -33,13 +33,10 @@ const loadLiveVideo = (liveVideos) =>
             }
           })
 
-          // console.log(newLiveVideos);
-          
           // 삭제 및 삽입 실행 
           deleteOldVideo(oldLiveVideos)
           .then(()=> InsertNewVideo(newLiveVideos))
           .then(()=> {
-            console.log(newLiveVideos);
             resolve(newLiveVideos);
           })
           .catch((error)=> {
