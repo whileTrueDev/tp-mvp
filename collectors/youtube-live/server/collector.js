@@ -21,7 +21,6 @@ const front = () => new Promise((resolve, reject) => {
     .then((liveVideos) => loadLiveVideo(liveVideos))
     .then((newLiveVideos) => loadLiveChat(newLiveVideos))
     .then(()=> {
-      console.log("전단 종료");
       resolve();
     })
     .catch((error)=> {
@@ -44,16 +43,12 @@ const back = () => new Promise((resolve, reject) => {
       .then((mergedChats)=> loadMessage(mergedChats, connection))
       .then(()=>{
         connection.release();
-        console.log("후단 종료");
         resolve();
       })
       .catch((err)=>{
         connection.release();
-        reject({
-          error: true,
-          func : "back",
-          msg : err
-        });
+        console.log(err);
+        reject(err);
       });
     }
   })
@@ -62,8 +57,11 @@ const back = () => new Promise((resolve, reject) => {
 const main = async () => {
   const f = await front();
   const b = await back();
+  return;
 }
 
-scheduler.scheduleJob('0,4,8,12,16,20,24,28,32,36,40,44,48,52,56 * * * *', ()=>{
-  main();
-})
+// scheduler.scheduleJob('0,4,8,12,16,20,24,28,32,36,40,44,48,52,56 * * * *', ()=>{
+//   main();
+// })
+
+main();

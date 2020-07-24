@@ -82,7 +82,7 @@ const loadLiveChat = (liveChats) => new Promise((resolve, reject) => {
 const UpdateNewChatId = ({ videoId, activeLiveChatId }, connection) => {
   const UpdateQuery = 
   `
-  UPDATE liveVideos
+  UPDATE youtubeLiveVideos
   SET activeLiveChatId = ?
   WHERE videoId = ?;
   `;
@@ -110,7 +110,6 @@ const main = (newLiveVideos) => {
         reject(error);
       });
     }else {
-      console.log('새로운 video가 존재하지 않으므로 종료합니다.');
       resolve();
     }
   })

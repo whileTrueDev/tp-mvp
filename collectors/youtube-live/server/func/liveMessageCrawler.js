@@ -8,7 +8,7 @@ const getliveChatIdByDB = (connection) =>
   return new Promise((resolve, reject)=>{
     const selectQuery = `
     SELECT * 
-    FROM liveVideos
+    FROM youtubeLiveVideos
     `;
 
     doConnectionQuery({ connection, queryState: selectQuery, params: []})
@@ -59,6 +59,7 @@ const getChatData = (target, mergedChats, connection) => {
             const { snippet } = item; 
             const authorId = snippet.authorChannelId;
             const time = new Date(snippet.publishedAt).toLocaleString();
+
             const text = snippet.displayMessage;
             mergedChats.push({ channelId, authorId, time, text });
           });
@@ -89,7 +90,7 @@ const loadNextpageToken = ({ videoId, nextPageToken, connection }) =>
   return new Promise((resolve, reject)=>{ 
     const UpdateQuery = 
     `
-    UPDATE liveVideos
+    UPDATE youtubeLiveVideos
     SET nextPageToken = ?
     WHERE videoId = ?;
     `;
@@ -110,10 +111,14 @@ const requestAPI = (liveChats, connection) => {
   const mergedChats = [];
   const forEachPromise = (items, mergedChats, connection, fn) => items.reduce((promise, item) => promise.then(() => fn(item, mergedChats, connection)), Promise.resolve());
   return new Promise((resolve, reject)=>{
-    forEachPromise(liveChats, mergedChats, connection, getChatData)
+    if(liveChats.length === 0){
+      resolve(mergedChats);
+    } else {
+      forEachPromise(liveChats, mergedChats, connection, getChatData)
       .then(() => {
         resolve(mergedChats);
       });
+    }
   })
 }
 

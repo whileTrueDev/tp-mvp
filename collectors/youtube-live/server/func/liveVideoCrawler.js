@@ -36,6 +36,7 @@ const getLiveVideo = async (dbvalues) => {
     forEachPromise(dbvalues, getVideo)
       .then(() => {
         console.log(`크롤링을 종료합니다. 시작 시각 : ${new Date().toLocaleString()}`);
+        console.log(`현재 방송 중인 channel 수 : ${liveVideoDatas.length}`)
         resolve(liveVideoDatas);
       });
   });

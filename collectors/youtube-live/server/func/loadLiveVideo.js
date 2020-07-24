@@ -15,7 +15,7 @@ const loadLiveVideo = (liveVideos) =>
         const newLiveVideos = [];
         const oldLiveVideos = [];
         if(!dbdata.error){
-          const {videoIds, data} = dbdata.data;
+          const { videoIds, data } = dbdata.data;
           // 1. 현재 in live인 video인데 DB에 존재하지 않는경우, DB에 적재한다. 
           liveVideos.forEach((liveVideoData)=>{
             liveVideoIds.push(liveVideoData.videoId);
@@ -24,6 +24,7 @@ const loadLiveVideo = (liveVideos) =>
               newLiveVideos.push(liveVideoData);
             }
           }); 
+
           // 2. DB에는 존재하는데 liveVideo에는 존재하지 않아서 삭제하는 경우,
           data.forEach((dbVideoData)=>{
             if(!liveVideoIds.includes(dbVideoData.videoId))
@@ -32,11 +33,15 @@ const loadLiveVideo = (liveVideos) =>
             }
           })
 
-          // 삭제 및 삽입 실행 
+          // console.log(newLiveVideos);
           
+          // 삭제 및 삽입 실행 
           deleteOldVideo(oldLiveVideos)
-          .then(()=> {InsertNewVideo(newLiveVideos);})
-          .then(()=> {resolve(newLiveVideos);})
+          .then(()=> InsertNewVideo(newLiveVideos))
+          .then(()=> {
+            console.log(newLiveVideos);
+            resolve(newLiveVideos);
+          })
           .catch((error)=> {
             // 내부의 reject의 경우 밖으로 나가지 않기 때문에 자체적인 error-catch 구현
             console.log(error);
@@ -69,7 +74,7 @@ const deleteOldVideo = (oldLiveVideos) => {
 
   const deleteQuery = 
   `
-  DELETE FROM liveVideos
+  DELETE FROM youtubeLiveVideos
   WHERE videoId
   IN ${conditionQuery});
   `
@@ -91,7 +96,7 @@ const deleteOldVideo = (oldLiveVideos) => {
 
 // not live => live가 된 video로 DB에 적재한다.
 const InsertNewVideo = (newLiveVideos) => {
-  if(newLiveVideos.length == 0) {
+  if(newLiveVideos.length === 0) {
     return Promise.resolve();
   }
 
@@ -102,7 +107,7 @@ const InsertNewVideo = (newLiveVideos) => {
 
   const InsertQuery = 
   `
-  INSERT INTO liveVideos
+  INSERT INTO youtubeLiveVideos
   (videoId, channelId)
   VALUES ${conditionQuery};
   `;
@@ -128,7 +133,7 @@ const getliveVideoIdByDB = () =>
   return new Promise((resolve, reject)=>{
     const selectQuery = `
     SELECT * 
-    FROM liveVideos
+    FROM youtubeLiveVideos
     `;
 
     doQuery(selectQuery, [])
