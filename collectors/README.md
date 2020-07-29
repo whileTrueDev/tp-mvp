@@ -23,3 +23,4 @@
 - /twitchtv : 트위치tv 데이터 수집
 - /youtube : youtube 영상에 대한 데이터 수집
 - /youtube-live : youtube live영상에 대한 데이터 수집
+- /youtube-py : youtube 현재 게시되어있는(과거의) live영상에 대한 데이터 수집
