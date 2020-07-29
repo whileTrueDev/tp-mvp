@@ -1,6 +1,5 @@
 const { doConnectionQuery } = require('../model/doQuery');
 const axios =  require("axios");
-const API_KEY = 'AIzaSyD5wdcdgFPAAsYyVkvFcHrB-De2vZtjk_8';
 
 // 10분 전 live였던 video를 DB에서 가져온다.
 const getliveChatIdByDB = (connection) =>
@@ -44,7 +43,7 @@ const getChatData = (target, mergedChats, connection) => {
       part: 'id, snippet',
       liveChatId : activeLiveChatId,
       maxResults: 2000,
-      key: API_KEY
+      key: process.env.API_KEY
     }
     if(nextPageToken) {
       params.pageToken = nextPageToken;
@@ -58,9 +57,17 @@ const getChatData = (target, mergedChats, connection) => {
           row.data.items.reverse().forEach((item)=> {
             const { snippet } = item; 
             const authorId = snippet.authorChannelId;
-            const time = new Date(snippet.publishedAt).toLocaleString();
-
-            const text = snippet.displayMessage;
+            const time = new Date(snippet.publishedAt).toLocaleString('ko-KR', {
+              hour12: false,
+              year: '2-digit',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            });
+            // 데이터 저장시 필요한 전처리 -> \ 글자, 따옴표에 대한 처리
+            const text = snippet.displayMessage.replace(/\\/g, '');
             mergedChats.push({ channelId, authorId, time, text });
           });
           resolve({

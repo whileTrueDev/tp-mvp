@@ -1,10 +1,11 @@
-// 크롤러를 이용하여 해당 채널의 
-// infinity scrolling이므로 list의 갯수를 통해 분기를 결정한다.
-//  scrolling을 무한 반복 => 데이터 수집.
+// 게시되어있는 과거의 비디오들을 크롤러를 사용하여 라이브 비디오인지 판단하기 위해 사용되는 함수
+//  scrolling을 무한 반복 => 데이터 수집. =>  infinity scrolling이므로 list의 갯수를 통해 분기를 결정한다.
+
 require('dotenv').config(); // 환경변수를 위해. dev환경: .env 파일 / production환경: docker run의 --env-file인자로 넘김.
 const cheerio = require("cheerio");
 const puppeteer = require('puppeteer');
 const doQuery = require('../model/calculatorQuery');
+const dbvalues = require('../data');
 
 async function pageDown(page){
   await page.evaluate(async () => {
@@ -123,45 +124,5 @@ const getLiveVideo = async (dbvalues) => {
       });
   });
 };
-
-// module.exports = getLiveVideo;
-
-const dbvalues = [
-  // { type: 'creatorId', value: 'UC-Bsa2ivAGWq7bsSPrPGFVA' },
-  // { type: 'creatorId', value: 'UC9KQaCA_EMobJUxZszQ4wlg' },
-  // { type: 'creatorId', value: 'UCRY0vKmqFmQ4XCJomWMBf-w' },
-  // { type: 'creatorId', value: 'UCZXWb_78BrkjpsLHv2bJhUw' },
-  // { type: 'creatorId', value: 'UCmTjMP2tpOFoFIuKzb4uEhw' },
-  // { type: 'creatorId', value: 'UCybKp0O2N9sUZOgIm1j2r_w' },
-  // { type: 'creatorId', value: 'UCfdLDnGcRM3okEOtocWNHuQ' },
-  // { type: 'creatorId', value: 'UCiCNc3uj8Bnc9bDzHJS058Q' },
-  // { type: 'creatorId', value: 'UCaS8sePfGIHBU1R6uz04d0g' },
-  // { type: 'creatorId', value: 'UC2NFRq9s2neD_Ml0tPhNC2Q' },
-  // { type: 'creatorId', value: 'UCghP93LBNk1EGBr5gFJg20Q' },
-  // { type: 'creatorId', value: 'UC0-ZCUCeCQBwKU15x0Aqk_g' },
-  // { type: 'creatorId', value: 'UCY74n-XQJ69dxNdN7h71wLg' },
-  // { type: 'creatorId', value: 'UCarjMZCmwGZWZwshJXDnA5w' },
-  // { type: 'creatorId', value: 'UCoYFo-lRD3pchMUtsBcEbOA' },
-  // { type: 'creatorId', value: 'UCnXe6v0-5vmMMRU2qx0XwUw' },
-  // { type: 'creatorId', value: 'UCRNq4G2anQUfkvBZWrKYIqw' },
-  // { type: 'creatorId', value: 'UCHysRIIDpEywTmWl44ZV5Dw' },
-  // { type: 'creatorId', value: 'UCHe08MV-b1IWnsqRijJj5JQ' },
-  // { type: 'creatorId', value: 'UCi6QE2TWQ1OWEX1o5TPSz1g' },
-  // { type: 'creatorId', value: 'UC81LbS19aG9DG7qGyeNEBtA' },
-  // { type: 'creatorId', value: 'UCHQcF_yN5QSDYAnXb5vaXcg' },
-  // { type: 'creatorId', value: 'UCkd3KAYGnTNPJZZrPOFeWhA' },
-  // { type: 'creatorId', value: 'UC2untV6RHYn-FMJe1JZyi-g' },
-
-  {  type: 'creatorId', value: 'UCSHVH_AWVUc-C8-D8mh8W6A' },
-  {  type: 'creatorId', value: 'UCb5NLtXAsTBrmaZVhyFa-Wg' },
-  {  type: 'creatorId', value: 'UCg7rkxrTnIhiHEpXY1ec9NA' },
-  {  type: 'creatorId', value: 'UCWlwaqMam9GueCmnwT1VYDA' },
-  {  type: 'creatorId', value: 'UCqVkQsNin4MdGFrWvzFVOKw' },
-  {  type: 'creatorId', value: 'UC9pCNmC-Ovq2sRfHIwLDuIg' },
-  {  type: 'creatorId', value: 'UCoDLLyiqum2JOBI4Dty8eUA' },
-  {  type: 'creatorId', value: 'UCfnMSbA2Bfi4cnuuN2pa0HA' },
-  {  type: 'creatorId', value: 'UCIchCOLwLBMD87quHlNuXjQ' }
-
-];
 
 getLiveVideo(dbvalues);

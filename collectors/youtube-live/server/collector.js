@@ -48,21 +48,29 @@ const back = () => new Promise((resolve, reject) => {
       })
       .catch((err)=>{
         connection.release();
-        console.log(err);
-        reject(err);
+        console.log(err.msg);
+        resolve();
       });
     }
   })
 });
 
 const main = async () => {
+
+  // 실제 라이브여부 판정
   const f = await front();
+  
+  // 메세지 수집
   const b = await back();
   return;
 }
 
-// scheduler.scheduleJob('0,4,8,12,16,20,24,28,32,36,40,44,48,52,56 * * * *', ()=>{
-//   main();
-// })
+// 크리에이터의 수가 많아질 수록 오래걸린다.
+const f = scheduler.scheduleJob('*/5 * * * *', ()=>{
+  front();
+})
 
-main();
+const b = scheduler.scheduleJob('*/2 * * * *', ()=>{
+  back();
+})
+

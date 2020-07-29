@@ -5,7 +5,7 @@ const loadMessage = (mergedChats, connection) => {
   if(mergedChats.length == 0) {
     return Promise.reject({
       error : true,
-      func : "InsertNewChat",
+      func : "loadMessage",
       msg : "DB에 적재할 새로운 채팅이 존재하지 않습니다."
     });
   }
@@ -29,6 +29,7 @@ const loadMessage = (mergedChats, connection) => {
         resolve();
       })
       .catch((error)=>{
+        console.log(conditionQuery);
         reject({
             error: true,
             func : "loadMessage",

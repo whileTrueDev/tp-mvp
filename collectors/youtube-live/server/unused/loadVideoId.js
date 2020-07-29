@@ -1,9 +1,9 @@
+// 2020-07-29 현재 channelId => videoId on air의 과정이 할당량의 소모가 심하기 때문에 크롤러로 대체됨. 
+
 // API를 통해서 해당 channelID에 대한 videoID를 가져온다.
 // channelID => videoID(이미 저장된)
 const axios =  require("axios");
 const doQuery = require("../model/doQuery");
-// const API_KEY = 'AIzaSyD5wdcdgFPAAsYyVkvFcHrB-De2vZtjk_8';
-const API_KEY = 'AIzaSyBrcGP6WzgRVaHtiBpjz7y0LmBSJpj6kI0';
 
 
 // {
@@ -25,7 +25,7 @@ const getVideoData = (target, mergedVideos, nextPageToken) => {
       channelId,
       eventType: 'completed',
       type: 'video',
-      key: API_KEY
+      key: process.env.API_KEY
     }
     if(nextPageToken) {
       params.pageToken = nextPageToken;

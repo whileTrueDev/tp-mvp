@@ -1,3 +1,6 @@
+// 게시되어있는 과거의 비디오들을 API를 사용하여 라이브 비디오인지 판단하기 위해 사용되는 함수
+// 2020-07-29 현재 크롤러를 사용하여 라이브 비디오 판단을 진행하므로 사용하지 않음. -> API 호출에서 quota 소모량이 크므로
+
 // DB에 적재된 videoId를 하나로 묶어서 videos => liveStreamingDetails의 값을 저장.
 // 한번에 여러개를 전달하더라도 쉽지는 않을듯...
 const getliveChatId = (targets) => {

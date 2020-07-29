@@ -5,7 +5,6 @@
 const axios =  require("axios");
 const { doTransacQuery } = require('../model/doQuery');
 const pool = require('../model/connectionPool');
-const API_KEY = 'AIzaSyD5wdcdgFPAAsYyVkvFcHrB-De2vZtjk_8';
 
 // 하나의 video Id => liveChat id  => DB를 통해 간헐적인 요청으로 변경
 const getliveChatId = (targets) => {
@@ -19,7 +18,7 @@ const getliveChatId = (targets) => {
     const params = {
       part: 'liveStreamingDetails',
       id: ids,
-      key: API_KEY
+      key: process.env.API_KEY
     }
     axios.get(url, { params })
       .then((row) => {

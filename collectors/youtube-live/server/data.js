@@ -39,31 +39,4 @@ const dbvalues = [
   { type: 'creatorName', value: 'ULSANBIGWHALE' },
 ];
 
-const dbids =
-  ['UC-Bsa2ivAGWq7bsSPrPGFVA',
-    'UC9KQaCA_EMobJUxZszQ4wlg',
-    'UCRY0vKmqFmQ4XCJomWMBf-w',
-    'UCZXWb_78BrkjpsLHv2bJhUw',
-    'UCmTjMP2tpOFoFIuKzb4uEhw',
-    'UCybKp0O2N9sUZOgIm1j2r_w',
-    'UCfdLDnGcRM3okEOtocWNHuQ',
-    'UCiCNc3uj8Bnc9bDzHJS058Q',
-    'UCaS8sePfGIHBU1R6uz04d0g',
-    'UC2NFRq9s2neD_Ml0tPhNC2Q',
-    'UCghP93LBNk1EGBr5gFJg20Q',
-    'UC0-ZCUCeCQBwKU15x0Aqk_g',
-    'UCY74n-XQJ69dxNdN7h71wLg',
-    'UCarjMZCmwGZWZwshJXDnA5w',
-    'UCoYFo-lRD3pchMUtsBcEbOA',
-    'UCnXe6v0-5vmMMRU2qx0XwUw',
-    'UCRNq4G2anQUfkvBZWrKYIqw',
-    'UCHysRIIDpEywTmWl44ZV5Dw',
-    'UCHe08MV-b1IWnsqRijJj5JQ',
-    'UCi6QE2TWQ1OWEX1o5TPSz1g',
-    'UC81LbS19aG9DG7qGyeNEBtA',
-    'UCHQcF_yN5QSDYAnXb5vaXcg',
-    'UCkd3KAYGnTNPJZZrPOFeWhA',
-    'UC2untV6RHYn-FMJe1JZyi-g'
-  ];
-
 module.exports = dbvalues;
