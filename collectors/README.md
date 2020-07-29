@@ -21,6 +21,5 @@
 
 - /afreecatv : 아프리카tv 데이터 수집
 - /twitchtv : 트위치tv 데이터 수집
-- /youtube : youtube 영상에 대한 데이터 수집
-- /youtube-live : youtube live영상에 대한 데이터 수집
-- /youtube-py : 현재 게시되어있는(과거의) youtube live영상에 대한 데이터 수집
+- /youtube : 현재 게시되어있는(과거의) youtube live영상에 대한 데이터 수집
+- /youtube-live : youtube live영상에 대한 데이터 수집 
