@@ -74,4 +74,6 @@ const b = scheduler.scheduleJob('*/2 * * * *', ()=>{
   back();
 })
 
-// docker run --init --cap-add=SYS_ADMIN --name youtube-crawler-con -d -v /etc/localtime:/etc/localtime:ro --env-file ./.env youtube-crawler:2.1
+
+// 정의한 리눅스 사용자 계정의 권한을 사용하기 위한 option
+// docker run --init --cap-add=SYS_ADMIN --name youtube-crawler -d -v /etc/localtime:/etc/localtime:ro --env-file ./.env youtube-crawler:2.0

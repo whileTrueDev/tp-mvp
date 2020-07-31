@@ -25,7 +25,9 @@ const getVideo = async (item, page, liveVideoDatas) => {
 
 const getLiveVideo = async (dbvalues) => {
   console.log(`크롤링을 실시합니다. 시작 시각 : ${new Date().toLocaleString()}`);
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: ['--disable-dev-shm-usage']
+  });
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0); 
 
@@ -36,8 +38,7 @@ const getLiveVideo = async (dbvalues) => {
   return new Promise((resolve, reject) => {
     forEachPromise(dbvalues, getVideo)
       .then(() => {
-        console.log(`크롤링을 종료합니다. 종료 시각 : ${new Date().toLocaleString()}`);
-        console.log(`현재 방송 중인 channel 수 : ${liveVideoDatas.length}`)
+        console.log(`크롤링 종료, 현재 방송 중인 channel 수 : ${liveVideoDatas.length} | 종료 시각 : ${new Date().toLocaleString()}`)
         resolve(liveVideoDatas);
       });
   });

@@ -31,12 +31,34 @@ const getliveChatIdByDB = (connection) =>
   })
 }
 
+
+const hourDiff = (_date1, _date2) => {
+  var diffDate_1 = _date1 instanceof Date ? _date1 :new Date(_date1);
+  var diffDate_2 = _date2 instanceof Date ? _date2 :new Date(_date2);
+  var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime());
+
+  if(diff <= 0) {
+    return `00:00:00`
+  }
+
+  var hour   = parseInt(diff / (1000 * 60 * 60));
+  diff = diff - (hour * (1000 * 60 * 60));
+  var minute = parseInt(diff / (1000 * 60));
+  diff = diff - (minute * (1000 * 60));
+  var second = parseInt(diff / (1000));
+
+  hour = hour.toString().padStart(2, '0');
+  minute = minute.toString().padStart(2, '0');
+  second = second.toString().padStart(2, '0');
+  return `${hour}:${minute}:${second}`;
+}
+
 // ************************************ 지속적 반복 필요 ***************************************
 // 1회 요청시 7 quota
 // activeLiveChatId => live chat message
 // 하나의 channel ID => video Id in live
 const getChatData = (target, mergedChats, connection) => {
-  const { channelId ,videoId, activeLiveChatId, nextPageToken } = target;
+  const { channelId ,videoId, activeLiveChatId, nextPageToken, startedAt } = target;
   return new Promise((resolve, reject) => {
     const url = `https://www.googleapis.com/youtube/v3/liveChat/messages`;
     const params = {
@@ -57,7 +79,8 @@ const getChatData = (target, mergedChats, connection) => {
           row.data.items.reverse().forEach((item)=> {
             const { snippet } = item; 
             const authorId = snippet.authorChannelId;
-            const time = new Date(snippet.publishedAt).toLocaleString('ko-KR', {
+            const timeObject = new Date(snippet.publishedAt);
+            const time = timeObject.toLocaleString('ko-KR', {
               hour12: false,
               year: '2-digit',
               month: '2-digit',
@@ -66,9 +89,10 @@ const getChatData = (target, mergedChats, connection) => {
               minute: '2-digit',
               second: '2-digit'
             });
+            const play_time = hourDiff(timeObject, startedAt);
             // 데이터 저장시 필요한 전처리 -> \ 글자, 따옴표에 대한 처리
             const text = snippet.displayMessage.replace(/\\/g, '').replace(/\'/g, ' ');
-            mergedChats.push({ videoId, channelId, authorId, time, text });
+            mergedChats.push({ videoId, channelId, authorId, time, text, play_time });
           });
           resolve({
               error: false,

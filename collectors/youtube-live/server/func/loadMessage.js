@@ -10,22 +10,22 @@ const loadMessage = (mergedChats, connection) => {
     });
   }
 
-  const rawQuery = mergedChats.reduce((str, {videoId, channelId, authorId, time, text})=>{
-    return str + `('${videoId}', '${channelId}' , '${authorId}', '${time}' , '${text}'),`;
+  const rawQuery = mergedChats.reduce((str, {videoId, channelId, authorId, time, text, play_time})=>{
+    return str + `('${videoId}', '${channelId}' , '${authorId}', '${time}' , '${text}', '${play_time}'),`;
   },'');
   const conditionQuery = rawQuery.slice(0,-1) + ';';
 
   const InsertQuery = 
   `
   INSERT INTO youtubeChat
-  (videoId, channelId, authorId, time, text)
+  (videoId, channelId, authorId, time, text, playTime)
   VALUES ${conditionQuery};
   `;
 
   return new Promise((resolve, reject)=>{
     doConnectionQuery({ connection, queryState: InsertQuery, params: [] })
       .then(()=>{
-        console.log(`저장된 채팅 수 : ${mergedChats.length}`);
+        console.log(`저장된 채팅 수 : ${mergedChats.length} | ${new Date().toLocaleString()}`);
         resolve();
       })
       .catch((error)=>{
