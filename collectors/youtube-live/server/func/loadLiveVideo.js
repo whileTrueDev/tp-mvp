@@ -97,15 +97,15 @@ const InsertNewVideo = (newLiveVideos) => {
     return Promise.resolve();
   }
 
-  const rawQuery = newLiveVideos.reduce((str, {channelId, videoId})=>{
-    return str + `( '${videoId}' , '${channelId}'),`;
+  const rawQuery = newLiveVideos.reduce((str, {channelId, videoId, videoTitle})=>{
+    return str + `( '${videoId}' , '${channelId}' , '${videoTitle}'),`;
   },'');
   const conditionQuery = rawQuery.slice(0,-1) + ';';
 
   const InsertQuery = 
   `
   INSERT INTO youtubeLiveVideos
-  (videoId, channelId)
+  (videoId, channelId, videoTitle)
   VALUES ${conditionQuery};
   `;
 
