@@ -27,6 +27,7 @@ const getLiveVideo = async (dbvalues) => {
   console.log(`크롤링을 실시합니다. 시작 시각 : ${new Date().toLocaleString()}`);
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  await page.setDefaultNavigationTimeout(0); 
 
   // livevideo data 수집 array
   liveVideoDatas = [];

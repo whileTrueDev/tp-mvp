@@ -55,15 +55,15 @@ const back = () => new Promise((resolve, reject) => {
   })
 });
 
-const main = async () => {
+// const main = async () => {
 
-  // 실제 라이브여부 판정
-  const f = await front();
+//   // 실제 라이브여부 판정
+//   const f = await front();
   
-  // 메세지 수집
-  const b = await back();
-  return;
-}
+//   // 메세지 수집
+//   const b = await back();
+//   return;
+// }
 
 // 크리에이터의 수가 많아질 수록 오래걸린다.
 const f = scheduler.scheduleJob('*/5 * * * *', ()=>{
@@ -74,3 +74,4 @@ const b = scheduler.scheduleJob('*/2 * * * *', ()=>{
   back();
 })
 
+// docker run --init --cap-add=SYS_ADMIN --name youtube-crawler-con -d -v /etc/localtime:/etc/localtime:ro --env-file ./.env youtube-crawler:2.1

@@ -10,15 +10,15 @@ const loadMessage = (mergedChats, connection) => {
     });
   }
 
-  const rawQuery = mergedChats.reduce((str, {channelId, authorId, time, text})=>{
-    return str + `( '${channelId}' , '${authorId}', '${time}' , '${text}'),`;
+  const rawQuery = mergedChats.reduce((str, {videoId, channelId, authorId, time, text})=>{
+    return str + `('${videoId}', '${channelId}' , '${authorId}', '${time}' , '${text}'),`;
   },'');
   const conditionQuery = rawQuery.slice(0,-1) + ';';
 
   const InsertQuery = 
   `
   INSERT INTO youtubeChat
-  (channelId, authorId, time, text)
+  (videoId, channelId, authorId, time, text)
   VALUES ${conditionQuery};
   `;
 

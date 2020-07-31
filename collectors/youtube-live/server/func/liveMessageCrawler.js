@@ -67,8 +67,8 @@ const getChatData = (target, mergedChats, connection) => {
               second: '2-digit'
             });
             // 데이터 저장시 필요한 전처리 -> \ 글자, 따옴표에 대한 처리
-            const text = snippet.displayMessage.replace(/\\/g, '');
-            mergedChats.push({ channelId, authorId, time, text });
+            const text = snippet.displayMessage.replace(/\\/g, '').replace(/\'/g, ' ');
+            mergedChats.push({ videoId, channelId, authorId, time, text });
           });
           resolve({
               error: false,
