@@ -6,19 +6,19 @@ const loadMessage = (mergedChats, connection) => {
     return Promise.reject({
       error : true,
       func : "loadMessage",
-      msg : "DB에 적재할 새로운 채팅이 존재하지 않습니다."
+      msg : `채팅이 존재하지 않습니다. ${new Date().toLocaleString()}`
     });
   }
 
-  const rawQuery = mergedChats.reduce((str, {videoId, channelId, authorId, time, text, play_time, videoTitle})=>{
-    return str + `('${videoId}', '${channelId}' , '${authorId}', '${time}' , '${text}', '${play_time}', '${videoTitle}'),`;
+  const rawQuery = mergedChats.reduce((str, {videoId, authorId, time, play_time, text})=>{
+    return str + `('${videoId}', '${authorId}', '${time}', '${play_time}', '${text}'),`;
   },'');
   const conditionQuery = rawQuery.slice(0,-1) + ';';
 
   const InsertQuery = 
   `
   INSERT INTO youtubeChat
-  (videoId, channelId, authorId, time, text, playTime, videoTitle)
+  (videoId, authorId, time, playTime, text)
   VALUES ${conditionQuery};
   `;
 

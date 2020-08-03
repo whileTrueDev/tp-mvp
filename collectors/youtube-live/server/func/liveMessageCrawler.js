@@ -32,7 +32,7 @@ const getliveChatIdByDB = (connection) =>
 }
 
 
-const hourDiff = (_date1, _date2) => {
+const getPlayTime = (_date1, _date2) => {
   var diffDate_1 = _date1 instanceof Date ? _date1 :new Date(_date1);
   var diffDate_2 = _date2 instanceof Date ? _date2 :new Date(_date2);
   var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime());
@@ -58,7 +58,7 @@ const hourDiff = (_date1, _date2) => {
 // activeLiveChatId => live chat message
 // 하나의 channel ID => video Id in live
 const getChatData = (target, mergedChats, connection) => {
-  const { channelId ,videoId, activeLiveChatId, nextPageToken, startedAt, videoTitle } = target;
+  const { videoId, activeLiveChatId, nextPageToken, startDate } = target;
   return new Promise((resolve, reject) => {
     const url = `https://www.googleapis.com/youtube/v3/liveChat/messages`;
     const params = {
@@ -89,10 +89,10 @@ const getChatData = (target, mergedChats, connection) => {
               minute: '2-digit',
               second: '2-digit'
             });
-            const play_time = hourDiff(timeObject, startedAt);
+            const play_time = getPlayTime(timeObject, startDate);
             // 데이터 저장시 필요한 전처리 -> \ 글자, 따옴표에 대한 처리
             const text = snippet.displayMessage.replace(/\\/g, '').replace(/\'/g, ' ');
-            mergedChats.push({ videoId, channelId, authorId, time, text, play_time, videoTitle });
+            mergedChats.push({ videoId, authorId, time, play_time, text });
           });
           resolve({
               error: false,

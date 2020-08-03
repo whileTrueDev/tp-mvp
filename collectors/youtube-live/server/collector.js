@@ -4,9 +4,10 @@ const loadLiveVideo = require('./func/loadLiveVideo');
 const loadLiveChat = require('./func/loadLiveChat');
 const liveMessageCrawler = require('./func/liveMessageCrawler');
 const loadMessage = require('./func/loadMessage');
+const loadChannelId = require('./func/loadChannelId');
+
 const pool = require('./model/connectionPool');
 const scheduler = require('node-schedule');
-const dbvalues = require('./data');
 //  error data format
 // {
 //   error: true,
@@ -17,7 +18,8 @@ const dbvalues = require('./data');
 // 크롤링을 통해 라이브 방송 중인 videoId 수집하는 전단.
 // 약 3분 소요 => 오래걸린다.
 const front = () => new Promise((resolve, reject) => {
-    getLiveVideo(dbvalues)
+    loadChannelId()
+    .then((dbvalues)=> getLiveVideo(dbvalues))
     .then((liveVideos) => loadLiveVideo(liveVideos))
     .then((newLiveVideos) => loadLiveChat(newLiveVideos))
     .then(()=> {
@@ -55,25 +57,15 @@ const back = () => new Promise((resolve, reject) => {
   })
 });
 
-// const main = async () => {
-
-//   // 실제 라이브여부 판정
-//   const f = await front();
-  
-//   // 메세지 수집
-//   const b = await back();
-//   return;
-// }
-
-// 크리에이터의 수가 많아질 수록 오래걸린다.
+// 실제 라이브여부 판정
 const f = scheduler.scheduleJob('*/5 * * * *', ()=>{
   front();
 })
 
+// 메세지 수집
 const b = scheduler.scheduleJob('*/2 * * * *', ()=>{
   back();
 })
 
-
 // 정의한 리눅스 사용자 계정의 권한을 사용하기 위한 option
-// docker run --init --cap-add=SYS_ADMIN --name youtube-crawler -d -v /etc/localtime:/etc/localtime:ro --env-file ./.env youtube-crawler:2.0
+// docker run --init --cap-add=SYS_ADMIN --name youtube-crawler -d -v /etc/localtime:/etc/localtime:ro --env-file ./.env youtube-crawler:2.1

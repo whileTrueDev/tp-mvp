@@ -35,7 +35,10 @@ const loadLiveVideo = (liveVideos) =>
 
           // 삭제 및 삽입 실행 
           deleteOldVideo(oldLiveVideos)
-          .then(()=> InsertNewVideo(newLiveVideos))
+          .then(()=> Promise.all([
+            InsertLiveData(newLiveVideos),
+            InsertMetaData(newLiveVideos)
+          ]))
           .then(()=> {
             resolve(newLiveVideos);
           })
@@ -92,20 +95,20 @@ const deleteOldVideo = (oldLiveVideos) => {
 }
 
 // not live => live가 된 video로 DB에 적재한다.
-const InsertNewVideo = (newLiveVideos) => {
+const InsertLiveData = (newLiveVideos) => {
   if(newLiveVideos.length === 0) {
     return Promise.resolve();
   }
 
-  const rawQuery = newLiveVideos.reduce((str, {channelId, videoId, videoTitle})=>{
-    return str + `( '${videoId}' , '${channelId}' , '${videoTitle}'),`;
+  const rawQuery = newLiveVideos.reduce((str, { videoId })=>{
+    return str + `( '${videoId}'),`;
   },'');
   const conditionQuery = rawQuery.slice(0,-1) + ';';
 
   const InsertQuery = 
   `
   INSERT INTO youtubeLiveVideos
-  (videoId, channelId, videoTitle)
+  ( videoId )
   VALUES ${conditionQuery};
   `;
 
@@ -117,7 +120,41 @@ const InsertNewVideo = (newLiveVideos) => {
         .catch((error)=>{
           reject({
               error: true,
-              func : "InsertNewVideo",
+              func : "InsertLiveData",
+              msg : error
+          });
+        })
+  });
+}
+
+
+// not live => live가 된 video로 DB에 적재한다.
+const InsertMetaData = (newLiveVideos) => {
+  if(newLiveVideos.length === 0) {
+    return Promise.resolve();
+  }
+
+  const rawQuery = newLiveVideos.reduce((str, {videoId, videoTitle, channelId, channelName})=>{
+    return str + `( '${videoId}', '${videoTitle}', '${channelId}', '${channelName}'),`;
+  },'');
+  const conditionQuery = rawQuery.slice(0,-1) + ';';
+
+  const InsertQuery = 
+  `
+  INSERT INTO youtubeVideos
+  (videoId, videoTitle, channelId, channelName)
+  VALUES ${conditionQuery};
+  `;
+
+  return new Promise((resolve, reject)=>{
+      doQuery(InsertQuery, [])
+        .then(()=>{
+          resolve();
+        })
+        .catch((error)=>{
+          reject({
+              error: true,
+              func : "InsertMetaData",
               msg : error
           });
         })

@@ -20,9 +20,8 @@ const getVideo = async (item, page, liveVideoDatas) => {
       const $ = cheerio.load( video );
       const videoId = $('#thumbnail').attr('href').substring(9); 
       const videoTitle = $('#video-title').attr('title');
-      const channelName = $('#channel-name #text-container #text a').text();
-      // console.log(channelName);
-      liveVideoDatas.push({videoId, videoTitle, channelId: value});
+      const channelName2 = $('#channel-name #text-container #text a').text();
+      liveVideoDatas.push({videoId, videoTitle, channelId: value, channelName : channelName2.substring(0, channelName2.length / 2 )});
     })
   }
 };
@@ -49,4 +48,3 @@ const getLiveVideo = async (dbvalues) => {
 };
 
 module.exports = getLiveVideo;
-
