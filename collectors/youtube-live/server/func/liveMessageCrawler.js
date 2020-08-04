@@ -53,6 +53,14 @@ const getPlayTime = (_date1, _date2) => {
   return `${hour}:${minute}:${second}`;
 }
 
+// WINDOW : 2020-8-4 11:10:14 ├F10: AM┤
+// LINUX  : 8/4/2020, 10:54:01 AM
+const getDateFormat = (_date1) => {
+  var Date_1 = _date1 instanceof Date ? _date1 :new Date(_date1);
+  return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDay()} ${Date_1.toLocaleTimeString()}`
+}
+
+
 // ************************************ 지속적 반복 필요 ***************************************
 // 1회 요청시 7 quota
 // activeLiveChatId => live chat message
@@ -80,16 +88,7 @@ const getChatData = (target, mergedChats, connection) => {
             const { snippet } = item; 
             const authorId = snippet.authorChannelId;
             const timeObject = new Date(snippet.publishedAt);
-            const time = timeObject.toLocaleString({
-              timeZone: 'UTC',
-              hour12: false,
-              year: '2-digit',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit'
-            });
+            const time = getDateFormat(timeObject);
             const play_time = getPlayTime(timeObject, startDate);
             // 데이터 저장시 필요한 전처리 -> \ 글자, 따옴표에 대한 처리
             const text = snippet.displayMessage.replace(/\\/g, '').replace(/\'/g, ' ');
