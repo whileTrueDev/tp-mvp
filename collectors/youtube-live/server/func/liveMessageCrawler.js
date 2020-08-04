@@ -80,7 +80,8 @@ const getChatData = (target, mergedChats, connection) => {
             const { snippet } = item; 
             const authorId = snippet.authorChannelId;
             const timeObject = new Date(snippet.publishedAt);
-            const time = timeObject.toLocaleString('ko-KR', {
+            const time = timeObject.toLocaleString({
+              timeZone: 'UTC',
               hour12: false,
               year: '2-digit',
               month: '2-digit',
