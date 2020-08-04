@@ -35,7 +35,7 @@ const getliveChatIdByDB = (connection) =>
 const getPlayTime = (_date1, _date2) => {
   var diffDate_1 = _date1 instanceof Date ? _date1 :new Date(_date1);
   var diffDate_2 = _date2 instanceof Date ? _date2 :new Date(_date2);
-  var diff = Math.abs(diffDate_2.getTime() - diffDate_1.getTime());
+  var diff = (diffDate_2.getTime() - diffDate_1.getTime());
 
   if(diff <= 0) {
     return `00:00:00`
