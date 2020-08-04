@@ -45,12 +45,11 @@ const back = () => new Promise((resolve, reject) => {
       .then((mergedChats)=> loadMessage(mergedChats, connection))
       .then(()=>{
         connection.release();
-        console.log("---------------------------------------------------");
         resolve();
       })
       .catch((err)=>{
         connection.release();
-        console.log(err.msg);
+        console.log(err);
         resolve();
       });
     }

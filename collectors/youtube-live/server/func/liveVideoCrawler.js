@@ -27,11 +27,11 @@ const getVideo = async (item, page, liveVideoDatas) => {
 };
 
 const getLiveVideo = async (dbvalues) => {
-  console.log(`크롤링을 실시합니다. 시작 시각 : ${new Date().toLocaleString()}`);
+  console.log(`crawling start : ${new Date().toLocaleString()}`);
   // const browser = await puppeteer.launch({
   //   args: ['--disable-dev-shm-usage']
   // }); //할당된 메모리를 최대한 사용하게 함.
-   const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.setDefaultNavigationTimeout(0);  // 성능이 좋지 않은 환경에서 delay 발생할 경우, 페이지 로딩까지 기다리게함.
 
@@ -41,8 +41,10 @@ const getLiveVideo = async (dbvalues) => {
 
   return new Promise((resolve, reject) => {
     forEachPromise(dbvalues, getVideo)
-      .then(() => {
-        console.log(`크롤링 종료, 현재 방송 중인 channel 수 : ${liveVideoDatas.length} | 종료 시각 : ${new Date().toLocaleString()}`)
+      .then(async () => {
+        await page.close();
+        await browser.close();
+        console.log(`crawling end, channels on air : ${liveVideoDatas.length} | ${new Date().toLocaleString()}`);
         resolve(liveVideoDatas);
       });
   });

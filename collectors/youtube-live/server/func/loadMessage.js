@@ -6,7 +6,7 @@ const loadMessage = (mergedChats, connection) => {
     return Promise.reject({
       error : true,
       func : "loadMessage",
-      msg : `채팅이 존재하지 않습니다. ${new Date().toLocaleString()}`
+      msg : `no chats | ${new Date().toLocaleString()}`
     });
   }
 
@@ -25,7 +25,7 @@ const loadMessage = (mergedChats, connection) => {
   return new Promise((resolve, reject)=>{
     doConnectionQuery({ connection, queryState: InsertQuery, params: [] })
       .then(()=>{
-        console.log(`저장된 채팅 수 : ${mergedChats.length} | ${new Date().toLocaleString()}`);
+        console.log(`stored chat count : ${mergedChats.length} | ${new Date().toLocaleString()}`);
         resolve();
       })
       .catch((error)=>{

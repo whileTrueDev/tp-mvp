@@ -89,7 +89,7 @@ const getChatData = (target, mergedChats, connection) => {
             const authorId = snippet.authorChannelId;
             const timeObject = new Date(snippet.publishedAt);
             const time = getDateFormat(timeObject);
-            const play_time = getPlayTime(timeObject, startDate);
+            const play_time = getPlayTime(startDate, timeObject);
             // 데이터 저장시 필요한 전처리 -> \ 글자, 따옴표에 대한 처리
             const text = snippet.displayMessage.replace(/\\/g, '').replace(/\'/g, ' ');
             mergedChats.push({ videoId, authorId, time, play_time, text });
@@ -107,11 +107,34 @@ const getChatData = (target, mergedChats, connection) => {
         }
       })
       .catch((err) => {
+        // 종료하고 난 뒤에 비공개로 떨구게 되면 catch로 오류가 발생한다. => 다음 갱신시에 바뀐다.
+        if (err.response) {
+          if(error.response.status == 403){
+            resolve({
+              error: false
+            });
+          } else {
+            resolve({
+              error: true,
+              msg : err.response.status
+            });
+          }
+        }
+        else if (err.request) {
+          // 요청이 이루어 졌으나 응답을 받지 못했습니다.
           resolve({
             error: true,
-            msg : err.response.data.error.message
+            msg : err.request
           });
-      })
+        }
+        else {
+          // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
+          resolve({
+            error: true,
+            msg : err.message
+          });
+        }
+    })
   })
 }
 
