@@ -57,7 +57,7 @@ const getPlayTime = (_date1, _date2) => {
 // LINUX  : 8/4/2020, 10:54:01 AM
 const getDateFormat = (_date1) => {
   var Date_1 = _date1 instanceof Date ? _date1 :new Date(_date1);
-  return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDay()} ${Date_1.toLocaleTimeString()}`
+  return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`
 }
 
 
