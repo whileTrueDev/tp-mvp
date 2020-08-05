@@ -30,7 +30,7 @@ const getliveChatId = (targets) => {
               {
                 channelId : channelDic[videoId],
                 videoId,
-                viewer: details.concurrentViewers,
+                viewer: details.concurrentViewers, // 실시간 시청자 수가 집계가 가능하다. 
                 activeLiveChatId: details.activeLiveChatId
               }
             )
@@ -46,13 +46,40 @@ const getliveChatId = (targets) => {
           });
         }
       })
-      .catch((error) => {
-        console.log(error);
-        reject({
-          error: true,
-          func : "getliveChatId",
-          msg : error.response.data.message
-        });
+      .catch((err) => {
+        if (err.response) {
+          if(err.response.status == 403){
+            // 할당량 초과에 대한 오류핸들링
+            // err.response.data.error.message
+            reject({
+              error: true,
+              func : "getliveChatId",
+              msg: `no livechatId (quota exceeded) | ${new Date().toLocaleString()}`
+            })
+          } else {
+            reject({
+              error: true,
+              func : "getliveChatId",
+              msg : err.response.status
+            });
+          }
+        }
+        else if (err.request) {
+          // 요청이 이루어 졌으나 응답을 받지 못했습니다.
+          reject({
+            error: true,
+            func : "getliveChatId",
+            msg : err.request
+          });
+        }
+        else {
+          // 오류를 발생시킨 요청을 설정하는 중에 문제가 발생했습니다.
+          reject({
+            error: true,
+            func : "getliveChatId",
+            msg : err.message
+          });
+        }
       })
   })
 }
@@ -92,8 +119,7 @@ const UpdateNewChatId = ({ videoId, activeLiveChatId }, connection) => {
         resolve();
       })
       .catch((error)=>{
-        console.log(error);
-        resolve();
+        reject(error);
       })
   });
 }
@@ -108,7 +134,7 @@ const main = (newLiveVideos) => {
       .catch((error)=>{
         reject(error);
       });
-    }else {
+    } else {
       resolve();
     }
   })

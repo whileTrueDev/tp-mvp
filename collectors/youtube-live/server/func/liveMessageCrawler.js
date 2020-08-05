@@ -68,6 +68,17 @@ const getDateFormat = (_date1) => {
 const getChatData = (target, mergedChats, connection) => {
   const { videoId, activeLiveChatId, nextPageToken, startDate } = target;
   return new Promise((resolve, reject) => {
+    if(activeLiveChatId == null){
+      // activeLiveChatId가 null인경우에는 요청하지 않도록 한다.
+      //   resolve({
+      //     error: false,
+      //  });
+      reject({
+        error: true,
+        msg: `no chats(quota exceeded) | ${new Date().toLocaleString()}`
+      })
+     return;
+    }
     const url = `https://www.googleapis.com/youtube/v3/liveChat/messages`;
     const params = {
       part: 'id, snippet',
@@ -109,10 +120,13 @@ const getChatData = (target, mergedChats, connection) => {
       .catch((err) => {
         // 종료하고 난 뒤에 비공개로 떨구게 되면 catch로 오류가 발생한다. => 다음 갱신시에 바뀐다.
         if (err.response) {
-          if(error.response.status == 403){
-            resolve({
-              error: false
-            });
+          if(err.response.status == 403){
+            // 할당량 초과에 대한 오류핸들링
+            // err.response.data.error.message
+            reject({
+              error: true,
+              msg: `no chats(quota exceeded) | ${new Date().toLocaleString()}`
+            })
           } else {
             resolve({
               error: true,
@@ -171,6 +185,9 @@ const requestAPI = (liveChats, connection) => {
       forEachPromise(liveChats, mergedChats, connection, getChatData)
       .then(() => {
         resolve(mergedChats);
+      })
+      .catch((error)=>{
+        reject(error);
       });
     }
   })

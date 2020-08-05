@@ -14,6 +14,7 @@ const loadLiveVideo = (liveVideos) =>
         const liveVideoIds = [];
         const newLiveVideos = [];
         const oldLiveVideos = [];
+        const updateVideos = [];
         if(!dbdata.error){
           const { videoIds, data } = dbdata.data;
           // 1. 현재 in live인 video인데 DB에 존재하지 않는경우, DB에 적재한다. 
@@ -22,6 +23,10 @@ const loadLiveVideo = (liveVideos) =>
             if(!videoIds.includes(liveVideoData.videoId))
             {
               newLiveVideos.push(liveVideoData);
+            }
+            // 할당량 이슈로 인해 activeLiveChatId가 null 값으로 들어간경우, 재요청을 실시한다.
+            if(liveVideoData.activeLiveChatId == null){
+              updateVideos.push(liveVideoData);
             }
           }); 
 
@@ -40,7 +45,7 @@ const loadLiveVideo = (liveVideos) =>
             InsertMetaData(newLiveVideos)
           ]))
           .then(()=> {
-            resolve(newLiveVideos);
+            resolve(newLiveVideos.concat(updateVideos));
           })
           .catch((error)=> {
             // 내부의 reject의 경우 밖으로 나가지 않기 때문에 자체적인 error-catch 구현

@@ -26,8 +26,8 @@ const front = () => new Promise((resolve, reject) => {
       resolve();
     })
     .catch((error)=> {
-      console.log(error);
-      reject(error);
+      console.log(error.msg);
+      resolve();
     })
 });
 
@@ -49,7 +49,7 @@ const back = () => new Promise((resolve, reject) => {
       })
       .catch((err)=>{
         connection.release();
-        console.log(err);
+        console.log(err.msg);
         resolve();
       });
     }
