@@ -70,13 +70,11 @@ const getChatData = (target, mergedChats, connection) => {
   return new Promise((resolve, reject) => {
     if(activeLiveChatId == null){
       // activeLiveChatId가 null인경우에는 요청하지 않도록 한다.
-      //   resolve({
-      //     error: false,
-      //  });
-      reject({
-        error: true,
-        msg: `no chats(quota exceeded) | ${new Date().toLocaleString()}`
-      })
+      // => quota exceeded가 아닌데 다른 chat에 대해서도 불가능하면 안된다.
+      console.log(`${videoId} hasn't activeLiveChatId`)
+      resolve({
+        error: false,
+      });
      return;
     }
     const url = `https://www.googleapis.com/youtube/v3/liveChat/messages`;
