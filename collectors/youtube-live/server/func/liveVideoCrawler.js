@@ -13,6 +13,8 @@ const getVideo = async (item, page, liveVideoDatas) => {
   await page.goto(url);
 
   const row = await page.$("ytd-app ytd-item-section-renderer #contents");
+  
+  //row가 없을 수도 있다... => error handling을 해야하지만 딱히 의미는 없을 것으로 보인다..
   const videoList = await row.$$eval( "ytd-video-renderer", videos => videos.map(video => video.outerHTML));
 
   if(videoList.length != 0) {
