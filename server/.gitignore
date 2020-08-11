@@ -1,14 +1,6 @@
-.env
-dist
-node_modules
-
-# *****************************************************
-# Server
-# *****************************************************
-
 # compiled output
-server/dist
-server/node_modules
+/dist
+/node_modules
 
 # Logs
 logs
@@ -22,11 +14,11 @@ lerna-debug.log*
 .DS_Store
 
 # Tests
-server/coverage
-server/.nyc_output
+/coverage
+/.nyc_output
 
 # IDEs and editors
-server/.idea
+/.idea
 .project
 .classpath
 .c9/
