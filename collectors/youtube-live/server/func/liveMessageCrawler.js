@@ -71,7 +71,7 @@ const getChatData = (target, mergedChats, connection) => {
     if(activeLiveChatId == null){
       // activeLiveChatId가 null인경우에는 요청하지 않도록 한다.
       // => quota exceeded가 아닌데 다른 chat에 대해서도 불가능하면 안된다.
-      console.log(`${videoId} hasn't activeLiveChatId`)
+      console.log(`${videoId} hasn't activeLiveChatId`);
       resolve({
         error: false,
       });
@@ -121,9 +121,11 @@ const getChatData = (target, mergedChats, connection) => {
           if(err.response.status == 403){
             // 할당량 초과에 대한 오류핸들링
             // err.response.data.error.message
-            reject({
+
+            // 채팅 데이터를 수집하려고보니 과거의 channelId를 비공개하면서 생김.
+            resolve({
               error: true,
-              msg: `no chats(quota exceeded) | ${new Date().toLocaleString()}`
+              msg: `${videoId} is private or quota exceeded | ${new Date().toLocaleString()}`
             })
           } else {
             resolve({
