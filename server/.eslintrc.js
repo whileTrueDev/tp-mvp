@@ -4,73 +4,73 @@ module.exports = {
     sourceType: 'module',
     ecmaVersion: 6,
     ecmaFeatures: {
-        jsx: true,
-        modules: true,
-        experimentalObjectRestSpread: true
+      modules: true,
+      experimentalObjectRestSpread: true
     }
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: [
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
-    'prettier/@typescript-eslint',
-  ],
   root: true,
   env: {
     node: true,
     jest: true,
   },
+  plugins: [
+    '@typescript-eslint/eslint-plugin',
+    'prettier',
+    'jest',
+  ],
+  extends: [
+    'airbnb-base',
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended'
+  ],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    "lines-between-class-members": 0,
-    "no-trailing-spaces": [
-      "error",
+    'lines-between-class-members': 0,
+    'no-trailing-spaces': [
+      'error',
       {
-          "ignoreComments": true
+        ignoreComments: true
       }
     ],
-    "class-methods-use-this": [
-        "error",
-        {
-            "exceptMethods": [
-                "authorizationParams"
-            ]
-        }
+    'class-methods-use-this': [
+      1,
     ],
-    "@typescript-eslint/no-var-requires": "warn", // please use import
-    "no-underscore-dangle": "off",
-    "comma-dangle": "off",
-    "linebreak-style": "off",
-    "no-unused-vars": "warn",
-    "button-has-type": 0,
+    '@typescript-eslint/no-var-requires': 'warn', // please use import
+    'no-underscore-dangle': 'off',
+    'comma-dangle': 'off',
+    'linebreak-style': 'off',
+    'no-unused-vars': 'warn',
+    'button-has-type': 0,
+    'no-useless-constructor': 0,
+    'import/prefer-default-export': 0, // please use import
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never'
+      }
+    ]
   },
   settings: {
-    "import/extensions": [
-        ".js",
-        ".jsx",
-        ".ts",
-        ".tsx"
-    ],
-    "import/parsers": {
-        "@typescript-eslint/parser": [
-            ".js",
-            ".jsx",
-            ".ts",
-            ".tsx"
-        ]
+    'import/parsers': {
+      '@typescript-eslint/parser': [
+        '.js',
+        '.ts',
+      ]
     },
-    "import/resolver": {
-        node: {
-            extensions: [
-                ".js",
-                ".jsx",
-                ".ts",
-                ".tsx"
-            ]
-        }
+    'import/resolver': {
+      node: {
+        extensions: [
+          '.js',
+          '.ts',
+        ]
+      }
     }
-},
+  },
 };
