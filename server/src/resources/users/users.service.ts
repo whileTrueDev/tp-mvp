@@ -17,8 +17,12 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async findOne(id: string): Promise<UserEntity> {
-    return this.usersRepository.findOne(id);
+  async findOne(userId: string): Promise<UserEntity> {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.cats', 'cat')
+      .where('user.id = :userId', { userId })
+      .getOne();
   }
 
   async remove(userid: string): Promise<void> {
@@ -27,11 +31,5 @@ export class UsersService {
 
   async create(user: UserEntity): Promise<UserEntity> {
     return this.usersRepository.save(user);
-  }
-
-  async findCats(userId: string): Promise<CatEntity[]> {
-    return this.catsRepository.find({
-      owner: userId
-    });
   }
 }
