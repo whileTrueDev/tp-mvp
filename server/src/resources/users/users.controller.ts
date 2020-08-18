@@ -7,7 +7,6 @@ import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserEntity } from './entities/user.entity';
-import { CatEntity } from '../cats/entities/cat.entity';
 
 @Controller('users')
 export class UsersController {
@@ -16,11 +15,9 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  async find(@Query('id') id: string): Promise<UserEntity | UserEntity[]> {
-    if (id) {
-      return this.usersService.findOne(id);
-    }
-    return this.usersService.findAll();
+  async find(@Req() req: LogedInExpressRequest): Promise<UserEntity | UserEntity[]> {
+    const { userId } = req.user;
+    return this.usersService.findOne(userId);
   }
 
   @Post()
@@ -29,11 +26,5 @@ export class UsersController {
     @Body(new ValidationPipe()) createUserDto: CreateUserDto
   ): Promise<UserEntity> {
     return this.usersService.create(createUserDto);
-  }
-
-  @Get('cats')
-  @UseGuards(JwtAuthGuard)
-  async findCats(@Req() req: LogedInExpressRequest): Promise<CatEntity[]> {
-    return this.usersService.findCats(req.user.userId);
   }
 }

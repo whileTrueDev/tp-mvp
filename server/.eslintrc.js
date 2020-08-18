@@ -45,6 +45,7 @@ module.exports = {
     'no-unused-vars': 'warn',
     'button-has-type': 0,
     'no-useless-constructor': 0,
+    'import/no-cycle': 0, // disable dependency cycle for this project
     'import/prefer-default-export': 0, // please use import
     'import/extensions': [
       'error',

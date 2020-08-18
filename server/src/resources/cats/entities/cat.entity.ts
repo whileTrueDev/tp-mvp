@@ -1,4 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity, Column, PrimaryGeneratedColumn, ManyToOne
+} from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity({ name: 'Cat' })
 export class CatEntity {
@@ -14,6 +17,6 @@ export class CatEntity {
   @Column()
   breed: string;
 
-  @Column()
+  @ManyToOne(() => UserEntity, (user) => user.id)
   owner: string;
 }
