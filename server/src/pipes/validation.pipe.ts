@@ -21,10 +21,7 @@ export class ValidationPipe implements PipeTransform<any> {
     return value;
   }
 
-  private toValidate(
-    metatype:
-      Type<any>
-  ): boolean {
+  private toValidate(metatype: Type<any>): boolean {
     return !this.types.includes(metatype);
   }
 }

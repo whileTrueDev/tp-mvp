@@ -1,13 +1,13 @@
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   // **********************************************
   // Load .env file and set environment variables
-  dotenv.config();
+  // dotenv.config();
 
   const app = await NestFactory.create(AppModule);
 
