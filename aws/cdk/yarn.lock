@@ -323,6 +323,23 @@
     "@aws-cdk/core" "1.59.0"
     constructs "^3.0.2"
 
+"@aws-cdk/aws-rds@^1.59.0":
+  version "1.59.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-rds/-/aws-rds-1.59.0.tgz#07e7d7bf8180b4c9da522d40a8eb4f7bab227394"
+  integrity sha512-Oz58zapxc/EtgWlWw5wkPC7piqCtKFHn4LnmlJdCIm6JIrkXOP+Fuedb36e38aEv74y68tr9iVZ8nEylOCFL7g==
+  dependencies:
+    "@aws-cdk/aws-cloudwatch" "1.59.0"
+    "@aws-cdk/aws-ec2" "1.59.0"
+    "@aws-cdk/aws-events" "1.59.0"
+    "@aws-cdk/aws-iam" "1.59.0"
+    "@aws-cdk/aws-kms" "1.59.0"
+    "@aws-cdk/aws-lambda" "1.59.0"
+    "@aws-cdk/aws-logs" "1.59.0"
+    "@aws-cdk/aws-s3" "1.59.0"
+    "@aws-cdk/aws-secretsmanager" "1.59.0"
+    "@aws-cdk/core" "1.59.0"
+    constructs "^3.0.2"
+
 "@aws-cdk/aws-route53-targets@1.59.0", "@aws-cdk/aws-route53-targets@^1.59.0":
   version "1.59.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-route53-targets/-/aws-route53-targets-1.59.0.tgz#600046a06560cee2abe43b9407bb358d9509dbd7"
