@@ -19,9 +19,10 @@
 
 ## 작동방법  
 
-**1. 가상환경 실행(Mac 기준)**
+**1. 가상환경 실행(가상환경 이름이 .venv일 경우)**
 ~~~bash
-source .venv/bin/activate
+source .venv/bin/activate # Mac
+source .venv/Scripts/activate #윈도우
 ~~~
 **2. requirement 참고, 필요패키지 다운**
 
@@ -39,6 +40,7 @@ scrapyd-deploy --project=crawler
 ## 주의사항
 1. .venv/lib 내부, orator/orm/model.py의 \__timestamps__ 값 False로 변경 필요.
 2. crawler/drivers 폴더의 chromedirver는 맥용 프로그램을 설치함. 윈도우의 경우 윈도우용 크롬드라이버를 위치시켜야함  
-3. crawler/middlewares의 크롬드라이버 설정위치는 절대경로로 개발자별로 파일위치에 관하여 변경 필요.  
-4. 멀티프로세스 기본 8로 설정 하여, 본인의 CPU 코어에 맞게 숫자변경 필요.  
+3. crawler/middlewares의 크롬드라이버 설정위치는 절대경로로 개발자별로 파일위치에 관하여 변경 필요.
+4. crawler/configContoller의 env 경로 변경 필요함.
+5. 멀티프로세스 기본 8로 설정 하여, 본인의 CPU 코어에 맞게 숫자변경 필요.  
 - cralwer/run.py 하단 **Pool(processes=8)** 의 processes 인자 변경할 것!
