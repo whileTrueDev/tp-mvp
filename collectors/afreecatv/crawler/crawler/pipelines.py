@@ -77,6 +77,9 @@ class DatabasePipeline(object):
         afreecachat.viewer = item['viewer']
         afreecachat.category = item['category']
         afreecachat.videoTitle = item['videoTitle']
+        afreecachat.like = item['like']
+        afreecachat.bookmark = item['bookmark']
+        afreecachat.creatorId = item['creatorId']
         afreecachat.save()
 
         return item

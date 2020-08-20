@@ -28,7 +28,7 @@ class AfreecatvSpider(scrapy.Spider):
         yield scrapy.Request(url=self.start_url, callback=self.parse, method='GET', encoding='utf-8')
 
     def parse(self, response):
-        # 비가변 데이터
+        # 유동성적은 데이터
         creatorName = response.xpath('//*[@id="player_area"]/div[2]/div[2]/div[1]/text()').get()
         startAt = response.xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[1]/span/text()').get()
         resolution = response.xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[2]/span/text()').get()
@@ -52,5 +52,8 @@ class AfreecatvSpider(scrapy.Spider):
             item['viewer'] = chatData['viewer']
             item['category'] = chatData['category']
             item['videoTitle'] = chatData['videoTitle']
+            item['like'] = chatData['like']
+            item['bookmark'] = chatData['bookmark']
+            item['creatorId'] = chatData['creatorId']
             yield item
         

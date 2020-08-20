@@ -11,6 +11,9 @@ class AfreecatvChat(scrapy.Item):
     grade = scrapy.Field()
     chattime = scrapy.Field()
     userId = scrapy.Field()
+    like = scrapy.Field()
+    bookmark = scrapy.Field()
+    creatorId = scrapy.Field()
 
 class AfreecatvCreators(scrapy.Item):
     creatorName = scrapy.Field()

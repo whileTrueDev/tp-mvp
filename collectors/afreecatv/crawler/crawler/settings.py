@@ -27,6 +27,6 @@ ORATOR_CONFIG = {
         'database': config.DB_NAME,
         'user': config.DB_USER,
         'password': config.DB_PASSWORD,
-        'port': int(config.DB_PORT)
+        'port': config.DB_PORT
     }
 }

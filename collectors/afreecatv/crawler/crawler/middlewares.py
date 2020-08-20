@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from .pipelines import Afreecacreators
 import requests, re
 from .configController import ConfigController
+import os, subprocess
 
 chatAllData = []
 
@@ -30,7 +31,7 @@ class SeleniumMiddleware(object):
     def spider_opened(self, spider):
         self.config = ConfigController()
         self.config.load()
-        CHROMEDRIVER_PATH = '/Users/gangdong-gi/Desktop/repository/tp-mvp/collectors/afreecatv/crawler/crawler/drivers/chromedriver'
+        CHROMEDRIVER_PATH = r'C:\Users\WHILETRUESECOND\Desktop\tp-mvp\collectors\afreecatv\crawler\crawler\drivers\chromedriver.exe'
         WINDOW_SIZE = "1920, 1080"
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # 크롬창이 열리지 않게
@@ -69,8 +70,8 @@ class SeleniumMiddleware(object):
 
         # 채팅창 제어 변수 초깃값
         chatNum = 1
-        liveEndPoint = 0
-        tryTime = 0
+        liveEndPoint = 0 # 생방송 상대 여부 판별
+        tryTime = 0 # 채팅 업로드 시도횟수
         
         def liveEndCheck(self, chatNum, tryTime, liveEndPoint):
             response = requests.get(request.url)
@@ -78,7 +79,7 @@ class SeleniumMiddleware(object):
             getTitle = title.group()[-12:-2]
             try:
                 next_chating_present = EC.presence_of_element_located((By.ID, f'{chatNum+1}'))
-                WebDriverWait(self.driver, 5, poll_frequency=0.5).until(next_chating_present)
+                WebDriverWait(self.driver, 10, poll_frequency=0.5).until(next_chating_present)
             except:
                 if getTitle == '방송중이지 않습니다':
                     lg.info(f'{self.creatorId} 방송 종료')
@@ -89,9 +90,26 @@ class SeleniumMiddleware(object):
                     liveEndPoint = liveEndPoint + 1
                     return liveEndPoint
                 elif self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[3]').get_attribute("style") == '':
-                    lg.warning(f'{self.creatorId} 성인처리')
-                    liveEndPoint = liveEndPoint + 1
-                    return liveEndPoint
+                    lg.warning(f'{self.creatorId} 19세 방송중')
+                    try:
+                        self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[3]/div/button[1]').click()
+                    except:
+                        pass
+                    tryTime = tryTime + 1
+
+                    if tryTime == 13:
+                        lg.warning(f'{self.creatorId}님의 19세 방송중 상태 불안정에 따른 새로고침을 실시: 2분 채팅대기')
+                        self.driver.refresh()
+                        sleep(2)
+                        try:
+                            self.driver.find_element_by_xpath('//*[@id="stop_screen"]/dl/dd[2]/a').click()
+                        except:
+                            pass
+                        chatNum = 1
+                        tryTime = 0
+                    
+                    liveEndCheck(self, chatNum, tryTime, liveEndPoint)
+                    
                 elif self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[7]').get_attribute("style") == '':
                     lg.warning(f'{self.creatorId} 비밀번호 설정')
                     liveEndPoint = liveEndPoint + 1
@@ -100,7 +118,7 @@ class SeleniumMiddleware(object):
                     tryTime = tryTime + 1
 
                     if tryTime == 13:
-                        lg.warning(f'{self.creatorId}님의 방송 상태 불안정에 따른 새로고침을 실시: 1분 채팅대기')
+                        lg.warning(f'{self.creatorId}님의 방송 상태 불안정에 따른 새로고침을 실시: 2분 채팅대기')
                         self.driver.refresh()
                         sleep(2)
                         try:
@@ -127,10 +145,13 @@ class SeleniumMiddleware(object):
                 chatEachData['is_mobile'] = self.driver.find_element_by_xpath(userId).get_attribute("is_mobile")
                 chatEachData['category'] = self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[4]/span').text
                 chatEachData['videoTitle'] = self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/div[4]/span').text
+                chatEachData['like'] = self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/div[6]/ul/li[1]/span').text
+                chatEachData['bookmark'] = self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/div[6]/ul/li[2]/span').text
                 chatEachData['viewer'] = self.driver.find_element_by_xpath('//*[@id="nAllViewer"]').text
                 chatEachData['grade'] = self.driver.find_element_by_xpath(user).get_attribute("class").split('_')[0]
                 chatEachData['sex'] = self.driver.find_element_by_xpath(user).get_attribute("class").split('_')[1]
                 chatEachData['text'] = self.driver.find_element_by_xpath(chatIdNum).text
+                chatEachData['creatorId'] = self.creatorId
                 chatEachData['chattime'] = atTime
                 chatAllData.append(chatEachData)
             except:           
@@ -149,7 +170,9 @@ class SeleniumMiddleware(object):
         return HtmlResponse( url=request.url, body=body, encoding='utf-8', request=request )
     
     def spider_closed(self, spider):
-        lg.info('크롬브라우저 종료')
+        lg.info(f'{self.creatorId} 타겟방송 크롬브라우저 종료 및 프로세스 킬')
         self.driver.close()
+        self.driver.quit()
+
 
 

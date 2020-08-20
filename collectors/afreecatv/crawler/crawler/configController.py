@@ -5,7 +5,8 @@ class ConfigController:
     environmnet = ''
 
     def __init__(self):
-        load_dotenv(dotenv_path="/Users/gangdong-gi/Desktop/repository/tp-mvp/collectors/afreecatv/crawler/crawler/.env", verbose=True)
+        # dirpath = os.path.dirname(os.path.abspath(__file__))
+        load_dotenv(dotenv_path=r"C:\Users\WHILETRUESECOND\Desktop\tp-mvp\collectors\afreecatv\crawler\crawler\.env", verbose=True)
         
 
     def load(self):
@@ -13,7 +14,7 @@ class ConfigController:
         self.DB_NAME = os.getenv('DB_NAME')
         self.DB_USER = os.getenv('DB_USER')
         self.DB_PASSWORD = os.getenv('DB_PASSWORD')
-        self.DB_PORT = os.getenv('DB_PORT')
+        self.DB_PORT = int(os.getenv('DB_PORT'))
         self.AFREECA_ID = os.getenv('AFREECA_ID')
         self.AFREECA_PASSWORD = os.getenv('AFREECA_PASSWORD')
         self.DB_DRIVER = os.getenv('DB_DRIVER')
