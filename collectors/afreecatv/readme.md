@@ -19,9 +19,12 @@
 
 ## 작동방법  
 
+
 **1. 가상환경 실행( 가상환경 이름 .venv 으로 할 것)**
+
 ~~~bash
-source .venv/bin/activate
+source .venv/bin/activate # Mac
+source .venv/Scripts/activate #윈도우
 ~~~
 **2. requirement 참고, 필요패키지 다운**
 개발환경이 윈도우일 경우 pywin32 패키지 추가 설치 필요
@@ -42,7 +45,6 @@ scrapyd-deploy --project=crawler
 python run.py
 ~~~
 
-
 ---
 ## 주의사항
 1. .venv/lib 내부, orator/orm/model.py의 \__timestamps__ 값 False로 변경 필요.
@@ -52,3 +54,4 @@ python run.py
 - cralwer/run.py 하단 **Pool(processes=8)** 의 processes 인자 변경할 것!
 6. 크롤러 특성상 타겟 사이트의 UI 변경 시 로직 변경이 필수적
 7. kmotiv 아프리카 성인 인증 세션 만료 시 성인방송 입장 불가함
+
