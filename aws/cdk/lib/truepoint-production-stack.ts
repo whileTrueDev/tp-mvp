@@ -5,6 +5,7 @@ import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as route53 from '@aws-cdk/aws-route53'
 import * as route53targets from '@aws-cdk/aws-route53-targets'
 import * as logs from '@aws-cdk/aws-logs';
+import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as iam from '@aws-cdk/aws-iam';
 import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as rds from '@aws-cdk/aws-rds';
@@ -15,6 +16,7 @@ import getSSMParams from '../utils/getParams';
 const DOMAIN_NAME             = 'mytruepoint.com';
 const BACKEND_SUBDOMAIN       = 'api';
 const ID_PREFIX               = 'Truepoint';
+const DATABASE_PORT           = 3306;
 const BACKEND_PORT            = 3000;
 const FRONTEND_PORT           = 3001;
 const BACKEND_FAMILY_NAME     = 'truepoint-sever';
@@ -24,32 +26,18 @@ const FRONTEND_DOMAIN         = DOMAIN_NAME;
 
 const ECS_CLUSTER_NAME        = 'TruepointProduction';
 
+interface TruepointStackProps extends cdk.StackProps {
+  vpc: ec2.IVpc
+}
 export class TruepointStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: cdk.Construct, id: string, props?: TruepointStackProps) {
     super(scope, id, props);
 
     // *********************************************
     // ************** VPC and Subnets **************
     // *********************************************
-    const vpc = new ec2.Vpc(this, `${ID_PREFIX}Vpc`, {
-      cidr: "10.0.0.0/16",
-      maxAzs: 10, // To use all Avaliability Zone
-      subnetConfiguration: [
-        {
-          subnetType: ec2.SubnetType.PUBLIC, // For internet-facing load balancer
-          name: 'Ingress',
-        },
-        {
-          subnetType: ec2.SubnetType.PRIVATE, // For applications tier
-          name: 'Application',
-        },
-        {
-          subnetType: ec2.SubnetType.ISOLATED, // For Database tier
-          name: 'Database',
-        },
-      ]
-    });
-    
+    const vpc = props!.vpc;
+
     // *********************************************
     // ************* Security Groups ***************
     // *********************************************
@@ -60,17 +48,17 @@ export class TruepointStack extends cdk.Stack {
       securityGroupName: `${ID_PREFIX}PublicALBSecurityGroup`,
       description: 'Allow Inbound traffics for truepoint public ALB.',
       allowAllOutbound: false
-    })
+    });
     loadBalancerSecGrp.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(80),
       'Allow Port 80 for HTTP listener of Public ALB'
-    )
+    );
     loadBalancerSecGrp.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(443),
       'Allow Port 443 for HTTPS listener of Public ALB'
-    )
+    );
     
     // Backend sec-grp
     const backendSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}BackendSecGrp`, {
@@ -78,12 +66,12 @@ export class TruepointStack extends cdk.Stack {
       securityGroupName: `${ID_PREFIX}BackendSecurityGroup`,
       description: 'Allow Inbound traffics for Backend app of Truepoint.',
       allowAllOutbound: true
-    })
+    });
     backendSecGrp.addIngressRule(
       loadBalancerSecGrp,
       ec2.Port.tcp(BACKEND_PORT),
-      `Allow Port ${BACKEND_PORT} for only traffics from the truepoint Public ALB`
-    )
+      `Allow Port ${BACKEND_PORT} for traffics from the truepoint Public ALB`
+    );
 
     // Frontend sec-grp
     const frontendSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}FrontendSecGrp`, {
@@ -91,11 +79,29 @@ export class TruepointStack extends cdk.Stack {
       securityGroupName: `${ID_PREFIX}FrontendSecurityGroup`,
       description: 'Allow Inbound traffics for Frontend app of Truepoint.',
       allowAllOutbound: true
-    })
+    });
     frontendSecGrp.addIngressRule(
       loadBalancerSecGrp,
       ec2.Port.tcp(FRONTEND_PORT),
-      `Allow Port ${FRONTEND_PORT} for only traffics from the truepoint Public ALB`
+      `Allow Port ${FRONTEND_PORT} for traffics from the truepoint Public ALB`
+    );
+
+    // Database sec-grp
+    const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
+      vpc: vpc,
+      securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
+      description: 'Allow Inbound traffics for Database of Truepoint',
+      allowAllOutbound: false
+    });
+    databaseSecGrp.addEgressRule(
+      backendSecGrp,
+      ec2.Port.tcp(DATABASE_PORT),
+      `Allow Port ${DATABASE_PORT} for Outbound traffics to the truepoint Backend`
+    );
+    databaseSecGrp.addIngressRule(
+      backendSecGrp,
+      ec2.Port.tcp(DATABASE_PORT),
+      `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`
     )
 
     // *********************************************
@@ -108,7 +114,7 @@ export class TruepointStack extends cdk.Stack {
     // *********************************************
 
     // Define ECS Cluster
-    const productionCluster = new ecs.Cluster(this, `${ID_PREFIX}ProductionCluster`, {
+    const productionECSCluster = new ecs.Cluster(this, `${ID_PREFIX}productionECSCluster`, {
       vpc: vpc, clusterName: ECS_CLUSTER_NAME,
     });
 
@@ -153,7 +159,7 @@ export class TruepointStack extends cdk.Stack {
     // *********************************************
     // Create ECS Service for Backend
     const backendService = new ecs.FargateService(this, `${ID_PREFIX}BackendService`, {
-      cluster: productionCluster,
+      cluster: productionECSCluster,
       taskDefinition: backendTaskDef,
       desiredCount: 1,
       serviceName: `${ID_PREFIX}BackendService`
@@ -162,7 +168,7 @@ export class TruepointStack extends cdk.Stack {
     // *********************************************
     // Create ECS Service for Frontend
     const frontendService = new ecs.FargateService(this, `${ID_PREFIX}FrontendService`, {
-      cluster: productionCluster,
+      cluster: productionECSCluster,
       taskDefinition: frontendTaskDef,
       desiredCount: 1,
       serviceName: `${ID_PREFIX}FrontendService`
@@ -271,26 +277,47 @@ export class TruepointStack extends cdk.Stack {
     // *********************************************
     // ******************* RDS *********************
     // *********************************************
-    const DBInstace = new rds.DatabaseInstance(this, `${ID_PREFIX}ProductionDBInstance`, {
+    const dbEngine = rds.DatabaseInstanceEngine.mysql({
+      version: rds.MysqlEngineVersion.VER_8_0_17
+    })
+    const productionDBInstace = new rds.DatabaseInstance(this, `${ID_PREFIX}ProductionDBInstance`, {
       vpc: vpc,
-      engine: rds.DatabaseInstanceEngine.mysql({
-        version: rds.MysqlEngineVersion.VER_8_0_17
-      }),
+      engine: dbEngine,
       masterUsername: ssmParameters.TRUEPOINT_DB_USER.stringValue,
-      // *********************************************
-      // Free tier instance type for testing and developing
-      // please change other instace type when you deploy production
-      // *********************************************
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
-      // *********************************************
-      // For develop and testing.
-      // You should change this in production deployment
-      // *********************************************
-      multiAz: false, 
+      instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE),
+      multiAz: true,
+      allocatedStorage: 100,
       // Enable storage auto scailing option by specifying maximum allocated storage
       maxAllocatedStorage: 300, // GB
+      storageEncrypted: true,
+      cloudwatchLogsExports:[
+        'error', 'slowquery', 'general'
+      ],
+      backupRetention: cdk.Duration.days(7),
+      cloudwatchLogsRetention: logs.RetentionDays.ONE_MONTH,
+      autoMinorVersionUpgrade: true,
+      // deletionProtection: true,
+      securityGroups: [databaseSecGrp],
+      parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}ProductionDBParameterGroup`, {
+        engine: dbEngine,
+        parameters: {
+          time_zone: 'Asia/Seoul',
+          wait_timeout: '180',
+          max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
+        }
+      })
+    });
 
-      // and another option props...
-    })
+    // *********************************************
+    // ************* CloudWatch Alarm **************
+    // *********************************************
+
+    // Alarm for DB High CPU
+    new cloudwatch.Alarm(this, `${ID_PREFIX}ProductionDBHighCPU`, {
+      metric: productionDBInstace.metricCPUUtilization(),
+      threshold: 90,
+      evaluationPeriods: 1
+    });
   }
 }
