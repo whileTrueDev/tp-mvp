@@ -1,5 +1,5 @@
 require('dotenv').config(); // 환경변수를 위해. dev환경: .env 파일 / production환경: docker run의 --env-file인자로 넘김.
-const getLiveVideo = require("./func/liveVideoCrawler");
+const getLiveVideo = require("./func/parallelrCrawler");
 const loadLiveVideo = require('./func/loadLiveVideo');
 const loadLiveChat = require('./func/loadLiveChat');
 const liveMessageCrawler = require('./func/liveMessageCrawler');
@@ -19,7 +19,7 @@ const scheduler = require('node-schedule');
 // 약 3분 소요 => 오래걸린다.
 const front = () => new Promise((resolve, reject) => {
     loadChannelId()
-    .then((dbvalues)=> getLiveVideo(dbvalues))
+    .then((dbvalues)=>  getLiveVideo(dbvalues, 3))
     .then((liveVideos) => loadLiveVideo(liveVideos))
     .then((newLiveVideos) => loadLiveChat(newLiveVideos))
     .then(()=> {
@@ -57,7 +57,7 @@ const back = () => new Promise((resolve, reject) => {
 });
 
 // 실제 라이브여부 판정
-const f = scheduler.scheduleJob('*/5 * * * *', ()=>{
+const f = scheduler.scheduleJob('*/3 * * * *', ()=>{
   front();
 })
 
