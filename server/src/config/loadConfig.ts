@@ -5,28 +5,44 @@
 
 // Load the AWS SDK
 import AWS from 'aws-sdk';
+import { TruepointSecret, TruepointDbSecret } from '../interfaces/Secrets.interface';
 
 const region = 'ap-northeast-2';
-const secretName = 'TruepointDevDBInstanceSecre-3PRavEbPUj0r';
-let secret;
-let decodedBinarySecret;
-
 AWS.config.update({
-  accessKeyId: 'AKIAYMQWU4UC5GECPYEE',
-  secretAccessKey: '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'
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
 // Create a Secrets Manager client
-const client = new AWS.SecretsManager({
-  region
-});
+const client = new AWS.SecretsManager({ region });
 
 // In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
 // See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
 // We rethrow the exception by default.
 
-client.getSecretValue({ SecretId: secretName }, (err, data) => {
-  if (err) {
+async function getDbSecrets(): Promise<TruepointDbSecret> {
+  let secret: TruepointDbSecret;
+  try {
+    const list = await client.listSecrets().promise();
+    const target = list.SecretList.find(
+      (x) => x.Name.includes(
+        process.env.NODE_ENV === 'production'
+          ? 'TruepointProductionDB' : 'TruepointDevDB'
+      )
+    );
+
+    const dbSecretData = await client
+      .getSecretValue({ SecretId: target.Name })
+      .promise();
+
+    if ('data.SecretBinary' in dbSecretData) {
+      // const buff = new Buffer(data.SecretBinary, 'base64');
+      // decodedBinarySecret = buff.toString('ascii');
+    } else {
+      secret = JSON.parse(dbSecretData.SecretString);
+    }
+  } catch (err) {
+    console.log(err);
     if (err.code === 'DecryptionFailureException') {
       // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
       // Deal with the exception here, and/or rethrow at your discretion.
@@ -49,17 +65,13 @@ client.getSecretValue({ SecretId: secretName }, (err, data) => {
       throw err;
     }
   }
-  if (!err) {
-    // Decrypts secret using the associated KMS CMK.
-    // Depending on whether the secret is a string or binary, one of these fields will be populated.
-    if ('data.SecretBinary' in data) {
-      // const buff = new Buffer(data.SecretBinary, 'base64');
-      // decodedBinarySecret = buff.toString('ascii');
-    } else {
-      secret = JSON.parse(data.SecretString);
-    }
-  }
+  return secret;
+}
 
-  // Your code goes here.
-  console.log(secret);
-});
+// config service
+export default async (): Promise<TruepointSecret> => {
+  const dbSecrets = await getDbSecrets();
+  return {
+    database: { ...dbSecrets }
+  };
+};
