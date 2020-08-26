@@ -56,6 +56,7 @@ export class TruepointDevStack extends cdk.Stack {
       engine: dbEngine,
       masterUsername: 'truepoint',
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
+      databaseName: ID_PREFIX,
       // *********************************************
       // Free tier instance type for testing and developing
       // please change other instace type when you deploy production
@@ -81,8 +82,10 @@ export class TruepointDevStack extends cdk.Stack {
           wait_timeout: '180',
           max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
         }
-      }),      
-      deletionProtection: false
-    })
+      }),
+      deletionProtection: false,
+    });
+
+    devDBInstace.secret
   }
 }
