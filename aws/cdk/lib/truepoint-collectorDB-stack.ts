@@ -52,8 +52,9 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     const collectorDBInstace = new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc: vpc,
       engine: dbEngine,
-      masterUsername: 'truepoint',
+      masterUsername: 'whiletrue',
       instanceIdentifier: `${ID_PREFIX}RDS-${dbEngine.engineType}`,
+      databaseName: ID_PREFIX,
       // *********************************************
       // Free tier instance type for testing and developing
       // please change other instace type when you deploy production

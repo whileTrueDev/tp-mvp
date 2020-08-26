@@ -284,6 +284,7 @@ export class TruepointStack extends cdk.Stack {
       vpc: vpc,
       engine: dbEngine,
       masterUsername: ssmParameters.TRUEPOINT_DB_USER.stringValue,
+      databaseName: ID_PREFIX,
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE),
       multiAz: true,
