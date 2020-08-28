@@ -1,9 +1,8 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 import {
-  blue, yellow, grey,
-  red, cyan, blueGrey
+  cyan, blueGrey
 } from '@material-ui/core/colors';
-import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
+import { darken, lighten } from '@material-ui/core/styles/colorManipulator'
 
 const defaultTheme = createMuiTheme();
 
@@ -24,6 +23,7 @@ const rawTheme = {
       // contrastText: will be calculated to contrast with palette.primary.main
       contrastText: defaultTheme.palette.getContrastText(blueGrey[700]),
     },
+
     warning: defaultTheme.palette.secondary,
   },
   typography: {
@@ -46,16 +46,4 @@ const darkTheme = responsiveFontSizes(createMuiTheme({
   }
 }));
 
-const MainPageTheme = {
-  white: '#fff',
-  mainBlue: blue[600],
-  black: grey[900],
-  mainYellow: yellow[700],
-  red: red[500],
-  cyan: cyan[500],
-  subYellow: yellow[500],
-  Mainfont: 'Noto Sans KR',
-  ...rawTheme
-};
-
-export default { lightTheme, darkTheme, MainPageTheme };
+export default { lightTheme, darkTheme };
