@@ -2,9 +2,9 @@
     "parser": "@typescript-eslint/parser",
     "plugins": [
         "react",
-        "prettier",
+        "react-hooks",
         "jest",
-        "react-hooks"
+        "prettier"
     ],
     "extends": [
         "airbnb",
