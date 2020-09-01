@@ -16,6 +16,9 @@ import VideoAnalysis from './channel-analysis/VideoAnalysis';
 import Settings from './my-office/Settings';
 import Subscribe from './my-office/Subscribe';
 
+// TEST PCOmpon
+import TEST from '../../organisms/mypage/layouts/Navbars/TEST';
+
 export interface MypageRoute {
   path: string;
   name: string;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Sidebar from '../../../organisms/mypage/layouts/Sidebar';
 // import Footer from '../../../organisms/mypage/layouts/Footer/Footer';
@@ -6,11 +6,19 @@ import routes from '../routes';
 // css
 import useLayoutStyles from './MypageLayout.style';
 
-const CreatorDashboard = (): JSX.Element => {
+// organisms
+import Navbar from '../../../organisms/mypage/layouts/Navbars/Navbar';
+
+const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
 
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const handleDrawerToggle = (): void => {
+    setMobileOpen(!mobileOpen);
+  };
 
   useEffect(() => {
     document.title = 'Truepoint | mypage';
@@ -21,8 +29,12 @@ const CreatorDashboard = (): JSX.Element => {
 
   return (
     <div className={classes.wrapper}>
-      <Sidebar routes={routes.filter((r) => !r.noTab)} />
+      {/* <Sidebar routes={routes.filter((r) => !r.noTab)} /> */}
       <div className={classes.mainPanel} ref={mainPanel}>
+        <Navbar
+          handleDrawerToggle={handleDrawerToggle}
+          routes={routes}
+        />
         <div className={classes.content}>
           <div className={classes.container}>
             <Switch>
@@ -41,4 +53,4 @@ const CreatorDashboard = (): JSX.Element => {
   );
 };
 
-export default CreatorDashboard;
+export default UserDashboard;
