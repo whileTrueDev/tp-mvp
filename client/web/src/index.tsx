@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Switch, Route } from 'react-router-dom';
+import {
+  Router, Switch, Route
+} from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
   CssBaseline, ThemeProvider, Paper, IconButton, Typography
@@ -36,38 +38,37 @@ function Index(): JSX.Element {
       <ThemeProvider theme={THEME}>
         <CssBaseline />
 
-        {/* *********************************************** */}
-        {/* Example changing Theme !! */}
-        <Paper
-          style={{
-            height: '10vh', display: 'flex', justifyContent: 'center', alignItems: 'center'
-          }}
-        >
-          <div>
+        {/* 페이지 컴포넌트 */}
+        <Router history={history}>
+
+          {/* *********************************************** */}
+          {/* Example changing Theme !! */}
+          <Paper
+            style={{
+              height: '10vh', display: 'flex', justifyContent: 'center', alignItems: 'center'
+            }}
+          >
             <Typography variant="h4">
               트루포인트
             </Typography>
 
             {themeType === THEME_TYPE.DARK && (
-            <IconButton color="primary" onClick={handleThemeChange}><Brightness4Icon /></IconButton>
+              <IconButton color="primary" onClick={handleThemeChange}><Brightness4Icon /></IconButton>
             )}
             {themeType === THEME_TYPE.LIGHT && (
-            <IconButton color="primary" onClick={handleThemeChange}><Brightness7Icon /></IconButton>
+              <IconButton color="primary" onClick={handleThemeChange}><Brightness7Icon /></IconButton>
             )}
-          </div>
-        </Paper>
-        {/* This is Example */}
-        {/* *********************************************** */}
 
-        {/* 페이지 컴포넌트 */}
-        <Router history={history}>
+          </Paper>
+          {/* This is Example */}
+          {/* *********************************************** */}
+
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
             {/* 페이지 컴포넌트가 여기에 위치합니다. */}
-
           </Switch>
         </Router>
 
