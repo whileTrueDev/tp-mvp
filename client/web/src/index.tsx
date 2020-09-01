@@ -1,31 +1,71 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Router, Switch } from 'react-router-dom';
+import { createMuiTheme } from '@material-ui/core/styles';
 import {
-  ThemeProvider, Paper, Switch, Typography
+  CssBaseline, ThemeProvider, Paper, IconButton, Typography
 } from '@material-ui/core';
+import Brightness7Icon from '@material-ui/icons/Brightness7';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
 
+import history from './history';
 import * as serviceWorker from './serviceWorker';
-
-import theme from './theme';
-import './assets/index.css';
+import THEME_TYPE from './interfaces/ThemeType';
+import defaultTheme from './theme';
+import './assets/global.css';
 
 function Index(): JSX.Element {
-  const [isDarkTheme, setIsDarkTheme] = React.useState<boolean>(false);
-  function handleTheme(): void {
-    setIsDarkTheme(!isDarkTheme);
+  // ******************************************************************
+  // Dark/Light theme changing
+  const [themeType, setTheme] = React.useState<THEME_TYPE>(THEME_TYPE.LIGHT);
+  function handleThemeChange() {
+    if (themeType === THEME_TYPE.DARK) setTheme(THEME_TYPE.LIGHT);
+    else setTheme(THEME_TYPE.DARK);
   }
-
-  console.log(isDarkTheme ? 'dark' : 'light');
+  const THEME = createMuiTheme({
+    ...defaultTheme,
+    palette: { ...defaultTheme.palette, type: themeType, },
+  });
 
   return (
     <React.StrictMode>
-      <ThemeProvider theme={isDarkTheme ? theme.darkTheme : theme.lightTheme}>
-        <Paper>
-          <Typography variant="h4">
-            트루포인트
-          </Typography>
-          <Switch checked={isDarkTheme} onChange={handleTheme} />
-        </Paper>
+      <ThemeProvider theme={THEME}>
+        <CssBaseline />
+
+        {/* 페이지 컴포넌트 */}
+
+        <Router history={history}>
+          <Switch>
+            {/* <Route exact path="/" component={메인페이지} /> */}
+            {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
+            {/* 페이지 컴포넌트가 여기에 위치합니다. */}
+
+            {/* *********************************************** */}
+            {/* Example changing Theme !! */}
+            <Paper
+              style={{
+                height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center'
+              }}
+            >
+              <div>
+                <Typography variant="h4">
+                  트루포인트
+                </Typography>
+
+                {themeType === THEME_TYPE.DARK && (
+                <IconButton color="primary" onClick={handleThemeChange}><Brightness4Icon /></IconButton>
+                )}
+                {themeType === THEME_TYPE.LIGHT && (
+                <IconButton color="primary" onClick={handleThemeChange}><Brightness7Icon /></IconButton>
+                )}
+              </div>
+            </Paper>
+            {/* This is Example */}
+            {/* *********************************************** */}
+
+          </Switch>
+        </Router>
+
       </ThemeProvider>
     </React.StrictMode>
   );
