@@ -13,11 +13,48 @@ Eslint Vscode Extension을 설치해 주세요. ( Extensions => eslint 검색 =>
 이후 `Cmd` + `,` (windows: `ctrl` + `,`) 단축어를 입력하여 vscode setting 파일을 열고, 우측 상단의 open settings(JSON) 버튼을 클릭 해 `settings.json` 파일을 열어 아래의 내용을 최하단에 추가합니다.
 
 ```JSON
+// typescript semantic highlighting
+"editor.semanticHighlighting.enabled": true,
+// These are all my auto-save configs
+"editor.formatOnSave": true,
+// turn it off for JS and JSX, we will do this via eslint
+"[javascript]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+},
+"[javascriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+},
+"[typescript]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+},
+"[typescriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+},
 // eslint config
 "eslint.packageManager": "yarn",
 "eslint.codeAction.showDocumentation": {
     "enable": true
 }
+```
+
+추가적으로 vscode에서 개발 생산성 향상을 위해 다음의 코드를 추가할 수 있습니다. vscode의 Explorer에서 검색 시 포함되지 않을 파일 또는 폴더를 설정합니다.
+
+```json
+// 검색시 검색되지 않을 파일 및 디렉토리 설정
+"search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/tmp": true,
+    "**/build": true,
+    "**/dist": true,
+    "**/yarn.lock": true,
+    "**/*.log": true,
+},
 ```
 
 ## Vscode Explorer 아이콘 설정
@@ -47,6 +84,7 @@ vscode의 Material Icon Theme를 설치합니다. ( Extensions => material-icon-
     "*.strategy.ts": "key",
     "*.entity.ts": "sequelize",
     "*.config.ts": "settings",
+    "*.style.ts": "css",
 },
 "material-icon-theme.folders.associations": {
     "interfaces": "typescript",
@@ -73,4 +111,24 @@ yarn
 ```bash
 cd server
 yarn
+```
+
+다음의 명령어를 통해 각 서버를 실행합니다
+
+- 프론트 엔드
+
+```bash
+# 윈도우즈 OS
+yarn start
+# 맥OS
+yarn start:mac
+```
+
+- 백엔드
+
+```bash
+# OS 구분 없이 실행 스크립트 동일합니다.
+
+# dev환경 ( hot reloading )
+yarn start:dev
 ```
