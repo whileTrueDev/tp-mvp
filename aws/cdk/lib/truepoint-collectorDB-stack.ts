@@ -66,6 +66,10 @@ export class WhileTrueCollectorStack extends cdk.Stack {
       // *********************************************
       multiAz: false, 
       allocatedStorage: 100,
+      vpcPlacement: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      deletionProtection: true,
       // Enable storage auto scailing option by specifying maximum allocated storage
       maxAllocatedStorage: 300, // GB
       autoMinorVersionUpgrade: true,
