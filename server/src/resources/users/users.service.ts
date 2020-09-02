@@ -28,6 +28,6 @@ export class UsersService {
   }
 
   async create(user: UserEntity): Promise<UserEntity> {
-    return this.usersRepository.save(user);
+    return this.usersRepository.create(user);
   }
 }
