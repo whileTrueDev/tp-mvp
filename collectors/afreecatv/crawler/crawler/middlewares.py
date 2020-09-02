@@ -66,7 +66,6 @@ class SeleniumMiddleware(object):
         sleep(3)
         self.driver.find_element_by_xpath('//*[@id="stop_screen"]/dl/dd[2]/a').click()
         self.creatorId  = request.url[26:-1]
-        afreecaCreator = Afreecacreators()
 
         # 채팅창 제어 변수 초깃값
         chatNum = 1
@@ -132,7 +131,6 @@ class SeleniumMiddleware(object):
 
         while True:
             if liveEndCheck(self, chatNum, tryTime, liveEndPoint) == 1:
-                afreecaCreator.updateLiveCreator([self.creatorId],'turn-off')
                 break
             chatEachData = {}
             atTime = dt.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -171,6 +169,8 @@ class SeleniumMiddleware(object):
     
     def spider_closed(self, spider):
         lg.info(f'{self.creatorId} 타겟방송 크롬브라우저 종료 및 프로세스 킬')
+        afreecaCreator = Afreecacreators()
+        afreecaCreator.updateLiveCreator([self.creatorId],'turn-off')
         self.driver.close()
         self.driver.quit()
 

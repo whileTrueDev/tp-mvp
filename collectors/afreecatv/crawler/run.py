@@ -36,7 +36,7 @@ def liveCreatorChecker():
     return crawlTargetChanel
 
 def run_crawl_url(crawl_url):
-    os.system(f"curl -X POST http://localhost:6800/schedule.json -d project=crawler -d spider=afreecatv -d start_url={crawl_url} -d pid=")
+    os.system(f"curl -X POST http://localhost:6800/schedule.json -d project=crawler -d spider=afreecatv -d start_url={crawl_url}")
 
 def run_crawl():
     """크롤링 실행"""
@@ -47,7 +47,7 @@ def run_crawl():
         lg.info('새로 방송 킨 크리에이터가 없습니다')
     else:
         lg.info('타겟 크리에이터의 크롤링을 실시합니다')
-        pool = Pool(processes=6)
+        pool = Pool(processes=5)
         pool.map(run_crawl_url, crawl_urls)
         pool.close()
         pool.join()
