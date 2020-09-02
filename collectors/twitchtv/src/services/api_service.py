@@ -11,6 +11,7 @@ class APIService:
     twitch_oauth_token_url = 'https://id.twitch.tv/oauth2/token'
     twitch_stream_url = "https://api.twitch.tv/helix/streams"
     twitch_users_url = "https://api.twitch.tv/helix/users"
+    twitch_users_follows_url = "https://api.twitch.tv/helix/users/follows"
     twitch_games_url = 'https://api.twitch.tv/helix/games/top'
     twitch_vidoes_url = 'https://api.twitch.tv/helix/videos'
     twitch_tags_url = 'https://api.twitch.tv/helix/tags/streams'
@@ -41,75 +42,90 @@ class APIService:
                   self.twitch_oauth_token_url)
             sys.exit(1)
 
-    def getStreams(self, how_much_time, target_streamers=[]):
-        cursor = None
-        streamers = list()  # stream data list
-        contracted_streamers = list()  # 계약된 스트리머 데이터 리스트
+    def getStreams(self, target_streamers):
+        """트위치 방송 정보 데이터 수집 메소드
 
-        for _ in range(how_much_time):
+        Args:
+            target_streamers (list of TwitchTargetStreamers): 
+            데이터 수집 타겟으로 설정된 유저 목록
+
+        Returns:
+            [list of stream_data]: 수집된 타겟 유저의 방송 정보 리스트
+        """
+        streamers_data = list()  # stream data list
+
+        streamers = [streamer['streamerId'] for streamer in target_streamers]
+        print("요청할 크리에이터 수: %s" % (len(streamers)))
+
+        # 100 명 이상인 경우
+        if len(streamers) > self.PARAM_LENGTH_LIMIT:
+            # 100명마다 잘라서 [ [100], [100], [나머지] ] 의 형태로 만든다.
+            list_in_list = make_list_in_list(
+                streamers, self.PARAM_LENGTH_LIMIT)
+
+            for request_streamers in list_in_list:
+                params = {
+                    'language': 'ko', 'user_id': request_streamers
+                }
+
+                # request to the Twitch Api
+                res = requests.get(
+                    self.twitch_stream_url,
+                    headers=self.headers,
+                    params=params)
+
+                if res:
+                    data = res.json()
+                    streamers_data.extend(data['data'])
+        # 100 명 이하인 경우
+        else:
             params = {
-                'language': 'ko',
-                'first': self.PARAM_LENGTH_LIMIT,
-                'after': cursor
+                'language': 'ko', 'user_id': streamers
             }
+
+            # Request to the Twitch Api
             res = requests.get(
                 self.twitch_stream_url,
                 headers=self.headers,
                 params=params)
+
             if res:
                 data = res.json()
-                streamers.extend(data['data'])
-                # if exists pagination, go next, else break
-                if data['pagination']:
-                    cursor = data['pagination']['cursor']
-                else:
-                    break
-            else:
-                break
+                streamers_data.extend(data['data'])
 
-            # 앞서 받아온 300명의 크리에이터와 중복되지 않는 계약된 크리에이터들을 선택.
-            if len(target_streamers) > 0:
-                creators = [creator.creatorId for creator in target_streamers]
-                creators = [
-                    creator for creator in creators
-                    if creator not in [streamer.get('user_id') for streamer in streamers]]
-                print("중복을 제외한 요청할 계약된 크리에이터 수: %s" % (len(creators)))
+        print("Successfully Recieved Streams Data from TwitchAPI !!")
+        return streamers_data
 
-                # 중복된 streamerId 가 있는지 확인한 이후 중복된 크리에이터는 요청하지 않는다.
-                if len(creators) > self.PARAM_LENGTH_LIMIT:
+    def getFollowersCount(self, target_streamers):
+        """트위치 API에 팔로워 수를 요청하여 가져오는 함수
 
-                    # 100명마다 잘라서 [ [100], [100], [나머지] ] 의 형태로 만든다.
-                    list_in_list = make_list_in_list(
-                        creators, self.PARAM_LENGTH_LIMIT)
+        Args:
+            target_streamers (list of TwitchStreams): 타겟 스트리머 목록
 
-                    for request_creators in list_in_list:
-                        contracted_creator_params = {
-                            'language': 'ko', 'user_id': request_creators
-                        }
+        Returns:
+            [{
+                streamId: string,
+                streamerId: string,
+                followerCount: number
+            }]: 타겟 스트리머에 대한 followerCount 정보
+        """
+        followers_counts = []
+        for streamer in target_streamers:
+            params = {
+                'language': 'ko',
+                'first': 1,
+                'to_id': streamer['streamerId']
+            }
+            res = requests.get(
+                self.twitch_users_follows_url,
+                headers=self.headers,
+                params=params)
+            if res:
+                data = res.json()
+                followers_counts.append({
+                    'streamId': streamer['streamId'],
+                    'streamerId': streamer['streamerId'],
+                    'followerCount': data['total']
+                })
 
-                        # request to the Twitch Api
-                        contracted_creator_res = requests.get(
-                            self.twitch_stream_url, headers=self.headers, params=contracted_creator_params)
-
-                        if contracted_creator_res:
-                            # contracted_streamer 데이터를 합친다.
-                            contracted_streamers += contracted_creator_res.json().get('data')
-
-                else:
-                    contracted_creator_params = {
-                        'language': 'ko', 'user_id': request_creators
-                    }
-
-                    # request to the Twitch Api
-                    contracted_creator_res = requests.get(
-                        self.twitch_stream_url, headers=self.headers, params=contracted_creator_params)
-
-                    if contracted_creator_res:
-                        # contracted_streamer 데이터를 합친다.
-                        contracted_streamers += contracted_creator_res.json().get('data')
-
-            if len(contracted_streamers) > 0:
-                streamers = streamers + contracted_streamers
-
-            print("stream, streamdetail API 요청 DONE")
-            return streamers
+        return followers_counts

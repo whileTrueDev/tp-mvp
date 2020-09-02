@@ -1,11 +1,16 @@
 import warnings
+import datetime
 from sqlalchemy import exc as sa_exc
-from src.model.member import TwitchActiveStreams, TwitchStreams
+from src.model.member import TwitchActiveStreams, TwitchStreams, TwitchTargetStreamers
 
 
 class DBService:
     def __init__(self, dao):
         self.dao = dao
+        self.exited_streams = []
+
+    def selectTargetStreamers(self):
+        return [t.__dict__ for t in self.dao.query(TwitchTargetStreamers).all()]
 
     def insertStream(self, stream_data):
         # ####################################
@@ -13,7 +18,7 @@ class DBService:
         query = '''
         SELECT streamId
         FROM TwitchStreams
-        WHERE startedAt > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 30 DAY), "%Y-%m-%d %T")
+        WHERE startedAt > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 15 DAY), "%Y-%m-%d %T")
         GROUP BY streamId
         '''
         rows = self.do_query(query)
@@ -25,21 +30,47 @@ class DBService:
 
         # ####################################
         # Insert TwitchStreams
-        self.insert_list_of_dict(TwitchStreams, only_not_inserted)
+        if len(only_not_inserted) > 0:
+            self.insert_list_of_dict(TwitchStreams, only_not_inserted)
 
         # ####################################
         # Insert TwitchActiveStreams
-
-        # 수집 시간 단위 이전 시간의 active 방송 리스트
-        active_streams_before_timeunit = [stream.__dict__ for stream in self.dao.query(
-            TwitchActiveStreams).all()]
+        active_streams_before_timeunit = [ # 수집 시간 단위 이전 시간의 active 방송 리스트
+            stream.__dict__['streamId']
+            for stream in self.dao.query(TwitchActiveStreams).all()]
 
         # 현재 종료된 방송 (active리스트에는 있으나, 현재 api 리스트에는 없는 방송)
+        now_active_stream_ids = [st['streamId'] for st in stream_data]
+        exited_streams = [
+            active_stream for active_stream in active_streams_before_timeunit
+            if active_stream not in now_active_stream_ids]
 
-        # self.insert_list_of_dict(TwitchActiveStreams, only_not_inserted)
+        self.exited_streams = [i.__dict__ for i in self.dao.query(TwitchStreams) \
+            .filter(TwitchStreams.streamId.in_(exited_streams)) \
+            .all()]
+
+        # Delete all ActiveStreams rows
+        self.dao.query(TwitchActiveStreams).delete()
+
+        # Insert new ActiveStreams rows
+        self.insert_list_of_dict(TwitchActiveStreams, stream_data)
 
         self.dao.commit()
-        print('Stream data Commit Done !!')
+        print('TwitchStreams Insert Commit Done !!')
+    
+    def updateExitedStream(self, exited_stream_data):
+        '''
+        현재 방금 방송이 끝난 스트림에 대한 팔로워 수를 적재, 방송이 끝난 시점을 기록하는 메소드
+        '''
+        for data in exited_stream_data:
+            self.dao.query(TwitchStreams) \
+                .filter(TwitchStreams.streamId == data['streamId']) \
+                .update({
+                    'followerCount': data['followerCount'],
+                    'endedAt': datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+                })
+        self.dao.commit()
+        print('TwitchStreams Update Commit Done !!')
 
     def insertStreamDetail(self, stream_detail_data):
         self.db.insert_information(

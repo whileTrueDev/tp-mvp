@@ -18,7 +18,6 @@ class TwitchStreams(Base):
         endedAt: 해당 방송의 종료 시간 - 방송 종료시 update
         collected: TruepointDB의 streams에 적재되었는 지 여부 (1 = 적재 필요, 0 = 필요없음) - 방송 종료시 1로 update
         analyzed: TruepointDB의 streamSummary에 적재되었는 지 여부 (1 = 적재 필요, 0 = 필요없음) - 방송 종료시 1로 update
-        subscribeCount: 방송 종료시의 해당 streamer의  구독자 수
         followerCount: 방송 종료시의 해당 streamer의 팔로워 수
         createdAt: 해당 DB 행 생성 시간
         '''
@@ -31,7 +30,6 @@ class TwitchStreams(Base):
     endedAt = Column(TIMESTAMP, nullable=True)
     collected = Column(Boolean, default=0)
     analyzed = Column(Boolean, default=0)
-    subscribeCount = Column(Integer)
     followerCount = Column(Integer)
     createdAt = Column(TIMESTAMP, nullable=False,
                        default=func.now())
@@ -40,7 +38,7 @@ class TwitchStreams(Base):
         self,
         streamId, title, streamerId, streamerName,
         startedAt, endedAt,
-        subscribeCount, followerCount
+        followerCount
     ):
         self.streamId = streamId
         self.title = title
@@ -48,7 +46,6 @@ class TwitchStreams(Base):
         self.streamerName = streamerName
         self.startedAt = startedAt
         self.endedAt = endedAt
-        self.subscribeCount = subscribeCount
         self.followerCount = followerCount
 
 
@@ -144,13 +141,11 @@ class TwitchActiveStreams(Base):
         streamId: 해당 방송의 고유 아이디
         startedAt: 해당 방송의 시작 시간
         createdAt: 해당 행 생성 시간
-        updatedAt: 해당 행 수정 시간
         """
     }
     streamId = Column(String(50), unique=False, primary_key=True)
     startedAt = Column(TIMESTAMP)
     createdAt = Column(TIMESTAMP, nullable=False, default=func.now())
-    updatedAt = Column(TIMESTAMP, nullable=True)
 
 
 class TwitchChats(Base):
@@ -182,9 +177,9 @@ class TwitchTargetStreamers(Base):
     __tablename__ = 'TwitchTargetStreamers'
     __table_args__ = {
         'comment': '''
+        트위치 방송 정보 데이터 수집 대상 스트리머 목록정보
         streamerId: 타겟 스트리머 아이디
         streamerName: 타겟 스트리머 이름 (닉네임)
-        streamerLogo: 스트리머 로고 url
         streamerTwitchName: 타겟 스트리머 트위치 ID
         createdAt: 해당 행 생성 시간
         updatedAt: 해당 행 수정 시간
@@ -192,7 +187,6 @@ class TwitchTargetStreamers(Base):
     }
     streamerId = Column(String(50), primary_key=True)
     streamerName = Column(String(50), unique=False)
-    streamerLogo = Column(String(200), nullable=True)
     streamerTwitchName = Column(String(50), nullable=True)
     createdAt = Column(TIMESTAMP, nullable=False, default=func.now())
     updatedAt = Column(TIMESTAMP, nullable=True)

@@ -1,4 +1,3 @@
-import sys
 import requests
 from src.services.api_service import APIService
 from src.services.db_service import DBService
@@ -8,21 +7,34 @@ from src.utils.preprocessor import Preprocessor
 class APIController:
 
     def __init__(self, dao, client_id, client_secret):
-        self.service = APIService(dao, client_id, client_secret)
-        self.db = DBService(dao)
+        self.api_service = APIService(dao, client_id, client_secret)
+        self.db_service = DBService(dao)
         self.preprocessor = Preprocessor()
 
-    def getStreams(self, how_much_time=3):
+    def getStreams(self):
         # Get target streamers
+        target_streamers = self.db_service.selectTargetStreamers()
 
         # Get twitch stream data
-        streamers = self.service.getStreams(how_much_time)
-
+        streamers = self.api_service.getStreams(target_streamers)
+      
+        # Preprocess the data
         streams_data, stream_details_data = self.preprocessor.streamPreprocess(
             streamers)
 
-        self.db.insertStream(streams_data)
-        # self.db.insertStreamDetail(stream_details_data)
+        # Insert TwitchSterams, TwitchActiveStreams
+        self.db_service.insertStream(streams_data)
+
+        # Get twitch follwer, subscriber data for exited streams
+        exited_streams_with_followers = self.api_service.getFollowersCount(
+            self.db_service.exited_streams
+        )
+
+        # Update TwitchStreams: followerCount
+        self.db_service.updateExitedStream(exited_streams_with_followers)
+
+        # Insert TwitchStreamDetails
+        # self.db_service.insertStreamDetail(stream_details_data)
 
     def getUsersForInfoUpdate(self,):
         # Limitation of params on one call
