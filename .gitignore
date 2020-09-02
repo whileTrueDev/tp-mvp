@@ -1,3 +1,10 @@
+# python ignores
+/__pycache__
+__pycache__/
+__pycache__/*
+
+
+# nodejs ignores
 .env
 dist
 node_modules
