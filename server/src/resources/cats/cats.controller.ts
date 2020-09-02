@@ -1,7 +1,7 @@
 import {
   Controller, Get, Post, Patch, Body, UseGuards, Param, Delete, Request
 } from '@nestjs/common';
-import { LogedInExpressRequest } from '../../interfaces/LogedInRequest.interface';
+import { LogedInExpressRequest } from '../../interfaces/logedInRequest.interface';
 import { CatsService } from './cats.service';
 import { CatEntity } from './entities/cat.entity';
 import { CreateCatDto } from './dto/createCat.dto';

@@ -41,10 +41,6 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
   appResponsive: {
     top: '8px',
   },
-  headerIconList: {
-    display: 'flex',
-    alignItems: 'flex-end',
-  }
 }));
 
 export default useNavbarStyles;

@@ -7,7 +7,7 @@ import routes from '../routes';
 import useLayoutStyles from './MypageLayout.style';
 
 // organisms
-import Navbar from '../../../organisms/mypage/layouts/Navbars/Navbar';
+import Navbar from '../../../organisms/mypage/layouts/navbars/Navbar';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
@@ -29,7 +29,7 @@ const UserDashboard = (): JSX.Element => {
 
   return (
     <div className={classes.wrapper}>
-      {/* <Sidebar routes={routes.filter((r) => !r.noTab)} /> */}
+      <Sidebar routes={routes.filter((r) => !r.noTab)} />
       <div className={classes.mainPanel} ref={mainPanel}>
         <Navbar
           handleDrawerToggle={handleDrawerToggle}

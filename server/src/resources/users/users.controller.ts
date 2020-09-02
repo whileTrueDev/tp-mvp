@@ -1,7 +1,7 @@
 import {
   Controller, Post, Body, Get, UseGuards, UseInterceptors, ClassSerializerInterceptor, Query, Req
 } from '@nestjs/common';
-import { LogedInExpressRequest } from '../../interfaces/LogedInRequest.interface';
+import { LogedInExpressRequest } from '../../interfaces/logedInRequest.interface';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';

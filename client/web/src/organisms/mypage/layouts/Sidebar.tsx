@@ -1,9 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import classNames from 'classnames';
 // @material-ui/core components
 import {
   Grid, Drawer,
-  List, ListItem, ListItemText, ListItemIcon
+  List, ListItem, ListItemText, ListItemIcon, Icon
 } from '@material-ui/core';
 import { MypageRoute } from '../../../pages/mypage/routes';
 // styles
@@ -16,22 +17,26 @@ interface SidebarProps {
 export default function Sidebar({
   routes,
 }: SidebarProps): JSX.Element {
+  const classes = useSiedebarStyles();
+  function isActiveRoute(routeName: string): boolean {
+    return window.location.pathname.indexOf(routeName) > -1;
+  }
+
   const links = (
-    <List>
+    <List className={classes.flex}>
       {routes.map((route) => (
+
         <NavLink
           to={route.layout + route.path}
-          // className={classes.item}
           activeClassName="active"
           key={route.layout + route.path}
         >
-          <ListItem button>
-            <Grid container direction="column">
+          <ListItem button className={classes.itemLink}>
+            <Grid container direction="column" className={classes.center}>
               <Grid item>
-                {route.icon && (
-                  <ListItemIcon>{route.icon}</ListItemIcon>
-                )}
-                <ListItemText primary={route.name} disableTypography />
+                {/* route.icon
+                  && <ListItemIcon>{route.icon}</ListItemIcon> */}
+                <ListItemText primary={route.name} disableTypography className={classes.itemText} />
               </Grid>
             </Grid>
           </ListItem>

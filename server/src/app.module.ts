@@ -7,6 +7,7 @@ import { UsersModule } from './resources/users/users.module';
 
 import loadConfig from './config/loadConfig';
 import { TypeOrmConfigService } from './config/database.config';
+import { NotificationModule } from './resources/notification/notification.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { TypeOrmConfigService } from './config/database.config';
     }),
     CatsModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    NotificationModule
   ],
 })
 export class AppModule {}
