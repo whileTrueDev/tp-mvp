@@ -52,13 +52,14 @@ class TwitchStreamDetails(Base):
         '''
     }
     id = Column(Integer, primary_key=True, autoincrement=True)
-    streamId = Column(String(50), unique=False)
+    streamId = Column(String(50), unique=False, index=True)
     viewerCount = Column(Integer, unique=False)
     title = Column(String(150), unique=False)
     categoryId = Column(String(50), unique=False)
     tagIds = Column(Text, unique=False)
     createdAt = Column(TIMESTAMP, nullable=False,
-                       server_default=text('CURRENT_TIMESTAMP'))
+                       server_default=text('CURRENT_TIMESTAMP'),
+                       index=True)
 
 
 class TwitchStreamCategories(Base):

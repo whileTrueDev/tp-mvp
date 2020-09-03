@@ -23,7 +23,6 @@ class DBManager():
     @staticmethod
     def init_db():
         from src.model.member import Base
-        # Base.metadata.drop_all(bind=DBManager.__engine)
         Base.metadata.create_all(bind=DBManager.__engine)
 
     @staticmethod
