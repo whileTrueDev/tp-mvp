@@ -55,7 +55,7 @@ class ConfigLoader:
             signature_version='v4',
         )
 
-        print('Loading DB CONFIG ')
+        print('Loading DB CONFIG...')
         client = boto3.client('secretsmanager', config=my_config)
         secrets = client.list_secrets(
             Filters=[{'Key': 'name', 'Values': ['WhileTrueCollector']}])
@@ -67,4 +67,4 @@ class ConfigLoader:
                 # get secret values
                 db_secrets = client.get_secret_value(SecretId=secret_id)
                 self.DB_CONFIG = json.loads(db_secrets['SecretString'])
-                print('Successfully load DB config from aws secrets manager')
+                print('Successfully Load DB config from aws secrets manager')

@@ -4,3 +4,7 @@ __pycache__/*
 
 # config file
 .env
+
+# sql file for defaultvalues
+
+queries

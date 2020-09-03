@@ -1,7 +1,8 @@
 import warnings
 import datetime
 from sqlalchemy import exc as sa_exc
-from src.model.member import TwitchActiveStreams, TwitchStreams, TwitchTargetStreamers
+from src.model.member import TwitchActiveStreams, TwitchStreams, \
+    TwitchTargetStreamers, TwitchStreamDetails, TwitchStreamCategories, TwitchStreamTags
 
 
 class DBService:
@@ -10,7 +11,12 @@ class DBService:
         self.exited_streams = []
 
     def selectTargetStreamers(self):
-        return [t.__dict__ for t in self.dao.query(TwitchTargetStreamers).all()]
+        result = [t.__dict__ for t in self.dao.query(
+            TwitchTargetStreamers).all()]
+        print('Successfully ApiController Initialized !!')
+        print('Successfully Load all Target streamers !! - %s Streamers' %
+              len(result))
+        return result
 
     def insertStream(self, stream_data):
         # ####################################
@@ -21,21 +27,20 @@ class DBService:
         WHERE startedAt > DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 15 DAY), "%Y-%m-%d %T")
         GROUP BY streamId
         '''
-        rows = self.do_query(query)
+        rows = self.__do_query(query)
         already_inserted = [row[0] for row in rows]
 
         only_not_inserted = [stream for stream in stream_data if stream.get(
             'streamId') not in already_inserted]
-        print('only_not_inserted Stream 개수 : %s' % len(only_not_inserted))
 
         # ####################################
         # Insert TwitchStreams
         if len(only_not_inserted) > 0:
-            self.insert_list_of_dict(TwitchStreams, only_not_inserted)
+            self.__insert_list_of_dict(TwitchStreams, only_not_inserted)
 
         # ####################################
         # Insert TwitchActiveStreams
-        active_streams_before_timeunit = [ # 수집 시간 단위 이전 시간의 active 방송 리스트
+        active_streams_before_timeunit = [  # 수집 시간 단위 이전 시간의 active 방송 리스트
             stream.__dict__['streamId']
             for stream in self.dao.query(TwitchActiveStreams).all()]
 
@@ -45,131 +50,109 @@ class DBService:
             active_stream for active_stream in active_streams_before_timeunit
             if active_stream not in now_active_stream_ids]
 
-        self.exited_streams = [i.__dict__ for i in self.dao.query(TwitchStreams) \
-            .filter(TwitchStreams.streamId.in_(exited_streams)) \
-            .all()]
+        self.exited_streams = [i.__dict__ for i in self.dao.query(TwitchStreams)
+                               .filter(TwitchStreams.streamId.in_(exited_streams))
+                               .all()]
 
         # Delete all ActiveStreams rows
         self.dao.query(TwitchActiveStreams).delete()
 
         # Insert new ActiveStreams rows
-        self.insert_list_of_dict(TwitchActiveStreams, stream_data)
+        self.__insert_list_of_dict(TwitchActiveStreams, stream_data)
 
         self.dao.commit()
-        print('TwitchStreams Insert Commit Done !!')
-    
+        print('Successfully Committed to insert TwitchStreams !! - %s Rows' %
+              len(only_not_inserted))
+
     def updateExitedStream(self, exited_stream_data):
         '''
         현재 방금 방송이 끝난 스트림에 대한 팔로워 수를 적재, 방송이 끝난 시점을 기록하는 메소드
+        더불어 편집점 분석프로그램과 트루포인트 데이터 적재프로그램의 활성화를 위한 플래그 값을 업데이트합니다.
         '''
         for data in exited_stream_data:
+            # 팔로워 수를 적재 및 방송 끝난 시점 기록
             self.dao.query(TwitchStreams) \
                 .filter(TwitchStreams.streamId == data['streamId']) \
                 .update({
                     'followerCount': data['followerCount'],
-                    'endedAt': datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+                    'endedAt': datetime.datetime.utcnow() + datetime.timedelta(hours=9),
+                    'needCollect': True,
+                    'needAnalysis': True,
                 })
         self.dao.commit()
-        print('TwitchStreams Update Commit Done !!')
+        print('Successfully Committed to update TwitchStreams !! - %s Rows' %
+              len(exited_stream_data))
+
+    def updateTargetStreamersName(self, stream_data):
+        """TwitchTargetStreamers 테이블의 streamerName 컬럼을 최신 데이터로 업데이트하는합수
+
+        Args:
+            stream_data (list of streams): 트위치로부터 받아온 방송 정보 데이터
+        """
+        for stream in stream_data:
+            self.dao.query(TwitchTargetStreamers) \
+                .filter(TwitchTargetStreamers.streamerId == stream['streamerId']) \
+                .update({
+                    'streamerName': stream['streamerName']
+                })
+        self.dao.commit()
+        print('Successfully Committed to update TwitchTargetStreamers !!')
 
     def insertStreamDetail(self, stream_detail_data):
-        self.db.insert_information(
-            self.dao, 'TwitchStreamDetail', stream_detail_data)
+        """TwitchStreamDetails 테이블 데이터 적재 함수
+
+        Args:
+            stream_detail_data (list of stream detail data dict): 방송 세부정보 데이터 딕셔너리를 요소로 하는 리스트
+        """
+        self.__insert_list_of_dict(
+            TwitchStreamDetails, stream_detail_data)
 
         self.dao.commit()
-        print('Stream detail data Commit Done !!')
+        print('Successfully Committed to insert TwitchStreamDetails !! - %s Rows' %
+              len(stream_detail_data))
 
-    # def updateCreatorInfo(self, users):
-    #     if len(users) > 0:
+    def insertCategories(self, categories_data):
+        """TwtichCategories 테이블 데이터 적재 함수
 
-    #         query = '''
-    #         UPDATE creatorInfo
-    #         SET creatorLogo = :creatorLogo, creatorName = :creatorName
-    #         WHERE creatorId = :creatorId
-    #         '''
-    #         for creator in users:
-    #             query_dict = {
-    #                 'creatorLogo': creator['profile_image_url'],
-    #                 'creatorName': creator['display_name'],
-    #                 'creatorId': creator['id']
-    #             }
-    #             do_query_nofetch(self.dao, query, query_dict)
-    #             print('info updated! %s, %s' %
-    #                   (creator['id'], creator['display_name']))
+        Args:
+            categories_data (list of categories): 트위치 방송 카테고리 데이터 딕셔너리를 요소로 하는 리스트
+        """
+        already_inserted = [
+            i.__dict__['categoryId'] for i in self.dao.query(TwitchStreamCategories).all()]
 
-    #         self.dao.commit()
+        only_not_inserted = [category for category in categories_data
+                             if category['categoryId'] not in already_inserted]
 
-    # def insertGame(self, games):
-    #     already_inserted = select_groupby(self.dao, TwitchGame.gameId)
+        if len(only_not_inserted) > 0:
+            self.__insert_list_of_dict(
+                TwitchStreamCategories, only_not_inserted)
+            self.dao.commit()
+            print('Successfully Committed to insert TwitchStreamCategories !! - %s Rows' %
+                  len(only_not_inserted))
+        else:
+            print('Skip TwitchStreamCategories Insertion - There is no new record')
 
-    #     only_not_inserted = [game for game in games
-    #                          if game.get('gameId') not in already_inserted]
-    #     print('only_not_inserted Game 개수 : %s' % len(only_not_inserted))
+    def insertTags(self, tags_data):
+        """TwtichTags 테이블 데이터 적재 함수
 
-    #     if len(only_not_inserted) > 0:
-    #         insert_list_of_dict(self.dao, TwitchGame, only_not_inserted)
-    #         self.dao.commit()
-    #         print('Game data Commit Done !!')
+        Args:
+            tags_data (list of tags_data): 트위치 방송 카테고리 데이터 딕셔너리를 요소로 하는 리스트
+        """
+        already_inserted = [
+            i.__dict__['tagId'] for i in self.dao.query(TwitchStreamTags).all()]
 
-    # def insertTag(self, tags):
-    #     already_inserted = select_groupby(self.dao, TwitchTag.tagId)
+        only_not_inserted = [tag for tag in tags_data
+                             if tag['tagId'] not in already_inserted]
 
-    #     only_not_inserted = [tag for tag in tags if tag.get(
-    #         'tagId') not in already_inserted]
-    #     print('only_not_inserted Tag 개수 : %s' % len(only_not_inserted))
+        if len(only_not_inserted) > 0:
+            self.__insert_list_of_dict(TwitchStreamTags, only_not_inserted)
+            self.dao.commit()
+            print('Successfully Committed to insert TwitchStreamTags !! - %s Rows' %
+                  len(only_not_inserted))
+        else:
+            print('Skip TwitchStreamTags Insertion - There is no new record')
 
-    #     if len(only_not_inserted) > 0:
-    #         insert_list_of_dict(self.dao, TwitchTag, only_not_inserted)
-    #         self.dao.commit()
-    #         print('Tag data Commit Done !!')
-
-    # def deleteDuplicatedGames(self):
-    #     # ########################
-    #     # twitchGame 테이블에서 중복 적재된 데이터 삭제
-    #     # ########################
-
-    #     print("twitchGame 테이블의 중복 데이터 삭제 시작")
-    #     delete_duplicated_data_query = '''
-    #     DELETE FROM twitchGame
-    #         WHERE code NOT IN (
-    #             SELECT code FROM (
-    #                 SELECT code
-    #                 FROM twitchGame
-    #                 GROUP BY `gameId`
-    #             ) AS code);'''
-    #     self.dao.execute(delete_duplicated_data_query)
-    #     self.dao.commit()
-    #     print("twitchGame 테이블의 중복 데이터 삭제 완료")
-
-    # # deprecated
-    # def updateGameBoxArt(self, games):
-    #     import time
-    #     # boxArt update
-    #     from model import update_game
-    #     data = [{
-    #         'id': d['id'],
-    #         'box_art_url': d['box_art_url'].replace(
-    #             '{width}', '300').replace('{height}', '300'),
-    #     } for d in games]
-
-    #     affected_row = 0
-    #     for i, game in enumerate(data):
-    #         affected = update_game(self.dao,
-    #                                gameId=game['id'],
-    #                                boxArt=game['box_art_url'])
-
-    #         affected_row += affected
-
-    #         if (i % 100 == 0):
-    #             print('inserted... %s' % i)
-    #             self.dao.commit()
-    #             time.sleep(1)
-
-    #     print('affected Rows : %s' % affected_row)
-    #     self.dao.commit()
-    #     print('commit Done')
-
-    def do_query(self, query, query_dict={}):
+    def __do_query(self, query, query_dict={}):
         '''
         db query => fetchAll 함수  
         :query: {string} 디비 쿼리, 동적인 데이터는 :data이름 으로 넣는다.  
@@ -178,67 +161,5 @@ class DBService:
         rows = self.dao.execute(query, query_dict).fetchall()
         return rows
 
-    def insert_list_of_dict(self, TableObject, data_list):
+    def __insert_list_of_dict(self, TableObject, data_list):
         self.dao.execute(TableObject.__table__.insert(), data_list)
-
-    # def do_query_nofetch(self, query, query_dict={}):
-    #     '''
-    #     db query => void 함수
-    #     :query: {string} 디비 쿼리, 동적인 데이터는 :data이름 으로 넣는다.
-    #     :query_dict: {dict} 디비 쿼리 딕셔너리 동적인 데이터를 넣는 경우 키:값으로 매핑하는 딕셔너리
-    #     '''
-    #     rows = self.dao.execute(query, query_dict)
-    #     return rows
-
-    # def select_groupby_if_not_exists(self, target_col, group_key_col, filter_col):
-    #     '''
-    #     select
-    #     * input
-    #     - dao : scoped_session 객체
-    #     - target_col : 그룹으로 묶어 반환 될 클래스(테이블)의 멤버변수(컬럼)
-    #             ex) TwitchChat.broad_date
-    #     - filter_key: 필터 키(컬럼명) 값
-    #     - filter_value : 필터로 들어갈 값. not Key
-    #     * output
-    #     selected rows
-    #     '''
-    #     rows = self.dao.query(target_col).group_by(
-    #         group_key_col).filter(filter_col == None).all()
-
-    #     rows = [row[0] for row in rows]
-    #     return rows
-
-    # def select_groupby(self, target_col, target_streamer=None):
-    #     """
-    #     select 구문 함수
-    #     * input
-    #     - dao : scoped_session 객체
-    #     - target_col : 그룹으로 묶어 반환 될 클래스(테이블)의 멤버변수(컬럼)
-    #             ex) TwitchChat.broad_date
-    #     - target_streamer : 추가적 조건으로 추가할 스트리머이름
-    #     * output
-    #     selected rows
-    #     """
-    #     if not target_streamer:
-    #         rows = self.dao.query(target_col).group_by(target_col).all()
-    #         rows = [row[0] for row in rows]  # [(1,), (2,), ...] 의 형식이기에
-    #         return rows
-    #     else:
-    #         rows = self.dao.query(target_col).group_by(
-    #             target_col).filter_by(
-    #                 streamerName=target_streamer).all()
-    #         return rows
-
-    # def select_contracted_creator(self):
-    #     # from src.model.member import CreatorInfo
-    #     rows = self.dao.query(CreatorInfo).filter_by(
-    #         creatorContractionAgreement=1
-    #     ).all()
-    #     return rows
-
-    # def update_game(self, dao, gameId, boxArt):
-    #     affected = self.dao.query(TwitchGame).filter_by(
-    #         gameId=gameId).update(
-    #             {TwitchGame.boxArt: boxArt})
-
-    #     return affected

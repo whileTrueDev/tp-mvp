@@ -55,7 +55,6 @@ class APIService:
         streamers_data = list()  # stream data list
 
         streamers = [streamer['streamerId'] for streamer in target_streamers]
-        print("요청할 크리에이터 수: %s" % (len(streamers)))
 
         # 100 명 이상인 경우
         if len(streamers) > self.PARAM_LENGTH_LIMIT:
@@ -129,3 +128,56 @@ class APIService:
                 })
 
         return followers_counts
+
+    def getCategories(self):
+        cursor = None
+        data = []
+        while True:
+            params = {'first': self.PARAM_LENGTH_LIMIT, 'after': cursor}
+            # api 요청
+            res = requests.get(
+                self.twitch_games_url, headers=self.headers, params=params)
+            if res:
+                data_ = res.json()
+                data.extend(data_['data'])
+                if data_['pagination']:
+                    cursor = data_['pagination']['cursor']
+                else:
+                    break
+
+        total_categories = [
+            {"categoryId": i['id'],
+             "categoryName": i['name'],
+             'boxArt': i['box_art_url'].replace(
+                '{width}', '300').replace('{height}', '300'),
+             } for i in data]
+
+        return total_categories
+
+    def getTags(self):
+        cursor = None
+        total_tags = []
+
+        while True:
+            params = {'first': 100, 'after': cursor}
+            # api 요청
+            res = requests.get(
+                self.twitch_tags_url, headers=self.headers, params=params)
+            if res:
+                data_ = res.json()
+
+                total_tags.extend([{
+                    'tagId': d['tag_id'],
+                    'isAuto': True if d['is_auto'] else False,
+                    'nameKr': d.get('localization_names').get('ko-kr'),
+                    'nameUs': d.get('localization_names').get('en-us'),
+                    'descriptionKr': d.get('localization_descriptions').get('ko-kr'),
+                    'descriptionUs': d.get('localization_descriptions').get('en-us'),
+                } for d in data_['data']])
+
+                if data_['pagination']:
+                    cursor = data_['pagination']['cursor']
+                else:
+                    break
+
+        return total_tags

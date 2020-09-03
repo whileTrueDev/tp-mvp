@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer, BigInteger, TIMESTAMP, Text, Float, Boolean
-from sqlalchemy.sql.expression import func
+from sqlalchemy.sql.expression import func, text
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -16,10 +16,11 @@ class TwitchStreams(Base):
         streamerName: 해당 방송의 방송인의 닉네임
         startedAt: 해당 방송 시작 시간
         endedAt: 해당 방송의 종료 시간 - 방송 종료시 update
-        collected: TruepointDB의 streams에 적재되었는 지 여부 (1 = 적재 필요, 0 = 필요없음) - 방송 종료시 1로 update
-        analyzed: TruepointDB의 streamSummary에 적재되었는 지 여부 (1 = 적재 필요, 0 = 필요없음) - 방송 종료시 1로 update
+        needCollect: TruepointDB의 streams에 적재되었는 지 여부 (1 = 적재 필요, 0 = 필요없음) - 방송 종료시 1로 update
+        needAnalysis: TruepointDB의 streamSummary에 적재되었는 지 여부 (1 = 적재 필요, 0 = 필요없음) - 방송 종료시 1로 update
         followerCount: 방송 종료시의 해당 streamer의 팔로워 수
         createdAt: 해당 DB 행 생성 시간
+        updatedAt: 해당 행 최근 수정 시간
         '''
     }
     streamId = Column(String(50), primary_key=True)
@@ -28,25 +29,13 @@ class TwitchStreams(Base):
     streamerName = Column(String(50), unique=False)
     startedAt = Column(TIMESTAMP)
     endedAt = Column(TIMESTAMP, nullable=True)
-    collected = Column(Boolean, default=0)
-    analyzed = Column(Boolean, default=0)
+    needCollect = Column(Boolean, default=0)
+    needAnalysis = Column(Boolean, default=0)
     followerCount = Column(Integer)
     createdAt = Column(TIMESTAMP, nullable=False,
-                       default=func.now())
-
-    def __init__(
-        self,
-        streamId, title, streamerId, streamerName,
-        startedAt, endedAt,
-        followerCount
-    ):
-        self.streamId = streamId
-        self.title = title
-        self.streamerId = streamerId
-        self.streamerName = streamerName
-        self.startedAt = startedAt
-        self.endedAt = endedAt
-        self.followerCount = followerCount
+                       server_default=text('CURRENT_TIMESTAMP'))
+    updatedAt = Column(TIMESTAMP, nullable=True, server_default=text(
+        'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
 
 class TwitchStreamDetails(Base):
@@ -62,21 +51,14 @@ class TwitchStreamDetails(Base):
         createdAt: 해당 DB 행 생성 시간
         '''
     }
-    streamId = Column(String(50), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    streamId = Column(String(50), unique=False)
     viewerCount = Column(Integer, unique=False)
     title = Column(String(150), unique=False)
     categoryId = Column(String(50), unique=False)
     tagIds = Column(Text, unique=False)
     createdAt = Column(TIMESTAMP, nullable=False,
-                       default=func.now())
-
-    def __init__(self, streamId, viewer, title, categoryId, tagIds, createdAt):
-        self.streamId = streamId
-        self.viewer = viewer
-        self.title = title
-        self.categoryId = categoryId
-        self.tagIds = tagIds
-        self.createdAt = createdAt
+                       server_default=text('CURRENT_TIMESTAMP'))
 
 
 class TwitchStreamCategories(Base):
@@ -85,27 +67,22 @@ class TwitchStreamCategories(Base):
         'comment': """
         트위치 방송 카테고리 정보
         categoryId: 카테고리 고유 아이디
-        gameName: 카테고리 이름 (영어)
-        gameNameKr: 카테고리 이름 (한국어)
+        categoryName: 카테고리 이름 (영어)
+        categoryNameKr: 카테고리 이름 (한국어)
         boxArt: 카테고리를 대표하는 이미지 url
         createdAt: 해당 행 생성 시간
         updatedAt: 해당 행 최근 수정 시간
         """
     }
-    categoryId = Column(String(50), unique=False, primary_key=True)
-    categoryName = Column(String(100), unique=False)
-    categoryNameKr = Column(String(100), unique=False)
-    boxArt = Column(String(200), unique=False)
-    createdAt = Column(TIMESTAMP, nullable=False, default=func.now())
-    updatedAt = Column(TIMESTAMP, nullable=True)
-
-    def __init__(self, categoryId, categoryName, categoryNameKr, boxArt, createdAt, updatedAt):
-        self.categoryId = categoryId
-        self.categoryName = categoryName
-        self.categoryNameKr = categoryNameKr
-        self.boxArt = boxArt
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    categoryId = Column(String(50), unique=False, nullable=False)
+    categoryName = Column(String(100), unique=False, nullable=False)
+    categoryNameKr = Column(String(100), unique=False, nullable=True)
+    boxArt = Column(String(200), unique=False, nullable=False)
+    createdAt = Column(TIMESTAMP, nullable=False, server_default=text(
+        'CURRENT_TIMESTAMP'))
+    updatedAt = Column(TIMESTAMP, nullable=True, server_default=text(
+        'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
 
 class TwitchStreamTags(Base):
@@ -123,14 +100,17 @@ class TwitchStreamTags(Base):
         updatedAt: 해당 행 최근 수정 시간
         """
     }
-    tagId = Column(String(100), primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    tagId = Column(String(100), nullable=False)
     isAuto = Column(Boolean, unique=False)  # 0 or 1
     nameKr = Column(String(50), unique=False, nullable=True)
     nameUs = Column(String(50), unique=False)
     descriptionKr = Column(String(255), unique=False, nullable=True)
     descriptionUs = Column(String(255), unique=False)
-    createdAt = Column(TIMESTAMP, nullable=False, default=func.now())
-    updatedAt = Column(TIMESTAMP, nullable=True)
+    createdAt = Column(TIMESTAMP, nullable=False,
+                       server_default=text('CURRENT_TIMESTAMP'))
+    updatedAt = Column(TIMESTAMP, nullable=True,
+                       server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
 
 class TwitchActiveStreams(Base):
@@ -145,7 +125,8 @@ class TwitchActiveStreams(Base):
     }
     streamId = Column(String(50), unique=False, primary_key=True)
     startedAt = Column(TIMESTAMP)
-    createdAt = Column(TIMESTAMP, nullable=False, default=func.now())
+    createdAt = Column(TIMESTAMP, nullable=False,
+                       server_default=text('CURRENT_TIMESTAMP'))
 
 
 class TwitchChats(Base):
@@ -180,13 +161,13 @@ class TwitchTargetStreamers(Base):
         트위치 방송 정보 데이터 수집 대상 스트리머 목록정보
         streamerId: 타겟 스트리머 아이디
         streamerName: 타겟 스트리머 이름 (닉네임)
-        streamerTwitchName: 타겟 스트리머 트위치 ID
         createdAt: 해당 행 생성 시간
-        updatedAt: 해당 행 수정 시간
+        updatedAt: 해당 행 최근 수정 시간
         '''
     }
     streamerId = Column(String(50), primary_key=True)
     streamerName = Column(String(50), unique=False)
-    streamerTwitchName = Column(String(50), nullable=True)
-    createdAt = Column(TIMESTAMP, nullable=False, default=func.now())
-    updatedAt = Column(TIMESTAMP, nullable=True)
+    createdAt = Column(TIMESTAMP, nullable=False,
+                       server_default=text('CURRENT_TIMESTAMP'))
+    updatedAt = Column(TIMESTAMP, nullable=True, server_default=text(
+        'CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))

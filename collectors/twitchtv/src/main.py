@@ -1,6 +1,8 @@
 import os
 import sys
 import json
+import time
+import datetime
 import requests
 from src.db import DBManager
 from src.config.config_loader import ConfigLoader
@@ -10,10 +12,14 @@ from src.controllers.api_controller import APIController
 
 class TwitchCollector:
     dao = None  # Data Access Obejct = dao = scoped_session
-
     streamers = list()
 
     def __init__(self):
+        # ######### Time Settings #########
+        self.starttime = time.time()
+        self.KST = datetime.timezone(datetime.timedelta(hours=9))
+        self.now = datetime.datetime.now(self.KST)
+
         # ########## Load Config ##########
         self.config = ConfigLoader()
         self.config.init()
@@ -36,29 +42,34 @@ class TwitchCollector:
 
     # Exit process
     def exit(self):
-        print('Session 종료')
+        print('Successfully Remove DB Session !!')
         self.dao.remove()
-        print('engine 종료')
+        print('Successfully Dispose DB Engine !!')
         DBManager.dispose()
-        print('정상 종료됨.')
-        sys.exit()
+
+        sec = time.time() - self.starttime
+        running_time = str(datetime.timedelta(seconds=sec)).split(".")[0]
+
+        print('Successfully Exited !! - Running time: %s' % running_time)
+        sys.exit(0)
 
     # Start getting data via twitch API
     def run(self):
-        # Stream, stream detail
-        streamers = self.twitch_api.getStreams()
+        try:
+            # Stream, stream detail
+            self.twitch_api.getStreams()
 
-        # # Creator info update
-        # users = self.twitch_api.getUsersForInfoUpdate()
-        # self.db.updateCreatorInfo(users)
+            # Categories
+            if (self.now.minute in [57, 58, 59]):
+                self.twitch_api.getCategories()
+            else:
+                print(
+                    'Skip TwitchStreamCategories Request... - request only every 57-59 minute')
 
-        # # Game
-        # games = self.twitch_api.getGame()
-        # self.db.insertGame(games)
-
-        # # Tag
-        # tags = self.twitch_api.getTag()
-        # self.db.insertTag(tags)
-
-        # twitchGame중복제거
-        # self.db.deleteDuplicatedGames()
+            # Tags
+            if (self.now.hour == 0 & self.now.minute in [57, 58, 59]):
+                self.twitch_api.getTags()
+            else:
+                print('Skip TwitchStreamTags Request... - request only 00:57-59')
+        except Exception as e:
+            print('Error occured !! - ', e)

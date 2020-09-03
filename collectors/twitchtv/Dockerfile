@@ -8,7 +8,7 @@ FROM python:alpine
 # If you prefer miniconda:
 #FROM continuumio/miniconda3
 
-LABEL Name=whiletrue-twitch-crawler Version=1.0.0
+LABEL Name=whiletrue-twitch-collector Version=1.0.0
 
 ENV PYTHON_ENV production
 
@@ -18,8 +18,3 @@ ADD . /app
 # Using pip:
 RUN python3 -m pip install -r requirements.txt
 CMD ["python3", "run.py"]
-
-# # if want to collect only contracted creator data
-# # you should use this code
-# CMD ["python3", "-m", "twitch_crawler", "contracted"]
-

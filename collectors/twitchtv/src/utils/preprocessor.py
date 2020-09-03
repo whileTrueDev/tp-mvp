@@ -44,5 +44,6 @@ class Preprocessor:
             stream_result_list.append(stream_result_dict)
             stream_detail_result_list.append(stream_detail_result_dict)
 
-        print("현재 총 요청된 데이터 개수: %s" % len(stream_detail_result_list))
+        print("Successfully Done Preprocessing stream data !! - %s Rows" %
+              len(stream_detail_result_list))
         return stream_result_list, stream_detail_result_list
