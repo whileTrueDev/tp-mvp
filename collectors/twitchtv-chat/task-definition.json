@@ -1,0 +1,85 @@
+{
+  "ipcMode": null,
+  "executionRoleArn": "arn:aws:iam::576646866181:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "dnsSearchDomains": null,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "secretOptions": null,
+        "options": {
+          "awslogs-group": "/ecs/onad-chatbot-twitch",
+          "awslogs-region": "ap-northeast-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "entryPoint": null,
+      "portMappings": [],
+      "command": null,
+      "linuxParameters": null,
+      "cpu": 0,
+      "environment": [],
+      "resourceRequirements": null,
+      "ulimits": null,
+      "dnsServers": null,
+      "mountPoints": [],
+      "workingDirectory": null,
+      "secrets": [
+        {
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TWITCH_BOT_OAUTH_TOKEN",
+          "name": "TWITCH_CHATBOT_OAUTH_TOKEN"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_ACCESS_KEY_ID",
+          "name": "AWS_ACCESS_KEY_ID"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_SECRET_ACCESS_KEY",
+          "name": "AWS_SECRET_ACCESS_KEY"
+        }
+      ],
+      "dockerSecurityOptions": null,
+      "memory": null,
+      "memoryReservation": 500,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "image": "hwasurr/onad_twitch_bot",
+      "startTimeout": null,
+      "firelensConfiguration": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "essential": true,
+      "links": null,
+      "hostname": null,
+      "extraHosts": null,
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
+      "systemControls": null,
+      "privileged": null,
+      "name": "onad-twitch-bot"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": "512",
+  "taskRoleArn": null,
+  "compatibilities": [
+    "EC2",
+    "FARGATE"
+  ],
+  "family": "onad-chatbot-twitch",
+  "pidMode": null,
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "revision": 1,
+  "status": "ACTIVE",
+  "inferenceAccelerators": null,
+  "proxyConfiguration": null,
+  "volumes": []
+}
