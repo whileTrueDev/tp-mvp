@@ -1,9 +1,9 @@
 import tmi, { ChatUserstate } from 'tmi.js'; // For twitchChat socket server
-import io from 'socket.io-client';
-
 import connectDB from '../model/connectDB';
 import WhileTrueScheduler from '../lib/scheduler';
 import { ChatContainer } from '../interfaces/chat.interface';
+import { Streamer } from '../interfaces/streamer.interface';
+import { Stream } from '../interfaces/stream.interface';
 
 
 // Configure constants
@@ -18,7 +18,7 @@ interface Handlers {
   onJoinHandler(channel: string, username: string, self: boolean): void;
 }
 /**
- * 온애드 트위치 채팅 수집기 v2
+ * 와일트루 트위치 채팅 수집기 v1
  */
 export default class TwitchBot {
   // Tmi Client
@@ -28,7 +28,9 @@ export default class TwitchBot {
   // 가동 중 스케쥴러 목록
   private runningSchedulers: Array<WhileTrueScheduler> = [];
   // List of target streamers
-  private creators: string[] = [];
+  private streamers: Streamer[] = [];
+  // List of current streams
+  private streams: Stream[] = [];
   // Chat data container
   private chatContainer: ChatContainer = {
     chatCount: 0,
@@ -49,24 +51,8 @@ export default class TwitchBot {
       onMessageHandler: (channel, userstate, msg, self): void => {
         if (self) { return; } // Ignore messages from the bot
 
-        // badges?: Badges;
-        // color?: string;
-        // "display-name"?: string;
-        // emotes?: { [emoteid: string]: string[] };
-        // id?: string;
-        // mod?: boolean;
-        // turbo?: boolean;
-        // 'emotes-raw'?: string;
-        // 'badges-raw'?: string;
-        // "room-id"?: string;
-        // subscriber?: boolean;
-        // 'user-type'?: "" | "mod" | "global_mod" | "admin" | "staff";
-        // "user-id"?: string;
-        // "tmi-sent-ts"?: string;
-        // flags?: string;
-
         const data = {
-          creatorId: userstate['room-id'],
+          streamerId: userstate['room-id'],
           time: new Date(),
           name: userstate['display-name'],
           userid: userstate['user-id'],
@@ -85,7 +71,7 @@ export default class TwitchBot {
       },
       // Called when client join channel
       onJoinHandler: (channel, username, self): void => {
-        if (self) { // join event from the onad bot
+        if (self) { // join event from the WhileTrue bot
           const channelName = channel.replace('#', '');
           console.log(`[${new Date().toLocaleString()}] join channel: ${channelName}`);
           this.joinedChannels.push(channelName);
@@ -94,6 +80,7 @@ export default class TwitchBot {
     };
   }
 
+  // Tmi Client 시작
   private startClient(OPTION: tmi.Options): void {
     const client = tmi.Client(OPTION);
     this.chatBotClient = client;
@@ -106,41 +93,61 @@ export default class TwitchBot {
     }
   }
 
-  private getCreators(): void {
-    connectDB.getContratedCreators()
-      .then((allCreators) => { this.creators = allCreators; });
+  // Target Streamer 가져오기
+  private getStreamers(): void {
+    connectDB.getTargetStreamers()
+      .then((allStreamers) => { this.streamers = allStreamers; });
   }
 
-  private addNewCreator(): void { // 새로운/정지된 크리에이터 채널에 입장 - 매일 0시 1분.
-    console.log('=============== AddNewCreator ===============');
+  // Stream 가져오기
+  private getStreams(): void {
+    connectDB.getCurrentStreams()
+      .then((streams) => { this.streams = streams; });
+  }
+
+  // 새로운/정지된 크리에이터 채널에 입장 - 매일 0시 1분.
+  private addNewStreamers(): void {
+    console.log('=============== addNewStreamers ===============');
     // 새로운 크리에이터 채널 입장
     if (this.chatBotClient) {
       const channels = this.chatBotClient.getChannels().map((channel) => channel.replace('#', ''));
-      const newCreators = this.creators.filter(
-        (creator) => !(channels.includes(creator.creatorTwitchId))
+      const newStreamers = this.streamers.filter(
+        (streamer) => !(channels.includes(streamer.streamerChannelName))
       );
 
-      newCreators.forEach((creator, idx) => {
-        const anonFunc = (creator1: string): void => {
+      newStreamers.forEach((streamer, idx) => {
+        const anonFunc = (streamer1: string): void => {
           setTimeout(() => {
             if (this.chatBotClient) {
-              this.chatBotClient.join(creator1)
+              this.chatBotClient.join(streamer1)
                 .catch((err: any) => { console.log(`channel join error: ${err}`); });
             }
           }, idx * JOIN_TIMEOUT);
         };
-        anonFunc(creator.creatorTwitchId);
+        anonFunc(streamer.streamerChannelName);
       });
     }
   }
 
-  private chatPeriodicInsert(): void { // 주기적 채팅로그 삽입 - 매 10분
+  // 주기적 채팅로그 삽입 - 매 10분
+  private async chatPeriodicInsert(): Promise<void> {
     const { chatBuffer } = this.chatContainer;
     console.log('=================== Chat-autoInsert ====================');
     console.log('[TIME]: ', new Date().toLocaleString());
     console.log(`[Request Insert Rows]: ${chatBuffer.length} chats`);
 
     if (chatBuffer.length > 0) {
+      // ********************************************************
+      // chat 데이터에 streamId 및 playtime 부여
+      // 매 수집된 채팅 데이터 삽입 이전에 최신화된 Stream 데이터에서
+      // streamerId 기준으로 찾아 알맞은 Stream을 찾아 streamId를 넣고,
+      // 해당 Stream의 startedAt 시간을 기준으로
+      // playtime을 생성한 이후 데이터 적재.
+      // ********************************************************
+      console.log(this.streams[0].startedAt);
+      console.log(this.streams[0].streamId);
+      console.log(this.streams[0].streamerName);
+
       connectDB.insertChats(chatBuffer)
         .then((result) => {
           // result = db OKPacket
@@ -157,17 +164,29 @@ export default class TwitchBot {
     }
   }
 
+  // 로깅 및 헬스체크 - 1 or 5분 단위
+  private healthCheck(): void {
+    console.log('=================== healthCheck ====================');
+    console.log('[TIME]: ', new Date().toLocaleString());
+    console.log(`[Collecting channels]: ${this.joinedChannels.length}`);
+    console.log(`[Get channels Length]: ${this.chatBotClient?.getChannels().length}`);
+    console.log('[All chats deal on client]: ', this.chatContainer.chatCount);
+    console.log('[Chats on collector buffer]: ', this.chatContainer.chatBuffer.length);
+    console.log(`[Chats inserted]: ${this.chatContainer.insertedChatCount}`);
+    console.log(`[Running Schedulers]: ${this.runningSchedulers.length}`);
+  }
+
   runBot(): void {
-    connectDB.getContratedCreators()
-      .then((creators) => {
-        this.creators = creators;
-        const contractedChannels = creators.map((creator) => creator.creatorTwitchId);
-        console.log(`contractedChannels : ${contractedChannels.length}`);
+    connectDB.getTargetStreamers()
+      .then((streamers) => {
+        this.streamers = streamers;
+        const targetChannels = streamers.map((streamer) => streamer.streamerChannelName);
+        console.log(`targetChannels : ${targetChannels.length}`);
         const OPTION = {
           debug: true,
           connection: { reconnect: true, secure: true },
           identity: { username: BOT_NAME, password: BOT_OAUTH_TOKEN },
-          channels: contractedChannels
+          channels: targetChannels
         };
 
         this.startClient(OPTION);
@@ -184,37 +203,30 @@ export default class TwitchBot {
     this.startClient(OPTION);
   }
 
-  healthCheck(): void { // 로깅 및 헬스체크 - 1 or 5분 단위
-    console.log('=================== healthCheck ====================');
-    console.log('[TIME]: ', new Date().toLocaleString());
-    console.log(`[Collecting channels]: ${this.joinedChannels.length}`);
-    console.log(`[Get channels Length]: ${this.chatBotClient?.getChannels().length}`);
-    console.log('[All chats on client]: ', this.chatContainer.chatCount);
-    console.log('[Chats on collector buffer]: ', this.chatContainer.chatBuffer.length);
-    console.log(`[Chats inserted]: ${this.chatContainer.insertedChatCount}`);
-    console.log(`[Running Schedulers]: ${this.runningSchedulers.length}`);
-  }
-
   runScheduler(): void {
     console.log('start schdulejobs!');
     const healthCheckScheduler = new WhileTrueScheduler(
       'healthcheck', '* * * * *', this.healthCheck.bind(this)
     );
-    const addNewCreatorScheduler = new WhileTrueScheduler(
-      'addnewcreator', '1 0 * * *', this.addNewCreator.bind(this)
+    const addNewStreamerScheduler = new WhileTrueScheduler(
+      'addnewstreamers', '1 0 * * *', this.addNewStreamers.bind(this)
     );
     const chatPeriodicInsertScheduler = new WhileTrueScheduler(
       'autoinsert', '*/10 * * * *', this.chatPeriodicInsert.bind(this)
     );
-    const getCreatorsDataScheduler = new WhileTrueScheduler(
-      'getCreatorsData', '5,15,25,35,45,55 * * * *', this.getCreators.bind(this)
+    const getStreamsDataScheduler = new WhileTrueScheduler(
+      'getStreamsData', '8,18,28,38,48,58 * * * *', this.getStreams.bind(this)
+    );
+    const getStreamersDataScheduler = new WhileTrueScheduler(
+      'getStreamersData', '5,15,25,35,45,55 * * * *', this.getStreamers.bind(this)
     );
 
     this.runningSchedulers = [
       healthCheckScheduler,
-      addNewCreatorScheduler,
+      addNewStreamerScheduler,
       chatPeriodicInsertScheduler,
-      getCreatorsDataScheduler
+      getStreamsDataScheduler,
+      getStreamersDataScheduler,
     ];
   }
 

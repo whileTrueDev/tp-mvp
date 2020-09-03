@@ -135,6 +135,7 @@ class TwitchChats(Base):
     __table_args__ = {
         'comment': '''
         streamId: 해당 방송 고유 아이디
+        streamerId: 해당 방송 진행중인 스트리머 고유 아이디
         authorId: 채팅 저자 고유 아이디
         authorName: 채팅 저자 이름(닉네임)
         subscriber: 채팅 저자가 해당 방송(스트리머)의 구독자 인지 여부
@@ -142,32 +143,36 @@ class TwitchChats(Base):
         badges: 채팅 뱃지 JSON string
         text: 채팅 내용
         time: 채팅 발화 시간
+        playtime: 채팅 발화 시점의 방송 시작 대비 시간
         '''
     }
     id = Column(Integer, primary_key=True, autoincrement=True)
     streamId = Column(String(50), unique=False)
+    streamerId = Column(String(50), unique=False)
     authorId = Column(String(50), unique=False)
     authorName = Column(String(50), unique=False)
     subscriber = Column(Boolean, default=0)
     manager = Column(Boolean, default=0)
     badges = Column(String(150), nullable=True)
     text = Column(Text, unique=False)
-    time = Column(TIMESTAMP)
-
+    time = Column(TIMESTAMP, nullable=False)
+    playtime = Column(TIMESTAMP, nullable=True)
 
 class TwitchTargetStreamers(Base):
     __tablename__ = 'TwitchTargetStreamers'
     __table_args__ = {
         'comment': '''
         트위치 방송 정보 데이터 수집 대상 스트리머 목록정보
-        streamerId: 타겟 스트리머 아이디
+        streamerId: 타겟 스트리머 고유 아이디
         streamerName: 타겟 스트리머 이름 (닉네임)
+        streamerChannelName: 타겟 스트리머 채널 ID
         createdAt: 해당 행 생성 시간
         updatedAt: 해당 행 최근 수정 시간
         '''
     }
     streamerId = Column(String(50), primary_key=True)
     streamerName = Column(String(50), unique=False)
+    streamerChannelName = Column(String(100))
     createdAt = Column(TIMESTAMP, nullable=False,
                        server_default=text('CURRENT_TIMESTAMP'))
     updatedAt = Column(TIMESTAMP, nullable=True, server_default=text(

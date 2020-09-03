@@ -1,17 +1,41 @@
 import doQuery, { OkPacket } from './doQuery'; // For data insert
 import createChatInsertQueryValues from '../lib/createChatInsertQueryValues'; // For Query
 import { Chat } from '../interfaces/chat.interface';
+import { Streamer } from '../interfaces/streamer.interface';
+import { Stream } from '../interfaces/stream.interface';
 
 // 계약된 모든 크리에이터 가져오기.
-async function getContratedCreators(): Promise<any> {
+async function getTargetStreamers(): Promise<Streamer[]> {
   const getContractedChannelsQuery = `
-  SELECT creatorTwitchId, adChatAgreement
-    FROM creatorInfo
-    WHERE creatorContractionAgreement = 1`;
-  return doQuery(getContractedChannelsQuery)
+    SELECT streamerChannelName
+    FROM TwitchTargetStreamers
+    WHERE streamerChannelName IS NOT NULL`;
+  return doQuery<Streamer[]>(getContractedChannelsQuery)
     .then((row) => {
       if (row.error || !row.result) {
-        console.log('[DB적재 에러]');
+        console.log('[DB Select 에러] - getTargetStreamers');
+      }
+      return row.result;
+    })
+    .catch((err) => {
+      console.log('err', err);
+      throw Error(err);
+    });
+}
+
+// 현재 진행중인 stream 정보 가져오기
+async function getCurrentStreams(): Promise<Stream[]> {
+  const getCurrentStreamQuery = `
+  SELECT ts.streamId, ts.streamerName, ts.startedAt
+    FROM TwitchStreamDetails AS tsd
+    JOIN TwitchStreams as ts ON tsd.streamId = ts.streamId
+    WHERE tsd.createdAt > date_sub(NOW(), INTERVAL 4 MINUTE)
+    GROUP BY streamId
+    ORDER BY tsd.createdAt DESC`;
+  return doQuery<Stream[]>(getCurrentStreamQuery)
+    .then((row) => {
+      if (row.error || !row.result) {
+        console.log('[DB Select 에러] - getCurrentStream');
       }
       return row.result;
     })
@@ -29,9 +53,7 @@ async function insertChats(chatBuffer: Chat[]): Promise<OkPacket> {
   return doQuery<OkPacket>(insertQuery, insertQueryArray)
     .then((row) => {
       if (row.error || !row.result) {
-        console.log('[DB적재 에러]');
-      } else {
-        console.log(`[Insert Success] - number of row: ${chatBuffer.length}`);
+        console.log('[DB적재 에러] - insertChats');
       }
       return row.result;
     })
@@ -42,6 +64,7 @@ async function insertChats(chatBuffer: Chat[]): Promise<OkPacket> {
 }
 
 export default {
-  getContratedCreators,
+  getTargetStreamers,
+  getCurrentStreams,
   insertChats,
 };

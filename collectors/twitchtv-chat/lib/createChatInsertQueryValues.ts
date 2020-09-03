@@ -4,8 +4,8 @@ type ChatInsertQuery = string;
 type ChatInsertArray = Array<string | number | null | Date | undefined>;
 function createChatInsertQueryValues(data: Chat[]): [ChatInsertQuery, ChatInsertArray] {
   const insertQuery = `
-    INSERT INTO twitchChat
-    ( creatorId, time, name, userId, subscriber, manager, badges, text )
+    INSERT INTO TwitchChats
+    ( streamerId, time, authorName, authorId, subscriber, manager, badges, text )
     VALUES `;
   let queryArray: ChatInsertArray = [];
   let queryValues: ChatInsertQuery = '';
@@ -14,7 +14,7 @@ function createChatInsertQueryValues(data: Chat[]): [ChatInsertQuery, ChatInsert
     const values = '(?, ?, ?, ?, ?, ?, ?, ?)';
     const comma = ',\n';
 
-    if (!chat.creatorId || !chat.text || !chat.name || !chat.userid) {
+    if (!chat.streamerId || !chat.text || !chat.name || !chat.userid) {
       // 있어서는 안될 데이터.
     } else {
       if (index !== data.length - 1) {
@@ -24,7 +24,7 @@ function createChatInsertQueryValues(data: Chat[]): [ChatInsertQuery, ChatInsert
       }
 
       queryArray = queryArray.concat([
-        chat.creatorId, chat.time, chat.name, chat.userid,
+        chat.streamerId, chat.time, chat.name, chat.userid,
         chat.subscriber ? 1 : 0, chat.manager ? 1 : 0,
         chat.badges ? JSON.stringify(chat.badges) : null, chat.text
       ]);
