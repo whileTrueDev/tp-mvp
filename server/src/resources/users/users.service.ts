@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import bcrypt from 'bcrypt';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  private readonly users: UserEntity[];
-
   constructor(
     @InjectRepository(UserEntity) private readonly usersRepository: Repository<UserEntity>,
   ) {}
@@ -16,18 +15,24 @@ export class UsersService {
   }
 
   async findOne(userId: string): Promise<UserEntity> {
-    return this.usersRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.cats', 'cat')
-      .where('user.id = :userId', { userId })
-      .getOne();
+    const user = this.usersRepository.findOne(userId);
+    return user;
   }
 
   async remove(userid: string): Promise<void> {
     await this.usersRepository.delete(userid);
   }
 
-  async create(user: UserEntity): Promise<UserEntity> {
-    return this.usersRepository.create(user);
+  async register(user: UserEntity): Promise<UserEntity> {
+    // 비밀번호 암호화 using bcrypt
+    // Github Repository => https://github.com/kelektiv/node.bcrypt.js/
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+
+    const alreadyExists = await this.findOne(user.userId);
+
+    if (!alreadyExists) {
+      return this.usersRepository.save({ ...user, password: hashedPassword });
+    }
+    throw new HttpException('ID is duplicated', HttpStatus.BAD_REQUEST);
   }
 }
