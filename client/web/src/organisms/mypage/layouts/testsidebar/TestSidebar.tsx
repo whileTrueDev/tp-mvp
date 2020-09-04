@@ -28,6 +28,7 @@ export default function TestSidebar({
     return window.location.pathname.indexOf(routeName) > -1;
   }
 
+  const [clicked, setClicked] = React.useState<'red'|'blue'>('red');
   const links = (
     <List>
       <Divider />
@@ -45,6 +46,7 @@ export default function TestSidebar({
             className={classes.listText}
             button
             disableGutters
+            selected
           >
 
             <Grid container direction="column">
@@ -52,23 +54,32 @@ export default function TestSidebar({
                 <Accordion
                   square
                   className={classes.accordian}
+
                 >
-                  <AccordionSummary className={classes.accordianHeader}>
-                    {route.icon
-                      ? (
-                        <ListItemIcon
-                          className={classes.listIcon}
-                        >
-                          <route.icon />
-                        </ListItemIcon>
-                      )
-                      : <div />}
-                    <ListItemText>
-                      <Button variant="text">
-                        {route.name}
-                      </Button>
-                    </ListItemText>
-                  </AccordionSummary>
+                  <Button
+                    className={classes.testButton}
+                    style={{ background: 'primary' }}
+                  >
+                    <AccordionSummary
+                      className={classes.accordianHeader}
+                    >
+                      {route.icon
+                        ? (
+                          <ListItemIcon
+                            className={classes.listIcon}
+                          >
+                            <route.icon />
+                          </ListItemIcon>
+                        )
+                        : <div />}
+                      <ListItemText>
+                        <Typography variant="h6">
+                          {route.name}
+                        </Typography>
+                      </ListItemText>
+                    </AccordionSummary>
+                  </Button>
+
                   {/* 서브라우터가 존재 하는 경우 */}
                   {route.subRoutes
                     ? (
@@ -83,7 +94,7 @@ export default function TestSidebar({
                               className={classes.accordianList}
                               style={{ textDecoration: 'none', color: 'black' }}
                             >
-                              <ListItem button>
+                              <ListItem button className={classes.subTabActive}>
                                 <Grid container direction="column">
                                   <Grid item>
                                     <ListItemText>

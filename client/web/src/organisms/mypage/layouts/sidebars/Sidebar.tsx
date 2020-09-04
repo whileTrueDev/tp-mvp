@@ -5,7 +5,9 @@ import classNames from 'classnames';
 import {
   Grid, Drawer,
   List, ListItem, ListItemText, ListItemIcon, Icon,
-  Accordion, AccordionSummary, AccordionDetails
+  Accordion, AccordionSummary, AccordionDetails, Divider,
+  Typography, Paper, Button
+
 } from '@material-ui/core';
 import { MypageRoute } from '../../../../pages/mypage/routes';
 // styles
@@ -29,46 +31,71 @@ export default function Sidebar({
   };
 
   const links = (
-    <List className={classes.flex}>
+    <List>
+      <Divider />
       {routes.map((route) => (
-        <NavLink
-
-          to={route.layout + route.path}
+        <NavLink // 서브라우터 존재시 해당 상위 탭 클릭시 하위 탭 첫 번째 페이지를 default 로 설정
+          to={route.subRoutes
+            ? (route.subRoutes[0].layout + route.subRoutes[0].path)
+            : (route.layout + route.path)}
           activeClassName="active"
           key={route.layout + route.path}
+          style={{ textDecoration: 'none' }}
         >
           <ListItem
+            key={route.name}
+            className={classes.listText}
             button
-            onClick={() => handleTabClick}
+            disableGutters
+            selected
           >
 
-            <Grid container direction="column" className={classes.center}>
+            <Grid container direction="column">
               <Grid item>
-                {/* route.icon
-                  && <ListItemIcon>{route.icon}</ListItemIcon> */}
+                <Accordion
+                  square
+                  className={classes.accordian}
+                >
+                  <AccordionSummary
+                    className={classes.accordianHeader}
+                  >
+                    {route.icon
+                      ? (
+                        <ListItemIcon
+                          className={classes.listIcon}
+                        >
+                          <route.icon />
+                        </ListItemIcon>
+                      )
+                      : <div />}
+                    <ListItemText>
+                      <Typography variant="h6">
+                        {route.name}
+                      </Typography>
+                    </ListItemText>
+                  </AccordionSummary>
+                  {/* 서브라우터가 존재 하는 경우 */}
+                  {route.subRoutes
+                    ? (
 
-                {route.subRoutes
-                  ? (
-                    <Accordion square className={classes.accordian}>
-                      <AccordionSummary className={classes.accordianSummary}>
-                        <ListItemText
-                          primary={route.name}
-                          disableTypography
-                          className={classes.itemText}
-                        />
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <List className={classes.flex}>
+                      <AccordionDetails className={classes.listText}>
+                        <List>
                           {route.subRoutes.map((subroute) => (
                             <NavLink
                               to={subroute.layout + subroute.path}
                               activeClassName="active"
                               key={subroute.layout + route.path}
+                              className={classes.accordianList}
+                              style={{ textDecoration: 'none', color: 'black' }}
                             >
-                              <ListItem className={classes.itemLink}>
-                                <Grid container direction="column" className={classes.center}>
+                              <ListItem button className={classes.subTabActive}>
+                                <Grid container direction="column">
                                   <Grid item>
-                                    <ListItemText primary={subroute.name} disableTypography />
+                                    <ListItemText>
+                                      <Typography variant="body1">
+                                        {subroute.name}
+                                      </Typography>
+                                    </ListItemText>
                                   </Grid>
                                 </Grid>
                               </ListItem>
@@ -77,19 +104,15 @@ export default function Sidebar({
                           ))}
                         </List>
                       </AccordionDetails>
-                    </Accordion>
-                  )
-                  : (
-                    <ListItemText
-                      primary={route.name}
-
-                      className={classes.itemText}
-                    />
-                  )}
+                    )
+                    : (<></>)}
+                </Accordion>
               </Grid>
             </Grid>
           </ListItem>
+          <Divider />
         </NavLink>
+
       ))}
     </List>
   );

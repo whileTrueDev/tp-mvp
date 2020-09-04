@@ -6,11 +6,19 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  accordian: {
-    boxShadow: 'none',
-  },
-  accordianSummary: {
+  listText: {
+    padding: '0',
     textAlign: 'center',
+    justifyContent: 'center',
+    fontSize: '15px',
+    backgroundColor: 'transparent',
+  },
+  listIcon: {
+    padding: '0',
+    margin: '0',
+    justifyContent: 'center',
+    alignItems: 'center',
+
   },
   center: {
     display: 'flex',
@@ -165,7 +173,7 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.common.white,
   },
   sidebarWrapper: {
-    position: 'fixed',
+    position: 'relative',
     height: 'calc(100vh - 75px)',
     overflow: 'auto',
     width: '80px',
@@ -174,6 +182,41 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
   },
   desktopWrapper: {
     zIndex: 3,
+  },
+  accordianList: {
+    textAlign: 'center',
+    justifyContent: 'center',
+    fontSize: '14px',
+    backgroundColor: 'transparent',
+  },
+  accordian: {
+    boxShadow: 'none',
+    border: '0',
+  },
+  accordianHeader: {
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light // 마우스 가져갈때
+    },
+    '&:focus': {
+      backgroundColor: theme.palette.primary.light // 클릭 했을 때
+    },
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    // '&: root': {
+    //   '&$expanded': {
+    //     backgroundColor: theme.palette.primary.light // 클릭 했을 때
+    //   },
+    // }
+  },
+  active: {
+    background: theme.palette.primary.main,
+  },
+  subTabActive: {
+    '&:focus': {
+      color: theme.palette.primary.light // 클릭 했을 때
+    },
   }
 }));
 
