@@ -1,8 +1,8 @@
 {
-  "name": "onad-chat-collector",
+  "name": "whiletrue-chat-collector",
   "version": "1.0.0",
   "description": "chat bot client for twitch-onad",
-  "main": "index.js",
+  "main": "index.ts",
   "license": "MIT",
   "scripts": {
     "start": "ts-node index.ts",
@@ -15,6 +15,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "aws-sdk": "^2.746.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mysql": "^2.17.1",

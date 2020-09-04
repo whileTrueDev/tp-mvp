@@ -1,6 +1,8 @@
 FROM node:12.16.1-alpine
 ENV NODE_ENV production
 
+LABEL Name=whiletrue-twitch-chat Version=1.0.0
+
 # timezone 설정
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

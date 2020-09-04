@@ -1,17 +1,4 @@
-import mysql, { MysqlError, PoolConnection } from 'mysql';
-
-require('dotenv').config();
-
-const port = typeof process.env.DB_PORT === 'string' ? Number(process.env.DB_PORT) : process.env.DB_PORT;
-
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  charset: process.env.DB_CHARSET
-});
+import { Pool, MysqlError, PoolConnection } from 'mysql';
 
 export interface OkPacket {
   fieldCount: number;
@@ -30,7 +17,7 @@ export interface OkPacket {
  * @param {array} queryArray ? 에 해당하는 변수들을 요소로 가지는 array
  */
 function doQuery<QueryResult = {}>(
-  query: string, queryArray?: any[]
+  pool: Pool, query: string, queryArray?: any[]
 ): Promise<{result: QueryResult; error: any}> {
   return new Promise((resolve, reject) => {
     pool.getConnection((err: MysqlError, conn: PoolConnection) => {

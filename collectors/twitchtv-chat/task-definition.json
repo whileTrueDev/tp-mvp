@@ -8,7 +8,7 @@
         "logDriver": "awslogs",
         "secretOptions": null,
         "options": {
-          "awslogs-group": "/ecs/onad-chatbot-twitch",
+          "awslogs-group": "/ecs/whiletrue-twitch-chat",
           "awslogs-region": "ap-northeast-2",
           "awslogs-stream-prefix": "ecs"
         }
@@ -43,7 +43,7 @@
       "memoryReservation": 500,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "hwasurr/onad_twitch_bot",
+      "image": "hwasurr/whiletrue-twitch-chat",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
@@ -60,7 +60,7 @@
       "dockerLabels": null,
       "systemControls": null,
       "privileged": null,
-      "name": "onad-twitch-bot"
+      "name": "whiletrue-twitch-chat"
     }
   ],
   "placementConstraints": [],
@@ -70,7 +70,7 @@
     "EC2",
     "FARGATE"
   ],
-  "family": "onad-chatbot-twitch",
+  "family": "whiletrue-twitch-chat",
   "pidMode": null,
   "requiresCompatibilities": [
     "FARGATE"

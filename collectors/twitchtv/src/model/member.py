@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, BigInteger, TIMESTAMP, Text, Float, Boolean
+from sqlalchemy import Column, String, Integer, BigInteger, TIMESTAMP, Text, Float, Boolean, TIME
 from sqlalchemy.sql.expression import func, text
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -147,16 +147,17 @@ class TwitchChats(Base):
         '''
     }
     id = Column(Integer, primary_key=True, autoincrement=True)
-    streamId = Column(String(50), unique=False)
-    streamerId = Column(String(50), unique=False)
+    streamId = Column(String(50), unique=False, index=True)
+    streamerId = Column(String(50), unique=False, index=True)
     authorId = Column(String(50), unique=False)
     authorName = Column(String(50), unique=False)
     subscriber = Column(Boolean, default=0)
     manager = Column(Boolean, default=0)
     badges = Column(String(150), nullable=True)
     text = Column(Text, unique=False)
-    time = Column(TIMESTAMP, nullable=False)
-    playtime = Column(TIMESTAMP, nullable=True)
+    time = Column(TIMESTAMP, nullable=False, index=True)
+    playtime = Column(TIME, nullable=True)
+
 
 class TwitchTargetStreamers(Base):
     __tablename__ = 'TwitchTargetStreamers'

@@ -1,3 +1,4 @@
+import mysql from 'mysql';
 import doQuery, { OkPacket } from './doQuery'; // For data insert
 import createChatInsertQueryValues from '../lib/createChatInsertQueryValues'; // For Query
 import { Chat } from '../interfaces/chat.interface';
@@ -5,12 +6,12 @@ import { Streamer } from '../interfaces/streamer.interface';
 import { Stream } from '../interfaces/stream.interface';
 
 // 계약된 모든 크리에이터 가져오기.
-async function getTargetStreamers(): Promise<Streamer[]> {
+async function getTargetStreamers(pool: mysql.Pool): Promise<Streamer[]> {
   const getContractedChannelsQuery = `
     SELECT streamerChannelName
     FROM TwitchTargetStreamers
     WHERE streamerChannelName IS NOT NULL`;
-  return doQuery<Streamer[]>(getContractedChannelsQuery)
+  return doQuery<Streamer[]>(pool, getContractedChannelsQuery)
     .then((row) => {
       if (row.error || !row.result) {
         console.log('[DB Select 에러] - getTargetStreamers');
@@ -24,15 +25,15 @@ async function getTargetStreamers(): Promise<Streamer[]> {
 }
 
 // 현재 진행중인 stream 정보 가져오기
-async function getCurrentStreams(): Promise<Stream[]> {
+async function getCurrentStreams(pool: mysql.Pool): Promise<Stream[]> {
   const getCurrentStreamQuery = `
-  SELECT ts.streamId, ts.streamerName, ts.startedAt
+  SELECT ts.streamId, ts.streamerName, ts.streamerId, ts.startedAt
     FROM TwitchStreamDetails AS tsd
     JOIN TwitchStreams as ts ON tsd.streamId = ts.streamId
     WHERE tsd.createdAt > date_sub(NOW(), INTERVAL 4 MINUTE)
     GROUP BY streamId
     ORDER BY tsd.createdAt DESC`;
-  return doQuery<Stream[]>(getCurrentStreamQuery)
+  return doQuery<Stream[]>(pool, getCurrentStreamQuery)
     .then((row) => {
       if (row.error || !row.result) {
         console.log('[DB Select 에러] - getCurrentStream');
@@ -46,11 +47,11 @@ async function getCurrentStreams(): Promise<Stream[]> {
 }
 
 // 채팅로그 버퍼에 쌓인 모든 채팅로그를 적재.
-async function insertChats(chatBuffer: Chat[]): Promise<OkPacket> {
+async function insertChats(pool: mysql.Pool, chatBuffer: Chat[]): Promise<OkPacket> {
   const [insertQuery, insertQueryArray] = createChatInsertQueryValues(chatBuffer);
 
   // Reqeust query to DB
-  return doQuery<OkPacket>(insertQuery, insertQueryArray)
+  return doQuery<OkPacket>(pool, insertQuery, insertQueryArray)
     .then((row) => {
       if (row.error || !row.result) {
         console.log('[DB적재 에러] - insertChats');

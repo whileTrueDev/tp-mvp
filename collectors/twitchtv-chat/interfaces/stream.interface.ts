@@ -1,5 +1,6 @@
 export interface Stream {
   streamId: string;
+  streamerId: string;
   streamerName: string;
-  startedAt: string;
+  startedAt: Date;
 }
