@@ -7,7 +7,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     borderBottom: '0',
     marginBottom: '0',
     position: 'absolute',
-    width: '100%',
+    width: 'parent',
     paddingTop: '10px',
     zIndex: 10,
     color: '#ffff',

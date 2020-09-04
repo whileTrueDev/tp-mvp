@@ -1,8 +1,8 @@
 export interface Notification {
   index: number;
-  userid: string;
+  userId: string;
   title: string;
   content: string;
-  dateform: string;
   readState: number;
+  dateform: string;
 }

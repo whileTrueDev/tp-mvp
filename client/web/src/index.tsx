@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Router, Switch, Route
+  Router, Switch, Route, BrowserRouter,
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
@@ -13,7 +13,6 @@ import Brightness4Icon from '@material-ui/icons/Brightness4';
 import THEME_TYPE from './interfaces/ThemeType';
 import * as serviceWorker from './serviceWorker';
 import defaultTheme from './theme';
-import history from './history';
 import './assets/global.css';
 // Pages
 import Main from './pages/mainpage/Main';
@@ -32,6 +31,14 @@ function Index(): JSX.Element {
   const THEME = createMuiTheme({
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
+    overrides: {
+      MuiDrawer: {
+        // paperAnchorLeft: {
+        //   marginTop: '10vh',
+        //   marginLeft: '200px',
+        // }
+      }
+    }
   });
 
   return (
@@ -40,7 +47,7 @@ function Index(): JSX.Element {
         <CssBaseline />
 
         {/* 페이지 컴포넌트 */}
-        <Router history={history}>
+        <BrowserRouter>
 
           {/* *********************************************** */}
           {/* Example changing Theme !! */}
@@ -72,7 +79,7 @@ function Index(): JSX.Element {
             {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
             {/* 페이지 컴포넌트가 여기에 위치합니다. */}
           </Switch>
-        </Router>
+        </BrowserRouter>
 
       </ThemeProvider>
     </React.StrictMode>

@@ -32,7 +32,7 @@ export interface MypageRoute {
 
 const dashboardRoutes: MypageRoute[] = [
   {
-    path: '/',
+    path: '/main',
     name: '대시보드',
     icon: DashboardIcon,
     component: Dashboard, // 해당 페이지 컴포넌트를 여기에

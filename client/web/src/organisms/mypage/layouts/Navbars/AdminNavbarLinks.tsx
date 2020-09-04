@@ -29,7 +29,10 @@ function HeaderLinks(): JSX.Element {
 
   // 개인 알림 - GET Request
   const [{ data: getData, loading: getLoading, error: getError }, excuteGet] = useAxios({
-    url: 'http://localhost:3000/notification'
+    url: 'http://localhost:3000/notification',
+    params: {
+      userId: 'test2',
+    }
   });
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state

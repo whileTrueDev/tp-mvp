@@ -50,19 +50,25 @@ function NotificationPopper({
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element {
   const classes = useStyles();
-  // const notiReadPatch = usePatchRequest(`/${userType}/notification`, () => {
-  //   // 클라이언트 알림 읽음 처리
-  //   successCallback(); // 개인 알림 데이터 리로드
-  // });
-
-  const [selectedNotificationIndex,
-    setSelectedNotificationIndex] = React.useState<number | null>(null);
-  const [{ data: patchData, loading: patchLoading, error: patchError }, excutePatch] = useAxios({
+  const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
     url: 'http://localhost:3000/notification',
     method: 'patch',
   }, {
     manual: true
   });
+
+  const handleNotificationListItemClick = (notification: Notification) => {
+    if (notification.readState === UNREAD_STATE) {
+      excutePatch({
+        data: {
+          userId: 'test2', // userId (client login user)
+          index: notification.index,
+        }
+      });
+
+      if (!patchError && !patchLoading) setChangeReadState(true);
+    }
+  };
 
   return (
     <Popper
@@ -92,17 +98,7 @@ function NotificationPopper({
         <div>
           {notificationData.map((noti) => (
             <div key={noti.index}>
-              <MenuItem onClick={(): void => {
-                if (noti.readState === UNREAD_STATE) {
-                  excutePatch({
-                    data: {
-                      index: noti.index,
-                    }
-                  });
-                }
-                setChangeReadState(true);
-              }}
-              >
+              <MenuItem onClick={() => handleNotificationListItemClick(noti)}>
                 <div className={classes.message}>
                   <Typography>
                     {noti.readState

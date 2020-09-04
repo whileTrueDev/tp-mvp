@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn, ManyToOne
+  Entity, Column, PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity({ name: 'Notification' })
@@ -8,14 +8,21 @@ export class NotificationEntity {
   index: number;
 
   @Column()
+  userId: string;
+
+  @Column()
   title: string;
 
   @Column()
   content: string;
 
-  @Column()
+  @Column('timestamp')
   dateform: string;
 
   @Column()
   readState: number;
+
+  constructor(partial: Partial<NotificationEntity>) {
+    Object.assign(this, partial);
+  }
 }

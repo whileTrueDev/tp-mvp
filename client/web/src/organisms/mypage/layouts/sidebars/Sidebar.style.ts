@@ -6,10 +6,17 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  accordian: {
+    boxShadow: 'none',
+  },
+  accordianSummary: {
+    textAlign: 'center',
+  },
   center: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: '0'
   },
   drawerPaper: {
     border: 'none',
@@ -126,12 +133,12 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     },
     backgroundColor: 'transparent',
     '&:hover': {
-      backgroundColor: theme.palette.secondary.light,
+      backgroundColor: theme.palette.primary.light
       // 마우스 가져갈때
     },
   },
   activeLink: {
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.main,
   },
   itemIcon: {
     width: '40%',
@@ -158,7 +165,7 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.common.white,
   },
   sidebarWrapper: {
-    position: 'relative',
+    position: 'fixed',
     height: 'calc(100vh - 75px)',
     overflow: 'auto',
     width: '80px',

@@ -5,11 +5,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 // @material-ui/icons
 import EventNote from '@material-ui/icons/EventNote';
 import Menu from '@material-ui/icons/Menu';
 // core components
+import { useHistory } from 'react-router-dom';
 import useNavbarStyles from './Navbar.style';
 // import Button from '../../../../atoms/CustomButtons/Button';
 import AdminNavbarLinks from './AdminNavbarLinks';
@@ -31,6 +33,8 @@ interface NavUserInfoInterface{
 function Navbar(props: NavbarProps): JSX.Element {
   const classes = useNavbarStyles();
   const { routes, handleDrawerToggle } = props;
+
+  const history = useHistory();
   const [selectedUserIndex, setSelectedUserIndex] = React.useState<number>(0);
   const [navUserInfoList, setNavUserInfoList] = React.useState<NavUserInfoInterface[]>([
     {
@@ -54,6 +58,7 @@ function Navbar(props: NavbarProps): JSX.Element {
   return (
     <AppBar className={classes.appBar}>
       <Toolbar className={classes.container}>
+
         <Grid container justify="space-between" direction="row">
           <Grid container item direction="row" xs={10} spacing={2} justify="flex-start" alignItems="flex-end">
             {/* 사용중인 유저 이름 , 드롭다운 리스트로 구독중인 다른 유저 목록 선택 가능하도록 해야함 */}

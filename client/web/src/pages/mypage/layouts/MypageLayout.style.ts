@@ -2,14 +2,14 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useLayoutStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    position: 'relative',
+    position: 'static',
     top: '0',
-    height: '100vh',
+    height: '110vh',
   },
   mainPanel: {
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${300}px)`,
-    },
+    // [theme.breakpoints.up('md')]: {
+    //   width: `calc(100% - ${300}px)`,
+    // },
     overflow: 'auto',
     position: 'relative',
     float: 'right',
@@ -37,6 +37,9 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     marginRight: 'auto',
     marginLeft: 'auto',
   },
+  listWrapper: {
+    width: '100%',
+  }
 }));
 
 export default useLayoutStyles;
