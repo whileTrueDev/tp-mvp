@@ -44,6 +44,11 @@ export default function getSSMParams(scope: cdk.Construct) {
       parameterName: '/CRAWL_TWITCH_API_CLIENT_SECRET', version: 1
     }
   )
+  const TWITCH_BOT_OAUTH_TOKEN = ssm.StringParameter.fromSecureStringParameterAttributes(
+    scope, '/TWITCH_BOT_OAUTH_TOKEN', {
+      parameterName: '/TWITCH_BOT_OAUTH_TOKEN', version: 1
+    }
+  )
 
 
   return {
@@ -51,5 +56,6 @@ export default function getSSMParams(scope: cdk.Construct) {
     TRUEPOINT_SECRET_ACCESS_KEY,
     CRAWL_TWITCH_API_KEY,
     CRAWL_TWITCH_API_CLIENT_SECRET,
+    TWITCH_BOT_OAUTH_TOKEN,
   };
 }

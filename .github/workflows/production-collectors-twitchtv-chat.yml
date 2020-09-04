@@ -24,6 +24,7 @@ jobs:
 
       - name: TS Build
         run: |
+          cd collectors/twitchtv-chat
           yarn
           yarn build
 

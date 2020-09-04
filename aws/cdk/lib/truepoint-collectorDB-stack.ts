@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
+import * as iam from '@aws-cdk/aws-iam';
 import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
@@ -13,9 +14,10 @@ interface WhileTrueCollectorStackProps extends cdk.StackProps {
 }
 
 // CONSTANTS
-const ID_PREFIX                    = 'WhileTrueCollector';
-const DATABASE_PORT                = 3306;
-const TWITCH_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-collector'
+const ID_PREFIX                         = 'WhileTrueCollector';
+const DATABASE_PORT                     = 3306;
+const TWITCH_COLLECTOR_FAMILY_NAME      = 'whiletrue-twitch-collector'
+const TWITCH_CHAT_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-chat'
 
 export class WhileTrueCollectorStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
@@ -144,9 +146,54 @@ export class WhileTrueCollectorStack extends cdk.Stack {
         cluster: ECSCluster,
         desiredTaskCount: 1,
         scheduledFargateTaskDefinitionOptions: {
-        taskDefinition: twitchtvTaskDef,
+          taskDefinition: twitchtvTaskDef,
+        },
+        schedule: events.Schedule.expression('cron(3,6,9,13,16,19,23,26,29,33,36,39,43,46,49,53,56,59 * * * ? *)'),
+    });
+
+    // *********************************************
+    // Define task definition of Twitchtv Chats Collector
+    const twitchtvChatsLogGroup = new logs.LogGroup(
+      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}LogGroup`, {
+      logGroupName: `/ecs/${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`,
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    });
+    const twitchtvChatsTaskDef = new ecs.FargateTaskDefinition(
+      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TaskDef`,
+      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME }
+    );
+    twitchtvChatsTaskDef.addContainer(
+      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Container`, {
+      image: ecs.ContainerImage.fromRegistry(`hwasurr/${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`),
+      memoryLimitMiB: 512,
+      secrets: {
+        TWITCH_BOT_OAUTH_TOKEN: ecs.Secret.fromSsmParameter(ssmParameters.TWITCH_BOT_OAUTH_TOKEN),
+        AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
+        AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_SECRET_ACCESS_KEY,) 
       },
-      schedule: events.Schedule.expression('cron(3,6,9,13,16,19,23,26,29,33,36,39,43,46,49,53,56,59 * * * ? *)'),
+      logging: new ecs.AwsLogDriver({ logGroup: twitchtvChatsLogGroup, streamPrefix: 'ecs' }),
+    });
+
+    // *********************************************
+    // Create SecurityGroups for Twitchtv Chats Collector
+    const twitchtvChatsSecGrp = new ec2.SecurityGroup(this,
+      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`, {
+        vpc: vpc,
+        securityGroupName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}SecurityGroup`,
+        description: 'Allow all Outbound traffics for Twitch Chats Collector.',
+        allowAllOutbound: true
+      }
+    );
+
+    // *********************************************
+    // Create ECS Service for Twitchtv Chats Collector
+    new ecs.FargateService(
+      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`, {
+      cluster: ECSCluster,
+      taskDefinition: twitchtvChatsTaskDef,
+      desiredCount: 1,
+      serviceName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`,
+      securityGroup: twitchtvChatsSecGrp
     });
   }
 }
