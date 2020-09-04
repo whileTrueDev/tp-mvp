@@ -1,19 +1,25 @@
-import { IsBoolean, IsString, IsOptional } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
+import { UserEntity } from '../entities/user.entity';
 
-export class CreateUserDto {
+export class CreateUserDto implements UserEntity {
   @IsString()
-  id: string;
-
-  @IsString()
-  firstName: string;
+  userId: string;
 
   @IsString()
-  lastName: string;
+  password!: string;
 
-  @IsOptional()
+  @IsString()
+  name!: string;
+
+  @IsString()
+  mail!: string;
+
+  @IsString()
+  birth!: string;
+
+  @IsString()
+  gender!: string;
+
   @IsBoolean()
-  isActive?: boolean;
-
-  @IsString()
-  password: string;
+  marketingAgreement: boolean;
 }

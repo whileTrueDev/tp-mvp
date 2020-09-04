@@ -7,13 +7,13 @@ import { UserLoginPayload } from '../interfaces/loginUserPayload.interface';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super();
+    super({ usernameField: 'userId' });
   }
 
   // validate 함수를 오버라이딩 하여야 합니다.
-  async validate(username: string, password: string): Promise<UserLoginPayload> {
+  async validate(userId: string, password: string): Promise<UserLoginPayload> {
     // 대부분의 validate 작업은 AuthService의 도움으로 수행됩니다.
-    const user = await this.authService.validateUser(username, password);
+    const user = await this.authService.validateUser(userId, password);
     if (!user) {
       throw new UnauthorizedException();
     }

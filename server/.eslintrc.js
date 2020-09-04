@@ -36,7 +36,7 @@ module.exports = {
       }
     ],
     'class-methods-use-this': [
-      1,
+      0,
     ],
     '@typescript-eslint/no-var-requires': 'warn', // please use import
     'no-underscore-dangle': 'off',

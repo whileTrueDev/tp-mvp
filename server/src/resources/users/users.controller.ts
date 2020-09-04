@@ -15,7 +15,7 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  async find(@Req() req: LogedInExpressRequest): Promise<UserEntity | UserEntity[]> {
+  async find(@Req() req: LogedInExpressRequest): Promise<UserEntity> {
     const { userId } = req.user;
     return this.usersService.findOne(userId);
   }
@@ -25,6 +25,6 @@ export class UsersController {
   async create(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto
   ): Promise<UserEntity> {
-    return this.usersService.create(createUserDto);
+    return this.usersService.register(createUserDto);
   }
 }
