@@ -1,5 +1,6 @@
 // DB 커넥션 가져오기.
 const pool = require('./connectionPool');
+
 /* 2019-07-02 박찬우
 
 */
@@ -18,6 +19,7 @@ const pool = require('./connectionPool');
  * @author 박찬우
  */
 const doQuery = (query, queryArray = []) => new Promise((resolve, reject) => {
+
   pool.getConnection((err, conn) => {
     // 커넥션 시 에러발생
     if (err) {

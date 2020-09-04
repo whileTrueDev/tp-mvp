@@ -3,9 +3,10 @@
 // Input format  : [ { channelId, videoId } ... ]
 // Output format : [ { channelId, videoId } ... ] (new)
 const doQuery = require('../model/calculatorQuery');
+const setStreamData = require('./setStreamData');
 
 // 실제 현재 라이브인 video 를 적재하고, live가 종료된 video에 대한 삭제를 진행하는 함수
-const loadLiveVideo = (liveVideos) =>
+const loadLiveVideo = (liveVideos, accessTokenDic) =>
 {
   return new Promise((resolve, reject)=> {
     getliveVideoIdByDB()
@@ -16,9 +17,9 @@ const loadLiveVideo = (liveVideos) =>
         const oldLiveVideos = [];
         const updateVideos = [];
         if(!dbdata.error){
-          const { videoIds, data } = dbdata.data;
+          const { tokenDic, videoIds, data } = dbdata.data;
           // 1. 현재 in live인 video인데 DB에 존재하지 않는경우, DB에 적재한다. 
-          liveVideos.forEach((liveVideoData)=>{
+          const liveStreams = liveVideos.map((liveVideoData)=>{
             liveVideoIds.push(liveVideoData.videoId);
             if(!videoIds.includes(liveVideoData.videoId))
             {
@@ -28,24 +29,44 @@ const loadLiveVideo = (liveVideos) =>
             if(liveVideoData.activeLiveChatId == null){
               updateVideos.push(liveVideoData);
             }
+
+            // videoId에 수집된 nextPageToken을 집어넣어준다.
+            const nextPageToken = tokenDic.hasOwnProperty(liveVideoData.videoId) ? tokenDic[liveVideoData.videoId] : null;
+            return {
+              ...liveVideoData,
+              nextPageToken
+            }
           }); 
 
           // 2. DB에는 존재하는데 liveVideo에는 존재하지 않아서 삭제하는 경우,
           data.forEach((dbVideoData)=>{
             if(!liveVideoIds.includes(dbVideoData.videoId))
             {
-              oldLiveVideos.push(dbVideoData);
+              // videoId에 대해서 access token을 가져야한다. 
+              const accessToken = tokenDic.hasOwnProperty(dbVideoData.videoId) ? tokenDic[dbVideoData.videoId].accessToken : null;
+              oldLiveVideos.push(
+                { 
+                  ...dbVideoData,
+                  accessToken
+                }
+              );
             }
           })
 
           // 삭제 및 삽입 실행 
-          deleteOldVideo(oldLiveVideos)
+          Promise.all(
+           [
+            deleteOldVideo(oldLiveVideos),
+            setStreamData(oldLiveVideos, accessTokenDic)
+           ] 
+          )
           .then(()=> Promise.all([
             InsertLiveData(newLiveVideos),
             InsertMetaData(newLiveVideos)
           ]))
           .then(()=> {
-            resolve(newLiveVideos.concat(updateVideos));
+            // resolve(newLiveVideos.concat(updateVideos)); => 따로 activeLiveChat을 수집할 필요가 없다.
+            resolve(liveStreams);
           })
           .catch((error)=> {
             // 내부의 reject의 경우 밖으로 나가지 않기 때문에 자체적인 error-catch 구현
@@ -79,7 +100,7 @@ const deleteOldVideo = (oldLiveVideos) => {
 
   const deleteQuery = 
   `
-  DELETE FROM youtubeLiveVideos
+  DELETE FROM YoutubeActiveStreams
   WHERE videoId
   IN ${conditionQuery});
   `
@@ -105,15 +126,15 @@ const InsertLiveData = (newLiveVideos) => {
     return Promise.resolve();
   }
 
-  const rawQuery = newLiveVideos.reduce((str, { videoId })=>{
-    return str + `( '${videoId}'),`;
+  const rawQuery = newLiveVideos.reduce((str, { channelId, videoId, activeLiveChatId, startDate})=>{
+    return str + `('${channelId}', '${videoId}', '${activeLiveChatId}', '${startDate}'),`;
   },'');
   const conditionQuery = rawQuery.slice(0,-1) + ';';
 
   const InsertQuery = 
   `
-  INSERT INTO youtubeLiveVideos
-  ( videoId )
+  INSERT INTO YoutubeActiveStreams
+  (channelId, videoId, activeLiveChatId, startDate)
   VALUES ${conditionQuery};
   `;
 
@@ -139,15 +160,15 @@ const InsertMetaData = (newLiveVideos) => {
     return Promise.resolve();
   }
 
-  const rawQuery = newLiveVideos.reduce((str, {videoId, videoTitle, channelId, channelName})=>{
-    return str + `( '${videoId}', '${videoTitle}', '${channelId}', '${channelName}'),`;
+  const rawQuery = newLiveVideos.reduce((str, {videoId, videoTitle, channelId, channelName, startDate})=>{
+    return str + `( '${videoId}', '${videoTitle}', '${channelId}', '${channelName}', '${startDate}'),`;
   },'');
   const conditionQuery = rawQuery.slice(0,-1) + ';';
 
   const InsertQuery = 
   `
-  INSERT INTO youtubeVideos
-  (videoId, videoTitle, channelId, channelName)
+  INSERT INTO YoutubeStreams
+  (videoId, videoTitle, channelId, channelName, startDate)
   VALUES ${conditionQuery};
   `;
 
@@ -166,26 +187,29 @@ const InsertMetaData = (newLiveVideos) => {
   });
 }
 
-// 10분 전 live였던 video를 DB에서 가져온다.
+// 3분 전 live였던 video를 DB에서 가져온다.
+// 현재까지 수집된 nextPageToken을 dict으로 만들어서 현재 방송중인 데이터에 추가한다.
 const getliveVideoIdByDB = () =>
 {
   return new Promise((resolve, reject)=>{
     const selectQuery = `
     SELECT * 
-    FROM youtubeLiveVideos
+    FROM YoutubeActiveStreams
     `;
 
     doQuery(selectQuery, [])
     .then((row)=>{
       const videoIds = [];
+      const tokenDic = {};
       const result = row.result.map(element => {
         videoIds.push(element.videoId);
+        tokenDic[element.videoId] = element.nextPageToken;
         return {...element};
       });
       resolve({
         error: false,
         data : {
-          videoIds, data : result
+          tokenDic, videoIds, data : result
         }
       });
     })

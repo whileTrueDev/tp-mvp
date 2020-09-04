@@ -1,7 +1,6 @@
 // DB 커넥션 가져오기.
 const pool = require('./connectionPool');
 
-
 /* 2019-07-02 박찬우
 0. 간략한 설명
   - Promise API를 이용한 비동기식 DB접근을 동기식화 하여 쿼리의 결과값을 리턴하는 함수.
@@ -13,7 +12,9 @@ const pool = require('./connectionPool');
   - logger는 어떠한 함수에 Error 발생했는지 기록하여야하므로 calculation 에서 사용.
 */
 
-const calculatorQuery = (query, queryArray = []) => new Promise((resolve, reject) => {
+const calculatorQuery = (query, queryArray = []) => new Promise(async(resolve, reject) => {
+  // const pool = await getpool();
+
   pool.getConnection((err, conn) => {
     // 커넥션 시 에러발생
     if (err) {

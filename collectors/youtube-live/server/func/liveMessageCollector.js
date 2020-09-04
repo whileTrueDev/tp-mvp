@@ -1,37 +1,6 @@
 const { doConnectionQuery } = require('../model/doQuery');
 const axios =  require("axios");
 
-// 10분 전 live였던 video를 DB에서 가져온다.
-const getliveChatIdByDB = (connection) =>
-{
-  return new Promise((resolve, reject)=>{
-    const selectQuery = `
-    SELECT * 
-    FROM youtubeLiveVideos
-    `;
-
-    doConnectionQuery({ connection, queryState: selectQuery, params: []})
-    .then((row)=>{
-      const result = row.result.map(element => {
-        return {...element};
-      });
-      resolve({
-        error: false,
-        data : result
-      });
-    })
-    .catch((error)=>{
-      // DB에 대한 조회가 불가능하더라도 API를 통해 구하여 사용하면 되므로 resolve()를 사용한다.
-      reject({
-        error: true,
-        func : "getliveChatIdByDB",
-        msg : error
-      });
-    });
-  })
-}
-
-
 const getPlayTime = (_date1, _date2) => {
   var diffDate_1 = _date1 instanceof Date ? _date1 :new Date(_date1);
   var diffDate_2 = _date2 instanceof Date ? _date2 :new Date(_date2);
@@ -66,7 +35,7 @@ const getDateFormat = (_date1) => {
 // activeLiveChatId => live chat message
 // 하나의 channel ID => video Id in live
 const getChatData = (target, mergedChats, connection) => {
-  const { videoId, activeLiveChatId, nextPageToken, startDate } = target;
+  const { videoId, activeLiveChatId, nextPageToken, startDate, viewer } = target;
   return new Promise((resolve, reject) => {
     if(activeLiveChatId == null){
       // activeLiveChatId가 null인경우에는 요청하지 않도록 한다.
@@ -101,7 +70,7 @@ const getChatData = (target, mergedChats, connection) => {
             const play_time = getPlayTime(startDate, timeObject);
             // 데이터 저장시 필요한 전처리 -> \ 글자, 따옴표에 대한 처리
             const text = snippet.displayMessage.replace(/\\/g, '').replace(/\'/g, ' ');
-            mergedChats.push({ videoId, authorId, time, play_time, text });
+            mergedChats.push({ videoId, authorId, time, play_time, text, viewer });
           });
           resolve({
               error: false,
@@ -158,7 +127,7 @@ const loadNextpageToken = ({ videoId, nextPageToken, connection }) =>
   return new Promise((resolve, reject)=>{ 
     const UpdateQuery = 
     `
-    UPDATE youtubeLiveVideos
+    UPDATE YoutubeActiveStreams
     SET nextPageToken = ?
     WHERE videoId = ?;
     `;
@@ -193,9 +162,8 @@ const requestAPI = (liveChats, connection) => {
   })
 }
 
-const liveChatCrawler = (connection) => new Promise((resolve, reject) => {
-  getliveChatIdByDB(connection)
-  .then(({error, data}) => requestAPI(data, connection))
+const liveChatCrawler = (targets, connection) => new Promise((resolve, reject) => {
+  requestAPI(targets, connection)
   .then((mergedChats)=> {
     resolve(mergedChats);
   })
