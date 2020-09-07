@@ -13,9 +13,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from .pipelines import Afreecacreators
 import requests, re
 from .configController import ConfigController
-import os, subprocess
+import os
 
 chatAllData = []
+temporary_private = 0
 
 class SeleniumMiddleware(object):
 
@@ -30,8 +31,9 @@ class SeleniumMiddleware(object):
 
     def spider_opened(self, spider):
         self.config = ConfigController()
-        self.config.load()
-        CHROMEDRIVER_PATH = r'C:\Users\WHILETRUESECOND\Desktop\tp-mvp\collectors\afreecatv\crawler\crawler\drivers\chromedriver.exe'
+        dirpath = os.path.dirname(os.path.abspath(__file__))
+        # CHROMEDRIVER_PATH = r'C:\Users\WHILETRUESECOND\Desktop\tp-mvp\collectors\afreecatv\crawler\crawler\drivers\chromedriver.exe'
+        CHROMEDRIVER_PATH = os.path.join(dirpath, r"\drivers\chromedriver.exe")
         WINDOW_SIZE = "1920, 1080"
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # 크롬창이 열리지 않게
@@ -66,7 +68,8 @@ class SeleniumMiddleware(object):
         sleep(3)
         self.driver.find_element_by_xpath('//*[@id="stop_screen"]/dl/dd[2]/a').click()
         self.creatorId  = request.url[26:-1]
-
+        self.start_date = dt.strptime(self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[1]/span').text, '%Y-%m-%d %H:%M:%S')
+        self.videoId = dt.strftime(self.start_date, '%Y%m%d%H%M%S') + self.creatorId
         # 채팅창 제어 변수 초깃값
         chatNum = 1
         liveEndPoint = 0 # 생방송 상대 여부 판별
@@ -84,10 +87,10 @@ class SeleniumMiddleware(object):
                     lg.info(f'{self.creatorId} 방송 종료')
                     liveEndPoint = liveEndPoint + 1
                     return liveEndPoint
-                elif self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[8]').get_attribute("style") == '':
-                    lg.warning(f'{self.creatorId} 블라인드 처리')
-                    liveEndPoint = liveEndPoint + 1
-                    return liveEndPoint
+                # elif self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[8]').get_attribute("style") == '':
+                #     lg.warning(f'{self.creatorId} 블라인드 처리')
+                #     liveEndPoint = liveEndPoint + 1
+                #     return liveEndPoint
                 elif self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[3]').get_attribute("style") == '':
                     lg.warning(f'{self.creatorId} 19세 방송중')
                     try:
@@ -111,6 +114,7 @@ class SeleniumMiddleware(object):
                     
                 elif self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[7]').get_attribute("style") == '':
                     lg.warning(f'{self.creatorId} 비밀번호 설정')
+                    temporary_private = temporary_private + 1
                     liveEndPoint = liveEndPoint + 1
                     return liveEndPoint 
                 else:
@@ -133,13 +137,13 @@ class SeleniumMiddleware(object):
             if liveEndCheck(self, chatNum, tryTime, liveEndPoint) == 1:
                 break
             chatEachData = {}
-            atTime = dt.now().strftime('%Y-%m-%d %H:%M:%S')
+            atTime = dt.strptime(dt.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
             chatIdNum = f'//*[@id=\"{chatNum}\"]'
             user = f'//*[@id=\"{chatNum}\"]/preceding-sibling::dt'
             userId = f'//*[@id=\"{chatNum}\"]/preceding-sibling::dt/a'
             
             try:
-                chatEachData['userId'] = self.driver.find_element_by_xpath(userId).get_attribute("user_id")
+                chatEachData['viewerId'] = self.driver.find_element_by_xpath(userId).get_attribute("user_id")
                 chatEachData['is_mobile'] = self.driver.find_element_by_xpath(userId).get_attribute("is_mobile")
                 chatEachData['category'] = self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[4]/span').text
                 chatEachData['videoTitle'] = self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/div[4]/span').text
@@ -150,7 +154,9 @@ class SeleniumMiddleware(object):
                 chatEachData['sex'] = self.driver.find_element_by_xpath(user).get_attribute("class").split('_')[1]
                 chatEachData['text'] = self.driver.find_element_by_xpath(chatIdNum).text
                 chatEachData['creatorId'] = self.creatorId
-                chatEachData['chattime'] = atTime
+                chatEachData['videoId'] = self.videoId
+                chatEachData['chatTime'] = atTime
+                chatEachData['playTime'] = atTime - self.start_date
                 chatAllData.append(chatEachData)
             except:           
                 lg.warning(f'{self.creatorId}님 방송의 채팅량이 많아 다시 주기를 갱신')

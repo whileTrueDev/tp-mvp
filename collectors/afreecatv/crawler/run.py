@@ -43,6 +43,7 @@ def run_crawl():
     lg.info('크롤러 프로그램 실행')
     crawl_urls = liveCreatorChecker()
 
+
     if len(crawl_urls) < 1:
         lg.info('새로 방송 킨 크리에이터가 없습니다')
     else:

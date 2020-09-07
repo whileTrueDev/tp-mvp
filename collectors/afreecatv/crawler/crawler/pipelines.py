@@ -8,13 +8,13 @@ from .logger import logger as lg
 db = DatabaseManager(ORATOR_CONFIG)
 Model.set_connection_resolver(db)
 
-class Afreecacreators(Model):
-    """afreecaCreators 데이터 데이블"""
-    __table__ = 'afreecacreators'
+class AfreecaActiveStreams(Model):
+    """AfreecaActiveStreams 데이터 데이블"""
+    __table__ = 'AfreecaActiveStreams'
 
     @belongs_to_many
-    def afreecachats(self):
-        return Afreecachats
+    def afreecaChats(self):
+        return AfreecaChats
 
     # Live방송 중인 크리에이터 뽑아온다.
     def getLiveCreator(self):
@@ -23,20 +23,32 @@ class Afreecacreators(Model):
             rows = []
             for row in allRow:
                 rows.append(row['creatorId'])
-        except:
-            rows = []
+        except:            rows = []
         return rows
+
+    def getPrivateCreator(self, creatorId):
+        try:
+            allRow = db.table(self.__table__).where('creatorId', '=', creatorId).get().all()
+            rows
 
     def updateLiveCreator(self, creatorIds, turnState):    
         for creatorId in creatorIds:
-            if turnState == 'turn-off':
+            if turnState == 'live-off':
                 row = db.table(self.__table__).where('creatorId', '=', creatorId).update(is_live=0)
                 if row != 0:
                     lg.info(f'{creatorId}님이 라이브 방송을 종료했습니다')
-            else:
+            elif turnState == 'live-on':
                 row = db.table(self.__table__).where('creatorId', '=', creatorId).update(is_live=1)
                 if row != 0:
                     lg.info(f'{creatorId}님이 라이브 방송을 시작했습니다')
+            elif turnState == 'private-on':
+                row = db.table(self.__table__).where('creatorId', '=', creatorId).update(is_private=1)
+                if row != 0:
+                    lg.info(f'{creatorId}님이 비밀 방송을 시작했습니다')
+            elif turnState == 'private-off':
+                row = db.table(self.__table__).where('creatorId', '=', creatorId).update(is_private=0)
+                if row != 0:
+                    lg.info(f'{creatorId}님이 비밀 방송을 종료했습니다')
             
                 
     def updateContent(self, creatorId, creatorName, startAt, resolution, videoQuality, endAt):
@@ -49,13 +61,13 @@ class Afreecacreators(Model):
         )
 
 
-class Afreecachats(Model):
-    """afreecaChat 데이터 테이블"""
-    __table__ = 'afreecachats'
+class AfreecaChats(Model):
+    """AfreecaChat 데이터 테이블"""
+    __table__ = 'AfreecaChats'
 
     @belongs_to_many
-    def afreecacreators(self):
-        return Afreecacreators
+    def afreecaActiveStreams(self):
+        return AfreecaActiveStreams
 
 
 class DatabasePipeline(object):

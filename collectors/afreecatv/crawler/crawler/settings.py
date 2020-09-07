@@ -1,7 +1,7 @@
 from .configController import ConfigController
 
 config = ConfigController()
-config.load()
+config.load_dbconfig_from_aws_secrets_manager()
 
 BOT_NAME = 'crawler'
 
@@ -22,11 +22,11 @@ ITEM_PIPELINES = {
 
 ORATOR_CONFIG = {    
     'mysql': {
-        'driver': config.DB_DRIVER,
-        'host': config.DB_HOST,
-        'database': config.DB_NAME,
-        'user': config.DB_USER,
-        'password': config.DB_PASSWORD,
-        'port': config.DB_PORT
+        'driver': config.DB_CONFIG["engine"],
+        'host': config.DB_CONFIG["host"],
+        'database': config.DB_CONFIG["dbname"],
+        'user': config.DB_CONFIG["username"],
+        'password': config.DB_CONFIG["password"],
+        'port': config.DB_CONFIG["port"]
     }
 }

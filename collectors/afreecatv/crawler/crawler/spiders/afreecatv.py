@@ -7,7 +7,7 @@ import re
 from datetime import datetime as dt
 from crawler.pipelines import Afreecacreators
 from crawler.items import AfreecatvChat
-from crawler.middlewares import chatAllData
+from crawler.middlewares import chatAllData, temporary_private
 from crawler.logger import logger as lg
 
 from selenium import webdriver
@@ -33,7 +33,7 @@ class AfreecatvSpider(scrapy.Spider):
         startAt = response.xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[1]/span/text()').get()
         resolution = response.xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[2]/span/text()').get()
         videoQuality = response.xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[3]/span/text()').get()
-        endAt = dt.now().strftime('%Y-%m-%d %H:%M:%S')
+        endAt = dt.strptime(dt.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
         afreecaCreator =  Afreecacreators()
         afreecaCreator.updateContent(self.creatorId, creatorName, startAt, resolution, videoQuality, endAt)
 
