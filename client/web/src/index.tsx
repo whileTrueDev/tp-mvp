@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Router, Switch, Route
+  BrowserRouter, Switch, Route
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
@@ -13,12 +13,12 @@ import Brightness4Icon from '@material-ui/icons/Brightness4';
 import THEME_TYPE from './interfaces/ThemeType';
 import * as serviceWorker from './serviceWorker';
 import defaultTheme from './theme';
-import history from './history';
 import './assets/global.css';
 // Pages
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
+import Login from './pages/mainpage/Login';
 
 function Index(): JSX.Element {
   // ******************************************************************
@@ -39,38 +39,16 @@ function Index(): JSX.Element {
         <CssBaseline />
 
         {/* 페이지 컴포넌트 */}
-        <Router history={history}>
-
-          {/* *********************************************** */}
-          {/* Example changing Theme !! */}
-          <Paper
-            style={{
-              height: '10vh', display: 'flex', justifyContent: 'center', alignItems: 'center'
-            }}
-          >
-            <Typography variant="h4">
-              트루포인트
-            </Typography>
-
-            {themeType === THEME_TYPE.DARK && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness4Icon /></IconButton>
-            )}
-            {themeType === THEME_TYPE.LIGHT && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness7Icon /></IconButton>
-            )}
-
-          </Paper>
-          {/* This is Example */}
-          {/* *********************************************** */}
-
+        <BrowserRouter>
           <Switch>
             <Route exact path="/" component={Main} />
+            <Route exact path="/login" component={Login} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
             {/* 페이지 컴포넌트가 여기에 위치합니다. */}
           </Switch>
-        </Router>
+        </BrowserRouter>
 
       </ThemeProvider>
     </React.StrictMode>
