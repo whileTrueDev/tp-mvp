@@ -7,7 +7,7 @@ export class PlatformYoutubeEntity {
   @Column({ primary: true })
   youtubeId!: string;
 
-  @Column({ length: 200 })
+  @Column()
   logo!: string;
 
   @Column({ nullable: false })

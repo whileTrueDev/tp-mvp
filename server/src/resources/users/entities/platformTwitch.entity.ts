@@ -7,7 +7,7 @@ export class PlatformTwitchEntity {
   @Column({ primary: true })
   twitchId!: string;
 
-  @Column({ length: 200 })
+  @Column()
   logo!: string;
 
   // ex) 침착맨

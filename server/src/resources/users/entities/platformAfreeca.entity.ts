@@ -7,7 +7,7 @@ export class PlatformAfreecaEntity {
   @Column({ primary: true })
   afreecaId!: string;
 
-  @Column({ length: 200 })
+  @Column()
   logo!: string;
 
   @Column({ nullable: false })
