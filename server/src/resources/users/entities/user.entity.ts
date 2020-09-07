@@ -37,6 +37,9 @@ export class UserEntity {
   @Column()
   gender!: string;
 
+  @Column({ default: 'user' })
+  roles?: string;
+
   @Exclude()
   @OneToOne(() => PlatformTwitchEntity, (twitch) => twitch.twitchId)
   @Column({ nullable: true })
