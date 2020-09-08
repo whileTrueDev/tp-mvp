@@ -30,6 +30,7 @@
     "@nestjs/typeorm": "^7.1.0",
     "accesscontrol": "^2.2.1",
     "aws-sdk": "^2.738.0",
+    "axios": "^0.20.0",
     "bcrypt": "^5.0.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
