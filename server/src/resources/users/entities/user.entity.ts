@@ -8,7 +8,7 @@ import { PlatformTwitchEntity } from './platformTwitch.entity';
 import { PlatformAfreecaEntity } from './platformAfreeca.entity';
 import { PlatformYoutubeEntity } from './platformYoutube.entity';
 
-@Entity({ name: 'User1' })
+@Entity({ name: 'UserTest' })
 export class UserEntity {
   // For Exclude Decorator
   constructor(partial: Partial<UserEntity>) {
@@ -23,6 +23,9 @@ export class UserEntity {
 
   @Column()
   mail!: string;
+
+  @Column({ length: 64 })
+  userDI?: string;
 
   // The ClassSerializerInterceptor interceptor uses the powerful class-transformer package
   // to provide a declarative and extensible way of transforming objects

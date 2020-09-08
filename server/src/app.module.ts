@@ -5,6 +5,7 @@ import { AccessControlModule } from 'nest-access-control';
 
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
+
 import { TypeOrmConfigService } from './config/database.config';
 
 import loadConfig from './config/loadConfig';
