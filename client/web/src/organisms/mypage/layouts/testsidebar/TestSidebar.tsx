@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import BorderLeftIcon from '@material-ui/icons/BorderLeft';
+import MaximizeIcon from '@material-ui/icons/Maximize';
 import { MypageRoute } from '../../../../pages/mypage/routes';
 // styles
 // import useSiedebarStyles from './Sidebar.style';
@@ -76,8 +77,8 @@ export default function TestSidebar({
                   >
 
                     <Grid container xs={12} direction="row" justify="flex-start">
-                      <Grid item xs={1}>
-                        {isActiveRoute(route.path) ? '|' : <div />}
+                      <Grid item xs={1} alignContent="center">
+                        {isActiveRoute(route.path) ? <MaximizeIcon style={{ transform: 'rotate(-90deg)', fontSize: '30px' }} /> : <div />}
                       </Grid>
                       <Grid item xs={3}>
                         {route.icon

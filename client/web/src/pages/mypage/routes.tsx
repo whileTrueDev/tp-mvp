@@ -9,6 +9,9 @@ import WorkIcon from '@material-ui/icons/Work';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'; // 대쉬보드
 import EqualizerIcon from '@material-ui/icons/Equalizer'; // 채널 분석
 import SettingsIcon from '@material-ui/icons/Settings'; // 내 정보
+import ConfirmationNumberOutlinedIcon from '@material-ui/icons/ConfirmationNumberOutlined'; // 방송 정보 90 도 회전
+import LocalMoviesOutlinedIcon from '@material-ui/icons/LocalMoviesOutlined';
+import SwitchVideoOutlinedIcon from '@material-ui/icons/SwitchVideoOutlined';
 
 // Page Components
 import Dashboard from './Dashboard';
