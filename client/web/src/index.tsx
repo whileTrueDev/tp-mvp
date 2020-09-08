@@ -7,7 +7,9 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import {
   CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-
+import Axios from 'axios';
+import { configure } from 'axios-hooks';
+// 
 import THEME_TYPE from './interfaces/ThemeType';
 import * as serviceWorker from './serviceWorker';
 import defaultTheme from './theme';
@@ -19,6 +21,9 @@ import TermsOfUse from './pages/others/TermsOfUse';
 import Login from './pages/mainpage/Login';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
+
+const axios = Axios.create({ baseURL: 'http://localhost:3000' });
+configure({ axios });
 
 function Index(): JSX.Element {
   // ******************************************************************
