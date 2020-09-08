@@ -5,10 +5,8 @@ import {
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
-  CssBaseline, ThemeProvider, Paper, IconButton, Typography
+  CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-import Brightness7Icon from '@material-ui/icons/Brightness7';
-import Brightness4Icon from '@material-ui/icons/Brightness4';
 
 import THEME_TYPE from './interfaces/ThemeType';
 import * as serviceWorker from './serviceWorker';
@@ -19,6 +17,8 @@ import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Login from './pages/mainpage/Login';
+import FindId from './pages/others/FindId';
+import FindPassword from './pages/others/FindPassword';
 
 function Index(): JSX.Element {
   // ******************************************************************
@@ -43,6 +43,8 @@ function Index(): JSX.Element {
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/find-id" component={FindId} />
+            <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
