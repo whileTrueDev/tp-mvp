@@ -8,7 +8,6 @@ import {
 } from '@material-ui/core';
 
 import login from '../../../utils/auth/login';
-import host from '../../../host-endpoint';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 
@@ -30,7 +29,7 @@ export default function LoginForm(): JSX.Element {
 
   // API Requests
   const [{ loading, error }, executePost] = useAxios(
-    { method: 'POST', url: `${host}/auth/login` },
+    { method: 'POST', url: '/auth/login' },
     { manual: true }
   );
 
@@ -66,7 +65,7 @@ export default function LoginForm(): JSX.Element {
           color="secondary"
           type="text"
           label="아이디"
-          inputProps={{ minlength: 3, required: true, }}
+          inputProps={{ minLength: 3, required: true, }}
           inputRef={userIdRef}
         />
         <TextField
@@ -74,7 +73,7 @@ export default function LoginForm(): JSX.Element {
           color="secondary"
           type="password"
           label="비밀번호"
-          inputProps={{ minlength: 3, required: true, }}
+          inputProps={{ minLength: 3, required: true, }}
           placeholder="비밀번호를 입력해주세요"
           inputRef={passwordRef}
           autoComplete="off"
