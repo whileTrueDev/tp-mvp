@@ -1,7 +1,12 @@
 import {
-  Controller, Post, Body, Get, UseGuards, UseInterceptors, ClassSerializerInterceptor, Query, Req
+  Controller, Post, Body, Get,
+  UseGuards, UseInterceptors,
+  ClassSerializerInterceptor, Req, ForbiddenException, Param
 } from '@nestjs/common';
-import { LogedInExpressRequest } from '../../interfaces/LogedInRequest.interface';
+import {
+  UseRoles, ACGuard,
+} from 'nest-access-control';
+import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
@@ -10,14 +15,23 @@ import { UserEntity } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
 
-  @Get()
-  @UseGuards(JwtAuthGuard)
+  @Get('/:id')
+  @UseGuards(JwtAuthGuard, ACGuard)
+  @UseRoles({ resource: 'profile', action: 'read', possession: 'own' })
   @UseInterceptors(ClassSerializerInterceptor)
-  async find(@Req() req: LogedInExpressRequest): Promise<UserEntity> {
-    const { userId } = req.user;
-    return this.usersService.findOne(userId);
+  async find(
+    @Param('id') id: string,
+    @Req() req: LogedInExpressRequest,
+  ): Promise<UserEntity> {
+    const { user } = req;
+    if (user.userId === id) {
+      return this.usersService.findOne(user.userId);
+    }
+    throw new ForbiddenException();
   }
 
   @Post()

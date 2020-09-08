@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useMediaQuery } from '@material-ui/core';
-import LoginForm from '../../organisms/mainpage/login/LoginForm';
 import LoginFooter from '../../organisms/shared/FooterShort';
+import FindPasswordForm from '../../organisms/mainpage/login/FindPasswordForm';
 
 const useStyles = makeStyles((theme) => ({
   container: { display: 'flex', height: '100vh', },
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login():JSX.Element {
+export default function FindAuth():JSX.Element {
   const classes = useStyles();
   const isDesktop = useMediaQuery('(min-width:768px)');
 
@@ -31,10 +31,9 @@ export default function Login():JSX.Element {
         className={classes.centerflex}
         style={{ width: isDesktop ? '50%' : '100%' }}
       >
-        <LoginForm />
+        <FindPasswordForm />
         <LoginFooter />
       </div>
-
     </section>
   );
 }

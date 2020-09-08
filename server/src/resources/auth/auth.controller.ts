@@ -5,7 +5,7 @@ import {
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
-import { UserLoginPayload } from './interfaces/loginUserPayload.interface';
+import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
 
 @Controller('auth')
 export class AuthController {

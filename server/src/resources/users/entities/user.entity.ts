@@ -8,7 +8,7 @@ import { PlatformTwitchEntity } from './platformTwitch.entity';
 import { PlatformAfreecaEntity } from './platformAfreeca.entity';
 import { PlatformYoutubeEntity } from './platformYoutube.entity';
 
-@Entity({ name: 'User' })
+@Entity({ name: 'User1' })
 export class UserEntity {
   // For Exclude Decorator
   constructor(partial: Partial<UserEntity>) {
@@ -37,14 +37,20 @@ export class UserEntity {
   @Column()
   gender!: string;
 
+  @Column({ default: 'user' })
+  roles?: string;
+
+  @Exclude()
   @OneToOne(() => PlatformTwitchEntity, (twitch) => twitch.twitchId)
   @Column({ nullable: true })
   twitchId?: string;
 
+  @Exclude()
   @OneToOne(() => PlatformAfreecaEntity, (affreca) => affreca.afreecaId)
   @Column({ nullable: true })
   afreecaId?: string;
 
+  @Exclude()
   @OneToOne(() => PlatformYoutubeEntity, (youtube) => youtube.youtubeId)
   @Column({ nullable: true })
   youtubeId?: string;

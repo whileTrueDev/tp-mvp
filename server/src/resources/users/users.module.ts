@@ -10,10 +10,10 @@ import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
-    UserEntity,
     PlatformAfreecaEntity,
     PlatformTwitchEntity,
-    PlatformYoutubeEntity
+    PlatformYoutubeEntity,
+    UserEntity,
   ])],
   providers: [UsersService],
   controllers: [UsersController],
