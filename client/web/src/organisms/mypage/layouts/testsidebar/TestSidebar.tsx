@@ -9,12 +9,11 @@ import {
   Typography, Paper, Button
 
 } from '@material-ui/core';
+// @material-ui/icons icon
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import BorderLeftIcon from '@material-ui/icons/BorderLeft';
 import MaximizeIcon from '@material-ui/icons/Maximize';
 import { MypageRoute } from '../../../../pages/mypage/routes';
 // styles
-// import useSiedebarStyles from './Sidebar.style';
 import useTestStyle from './TestSidebar.style';
 
 interface SidebarProps {
