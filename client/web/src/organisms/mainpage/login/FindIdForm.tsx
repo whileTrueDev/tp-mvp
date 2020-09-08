@@ -74,7 +74,7 @@ export default function FindAccountForm(): JSX.Element {
       const username = usernameRef.current.value;
       const usermail = usermailRef.current.value;
       getRequest({
-        params: { type: 'email', username, usermail }
+        params: { type: 'email', name: username, mail: usermail }
       }).then((res) => {
         if (res.data) {
           const { userId } = res.data;

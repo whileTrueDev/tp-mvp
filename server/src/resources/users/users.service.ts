@@ -37,19 +37,19 @@ export class UsersService {
   }
 
   // User의 ID를 찾는 동기 함수. 결과값으로는 UserEntity의 인스턴스를 반환받되, 전달하는 것은 ID이다.
-  async findID(name: string, mail?: string, userDI?: string) : Promise<string> {
+  async findID(name: string, mail?: string, userDI?: string) : Promise<Pick<UserEntity, 'userId'>> {
     // userDI의 존재여부에 따라서 조회방식을 분기한다.
     if (userDI) {
       const user = await this.usersRepository
         .findOne({ where: { name, userDI } });
       if (user) {
-        return user.userId;
+        return { userId: user.userId };
       }
     } else {
       const user = await this.usersRepository
         .findOne({ where: { name, mail } });
       if (user) {
-        return user.userId;
+        return { userId: user.userId };
       }
     }
     throw new HttpException('ID is not found', HttpStatus.BAD_REQUEST);
