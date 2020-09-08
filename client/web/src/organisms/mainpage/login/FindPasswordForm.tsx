@@ -62,7 +62,7 @@ export default function FindAccountForm(): JSX.Element {
         padding: 32,
         minWidth: 300,
         maxWidth: 500,
-        border: '1px solid #ddd',
+        border: '1px solid #dddd',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
