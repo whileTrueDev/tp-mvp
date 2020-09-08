@@ -16,10 +16,9 @@ export class NotificationController {
   }
 
   @Patch()
-  updateNotificationReadState(@Body(
-    new ValidationPipe()
-  ) changeReadState: ChangeReadState)
-    : Promise<boolean> {
+  updateNotificationReadState(
+    @Body(new ValidationPipe()) changeReadState: ChangeReadState
+  ): Promise<boolean> {
     return this.notificationService.changeReadState(changeReadState);
   }
 }

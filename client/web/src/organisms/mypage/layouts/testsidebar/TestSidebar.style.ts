@@ -2,7 +2,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useTestStyle = makeStyles((theme: Theme) => ({
   root: {
-    marginTop: '64px',
+
   },
   center: {
     display: 'flex',
@@ -10,65 +10,85 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     padding: '0',
   },
+  listWrapper: {
+    padding: '0px',
+  },
   listText: {
-    padding: '0',
+    minheight: '74px',
+    width: 'parent',
     textAlign: 'center',
     justifyContent: 'center',
+    padding: '0px',
     fontSize: '15px',
-    backgroundColor: 'transparent',
+    backgroundColor: 'parent',
   },
-  listIcon: {
+  listIconWrapper: {
     padding: '0',
     margin: '0',
     justifyContent: 'center',
     alignItems: 'center',
-
+  },
+  listIcon: {
+    fontSize: '32px',
+    color: 'black'
   },
   accordianList: {
+    width: 'parent',
+    padding: '5px',
     textAlign: 'center',
     justifyContent: 'center',
     fontSize: '14px',
-    backgroundColor: 'transparent',
+    backgroundColor: 'parent',
   },
   accordian: {
     boxShadow: 'none',
     border: '0',
-    // '&:focus': {
-    //   backgroundColor: theme.palette.primary.light // 클릭 했을 때
-    // },
-
-  },
-  testButton: {
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light // 마우스 가져갈때
-    },
-    '&:visited': {
-      backgroundColor: theme.palette.primary.light // 마우스 가져갈때
-    },
-    width: '100%',
-    border: '0',
+    background: 'parent',
   },
   accordianHeader: {
-    // '&:hover': {
-    //   backgroundColor: theme.palette.primary.light // 마우스 가져갈때
-    // },
+    backgroundColor: 'parent',
     justifyContent: 'center',
+    height: '74px',
     alignItems: 'center',
     alignContent: 'center',
     border: '0',
-    // '&: root': {
-    //   '&$expanded': {
-    //     backgroundColor: theme.palette.primary.light // 클릭 했을 때
-    //   },
-    // }
+    paddingTop: '23px',
+    paddingBottom: '23px',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light // 마우스 가져갈때
+    },
+  },
+  accordianHeaderButton: {
+    width: '100%',
+    height: '74px',
+    margin: '0px',
+    border: '0px',
   },
   active: {
-    background: theme.palette.primary.main,
+    // backgroundColor: theme.palette.primary.light,
+    color: 'black'
   },
-  subTabActive: {
-    '&:focus': {
-      color: theme.palette.primary.light // 클릭 했을 때
+  subTabItem: {
+    padding: '0',
+    '&:hover,&:focus': {
+      color: theme.palette.primary.light, // 클릭 했을 때
     },
+  },
+  selectedTab: {
+    fontWeight: 'bold',
+    color: 'black'
+  },
+  notSelectedTab: {
+    color: '#868e96',
+
+  },
+  selectedIcon: {
+    color: 'black',
+    fontSize: '32px',
+  },
+  notSelectedIcon: {
+    color: 'primary',
+    fontSize: '32px',
   }
 }));
 

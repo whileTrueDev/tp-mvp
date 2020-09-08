@@ -6,6 +6,10 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     top: '0',
     height: '110vh',
   },
+  appbarWrapper: {
+    width: '1510px',
+    height: '98px',
+  },
   mainPanel: {
     // [theme.breakpoints.up('md')]: {
     //   width: `calc(100% - ${300}px)`,
@@ -38,7 +42,9 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
   },
   listWrapper: {
-    width: '100%',
+
+    width: '206px',
+    height: '1094px'
   }
 }));
 

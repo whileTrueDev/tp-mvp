@@ -20,9 +20,9 @@ export class StreamSummaryEntity {
   @Column('timestamp')
   createdAt: Date;
 
-  @OneToOne(() => StreamsEntity)
-  @JoinColumn()
-  streams: StreamsEntity
+  // @OneToOne(() => StreamsEntity)
+  // @JoinColumn()
+  // streams: StreamsEntity
 
   constructor(partial: Partial<StreamSummaryEntity>) {
     Object.assign(this, partial);

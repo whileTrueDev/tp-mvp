@@ -5,7 +5,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 // @material-ui/icons
 import EventNote from '@material-ui/icons/EventNote';
@@ -27,27 +26,25 @@ export interface NavbarProps {
 interface NavUserInfoInterface{
   username : string;
   subscribePerioud: string;
-  // isSubscribe: boolean;
 }
 
 function Navbar(props: NavbarProps): JSX.Element {
   const classes = useNavbarStyles();
   const { routes, handleDrawerToggle } = props;
 
-  const history = useHistory();
   const [selectedUserIndex, setSelectedUserIndex] = React.useState<number>(0);
   const [navUserInfoList, setNavUserInfoList] = React.useState<NavUserInfoInterface[]>([
     {
-      username: 'aaaaaaaaa', subscribePerioud: '2019-09-01 ~ 2019-09-30',
+      username: 'test1', subscribePerioud: '2019-09-01 ~ 2019-09-30',
     },
     {
-      username: 'bbbbbbbbb', subscribePerioud: '2019-09-01 ~ 2110-09-30',
+      username: 'test2', subscribePerioud: '2019-09-01 ~ 2110-09-30',
     },
     {
-      username: 'ccccccccc', subscribePerioud: '2019-09-01 ~ 2222-09-30',
+      username: 'test3', subscribePerioud: '2019-09-01 ~ 2222-09-30',
     },
     {
-      username: 'ddddddddd', subscribePerioud: '2019-09-01 ~ 3333-09-30',
+      username: 'test4', subscribePerioud: '2019-09-01 ~ 3333-09-30',
     },
   ]);
 
@@ -58,9 +55,8 @@ function Navbar(props: NavbarProps): JSX.Element {
   return (
     <AppBar className={classes.appBar}>
       <Toolbar className={classes.container}>
-
-        <Grid container justify="space-between" direction="row">
-          <Grid container item direction="row" xs={10} spacing={2} justify="flex-start" alignItems="flex-end">
+        <Grid container justify="space-between" direction="row" xs={12}>
+          <Grid item container md={10} direction="row" alignContent="flex-end" spacing={1}>
             {/* 사용중인 유저 이름 , 드롭다운 리스트로 구독중인 다른 유저 목록 선택 가능하도록 해야함 */}
             <Grid item>
               <NavbarUserList
@@ -71,18 +67,18 @@ function Navbar(props: NavbarProps): JSX.Element {
             </Grid>
 
             {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 */}
-            <Grid item>
-              <EventNote />
+            <Grid item alignContent="flex-end">
+              <EventNote className={classes.leftGridIcon} />
             </Grid>
 
-            <Grid item>
-              <Typography variant="subtitle1">
+            <Grid item alignContent="flex-end">
+              <Typography style={{ fontSize: '27px', textDecoration: 'underline' }}>
                 {navUserInfoList[selectedUserIndex].subscribePerioud}
               </Typography>
             </Grid>
 
           </Grid>
-          <Grid container item xs={2}>
+          <Grid item container md={2} alignContent="center">
             {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
 
             <AdminNavbarLinks />

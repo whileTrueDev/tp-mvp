@@ -1,6 +1,6 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 
-const drawerWidth = 120;
+const drawerWidth = 107;
 const useSiedebarStyles = makeStyles((theme: Theme) => ({
   flex: {
     justifyContent: 'center',
@@ -18,7 +18,6 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     margin: '0',
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   center: {
     display: 'flex',
@@ -33,7 +32,7 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     bottom: '0',
     left: '0',
     zIndex: 1,
-    width: drawerWidth,
+    width: '107px',
     [theme.breakpoints.up('md')]: {
       width: drawerWidth,
       position: 'fixed',
@@ -176,7 +175,6 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
     height: 'calc(100vh - 75px)',
     overflow: 'auto',
-    width: '80px',
     zIndex: 4,
     overflowScrolling: 'touch',
   },

@@ -6,6 +6,10 @@ import BrandingWatermarkIcon from '@material-ui/icons/BrandingWatermarkOutlined'
 import ReorderIcon from '@material-ui/icons/Reorder';
 import WorkIcon from '@material-ui/icons/Work';
 
+import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'; // 대쉬보드
+import EqualizerIcon from '@material-ui/icons/Equalizer'; // 채널 분석
+import SettingsIcon from '@material-ui/icons/Settings'; // 내 정보
+
 // Page Components
 import Dashboard from './Dashboard';
 import HighlightAnalysis from './HighlightAnalysis';
@@ -53,7 +57,7 @@ const dashboardRoutes: MypageRoute[] = [
     nested: true,
     subRoutes: [
       {
-        path: '/stream',
+        path: '/each-stream',
         name: '방송별 비교',
         layout: '/mypage/stream-analysis',
         component: StreamAnalysis, // 해당 페이지 컴포넌트를 여기에
@@ -65,7 +69,7 @@ const dashboardRoutes: MypageRoute[] = [
         component: PeriodAnalysis// 해당 페이지 컴포넌트를 여기에
       },
       {
-        path: '/period-vs-period',
+        path: '/term-to-term',
         name: '기간 대 기간 분석',
         layout: '/mypage/stream-analysis',
         component: PeriodVsPeriodAnalysis// 해당 페이지 컴포넌트를 여기에
@@ -86,7 +90,7 @@ const dashboardRoutes: MypageRoute[] = [
         component: VideoAnalysis // 해당 페이지 컴포넌트를 여기에
       },
       {
-        path: '/period',
+        path: '/each-erioud',
         name: '기간별 분석',
         layout: '/mypage/channel-analysis',
         component: PeriodAnalysis// 해당 페이지 컴포넌트를 여기에

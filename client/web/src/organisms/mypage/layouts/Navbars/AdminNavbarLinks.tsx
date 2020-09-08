@@ -12,6 +12,8 @@ import Home from '@material-ui/icons/Home';
 import useAxios from 'axios-hooks';
 import useAnchorEl from '../../../../utils/hooks/useAnchorEl';
 import NotificationPopper from './NotificationPopper';
+// style
+import useNavbarStyles from './Navbar.style';
 
 export interface Notification {
   index: number;
@@ -23,11 +25,13 @@ export interface Notification {
 
 function HeaderLinks(): JSX.Element {
   const notificationRef = useRef<HTMLButtonElement | null>(null);
+  const classes = useNavbarStyles();
   const {
     anchorEl, handleAnchorOpen, handleAnchorOpenWithRef, handleAnchorClose
   } = useAnchorEl();
 
   // 개인 알림 - GET Request
+  // userId 쿠키 or 헤더 토큰에서 추출
   const [{ data: getData, loading: getLoading, error: getError }, excuteGet] = useAxios({
     url: 'http://localhost:3000/notification',
     params: {
@@ -54,7 +58,7 @@ function HeaderLinks(): JSX.Element {
             to="/"
             component={Link}
           >
-            <Home />
+            <Home className={classes.rightGridIcon} />
           </IconButton>
         </Tooltip>
       </Hidden>
@@ -75,8 +79,7 @@ function HeaderLinks(): JSX.Element {
                 : (null)}
               color="secondary"
             />
-
-            <Notifications />
+            <Notifications className={classes.rightGridIcon} />
           </IconButton>
         </Tooltip>
       </Hidden>

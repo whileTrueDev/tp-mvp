@@ -38,8 +38,8 @@ const UserDashboard = (): JSX.Element => {
             <TestSidebar routes={routes.filter((r) => !r.noTab)} />
           </Paper>
         </Grid>
-        <Grid item xs={9}>
-          <div className={classes.mainPanel} ref={mainPanel}>
+        <Grid item xs={9} alignContent="center" className={classes.mainPanel} ref={mainPanel}>
+          <div>
             <Navbar
               handleDrawerToggle={handleDrawerToggle}
               routes={routes}
