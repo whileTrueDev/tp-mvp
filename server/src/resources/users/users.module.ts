@@ -15,7 +15,7 @@ import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
     PlatformYoutubeEntity,
     UserEntity,
   ]),
-  forwardRef(() => AuthModule)
+  forwardRef(() => AuthModule), // Resolve circular dependencies between Moduels
   ],
   providers: [UsersService],
   controllers: [UsersController],

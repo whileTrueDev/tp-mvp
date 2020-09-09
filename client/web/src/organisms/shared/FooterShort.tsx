@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   footer: {
-    position: 'absolute',
-    bottom: 20,
+    position: 'relative',
+    bottom: theme.spacing(2),
   },
   centerflex: {
     display: 'flex',

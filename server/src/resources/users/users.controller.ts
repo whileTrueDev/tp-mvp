@@ -14,7 +14,7 @@ import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserEntity } from './entities/user.entity';
-import { certificationType, certificationInfo } from '../../interfaces/certification.interface';
+import { CertificationType, CertificationInfo } from '../../interfaces/certification.interface';
 
 @Controller('users')
 export class UsersController {
@@ -27,10 +27,10 @@ export class UsersController {
   // + 본인인증에 대한 여부 변수를 포함하여 전달.
   @Get('/id')
   async findId(
-    @Query() query : certificationType,
+    @Query() query : CertificationType,
   ): Promise<Pick<UserEntity, 'userId'>> {
     if (query.impUid) {
-      const { userDI, name }: certificationInfo = await this.authService
+      const { userDI, name }: CertificationInfo = await this.authService
         .getCertificationInfo(query.impUid);
       return this.usersService.findID(name, null, userDI);
     }
@@ -41,7 +41,7 @@ export class UsersController {
   async findPassword(
     @Query('impUid') impUid : string,
   ) : Promise<string> {
-    const { userDI }:certificationInfo = await this.authService.getCertificationInfo(impUid);
+    const { userDI }:CertificationInfo = await this.authService.getCertificationInfo(impUid);
     return this.usersService.findPW(userDI);
   }
 

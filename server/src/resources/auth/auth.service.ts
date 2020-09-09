@@ -11,7 +11,7 @@ import axios from 'axios';
 import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
-import { certificationInfo } from '../../interfaces/certification.interface';
+import { CertificationInfo } from '../../interfaces/certification.interface';
 
 @Injectable()
 export class AuthService {
@@ -46,7 +46,7 @@ export class AuthService {
     };
   }
 
-  async getCertificationInfo(impUid : string): Promise<certificationInfo> {
+  async getCertificationInfo(impUid : string): Promise<CertificationInfo> {
     try {
       // 인증 토큰 발급 받기
       const getToken = await axios({
