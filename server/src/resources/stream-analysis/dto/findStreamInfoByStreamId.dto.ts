@@ -1,11 +1,13 @@
 import {
-  IsString,
+  ValidateNested, ArrayMinSize,
+  ArrayMaxSize, IsArray
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { EachStream } from './eachStream.dto';
 
 export class findStreamInfoByStreamId {
-  @IsString()
-  streamId: string;
-
-  @IsString()
-  platform: 'twitch' | 'afreeca' | 'youtube'
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EachStream)
+  streams: EachStream[];
 }

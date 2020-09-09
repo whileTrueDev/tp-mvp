@@ -1,12 +1,14 @@
 import React from 'react';
+// @material-ui core components
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Cached from '@material-ui/icons/Cached';
 import Typography from '@material-ui/core/Typography';
+// @material-ui icons
+import Cached from '@material-ui/icons/Cached';
 // styles
 import useNavbarStyles from './Navbar.style';
 
@@ -44,6 +46,9 @@ const StyledMenuItem = withStyles((theme) => ({
 interface NavUserInfoInterface{
   username : string;
   subscribePerioud: string;
+  isSubscribe: boolean;
+  subscribeStartAt: Date;
+  subscribeEndAt: Date;
 }
 
 interface NavbarUserListProps{

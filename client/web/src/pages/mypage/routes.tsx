@@ -1,17 +1,11 @@
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
-// Material Icons
-import DashboardIcon from '@material-ui/icons/DashboardOutlined';
-import PersonIcon from '@material-ui/icons/PersonOutline';
-import BrandingWatermarkIcon from '@material-ui/icons/BrandingWatermarkOutlined';
-import ReorderIcon from '@material-ui/icons/Reorder';
-import WorkIcon from '@material-ui/icons/Work';
 
-import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'; // 대쉬보드
-import EqualizerIcon from '@material-ui/icons/Equalizer'; // 채널 분석
-import SettingsIcon from '@material-ui/icons/Settings'; // 내 정보
-import ConfirmationNumberOutlinedIcon from '@material-ui/icons/ConfirmationNumberOutlined'; // 방송 정보 90 도 회전
-import LocalMoviesOutlinedIcon from '@material-ui/icons/LocalMoviesOutlined'; // 방송 정보
-import SwitchVideoOutlinedIcon from '@material-ui/icons/SwitchVideoOutlined'; // 방송 정보
+// atoms SvgIcons
+import DashboardIcon from '../../atoms/sidebar-icons/DashboardIcon';
+import EditPointAnalysisIcon from '../../atoms/sidebar-icons/EditPointAnalysisIcon';
+import MyInfoIcon from '../../atoms/sidebar-icons/MyInfoIcon';
+import StreamAnalysisIcon from '../../atoms/sidebar-icons/StreamAnalysisIcon';
+import ChannelAnalysisIcon from '../../atoms/sidebar-icons/ChannelAnalysisIcon';
 
 // Page Components
 import Dashboard from './Dashboard';
@@ -22,9 +16,6 @@ import PeriodVsPeriodAnalysis from './stream-analysis/PeriodVsPeriodAnalysis';
 import VideoAnalysis from './channel-analysis/VideoAnalysis';
 import Settings from './my-office/Settings';
 import Subscribe from './my-office/Subscribe';
-
-// TEST PCOmpon
-// import TEST from '../../organisms/mypage/layouts/Navbars/TEST';
 
 export interface MypageRoute {
   path: string;
@@ -48,14 +39,14 @@ const dashboardRoutes: MypageRoute[] = [
   {
     path: '/highlight',
     name: '편집점 분석',
-    icon: BrandingWatermarkIcon,
+    icon: EditPointAnalysisIcon,
     component: HighlightAnalysis, // 해당 페이지 컴포넌트를 여기에
     layout: '/mypage',
   },
   {
     path: '/stream-analysis',
     name: '방송 분석',
-    icon: WorkIcon,
+    icon: StreamAnalysisIcon,
     layout: '/mypage',
     nested: true,
     subRoutes: [
@@ -82,7 +73,7 @@ const dashboardRoutes: MypageRoute[] = [
   {
     path: '/channel-analysis',
     name: '채널 분석',
-    icon: ReorderIcon,
+    icon: ChannelAnalysisIcon,
     layout: '/mypage',
     nested: true,
     subRoutes: [
@@ -104,7 +95,7 @@ const dashboardRoutes: MypageRoute[] = [
     path: '/my-office',
     name: '내 정보 관리',
     layout: '/mypage',
-    icon: PersonIcon,
+    icon: MyInfoIcon,
     nested: true,
     subRoutes: [
       {

@@ -17,7 +17,7 @@ export class NotificationEntity {
   content: string;
 
   @Column('timestamp')
-  dateform: string;
+  dateform: Date;
 
   @Column()
   readState: number;

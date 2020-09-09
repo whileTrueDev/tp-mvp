@@ -9,11 +9,15 @@ import IconButton from '@material-ui/core/IconButton';
 // @material-ui/icons
 import Notifications from '@material-ui/icons/Notifications';
 import Home from '@material-ui/icons/Home';
+// axios-hooks
 import useAxios from 'axios-hooks';
 import useAnchorEl from '../../../../utils/hooks/useAnchorEl';
+// notificaiton list component
 import NotificationPopper from './NotificationPopper';
 // style
 import useNavbarStyles from './Navbar.style';
+// type
+import { MypageRoute as MypageRouteType } from '../../../../pages/mypage/routes';
 
 export interface Notification {
   index: number;
@@ -23,7 +27,12 @@ export interface Notification {
   readState: number;
 }
 
-function HeaderLinks(): JSX.Element {
+interface HeaderLinksProps {
+  routes: MypageRouteType[];
+}
+
+function HeaderLinks(props: HeaderLinksProps): JSX.Element {
+  const { routes } = props;
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const classes = useNavbarStyles();
   const {
@@ -41,7 +50,7 @@ function HeaderLinks(): JSX.Element {
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
-
+  const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     if (changeReadState) {
       excuteGet();
@@ -55,7 +64,7 @@ function HeaderLinks(): JSX.Element {
         <Tooltip title="홈으로 이동">
           <IconButton
             aria-label="to-home"
-            to="/"
+            to={routes[0].path}
             component={Link}
           >
             <Home className={classes.rightGridIcon} />
@@ -66,6 +75,7 @@ function HeaderLinks(): JSX.Element {
       <Hidden smDown>
         <Tooltip title="알림">
           <IconButton
+            style={{ marginRight: '27px' }}
             aria-label="notifications"
             ref={notificationRef}
             onClick={(e): void => {

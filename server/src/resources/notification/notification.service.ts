@@ -1,8 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable, InternalServerErrorException, BadRequestException, HttpException, HttpStatus
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotificationEntity } from './entities/notification.entity';
 import { ChangeReadState } from './dto/changeReadState.dto';
+import { FindAllNotifications } from './dto/findAllNotifications.dto';
 
 @Injectable()
 export class NotificationService {
@@ -11,14 +14,14 @@ export class NotificationService {
       private readonly notificationRepository: Repository<NotificationEntity>,
   ) {}
 
-  async findAll(userId: string): Promise<NotificationEntity[]> {
-    // 로그인한 유저 아이디와 일치하는 모든 알림을 검색
+  async findAll(findAllRequest: FindAllNotifications): Promise<NotificationEntity[]> {
+    // 로그인한 유저 아이디와 일치하는 모든 알림을 검색 (빈 리스트 포함)
     const notificationList = await this.notificationRepository
       .createQueryBuilder()
-      .where('userId = :id', { id: userId })
+      .where('userId = :id', { id: findAllRequest.userId })
       .getMany()
       .catch((err) => {
-        throw new InternalServerErrorException(err);
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notification ... ');
       });
 
     return notificationList;
@@ -36,13 +39,13 @@ export class NotificationService {
       .andWhere('index= :notiIndex', { notiIndex: changeReadState.index })
       .execute()
       .catch((err) => {
-        throw new InternalServerErrorException(err);
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notification ... ');
       });
 
-    if (updateResult.affected > 0) {
-      return true;
+    if (updateResult.affected < 1) {
+      throw new HttpException('Request Notification Index is Invalid ... ', HttpStatus.BAD_REQUEST);
     }
 
-    return false;
+    return true;
   }
 }

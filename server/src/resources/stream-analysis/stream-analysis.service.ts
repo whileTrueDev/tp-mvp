@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   Repository,
 } from 'typeorm';
-import { findStreamInfoByStreamId as Stream } from './dto/findStreamInfoByStreamId.dto';
+import { findStreamInfoByStreamId as Streams } from './dto/findStreamInfoByStreamId.dto';
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
 
@@ -19,35 +19,37 @@ export class StreamAnalysisService {
     input   :  streamId , platform
     output  :  chat_count , smile_count , viewer or subscribe_count
   */
-  async findStreamInfoByStreamId(stream1: Stream, stream2: Stream): Promise<StreamSummaryEntity[]> {
-    // streamId 를 통해 각 stream 의 정보를 조회한다.
-
-    const streamInfo1 = await this.streamSummaryRepository
+  async findStreamInfoByStreamId(streams: Streams)
+  : Promise<StreamSummaryEntity[]> {
+    console.log(streams);
+    const streamInfoBase = await this.streamSummaryRepository
       .createQueryBuilder()
-      .where('streamId = :id', { id: stream1.streamId })
-      .andWhere('platform = :platform', { platform: stream1.platform })
+      .where('streamId = :id', { id: streams[0].streamId })
+      .andWhere('platform = :platform', { platform: streams[0].platform })
       .getOne()
       .catch((err) => {
-        throw new InternalServerErrorException(err, 'findStreamInfoByStreamId Error');
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });
 
-    const streamInfo2 = await this.streamSummaryRepository
-      .createQueryBuilder()
-      .where('streamId = :id', { id: stream2.streamId })
-      .andWhere('platform = :platform', { platform: stream2.platform })
-      .getOne()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'findStreamInfoByStreamId Error');
-      });
+    if (streams[1]) {
+      const streamInfoCompare = await this.streamSummaryRepository
+        .createQueryBuilder()
+        .where('streamId = :id', { id: streams[1].streamId })
+        .andWhere('platform = :platform', { platform: streams[1].platform })
+        .getOne()
+        .catch((err) => {
+          throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+        });
+      return [streamInfoBase, streamInfoCompare];
+    }
 
-    return [streamInfo1, streamInfo2];
+    return [streamInfoBase, null];
   }
 
   /*
     input   :  startAt , endAt , userId
     output  :  chat_count , smile_count , viewer or subscribe_count
   */
-
   async findStreamInfoByTerm(userId: string, startAt: Date, endAt: Date)
   : Promise<StreamSummaryEntity[]> {
     const streamsTermData: StreamSummaryEntity[] = await this.streamSummaryRepository
@@ -62,7 +64,7 @@ export class StreamAnalysisService {
       .andWhere('streams.startAt <= :endDate', { endDate: endAt })
       .getMany()
       .catch((err) => {
-        throw new InternalServerErrorException(err, 'Stream Term Anlaysis Error');
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });
 
     return streamsTermData;

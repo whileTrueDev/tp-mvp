@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useNavbarStyles = makeStyles((theme: Theme) => ({
   appBar: {
-    backgroundColor: '#4B5AC7',
+    backgroundColor: theme.palette.primary.main, // '#4B5AC7'
     boxShadow: 'none',
     borderBottom: '0',
     marginBottom: '0',
@@ -44,8 +44,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     marginTop: '9px',
   },
   rightGridIcon: {
-    fontSize: '27px',
-    marginRight: '27px',
+    fontSize: '32px',
   },
   useNameButton: {
     padding: '0px',
@@ -53,7 +52,20 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     marginLeft: '107px',
     marginRight: '15px'
   },
-
+  subscribeChip: {
+    background: '#FFFF',
+    padding: '5px',
+    marginLeft: '10px',
+    fontWeight: 'bold',
+    color: '#04006E'
+  },
+  notSubscribeChip: {
+    background: 'black',
+    padding: '5px',
+    marginLeft: '10px',
+    fontWeight: 'bold',
+    color: '#FFFF'
+  }
 }));
 
 export default useNavbarStyles;

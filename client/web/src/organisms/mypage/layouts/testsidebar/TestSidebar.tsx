@@ -1,6 +1,5 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import classNames from 'classnames';
 // @material-ui/core components
 import {
   Grid, Drawer,
@@ -44,7 +43,7 @@ export default function TestSidebar({
   };
 
   const links = (
-    <List className={classes.listWrapper}>
+    <List className={classes.listWrapper} style={{ marginTop: '98px' }}>
       <Divider />
       {routes.map((route) => (
         <NavLink // 서브라우터 존재시 해당 상위 탭 클릭시 하위 탭 첫 번째 페이지를 default 로 설정
@@ -68,16 +67,10 @@ export default function TestSidebar({
                   className={classes.accordian}
                 >
 
-                  <AccordionSummary
-                    className={classes.accordianHeader}
-                    // classes={{
-                    //   expanded: classes.active
-                    // }}
-                  >
-
+                  <AccordionSummary className={classes.accordianHeader}>
                     <Grid container xs={12} direction="row" justify="flex-start">
                       <Grid item xs={1} alignContent="center">
-                        {isActiveRoute(route.path) ? <MaximizeIcon style={{ transform: 'rotate(-90deg)', fontSize: '30px' }} /> : <div />}
+                        {isActiveRoute(route.path) ? <MaximizeIcon style={{ transform: 'rotate(-90deg)', fontSize: '32px', marginTop: '3px' }} /> : <div />}
                       </Grid>
                       <Grid item xs={3}>
                         {route.icon
@@ -113,7 +106,7 @@ export default function TestSidebar({
                               activeClassName="active"
                               key={subroute.layout + route.path}
                               className={classes.accordianList}
-                              style={{ textDecoration: 'none', color: 'black' }}
+                              style={{ textDecoration: 'none' }}
                             >
                               <ListItem button className={classes.subTabItem}>
                                 <Grid container direction="column" spacing={0} justify="flex-start">

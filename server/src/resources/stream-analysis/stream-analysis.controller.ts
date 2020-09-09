@@ -1,5 +1,5 @@
 import {
-  Controller, Body, Get,
+  Controller, Body, Get, ValidationPipe as ArrayValidationPipe, ParseArrayPipe
 } from '@nestjs/common';
 import { StreamAnalysisService } from './stream-analysis.service';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
@@ -18,11 +18,10 @@ export class StreamAnalysisController {
   */
   @Get('streams')
   getStreamsInfo(
-    @Body('stream1', new ValidationPipe()) stream1:findStreamInfoByStreamId,
-    @Body('stream2', new ValidationPipe()) stream2:findStreamInfoByStreamId
+    @Body(new ParseArrayPipe()) findInfoRequest: findStreamInfoByStreamId
   )
     : Promise<StreamSummaryEntity[]> {
-    return this.streamAnalysisService.findStreamInfoByStreamId(stream1, stream2);
+    return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
 
   /*
@@ -31,7 +30,7 @@ export class StreamAnalysisController {
   */
   @Get('term')
   getTermStreamsInfo(@Body(new ValidationPipe()) body: findStreamInfoByTerms)
-    : Promise<StreamSummaryEntity[]> {
+  : Promise<StreamSummaryEntity[]> {
     return this.streamAnalysisService
       .findStreamInfoByTerm(body.userId, body.startAt as Date, body.endAt as Date);
     // as Date 차후 프론트 데이터 포멧 확인후 수정

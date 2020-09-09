@@ -2,7 +2,6 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useTestStyle = makeStyles((theme: Theme) => ({
   root: {
-
   },
   center: {
     display: 'flex',
@@ -11,7 +10,7 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     padding: '0',
   },
   listWrapper: {
-    padding: '0px',
+    padding: '1px',
   },
   listText: {
     minheight: '74px',
@@ -64,10 +63,6 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     margin: '0px',
     border: '0px',
   },
-  active: {
-    // backgroundColor: theme.palette.primary.light,
-    color: 'black'
-  },
   subTabItem: {
     padding: '0',
     '&:hover,&:focus': {
@@ -80,11 +75,12 @@ const useTestStyle = makeStyles((theme: Theme) => ({
   },
   notSelectedTab: {
     color: '#868e96',
-
   },
   selectedIcon: {
     color: 'black',
     fontSize: '32px',
+    justifyContent: 'center',
+    textAlign: 'center'
   },
   notSelectedIcon: {
     color: 'primary',
