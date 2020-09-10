@@ -85,6 +85,8 @@ vscode의 Material Icon Theme를 설치합니다. ( Extensions => material-icon-
     "*.entity.ts": "sequelize",
     "*.config.ts": "settings",
     "*.style.ts": "css",
+    "*.roles.ts": "nest-decorator",
+    "*.decorator.ts": "nest-decorator",
 },
 "material-icon-theme.folders.associations": {
     "interfaces": "typescript",

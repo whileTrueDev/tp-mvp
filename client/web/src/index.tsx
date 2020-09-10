@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Switch, Route, BrowserRouter,
+  BrowserRouter, Switch, Route
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
-  CssBaseline, ThemeProvider, Paper, IconButton, Typography
+  CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-import Brightness7Icon from '@material-ui/icons/Brightness7';
-import Brightness4Icon from '@material-ui/icons/Brightness4';
-
+import Axios from 'axios';
+import { configure } from 'axios-hooks';
+// 
 import THEME_TYPE from './interfaces/ThemeType';
 import * as serviceWorker from './serviceWorker';
 import defaultTheme from './theme';
@@ -19,6 +19,12 @@ import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
+import Login from './pages/mainpage/Login';
+import FindId from './pages/others/FindId';
+import FindPassword from './pages/others/FindPassword';
+
+const axios = Axios.create({ baseURL: 'http://localhost:3000' });
+configure({ axios });
 
 function Index(): JSX.Element {
   // ******************************************************************
@@ -40,31 +46,11 @@ function Index(): JSX.Element {
 
         {/* 페이지 컴포넌트 */}
         <BrowserRouter>
-
-          {/* *********************************************** */}
-          {/* Example changing Theme !! */}
-          <Paper
-            style={{
-              height: '10vh', display: 'flex', justifyContent: 'center', alignItems: 'center'
-            }}
-          >
-            <Typography variant="h4">
-              트루포인트
-            </Typography>
-
-            {themeType === THEME_TYPE.DARK && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness4Icon /></IconButton>
-            )}
-            {themeType === THEME_TYPE.LIGHT && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness7Icon /></IconButton>
-            )}
-
-          </Paper>
-          {/* This is Example */}
-          {/* *********************************************** */}
-
           <Switch>
             <Route exact path="/" component={Main} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/find-id" component={FindId} />
+            <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             <Route exact pate="/mypage" component={Mypage} />
