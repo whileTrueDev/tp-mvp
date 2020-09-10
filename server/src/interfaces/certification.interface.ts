@@ -13,5 +13,5 @@ export interface CertificationInfo {
 
 export interface CheckIdType {
   userId? : string,
-  userDI? : string,
+  impUid? : string,
 }

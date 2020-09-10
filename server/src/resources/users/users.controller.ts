@@ -44,13 +44,18 @@ export class UsersController {
   async checkId(
     @Query() query : CheckIdType,
   ): Promise<boolean> {
+    if (query.impUid) {
+      const { userDI }: CertificationInfo = await this.authService
+        .getCertificationInfo(query.impUid);
+      return this.usersService.checkID({ userDI });
+    }
     return this.usersService.checkID(query);
   }
 
   @Patch('/password')
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto
-  ) : Promise<string> {
+  ) : Promise<boolean> {
     return this.usersService.findPW(userDI, password);
   }
 

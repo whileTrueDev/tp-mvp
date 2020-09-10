@@ -10,7 +10,6 @@ import { AuthService } from './auth.service';
 import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import { CheckCertificationDto } from './dto/searchIamportCertification.dto';
-import { ValidationPipe } from '../../pipes/validation.pipe';
 
 @Controller('auth')
 export class AuthController {

@@ -36,6 +36,8 @@ export default function FindAccountForm(): JSX.Element {
   // **************************************************
   // 스텝 할당을 위한 스테이트
   const [activeStep, setActiveStep] = React.useState(0);
+  const [helperText, setHelperOpen] = React.useState<string>();
+
   function handleBack() {
     setActiveStep((prev) => prev - 1);
   }
@@ -51,13 +53,8 @@ export default function FindAccountForm(): JSX.Element {
   }
 
   // 스텝 2 에러 알림창 렌더링을 위한 스테이트
-  const [helperOpen, setHelperOpen] = React.useState(false);
-  function handleHelperOpen() {
-    setHelperOpen(true);
-  }
-  function handleHelperClose() {
-    setHelperOpen(false);
-  }
+  function handleHelperOpen(errorMessage:string):void { setHelperOpen(errorMessage); }
+  function handleHelperClose():void { setHelperOpen(undefined); }
 
   // **************************************************
   // Input values
@@ -67,7 +64,7 @@ export default function FindAccountForm(): JSX.Element {
   // **************************************************
   // Request for finding Id
   const [foundedId, setFoundedId] = React.useState<string>();
-  const [{ loading, error }, getRequest] = useAxios(
+  const [{ loading }, getRequest] = useAxios(
     '/users/id', { manual: true }
   );
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
@@ -80,12 +77,17 @@ export default function FindAccountForm(): JSX.Element {
       }).then((res) => {
         if (res.data) {
           const { userId } = res.data;
-          const asteriskedUserId = transformIdToAsterisk(userId);
-          setFoundedId(asteriskedUserId);
-          // Handle to next step
-          handleNext();
+          if (userId) {
+            const asteriskedUserId = transformIdToAsterisk(userId);
+            setFoundedId(asteriskedUserId);
+            // Handle to next step
+            handleNext();
+          } else {
+            // 계정이 존재하지 않으므로
+            handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
+          }
         }
-      }).catch(() => { handleHelperOpen(); });
+      }).catch(() => { handleHelperOpen('아이디 정보를 불러오는 도중에 오류가 발생했습니다. support@mytruepoint.com으로 문의바랍니다.'); });
     }
   }
 
@@ -98,20 +100,24 @@ export default function FindAccountForm(): JSX.Element {
     }).then((res) => {
       if (res.data) {
         const { userId } = res.data;
-        const asteriskedUserId = transformIdToAsterisk(userId);
-        setFoundedId(asteriskedUserId);
-        // Handle to next step
-        handleNext();
+        if (userId) {
+          const asteriskedUserId = transformIdToAsterisk(userId);
+          setFoundedId(asteriskedUserId);
+          // Handle to next step
+          handleNext();
+        } else {
+          handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
+        }
       }
-    }).catch(() => { handleHelperOpen(); });
+    }).catch(() => { handleHelperOpen('아이디 정보를 불러오는 도중에 오류가 발생했습니다. support@mytruepoint.com으로 문의바랍니다.'); });
   });
 
   return (
     <div style={{ textAlign: 'center' }}>
       <TruepointLogo />
-      {helperOpen && error && (
+      { helperText && (
         <div className={classes.helper}>
-          <LoginHelper text="아이디 정보를 불러오는 도중에 오류가 발생했습니다. support@mytruepoint.com으로 문의바랍니다." />
+          <LoginHelper text={helperText} />
         </div>
       )}
 
@@ -239,9 +245,12 @@ export default function FindAccountForm(): JSX.Element {
         </div>
       </div>
       )}
+
+      {!(activeStep === 2 && foundedId) && (
       <div className={classes.subcontent}>
         <Button component={Link} to="/login">로그인 하러 가기</Button>
       </div>
+      )}
 
       {/* 데이터 불러오는 중 로딩 컴포넌트 */}
       {activeStep === 1 && loading && (<CenterLoading position="relative" />)}
