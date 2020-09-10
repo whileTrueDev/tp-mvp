@@ -8,15 +8,17 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
-from .pipelines import Afreecacreators
+from selenium.webdriver.common.keys import Keys
+from .pipelines import AfreecaActiveStreams
+from .pipelines import AfreecaTargetStreamers
 import requests, re
 from .configController import ConfigController
 import os
 
 chatAllData = []
 temporary_private = 0
+targetVideoId = None
 
 class SeleniumMiddleware(object):
 
@@ -33,7 +35,7 @@ class SeleniumMiddleware(object):
         self.config = ConfigController()
         dirpath = os.path.dirname(os.path.abspath(__file__))
         # CHROMEDRIVER_PATH = r'C:\Users\WHILETRUESECOND\Desktop\tp-mvp\collectors\afreecatv\crawler\crawler\drivers\chromedriver.exe'
-        CHROMEDRIVER_PATH = os.path.join(dirpath, r"\drivers\chromedriver.exe")
+        CHROMEDRIVER_PATH = os.path.join(dirpath, r"drivers/chromedriver.exe")
         WINDOW_SIZE = "1920, 1080"
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # 크롬창이 열리지 않게
@@ -64,12 +66,14 @@ class SeleniumMiddleware(object):
 
 
     def process_request( self, request, spider ):
+        afreecaActive = AfreecaActiveStreams()
         self.driver.get( request.url )
         sleep(3)
         self.driver.find_element_by_xpath('//*[@id="stop_screen"]/dl/dd[2]/a').click()
         self.creatorId  = request.url[26:-1]
         self.start_date = dt.strptime(self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[1]/span').text, '%Y-%m-%d %H:%M:%S')
         self.videoId = dt.strftime(self.start_date, '%Y%m%d%H%M%S') + self.creatorId
+        targetVideoId = self.videoId
         # 채팅창 제어 변수 초깃값
         chatNum = 1
         liveEndPoint = 0 # 생방송 상대 여부 판별
@@ -114,6 +118,7 @@ class SeleniumMiddleware(object):
                     
                 elif self.driver.find_element_by_xpath('//*[@id="afreecatv_player"]/div[12]/div/div/div[7]').get_attribute("style") == '':
                     lg.warning(f'{self.creatorId} 비밀번호 설정')
+                    afreecaActive.updateLiveCreator([self.creatorId], 'private-on')
                     temporary_private = temporary_private + 1
                     liveEndPoint = liveEndPoint + 1
                     return liveEndPoint 
@@ -174,8 +179,8 @@ class SeleniumMiddleware(object):
         return HtmlResponse( url=request.url, body=body, encoding='utf-8', request=request )
     
     def spider_closed(self, spider):
+        afreecaCreator = AfreecaActiveStreams()
         lg.info(f'{self.creatorId} 타겟방송 크롬브라우저 종료 및 프로세스 킬')
-        afreecaCreator = Afreecacreators()
         afreecaCreator.updateLiveCreator([self.creatorId],'turn-off')
         self.driver.close()
         self.driver.quit()

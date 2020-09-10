@@ -2,22 +2,28 @@ import scrapy
 
 
 class AfreecatvChat(scrapy.Item):
-    viewer = scrapy.Field()
+    viwer = scrapy.Field()
+    viewerId = scrapy.Field()
     category = scrapy.Field()
     videoTitle = scrapy.Field()
+    videoId = scrapy.Field()
     text = scrapy.Field()
     is_mobile = scrapy.Field()
     sex = scrapy.Field()
     grade = scrapy.Field()
-    chattime = scrapy.Field()
-    userId = scrapy.Field()
+    chatTime = scrapy.Field()
     like = scrapy.Field()
     bookmark = scrapy.Field()
     creatorId = scrapy.Field()
+    playTime = scrapy.Field()
 
-class AfreecatvCreators(scrapy.Item):
-    creatorName = scrapy.Field()
-    startAt = scrapy.Field()
+class AfreecaStreams(scrapy.Item):
+    videoId = scrapy.Field()
+    videoTitle = scrapy.Field()
+    startDate = scrapy.Field()
+    endDate = scrapy.Field()
+    bookmark = scrapy.Field()
     resolution = scrapy.Field()
     videoQuality = scrapy.Field()
-    endAt = scrapy.Field()
+    needAnalysis = scrapy.Field()
+    needCollect = scrapy.Field()

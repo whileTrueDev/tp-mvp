@@ -1,7 +1,8 @@
 import schedule
 import time
-from crawler.pipelines import Afreecacreators
-from crawler.spiders import creatorList as cL, afreecatv as af
+from crawler.pipelines import AfreecaActiveStreams
+from crawler.pipelines import AfreecaTargetStreamers
+from crawler.spiders import afreecatv as af
 import requests
 import re
 import os
@@ -9,10 +10,13 @@ from crawler.logger import logger as lg
 from multiprocessing import Pool
 
 def liveCreatorChecker():
+    afTargetStreamers = AfreecaTargetStreamers()
+    targetStreamers = afTargetStreamers.getTargetUser() # 현재 아프리카 플랫폼 구독중인 아이들
+    
     creatorChanels = {} # 전체 크리에이터 크리에이터 : 크리에이터 방송 채널
     nowliveCreator = [] # 현재 방송중인 크리에이터들 list
     
-    for creator in cL.creatorList:
+    for creator in targetStreamers:
         creatorChanels[creator] = f'http://play.afreecatv.com/{creator}/'
 
     for creator, creatorChanel in creatorChanels.items():
@@ -22,7 +26,7 @@ def liveCreatorChecker():
         if getTitle != '방송중이지 않습니다':
             nowliveCreator.append(creator)
 
-    afreecaCreator  = Afreecacreators()
+    afreecaCreator  = AfreecaActiveStreams()
     liveCreator = afreecaCreator.getLiveCreator()
     afreecaCreator.updateLiveCreator(nowliveCreator, 'turn-on')
     
