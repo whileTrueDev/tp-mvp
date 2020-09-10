@@ -2,14 +2,11 @@ import React from 'react';
 // @material-ui/core components
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 // @material-ui/icons
 import EventNoteIcon from '@material-ui/icons/EventNote';
-import MenuIcon from '@material-ui/icons/Menu';
 // core components
 import useNavbarStyles from './Navbar.style';
 import HeaderLinks from './HeaderLinks';
@@ -28,12 +25,11 @@ interface NavUserInfoInterface{
 export interface NavbarProps {
   navUserInfoList: NavUserInfoInterface[];
   routes: MypageRouteType[];
-  handleDrawerToggle: () => void;
 }
 
 function Navbar(props: NavbarProps): JSX.Element {
   const classes = useNavbarStyles();
-  const { navUserInfoList, routes, handleDrawerToggle } = props;
+  const { navUserInfoList, routes } = props;
   const [selectedUserIndex, setSelectedUserIndex] = React.useState<number>(0);
   const currDate = new Date();
 
@@ -46,7 +42,7 @@ function Navbar(props: NavbarProps): JSX.Element {
     <AppBar className={classes.appBar}>
       <Toolbar className={classes.container}>
 
-        <Grid container justify="space-between" direction="row" xs={12}>
+        <Grid container justify="space-between" direction="row">
           <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
             {/* 사용중인 유저 이름 , 클릭시 구독 유저 드롭다운 리스트 */}
             <Grid item>
@@ -58,13 +54,10 @@ function Navbar(props: NavbarProps): JSX.Element {
             </Grid>
 
             {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 */}
-            <Grid item style={{ padding: 0 }}>
-              <EventNoteIcon className={classes.leftGridIcon} />
-            </Grid>
-
             {/* Case Date Type */}
-            <Grid item>
-              <Typography variant="h5" className={classes.subscribePeriod}>
+            <Grid item className={classes.subscribePeriod}>
+              <EventNoteIcon className={classes.leftGridIcon} style={{ padding: 0, margin: 0 }} />
+              <Typography variant="h5">
                 {`${navUserInfoList[selectedUserIndex].subscribeStartAt.toLocaleDateString()} ~
                 ${navUserInfoList[selectedUserIndex].subscribeEndAt.toLocaleDateString()}`}
               </Typography>

@@ -25,11 +25,6 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     overflow: 'auto',
     backgroundColor: theme.palette.background.default,
   },
-  content: {
-    margin: theme.spacing(2),
-    marginLeft: theme.spacing(4),
-    padding: theme.spacing(4),
-  },
 }));
 
 export default useLayoutStyles;

@@ -49,7 +49,7 @@ export default function TestSidebar({
               <Accordion square className={classes.accordian}>
                 <AccordionSummary className={classes.accordianHeader}>
                   <Grid container direction="row" justify="flex-start">
-                    <Grid item xs={1} alignContent="center">
+                    <Grid item xs={1}>
                       {isActiveRoute(route.path) && (
                         <MaximizeIcon className={classes.selectedIndicator} />
                       )}
@@ -86,10 +86,9 @@ export default function TestSidebar({
                 {route.subRoutes && (
                 <AccordionDetails className={classes.subRouteList}>
                   {route.subRoutes.map((subroute) => (
-                    <Link
-                      key={subroute.layout + route.path}
+                    <div
+                      key={subroute.layout + subroute.path}
                       className={classes.subRouteLink}
-                      to={subroute.layout + subroute.path}
                     >
                       <ArrowForwardIosIcon color="primary" fontSize="small" />
                       <Typography
@@ -98,10 +97,12 @@ export default function TestSidebar({
                           [classes.selected]: isActiveRoute(subroute.path),
                           [classes.notSelectedTab]: !isActiveRoute(subroute.path),
                         })}
+                        to={subroute.layout + subroute.path}
+                        component={Link}
                       >
                         {subroute.name}
                       </Typography>
-                    </Link>
+                    </div>
                   ))}
                 </AccordionDetails>
                 )}

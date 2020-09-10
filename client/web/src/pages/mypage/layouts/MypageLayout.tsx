@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Switch, Route } from 'react-router-dom';
 // material-ui components layout
 import routes from '../routes';
 // css
 import useLayoutStyles from './MypageLayout.style';
 // organisms
-import Navbar from '../../../organisms/mypage/layouts/Navbars/Navbar';
+import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
 
 interface NavUserInfoInterface{
@@ -21,11 +21,6 @@ const UserDashboard = (): JSX.Element => {
 
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
-
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const handleDrawerToggle = (): void => {
-    setMobileOpen(!mobileOpen);
-  };
 
   useEffect(() => {
     document.title = 'Truepoint | mypage';
@@ -68,11 +63,10 @@ const UserDashboard = (): JSX.Element => {
         <nav className={classes.appbarWrapper}>
           <Navbar
             navUserInfoList={navUserInfoList}
-            handleDrawerToggle={handleDrawerToggle}
             routes={routes}
           />
         </nav>
-        <main className={classes.content}>
+        <main>
           <Switch>
             {routes.map((route) => (
               route.component

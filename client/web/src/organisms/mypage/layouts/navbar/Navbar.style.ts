@@ -9,7 +9,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
     display: 'block',
     zIndex: 9999,
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.dark,
   },
   container: {
     paddingRight: '0px',
@@ -22,7 +22,6 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     textTransform: 'none',
     fontWeight: 'bold',
     lineHeight: '100%',
-    marginRight: theme.spacing(1),
     textDecoration: 'underline',
   },
   leftGridIcon: {
@@ -35,11 +34,14 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
   useNameButton: {
     padding: 0,
     height: '100%',
-    marginLeft: theme.spacing(4),
+    marginLeft: theme.spacing(8),
     marginRight: theme.spacing(2)
   },
   subscribePeriod: {
-    textDecoration: 'underline', color: theme.palette.common.white
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'underline',
+    color: theme.palette.common.white
   },
   subscribeChip: {
     background: theme.palette.common.white,
