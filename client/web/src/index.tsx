@@ -19,6 +19,8 @@ import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Login from './pages/mainpage/Login';
+import Regist from './pages/mainpage/Regist';
+
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 
@@ -48,6 +50,7 @@ function Index(): JSX.Element {
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/regist" component={Regist} />
             <Route exact path="/find-id" component={FindId} />
             <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
