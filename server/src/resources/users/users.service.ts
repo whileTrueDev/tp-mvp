@@ -3,11 +3,15 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
+import { UserTokenEntity } from './entities/userToken.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(UserEntity) private readonly usersRepository: Repository<UserEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
+    @InjectRepository(UserTokenEntity)
+    private readonly userTokensRepository: Repository<UserTokenEntity>,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -86,5 +90,23 @@ export class UsersService {
       return password;
     }
     throw new HttpException('ID is not found', HttpStatus.BAD_REQUEST);
+  }
+
+  // **********************************************
+  // User Tokens 관련
+
+  // Find User Tokens
+  async findOneToken(refreshToken: string): Promise<UserTokenEntity> {
+    const userToken = await this.userTokensRepository.findOne({
+      refreshToken
+    });
+
+    return userToken;
+  }
+  // Update User Tokens
+  async saveRefreshToken(
+    newTokenEntity: UserTokenEntity
+  ): Promise<UserTokenEntity> {
+    return this.userTokensRepository.save(newTokenEntity);
   }
 }

@@ -7,11 +7,11 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import {
   CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-import Axios from 'axios';
 import { configure } from 'axios-hooks';
-// 
-import THEME_TYPE from './interfaces/ThemeType';
+import axios from './utils/axios';
 import * as serviceWorker from './serviceWorker';
+// styles
+import THEME_TYPE from './interfaces/ThemeType';
 import defaultTheme from './theme';
 import './assets/global.css';
 // Pages
@@ -22,9 +22,7 @@ import Login from './pages/mainpage/Login';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 
-const axios = Axios.create({ baseURL: 'http://localhost:3000' });
 configure({ axios });
-
 function Index(): JSX.Element {
   // ******************************************************************
   // Dark/Light theme changing
