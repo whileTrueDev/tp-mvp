@@ -56,17 +56,19 @@ class AfreecatvSpider(scrapy.Spider):
         lg.info(f'{creatorName}님의 채팅 데이터를 저장합니다.')
         
         for chatData in chatAllData:
+            item['videoId'] = chatData['videoId']
             item['text'] = chatData['text']
             item['is_mobile'] = chatData['is_mobile']
             item['sex'] = chatData['sex']
             item['grade'] = chatData['grade']
-            item['chattime'] = chatData['chattime']
-            item['userId'] = chatData['userId']
+            item['chatTime'] = chatData['chatTime']
+            item['viewerId'] = chatData['viewerId']
             item['viewer'] = chatData['viewer']
             item['category'] = chatData['category']
             item['videoTitle'] = chatData['videoTitle']
             item['like'] = chatData['like']
             item['bookmark'] = chatData['bookmark']
             item['creatorId'] = chatData['creatorId']
+            item['playTime'] = chatData['playTime']
             yield item
         
