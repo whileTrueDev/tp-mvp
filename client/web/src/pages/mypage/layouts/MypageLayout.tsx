@@ -1,14 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 // material-ui components layout
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Sidebar from '../../../organisms/mypage/layouts/sidebars/Sidebar';
 import routes from '../routes';
 // css
 import useLayoutStyles from './MypageLayout.style';
 // organisms
-import Navbar from '../../../organisms/mypage/layouts/navbars/Navbar';
+import Navbar from '../../../organisms/mypage/layouts/Navbars/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
 
 interface NavUserInfoInterface{
@@ -38,7 +35,7 @@ const UserDashboard = (): JSX.Element => {
   });
 
   // navUserInfoList 하드코딩
-  const [navUserInfoList, setNavUserInfoList] = React.useState<NavUserInfoInterface[]>([
+  const [navUserInfoList] = React.useState<NavUserInfoInterface[]>([
     {
       username: 'test1',
       subscribePerioud: '2019-09-01 ~ 2019-09-3',
@@ -64,48 +61,41 @@ const UserDashboard = (): JSX.Element => {
 
   return (
     <div className={classes.wrapper}>
+      <aside className={classes.sidebarWrapper}>
+        <TestSidebar routes={routes.filter((r) => !r.noTab)} />
+      </aside>
+      <div ref={mainPanel} className={classes.mainPanel}>
+        <nav className={classes.appbarWrapper}>
+          <Navbar
+            navUserInfoList={navUserInfoList}
+            handleDrawerToggle={handleDrawerToggle}
+            routes={routes}
+          />
+        </nav>
+        <main className={classes.content}>
+          <Switch>
+            {routes.map((route) => (
+              route.component
+                ? (
+                  <Route
+                    path={route.layout + route.path}
+                    component={route.component}
+                    key={route.name}
+                  />
+                ) : (
+                  route.subRoutes && route.subRoutes.map((subRoute) => (
+                    <Route
+                      path={subRoute.layout + subRoute.path}
+                      component={subRoute.component}
+                      key={subRoute.name}
+                    />
+                  ))
+                )
+            ))}
 
-      <Grid container justify="center" direction="row">
-        <Grid container item xs={2} className={classes.listWrapper}>
-          <Paper className={classes.listWrapper}>
-            <TestSidebar routes={routes.filter((r) => !r.noTab)} />
-          </Paper>
-        </Grid>
-        <Grid item xs={9} alignContent="center" className={classes.mainPanel} ref={mainPanel}>
-          <div>
-            <Navbar
-              navUserInfoList={navUserInfoList}
-              handleDrawerToggle={handleDrawerToggle}
-              routes={routes}
-            />
-            <div className={classes.content}>
-              <div className={classes.container}>
-                <Switch>
-                  {routes.map((route) => (
-                    route.component
-                      ? (
-                        <Route
-                          path={route.layout + route.path}
-                          component={route.component}
-                          key={route.name}
-                        />
-                      ) : (
-                        route.subRoutes && route.subRoutes.map((subRoute) => (
-                          <Route
-                            path={subRoute.layout + subRoute.path}
-                            component={subRoute.component}
-                            key={subRoute.name}
-                          />
-                        ))
-                      )
-                  ))}
-
-                </Switch>
-              </div>
-            </div>
-          </div>
-        </Grid>
-      </Grid>
+          </Switch>
+        </main>
+      </div>
     </div>
   );
 };

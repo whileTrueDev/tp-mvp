@@ -8,8 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 // @material-ui/icons
-import EventNote from '@material-ui/icons/EventNote';
-import Menu from '@material-ui/icons/Menu';
+import EventNoteIcon from '@material-ui/icons/EventNote';
+import MenuIcon from '@material-ui/icons/Menu';
 // core components
 import useNavbarStyles from './Navbar.style';
 import HeaderLinks from './HeaderLinks';
@@ -59,20 +59,13 @@ function Navbar(props: NavbarProps): JSX.Element {
 
             {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 */}
             <Grid item style={{ padding: 0 }}>
-              <EventNote className={classes.leftGridIcon} />
+              <EventNoteIcon className={classes.leftGridIcon} />
             </Grid>
-
-            {/* Case String Type */}
-            {/* <Grid item>
-              <Typography style={{ fontSize: '25px', textDecoration: 'underline' }}>
-                {navUserInfoList[selectedUserIndex].subscribePerioud}
-              </Typography>
-            </Grid> */}
 
             {/* Case Date Type */}
             <Grid item>
-              <Typography style={{ fontSize: '25px', textDecoration: 'underline' }}>
-                {`${navUserInfoList[selectedUserIndex].subscribeStartAt.toLocaleDateString()}~
+              <Typography variant="h5" className={classes.subscribePeriod}>
+                {`${navUserInfoList[selectedUserIndex].subscribeStartAt.toLocaleDateString()} ~
                 ${navUserInfoList[selectedUserIndex].subscribeEndAt.toLocaleDateString()}`}
               </Typography>
             </Grid>
@@ -91,17 +84,6 @@ function Navbar(props: NavbarProps): JSX.Element {
           <Grid item container md={2} alignContent="center">
             {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
             <HeaderLinks routes={routes} />
-
-            <Hidden mdUp implementation="css">
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerToggle}
-              >
-                <Menu />
-              </IconButton>
-            </Hidden>
-
           </Grid>
         </Grid>
 

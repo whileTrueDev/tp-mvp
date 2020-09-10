@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Router, Switch, Route, BrowserRouter,
+  Switch, Route, BrowserRouter,
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
@@ -18,7 +18,7 @@ import './assets/global.css';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
-import UserDashboard from './pages/mypage/layouts/MypageLayout';
+import Mypage from './pages/mypage/layouts/MypageLayout';
 
 function Index(): JSX.Element {
   // ******************************************************************
@@ -31,14 +31,6 @@ function Index(): JSX.Element {
   const THEME = createMuiTheme({
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
-    overrides: {
-      MuiDrawer: {
-        // paperAnchorLeft: {
-        //   marginTop: '10vh',
-        //   marginLeft: '200px',
-        // }
-      }
-    }
   });
 
   return (
@@ -75,7 +67,7 @@ function Index(): JSX.Element {
             <Route exact path="/" component={Main} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
-            <Route exact pate="/mypage" component={UserDashboard} />
+            <Route exact pate="/mypage" component={Mypage} />
             {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
             {/* 페이지 컴포넌트가 여기에 위치합니다. */}
           </Switch>

@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 // @material-ui icons
@@ -12,11 +11,11 @@ import Cached from '@material-ui/icons/Cached';
 // styles
 import useNavbarStyles from './Navbar.style';
 
-const StyledMenu = withStyles({
+const StyledMenu = withStyles((theme) => ({
   paper: {
-    border: '1px solid #d3d4d5',
+    border: `1px solid ${theme.palette.divider}`,
   },
-})((props: MenuProps) => (
+}))((props: MenuProps) => (
   <Menu
     elevation={0}
     getContentAnchorEl={null}
@@ -80,14 +79,11 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
           key={user.username}
           onClick={() => { handleSelectedUserIndex(user); handleClose(); }}
         >
-          <ListItemIcon>
-            <Cached fontSize="small" />
-          </ListItemIcon>
+          <Cached fontSize="small" style={{ marginRight: 16 }} />
           <ListItemText primary={user.username} />
         </StyledMenuItem>
       ));
     }
-
     // 구독한 유저가 존재 하지 않을 경우
     return (
       <StyledMenuItem>
@@ -99,10 +95,10 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
   return (
     <div>
       <Button onClick={handleClick} className={classes.useNameButton}>
-        <Typography className={classes.title}>
+        <Typography variant="h4" className={classes.title}>
           {navUserInfoList[selectedUserIndex].username}
         </Typography>
-        <Typography className={classes.title}>
+        <Typography variant="h4">
           님
         </Typography>
       </Button>
