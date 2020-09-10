@@ -11,7 +11,7 @@ import axios from 'axios';
 import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
-import { certificationInfo } from '../../interfaces/certification.interface';
+import { CertificationInfo } from '../../interfaces/certification.interface';
 
 @Injectable()
 export class AuthService {
@@ -46,7 +46,7 @@ export class AuthService {
     };
   }
 
-  async getCertificationInfo(impUid : string): Promise<certificationInfo> {
+  async getCertificationInfo(impUid : string): Promise<CertificationInfo> {
     try {
       // 인증 토큰 발급 받기
       const getToken = await axios({
@@ -58,8 +58,7 @@ export class AuthService {
           imp_secret: process.env.IMP_SECRET // REST API Secret
         }
       });
-
-      const { accessToken } = getToken.data.response.access_token; // 인증 토큰
+      const accessToken = getToken.data.response.access_token; // 인증 토큰
       // imp_uid로 인증 정보 조회
       const getCertifications = await axios({
         url: `https://api.iamport.kr/certifications/${impUid}`, // imp_uid 전달
@@ -68,18 +67,17 @@ export class AuthService {
       });
       const certificationsInfo = getCertifications.data.response; // 조회한 인증 정보
       // 인증정보에 대한 데이터를 저장하거나 사용한다.
-
       const {
         name,
         gender,
-        birth
+        birthday,
       } = certificationsInfo;
       const userDI = certificationsInfo.unique_in_site;
 
       return {
         name,
         gender,
-        birth,
+        birth: birthday,
         userDI
       };
     } catch (e) {
