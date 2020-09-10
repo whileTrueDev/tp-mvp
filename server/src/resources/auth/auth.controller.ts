@@ -34,7 +34,7 @@ export class AuthController {
   ): Promise<CertificationInfo> {
     const certificationInfo = await this.authService
       .getCertificationInfo(checkCertificationDto.impUid);
-    if (!certificationInfo) throw new HttpException('User not exists in truepoint', HttpStatus.BAD_REQUEST);
+    if (!certificationInfo) throw new HttpException('error on server of truepoint', HttpStatus.BAD_REQUEST);
     return certificationInfo;
   }
 }

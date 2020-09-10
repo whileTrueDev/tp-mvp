@@ -59,7 +59,7 @@ function PlatformRegistForm({
   const [numberType, setNumberType] = useState(true);
   const [marketerCustomDomain, setCustomDomain] = useState('');
   const [, getRequest] = useAxios(
-    '/users/checkId', { manual: true }
+    '/users/check-id', { manual: true }
   );
 
   function handleCustom(event: React.ChangeEvent<HTMLInputElement>): void {

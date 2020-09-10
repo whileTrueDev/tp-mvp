@@ -58,7 +58,7 @@ function IndentityVerification({
     '/auth/certification', { manual: true }
   );
   const [, checkIdRequest] = useAxios(
-    '/users/checkId', { manual: true }
+    '/users/check-id', { manual: true }
   );
 
   const iamport = useIamportCertification((impUid) => {
