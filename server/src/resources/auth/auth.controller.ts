@@ -10,7 +10,6 @@ import { AuthService } from './auth.service';
 import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import { CheckCertificationDto } from './dto/checkCertification.dto';
-import { LoginTokenExports } from './interfaces/loginToken.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -24,14 +23,14 @@ export class AuthController {
   async login(
     @Request() req: express.Request,
     @Res() res: express.Response,
-  ): Promise<LoginTokenExports> {
+  ): Promise<void> {
     const {
       accessToken, refreshToken,
     } = await this.authService.login(req.user as UserLoginPayload);
 
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
-    return { accessToken };
+    res.send({ access_token: accessToken });
   }
 
   // 토큰 새로고침 컨트롤러
@@ -39,7 +38,7 @@ export class AuthController {
   async silentRefresh(
     @Request() req: express.Request,
     @Res() res: express.Response,
-  ): Promise<LoginTokenExports> {
+  ): Promise<void> {
     // 헤더로부터 refresh token 비구조화 할당
     const { refresh_token: prevRefreshToken } = req.cookies;
     const {
@@ -50,7 +49,6 @@ export class AuthController {
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     // 새로운 accessToken을 반환
     res.send({ access_token: accessToken });
-    return { accessToken };
   }
 
   @UseGuards(JwtAuthGuard)
