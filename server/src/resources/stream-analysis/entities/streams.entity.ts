@@ -32,6 +32,9 @@ export class StreamsEntity {
   @Column()
   length: number;
 
+  // @OneToOne((type) => StreamSummaryEntity, (streamSummary) => streamSummary.streams)
+  // streamSummary: StreamSummaryEntity
+
   constructor(partial: Partial<StreamsEntity>) {
     Object.assign(this, partial);
   }
