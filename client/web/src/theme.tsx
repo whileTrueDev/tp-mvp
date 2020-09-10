@@ -13,7 +13,7 @@ const rawTheme: ThemeOptions = {
     primary: {
       light: '#A8C4F9',
       main: '#929ef8',
-      dark: darken('#929ef8', 0.07),
+      dark: '#4b5ac7',
     },
     secondary: {
       light: lighten('#79e2e0', 0.07),

@@ -7,6 +7,8 @@ import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
 
 import { TypeOrmConfigService } from './config/database.config';
+import { NotificationModule } from './resources/notification/notification.module';
+import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
 
 import loadConfig from './config/loadConfig';
 
@@ -20,7 +22,9 @@ import { roles } from './roles/app.roles';
     }),
     AccessControlModule.forRoles(roles),
     AuthModule,
-    UsersModule
+    UsersModule,
+    NotificationModule,
+    StreamAnalysisModule,
   ],
 })
 export class AppModule {}

@@ -2,9 +2,8 @@
 /__pycache__
 __pycache__/
 __pycache__/*
+*.sql
 
-
-# nodejs ignores
 .env
 dist
 node_modules
