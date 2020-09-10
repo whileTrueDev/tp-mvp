@@ -15,10 +15,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: UserLoginPayload): Promise<LogedinUser> {
-    return {
+    const reqAttachTargetUser = {
       userId: payload.userId,
       userName: payload.name,
       roles: payload.roles,
     };
+    return reqAttachTargetUser;
   }
 }

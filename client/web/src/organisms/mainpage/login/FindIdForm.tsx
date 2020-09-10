@@ -8,6 +8,7 @@ import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
+import TruepointLogo from '../../../atoms/TruepointLogo';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%'
   },
   inputField: { width: '100%' },
+  helper: { marginTop: 32, minWidth: 300, maxWidth: 500, },
 }));
 
 export default function FindAccountForm(): JSX.Element {
@@ -74,7 +76,7 @@ export default function FindAccountForm(): JSX.Element {
       const username = usernameRef.current.value;
       const usermail = usermailRef.current.value;
       getRequest({
-        params: { type: 'email', name: username, mail: usermail }
+        params: { name: username, mail: usermail }
       }).then((res) => {
         if (res.data) {
           const { userId } = res.data;
@@ -92,7 +94,7 @@ export default function FindAccountForm(): JSX.Element {
   const iamport = useIamportCertification((impUid) => {
     // iamport 본인인증 이후 실행될 Id 조회 함수
     getRequest({
-      params: { type: 'certification', impUid }
+      params: { impUid }
     }).then((res) => {
       if (res.data) {
         const { userId } = res.data;
@@ -106,9 +108,9 @@ export default function FindAccountForm(): JSX.Element {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <Typography variant="h4">TRUEPOINT LOGO</Typography>
+      <TruepointLogo />
       {helperOpen && error && (
-        <div style={{ marginTop: 32, minWidth: 300, maxWidth: 500, }}>
+        <div className={classes.helper}>
           <LoginHelper text="아이디 정보를 불러오는 도중에 오류가 발생했습니다. support@mytruepoint.com으로 문의바랍니다." />
         </div>
       )}
@@ -230,7 +232,7 @@ export default function FindAccountForm(): JSX.Element {
             color="secondary"
             variant="contained"
             style={{ color: 'white' }}
-            className={classnames(classes.fullButton, classes.subcontent)}
+            className={classes.fullButton}
           >
             <Typography variant="body1">로그인 하러 가기</Typography>
           </Button>
@@ -241,9 +243,8 @@ export default function FindAccountForm(): JSX.Element {
         <Button component={Link} to="/login">로그인 하러 가기</Button>
       </div>
 
-      {activeStep === 1 && loading && (
-        <CenterLoading position="relative" />
-      )}
+      {/* 데이터 불러오는 중 로딩 컴포넌트 */}
+      {activeStep === 1 && loading && (<CenterLoading position="relative" />)}
 
     </div>
   );

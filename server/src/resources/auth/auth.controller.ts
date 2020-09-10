@@ -1,9 +1,11 @@
 import express from 'express';
 import {
-  Controller, Request, Post, UseGuards, Get, Query, HttpException, HttpStatus
+  Controller, Request, Post, UseGuards, Get, Query,
+  HttpException, HttpStatus
 } from '@nestjs/common';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from './auth.service';
 import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
