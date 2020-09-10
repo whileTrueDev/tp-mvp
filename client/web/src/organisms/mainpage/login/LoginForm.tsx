@@ -4,12 +4,13 @@ import { useHistory, Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
-  Button, Typography, TextField,
+  Button, TextField,
 } from '@material-ui/core';
 
 import login from '../../../utils/auth/login';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
+import TruepointLogo from '../../../atoms/TruepointLogo';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
@@ -58,15 +59,17 @@ export default function LoginForm(): JSX.Element {
         onSubmit={handleLoginSubmit}
         className={classes.formWidth}
       >
-        <Typography variant="h4">TRUEPOINT LOGO</Typography>
+        <TruepointLogo />
 
         <TextField
           className={classnames(classes.upperSpace, classes.formWidth)}
           color="secondary"
           type="text"
           label="아이디"
+          placeholder="아이디를 입력해주세요"
           inputProps={{ minLength: 3, required: true, }}
           inputRef={userIdRef}
+          autoFocus
         />
         <TextField
           className={classes.formWidth}

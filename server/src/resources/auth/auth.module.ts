@@ -14,7 +14,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtModule.registerAsync({
       useClass: JwtConfigService
     }),
-    forwardRef(() => UsersModule)
+    forwardRef(() => UsersModule), // Resolve circular dependencies between Moduels
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],

@@ -51,7 +51,6 @@ export class UsersController {
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto
   ) : Promise<string> {
-    // const { userDI }:CertificationInfo = await this.authService.getCertificationInfo(impUid);
     return this.usersService.findPW(userDI, password);
   }
 

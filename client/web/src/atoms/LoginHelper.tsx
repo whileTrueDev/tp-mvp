@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface LoginHelperProps {
-  text: React.ReactNode,
+  text: string,
   className?: string,
 }
 export default function LoginHelper(props: LoginHelperProps):JSX.Element {
@@ -20,9 +20,12 @@ export default function LoginHelper(props: LoginHelperProps):JSX.Element {
   const classes = useStyles();
   return (
     <div className={classnames(classes.container, className)}>
-      <Typography variant="body2" style={{ color: 'white' }}>
-        {text}
-      </Typography>
+      {text.split('\n').map((te) => (
+        <Typography key={te} variant="body2" style={{ color: 'white' }}>
+          {te}
+        </Typography>
+      )) }
+
     </div>
 
   );
