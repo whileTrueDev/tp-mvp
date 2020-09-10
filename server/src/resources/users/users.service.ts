@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
+import { CheckIdType } from '../../interfaces/certification.interface';
 
 @Injectable()
 export class UsersService {
@@ -32,12 +33,9 @@ export class UsersService {
     // Github Repository => https://github.com/kelektiv/node.bcrypt.js/
     const hashedPassword = await bcrypt.hash(user.password, 10);
 
-    const alreadyExists = await this.findOne(user.userId);
+    return this.usersRepository.save({ ...user, password: hashedPassword });
 
-    if (!alreadyExists) {
-      return this.usersRepository.save({ ...user, password: hashedPassword });
-    }
-    throw new HttpException('ID is duplicated', HttpStatus.BAD_REQUEST);
+    // throw new HttpException('ID is duplicated', HttpStatus.BAD_REQUEST);
   }
 
   // User의 ID를 찾는 동기 함수. 결과값으로는 UserEntity의 인스턴스를 반환받되, 전달하는 것은 ID이다.
@@ -45,7 +43,7 @@ export class UsersService {
     // userDI의 존재여부에 따라서 조회방식을 분기한다.
     if (userDI) {
       const user = await this.usersRepository
-        .findOne({ where: { name, userDI } });
+        .findOne({ where: { userDI } });
       if (user) {
         return { userId: user.userId };
       }
@@ -59,23 +57,21 @@ export class UsersService {
     throw new HttpException('ID is not found', HttpStatus.BAD_REQUEST);
   }
 
+  async checkID({ userId, userDI } : CheckIdType): Promise<boolean> {
+    const user = await this.usersRepository
+      .findOne({ where: (userDI ? { userDI } : { userId }) });
+    if (user) {
+      return true;
+    }
+    return false;
+  }
+
   // 본인인증의 결과가 인증이 되면,  해당 계정의 패스워드 변경후, 패스워드를 보여준다.
-  async findPW(userDI: string) : Promise<string> {
+  async findPW(userDI: string, password: string) : Promise<string> {
     const user = await this.usersRepository
       .findOne({ where: { userDI } });
     if (user) {
       // 임시번호 저장 후에 임시비밀번호 저장.
-      let password = '';
-
-      for (let i = 0; i < 8; i += 1) {
-        const lowerStr = String.fromCharCode(Math.floor(Math.random() * 26 + 97));
-        if (i % 2 === 0) {
-          password += String(Math.floor(Math.random() * 10));
-        } else {
-          password += lowerStr;
-        }
-      }
-
       const hashedPassword = await bcrypt.hash(password, 10);
 
       await this.usersRepository

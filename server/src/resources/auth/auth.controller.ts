@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   Controller, Request, Post, UseGuards, Get, Query,
-  HttpException, HttpStatus, Res, Header
+  HttpException, HttpStatus, Res
 } from '@nestjs/common';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import { CheckCertificationDto } from './dto/checkCertification.dto';
-import { LoginToken } from './interfaces/loginToken.interface';
+import { LoginTokenExports } from './interfaces/loginToken.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -24,14 +24,14 @@ export class AuthController {
   async login(
     @Request() req: express.Request,
     @Res() res: express.Response,
-  ): Promise<void> {
+  ): Promise<LoginTokenExports> {
     const {
       accessToken, refreshToken,
     } = await this.authService.login(req.user as UserLoginPayload);
 
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
-    res.send({ access_token: accessToken });
+    return { accessToken };
   }
 
   // 토큰 새로고침 컨트롤러
@@ -39,7 +39,7 @@ export class AuthController {
   async silentRefresh(
     @Request() req: express.Request,
     @Res() res: express.Response,
-  ): Promise<void> {
+  ): Promise<LoginTokenExports> {
     // 헤더로부터 refresh token 비구조화 할당
     const { refresh_token: prevRefreshToken } = req.cookies;
     const {
@@ -50,6 +50,7 @@ export class AuthController {
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     // 새로운 accessToken을 반환
     res.send({ access_token: accessToken });
+    return { accessToken };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -64,7 +65,6 @@ export class AuthController {
   ): Promise<CertificationInfo> {
     const certificationInfo = await this.authService
       .getCertificationInfo(checkCertificationDto.impUid);
-
     if (!certificationInfo) throw new HttpException('User not exists in truepoint', HttpStatus.BAD_REQUEST);
     return certificationInfo;
   }

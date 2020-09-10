@@ -15,16 +15,22 @@ export class UserEntity {
     Object.assign(this, partial);
   }
 
-  @Column({ primary: true })
+  @Column({ primary: true, length: 20 })
   userId!: string
 
-  @Column({ nullable: false, length: 30 })
+  @Column({ length: 30 })
+  nickName!: string;
+
+  @Column({ nullable: false, length: 15 })
   name!: string;
 
-  @Column()
+  @Column({ length: 50 })
   mail!: string;
 
-  @Column({ length: 64 })
+  @Column({ length: 50 })
+  phone!: string;
+
+  @Column({ length: 70, unique: true })
   userDI?: string;
 
   // The ClassSerializerInterceptor interceptor uses the powerful class-transformer package
@@ -34,10 +40,10 @@ export class UserEntity {
   @Column({ nullable: false })
   password!: string;
 
-  @Column()
+  @Column({ length: 10 })
   birth!: string;
 
-  @Column()
+  @Column({ length: 1 })
   gender!: string;
 
   @Column({ default: 'user' })
