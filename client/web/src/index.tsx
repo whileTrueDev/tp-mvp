@@ -21,7 +21,6 @@ import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
-
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 
@@ -46,7 +45,6 @@ function Index(): JSX.Element {
       <div style={{ textAlign: 'center' }}>
         <button style={{ padding: 32 }} type="button" onClick={handleThemeChange}>theme change</button>
       </div>
-
       {/* 페이지 컴포넌트 */}
       <BrowserRouter>
         <Switch>
@@ -54,7 +52,7 @@ function Index(): JSX.Element {
           <Route exact path="/login" component={Login} />
           <Route exact path="/find-id" component={FindId} />
           <Route exact path="/find-pw" component={FindPassword} />
-          <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+          <Route exact path="/PrivacyPolicy" component={PrivacyPolicy} />
           <Route exact path="/termsofuse" component={TermsOfUse} />
           <Route exact pate="/mypage" component={Mypage} />
           {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
