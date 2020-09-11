@@ -41,11 +41,11 @@ code {
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #ddd; 
   border: 2px solid transparent;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #c0c0c0
 }

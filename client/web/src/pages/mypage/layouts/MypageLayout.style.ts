@@ -2,12 +2,16 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useLayoutStyles = makeStyles((theme: Theme) => ({
   wrapper: {
+    minHeight: '100vh',
+    background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+  },
+  conatiner: {
     width: 1520,
     margin: '0 auto',
     height: 1094,
     display: 'flex',
+    boxShadow: theme.shadows[4],
     backgroundColor: theme.palette.background.default,
-    boxShadow: theme.shadows[4]
   },
   sidebarWrapper: {
     width: 230,

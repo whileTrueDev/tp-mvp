@@ -10,6 +10,7 @@ import RegistForm from './RegistForm';
 import PaperSheet from './Paper';
 import IdentityVerification from './IdentityVerification';
 import { myReducer, initialState } from './Stepper.reducer';
+import TruepointLogo from '../../../atoms/TruepointLogo';
 
 function RegistStepper(): JSX.Element {
   const history = useHistory();
@@ -67,7 +68,7 @@ function RegistStepper(): JSX.Element {
       <Grid container direction="column">
         {(activeStep === 0 || activeStep === 1) && (
         <Grid item className={classes.center}>
-          <Typography variant="h4">TRUEPOINT LOGO</Typography>
+          <TruepointLogo />
         </Grid>
         )}
         <Grid item>

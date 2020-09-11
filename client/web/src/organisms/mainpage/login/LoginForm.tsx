@@ -46,7 +46,7 @@ export default function LoginForm(): JSX.Element {
       }).then((res) => {
         if (res && res.data) {
           login(res.data.access_token);
-          history.push('/');
+          history.push('/mypage/main');
         } else {
           // 에러 처리 필요
           console.log('err');

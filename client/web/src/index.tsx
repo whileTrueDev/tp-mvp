@@ -51,6 +51,7 @@ function Index(): JSX.Element {
       <BrowserRouter>
         <Switch>
           <Route exact path="/" component={Main} />
+          <Route exact path="/signup" component={Regist} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/find-id" component={FindId} />
           <Route exact path="/find-pw" component={FindPassword} />

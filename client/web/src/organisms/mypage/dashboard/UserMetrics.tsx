@@ -3,7 +3,7 @@ import {
   Card, CardContent,
   Avatar, Grid, Typography,
 } from '@material-ui/core';
-
+import { Rating } from '@material-ui/lab';
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
@@ -21,12 +21,29 @@ const BorderLinearProgress = withStyles((theme) => ({
   },
 }))(LinearProgress);
 
+const TruepointRating = withStyles((theme) => ({
+  iconFilled: {
+    color: theme.palette.secondary.main,
+  },
+  iconHover: {
+    color: theme.palette.primary.dark
+  }
+}))(Rating);
+
 export default function UserMetrics(): JSX.Element {
   return (
     <>
-      <div style={{ marginBottom: 32 }}>
-        <Avatar src="https://avatars0.githubusercontent.com/u/42171155?s=400&u=72c333c5e2c44b64b16b7fef5670182c523d4c96&v=4" style={{ width: 150, height: 150, margin: 32 }} />
-      </div>
+      <Grid container spacing={2} style={{ height: 250, marginBottom: 32 }}>
+        <Grid item xs={3} container direction="column" alignItems="center">
+          <Avatar src="https://avatars0.githubusercontent.com/u/42171155?s=400&u=72c333c5e2c44b64b16b7fef5670182c523d4c96&v=4" style={{ width: 150, height: 150, margin: 32 }} />
+          <TruepointRating name="read-only" readOnly value={0.5} precision={0.5} />
+        </Grid>
+
+        <Grid item xs={9} container direction="column" alignItems="center">
+          <Typography variant="h1">그래프가</Typography>
+          <Typography variant="h1">위치할 예정</Typography>
+        </Grid>
+      </Grid>
 
       <Grid container spacing={2}>
         {[1233, 2516, 3434, 45454].map((card) => (
