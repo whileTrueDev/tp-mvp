@@ -30,8 +30,6 @@ class ConfigController:
         if (secrets):
             if len(secrets['SecretList']) > 0:
                 secret_id = secrets['SecretList'][0]['Name']
-
-                #get secret values
                 db_secrets = client.get_secret_value(SecretId=secret_id)
                 self.DB_CONFIG = json.loads(db_secrets['SecretString'])
 
