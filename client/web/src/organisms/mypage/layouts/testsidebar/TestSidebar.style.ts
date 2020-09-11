@@ -1,43 +1,20 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useTestStyle = makeStyles((theme: Theme) => ({
-  root: {
+  conatiner: {
+    borderTop: `1px solid ${theme.palette.divider}`,
+    padding: 0,
   },
-  center: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '0',
-  },
-  listWrapper: {
-    padding: '1px',
-  },
-  listText: {
+  listItem: {
+    padding: 0,
     minheight: '74px',
-    width: 'parent',
     textAlign: 'center',
-    justifyContent: 'center',
-    padding: '0px',
-    fontSize: '15px',
-    backgroundColor: 'parent',
   },
-  listIconWrapper: {
-    padding: '0',
-    margin: '0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  listIcon: {
-    fontSize: '32px',
-    color: 'black'
-  },
-  accordianList: {
-    width: 'parent',
-    padding: '5px',
-    textAlign: 'center',
-    justifyContent: 'center',
-    fontSize: '14px',
-    backgroundColor: 'parent',
+  icon: { fontSize: 32, },
+  notSelectedTab: { color: theme.palette.text.disabled, },
+  selected: { color: theme.palette.text.primary, fontWeight: 'bold', },
+  selectedIndicator: {
+    transform: 'rotate(-90deg)', fontSize: 32, marginTop: '3px'
   },
   accordian: {
     boxShadow: 'none',
@@ -45,47 +22,22 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     background: 'parent',
   },
   accordianHeader: {
-    backgroundColor: 'parent',
-    justifyContent: 'center',
     height: '74px',
-    alignItems: 'center',
     alignContent: 'center',
-    border: '0',
-    paddingTop: '23px',
-    paddingBottom: '23px',
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
     '&:hover': {
       backgroundColor: theme.palette.primary.light // 마우스 가져갈때
     },
   },
-  accordianHeaderButton: {
+  subRouteList: { display: 'block' },
+  subRouteLink: {
+    padding: `${theme.spacing(1)}px 0px ${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    display: 'flex',
+    alignItems: 'center',
     width: '100%',
-    height: '74px',
-    margin: '0px',
-    border: '0px',
+    textDecoration: 'none',
   },
-  subTabItem: {
-    padding: '0',
-    '&:hover,&:focus': {
-      color: theme.palette.primary.light, // 클릭 했을 때
-    },
-  },
-  selectedTab: {
-    fontWeight: 'bold',
-    color: 'black'
-  },
-  notSelectedTab: {
-    color: '#868e96',
-  },
-  selectedIcon: {
-    color: 'black',
-    fontSize: '32px',
-    justifyContent: 'center',
-    textAlign: 'center'
-  },
-  notSelectedIcon: {
-    color: 'primary',
-    fontSize: '32px',
-  }
 }));
 
 export default useTestStyle;

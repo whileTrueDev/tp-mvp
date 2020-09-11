@@ -2,14 +2,11 @@ import React from 'react';
 // @material-ui/core components
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 // @material-ui/icons
 import EventNote from '@material-ui/icons/EventNote';
-import Menu from '@material-ui/icons/Menu';
 // core components
 import useNavbarStyles from './Navbar.style';
 import HeaderLinks from './HeaderLinks';
@@ -28,12 +25,11 @@ interface NavUserInfoInterface{
 export interface NavbarProps {
   navUserInfoList: NavUserInfoInterface[];
   routes: MypageRouteType[];
-  handleDrawerToggle: () => void;
 }
 
 function Navbar(props: NavbarProps): JSX.Element {
   const classes = useNavbarStyles();
-  const { navUserInfoList, routes, handleDrawerToggle } = props;
+  const { navUserInfoList, routes } = props;
   const [selectedUserIndex, setSelectedUserIndex] = React.useState<number>(0);
   const currDate = new Date();
 
@@ -91,17 +87,6 @@ function Navbar(props: NavbarProps): JSX.Element {
           <Grid item container md={2} alignContent="center">
             {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
             <HeaderLinks routes={routes} />
-
-            <Hidden mdUp implementation="css">
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerToggle}
-              >
-                <Menu />
-              </IconButton>
-            </Hidden>
-
           </Grid>
         </Grid>
 
