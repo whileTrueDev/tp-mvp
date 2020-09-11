@@ -7,6 +7,6 @@ export interface UserStatisticsInterface {
   viewer: number;
   fan: number;
   startAt: Date;
-  length: number;
+  airTime: number;
   chatCount : number;
 }

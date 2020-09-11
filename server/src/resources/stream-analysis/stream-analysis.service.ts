@@ -94,7 +94,7 @@ export class StreamAnalysisService {
 
   /*
     input   :  userId, nowDate
-    output  :  "length, viewer, fan" in Streams  +  "chat_count" in StreamSummary 
+    output  :  "airTime, viewer, fan" in Streams  +  "chat_count" in StreamSummary 
   */
   async findUserWeekStreamInfoByUserId(userId: string, nowDate: string): Promise<any> {
     // ISO Date String --> 요일 기준 YYYY-MM-DD 00:00:00:000 변환
@@ -104,8 +104,6 @@ export class StreamAnalysisService {
     nowAt.setHours(nowAt.getHours(), 0, 0, 0);
     startAt.setHours(startAt.getHours(), 0, 0, 0);
 
-    console.log('now : ', nowAt);
-    console.log('start : ', startAt);
     /*
       streamsInfoArray
       viewer    :  기간내 방송 당 시청자 수  평균
@@ -153,7 +151,6 @@ export class StreamAnalysisService {
     });
 
     // streamInfoArray legnth 0 일 경우 initial value return
-
     allPlatformData.calculateData();
     twitchData.calculateData();
     afreecaData.calculateData();

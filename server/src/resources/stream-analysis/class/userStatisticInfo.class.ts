@@ -3,7 +3,7 @@ import { UserStatisticsInterface } from '../interface/userStatisticInfo.interfac
 export class UserStatisticInfo {
   avgViewer: number;
   changeFan: number;
-  avgLength: number;
+  avgAirTime: number;
   totalChatCount: number;
   count: number;
 
@@ -11,7 +11,7 @@ export class UserStatisticInfo {
     this.count = 0;
     this.totalChatCount = 0;
     this.changeFan = 0;
-    this.avgLength = 0;
+    this.avgAirTime = 0;
     this.avgViewer = 0;
   }
 
@@ -21,12 +21,12 @@ export class UserStatisticInfo {
     this.totalChatCount += data.chatCount;
     this.avgViewer += data.viewer;
     this.changeFan = data.fan;
-    this.avgLength += data.length;
+    this.avgAirTime += data.airTime;
   }
 
   calculateData(): void {
     if (this.count > 1) {
-      this.avgLength /= this.count;
+      this.avgAirTime /= this.count;
       this.avgViewer /= this.count;
     }
   }

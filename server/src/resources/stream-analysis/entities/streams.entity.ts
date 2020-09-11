@@ -30,7 +30,7 @@ export class StreamsEntity {
   startAt: Date;
 
   @Column()
-  length: number;
+  airTime: number;
 
   // @OneToOne((type) => StreamSummaryEntity, (streamSummary) => streamSummary.streams)
   // streamSummary: StreamSummaryEntity
