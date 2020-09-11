@@ -1,7 +1,6 @@
 import React, { useState, useReducer } from 'react';
 import {
   Grid,
-  Typography
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';

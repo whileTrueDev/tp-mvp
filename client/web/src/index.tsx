@@ -11,29 +11,25 @@ import { configure } from 'axios-hooks';
 import axios from './utils/axios';
 import * as serviceWorker from './serviceWorker';
 // styles
-import THEME_TYPE from './interfaces/ThemeType';
 import defaultTheme from './theme';
 import './assets/global.css';
-// Pages
+// Pages and organisms
+import Appbar from './organisms/shared/Appbar';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
-
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
+// hooks
+import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 
+// axios-hooks configuration
 configure({ axios });
 function Index(): JSX.Element {
-  // ******************************************************************
-  // Dark/Light theme changing
-  const [themeType, setTheme] = React.useState<THEME_TYPE>(THEME_TYPE.LIGHT);
-  function handleThemeChange() {
-    if (themeType === THEME_TYPE.DARK) setTheme(THEME_TYPE.LIGHT);
-    else setTheme(THEME_TYPE.DARK);
-  }
+  const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
@@ -43,12 +39,10 @@ function Index(): JSX.Element {
     <ThemeProvider theme={THEME}>
       <CssBaseline />
 
-      <div style={{ textAlign: 'center' }}>
-        <button style={{ padding: 32 }} type="button" onClick={handleThemeChange}>theme change</button>
-      </div>
-
       {/* 페이지 컴포넌트 */}
       <BrowserRouter>
+        <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
+
         <Switch>
           <Route exact path="/" component={Main} />
           <Route exact path="/signup" component={Regist} />

@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
 export default function FooterShort():JSX.Element {
   const classes = useStyles();
   return (
-
     <div className={classnames(classes.centerflex, classes.footer)}>
       <div>
         <Button component={Link} to="/termsofuse">이용약관</Button>

@@ -7,6 +7,7 @@ import useLayoutStyles from './MypageLayout.style';
 // organisms
 import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
+import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
 
 interface NavUserInfoInterface{
   username : string;
@@ -92,6 +93,7 @@ const UserDashboard = (): JSX.Element => {
           </main>
         </div>
       </div>
+      <MypageFooter />
     </div>
   );
 };

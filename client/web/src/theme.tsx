@@ -1,5 +1,6 @@
 import { ThemeOptions } from '@material-ui/core';
 import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 
 const rawTheme: ThemeOptions = {
   palette: {
@@ -20,6 +21,11 @@ const rawTheme: ThemeOptions = {
       main: '#79e2e0',
       dark: darken('#79e2e0', 0.1),
     },
+    info: {
+      light: '#9AA2C5',
+      main: blueGrey[400],
+      dark: blueGrey[600],
+    }
   },
   typography: {
     fontFamily: '"NotoSansKR-Regular", "Sunflower", sans-serif'

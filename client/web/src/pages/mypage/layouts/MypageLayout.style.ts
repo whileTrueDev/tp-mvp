@@ -2,11 +2,12 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useLayoutStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    minHeight: '100vh',
+    position: 'sticky',
+    minHeight: 'calc(100vh - 100px)',
     background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   conatiner: {
-    width: 1520,
+    width: 1400,
     margin: '0 auto',
     height: 1094,
     display: 'flex',
@@ -18,11 +19,13 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     paddingTop: 96,
     backgroundColor: theme.palette.background.paper,
     borderRight: `1px solid ${theme.palette.divider}`,
+    top: 0,
   },
   appbarWrapper: {
     height: 96,
-    position: 'sticky',
     top: 0,
+    position: 'sticky',
+    zIndex: 9999,
   },
   mainPanel: {
     width: '100%',
