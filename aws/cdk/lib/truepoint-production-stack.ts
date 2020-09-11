@@ -129,14 +129,7 @@ export class TruepointStack extends cdk.Stack {
     const backendContainer = backendTaskDef.addContainer(`${ID_PREFIX}BackendContainer`, {
       image: ecs.ContainerImage.fromRegistry(`hwasurr/${BACKEND_FAMILY_NAME}`),
       memoryLimitMiB: 512,
-      secrets: {
-        DB_HOST: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_DB_HOST),
-        DB_PASSWORD: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_DB_PASSWORD),
-        DB_PORT: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_DB_PORT),
-        DB_USER: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_DB_USER),
-        DB_DATABASE: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_DB_DATABASE),
-        DB_CHARSET: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_DB_CHARSET),
-      },
+      // secrets: {},
       logging: new ecs.AwsLogDriver({ logGroup: backendLogGroup, streamPrefix: 'ecs' }),
     });
     backendContainer.addPortMappings({ containerPort: BACKEND_PORT });
@@ -283,7 +276,7 @@ export class TruepointStack extends cdk.Stack {
     const productionDBInstace = new rds.DatabaseInstance(this, `${ID_PREFIX}ProductionDBInstance`, {
       vpc: vpc,
       engine: dbEngine,
-      masterUsername: ssmParameters.TRUEPOINT_DB_USER.stringValue,
+      masterUsername: 'truepoint',
       databaseName: ID_PREFIX,
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE),

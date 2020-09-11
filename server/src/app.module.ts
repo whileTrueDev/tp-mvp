@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-// import { CatsModule } from './resources/cats/cats.module';
-import { AuthModule } from './resources/auth/auth.module';
-// import { UsersModule } from './resources/users/users.module';
+import { AccessControlModule } from 'nest-access-control';
 
-import loadConfig from './config/loadConfig';
+import { AuthModule } from './resources/auth/auth.module';
+import { UsersModule } from './resources/users/users.module';
+
 import { TypeOrmConfigService } from './config/database.config';
 import { NotificationModule } from './resources/notification/notification.module';
-import { StreamAnalysisService } from './resources/stream-analysis/stream-analysis.service';
 import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
+
+import loadConfig from './config/loadConfig';
+
+import { roles } from './roles/app.roles';
 
 @Module({
   imports: [
@@ -17,9 +20,9 @@ import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysi
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService
     }),
-    // CatsModule,
-    // AuthModule,
-    // UsersModule,
+    AccessControlModule.forRoles(roles),
+    AuthModule,
+    UsersModule,
     NotificationModule,
     StreamAnalysisModule,
   ],

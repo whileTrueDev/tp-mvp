@@ -5,7 +5,7 @@ import routes from '../routes';
 // css
 import useLayoutStyles from './MypageLayout.style';
 // organisms
-import Navbar from '../../../organisms/mypage/layouts/navbars/Navbar';
+import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
 
 interface NavUserInfoInterface{

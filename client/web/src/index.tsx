@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Router, Switch, Route, BrowserRouter,
+  BrowserRouter, Switch, Route
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
-  CssBaseline, ThemeProvider, Paper, IconButton, Typography
+  CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-import Brightness7Icon from '@material-ui/icons/Brightness7';
-import Brightness4Icon from '@material-ui/icons/Brightness4';
-
+import Axios from 'axios';
+import { configure } from 'axios-hooks';
+// 
 import THEME_TYPE from './interfaces/ThemeType';
 import * as serviceWorker from './serviceWorker';
 import defaultTheme from './theme';
@@ -18,7 +18,13 @@ import './assets/global.css';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
-import UserDashboard from './pages/mypage/layouts/MypageLayout';
+import Mypage from './pages/mypage/layouts/MypageLayout';
+import Login from './pages/mainpage/Login';
+import FindId from './pages/others/FindId';
+import FindPassword from './pages/others/FindPassword';
+
+const axios = Axios.create({ baseURL: 'http://localhost:3000' });
+configure({ axios });
 
 function Index(): JSX.Element {
   // ******************************************************************
@@ -31,58 +37,32 @@ function Index(): JSX.Element {
   const THEME = createMuiTheme({
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
-    overrides: {
-      MuiDrawer: {
-        // paperAnchorLeft: {
-        //   marginTop: '10vh',
-        //   marginLeft: '200px',
-        // }
-      }
-    }
   });
 
   return (
-    <React.StrictMode>
-      <ThemeProvider theme={THEME}>
-        <CssBaseline />
+    <ThemeProvider theme={THEME}>
+      <CssBaseline />
 
-        {/* 페이지 컴포넌트 */}
-        <BrowserRouter>
+      <div style={{ textAlign: 'center' }}>
+        <button style={{ padding: 32 }} type="button" onClick={handleThemeChange}>theme change</button>
+      </div>
 
-          {/* *********************************************** */}
-          {/* Example changing Theme !! */}
-          <Paper
-            style={{
-              height: '10vh', display: 'flex', justifyContent: 'center', alignItems: 'center'
-            }}
-          >
-            <Typography variant="h4">
-              트루포인트
-            </Typography>
+      {/* 페이지 컴포넌트 */}
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Main} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/find-id" component={FindId} />
+          <Route exact path="/find-pw" component={FindPassword} />
+          <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+          <Route exact path="/termsofuse" component={TermsOfUse} />
+          <Route exact pate="/mypage" component={Mypage} />
+          {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
+          {/* 페이지 컴포넌트가 여기에 위치합니다. */}
+        </Switch>
+      </BrowserRouter>
 
-            {themeType === THEME_TYPE.DARK && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness4Icon /></IconButton>
-            )}
-            {themeType === THEME_TYPE.LIGHT && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness7Icon /></IconButton>
-            )}
-
-          </Paper>
-          {/* This is Example */}
-          {/* *********************************************** */}
-
-          <Switch>
-            <Route exact path="/" component={Main} />
-            <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-            <Route exact path="/termsofuse" component={TermsOfUse} />
-            <Route exact pate="/mypage" component={UserDashboard} />
-            {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
-            {/* 페이지 컴포넌트가 여기에 위치합니다. */}
-          </Switch>
-        </BrowserRouter>
-
-      </ThemeProvider>
-    </React.StrictMode>
+    </ThemeProvider>
   );
 }
 

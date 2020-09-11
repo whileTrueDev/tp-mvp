@@ -2,11 +2,16 @@
  * AuthService는 user를 검색하고 password 를 확인하는 작업을 합니다
  * validateUser() 메소드가 passport local strategy에서 사용되어 그 역할을 합니다. 
  */
-import { Injectable } from '@nestjs/common';
+import bcrypt from 'bcrypt';
+import {
+  Injectable, HttpException, HttpStatus
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import axios from 'axios';
 import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
-import { UserLoginPayload } from './interfaces/loginUserPayload.interface';
+import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
+import { CertificationInfo } from '../../interfaces/certification.interface';
 
 @Injectable()
 export class AuthService {
@@ -16,26 +21,70 @@ export class AuthService {
   ) {}
 
   // This is for local-strategy and for generating jwt token
-  async validateUser(userId: string, pass: string): Promise<UserLoginPayload> {
+  async validateUser(userId: string, plainPassword: string): Promise<UserLoginPayload> {
     const user = await this.usersService.findOne(userId);
 
-    // 꼭, bcrypt와 같은 암호화 라이브러리를 사용하여 비밀번호를 plain text로 유지하지 않고 암호화하여 사용한다.
-    if (user && user.password === pass) {
-      // Extracting password
-      const { password, ...result } = user;
+    if (user) {
+      const isCorrectPass = await bcrypt.compare(plainPassword, user.password);
+      if (isCorrectPass) {
+        // Extracting password
+        const { password, ...result } = user;
 
-      return result;
+        return result;
+      }
     }
     return null;
   }
 
   // This is for jwt strategy
-  async login(user: any): Promise<LoginToken> {
-    const payload = {
-      id: user.id, firstName: user.firstName, lastName: user.lastName
+  async login(user: UserLoginPayload): Promise<LoginToken> {
+    const payload: LogedinUser = {
+      userId: user.userId, userName: user.name, roles: user.roles
     };
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async getCertificationInfo(impUid : string): Promise<CertificationInfo> {
+    try {
+      // 인증 토큰 발급 받기
+      const getToken = await axios({
+        url: 'https://api.iamport.kr/users/getToken',
+        method: 'post', // POST method
+        headers: { 'Content-Type': 'application/json' }, // "Content-Type": "application/json"
+        data: {
+          imp_key: process.env.IMP_KEY, // REST API키
+          imp_secret: process.env.IMP_SECRET // REST API Secret
+        }
+      });
+
+      const { accessToken } = getToken.data.response.access_token; // 인증 토큰
+      // imp_uid로 인증 정보 조회
+      const getCertifications = await axios({
+        url: `https://api.iamport.kr/certifications/${impUid}`, // imp_uid 전달
+        method: 'get', // GET method
+        headers: { Authorization: accessToken } // 인증 토큰 Authorization header에 추가
+      });
+      const certificationsInfo = getCertifications.data.response; // 조회한 인증 정보
+      // 인증정보에 대한 데이터를 저장하거나 사용한다.
+
+      const {
+        name,
+        gender,
+        birth
+      } = certificationsInfo;
+      const userDI = certificationsInfo.unique_in_site;
+
+      return {
+        name,
+        gender,
+        birth,
+        userDI
+      };
+    } catch (e) {
+      console.error(e);
+      throw new HttpException('서버오류입니다. 잠시후 다시 진행해주세요.', HttpStatus.BAD_REQUEST);
+    }
   }
 }

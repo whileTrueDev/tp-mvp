@@ -1,7 +1,8 @@
 import React from 'react';
+import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
   return (
-    <div>PeriodVsPeriodAnalysis</div>
+    <MypageSectionWrapper>PeriodVsPeriodAnalysis</MypageSectionWrapper>
   );
 }
