@@ -2,7 +2,7 @@ import {
   IsString, IsDateString, IsDate,
 } from 'class-validator';
 
-export class findUserStatisticInfo {
+export class FindUserStatisticInfo {
   @IsString()
   userId: string;
 

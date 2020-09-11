@@ -1,5 +1,5 @@
 import {
-  IsString, Length
+  IsString, Length, isNotEmpty, IsIn
 } from 'class-validator';
 
 export class EachStream {
@@ -7,6 +7,6 @@ export class EachStream {
   @Length(2)
   streamId: string;
 
-  @IsString()
-  platform: 'twitch' | 'afreeca' | 'youtube'
+  @IsIn(['twitch', 'afreeca', 'youtube'])
+  platform: string;
 }

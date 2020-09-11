@@ -5,8 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   Repository,
 } from 'typeorm';
-import { start } from 'repl';
-import { findStreamInfoByStreamId as Streams } from './dto/findStreamInfoByStreamId.dto';
+// logic class
+import { UserStatisticInfo } from './class/userStatisticInfo.class';
+// interface
+import { UserStatisticsInterface } from './interface/userStatisticInfo.interface';
+// dto
+import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
+// database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
 
@@ -22,26 +27,10 @@ export class StreamAnalysisService {
     input   :  streamId , platform
     output  :  chat_count , smile_count , viewer or subscribe_count
   */
-  async findStreamInfoByStreamId(streams: Streams)
+  async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId)
   : Promise<StreamSummaryEntity[]> {
-    console.log(streams);
-    const streamInfoBase = await this.streamSummaryRepository
-      .createQueryBuilder('streamSummary')
-      .innerJoin(
-        StreamsEntity,
-        'streams',
-        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
-      )
-      .select(['streamSummary.*', 'viewer'])
-      .where('streamSummary.streamId = :id', { id: streams[0].streamId })
-      .andWhere('streamSummary.platform = :platform', { platform: streams[0].platform })
-      .execute()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
-      });
-
-    if (streams[1]) {
-      const streamInfoCompare = await this.streamSummaryRepository
+    if (streams[0]) {
+      const streamInfoBase = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
         .innerJoin(
           StreamsEntity,
@@ -49,25 +38,41 @@ export class StreamAnalysisService {
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
         )
         .select(['streamSummary.*', 'viewer'])
-        .where('streamSummary.streamId = :id', { id: streams[1].streamId })
-        .andWhere('streamSummary.platform = :platform', { platform: streams[1].platform })
+        .where('streamSummary.streamId = :id', { id: streams[0].streamId })
+        .andWhere('streamSummary.platform = :platform', { platform: streams[0].platform })
         .execute()
         .catch((err) => {
           throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
         });
-      return [streamInfoBase, streamInfoCompare];
-    }
 
-    return [streamInfoBase, null];
+      if (streams[1]) {
+        const streamInfoCompare = await this.streamSummaryRepository
+          .createQueryBuilder('streamSummary')
+          .innerJoin(
+            StreamsEntity,
+            'streams',
+            'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+          )
+          .select(['streamSummary.*', 'viewer'])
+          .where('streamSummary.streamId = :id', { id: streams[1].streamId })
+          .andWhere('streamSummary.platform = :platform', { platform: streams[1].platform })
+          .execute()
+          .catch((err) => {
+            throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+          });
+        return [streamInfoBase, streamInfoCompare];
+      }
+      return [streamInfoBase, null];
+    }
+    return [null, null];
   }
 
   /*
     input   :  startAt , endAt , userId
     output  :  chat_count , smile_count , viewer or subscribe_count
   */
-  async findStreamInfoByTerm(userId: string, startAt: Date, endAt: Date)
+  async findStreamInfoByTerm(userId: string, startAt: string, endAt: string)
   : Promise<StreamSummaryEntity[]> {
-    console.log(userId, startAt, endAt);
     const streamsTermData: any[] = await this.streamSummaryRepository
       .createQueryBuilder('streamSummary')
       .innerJoin(
@@ -83,132 +88,82 @@ export class StreamAnalysisService {
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });
-
+    console.log(streamsTermData);
     return streamsTermData;
   }
 
+  /*
+    input   :  userId, nowDate
+    output  :  "length, viewer, fan" in Streams  +  "chat_count" in StreamSummary 
+  */
   async findUserWeekStreamInfoByUserId(userId: string, nowDate: string): Promise<any> {
+    // ISO Date String --> 요일 기준 YYYY-MM-DD 00:00:00:000 변환
     const nowAt = new Date(nowDate);
     const startAt = new Date(nowAt);
     startAt.setDate(startAt.getDate() - 7);
+    nowAt.setHours(nowAt.getHours(), 0, 0, 0);
+    startAt.setHours(startAt.getHours(), 0, 0, 0);
 
-    console.log('now : ', nowAt.toISOString());
-    console.log('start : ', startAt.toISOString());
-
-    const streamsInfoArray: any[] = await this.streamSummaryRepository
-      .createQueryBuilder('streamSummary')
-      .innerJoin(StreamsEntity, 'streams', 'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform')
-      .select(['streamSummary.*'])
-      .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startAt > :startDate', { startDate: startAt.toISOString() })
-      .andWhere('streams.startAt <= :nowDate', { nowDate: nowAt.toISOString() })
-      .execute();
-
-    return streamsInfoArray;
-  }
-
-  async test(userId: string, nowDate: string): Promise<any> {
-    const nowAt = new Date(nowDate);
-    const startAt = new Date(nowAt);
-    startAt.setDate(startAt.getDate() - 7);
-
-    console.log('now : ', nowAt.toISOString());
-    console.log('start : ', startAt.toISOString());
-
-    const streamsInfoArray: any[] = await this.streamsRepository
+    console.log('now : ', nowAt);
+    console.log('start : ', startAt);
+    /*
+      streamsInfoArray
+      viewer    :  기간내 방송 당 시청자 수  평균
+      fan       :  nowDate 와 가장 가까운 방송 의 fan
+      length    :  기간내 방송 당 방송 시간 평균 
+      chatCount :  기간내 총 채팅 발생 수 -> 단순 합산
+    */
+    const streamsInfoArray: UserStatisticsInterface[] = await this.streamsRepository
       .createQueryBuilder('streams')
       .innerJoin(StreamSummaryEntity, 'streamSummary', 'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform')
       .select(['streams.* , streamSummary.chatCount'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startAt > :startDate', { startDate: startAt.toISOString() })
-      .andWhere('streams.startAt <= :nowDate', { nowDate: nowAt.toISOString() })
+      .andWhere('streams.startAt < :nowDate', { nowDate: nowAt.toISOString() })
       .execute();
 
-    console.log(streamsInfoArray);
-
-    /*
-      streamsInfoArray
-      viewer    :  기간내 방송 당 시청자 수  평균
-      fan       :  nowDate - 7d 와 가장 가까운 방송 당시의 fan 과 nowDate 와 가장 가까운 방송 당시의 fan 차이
-      length    :  기간내 방송 당 방송 시간 평균 
-      chatCount :  기간내 총 채팅 발생 수 -> 단순 합산
-    */
-
-    const twitchData = {
-      avgViewer: 0.0,
-      avgLength: 0.0,
-      totalChatCount: 0.0,
-      changeFan: 0.0
-    };
-    const afreecaData = {
-      avgViewer: 0.0,
-      avgLength: 0.0,
-      totalChatCount: 0.0,
-      changeFan: 0.0
-    };
-    const youtubeData = {
-      avgViewer: 0.0,
-      avgLength: 0.0,
-      totalChatCount: 0.0,
-      changeFan: 0.0
-    };
-    const allPlatformData = {
-      avgViewer: 0.0,
-      avgLength: 0.0,
-      totalChatCount: 0.0,
-      changeFan: 0.0
-
-    };
+    const twitchData = new UserStatisticInfo();
+    const afreecaData = new UserStatisticInfo();
+    const youtubeData = new UserStatisticInfo();
+    const allPlatformData = new UserStatisticInfo();
 
     streamsInfoArray.forEach((data) => {
-      allPlatformData.totalChatCount += data.chatCount;
-      allPlatformData.avgLength += data.length;
-      allPlatformData.avgViewer += data.viewer;
-
+      allPlatformData.pushData(data);
       switch (data.platform) {
         case 'twitch': {
-          twitchData.totalChatCount += data.chatCount;
-          twitchData.avgLength += data.length;
-          twitchData.avgViewer += data.viewer;
+          twitchData.pushData(data);
           break;
         }
         case 'afreeca': {
-          afreecaData.totalChatCount += data.chatCount;
-          afreecaData.avgLength += data.length;
-          afreecaData.avgViewer += data.viewer;
+          afreecaData.pushData(data);
           break;
         }
         case 'youtube': {
-          youtubeData.totalChatCount += data.chatCount;
-          youtubeData.avgLength += data.length;
-          youtubeData.avgViewer += data.viewer;
+          youtubeData.pushData(data);
           break;
         }
         default: {
           // data 오류
-          throw new HttpException('Request Notification Index is Invalid ... ', HttpStatus.INTERNAL_SERVER_ERROR);
+          throw new HttpException(
+            'Invalid Array Data Format ... ',
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
         }
       }
     });
 
-    allPlatformData.changeFan = streamsInfoArray[streamsInfoArray.length - 1].fan - streamsInfoArray[0].fan;
-    allPlatformData.avgLength /= streamsInfoArray.length;
-    allPlatformData.avgViewer /= streamsInfoArray.length;
+    // streamInfoArray legnth 0 일 경우 initial value return
 
-    // twitchData.changeFan = streamsInfoArray[streamsInfoArray.length - 1].fan - streamsInfoArray[0].fan;
-    // twitchData.avgLength /= streamsInfoArray.length;
-    // twitchData.avgViewer /= streamsInfoArray.length;
-
-    // afreecaData.changeFan = streamsInfoArray[streamsInfoArray.length - 1].fan - streamsInfoArray[0].fan;
-    // afreecaData.avgLength /= streamsInfoArray.length;
-    // afreecaData.avgViewer /= streamsInfoArray.length;
-
-    // youtubeData.changeFan = streamsInfoArray[streamsInfoArray.length - 1].fan - streamsInfoArray[0].fan;
-    // youtubeData.avgLength /= streamsInfoArray.length;
-    // youtubeData.avgViewer /= streamsInfoArray.length;
+    allPlatformData.calculateData();
+    twitchData.calculateData();
+    afreecaData.calculateData();
+    youtubeData.calculateData();
 
     return {
-      allPlatformData, twitchData, afreecaData, youtubeData
+      allPlatformData,
+      twitchData,
+      afreecaData,
+      youtubeData
     };
   }
 }

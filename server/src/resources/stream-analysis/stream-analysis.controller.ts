@@ -1,48 +1,76 @@
 import {
-  Controller, Body, Get, ValidationPipe as ArrayValidationPipe, ParseArrayPipe
+  Controller, Get, ParseArrayPipe, Query, UseGuards,
 } from '@nestjs/common';
 import { StreamAnalysisService } from './stream-analysis.service';
-import { StreamSummaryEntity } from './entities/streamSummary.entity';
-import { findStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
+// pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
-import { findStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
-import { findUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
+// guard
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+// entities
+import { StreamSummaryEntity } from './entities/streamSummary.entity';
+// dto
+import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
+import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
+import { EachStream } from './dto/eachStream.dto';
+import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
+
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(private readonly streamAnalysisService: StreamAnalysisService) {}
   /*
-    input   :  {  stream1 : { streamId , platform } , 
-                  stream2 : { streamId , platform }  }
-    output  :  stream1 : { chat_count , smile_count , viewer or subscribe_count } ,
-               stream2 : { chat_count , smile_count , viewer or subscribe_count } 
+    input   :  params: {
+                  streams: 
+                    [ { streamId: 'streamId1', platform: 'twitch' }, 
+                      { streamId: 'streamId2', platform: 'twitch' }] 
+                } 
+    output  :  [{ chat_count , smile_count , viewer } || null ,
+                { chat_count , smile_count , viewer } || null ]
   */
   @Get('streams')
   getStreamsInfo(
-    @Body('streams') findInfoRequest: findStreamInfoByStreamId
-  )
-    : Promise<StreamSummaryEntity[]> {
+    @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
+  ): Promise<StreamSummaryEntity[]> {
     return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
 
   /*
-    input   :  { startAt(ISODateString) , endAt(ISODateString) , userId }
-    output  :  chat_count , smile_count , viewer or subscribe_count
+    input   :  params: {
+                startAt: (new Date(0)).toISOString(),
+                endAt: (new Date()).toISOString(),
+                userId: 'userId1'
+              }
+    output  :  { chat_count , smile_count , viewer }
   */
   @Get('term')
-  getTermStreamsInfo(@Body(new ValidationPipe()) body: findStreamInfoByTerms)
+  getTermStreamsInfo(
+    @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
+  )
   : Promise<StreamSummaryEntity[]> {
-    return this.streamAnalysisService
-      .findStreamInfoByTerm(body.userId, body.startAt, body.endAt);
-    // as Date 차후 프론트 데이터 포멧 확인후 수정
+    return this.streamAnalysisService.findStreamInfoByTerm(
+      findTermRequest.userId,
+      findTermRequest.startAt,
+      findTermRequest.endAt
+    );
   }
 
   /*
-    input   :  { userId , nowDate(ISODateString) }
-    output  :  7 days streams[] 
+    jwt guard -> 권한 검사 , 구독 확인
+    input   :   params: {
+                  nowDate: (new Date()).toISOString(),
+                  userId: 'userId1'
+                }
+    output  :  { allPlatformData: { avgViewer, avgLength, changeFan, totalChatCount , count }, 
+                 afreecaData : // , twitchData : // , youtubeData : // }
   */
   @Get('user-statistics')
-  getUserStatisticsInfo(@Body(new ValidationPipe()) body: findUserStatisticInfo)
-  : any {
-    return this.streamAnalysisService.findUserWeekStreamInfoByUserId(body.userId, body.nowDate.split('T')[0]);
+  // @UseGuards(JwtAuthGuard)
+  getUserStatisticsInfo(
+    @Query(new ValidationPipe()) findUserStatisticRequest: FindUserStatisticInfo
+  )
+  : Promise<any> {
+    return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
+      findUserStatisticRequest.userId,
+      findUserStatisticRequest.nowDate
+    );
   }
 }
