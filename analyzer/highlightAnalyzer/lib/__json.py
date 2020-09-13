@@ -11,4 +11,4 @@ def json_dumper(data, file_name, encoding='utf-8', _ascii=False, indent=4):
       indent : prefix 4
     '''
     with open('{file}.json'.format(file=file_name), 'w', encoding=encoding) as f:
-        json.dump(data, f, ensure_ascii=_ascii, indent=indent)
+        json.dump(data, f, ensure_ascii=_ascii, indent=indent, default=str)
