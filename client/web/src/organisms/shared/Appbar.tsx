@@ -8,9 +8,10 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import TruepointLogo from '../../atoms/TruepointLogo';
-import UserMenuPopover from '../../atoms/UserMenuPopover';
+import UserMenuPopover from './sub/UserMenuPopover';
 
 import THEME_TYPE from '../../interfaces/ThemeType';
+import useAuthContext from '../../utils/hooks/useAuthContext';
 
 const APPBAR_HEIGHT = 100;
 
@@ -31,7 +32,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px 0px`,
   },
-  toolbar: { display: 'flex', justifyContent: 'space-between', },
+  toolbar: {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%'
+  },
   links: { display: 'flex', alignItems: 'center' },
   link: {
     color: 'white', marginLeft: theme.spacing(2), marginRight: theme.spacing(4)
@@ -49,6 +52,7 @@ export default function AppBar({
   themeType,
   handleThemeChange,
 }: AppbarProps): JSX.Element {
+  const authContext = useAuthContext();
   const classes = useStyles();
   const [UserMenuAnchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -79,17 +83,31 @@ export default function AppBar({
             </div>
 
             <div>
-              <Button variant="contained" color="secondary" style={{ color: 'white' }}>로그인</Button>
-              <IconButton onClick={handleClick}>
-                <Avatar />
-              </IconButton>
-              <UserMenuPopover
-                open={UserMenuOpen}
-                anchorEl={UserMenuAnchorEl}
-                onClose={handleClose}
-                themeType={themeType}
-                handleThemeChange={handleThemeChange}
-              />
+              {authContext.user.userId ? (
+                <>
+                  <IconButton onClick={handleClick}>
+                    <Avatar />
+                  </IconButton>
+                  <UserMenuPopover
+                    disableScrollLock
+                    open={UserMenuOpen}
+                    anchorEl={UserMenuAnchorEl}
+                    onClose={handleClose}
+                    themeType={themeType}
+                    handleThemeChange={handleThemeChange}
+                  />
+                </>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{ color: 'white' }}
+                  component={Link}
+                  to="/login"
+                >
+                  로그인
+                </Button>
+              )}
             </div>
           </div>
         </MuiAppBar>

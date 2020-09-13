@@ -7,6 +7,7 @@ export interface LogedinUser {
   userId: string;
   userName: string;
   roles: string | string[];
+  userDI: string;
 }
 
 export interface LogedInExpressRequest extends Request {

@@ -9,6 +9,7 @@ import LoginHelper from '../../../atoms/LoginHelper';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import useDialog from '../../../utils/hooks/useDialog';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -51,13 +52,7 @@ export default function FindAccountForm(): JSX.Element {
   }
 
   // 스텝 2 에러 알림창 렌더링을 위한 스테이트
-  const [helperOpen, setHelperOpen] = React.useState(false);
-  function handleHelperOpen() {
-    setHelperOpen(true);
-  }
-  function handleHelperClose() {
-    setHelperOpen(false);
-  }
+  const helperText = useDialog();
 
   // **************************************************
   // Input values
@@ -85,7 +80,7 @@ export default function FindAccountForm(): JSX.Element {
           // Handle to next step
           handleNext();
         }
-      }).catch(() => { handleHelperOpen(); });
+      }).catch(() => { helperText.handleOpen(); });
     }
   }
 
@@ -103,13 +98,13 @@ export default function FindAccountForm(): JSX.Element {
         // Handle to next step
         handleNext();
       }
-    }).catch(() => { handleHelperOpen(); });
+    }).catch(() => { helperText.handleOpen(); });
   });
 
   return (
     <div style={{ textAlign: 'center' }}>
       <TruepointLogo />
-      {helperOpen && error && (
+      {helperText.open && error && (
         <div className={classes.helper}>
           <LoginHelper text="아이디 정보를 불러오는 도중에 오류가 발생했습니다. support@mytruepoint.com으로 문의바랍니다." />
         </div>
@@ -180,7 +175,7 @@ export default function FindAccountForm(): JSX.Element {
             className={classes.fullButton}
             onClick={() => {
               handleBack();
-              handleHelperClose();
+              helperText.handleClose();
             }}
           >
             <Typography>방법 선택으로 돌아가기</Typography>
@@ -210,7 +205,7 @@ export default function FindAccountForm(): JSX.Element {
             className={classes.fullButton}
             onClick={() => {
               handleBack();
-              handleHelperClose();
+              helperText.handleClose();
             }}
           >
             <Typography>방법 선택으로 돌아가기</Typography>

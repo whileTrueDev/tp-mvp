@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, } from 'react-router-dom';
 // material-ui components layout
 import routes from '../routes';
 // css
@@ -22,9 +22,7 @@ const UserDashboard = (): JSX.Element => {
 
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    document.title = 'Truepoint | mypage';
     if (mainPanel && mainPanel.current) {
       mainPanel.current.scrollTop = 0;
     }

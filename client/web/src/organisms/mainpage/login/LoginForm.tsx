@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import classnames from 'classnames';
 import { useHistory, Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
@@ -7,10 +7,11 @@ import {
   Button, TextField,
 } from '@material-ui/core';
 
-import login from '../../../utils/auth/login';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import useDialog from '../../../utils/hooks/useDialog';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
@@ -20,16 +21,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function LoginForm(): JSX.Element {
+  const authContext = useAuthContext();
   const history = useHistory();
   const theme = useTheme();
   const classes = useStyles();
+
+  // 로그인 실패 도움말
+  const helperText = useDialog();
+  const [helperTextValue, setHelperTextValue] = useState<string>();
 
   // Input Refs
   const userIdRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   // API Requests
-  const [{ loading, error }, executePost] = useAxios(
+  const [{ loading }, executePost] = useAxios(
     { method: 'POST', url: '/auth/login' },
     { manual: true }
   );
@@ -45,13 +51,19 @@ export default function LoginForm(): JSX.Element {
         }
       }).then((res) => {
         if (res && res.data) {
-          login(res.data.access_token);
+          authContext.handleLogin(res.data.access_token);
           history.push('/mypage/main');
         } else {
-          // 에러 처리 필요
-          console.log('err');
+          // 올바르지 못한 요청 ( 없는 아이디인 경우 또는 비밀번호가 틀린경우)
+          helperText.handleOpen();
+          setHelperTextValue('로그인 과정에서 알 수 없는 오류가 발생했습니다. support@mytruepoint.com으로 문의주세요');
         }
-      }).catch((err) => { console.log(err); });
+      }).catch((err) => {
+        if (err.response && err.response.status === 400) {
+          helperText.handleOpen();
+          setHelperTextValue('아이디 혹은 비밀번호가 일치하지 않습니다. 입력한 내용을 다시 확인해 주세요.');
+        }
+      });
     }
   }
 
@@ -88,16 +100,10 @@ export default function LoginForm(): JSX.Element {
         />
 
         {/* 로그인 실패 도움말 */}
-        {error && error.response?.status !== 401 && (
+        {helperText && helperTextValue && (
           <LoginHelper
             className={classes.upperSpace}
-            text="로그인 과정에서 알 수 없는 오류가 발생했습니다. support@mytruepoint.com으로 문의주세요"
-          />
-        )}
-        {error && error.response?.status === 401 && (
-          <LoginHelper
-            className={classes.upperSpace}
-            text="아이디 혹은 비밀번호가 일치하지 않습니다. 입력한 내용을 다시 확인해 주세요."
+            text={helperTextValue}
           />
         )}
 

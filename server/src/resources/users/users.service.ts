@@ -99,6 +99,11 @@ export class UsersService {
 
     return userToken;
   }
+  // Refresh Token 삭제 - 로그아웃을 위해
+  async removeOneToken(userId: string): Promise<UserTokenEntity> {
+    const userToken = await this.userTokensRepository.findOne(userId);
+    return this.userTokensRepository.remove(userToken);
+  }
   // Update User Tokens
   async saveRefreshToken(
     newTokenEntity: UserTokenEntity

@@ -1,6 +1,4 @@
-import Axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
-import SESSION_STORAGE_LOGIN_KEY from './auth/constants';
-import login from './auth/login';
+import Axios, { AxiosResponse, AxiosError } from 'axios';
 
 // configures
 
@@ -8,18 +6,6 @@ const axios = Axios.create({
   baseURL: 'http://localhost:3000',
   withCredentials: true
 });
-
-// *******************************************
-// Request Interceptors
-function onRequestFulfilled(config: AxiosRequestConfig): AxiosRequestConfig {
-  const newConfig = config;
-  newConfig.headers.Authorization = `Bearer ${sessionStorage.getItem(SESSION_STORAGE_LOGIN_KEY)}`;
-  return newConfig;
-}
-
-axios.interceptors.request.use(
-  onRequestFulfilled, (error) => Promise.reject(error)
-);
 
 // *******************************************
 // Response Interceptors
@@ -32,13 +18,15 @@ function onResponseRejected(err: AxiosError): any {
     return axios.post('http://localhost:3000/auth/silent-refresh')
       .then((res) => {
         const token = res.data.access_token;
-        login(token);
+        // 새로받은 access token을 axios 기본 헤더로 설정
+        axios.defaults.headers.Authorization = `Bearer ${token}`;
+        return axios(err.config);
       })
       .catch((error) => {
         window.location.href = '/login';
       });
   }
-  return err;
+  return Promise.reject(err);
 }
 
 axios.interceptors.response.use(

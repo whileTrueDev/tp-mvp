@@ -25,10 +25,14 @@ import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
+import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 
 // axios-hooks configuration
 configure({ axios });
 function Index(): JSX.Element {
+  const {
+    user, accessToken, handleLogout, handleLogin
+  } = useLogin();
   const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
     ...defaultTheme,
@@ -39,23 +43,29 @@ function Index(): JSX.Element {
     <ThemeProvider theme={THEME}>
       <CssBaseline />
 
-      {/* 페이지 컴포넌트 */}
-      <BrowserRouter>
-        <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
+      {/* 로그인 여부 Context */}
+      <AuthContext.Provider value={{
+        user, accessToken, handleLogin, handleLogout
+      }}
+      >
+        {/* 페이지 컴포넌트 */}
+        <BrowserRouter>
+          <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
 
-        <Switch>
-          <Route exact path="/" component={Main} />
-          <Route exact path="/signup" component={Regist} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/find-id" component={FindId} />
-          <Route exact path="/find-pw" component={FindPassword} />
-          <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-          <Route exact path="/termsofuse" component={TermsOfUse} />
-          <Route exact pate="/mypage" component={Mypage} />
-          {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
-          {/* 페이지 컴포넌트가 여기에 위치합니다. */}
-        </Switch>
-      </BrowserRouter>
+          <Switch>
+
+            <Route exact path="/" component={Main} />
+            <Route exact path="/signup" component={Regist} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/find-id" component={FindId} />
+            <Route exact path="/find-pw" component={FindPassword} />
+            <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+            <Route exact path="/termsofuse" component={TermsOfUse} />
+
+            <Route exact pate="/mypage" component={Mypage} />
+          </Switch>
+        </BrowserRouter>
+      </AuthContext.Provider>
 
     </ThemeProvider>
   );
