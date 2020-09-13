@@ -7,6 +7,7 @@ import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
+import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import getSSMParams from '../utils/getParams';
 
 interface WhileTrueCollectorStackProps extends cdk.StackProps {
@@ -36,7 +37,7 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
       vpc: vpc,
       securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
-      description: 'Allow traffics for Database of Truepoint',
+      description: 'Allow traffics for Database of Truepoint Collector',
       allowAllOutbound: false
     });
     databaseSecGrp.addEgressRule(
@@ -49,6 +50,13 @@ export class WhileTrueCollectorStack extends cdk.Stack {
       ec2.Port.tcp(DATABASE_PORT),
       `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`
     );
+
+    const loadBalancerSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}LoadBalancerSecGrp`, {
+      vpc: vpc,
+      securityGroupName: `${ID_PREFIX}LoadBalancerSecurityGroup`,
+      description: 'Allow traffics for LoadBalancer of Truepoint Collector',
+      allowAllOutbound: true,
+    })
 
     // *********************************************
     // ******************* RDS *********************
@@ -187,13 +195,57 @@ export class WhileTrueCollectorStack extends cdk.Stack {
 
     // *********************************************
     // Create ECS Service for Twitchtv Chats Collector
-    new ecs.FargateService(
+    const twitchtvChatsService = new ecs.FargateService(
       this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`, {
       cluster: ECSCluster,
       taskDefinition: twitchtvChatsTaskDef,
       desiredCount: 1,
       serviceName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`,
-      securityGroup: twitchtvChatsSecGrp
+      securityGroup: twitchtvChatsSecGrp,
+    });
+
+    // Add Auto Scaling feature
+    const twitchtvChatsAutoScaling = twitchtvChatsService.autoScaleTaskCount({ maxCapacity: 5 });
+    twitchtvChatsAutoScaling.scaleOnCpuUtilization(
+      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}CpuScaling`, {
+        targetUtilizationPercent: 70
+      })
+
+    // ********************************************
+    // Create ALB for TwitchCats Collector
+    const publicLoadBalancer = new elbv2.ApplicationLoadBalancer(
+      this, `${ID_PREFIX}PublicLoadBalancer`, {
+      vpc: vpc,
+      internetFacing: true,
+      loadBalancerName: `${ID_PREFIX}Public`,
+      securityGroup: loadBalancerSecGrp
+    });
+
+    // Define loadbalancer Target group
+    const twitchCatsTargetGroup = new elbv2.ApplicationTargetGroup(
+      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TargetGroup`, {
+      vpc: vpc,
+      protocol: elbv2.ApplicationProtocol.HTTP,
+      port: 80,
+      targets: [twitchtvChatsService],
+      targetGroupName: `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TargetGroup`,
+      healthCheck: {
+        path: '/',
+        interval: cdk.Duration.seconds(30),
+      }
+    });
+
+    // Define HTTP Listener
+    publicLoadBalancer.addListener(
+      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}HttpListener`, {
+      port: 80,
+      defaultTargetGroups: [twitchCatsTargetGroup],
+    });
+    // Define HTTPS Listener
+    publicLoadBalancer.addListener(
+      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}HttpsListener`, {
+      port: 443,
+      defaultTargetGroups: [twitchCatsTargetGroup],
     });
   }
 }
