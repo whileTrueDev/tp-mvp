@@ -1,0 +1,3 @@
+[submodule "analyzer/highlightAnalyzer/komoran3py"]
+	path = analyzer/highlightAnalyzer/komoran3py
+	url = https://github.com/lovit/komoran3py.git
