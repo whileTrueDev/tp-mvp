@@ -1,9 +1,9 @@
 import re
-from komoran.komoran3py import KomoranPy
+from komoran3py.komoran3py import KomoranPy
 from .warning_eliminator import ChainedAssignent
 
 ko = KomoranPy()
-ko.set_user_dictionary(('../komoran/user_dictionary.txt'))
+ko.set_user_dictionary(('../user_dictionary.txt'))
 
 
 def morphs_analyzer(word):
@@ -37,6 +37,5 @@ def word_counter(index, df):
             if len(df['anal'][index]) == 1:
                 df['?'][index] = 1
     except Exception as e:
-        print(df['anal'][index])
         print(e)
         df['error'][index] = 1
