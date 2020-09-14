@@ -34,7 +34,7 @@ main()
 })
 .catch((err)=>{
   console.log(err.msg);
-  reject();
+  process.exit(0);
 })
 
 // const scheduler = require('node-schedule');
