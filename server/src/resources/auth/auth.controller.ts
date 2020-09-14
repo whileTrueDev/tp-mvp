@@ -9,7 +9,7 @@ import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from './auth.service';
 import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
-import { CheckCertificationDto } from './dto/checkCertification.dto';
+import { CheckCertificationDto } from './dto/searchIamportCertification.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -35,8 +35,7 @@ export class AuthController {
   ): Promise<CertificationInfo> {
     const certificationInfo = await this.authService
       .getCertificationInfo(checkCertificationDto.impUid);
-
-    if (!certificationInfo) throw new HttpException('User not exists in truepoint', HttpStatus.BAD_REQUEST);
+    if (!certificationInfo) throw new HttpException('error on server of truepoint', HttpStatus.BAD_REQUEST);
     return certificationInfo;
   }
 }
