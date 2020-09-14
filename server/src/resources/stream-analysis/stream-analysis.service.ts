@@ -8,7 +8,7 @@ import {
 // logic class
 import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
-import { UserStatisticsInterface } from './interface/userStatisticInfo.interface';
+import { StreamsInfo } from './interface/streamsInfo.interface';
 // dto
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
@@ -28,9 +28,9 @@ export class StreamAnalysisService {
     output  :  chat_count , smile_count , viewer
   */
   async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId)
-  : Promise<StreamSummaryEntity[]> {
+  : Promise<StreamsInfo[]> {
     if (streams[0]) {
-      const streamInfoBase = await this.streamSummaryRepository
+      const streamInfoBase: StreamsInfo = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
         .innerJoin(
           StreamsEntity,
@@ -46,7 +46,7 @@ export class StreamAnalysisService {
         });
 
       if (streams[1]) {
-        const streamInfoCompare = await this.streamSummaryRepository
+        const streamInfoCompare: StreamsInfo = await this.streamSummaryRepository
           .createQueryBuilder('streamSummary')
           .innerJoin(
             StreamsEntity,
@@ -72,7 +72,7 @@ export class StreamAnalysisService {
     output  :  chat_count , smile_count , viewer or subscribe_count
   */
   async findStreamInfoByTerm(userId: string, startAt: string, endAt: string)
-  : Promise<StreamSummaryEntity[]> {
+  : Promise<StreamsInfo[]> {
     const streamsTermData: any[] = await this.streamSummaryRepository
       .createQueryBuilder('streamSummary')
       .innerJoin(
@@ -101,8 +101,8 @@ export class StreamAnalysisService {
     const nowAt = new Date(nowDate);
     const startAt = new Date(nowAt);
     startAt.setDate(startAt.getDate() - 7);
-    nowAt.setHours(nowAt.getHours(), 0, 0, 0);
-    startAt.setHours(startAt.getHours(), 0, 0, 0);
+    nowAt.setHours(0, 0, 0, 0);
+    startAt.setHours(0, 0, 0, 0);
 
     /*
       streamsInfoArray
@@ -111,13 +111,12 @@ export class StreamAnalysisService {
       length    :  기간내 방송 당 방송 시간 평균 
       chatCount :  기간내 총 채팅 발생 수 -> 단순 합산
     */
-    const streamsInfoArray: UserStatisticsInterface[] = await this.streamsRepository
+    const streamsInfoArray: StreamsEntity[] = await this.streamsRepository
       .createQueryBuilder('streams')
-      .select(['streams.*'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startedAt > :startDate', { startDate: startAt.toISOString() })
       .andWhere('streams.startedAt < :nowDate', { nowDate: nowAt.toISOString() })
-      .execute()
+      .getMany()
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });

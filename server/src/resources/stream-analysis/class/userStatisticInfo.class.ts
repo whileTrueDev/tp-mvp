@@ -1,6 +1,7 @@
-import { UserStatisticsInterface } from '../interface/userStatisticInfo.interface';
+import { StreamsEntity } from '../entities/streams.entity';
+import { UserStatisticInfo as StatisticInterface } from '../interface/userStatisticInfo.interface';
 
-export class UserStatisticInfo {
+export class UserStatisticInfo implements StatisticInterface {
   avgViewer: number;
   changeFan: number;
   avgAirTime: number;
@@ -16,7 +17,7 @@ export class UserStatisticInfo {
   }
 
   // 3사 통합 및 각 플랫폼 구독자수 변화량 계산 추후 추가 필요
-  pushData(data: UserStatisticsInterface): void {
+  pushData(data: StreamsEntity): void {
     this.count += 1;
     this.totalChatCount += data.chatCount;
     this.avgViewer += data.viewer;

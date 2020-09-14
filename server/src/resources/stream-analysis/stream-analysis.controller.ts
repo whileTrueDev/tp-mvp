@@ -6,8 +6,9 @@ import { StreamAnalysisService } from './stream-analysis.service';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 // guard
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-// entities
-import { StreamSummaryEntity } from './entities/streamSummary.entity';
+// interface
+import { StreamsInfo } from './interface/streamsInfo.interface';
+import { UserStatisticInfo } from './interface/userStatisticInfo.interface';
 // dto
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
@@ -30,7 +31,7 @@ export class StreamAnalysisController {
   @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
-  ): Promise<StreamSummaryEntity[]> {
+  ): Promise<StreamsInfo[]> {
     return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
 
@@ -47,7 +48,7 @@ export class StreamAnalysisController {
   getTermStreamsInfo(
     @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
-  : Promise<StreamSummaryEntity[]> {
+  : Promise<StreamsInfo[]> {
     return this.streamAnalysisService.findStreamInfoByTerm(
       findTermRequest.userId,
       findTermRequest.startAt,
@@ -69,7 +70,7 @@ export class StreamAnalysisController {
   getUserStatisticsInfo(
     @Query(new ValidationPipe()) findUserStatisticRequest: FindUserStatisticInfo
   )
-  : Promise<any> {
+  : Promise<UserStatisticInfo> {
     return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
       findUserStatisticRequest.userId,
       findUserStatisticRequest.nowDate
