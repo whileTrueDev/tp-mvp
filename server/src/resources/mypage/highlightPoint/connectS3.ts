@@ -4,13 +4,6 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const s3 = new AWS.S3();
 
-s3.config.update(
-  {
-    accessKeyId: 'AKIAYMQWU4UCTYMO2SMR',
-    secretAccessKey: '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',
-    region: 'ap-northeast-2'
-  }
-);
 console.log(process.env.AWS_ACCESS_KEY_ID);
 const getParams = {
   Bucket: 'truepoint', // your bucket name,
