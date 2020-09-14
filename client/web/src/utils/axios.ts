@@ -19,7 +19,7 @@ function onResponseRejected(err: AxiosError): any {
       .then((res) => {
         const token = res.data.access_token;
         // 새로받은 access token을 axios 기본 헤더로 설정
-        axios.defaults.headers.Authorization = `Bearer ${token}`;
+        axios.defaults.headers.common.Authorization = `Bearer ${token}`;
         return axios(err.config);
       })
       .catch((error) => {
