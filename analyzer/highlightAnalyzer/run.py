@@ -11,9 +11,9 @@ import pandas as pd
 import numpy as np
 from datetime import date
 from multiprocessing import Process, Pool
-from lib.s3_connector import upload_file, upload_json
+from lib.s3_connector import upload_json
 from lib.db_connect import DbHandler
-from lib.morphs_analyzer import morphs_analyzer, word_counter, get_line_score
+from lib.morphs_analyzer import morphs_analyzer, word_counter, get_line_score, morphs_test
 from lib.__json import json_dumper
 from lib.warning_eliminator import ChainedAssignent
 
