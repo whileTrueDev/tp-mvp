@@ -18,7 +18,12 @@ from lib.__json import json_dumper
 from lib.warning_eliminator import ChainedAssignent
 
 
-def main(data, platform, stream_id, number):
+def main(data, platform, stream_id):
+    """
+    data : 분석할 채팅 list
+    platform : 채팅이 담겨져 있는 DB table 명
+    stream_id : 해당 채팅의 streamId 
+    """
     output = {'videoId': '', 'end_date': '', 'total_index': 0, 'highlight_points': []}
     output2 = {'videoId': '', 'end_date': '', 'total_index': '', 'metrics': {}}
     # 데이터프레임화
@@ -56,17 +61,17 @@ def main(data, platform, stream_id, number):
         # group 기본값 부여
         df_highlight['group'] = np.nan
     # 같은 그룹끼리 묶는 과정
-    GROUP_NUM = 0
+    group_num = 0
     for row in reversed(range(len(df_highlight))):
-        GROUP_NUM += 1
+        group_num += 1
         diff = df_highlight['index'][row] - df_highlight['index'][row - 1]
         if diff == 1:
             with ChainedAssignent():
-                df_highlight['group'].iloc[row] = GROUP_NUM
-            GROUP_NUM -= 1
+                df_highlight['group'].iloc[row] = group_num
+            group_num -= 1
         else:
             with ChainedAssignent():
-                df_highlight['group'].iloc[row] = GROUP_NUM
+                df_highlight['group'].iloc[row] = group_num
     # videoid, end_date, 총 index 값 넣기
     output['videoId'] = stream_id
     output['end_date'] = df_list.index[-1].strftime('%Y-%m-%d')
@@ -128,5 +133,5 @@ if __name__ == '__main__':
             if isinstance(list(line.values())[0], (list)):
                 # 유튜브는 streamId == creatorId
                 stream_id = line[platform][0]['streamId']
-                main(line[platform], platform, stream_id, i)
+                main(line[platform], platform, stream_id)
                 db_conn.update_state(platform, stream_id)
