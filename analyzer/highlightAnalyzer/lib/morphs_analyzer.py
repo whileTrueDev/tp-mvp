@@ -1,9 +1,18 @@
 import re
-from komoran3py.komoran3py import KomoranPy
+from os.path import join, dirname, abspath
+from .komoran3py import KomoranPy
 from .warning_eliminator import ChainedAssignent
 
+ROOT_PATH = dirname(abspath(__file__))
+
 ko = KomoranPy()
-ko.set_user_dictionary(('../user_dictionary.txt'))
+ko.set_user_dictionary(('{path}/komoran3py/user_dictionary.txt'.format(path=ROOT_PATH)))
+
+
+def morphs_test(text):
+    test_line = ko.pos(text)
+    print(test_line)
+    return test_line
 
 
 def morphs_analyzer(word):

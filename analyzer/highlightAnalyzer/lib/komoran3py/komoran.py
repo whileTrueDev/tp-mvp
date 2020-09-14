@@ -1,6 +1,7 @@
 import os
 import jpype
-from komoran3py.jvm import init_jvm
+from .jvm import init_jvm
+
 
 class KomoranPy:
 
