@@ -19,6 +19,7 @@ import './assets/global.css';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
+import HighlightAnalysis from './pages/mypage/HighlightAnalysis';
 
 function Index(): JSX.Element {
   // ******************************************************************
@@ -67,6 +68,7 @@ function Index(): JSX.Element {
             <Route exact path="/" component={Main} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
+            <Route exact path="/highlightanalysis" component={HighlightAnalysis} />
             {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
             {/* 페이지 컴포넌트가 여기에 위치합니다. */}
           </Switch>
