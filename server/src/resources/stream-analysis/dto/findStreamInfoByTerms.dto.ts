@@ -1,5 +1,5 @@
 import {
-  IsString, IsDateString, IsDate,
+  IsString, IsDateString,
 } from 'class-validator';
 
 export class FindStreamInfoByTerms {

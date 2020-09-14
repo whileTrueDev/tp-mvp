@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryColumn, OneToOne, JoinColumn
+  Entity, Column, PrimaryColumn, OneToOne
 } from 'typeorm';
 import { StreamsEntity } from './streams.entity';
 
