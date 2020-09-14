@@ -1,10 +1,11 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToOne, JoinColumn
+  Entity, Column, PrimaryColumn, OneToOne,
 } from 'typeorm';
 import { StreamSummaryEntity } from './streamSummary.entity';
 
 @Entity({ name: 'Streams' })
 export class StreamsEntity {
+  @OneToOne((type) => StreamSummaryEntity, (StreamSummary) => StreamSummary.streamId)
   @PrimaryColumn()
   streamId: string;
 
@@ -31,6 +32,9 @@ export class StreamsEntity {
 
   @Column()
   airTime: number;
+
+  @Column()
+  chatCount: number;
 
   // @OneToOne((type) => StreamSummaryEntity, (streamSummary) => streamSummary.streams)
   // streamSummary: StreamSummaryEntity

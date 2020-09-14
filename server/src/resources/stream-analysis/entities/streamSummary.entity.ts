@@ -5,14 +5,12 @@ import { StreamsEntity } from './streams.entity';
 
 @Entity({ name: 'StreamSummary' })
 export class StreamSummaryEntity {
+  @OneToOne((type) => StreamsEntity, (Streams) => Streams.streamId)
   @PrimaryColumn()
   streamId: string;
 
   @PrimaryColumn()
   platform: string;
-
-  @Column()
-  chatCount: number;
 
   @Column()
   smileCount: number;

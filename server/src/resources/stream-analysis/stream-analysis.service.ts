@@ -25,7 +25,7 @@ export class StreamAnalysisService {
   ) {}
   /*
     input   :  streamId , platform
-    output  :  chat_count , smile_count , viewer or subscribe_count
+    output  :  chat_count , smile_count , viewer
   */
   async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId)
   : Promise<StreamSummaryEntity[]> {
@@ -37,7 +37,7 @@ export class StreamAnalysisService {
           'streams',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
         )
-        .select(['streamSummary.*', 'viewer'])
+        .select(['streamSummary.*', 'viewer', 'chatCount'])
         .where('streamSummary.streamId = :id', { id: streams[0].streamId })
         .andWhere('streamSummary.platform = :platform', { platform: streams[0].platform })
         .execute()
@@ -53,7 +53,7 @@ export class StreamAnalysisService {
             'streams',
             'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
           )
-          .select(['streamSummary.*', 'viewer'])
+          .select(['streamSummary.*', 'viewer', 'chatCount'])
           .where('streamSummary.streamId = :id', { id: streams[1].streamId })
           .andWhere('streamSummary.platform = :platform', { platform: streams[1].platform })
           .execute()
@@ -80,7 +80,7 @@ export class StreamAnalysisService {
         'streams',
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
       )
-      .select(['streamSummary.*', 'viewer'])
+      .select(['streamSummary.*', 'viewer', 'chatCount'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startAt >= :startDate', { startDate: startAt })
       .andWhere('streams.startAt <= :endDate', { endDate: endAt })
@@ -88,7 +88,7 @@ export class StreamAnalysisService {
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });
-    console.log(streamsTermData);
+
     return streamsTermData;
   }
 
@@ -113,12 +113,14 @@ export class StreamAnalysisService {
     */
     const streamsInfoArray: UserStatisticsInterface[] = await this.streamsRepository
       .createQueryBuilder('streams')
-      .innerJoin(StreamSummaryEntity, 'streamSummary', 'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform')
-      .select(['streams.* , streamSummary.chatCount'])
+      .select(['streams.*'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startAt > :startDate', { startDate: startAt.toISOString() })
       .andWhere('streams.startAt < :nowDate', { nowDate: nowAt.toISOString() })
-      .execute();
+      .execute()
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+      });
 
     const twitchData = new UserStatisticInfo();
     const afreecaData = new UserStatisticInfo();

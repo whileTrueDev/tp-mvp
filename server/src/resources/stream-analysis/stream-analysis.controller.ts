@@ -41,7 +41,7 @@ export class StreamAnalysisController {
               }
     output  :  { chat_count , smile_count , viewer }
   */
-  @Get('term')
+  @Get('terms')
   getTermStreamsInfo(
     @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
