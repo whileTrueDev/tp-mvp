@@ -1,6 +1,8 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
+import * as route53 from '@aws-cdk/aws-route53';
+import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
@@ -19,6 +21,7 @@ const ID_PREFIX                         = 'WhileTrueCollector';
 const DATABASE_PORT                     = 3306;
 const TWITCH_COLLECTOR_FAMILY_NAME      = 'whiletrue-twitch-collector'
 const TWITCH_CHAT_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-chat'
+const DOMAIN_NAME                       = 'mytruepoint.com'
 
 export class WhileTrueCollectorStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
@@ -36,7 +39,7 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     // Database sec-grp
     const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
       vpc: vpc,
-      securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
+      // securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup2`,
       description: 'Allow traffics for Database of Truepoint Collector',
       allowAllOutbound: false
     });
@@ -50,13 +53,6 @@ export class WhileTrueCollectorStack extends cdk.Stack {
       ec2.Port.tcp(DATABASE_PORT),
       `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`
     );
-
-    const loadBalancerSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}LoadBalancerSecGrp`, {
-      vpc: vpc,
-      securityGroupName: `${ID_PREFIX}LoadBalancerSecurityGroup`,
-      description: 'Allow traffics for LoadBalancer of Truepoint Collector',
-      allowAllOutbound: true,
-    })
 
     // *********************************************
     // ******************* RDS *********************
@@ -168,12 +164,11 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     });
     const twitchtvChatsTaskDef = new ecs.FargateTaskDefinition(
       this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TaskDef`,
-      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME }
+      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME, cpu: 512, memoryLimitMiB: 1024, }
     );
     twitchtvChatsTaskDef.addContainer(
       `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Container`, {
       image: ecs.ContainerImage.fromRegistry(`hwasurr/${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`),
-      memoryLimitMiB: 512,
       secrets: {
         TWITCH_BOT_OAUTH_TOKEN: ecs.Secret.fromSsmParameter(ssmParameters.TWITCH_BOT_OAUTH_TOKEN),
         AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
@@ -187,7 +182,7 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     const twitchtvChatsSecGrp = new ec2.SecurityGroup(this,
       `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`, {
         vpc: vpc,
-        securityGroupName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}SecurityGroup`,
+        // securityGroupName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}SecurityGroup`,
         description: 'Allow all Outbound traffics for Twitch Chats Collector.',
         allowAllOutbound: true
       }
@@ -195,57 +190,13 @@ export class WhileTrueCollectorStack extends cdk.Stack {
 
     // *********************************************
     // Create ECS Service for Twitchtv Chats Collector
-    const twitchtvChatsService = new ecs.FargateService(
+    new ecs.FargateService(
       this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`, {
       cluster: ECSCluster,
       taskDefinition: twitchtvChatsTaskDef,
       desiredCount: 1,
-      serviceName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`,
       securityGroup: twitchtvChatsSecGrp,
     });
 
-    // Add Auto Scaling feature
-    const twitchtvChatsAutoScaling = twitchtvChatsService.autoScaleTaskCount({ maxCapacity: 5 });
-    twitchtvChatsAutoScaling.scaleOnCpuUtilization(
-      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}CpuScaling`, {
-        targetUtilizationPercent: 70
-      })
-
-    // ********************************************
-    // Create ALB for TwitchCats Collector
-    const publicLoadBalancer = new elbv2.ApplicationLoadBalancer(
-      this, `${ID_PREFIX}PublicLoadBalancer`, {
-      vpc: vpc,
-      internetFacing: true,
-      loadBalancerName: `${ID_PREFIX}Public`,
-      securityGroup: loadBalancerSecGrp
-    });
-
-    // Define loadbalancer Target group
-    const twitchCatsTargetGroup = new elbv2.ApplicationTargetGroup(
-      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TargetGroup`, {
-      vpc: vpc,
-      protocol: elbv2.ApplicationProtocol.HTTP,
-      port: 80,
-      targets: [twitchtvChatsService],
-      targetGroupName: `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TargetGroup`,
-      healthCheck: {
-        path: '/',
-        interval: cdk.Duration.seconds(30),
-      }
-    });
-
-    // Define HTTP Listener
-    publicLoadBalancer.addListener(
-      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}HttpListener`, {
-      port: 80,
-      defaultTargetGroups: [twitchCatsTargetGroup],
-    });
-    // Define HTTPS Listener
-    publicLoadBalancer.addListener(
-      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}HttpsListener`, {
-      port: 443,
-      defaultTargetGroups: [twitchCatsTargetGroup],
-    });
   }
 }
