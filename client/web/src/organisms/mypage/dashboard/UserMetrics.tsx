@@ -4,6 +4,7 @@ import {
   Avatar, Grid, Typography,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
+
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
@@ -43,7 +44,6 @@ export default function UserMetrics(): JSX.Element {
           <Typography variant="h1">그래프가</Typography>
           <Typography variant="h1">위치할 예정</Typography>
         </Grid>
-      </Grid>
 
       <Grid container spacing={2}>
         {[1233, 2516, 3434, 45454].map((card) => (

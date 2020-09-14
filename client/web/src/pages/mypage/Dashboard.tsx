@@ -13,8 +13,6 @@ export default function Dashboard(): JSX.Element {
       </MypageSectionWrapper>
       <MypageSectionWrapper>
         <SimpleNoticeTable />
-        <SimpleNoticeTable />
-        <SimpleNoticeTable />
       </MypageSectionWrapper>
     </>
   );

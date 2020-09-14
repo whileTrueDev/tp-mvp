@@ -66,7 +66,6 @@ function Index(): JSX.Element {
           </Switch>
         </BrowserRouter>
       </AuthContext.Provider>
-
     </ThemeProvider>
   );
 }
