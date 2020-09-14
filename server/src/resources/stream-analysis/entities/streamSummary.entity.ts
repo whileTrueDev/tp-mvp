@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryColumn, OneToOne
+  Entity, Column, PrimaryColumn, OneToOne, CreateDateColumn
 } from 'typeorm';
 import { StreamsEntity } from './streams.entity';
 
@@ -15,7 +15,7 @@ export class StreamSummaryEntity {
   @Column()
   smileCount: number;
 
-  @Column('timestamp')
+  @CreateDateColumn()
   createdAt: Date;
 
   // @OneToOne((type) => StreamsEntity, (streams) => streams.streamSummary)

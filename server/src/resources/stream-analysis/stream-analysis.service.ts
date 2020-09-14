@@ -82,8 +82,8 @@ export class StreamAnalysisService {
       )
       .select(['streamSummary.*', 'viewer', 'chatCount'])
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startAt >= :startDate', { startDate: startAt })
-      .andWhere('streams.startAt <= :endDate', { endDate: endAt })
+      .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
+      .andWhere('streams.startedAt <= :endDate', { endDate: endAt })
       .execute()
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
@@ -115,8 +115,8 @@ export class StreamAnalysisService {
       .createQueryBuilder('streams')
       .select(['streams.*'])
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startAt > :startDate', { startDate: startAt.toISOString() })
-      .andWhere('streams.startAt < :nowDate', { nowDate: nowAt.toISOString() })
+      .andWhere('streams.startedAt > :startDate', { startDate: startAt.toISOString() })
+      .andWhere('streams.startedAt < :nowDate', { nowDate: nowAt.toISOString() })
       .execute()
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');

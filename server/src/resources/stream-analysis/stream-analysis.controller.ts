@@ -27,6 +27,7 @@ export class StreamAnalysisController {
                 { chat_count , smile_count , viewer } || null ]
   */
   @Get('streams')
+  @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
   ): Promise<StreamSummaryEntity[]> {
@@ -42,6 +43,7 @@ export class StreamAnalysisController {
     output  :  { chat_count , smile_count , viewer }
   */
   @Get('terms')
+  @UseGuards(JwtAuthGuard)
   getTermStreamsInfo(
     @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
@@ -63,7 +65,7 @@ export class StreamAnalysisController {
                  afreecaData : // , twitchData : // , youtubeData : // }
   */
   @Get('user-statistics')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   getUserStatisticsInfo(
     @Query(new ValidationPipe()) findUserStatisticRequest: FindUserStatisticInfo
   )

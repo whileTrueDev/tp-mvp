@@ -44,8 +44,12 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   const [{ data: getData, loading: getLoading, error: getError }, excuteGet] = useAxios({
     url: 'http://localhost:3000/notification',
     params: {
-      userId: 'test2',
+      userId: 'test111',
     }
+  });
+
+  React.useEffect(() => {
+    console.log(getError);
   });
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state

@@ -28,7 +28,7 @@ export class StreamsEntity {
   fan: number;
 
   @Column('timestamp')
-  startAt: Date;
+  startedAt: Date;
 
   @Column()
   airTime: number;
