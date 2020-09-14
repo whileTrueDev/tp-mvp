@@ -18,6 +18,7 @@ import './assets/global.css';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
+import Mypage from './pages/mypage/layouts/MypageLayout';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
 
@@ -41,27 +42,40 @@ function Index(): JSX.Element {
   });
 
   return (
-    <React.StrictMode>
-      <ThemeProvider theme={THEME}>
-        <CssBaseline />
+    <ThemeProvider theme={THEME}>
+      <CssBaseline />
 
-        {/* 페이지 컴포넌트 */}
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/" component={Main} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/regist" component={Regist} />
-            <Route exact path="/find-id" component={FindId} />
-            <Route exact path="/find-pw" component={FindPassword} />
-            <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-            <Route exact path="/termsofuse" component={TermsOfUse} />
-            {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
-            {/* 페이지 컴포넌트가 여기에 위치합니다. */}
-          </Switch>
-        </BrowserRouter>
+      {/* 페이지 컴포넌트 */}
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Main} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/regist" component={Regist} />
+          <Route exact path="/find-id" component={FindId} />
+          <Route exact path="/find-pw" component={FindPassword} />
+          <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+          <Route exact path="/termsofuse" component={TermsOfUse} />
+          {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
+          {/* 페이지 컴포넌트가 여기에 위치합니다. */}
+        </Switch>
+      </BrowserRouter>
 
-      </ThemeProvider>
-    </React.StrictMode>
+      {/* 페이지 컴포넌트 */}
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Main} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/find-id" component={FindId} />
+          <Route exact path="/find-pw" component={FindPassword} />
+          <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+          <Route exact path="/termsofuse" component={TermsOfUse} />
+          <Route exact pate="/mypage" component={Mypage} />
+          {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
+          {/* 페이지 컴포넌트가 여기에 위치합니다. */}
+        </Switch>
+      </BrowserRouter>
+
+    </ThemeProvider>
   );
 }
 

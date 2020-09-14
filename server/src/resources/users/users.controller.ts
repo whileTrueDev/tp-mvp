@@ -6,7 +6,6 @@ import {
 import {
   UseRoles, ACGuard,
 } from 'nest-access-control';
-import { String } from 'aws-sdk/clients/apigateway';
 import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';

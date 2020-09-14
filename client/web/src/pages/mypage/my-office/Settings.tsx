@@ -1,7 +1,8 @@
 import React from 'react';
+import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 
 export default function Settings(): JSX.Element {
   return (
-    <div>Settings</div>
+    <MypageSectionWrapper>Settings</MypageSectionWrapper>
   );
 }
