@@ -55,10 +55,7 @@ function IndentityVerification({
   const classes = useStyles();
   const history = useHistory();
   const [, getRequest] = useAxios(
-    '/auth/certification', { manual: true }
-  );
-  const [, checkIdRequest] = useAxios(
-    '/users/checkId', { manual: true }
+    '/users/check-id', { manual: true }
   );
 
   const iamport = useIamportCertification((impUid) => {
@@ -67,24 +64,14 @@ function IndentityVerification({
       params: { impUid }
     }).then((res) => {
       if (res.data) {
-        // 기존의 가입된 내역이 존재할 경우, 넘길 수 있도록 변경한다.
-        checkIdRequest({
-          params: { userDI: res.data.userDI }
-        }).then((inres) => {
-          if (inres.data) {
-            // 회원가입한 ID가 존재한다.
-            alert('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.');
-            history.replace('/find-id');
-          } else {
-            setCertificationInfo(res.data);
-            handleNext();
-          }
-        });
+        alert('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.');
+        history.replace('/find-id');
       } else {
-        // 에러일 가능성이 존재한다.
-        handleBack();
+        setCertificationInfo(res.data);
+        handleNext();
       }
-    }).catch(() => { handleBack(); });
+    })
+      .catch(() => { handleBack(); });
   });
 
   return (
@@ -108,7 +95,7 @@ function IndentityVerification({
           <Typography>다음</Typography>
         </Button>
         <Button
-          // onClick={handleBack}
+          onClick={() => { history.push('/login'); }}
           className={classes.fullButton}
         >
           <Typography>뒤로</Typography>
