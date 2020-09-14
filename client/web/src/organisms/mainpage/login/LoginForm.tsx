@@ -123,7 +123,7 @@ export default function LoginForm(): JSX.Element {
             className={classes.button}
             style={{ color: theme.palette.text.primary }}
             component={Link}
-            to="/signup"
+            to="/regist"
           >
             회원가입
           </Button>

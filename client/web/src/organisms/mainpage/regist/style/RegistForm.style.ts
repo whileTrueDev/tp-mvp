@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   textField: {
+    color: theme.palette.text.secondary,
     [theme.breakpoints.down('xs')]: {
       minWidth: '200px',
       marginRight: 0,

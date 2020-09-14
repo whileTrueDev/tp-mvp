@@ -25,7 +25,6 @@ export class UsersController {
   ) {}
 
   // get request에 반응하는 router, 함수정의
-  // + 본인인증에 대한 여부 변수를 포함하여 전달.
   @Get('/id')
   async findId(
     @Query() query : CertificationType,
@@ -40,17 +39,22 @@ export class UsersController {
 
   // 1. ID 값을 통해서 ID의 존재여부 확인.
   // 2. userDI 값을 통해서 ID의 존재여부 확인.
-  @Get('/checkId')
+  @Get('/check-id')
   async checkId(
     @Query() query : CheckIdType,
   ): Promise<boolean> {
+    if (query.impUid) {
+      const { userDI }: CertificationInfo = await this.authService
+        .getCertificationInfo(query.impUid);
+      return this.usersService.checkID({ userDI });
+    }
     return this.usersService.checkID(query);
   }
 
   @Patch('/password')
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto
-  ) : Promise<string> {
+  ) : Promise<boolean> {
     return this.usersService.findPW(userDI, password);
   }
 
