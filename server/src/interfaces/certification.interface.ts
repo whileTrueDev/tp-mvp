@@ -10,3 +10,8 @@ export interface CertificationInfo {
   birth: string;
   userDI: string;
 }
+
+export interface CheckIdType {
+  userId? : string,
+  impUid? : string,
+}
