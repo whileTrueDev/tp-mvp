@@ -58,7 +58,6 @@ export class HighlightService {
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
     filterEmpty.map((value) => {
-      console.log(filterEmpty, value.split('_'));
       const startAt = value.split('_')[0];
       const finishAt = value.split('_')[1];
       const streamId = value.split('_')[2];
