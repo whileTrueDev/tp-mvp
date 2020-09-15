@@ -10,15 +10,12 @@ import {
 } from '@material-ui/core';
 
 import { configure } from 'axios-hooks';
-import THEME_TYPE from './interfaces/ThemeType';
 import * as serviceWorker from './serviceWorker';
 import axios from './utils/axios';
 
 // styles
 import defaultTheme from './theme';
 import './assets/truepoint.css';
-// Pages
-import './assets/global.css';
 // Pages and organisms
 import Appbar from './organisms/shared/Appbar';
 import Main from './pages/mainpage/Main';

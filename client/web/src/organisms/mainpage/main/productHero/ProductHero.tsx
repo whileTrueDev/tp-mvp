@@ -3,14 +3,13 @@ import { Container, Button } from '@material-ui/core';
 import shortid from 'shortid';
 import styles from '../style/ProductHero.style';
 import source from '../source/textsource';
-import Dialog from '../../../../atoms/dialog/Dialog.jsx';
+import Dialog from '../../../../atoms/Dialog/Dialog';
 import useDialog from '../../../../utils/hooks/useDialog';
-
 
 export default function ProductHero(): JSX.Element {
   const classes = styles();
-  const {open, handleClose, handleOpen} = useDialog();
-  
+  const { open, handleClose, handleOpen } = useDialog();
+
   return (
     <div className={classes.root}>
       <Container className={classes.wraper}>

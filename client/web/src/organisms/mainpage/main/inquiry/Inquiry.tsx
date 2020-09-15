@@ -1,17 +1,19 @@
 import React, { useState, useRef } from 'react';
-import { Checkbox, FormControlLabel, Button,
-  Typography, Input, Container, Grid, CircularProgress } from '@material-ui/core';
+import {
+  Checkbox, FormControlLabel, Button,
+  Typography, Input, Container, Grid, CircularProgress
+} from '@material-ui/core';
 import styles from '../style/Inquiry.style';
 import axios from '../../../../utils/axios';
 import useDialog from '../../../../utils/hooks/useDialog';
-import Dialog from '../../../../atoms/dialog/Dialog.jsx'
+import Dialog from '../../../../atoms/Dialog/Dialog';
 
 const initialContent = {
   name: '',
   content: '',
   privacyAgreement: false,
   email: ''
-}
+};
 
 const InquiryResult: any = {};
 
