@@ -971,6 +971,7 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     marginTop: 30,
+    fontSize: 20
   },
   policyWrapper: {
     marginTop: theme.spacing(8)
@@ -987,7 +988,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 30,
   },
   h4: {
-    fontSize: 25,
+    fontSize: 20,
   },
   h5: {
 
@@ -1013,7 +1014,7 @@ export default function PrivacyPolicy(): JSX.Element {
         <div className={classes.root}>
           <Grid container direction="row" alignItems="center" justify="space-between">
             <Grid item>
-              <h1 className={classes.h1}>TRUEPOINT Policy</h1>
+              <h1 className={classes.h1}>Policy</h1>
             </Grid>
           </Grid>
           <Grid container>
