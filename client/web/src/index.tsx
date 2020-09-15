@@ -94,13 +94,13 @@ function Index(): JSX.Element {
 
           <Switch>
             <Route exact path="/" component={Main} />
-            <Route exact path="/signup" component={Regist} />
+            <Route exact path="/regist" component={Regist} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/find-id" component={FindId} />
             <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
-            <Route exact path="/mypage" component={Mypage} />
+            <Route path="/mypage" component={Mypage} />
           </Switch>
 
         </BrowserRouter>
