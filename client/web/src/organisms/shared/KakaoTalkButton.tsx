@@ -4,9 +4,9 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   root: {
-    left: 1300,
+    bottom: 60,
     position: 'fixed',
-    top: 600,
+    right: 60,
     zIndex: 6
   }
 }));
