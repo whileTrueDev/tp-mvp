@@ -1,80 +1,109 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { AxiosResponse, AxiosError } from 'axios';
 import {
-  Router, Switch, Route
+  BrowserRouter, Switch, Route
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
-  CssBaseline, ThemeProvider, Paper, IconButton, Typography
+  CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-import Brightness7Icon from '@material-ui/icons/Brightness7';
-import Brightness4Icon from '@material-ui/icons/Brightness4';
 
-import THEME_TYPE from './interfaces/ThemeType';
+import { configure } from 'axios-hooks';
 import * as serviceWorker from './serviceWorker';
+import axios from './utils/axios';
+
+// styles
 import defaultTheme from './theme';
-import history from './history';
-import './assets/global.css';
-// Pages
+import './assets/truepoint.css';
+// Pages and organisms
+import Appbar from './organisms/shared/Appbar';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
-import HighlightAnalysis from './pages/mypage/highlight-analysis/HighlightAnalysis';
+import Mypage from './pages/mypage/layouts/MypageLayout';
+import KakaoTalk from './organisms/shared/KakaoTalkButton';
+import Login from './pages/mainpage/Login';
+import Regist from './pages/mainpage/Regist';
+import FindId from './pages/others/FindId';
+import FindPassword from './pages/others/FindPassword';
+// hooks
+import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
+import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 
 function Index(): JSX.Element {
-  // ******************************************************************
-  // Dark/Light theme changing
-  const [themeType, setTheme] = React.useState<THEME_TYPE>(THEME_TYPE.LIGHT);
-  function handleThemeChange() {
-    if (themeType === THEME_TYPE.DARK) setTheme(THEME_TYPE.LIGHT);
-    else setTheme(THEME_TYPE.DARK);
-  }
+  const {
+    user, accessToken, handleLogout, handleLogin
+  } = useLogin();
+  const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
   });
 
+  // *******************************************
+  // Axios Configurations
+
+  // Response Interceptors
+  function onResponseFulfilled(request: AxiosResponse): AxiosResponse {
+    return request;
+  }
+  function onResponseRejected(err: AxiosError): any {
+    if (err.response && err.response.status === 401) {
+      // Unauthorized Error 인 경우
+      return axios.post('/auth/silent-refresh')
+        .then((res) => {
+          const token = res.data.access_token;
+          // 새로받은 access token을 axios 기본 헤더로 설정
+          axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+          // React Context 변경
+          handleLogin(token);
+          // 실패 요청을 재 요청
+          const failedRequest = err.config;
+          failedRequest.headers['cache-control'] = 'no-cache';
+          return axios(failedRequest);
+        })
+        .catch((error) => { window.location.href = '/login'; });
+    }
+    return Promise.reject(err);
+  }
+  axios.interceptors.response.use(
+    onResponseFulfilled, onResponseRejected
+  );
+  // axios-hooks configuration
+  configure({ axios });
+
+  // Axios Configurations
+  // *******************************************
+
   return (
-    <React.StrictMode>
-      <ThemeProvider theme={THEME}>
-        <CssBaseline />
+    <ThemeProvider theme={THEME}>
+      <CssBaseline />
 
+      {/* 로그인 여부 Context */}
+      <AuthContext.Provider value={{
+        user, accessToken, handleLogin, handleLogout
+      }}
+      >
+        <KakaoTalk />
         {/* 페이지 컴포넌트 */}
-        <Router history={history}>
-
-          {/* *********************************************** */}
-          {/* Example changing Theme !! */}
-          <Paper
-            style={{
-              height: '10vh', display: 'flex', justifyContent: 'center', alignItems: 'center'
-            }}
-          >
-            <Typography variant="h4">
-              트루포인트
-            </Typography>
-
-            {themeType === THEME_TYPE.DARK && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness4Icon /></IconButton>
-            )}
-            {themeType === THEME_TYPE.LIGHT && (
-              <IconButton color="primary" onClick={handleThemeChange}><Brightness7Icon /></IconButton>
-            )}
-
-          </Paper>
-          {/* This is Example */}
-          {/* *********************************************** */}
+        <BrowserRouter>
+          <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
 
           <Switch>
             <Route exact path="/" component={Main} />
+            <Route exact path="/signup" component={Regist} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/find-id" component={FindId} />
+            <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
-            {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
-            {/* 페이지 컴포넌트가 여기에 위치합니다. */}
+            <Route exact path="/mypage" component={Mypage} />
           </Switch>
-        </Router>
 
-      </ThemeProvider>
-    </React.StrictMode>
+        </BrowserRouter>
+      </AuthContext.Provider>
+    </ThemeProvider>
   );
 }
 

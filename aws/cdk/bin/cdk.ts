@@ -24,16 +24,16 @@ new TruepointDevStack(app, 'TruepointDev', { env });
 // **********************************
 // VPC stack
 // **********************************
-// const TrupointVpcStack = new WhileTrueTruepointVpcStack(app, 'WhileTrue', { env });
+const TrupointVpcStack = new WhileTrueTruepointVpcStack(app, 'WhileTrue', { env });
 
 // **********************************
 // Collector DB Stack
 // **********************************
-// new WhileTrueCollectorStack(
-//   app,
-//   'WhileTrueCollector',
-//   { env, vpc: TrupointVpcStack.vpc }
-// );
+new WhileTrueCollectorStack(
+  app,
+  'WhileTrueCollector',
+  { env, vpc: TrupointVpcStack.vpc }
+);
 
 // **********************************
 // Truepoint Production Stack

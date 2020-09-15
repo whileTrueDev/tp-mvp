@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { CatsModule } from './resources/cats/cats.module';
+import { AccessControlModule } from 'nest-access-control';
+
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
 import { HighlightModule } from './resources/mypage/highlightPoint/hightlight.module';
 
-import loadConfig from './config/loadConfig';
 import { TypeOrmConfigService } from './config/database.config';
+import { NotificationModule } from './resources/notification/notification.module';
+import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
+
+import loadConfig from './config/loadConfig';
+
+import { roles } from './roles/app.roles';
 
 @Module({
   imports: [
@@ -15,10 +21,12 @@ import { TypeOrmConfigService } from './config/database.config';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService
     }),
-    CatsModule,
+    AccessControlModule.forRoles(roles),
     AuthModule,
     UsersModule,
-    HighlightModule
+    HighlightModule,
+    NotificationModule,
+    StreamAnalysisModule,
   ],
 })
 export class AppModule { }

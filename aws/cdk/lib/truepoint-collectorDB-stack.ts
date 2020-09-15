@@ -1,15 +1,27 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
+import * as ecs from '@aws-cdk/aws-ecs';
+import * as route53 from '@aws-cdk/aws-route53';
+import * as acm from '@aws-cdk/aws-certificatemanager';
+import * as iam from '@aws-cdk/aws-iam';
+import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
+import * as events from '@aws-cdk/aws-events';
 import * as rds from '@aws-cdk/aws-rds';
+import * as logs from '@aws-cdk/aws-logs';
+import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
+import getSSMParams from '../utils/getParams';
 
 interface WhileTrueCollectorStackProps extends cdk.StackProps {
   vpc: ec2.IVpc
 }
 
 // CONSTANTS
-const ID_PREFIX               = 'WhileTrueCollector';
-const DATABASE_PORT           = 3306;
+const ID_PREFIX                         = 'WhileTrueCollector';
+const DATABASE_PORT                     = 3306;
+const TWITCH_COLLECTOR_FAMILY_NAME      = 'whiletrue-twitch-collector'
+const TWITCH_CHAT_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-chat'
+const DOMAIN_NAME                       = 'mytruepoint.com'
 
 export class WhileTrueCollectorStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
@@ -27,8 +39,8 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     // Database sec-grp
     const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
       vpc: vpc,
-      securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
-      description: 'Allow traffics for Database of Truepoint',
+      // securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup2`,
+      description: 'Allow traffics for Database of Truepoint Collector',
       allowAllOutbound: false
     });
     databaseSecGrp.addEgressRule(
@@ -66,6 +78,10 @@ export class WhileTrueCollectorStack extends cdk.Stack {
       // *********************************************
       multiAz: false, 
       allocatedStorage: 100,
+      vpcPlacement: {
+        subnetType: ec2.SubnetType.PUBLIC
+      },
+      deletionProtection: true,
       // Enable storage auto scailing option by specifying maximum allocated storage
       maxAllocatedStorage: 300, // GB
       autoMinorVersionUpgrade: true,
@@ -89,5 +105,98 @@ export class WhileTrueCollectorStack extends cdk.Stack {
       threshold: 90,
       evaluationPeriods: 1
     });
+
+    // *********************************************
+    // *********** SSM Parameter Store *************
+    // *********************************************
+    const ssmParameters = getSSMParams(this);
+
+    // *********************************************
+    // ******************* ECS *********************
+    // *********************************************
+
+    // Define Collector ECS Cluster
+    const ECSCluster = new ecs.Cluster(this, `${ID_PREFIX}ECSCluster`, {
+      vpc: vpc, clusterName: ID_PREFIX,
+    });
+
+    // *********************************************
+    // Define task definition of Twitchtv Collector
+    const twitchtvLogGroup = new logs.LogGroup(
+      this, `${ID_PREFIX}${TWITCH_COLLECTOR_FAMILY_NAME}LogGroup`, {
+      logGroupName: `/ecs/${TWITCH_COLLECTOR_FAMILY_NAME}`, removalPolicy: cdk.RemovalPolicy.DESTROY
+    });
+    const twitchtvTaskDef = new ecs.FargateTaskDefinition(
+      this, `${ID_PREFIX}${TWITCH_COLLECTOR_FAMILY_NAME}TaskDef`,
+      { family: TWITCH_COLLECTOR_FAMILY_NAME }
+    );
+    twitchtvTaskDef.addContainer(
+      `${ID_PREFIX}${TWITCH_COLLECTOR_FAMILY_NAME}Container`, {
+      image: ecs.ContainerImage.fromRegistry(`hwasurr/${TWITCH_COLLECTOR_FAMILY_NAME}`),
+      memoryLimitMiB: 512,
+      secrets: {
+        CRAWL_TWITCH_API_CLIENT_SECRET: ecs.Secret.fromSsmParameter(ssmParameters.CRAWL_TWITCH_API_CLIENT_SECRET),
+        CRAWL_TWITCH_API_KEY: ecs.Secret.fromSsmParameter(ssmParameters.CRAWL_TWITCH_API_KEY),
+        AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
+        AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_SECRET_ACCESS_KEY,) 
+      },
+      logging: new ecs.AwsLogDriver({ logGroup: twitchtvLogGroup, streamPrefix: 'ecs' }),
+    });
+
+    // *********************************************
+    // Create ScheduledFargateTask for Twitchtv Collector
+    new ecsPatterns.ScheduledFargateTask(this,
+      `${TWITCH_COLLECTOR_FAMILY_NAME}Task`, {
+        cluster: ECSCluster,
+        desiredTaskCount: 1,
+        scheduledFargateTaskDefinitionOptions: {
+          taskDefinition: twitchtvTaskDef,
+        },
+        schedule: events.Schedule.expression('cron(3,6,9,13,16,19,23,26,29,33,36,39,43,46,49,53,56,59 * * * ? *)'),
+    });
+
+    // *********************************************
+    // Define task definition of Twitchtv Chats Collector
+    const twitchtvChatsLogGroup = new logs.LogGroup(
+      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}LogGroup`, {
+      logGroupName: `/ecs/${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`,
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    });
+    const twitchtvChatsTaskDef = new ecs.FargateTaskDefinition(
+      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TaskDef`,
+      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME, cpu: 512, memoryLimitMiB: 1024, }
+    );
+    twitchtvChatsTaskDef.addContainer(
+      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Container`, {
+      image: ecs.ContainerImage.fromRegistry(`hwasurr/${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`),
+      secrets: {
+        TWITCH_BOT_OAUTH_TOKEN: ecs.Secret.fromSsmParameter(ssmParameters.TWITCH_BOT_OAUTH_TOKEN),
+        AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
+        AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_SECRET_ACCESS_KEY,) 
+      },
+      logging: new ecs.AwsLogDriver({ logGroup: twitchtvChatsLogGroup, streamPrefix: 'ecs' }),
+    });
+
+    // *********************************************
+    // Create SecurityGroups for Twitchtv Chats Collector
+    const twitchtvChatsSecGrp = new ec2.SecurityGroup(this,
+      `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`, {
+        vpc: vpc,
+        // securityGroupName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}SecurityGroup`,
+        description: 'Allow all Outbound traffics for Twitch Chats Collector.',
+        allowAllOutbound: true
+      }
+    );
+
+    // *********************************************
+    // Create ECS Service for Twitchtv Chats Collector
+    new ecs.FargateService(
+      this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`, {
+      cluster: ECSCluster,
+      taskDefinition: twitchtvChatsTaskDef,
+      desiredCount: 1,
+      securityGroup: twitchtvChatsSecGrp,
+    });
+
   }
 }

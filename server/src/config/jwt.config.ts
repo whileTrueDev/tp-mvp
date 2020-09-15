@@ -8,7 +8,7 @@ export class JwtConfigService implements JwtOptionsFactory {
   createJwtOptions(): JwtModuleOptions {
     return {
       secret: this.configService.get<string>('JWT_SECRET'),
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: '1h' },
     };
   }
 }

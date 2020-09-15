@@ -2,40 +2,35 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useLayoutStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    position: 'relative',
-    top: '0',
-    height: '100vh',
+    position: 'sticky',
+    minHeight: 'calc(100vh - 100px)',
+    background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
-  mainPanel: {
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${300}px)`,
-    },
-    overflow: 'auto',
-    position: 'relative',
-    float: 'right',
-    transition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
-    maxHeight: '100%',
-    width: '100%',
-    overflowScrolling: 'touch',
+  conatiner: {
+    width: 1400,
+    margin: '0 auto',
+    height: 1094,
+    display: 'flex',
+    boxShadow: theme.shadows[4],
     backgroundColor: theme.palette.background.default,
   },
-  content: {
-    marginTop: '70px',
-    padding: '15px 15px',
-    minHeight: 'calc(100vh - 123px)',
-    [theme.breakpoints.down('xs')]: {
-      padding: 0
-    }
+  sidebarWrapper: {
+    width: 230,
+    paddingTop: 96,
+    backgroundColor: theme.palette.background.paper,
+    borderRight: `1px solid ${theme.palette.divider}`,
+    top: 0,
   },
-  container: {
-    [theme.breakpoints.down('xs')]: {
-      paddingLeft: 15,
-      paddingRight: 15
-    },
-    paddingRight: '15px',
-    paddingLeft: '15px',
-    marginRight: 'auto',
-    marginLeft: 'auto',
+  appbarWrapper: {
+    height: 96,
+    top: 0,
+    position: 'sticky',
+    zIndex: 9999,
+  },
+  mainPanel: {
+    width: '100%',
+    overflow: 'auto',
+    backgroundColor: theme.palette.background.default,
   },
 }));
 
