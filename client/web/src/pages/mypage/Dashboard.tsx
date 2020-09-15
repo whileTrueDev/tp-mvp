@@ -8,7 +8,7 @@ export default function Dashboard(): JSX.Element {
   const theme = useTheme();
   return (
     <>
-      <MypageSectionWrapper color={theme.palette.primary.light}>
+      <MypageSectionWrapper color={theme.palette.info.light}>
         <UserMetrics />
       </MypageSectionWrapper>
       <MypageSectionWrapper>

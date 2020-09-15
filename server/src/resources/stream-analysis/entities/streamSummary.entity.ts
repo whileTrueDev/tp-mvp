@@ -1,10 +1,11 @@
 import {
-  Entity, Column, PrimaryColumn, OneToOne, JoinColumn
+  Entity, Column, PrimaryColumn, OneToOne, CreateDateColumn
 } from 'typeorm';
 import { StreamsEntity } from './streams.entity';
 
 @Entity({ name: 'StreamSummary' })
 export class StreamSummaryEntity {
+  @OneToOne((type) => StreamsEntity, (Streams) => Streams.streamId)
   @PrimaryColumn()
   streamId: string;
 
@@ -12,16 +13,12 @@ export class StreamSummaryEntity {
   platform: string;
 
   @Column()
-  chatCount: number;
-
-  @Column()
   smileCount: number;
 
-  @Column('timestamp')
+  @CreateDateColumn()
   createdAt: Date;
 
-  // @OneToOne(() => StreamsEntity)
-  // @JoinColumn()
+  // @OneToOne((type) => StreamsEntity, (streams) => streams.streamSummary)
   // streams: StreamsEntity
 
   constructor(partial: Partial<StreamSummaryEntity>) {

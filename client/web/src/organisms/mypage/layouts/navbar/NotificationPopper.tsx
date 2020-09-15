@@ -79,7 +79,8 @@ function NotificationPopper({
       disablePortal
       modifiers={{
         flip: { enabled: true, },
-        preventOverflow: { enabled: false, boundariesElement: 'scrollParent', }
+        preventOverflow: { enabled: false, boundariesElement: 'scrollParent', },
+        hide: { enabled: false }
       }}
     >
       {/* 공지 메뉴 컴포넌트 */}

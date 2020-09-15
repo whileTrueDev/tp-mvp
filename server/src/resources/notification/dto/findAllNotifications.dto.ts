@@ -2,8 +2,8 @@ import {
   IsString, Length
 } from 'class-validator';
 
-const userIdMinLength = 1;
-const userIdMaxLength = 20;
+const userIdMinLength = 6;
+const userIdMaxLength = 15;
 
 export class FindAllNotifications {
   @IsString()

@@ -18,6 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const reqAttachTargetUser = {
       userId: payload.userId,
       userName: payload.name,
+      userDI: payload.userDI,
       roles: payload.roles,
     };
     return reqAttachTargetUser;
