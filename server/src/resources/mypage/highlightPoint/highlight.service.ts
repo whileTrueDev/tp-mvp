@@ -68,4 +68,3 @@ export class HighlightService {
     return returnArray;
   }
 }
-// highlight_json/134859149/2020-09-13/39667416302/39667416302
