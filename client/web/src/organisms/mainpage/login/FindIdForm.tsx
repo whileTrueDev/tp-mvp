@@ -9,6 +9,7 @@ import LoginHelper from '../../../atoms/LoginHelper';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import useDialog from '../../../utils/hooks/useDialog';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -53,8 +54,7 @@ export default function FindAccountForm(): JSX.Element {
   }
 
   // 스텝 2 에러 알림창 렌더링을 위한 스테이트
-  function handleHelperOpen(errorMessage:string):void { setHelperOpen(errorMessage); }
-  function handleHelperClose():void { setHelperOpen(undefined); }
+  const helperText = useDialog();
 
   // **************************************************
   // Input values
@@ -87,7 +87,7 @@ export default function FindAccountForm(): JSX.Element {
             handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
           }
         }
-      }).catch(() => { handleHelperOpen('아이디 정보를 불러오는 도중에 오류가 발생했습니다. support@mytruepoint.com으로 문의바랍니다.'); });
+      }).catch(() => { helperText.handleOpen(); });
     }
   }
 
@@ -109,13 +109,13 @@ export default function FindAccountForm(): JSX.Element {
           handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
         }
       }
-    }).catch(() => { handleHelperOpen('아이디 정보를 불러오는 도중에 오류가 발생했습니다. support@mytruepoint.com으로 문의바랍니다.'); });
+    }).catch(() => { helperText.handleOpen(); });
   });
 
   return (
     <div style={{ textAlign: 'center' }}>
       <TruepointLogo />
-      { helperText && (
+      {helperText.open && error && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />
         </div>
@@ -186,7 +186,7 @@ export default function FindAccountForm(): JSX.Element {
             className={classes.fullButton}
             onClick={() => {
               handleBack();
-              handleHelperClose();
+              helperText.handleClose();
             }}
           >
             <Typography>방법 선택으로 돌아가기</Typography>
@@ -216,7 +216,7 @@ export default function FindAccountForm(): JSX.Element {
             className={classes.fullButton}
             onClick={() => {
               handleBack();
-              handleHelperClose();
+              helperText.handleClose();
             }}
           >
             <Typography>방법 선택으로 돌아가기</Typography>

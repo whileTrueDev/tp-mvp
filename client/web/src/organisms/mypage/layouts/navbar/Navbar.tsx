@@ -32,7 +32,7 @@ function Navbar(props: NavbarProps): JSX.Element {
   const { navUserInfoList, routes } = props;
   const [selectedUserIndex, setSelectedUserIndex] = React.useState<number>(0);
   const currDate = new Date();
-  // const stringDate:string = currDate.toISOString();
+
   // "~ 님" 클릭 드롭다운 선택 핸들러
   const handleSelectedUserIndex = (user: NavUserInfoInterface) => {
     setSelectedUserIndex(navUserInfoList.indexOf(user));

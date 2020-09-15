@@ -1,7 +1,6 @@
 import React, { useState, useReducer } from 'react';
 import {
   Grid,
-  Typography
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
@@ -68,7 +67,6 @@ function RegistStepper(): JSX.Element {
       <Grid container direction="column">
         {(activeStep === 0 || activeStep === 1) && (
         <Grid item className={classes.center}>
-          {/* <Typography variant="h4">TRUEPOINT LOGO</Typography> */}
           <TruepointLogo />
         </Grid>
         )}

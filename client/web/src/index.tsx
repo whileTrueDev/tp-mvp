@@ -7,35 +7,33 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import {
   CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-import Axios from 'axios';
 import { configure } from 'axios-hooks';
-// 
-import THEME_TYPE from './interfaces/ThemeType';
+import axios from './utils/axios';
 import * as serviceWorker from './serviceWorker';
+// styles
 import defaultTheme from './theme';
 import './assets/global.css';
-// Pages
+// Pages and organisms
+import Appbar from './organisms/shared/Appbar';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
-
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
+// hooks
+import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
+import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 
-const axios = Axios.create({ baseURL: 'http://localhost:3000' });
+// axios-hooks configuration
 configure({ axios });
-
 function Index(): JSX.Element {
-  // ******************************************************************
-  // Dark/Light theme changing
-  const [themeType, setTheme] = React.useState<THEME_TYPE>(THEME_TYPE.LIGHT);
-  function handleThemeChange() {
-    if (themeType === THEME_TYPE.DARK) setTheme(THEME_TYPE.LIGHT);
-    else setTheme(THEME_TYPE.DARK);
-  }
+  const {
+    user, accessToken, handleLogout, handleLogin
+  } = useLogin();
+  const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
@@ -45,36 +43,29 @@ function Index(): JSX.Element {
     <ThemeProvider theme={THEME}>
       <CssBaseline />
 
-      {/* 페이지 컴포넌트 */}
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/" component={Main} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/regist" component={Regist} />
-          <Route exact path="/find-id" component={FindId} />
-          <Route exact path="/find-pw" component={FindPassword} />
-          <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-          <Route exact path="/termsofuse" component={TermsOfUse} />
-          {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
-          {/* 페이지 컴포넌트가 여기에 위치합니다. */}
-        </Switch>
-      </BrowserRouter>
+      {/* 로그인 여부 Context */}
+      <AuthContext.Provider value={{
+        user, accessToken, handleLogin, handleLogout
+      }}
+      >
+        {/* 페이지 컴포넌트 */}
+        <BrowserRouter>
+          <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
 
-      {/* 페이지 컴포넌트 */}
-      <BrowserRouter>
-        <Switch>
-          <Route exact path="/" component={Main} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/find-id" component={FindId} />
-          <Route exact path="/find-pw" component={FindPassword} />
-          <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-          <Route exact path="/termsofuse" component={TermsOfUse} />
-          <Route exact pate="/mypage" component={Mypage} />
-          {/* <Route exact path="/introduction" component={서비스소개페이지} /> */}
-          {/* 페이지 컴포넌트가 여기에 위치합니다. */}
-        </Switch>
-      </BrowserRouter>
+          <Switch>
 
+            <Route exact path="/" component={Main} />
+            <Route exact path="/signup" component={Regist} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/find-id" component={FindId} />
+            <Route exact path="/find-pw" component={FindPassword} />
+            <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+            <Route exact path="/termsofuse" component={TermsOfUse} />
+
+            <Route exact pate="/mypage" component={Mypage} />
+          </Switch>
+        </BrowserRouter>
+      </AuthContext.Provider>
     </ThemeProvider>
   );
 }

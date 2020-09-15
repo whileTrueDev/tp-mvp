@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   container: { display: 'flex', height: '100vh', },
   leftside: {
     width: '50%',
-    background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`
+    background: `url('images/main/loginpage.png'), linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   centerflex: {
     display: 'flex',

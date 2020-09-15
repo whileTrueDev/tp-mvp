@@ -1,6 +1,6 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { UserLoginPayload } from '../../../interfaces/logedInUser.interface';
 
@@ -15,7 +15,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     // 대부분의 validate 작업은 AuthService의 도움으로 수행됩니다.
     const user = await this.authService.validateUser(userId, password);
     if (!user) {
-      throw new UnauthorizedException();
+      throw new BadRequestException();
     }
     return user;
   }

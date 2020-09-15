@@ -1,12 +1,15 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
+import * as route53 from '@aws-cdk/aws-route53';
+import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as iam from '@aws-cdk/aws-iam';
 import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
 import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
+import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
 import getSSMParams from '../utils/getParams';
 
 interface WhileTrueCollectorStackProps extends cdk.StackProps {
@@ -18,6 +21,7 @@ const ID_PREFIX                         = 'WhileTrueCollector';
 const DATABASE_PORT                     = 3306;
 const TWITCH_COLLECTOR_FAMILY_NAME      = 'whiletrue-twitch-collector'
 const TWITCH_CHAT_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-chat'
+const DOMAIN_NAME                       = 'mytruepoint.com'
 
 export class WhileTrueCollectorStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
@@ -35,8 +39,8 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     // Database sec-grp
     const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
       vpc: vpc,
-      securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
-      description: 'Allow traffics for Database of Truepoint',
+      // securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup2`,
+      description: 'Allow traffics for Database of Truepoint Collector',
       allowAllOutbound: false
     });
     databaseSecGrp.addEgressRule(
@@ -160,12 +164,11 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     });
     const twitchtvChatsTaskDef = new ecs.FargateTaskDefinition(
       this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TaskDef`,
-      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME }
+      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME, cpu: 512, memoryLimitMiB: 1024, }
     );
     twitchtvChatsTaskDef.addContainer(
       `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Container`, {
       image: ecs.ContainerImage.fromRegistry(`hwasurr/${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`),
-      memoryLimitMiB: 512,
       secrets: {
         TWITCH_BOT_OAUTH_TOKEN: ecs.Secret.fromSsmParameter(ssmParameters.TWITCH_BOT_OAUTH_TOKEN),
         AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
@@ -179,7 +182,7 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     const twitchtvChatsSecGrp = new ec2.SecurityGroup(this,
       `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`, {
         vpc: vpc,
-        securityGroupName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}SecurityGroup`,
+        // securityGroupName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}SecurityGroup`,
         description: 'Allow all Outbound traffics for Twitch Chats Collector.',
         allowAllOutbound: true
       }
@@ -192,8 +195,8 @@ export class WhileTrueCollectorStack extends cdk.Stack {
       cluster: ECSCluster,
       taskDefinition: twitchtvChatsTaskDef,
       desiredCount: 1,
-      serviceName: `${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`,
-      securityGroup: twitchtvChatsSecGrp
+      securityGroup: twitchtvChatsSecGrp,
     });
+
   }
 }

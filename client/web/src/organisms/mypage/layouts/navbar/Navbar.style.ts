@@ -45,7 +45,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
   },
   subscribeChip: {
     background: theme.palette.common.white,
-    color: theme.palette.primary.dark,
+    color: theme.palette.primary.main,
     padding: theme.spacing(1),
     marginLeft: theme.spacing(1),
     fontWeight: 'bold',

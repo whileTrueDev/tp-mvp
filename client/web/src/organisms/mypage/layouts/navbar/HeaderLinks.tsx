@@ -68,7 +68,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         <Tooltip title="홈으로 이동">
           <IconButton
             aria-label="to-home"
-            to={routes[0].path}
+            to={routes[0].layout + routes[0].path}
             component={Link}
           >
             <Home className={classes.rightGridIcon} />
@@ -76,37 +76,32 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         </Tooltip>
       </Hidden>
 
-      <Hidden smDown>
-        <Tooltip title="알림">
-          <IconButton
-            style={{ marginRight: '27px' }}
-            aria-label="notifications"
-            ref={notificationRef}
-            onClick={(e): void => {
-              if (anchorEl) { handleAnchorClose(); } else { handleAnchorOpen(e); }
-            }}
-          >
-
-            <Badge
-              badgeContent={!getLoading && getData && !getError
-                ? (getData.filter((noti: Notification) => noti.readState === 0).length)
-                : (null)}
-              color="secondary"
-            />
-            <Notifications className={classes.rightGridIcon} />
-          </IconButton>
-        </Tooltip>
-      </Hidden>
-
-      <Hidden smDown>
-        {anchorEl && !getLoading && getData && !getError && (
-          <NotificationPopper
-            anchorEl={anchorEl}
-            notificationData={getData}
-            setChangeReadState={setChangeReadState}
+      <Tooltip title="알림">
+        <IconButton
+          style={{ marginRight: '27px' }}
+          aria-label="notifications"
+          ref={notificationRef}
+          onClick={(e): void => {
+            if (anchorEl) { handleAnchorClose(); } else { handleAnchorOpen(e); }
+          }}
+        >
+          <Badge
+            badgeContent={!getLoading && getData && !getError
+              ? (getData.filter((noti: Notification) => noti.readState === 0).length)
+              : (null)}
+            color="secondary"
           />
-        )}
-      </Hidden>
+          <Notifications className={classes.rightGridIcon} />
+        </IconButton>
+      </Tooltip>
+
+      {anchorEl && !getLoading && getData && !getError && (
+      <NotificationPopper
+        anchorEl={anchorEl}
+        notificationData={getData}
+        setChangeReadState={setChangeReadState}
+      />
+      )}
     </Grid>
   );
 }
