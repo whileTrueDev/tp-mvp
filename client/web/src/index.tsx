@@ -98,7 +98,7 @@ function Index(): JSX.Element {
             <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
-            <Route exact pate="/mypage" component={Mypage} />
+            <Route exact path="/mypage" component={Mypage} />
           </Switch>
 
         </BrowserRouter>
