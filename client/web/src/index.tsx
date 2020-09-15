@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { AxiosResponse, AxiosError } from 'axios';
 import {
   BrowserRouter, Switch, Route
 } from 'react-router-dom';
@@ -8,8 +9,9 @@ import {
   CssBaseline, ThemeProvider,
 } from '@material-ui/core';
 import { configure } from 'axios-hooks';
-import axios from './utils/axios';
 import * as serviceWorker from './serviceWorker';
+import axios from './utils/axios';
+
 // styles
 import defaultTheme from './theme';
 import './assets/global.css';
@@ -27,8 +29,6 @@ import FindPassword from './pages/others/FindPassword';
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 
-// axios-hooks configuration
-configure({ axios });
 function Index(): JSX.Element {
   const {
     user, accessToken, handleLogout, handleLogin
@@ -38,6 +38,41 @@ function Index(): JSX.Element {
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
   });
+
+  // *******************************************
+  // Axios Configurations
+
+  // Response Interceptors
+  function onResponseFulfilled(request: AxiosResponse): AxiosResponse {
+    return request;
+  }
+  function onResponseRejected(err: AxiosError): any {
+    if (err.response && err.response.status === 401) {
+      // Unauthorized Error 인 경우
+      return axios.post('/auth/silent-refresh')
+        .then((res) => {
+          const token = res.data.access_token;
+          // 새로받은 access token을 axios 기본 헤더로 설정
+          axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+          // React Context 변경
+          handleLogin(token);
+          // 실패 요청을 재 요청
+          const failedRequest = err.config;
+          failedRequest.headers['cache-control'] = 'no-cache';
+          return axios(failedRequest);
+        })
+        .catch((error) => { window.location.href = '/login'; });
+    }
+    return Promise.reject(err);
+  }
+  axios.interceptors.response.use(
+    onResponseFulfilled, onResponseRejected
+  );
+  // axios-hooks configuration
+  configure({ axios });
+
+  // Axios Configurations
+  // *******************************************
 
   return (
     <ThemeProvider theme={THEME}>

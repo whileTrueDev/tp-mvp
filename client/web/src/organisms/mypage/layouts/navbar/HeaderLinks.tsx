@@ -44,7 +44,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   const [{ data: getData, loading: getLoading, error: getError }, excuteGet] = useAxios({
     url: 'http://localhost:3000/notification',
     params: {
-      userId: 'test111',
+      userId: 'testtest',
     }
   });
 
