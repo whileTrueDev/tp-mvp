@@ -4,7 +4,6 @@ import {
   HttpException, HttpStatus, Res, BadRequestException, Body
 } from '@nestjs/common';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from './auth.service';
 import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
