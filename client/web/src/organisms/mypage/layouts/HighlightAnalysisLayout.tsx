@@ -31,7 +31,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       streamId
     });
   };
-  console.log(Boolean(data.streamId));
   const handleAnalyze = () => {
     // doSubmit
     console.log(selectedStream);

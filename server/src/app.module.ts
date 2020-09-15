@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CatsModule } from './resources/cats/cats.module';
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
+import { HighlightModule } from './resources/mypage/highlightPoint/hightlight.module';
 
 import loadConfig from './config/loadConfig';
 import { TypeOrmConfigService } from './config/database.config';
@@ -16,7 +17,8 @@ import { TypeOrmConfigService } from './config/database.config';
     }),
     CatsModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    HighlightModule
   ],
 })
-export class AppModule {}
+export class AppModule { }
