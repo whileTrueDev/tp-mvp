@@ -12,7 +12,6 @@ import Grid from '@material-ui/core/Grid';
 // icons
 import CloseIcon from '@material-ui/icons/Close';
 
-
 const DialogTitle = withStyles((theme: Theme) => ({
   root: {
     margin: 0,

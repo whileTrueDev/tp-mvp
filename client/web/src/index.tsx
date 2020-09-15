@@ -8,13 +8,14 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import {
   CssBaseline, ThemeProvider,
 } from '@material-ui/core';
+
 import { configure } from 'axios-hooks';
 import * as serviceWorker from './serviceWorker';
 import axios from './utils/axios';
 
 // styles
 import defaultTheme from './theme';
-import './assets/global.css';
+import './assets/truepoint.css';
 // Pages and organisms
 import Appbar from './organisms/shared/Appbar';
 import Main from './pages/mainpage/Main';
