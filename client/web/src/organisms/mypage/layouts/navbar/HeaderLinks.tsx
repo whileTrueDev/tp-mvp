@@ -36,7 +36,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const classes = useNavbarStyles();
   const {
-    anchorEl, handleAnchorOpen, handleAnchorOpenWithRef, handleAnchorClose
+    anchorEl, handleAnchorOpen, handleAnchorClose
   } = useAnchorEl();
 
   // 개인 알림 - GET Request
@@ -48,13 +48,8 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
     }
   });
 
-  React.useEffect(() => {
-    console.log(getError);
-  });
-
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
-  const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     if (changeReadState) {
       excuteGet();
