@@ -22,6 +22,7 @@ import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
+import KakaoTalk from './organisms/shared/KakaoTalkButton';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
 import FindId from './pages/others/FindId';
@@ -84,6 +85,7 @@ function Index(): JSX.Element {
         user, accessToken, handleLogin, handleLogout
       }}
       >
+        <KakaoTalk />
         {/* 페이지 컴포넌트 */}
         <BrowserRouter>
           <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
