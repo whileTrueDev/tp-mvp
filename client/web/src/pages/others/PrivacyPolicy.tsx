@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Grid } from '@material-ui/core';
 import shortid from 'shortid';
-import terms from './source/Terms';
+import terms from './source/terms';
 
 const useStyles = makeStyles((theme) => ({
   root: {
