@@ -18,7 +18,7 @@ const useHighlightAnalysisHeroStyles = makeStyles((theme) => ({
   },
   fonts: {
     fontWeight: 'bold',
-    color: theme.palette.primary.light
+    color: theme.palette.common.white
   },
   image: {
     marginTop: 8,
