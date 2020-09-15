@@ -5,24 +5,24 @@ const useHighlightAnalysisHeroStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.grey[400]
   },
   leftCard: {
-    padding: 20,
+    padding: 24,
     backgroundColor: theme.palette.primary.light,
   },
   middleCard: {
-    padding: 20,
+    padding: 24,
     backgroundColor: theme.palette.primary.dark
   },
   rightCard: {
-    padding: 20,
+    padding: 24,
     backgroundColor: theme.palette.secondary.light
   },
   fonts: {
     fontWeight: 'bold',
-    color: '#fff'
+    color: theme.palette.primary.light
   },
   image: {
-    marginTop: 10,
-    margin: 5
+    marginTop: 8,
+    margin: 8
   }
 }));
 
