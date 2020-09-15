@@ -63,7 +63,7 @@ function Index(): JSX.Element {
           failedRequest.headers['cache-control'] = 'no-cache';
           return axios(failedRequest);
         })
-        .catch((error) => { window.location.href = '/login'; });
+        .catch(() => Promise.reject(err)); // 로그인으로 이동
     }
     return Promise.reject(err);
   }
@@ -85,9 +85,7 @@ function Index(): JSX.Element {
         user, accessToken, handleLogin, handleLogout
       }}
       >
-        {/* 카카오 문의 */}
         <KakaoTalk />
-
         {/* 페이지 컴포넌트 */}
         <BrowserRouter>
           <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
