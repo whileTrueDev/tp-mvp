@@ -113,7 +113,7 @@ export default function Footer(): JSX.Element {
             <ul className={classes.list}>
               <li>
                 <Link
-                  href="/이용약관"
+                  href="/termsofuse"
                   color="inherit"
                   underline="none"
                   className={classes.listItem}
@@ -123,7 +123,7 @@ export default function Footer(): JSX.Element {
               </li>
               <li>
                 <Link
-                  href="/개인정보 처리방침"
+                  href="/privacypolicy"
                   color="inherit"
                   underline="none"
                   style={{ fontWeight: 'bold' }}
@@ -135,7 +135,7 @@ export default function Footer(): JSX.Element {
             </ul>
           </Grid>
           <Grid item className={classes.icons}>
-            <a href="#" className={classes.icon}>
+            <a href="https://mytruepoint.com" className={classes.icon}>
               <img src="./images/logo/truepointLogo.png" id="logo" alt="TruePointLogo" width={40} height={40} />
             </a>
             <Typography className={classes.name} variant="body2">
