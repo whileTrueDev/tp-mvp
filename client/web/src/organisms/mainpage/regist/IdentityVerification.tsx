@@ -81,7 +81,7 @@ function IndentityVerification({
               handleNext();
             } else {
               alert('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.');
-              history.push('/regist');
+              history.push('/signup');
             }
           });
       }
