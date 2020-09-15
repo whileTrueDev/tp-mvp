@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  makeStyles, Typography, Grid, Theme
-} from '@material-ui/core';
+import { makeStyles, Grid } from '@material-ui/core';
 import shortid from 'shortid';
 import AgreementSource from './source/AgreementSource';
 

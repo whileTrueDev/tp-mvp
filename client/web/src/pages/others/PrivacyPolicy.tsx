@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Grid } from '@material-ui/core';
 import shortid from 'shortid';
-import terms from './source/terms';
+import terms from './source/Term';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface Term {
+interface Terms {
   title: string;
   text: string;
 }
@@ -73,7 +73,7 @@ export default function PrivacyPolicy(): JSX.Element {
               <h2 className={classes.h2}>개인정보 처리방침</h2>
               <h4>{terms[3]}</h4>
               <div className={classes.content}>
-                {terms[2].map((term: Term) => (
+                {terms[2].map((term: Terms) => (
                   <div key={shortid.generate()} className={classes.policyWrapper}>
                     <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
                     <div key={shortid.generate()} className={classes.text}>

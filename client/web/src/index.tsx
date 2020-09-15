@@ -23,7 +23,7 @@ import Login from './pages/mainpage/Login';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 // kakaoIcon
-import KakaoTalk from './organisms/shared/kakaoTalk';
+import KakaoTalk from './organisms/shared/KakaoTalkButton';
 
 configure({ axios });
 function Index(): JSX.Element {
