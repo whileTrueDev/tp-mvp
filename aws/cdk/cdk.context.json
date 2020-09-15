@@ -10,5 +10,9 @@
     "ap-northeast-2b",
     "ap-northeast-2c",
     "ap-northeast-2d"
-  ]
+  ],
+  "hosted-zone:account=576646866181:domainName=mytruepoint.com:region=ap-northeast-2": {
+    "Id": "/hostedzone/Z00489301SPXI2OS9LJMO",
+    "Name": "mytruepoint.com."
+  }
 }

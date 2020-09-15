@@ -1,6 +1,6 @@
 import { ThemeOptions } from '@material-ui/core';
-import { indigo } from '@material-ui/core/colors';
 import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 
 const rawTheme: ThemeOptions = {
   palette: {
@@ -12,15 +12,20 @@ const rawTheme: ThemeOptions = {
      * https://material-ui.com/customization/color/#color 에서 Color를 찾을 수 있습니다.
      */
     primary: {
-      light: lighten(indigo[400], 0.07),
-      main: indigo[400],
-      dark: darken(indigo[400], 0.07),
+      light: '#a8c4f9',
+      main: '#929ef8',
+      dark: '#4b5ac7',
     },
-    // secondary: {
-    //   light: lighten(cyan[400], 0.07),
-    //   main: indigo[400],
-    //   dark: darken(cyan[400], 0.07),
-    // },
+    secondary: {
+      light: lighten('#79e2e0', 0.1),
+      main: '#79e2e0',
+      dark: darken('#79e2e0', 0.1),
+    },
+    info: {
+      light: '#9AA2C5',
+      main: blueGrey[400],
+      dark: blueGrey[600],
+    }
   },
   typography: {
     fontFamily: '"NotoSansKR-Regular", "Sunflower", sans-serif'

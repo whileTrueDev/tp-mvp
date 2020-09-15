@@ -33,6 +33,7 @@ export class WhileTrueTruepointVpcStack extends cdk.Stack {
           name: 'Database',
         },
       ],
+      natGateways: 1,
     });
     this.vpc = vpc;
   }

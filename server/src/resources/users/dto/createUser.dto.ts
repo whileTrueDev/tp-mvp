@@ -1,19 +1,35 @@
-import { IsBoolean, IsString, IsOptional } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
+import { UserEntity } from '../entities/user.entity';
 
-export class CreateUserDto {
+// 필수로 필요한 것은 반드시 존재해야한다.
+export class CreateUserDto implements UserEntity {
   @IsString()
-  id: string;
+  userId: string;
 
   @IsString()
-  firstName: string;
+  nickName!: string;
 
   @IsString()
-  lastName: string;
+  name!: string;
 
-  @IsOptional()
+  @IsString()
+  userDI: string;
+
+  @IsString()
+  password!: string;
+
+  @IsString()
+  phone!: string;
+
+  @IsString()
+  mail!: string;
+
+  @IsString()
+  birth!: string;
+
+  @IsString()
+  gender!: string;
+
   @IsBoolean()
-  isActive?: boolean;
-
-  @IsString()
-  password: string;
+  marketingAgreement: boolean;
 }

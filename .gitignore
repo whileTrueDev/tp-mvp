@@ -1,3 +1,9 @@
+# python ignores
+/__pycache__
+__pycache__/
+__pycache__/*
+*.sql
+
 .env
 dist
 node_modules
