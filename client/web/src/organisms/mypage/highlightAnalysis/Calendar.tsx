@@ -1,7 +1,8 @@
 import React from 'react';
 import { Paper, Typography } from '@material-ui/core';
+import useAxios from 'axios-hooks';
 import {
-  Calendar, MuiPickersUtilsProvider, DatePicker
+  Calendar, MuiPickersUtilsProvider
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import Grid from '@material-ui/core/Grid';
@@ -12,6 +13,9 @@ function StreamCalendar(props: any) {
   const [selectedDays, setSelectedDays] = React.useState([0]);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
     new Date(Date.now())
+  );
+  const [{ loading }, getRequest] = useAxios(
+    '/highlight/list', { manual: true }
   );
   const testJson = [
     {
@@ -40,9 +44,21 @@ function StreamCalendar(props: any) {
       setSelectedDays(dataArray);
     });
   };
-  // React.useEffect(() => {
-  //   getAllData(testJson);
-  // });
+
+  React.useEffect(() => {
+    getRequest({
+      params: { name: 134859149 }
+    }).then((res) => {
+      if (res.data) {
+        const { streamData } = res.data;
+        if (streamData) {
+          setSelectedDays(streamData);
+        }
+      }
+    }).catch(() => {
+      console.log('데이터호출실패');
+    });
+  });
   return (
     <Grid container>
       <Grid item xs={12}>
