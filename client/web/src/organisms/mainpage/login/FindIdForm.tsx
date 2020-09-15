@@ -37,7 +37,7 @@ export default function FindAccountForm(): JSX.Element {
   // **************************************************
   // 스텝 할당을 위한 스테이트
   const [activeStep, setActiveStep] = React.useState(0);
-  const [helperText, setHelperOpen] = React.useState<string>();
+  const [helperText, setHelperText] = React.useState<string>();
 
   function handleBack() {
     setActiveStep((prev) => prev - 1);
@@ -54,7 +54,7 @@ export default function FindAccountForm(): JSX.Element {
   }
 
   // 스텝 2 에러 알림창 렌더링을 위한 스테이트
-  const helperText = useDialog();
+  const helperTextDialog = useDialog();
 
   // **************************************************
   // Input values
@@ -84,10 +84,11 @@ export default function FindAccountForm(): JSX.Element {
             handleNext();
           } else {
             // 계정이 존재하지 않으므로
-            handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
+            setHelperText('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
+            helperTextDialog.handleOpen();
           }
         }
-      }).catch(() => { helperText.handleOpen(); });
+      }).catch(() => { helperTextDialog.handleOpen(); });
     }
   }
 
@@ -106,16 +107,16 @@ export default function FindAccountForm(): JSX.Element {
           // Handle to next step
           handleNext();
         } else {
-          handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
+          setHelperText('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
         }
       }
-    }).catch(() => { helperText.handleOpen(); });
+    }).catch(() => { helperTextDialog.handleOpen(); });
   });
 
   return (
     <div style={{ textAlign: 'center' }}>
       <TruepointLogo />
-      {helperText.open && error && (
+      {helperTextDialog.open && helperText && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />
         </div>
@@ -186,7 +187,7 @@ export default function FindAccountForm(): JSX.Element {
             className={classes.fullButton}
             onClick={() => {
               handleBack();
-              helperText.handleClose();
+              helperTextDialog.handleClose();
             }}
           >
             <Typography>방법 선택으로 돌아가기</Typography>
@@ -216,7 +217,7 @@ export default function FindAccountForm(): JSX.Element {
             className={classes.fullButton}
             onClick={() => {
               handleBack();
-              helperText.handleClose();
+              helperTextDialog.handleClose();
             }}
           >
             <Typography>방법 선택으로 돌아가기</Typography>
