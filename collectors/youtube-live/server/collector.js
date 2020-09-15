@@ -12,7 +12,7 @@ const liveCollector = require('./func/liveCollector');
 //   func : "getliveChatId",
 //   msg : error.response.data.message
 // }
-const main = () => {
+const main = () => new Promise((resolve, reject)=>{
   const accessTokenDic = {};
   loadTokens(accessTokenDic)
   .then((targets)=> getActiveStream(targets))
@@ -21,16 +21,25 @@ const main = () => {
   .then((liveStreamData)=> liveCollector(liveStreamData))
   .then(()=>{
     console.log(`collector end | ${new Date().toLocaleString()}`);
+    resolve();
   })
   .catch((err)=>{
-    console.log(err.msg);
+    reject(err);
   })
-}
-
-const scheduler = require('node-schedule');
-const b = scheduler.scheduleJob('*/2 * * * *', ()=>{
-  main();
 })
 
+main()
+.then(()=>{
+  process.exit(0);
+})
+.catch((err)=>{
+  console.log(err.msg);
+  process.exit(0);
+})
+
+// const scheduler = require('node-schedule');
+// const b = scheduler.scheduleJob('*/2 * * * *', ()=>{
+//   main();
+// })
 // 정의한 리눅스 사용자 계정의 권한을 사용하기 위한 option
 // docker run --init --cap-add=SYS_ADMIN --name youtube-crawler -d -v /etc/localtime:/etc/localtime:ro --env-file ./.env youtube-crawler:2.1

@@ -5,7 +5,7 @@ import { withStyles, Theme } from '@material-ui/core/styles';
 
 const StyledItemText = withStyles((theme: Theme) => ({
   root: {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.secondary,
     fontWeight: 700,
     [theme.breakpoints.down('sm')]: {
       fontSize: '14px',
@@ -15,9 +15,8 @@ const StyledItemText = withStyles((theme: Theme) => ({
   primary: ({ fontSize, color }: { fontSize?: string; color?: string }) => ({
     fontSize: fontSize || '16px',
     fontWeight: 700,
-    color: color || theme.palette.text.primary
+    color: color || theme.palette.text.secondary
   }),
 }))(ListItemText);
-
 
 export default StyledItemText;

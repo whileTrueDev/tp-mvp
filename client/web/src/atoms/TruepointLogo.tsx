@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export type TrupointLogoProps = React.ImgHTMLAttributes<HTMLImageElement>
 export default function TruepointLogo({
@@ -6,11 +7,13 @@ export default function TruepointLogo({
   ...props
 }: TrupointLogoProps): JSX.Element {
   return (
-    <img
-      src="images/logo/logo_long_truepoint.png"
-      alt=""
-      width={width}
-      {...props}
-    />
+    <Link to="/">
+      <img
+        src="images/logo/logo_long_truepoint.png"
+        alt=""
+        width={width}
+        {...props}
+      />
+    </Link>
   );
 }

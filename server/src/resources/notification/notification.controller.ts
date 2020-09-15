@@ -1,6 +1,7 @@
 import {
-  Controller, Get, Req, Body, Patch, Post, Param, Query, ValidationPipe as SingleValidationPipe
+  Controller, Get, Body, Patch, Query, UseGuards
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { NotificationService } from './notification.service';
 import { NotificationEntity } from './entities/notification.entity';
 import { ChangeReadState } from './dto/changeReadState.dto';
@@ -15,6 +16,7 @@ export class NotificationController {
     output  :  NotificationEntity[]
   */
   @Get()
+  @UseGuards(JwtAuthGuard)
   findAllUserNotifications(
     @Query(new ValidationPipe()) findRequest: FindAllNotifications
   ): Promise<NotificationEntity[]> {
@@ -26,6 +28,7 @@ export class NotificationController {
     output  :  true | false
   */
   @Patch()
+  @UseGuards(JwtAuthGuard)
   updateNotificationReadState(
     @Body(new ValidationPipe()) changeReadState: ChangeReadState
   ): Promise<boolean> {
