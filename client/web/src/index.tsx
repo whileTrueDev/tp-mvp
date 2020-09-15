@@ -85,7 +85,9 @@ function Index(): JSX.Element {
         user, accessToken, handleLogin, handleLogout
       }}
       >
+        {/* 카카오 문의 */}
         <KakaoTalk />
+
         {/* 페이지 컴포넌트 */}
         <BrowserRouter>
           <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
