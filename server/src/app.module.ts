@@ -5,6 +5,7 @@ import { AccessControlModule } from 'nest-access-control';
 
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
+import { HighlightModule } from './resources/mypage/highlightPoint/hightlight.module';
 
 import { TypeOrmConfigService } from './config/database.config';
 import { NotificationModule } from './resources/notification/notification.module';
@@ -23,8 +24,9 @@ import { roles } from './roles/app.roles';
     AccessControlModule.forRoles(roles),
     AuthModule,
     UsersModule,
+    HighlightModule,
     NotificationModule,
     StreamAnalysisModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

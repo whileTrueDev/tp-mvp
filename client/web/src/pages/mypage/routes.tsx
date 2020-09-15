@@ -9,7 +9,7 @@ import ChannelAnalysisIcon from '../../atoms/sidebar-icons/ChannelAnalysisIcon';
 
 // Page Components
 import Dashboard from './Dashboard';
-import HighlightAnalysis from './HighlightAnalysis';
+import HighlightAnalysis from './highlight-analysis/HighlightAnalysis';
 import StreamAnalysis from './stream-analysis/StreamAnalysis';
 import PeriodAnalysis from './stream-analysis/PeriodAnalysis';
 import PeriodVsPeriodAnalysis from './stream-analysis/PeriodVsPeriodAnalysis';
@@ -111,7 +111,7 @@ const dashboardRoutes: MypageRoute[] = [
         component: Subscribe// 해당 페이지 컴포넌트를 여기에
       },
     ]
-  }
+  },
 ];
 
 export default dashboardRoutes;

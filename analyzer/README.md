@@ -14,3 +14,47 @@ Collector DB로부터 데이터 가져와 JSON 형태의 편집점 데이터를 
 ## 방송정보 분석 프로그램
 
 Collector DB로부터 데이터 가져와 방송 정보 분석 => Truepoint App DB로 적재하는 프로그램
+
+# 유튜브 채팅 형태
+
+id
+creatorId
+userId
+chattime
+grade
+sex
+is_mobile
+text
+category
+videoTitle
+viewer
+like
+bookmark
+
+# 트위치 채팅 형태
+
+id
+creatorId
+time
+name
+userId
+subscriber
+manager
+badges
+text
+streamId 추가예정
+
+# 아프리카 채팅 형태
+
+code
+username
+userid
+membership
+userphoto
+text
+playtime
+realtime
+videoname
+videoid
+channelname
+channelid

@@ -71,7 +71,8 @@ async function getDbSecrets(): Promise<TruepointDbSecret> {
 // config service
 export default async (): Promise<TruepointSecret> => {
   const dbSecrets = await getDbSecrets();
+
   return {
-    database: { ...dbSecrets }
+    database: { ...dbSecrets },
   };
 };

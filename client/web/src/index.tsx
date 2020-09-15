@@ -63,7 +63,7 @@ function Index(): JSX.Element {
           failedRequest.headers['cache-control'] = 'no-cache';
           return axios(failedRequest);
         })
-        .catch((error) => { window.location.href = '/login'; });
+        .catch(() => Promise.reject(err)); // 로그인으로 이동
     }
     return Promise.reject(err);
   }
@@ -98,7 +98,7 @@ function Index(): JSX.Element {
             <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
-            <Route exact path="/mypage" component={Mypage} />
+            <Route path="/mypage" component={Mypage} />
           </Switch>
 
         </BrowserRouter>
