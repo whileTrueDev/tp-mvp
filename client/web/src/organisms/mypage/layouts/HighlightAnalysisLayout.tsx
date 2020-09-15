@@ -32,24 +32,9 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     });
   };
   const handleAnalyze = () => {
-    // doSubmit
-    console.log(selectedStream);
     setIsClicked(true);
   };
-  const testJson = [
-    {
-      startAt: new Date('2020-09-09T21:11:54'),
-      finishAt: new Date('2020-09-09T23:11:54'),
-      streamId: '123123',
-      streamTitle: '바벨 먹방'
-    },
-    {
-      startAt: new Date('2020-09-10T18:11:54'),
-      finishAt: new Date('2020-09-10T19:11:54'),
-      streamId: '2323232',
-      streamTitle: '덤벨 먹방'
-    }
-  ];
+
   return (
     <Grid
       container

@@ -21,8 +21,8 @@ const useHighlightAnalysisHeroStyles = makeStyles((theme) => ({
     color: theme.palette.common.white
   },
   image: {
-    marginTop: 8,
-    margin: 8
+    marginTop: theme.spacing(1),
+    margin: theme.spacing(1),
   }
 }));
 

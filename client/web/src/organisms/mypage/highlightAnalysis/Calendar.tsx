@@ -1,7 +1,6 @@
 import React from 'react';
 import { Paper, Typography } from '@material-ui/core';
 import Axios from 'axios';
-import useAxios from 'axios-hooks';
 import {
   Calendar, MuiPickersUtilsProvider
 } from '@material-ui/pickers';
