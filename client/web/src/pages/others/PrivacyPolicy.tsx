@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 50,
   },
   content: {
-    marginTop: 20,
+    marginTop: 15,
     fontFamily: 'Noto Sans KR',
   },
   text: {
@@ -65,13 +65,25 @@ export default function PrivacyPolicy(): JSX.Element {
         <div className={classes.root}>
           <Grid container direction="row" alignItems="center" justify="space-between">
             <Grid item>
-              <h1 className={classes.h1}>Policy</h1>
+              <h1 className={classes.h1}>개인정보 처리방침</h1>
             </Grid>
           </Grid>
           <Grid container>
             <div className={classes.root}>
-              <h2 className={classes.h2}>개인정보 처리방침</h2>
-              <h4>{terms[3]}</h4>
+              <div className={classes.content}>
+                {terms[3].map((term: Terms) => (
+                  <div key={shortid.generate()} className={classes.policyWrapper}>
+                    <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
+                    <div key={shortid.generate()} className={classes.text}>
+                      {term.text.split('\n').map((sentence) => (
+                        <p key={shortid.generate()}>{sentence}</p>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className={classes.root}>
               <div className={classes.content}>
                 {terms[2].map((term: Terms) => (
                   <div key={shortid.generate()} className={classes.policyWrapper}>
