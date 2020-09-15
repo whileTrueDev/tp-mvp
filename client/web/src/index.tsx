@@ -20,11 +20,10 @@ import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
 import Login from './pages/mainpage/Login';
-import Regist from './pages/mainpage/Regist';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 // kakaoIcon
-import KakaoTalk from './organisms/shared/kakaoTalk';
+import KakaoTalk from './organisms/shared/KakaoTalk';
 
 configure({ axios });
 function Index(): JSX.Element {
