@@ -4,15 +4,15 @@ import { makeStyles, Theme } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   root: {
-    marginTop: 500,
+    left: 1300,
     position: 'fixed',
-    marginLeft: 1300,
+    top: 600,
     zIndex: 6
   }
 }));
 
 function moveToTalk() {
-  window.location.href = 'https://www.google.com';
+  window.open('https://www.google.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
 }
 
 function KakaoTalk(): JSX.Element {

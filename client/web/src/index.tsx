@@ -47,9 +47,7 @@ function Index(): JSX.Element {
       <div style={{ textAlign: 'center' }}>
         <button style={{ padding: 32 }} type="button" onClick={handleThemeChange}>theme change</button>
       </div>
-      <div>
-        <KakaoTalk />
-      </div>
+      <KakaoTalk />
       {/* 페이지 컴포넌트 */}
       <BrowserRouter>
         <Switch>
