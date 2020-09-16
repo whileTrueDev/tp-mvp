@@ -27,7 +27,6 @@ export default function HighlightAnalysis(): JSX.Element {
       >
         <Grid
           item
-          xs={9}
           style={{ margin: '5vw' }}
         >
           <HighlightAnalysisLayout />

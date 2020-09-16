@@ -7,25 +7,25 @@ const s3 = new AWS.S3();
 
 @Injectable()
 export class HighlightService {
-  async getHighlightData(path): Promise<any> {
+  async getHighlightData(id, year, month, day, fileId): Promise<any> {
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: path
+      Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`
     };
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
   }
 
-  async getMetricData(path): Promise<any> {
+  async getMetricsData(id, year, month, day, fileId): Promise<any> {
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: path
+      Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`
     };
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
   }
 
-  async getDateList(name, year, month): Promise<string[]> {
+  async getDateListForCalendar(name, year, month): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
@@ -36,12 +36,16 @@ export class HighlightService {
       .then((value) => {
         value.Contents.map((v) => {
           const getKey = v.Key.split('/')[4];
-          keyArray.push(Number(getKey));
+          // 공백제거
+          if (v.Key.split('/')[4].length !== 0) {
+            keyArray.push(Number(getKey));
+          }
         });
       });
-    return keyArray;
+    const uniq = [...new Set(keyArray)];
+    return uniq;
   }
-  async getStreamList(name, year, month, day): Promise<string[]> {
+  async getStreamListForCalendarBtn(name, year, month, day): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
@@ -60,8 +64,10 @@ export class HighlightService {
     filterEmpty.map((value) => {
       const startAt = value.split('_')[0];
       const finishAt = value.split('_')[1];
-      const streamId = value.split('_')[2];
-      const oneStream = { startAt, finishAt, streamId };
+      const fileId = value;
+      const oneStream = {
+        getState: true, startAt, finishAt, fileId
+      };
       returnArray.push(oneStream);
     });
     return returnArray;

@@ -7,27 +7,27 @@ import { HighlightService } from './highlight.service';
 export class HighlightController {
   constructor(private readonly highlightService: HighlightService) { }
   @Get('/list')
-  getDateList(@Query('name') name: string, @Query('year') year: string, @Query('month') month: string,) {
+  getDateListForCalendar(@Query('name') name: string, @Query('year') year: string, @Query('month') month: string,) {
     if (name) {
-      return this.highlightService.getDateList(name, year, month);
+      return this.highlightService.getDateListForCalendar(name, year, month);
     }
   }
   @Get('/stream')
-  getStreamList(@Query('name') name: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string,) {
+  getStreamListForCalendarBtn(@Query('name') name: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string,) {
     if (name && year && month) {
-      return this.highlightService.getStreamList(name, year, month, day);
+      return this.highlightService.getStreamListForCalendarBtn(name, year, month, day);
     }
   }
-  @Get('/points')
-  getHighlightData(@Query('path') path: string) {
-    if (path) {
-      return this.highlightService.getHighlightData(path);
+  @Get('/highlight-points')
+  getHighlightData(@Query('id') id: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string, @Query('fileId') fileId: string) {
+    if (id) {
+      return this.highlightService.getHighlightData(id, year, month, day, fileId);
     }
   }
   @Get('/metrics')
-  getMetricData(@Query('path') path: string) {
-    if (path) {
-      return this.highlightService.getMetricData(path);
+  getMetricsData(@Query('id') id: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string, @Query('fileId') fileId: string) {
+    if (id) {
+      return this.highlightService.getMetricsData(id, year, month, day, fileId);
     }
   }
 }
