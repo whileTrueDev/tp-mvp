@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     background: theme.palette.primary.main,
     position: 'fixed',
     width: '100%',
-    zIndex: 9999,
+    zIndex: 1200,
   },
   container: {
     display: 'block',
