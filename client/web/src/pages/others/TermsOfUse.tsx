@@ -56,7 +56,8 @@ const useStyles = makeStyles((theme) => ({
 interface Terms {
  title: string,
  text : string
-}
+
+    }
 
 export default function TermsOfUse(): JSX.Element {
   const classes = useStyles();
@@ -71,7 +72,9 @@ export default function TermsOfUse(): JSX.Element {
           </Grid>
           <Grid container>
             <div className={classes.root}>
-              <h2 className={classes.h2}>크리에이터 계약</h2>
+              <h2 className={classes.h2}>
+                크리에이터 계약
+              </h2>
               <div className={classes.content}>
                 {AgreementSource[0].map((term: Terms) => (
                   <div key={shortid.generate()} className={classes.policyWrapper}>

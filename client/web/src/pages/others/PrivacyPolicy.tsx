@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     marginTop: 30,
-    fontSize: 20
+    fontSize: 25
   },
   policyWrapper: {
     marginTop: theme.spacing(8)
@@ -35,26 +35,17 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 35,
   },
   h3: {
-
-    fontSize: 30,
+    fontSize: 35,
   },
   h4: {
-    fontSize: 20,
-  },
-  h5: {
-
-    fontSize: 24,
-
-  },
-  h6: {
-
-    fontSize: 18,
-  },
+    fontSize: 30,
+  }
 }));
 
 interface Terms {
-  title: string;
+  title?: string;
   text: string;
+  subtitle?: string;
 }
 
 export default function PrivacyPolicy(): JSX.Element {
@@ -71,30 +62,19 @@ export default function PrivacyPolicy(): JSX.Element {
           <Grid container>
             <div className={classes.root}>
               <div className={classes.content}>
-                {terms[3].map((term: Terms) => (
-                  <div key={shortid.generate()} className={classes.policyWrapper}>
-                    <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
-                    <div key={shortid.generate()} className={classes.text}>
-                      {term.text.split('\n').map((sentence) => (
-                        <p key={shortid.generate()}>{sentence}</p>
-                      ))}
+                {terms.map((term: Terms) => (
+                  term.map((subterm: Terms) => (
+                    <div key={shortid.generate()} className={classes.policyWrapper}>
+                      <h3 className={classes.h3} key={shortid.generate()}>{subterm.title}</h3>
+                      <h4 className={classes.h4} key={shortid.generate()}>{subterm.subtitle}</h4>
+                      <div key={shortid.generate()} className={classes.text}>
+                        {subterm.text.split('\n').map((sentence) => (
+                          <p key={shortid.generate()}>{sentence}</p>
+                        ))}
+                        ))
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className={classes.root}>
-              <div className={classes.content}>
-                {terms[2].map((term: Terms) => (
-                  <div key={shortid.generate()} className={classes.policyWrapper}>
-                    <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
-                    <div key={shortid.generate()} className={classes.text}>
-                      {term.text.split('\n').map((sentence) => (
-                        <p key={shortid.generate()}>{sentence}</p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  ))))}
               </div>
             </div>
           </Grid>
