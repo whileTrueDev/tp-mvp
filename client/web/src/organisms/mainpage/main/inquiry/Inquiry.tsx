@@ -50,7 +50,7 @@ export default function Inquiry(): JSX.Element {
       alert('개인정보수집 및 이용안내에 동의해주세요');
     } else {
       AnonymousUser.privacyAgreement = true;
-      // 아래 요청 보내는 곳 수정해야함
+      // 아래 요청 보내는 곳 수정해야함 Done! - from hwasurr
       axios.post('/inquiry', AnonymousUser)
         .then(() => {
           confirmDialog.handleOpen();
@@ -62,7 +62,8 @@ export default function Inquiry(): JSX.Element {
             formRef.current.reset();
           }
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err.response);
           setLoading(false);
           alert('불편을 드려 대단히 죄송합니다.\n문의 요청중 오류가 발생했습니다.\ntruepointceo@gmail.com 메일로 보내주시면 감사하겠습니다.');
         });
@@ -95,7 +96,7 @@ export default function Inquiry(): JSX.Element {
                     disableUnderline
                     onChange={onChange}
                     required
-                    name="name"
+                    name="author"
                   />
                 </Grid>
                 <Grid item xs={6} sm={6} className={classes.detailWrap}>
@@ -132,7 +133,7 @@ export default function Inquiry(): JSX.Element {
                     placeholder="이용방법, 기타 문의 등 어떠한 내용도 괜찮습니다."
                     required
                     rows={5}
-                    name="inquiryContents"
+                    name="content"
                   />
                 </Grid>
               </Grid>
