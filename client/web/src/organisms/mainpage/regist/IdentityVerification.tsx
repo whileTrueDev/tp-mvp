@@ -58,6 +58,11 @@ function IndentityVerification({
     '/users/check-id', { manual: true }
   );
 
+  // Request auth/certification
+  const [, getCertificationRequest] = useAxios(
+    '/auth/certification', { manual: true }
+  );
+
   const iamport = useIamportCertification((impUid) => {
     // iamport 본인인증 이후 실행될 Id 조회 함수
     getRequest({
@@ -67,8 +72,18 @@ function IndentityVerification({
         alert('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.');
         history.replace('/find-id');
       } else {
-        setCertificationInfo(res.data);
-        handleNext();
+        getCertificationRequest({
+          params: { impUid }
+        })
+          .then((inres) => {
+            if (inres.data) {
+              setCertificationInfo(inres.data);
+              handleNext();
+            } else {
+              alert('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.');
+              history.push('/signup');
+            }
+          });
       }
     })
       .catch(() => { handleBack(); });
