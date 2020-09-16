@@ -96,6 +96,19 @@ export class UsersService {
     }
   }
 
+  /*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
+              해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
+  */
+  async findUserSubscribeInfo(userId: string): Promise<any> {
+    // userId 를 통해 "Subscribe" 조회 -> 구독한 유저 목록 추출
+    // 구독한 유저 목록을 통해 해당 구독 기간 추출
+    // 둘을 합쳐 반환
+
+    return userId;
+  }
+
   // **********************************************
   // User Tokens 관련
 

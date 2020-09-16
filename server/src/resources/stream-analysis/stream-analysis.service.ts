@@ -1,4 +1,3 @@
-
 import {
   Injectable, InternalServerErrorException, HttpException, HttpStatus
 } from '@nestjs/common';
@@ -8,9 +7,11 @@ import {
 } from 'typeorm';
 
 // logic class
+import { start } from 'repl';
 import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
+import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 // dto
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
@@ -25,6 +26,29 @@ export class StreamAnalysisService {
     @InjectRepository(StreamSummaryEntity)
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
   ) {}
+
+  /*
+    input   :  userId, date
+    output  :  date 의 month 에 해당하는 [ {streamId, platform, title, startAt, airTime}, ... ]
+  */
+  async findDayStreamList(userId: string, date: string): Promise<DayStreamsInfo[]> {
+    // 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
+    const originDate = new Date(date);
+    const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
+    const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
+    console.log(originDate);
+
+    const DayStreamData = await this.streamsRepository
+      .createQueryBuilder('streams')
+      .select(['streamId', 'platform', 'title', 'startedAt', 'airTime'])
+      .where('streams.userId = :id', { id: userId })
+      .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
+      .andWhere('streams.startedAt < :endDate', { endDate: endAt })
+      .execute();
+
+    return DayStreamData;
+  }
+
   /*
     input   :  streamId , platform
     output  :  chat_count , smile_count , viewer

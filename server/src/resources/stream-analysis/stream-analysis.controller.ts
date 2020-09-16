@@ -9,15 +9,27 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { UserStatisticInfo } from './interface/userStatisticInfo.interface';
+import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 // dto
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
 import { EachStream } from './dto/eachStream.dto';
 import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
+import { FindDayStreams } from './dto/findDayStreams.dto';
 
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(private readonly streamAnalysisService: StreamAnalysisService) {}
+
+  @Get('stream-list')
+  getDaysStreamList(@Query() findDaysStreamRequest: FindDayStreams): Promise<DayStreamsInfo[]> {
+    console.log(findDaysStreamRequest);
+    return this.streamAnalysisService.findDayStreamList(
+      findDaysStreamRequest.userId,
+      findDaysStreamRequest.date
+    );
+  }
+
   /*
     input   :  params: {
                   streams: 

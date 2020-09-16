@@ -73,6 +73,16 @@ export class UsersController {
   //   throw new ForbiddenException();
   // }
 
+  /*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
+              해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
+  */
+  @Get('/valid-subscribe-info')
+  getUserValidSubscribeInfo(@Query('userId') userId:any) {
+    return this.usersService.findUserSubscribeInfo(userId);
+  }
+
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   async create(
