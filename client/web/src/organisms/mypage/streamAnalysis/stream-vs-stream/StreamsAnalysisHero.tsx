@@ -7,6 +7,7 @@ import {
 // axios
 import useAxios from 'axios-hooks';
 import StreamCalendar from './Calendar';
+import StreamCard from './StreamCard';
 
 export interface DayStreamsInfo{
   streamId : string;
@@ -86,11 +87,20 @@ export default function StreamsAnalysisHero(): JSX.Element {
           </Grid>
           <Grid item container direction="column" xs={4}>
             선택한 방송 정보 2개
-            <Grid item>
-              방송 1
+            <Grid item style={{marginBottom: "22px"}}>
+              <StreamCard 
+                title="세상 테스트"
+                startedAt={new Date("2020-09-20T13:33:33")}
+                airTime={3}
+                base
+              />
             </Grid>
             <Grid item>
-              방송 2
+              <StreamCard 
+                title="세상 테스트"
+                startedAt={new Date("2020-09-20T13:33:33")}
+                airTime={3}
+              />
             </Grid>
           </Grid>
         </Grid>
