@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AxiosResponse, AxiosError } from 'axios';
 import {
-  BrowserRouter, Switch, Route
+  BrowserRouter, Switch, Route,
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
@@ -17,7 +17,6 @@ import axios from './utils/axios';
 import defaultTheme from './theme';
 import './assets/truepoint.css';
 // Pages and organisms
-import Appbar from './organisms/shared/Appbar';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
@@ -30,6 +29,7 @@ import FindPassword from './pages/others/FindPassword';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
+import { TruepointTheme } from './interfaces/TruepointTheme';
 
 function Index(): JSX.Element {
   const {
@@ -37,9 +37,9 @@ function Index(): JSX.Element {
   } = useLogin();
   const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
-    ...defaultTheme,
-    palette: { ...defaultTheme.palette, type: themeType, },
+    ...defaultTheme, palette: { ...defaultTheme.palette, type: themeType, },
   });
+  const truepointTheme: TruepointTheme = { ...THEME, handleThemeChange };
 
   // *******************************************
   // Axios Configurations
@@ -77,7 +77,7 @@ function Index(): JSX.Element {
   // *******************************************
 
   return (
-    <ThemeProvider theme={THEME}>
+    <ThemeProvider theme={truepointTheme}>
       <CssBaseline />
 
       {/* 로그인 여부 Context */}
@@ -88,14 +88,13 @@ function Index(): JSX.Element {
         <KakaoTalk />
         {/* 페이지 컴포넌트 */}
         <BrowserRouter>
-          <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
-
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/signup" component={Regist} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/find-id" component={FindId} />
             <Route exact path="/find-pw" component={FindPassword} />
+
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             <Route path="/mypage" component={Mypage} />

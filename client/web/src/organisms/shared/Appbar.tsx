@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
@@ -10,12 +10,11 @@ import IconButton from '@material-ui/core/IconButton';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import UserMenuPopover from './sub/UserMenuPopover';
 
-import THEME_TYPE from '../../interfaces/ThemeType';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 
 const APPBAR_HEIGHT = 100;
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
+const useStyles = makeStyles((theme) => createStyles({
   root: {
     flexGrow: 1,
     background: theme.palette.primary.main,
@@ -44,14 +43,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   appbarSpace: { paddingTop: APPBAR_HEIGHT },
 }));
 
-export interface AppbarProps {
-  themeType: THEME_TYPE;
-  handleThemeChange: () => void;
-}
-export default function AppBar({
-  themeType,
-  handleThemeChange,
-}: AppbarProps): JSX.Element {
+export default function AppBar(): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
   const [UserMenuAnchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -93,8 +85,6 @@ export default function AppBar({
                     open={UserMenuOpen}
                     anchorEl={UserMenuAnchorEl}
                     onClose={handleClose}
-                    themeType={themeType}
-                    handleThemeChange={handleThemeChange}
                   />
                 </>
               ) : (
