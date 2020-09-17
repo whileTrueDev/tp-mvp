@@ -36,7 +36,7 @@ export class StreamAnalysisService {
     const originDate = new Date(date);
     const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
     const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
-    console.log(originDate);
+    // console.log(originDate);
 
     const DayStreamData = await this.streamsRepository
       .createQueryBuilder('streams')
@@ -46,6 +46,7 @@ export class StreamAnalysisService {
       .andWhere('streams.startedAt < :endDate', { endDate: endAt })
       .execute();
 
+    console.log(DayStreamData.length);
     return DayStreamData;
   }
 

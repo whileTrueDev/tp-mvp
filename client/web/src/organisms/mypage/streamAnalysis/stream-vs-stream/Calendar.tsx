@@ -3,13 +3,15 @@ import React from 'react';
 import { Typography, Grid } from '@material-ui/core';
 // material-ui picker components
 import {
-  Calendar, MuiPickersUtilsProvider,
+  Calendar, MuiPickersUtilsProvider, DatePicker
 } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
 import useAxios from 'axios-hooks';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, Theme, createMuiTheme } from '@material-ui/core/styles';
+
+// 
 
 export interface DayStreamsInfo{
   streamId : string;
@@ -20,75 +22,79 @@ export interface DayStreamsInfo{
 }
 
 interface StreamCalendarProps {
-  dayStreamsList: DayStreamsInfo[];
-  handleDayStreamList : (responseList: DayStreamsInfo[]) => void;
-  handleChangeDayStreamList : (selectedDate: Date) => void;
+  handleDayStreamList:(responseList: (DayStreamsInfo)[]) => void;
+  clickedDate: Date;
+  setClickedDate: React.Dispatch<React.SetStateAction<Date>>;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
-  dayWithDotContainer: {
-    position: 'relative'
+  hasStreamDay: {
+    backgroundColor: 'red',
   },
-  dayWithDot: {
-    position: 'absolute',
-    height: 0,
-    width: 0,
-    border: '2px solid',
-    borderRadius: 4,
-    borderColor: '#ffff',
-    right: '50%',
-    transform: 'translateX(1px)',
-    top: '80%'
-  }
 }));
 
 function StreamCalendar(props: StreamCalendarProps) {
-  const { dayStreamsList, handleDayStreamList, handleChangeDayStreamList } = props;
-  const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
+  const { clickedDate, handleDayStreamList, setClickedDate } = props;
   const classes = useStyles();
+  const [month, setMonth] = React.useState<Date>();
+  const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
-  const handleChange = (_clickedDate: MaterialUiPickersDate) => {
-    if (_clickedDate) {
-      // console.log('d : ', clickedDate.getDate());
-      // console.log('m : ', clickedDate.getMonth() + 1);
-      // console.log('y : ', clickedDate.getFullYear());
-      console.log('Clicked Date : ', _clickedDate);
-      setClickedDate(_clickedDate);
-      handleChangeDayStreamList(_clickedDate);
-    }
-  };
-
-  const [{
-    data: getMonthStreams,
-    loading: getMonthStreamsLoading,
-    error: getMonthStreamsError
-  },
-  excuteGetMonthStreams] = useAxios({
+  const [{ data: getStreamsData, }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
     url: 'http://localhost:3000/stream-analysis/stream-list',
   }, { manual: true });
 
   React.useEffect(() => {
-    excuteGetMonthStreams({
+    excuteGetStreams({
       params: {
         userId: 'userId1',
         date: clickedDate.toISOString(),
       }
-    }).then((result) => console.log(result.data));
+    }).then((result) => setHasStreamDays(
+      result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
+    ));
   }, []);
 
-  const renderDayInPicker = (date: MaterialUiPickersDate, selectedDate: MaterialUiPickersDate, dayInCurrentMonth: boolean, dayComponent: JSX.Element) => {
-    const hasStreamDays: Date[] = dayStreamsList.map((streamInfo) => streamInfo.startedAt);
-    // console.log(hasStreamDays);
-    if (date && hasStreamDays.includes(new Date(date))) {
-      // console.log(date);
+  const handleDayChange = (newDate: MaterialUiPickersDate) => {
+    // 일이 바뀌면 백그라운드만 바뀌면 됨
+    if (newDate) setClickedDate(newDate);
+    const dayStreamList: DayStreamsInfo[] = [];
+    getStreamsData.forEach((stream) => {
+      if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
+        dayStreamList.push(stream);
+      }
+    });
+    handleDayStreamList(dayStreamList);
+  };
+
+  const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
+    // 달이 바뀌면 새롭게 방송있었던 날을 리렌더링 해야함
+    if (newMonth) {
+      setMonth(newMonth);
+      excuteGetStreams({
+        params: {
+          userId: 'userId1',
+          date: newMonth.toISOString(),
+        }
+      }).then((result) => {
+        setHasStreamDays(
+          result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
+        );
+      });
+    }
+  };
+
+  const renderDayInPicker = (
+    date: MaterialUiPickersDate,
+    selectedDate: MaterialUiPickersDate,
+    dayInCurrentMonth: boolean,
+    dayComponent: JSX.Element
+  ) => {
+    if (date && hasStreamDays.includes(date.getDate())) {
       return (
-        <div className={classes.dayWithDotContainer}>
-          {dayComponent}
-          <div className={classes.dayWithDot} />
-        </div>
+        React.cloneElement(dayComponent,
+          { style: { backgroundColor: '#a6c1f9', } })
       );
     }
-
     return dayComponent;
   };
 
@@ -103,11 +109,15 @@ function StreamCalendar(props: StreamCalendarProps) {
             alignItems="center"
           >
             <Grid item>
-              <Calendar
-                date={clickedDate}
-                onChange={handleChange}
+              <DatePicker
+                value={clickedDate}
+                onChange={handleDayChange}
+                onMonthChange={handleMonthChange}
                 disableFuture
                 renderDay={renderDayInPicker}
+                variant="static"
+                openTo="date"
+                disableToolbar
               />
             </Grid>
           </Grid>
