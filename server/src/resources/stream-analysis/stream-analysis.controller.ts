@@ -73,7 +73,6 @@ export class StreamAnalysisController {
   : Promise<UserStatisticInfo> {
     return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
       findUserStatisticRequest.userId,
-      findUserStatisticRequest.nowDate
     );
   }
 }
