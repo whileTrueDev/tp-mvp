@@ -1,8 +1,14 @@
 import React from 'react';
+// material - ui core components
 import {
-  Paper, Typography, Grid, Divider, List, ListItem
+  Typography, List, ListItem,
 } from '@material-ui/core';
+// material - ui styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
+import classnames from 'classnames';
+// interface
+import { Stream } from 'stream';
+import { StreamListProps, DayStreamsInfo } from './StreamAnalysisHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -19,35 +25,27 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: '13.1px',
     paddingBottom: '13.9x',
     borderRadius: '4px',
+    '&:hover,select': {
+      backgroundColor: theme.palette.primary.light,
+    }
+  },
+  selectedListItem: {
+
   },
   listItemText: {
     fontFamily: 'SourceSansPro',
     color: '#4d4f5c',
     textAlign: 'left',
     lineHeight: '2.06',
-    fontSize: '16px'
+    fontSize: '16px',
+    fontWeight: 'bold'
   }
 }));
 
-export interface DayStreamsInfo{
-    streamId : string;
-    title : string;
-    platform: 'afreeca'|'youtube'|'twitch';
-    airTime: number;
-    startedAt: Date;
-}
-
-interface StreamListProps {
-    dayStreamsList: (DayStreamsInfo)[];
-    selectedStreams?: (DayStreamsInfo)[];
-    baseStream: DayStreamsInfo|null;
-    compareStream: DayStreamsInfo|null;
-    handleSeletedStreams: (newStreams: DayStreamsInfo|null, base?: true | undefined) => void;
-}
-
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
-    dayStreamsList, selectedStreams, handleSeletedStreams, baseStream, compareStream
+    dayStreamsList, handleSeletedStreams, baseStream, compareStream,
+    handleFullMessage
   } = props;
   const classes = useStyles();
 
@@ -55,40 +53,39 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     const endAt = new Date(startDate);
     endAt.setHours(startDate.getHours() + streamLength);
     const airTimeText = `${startDate.getDate()}일
-                             ${startDate.getHours()}:${startDate.getMinutes()} ~ 
+                             ${startDate.getHours()}시 ${startDate.getMinutes()}분~ 
                              ${startDate.getDate()}일
-                             ${endAt.getHours()}:${endAt.getMinutes()}`;
+                             ${endAt.getHours()}시 ${endAt.getMinutes()}분`;
     return airTimeText;
   };
 
   const handleListStreamClick = (stream: DayStreamsInfo) => {
-    console.log(selectedStreams);
     if (baseStream && compareStream) {
-      console.log('full');
+      handleFullMessage(true);
     } else if (baseStream && !compareStream) {
-      console.log('harf');
-      //   const newArray = [baseStream, stream];
-      //   handleSeletedStreams(newArray);
       handleSeletedStreams(stream);
     } else if (!baseStream && compareStream) {
-      console.log('harf');
-      //   const newArray = [stream, compareStream];
-      //   handleSeletedStreams(newArray);
       handleSeletedStreams(stream, true);
     } else {
-      console.log('empty');
-      //   const newArray = new Array<DayStreamsInfo>(2);
-      //   newArray[0] = stream;
       handleSeletedStreams(stream, true);
     }
+  };
+
+  const isSelectedListItem = (listStream: DayStreamsInfo):boolean => {
+    console.log((listStream.streamId === baseStream?.streamId
+      || listStream.streamId === compareStream?.streamId));
+
+    return (listStream.streamId === baseStream?.streamId
+    || listStream.streamId === compareStream?.streamId);
   };
 
   return (
     <List className={classes.listWrapper}>
       {dayStreamsList && dayStreamsList.map((stream) => (
         <ListItem
-          button
           key={stream.streamId}
+          button
+          selected={isSelectedListItem(stream)}
           className={classes.listItem}
           onClick={() => handleListStreamClick(stream)}
         >

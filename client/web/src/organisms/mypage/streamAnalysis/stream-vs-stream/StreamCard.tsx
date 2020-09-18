@@ -1,10 +1,12 @@
 import React from 'react';
 import {
-  Card, CardHeader, CardContent, Typography, Grid, Hidden, IconButton
+  Card, CardContent, Typography, Grid, IconButton
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 import classnames from 'classnames';
+// interface
+import { StreamCardProps } from './StreamAnalysisHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardWrapper: {
@@ -29,14 +31,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   cardBodyWrapper: {
     width: '100%',
     backgroundColor: '#e7ebef',
-    minHeight: '89px',
+    minHeight: '120px',
     paddingTop: '11px',
     paddingBottom: '11px',
   },
   cardBodyCompWrapper: {
     width: '100%',
     backgroundColor: '#a6c1f9',
-    minHeight: '89px',
+    minHeight: '120px',
     paddingTop: '11px',
     paddingBottom: '11px',
   },
@@ -60,21 +62,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: 'auto'
   },
 }));
-export interface DayStreamsInfo{
-    streamId : string;
-    title : string;
-    platform: 'afreeca'|'youtube'|'twitch';
-    airTime: number;
-    startedAt: Date;
-  }
-
-interface StreamCardProps {
-    stream: DayStreamsInfo;
-    base? : true|null;
-    // baseStream: DayStreamsInfo|null;
-    // compareStream: DayStreamsInfo|null;
-    handleSeletedStreams: (newStreams: DayStreamsInfo|null, base?: true | undefined) => void
-}
 
 export default function StreamCard(props: StreamCardProps): JSX.Element {
   const {
@@ -86,9 +73,9 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
     const endAt = new Date(startDate);
     endAt.setHours(startDate.getHours() + streamLength);
     const airTimeText = `${startDate.getDate()}일
-                             ${startDate.getHours()}:${startDate.getMinutes()} ~ 
+                             ${startDate.getHours()}시 ${startDate.getMinutes()}분~ 
                              ${startDate.getDate()}일
-                             ${endAt.getHours()}:${endAt.getMinutes()}`;
+                             ${endAt.getHours()}시 ${endAt.getMinutes()}분`;
     return airTimeText;
   };
 
@@ -111,7 +98,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
           })}
           justify="space-between"
         >
-          <Grid item alignContent="center">
+          <Grid item>
             <Typography variant="body1" className={classes.cardTitle}>
               {base ? '기준 방송' : '비교 방송'}
             </Typography>

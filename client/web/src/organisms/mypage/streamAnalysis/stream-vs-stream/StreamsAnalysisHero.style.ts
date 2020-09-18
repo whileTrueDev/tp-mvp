@@ -1,9 +1,16 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useStreamHeroStyles = makeStyles((theme: Theme) => ({
-
   root: {
     flexGrow: 1,
+    marginTop: '135px',
+    height: '700px'
+  },
+  titleDivider: {
+    backgroundColor: '#4b5ac7',
+    width: '200px',
+    marginBottom: '12px',
+    height: '3px'
   },
   mainTitle: {
     color: '#000000',
@@ -31,7 +38,8 @@ const useStreamHeroStyles = makeStyles((theme: Theme) => ({
     width: '276px',
     height: '75px',
     paddingTop: '22.5px',
-    paddingBottom: '20.5px'
+    paddingBottom: '10.5px',
+    boxShadow: '0'
   },
   subTitle: {
     color: '#4d4f5c',
@@ -46,10 +54,11 @@ const useStreamHeroStyles = makeStyles((theme: Theme) => ({
   },
   bodyWrapper: {
     borderRadius: '12px',
+    hegith: '292px',
     border: 'solid 1px #707070',
     backgroundColor: '#ffffff',
     paddingTop: '22.5px',
-    paddingBottom: '28.5px',
+    paddingBottom: '18.5px',
     paddingRight: '0px',
     marginRight: '42px',
   },
@@ -64,6 +73,21 @@ const useStreamHeroStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     marginBottom: '5px',
   },
+  anlaysisButton: {
+    width: '136.2px',
+    height: '51.1px',
+    borderRadius: '6px',
+    backgroundColor: theme.palette.primary.dark,
+    fontFamily: 'SourceSansPro',
+    fontSize: '24px',
+    marginTop: '20px',
+    color: '#ffff'
+  },
+  alert: {
+    borderRadius: '5px',
+    marginBottom: '12px',
+    paddingTop: '4px'
+  }
 }));
 
 export default useStreamHeroStyles;

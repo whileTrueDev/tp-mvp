@@ -6,8 +6,10 @@ import {
   Repository,
 } from 'typeorm';
 
+// aws
+import * as AWS from 'aws-sdk';
+import * as dotenv from 'dotenv';
 // logic class
-import { start } from 'repl';
 import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
@@ -17,6 +19,10 @@ import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+
+// aws s3
+dotenv.config();
+const s3 = new AWS.S3();
 
 @Injectable()
 export class StreamAnalysisService {
@@ -36,7 +42,6 @@ export class StreamAnalysisService {
     const originDate = new Date(date);
     const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
     const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
-    // console.log(originDate);
 
     const DayStreamData = await this.streamsRepository
       .createQueryBuilder('streams')
@@ -46,7 +51,6 @@ export class StreamAnalysisService {
       .andWhere('streams.startedAt < :endDate', { endDate: endAt })
       .execute();
 
-    console.log(DayStreamData.length);
     return DayStreamData;
   }
 

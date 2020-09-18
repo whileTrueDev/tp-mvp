@@ -40,7 +40,7 @@ export class StreamAnalysisController {
                 { chat_count , smile_count , viewer } || null ]
   */
   @Get('streams')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)  
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
   ): Promise<StreamsInfo[]> {

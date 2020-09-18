@@ -10,13 +10,12 @@ import StreamsAnalysisBodyTest from '../../../organisms/mypage/streamAnalysis/st
 export default function StreamAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2}>
-        <Grid item>
-          <StreamsAnalysisHero />
-        </Grid>
-        <Grid item>
-          <StreamsAnalysisBodyTest />
-        </Grid>
+      <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
+
+        <StreamsAnalysisHero />
+
+        <StreamsAnalysisBodyTest />
+
       </Grid>
     </MypageSectionWrapper>
   );
