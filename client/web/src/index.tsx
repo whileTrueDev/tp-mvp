@@ -67,9 +67,8 @@ function Index(): JSX.Element {
           return axios(failedRequest);
         })
         .catch(() => {
-          // 로그인으로 강제 이동
-          window.location.href = '/login';
-          return Promise.reject(err);
+          window.location.href = '/';
+          return Promise.reject(err); // 로그인으로 강제 이동
         });
     }
     return Promise.reject(err);
@@ -83,18 +82,22 @@ function Index(): JSX.Element {
   // *******************************************
   // 자동로그인 체크하여 유효한 refresh token이 있는 경우 자동 로그인
   React.useLayoutEffect(() => {
-    axios.post('/auth/silent-refresh')
-      .then((res) => {
-        if (res.data) {
-          handleLogin(res.data.access_token);
-          // login, signup, find-id, find-pw인 경우 메인페이지로 이동
-          if (['/login', '/signup', 'find-id', 'find-pw']
-            .includes(window.location.pathname)) {
-            window.location.href = '/';
+    if (!user.userId) {
+      console.log('refreshing!...');
+      axios.post('/auth/silent-refresh')
+        .then((res) => {
+          if (res.data) {
+            handleLogin(res.data.access_token);
+            console.log('refreshed!...');
+            // login, signup, find-id, find-pw인 경우 메인페이지로 이동
+            if (['/login', '/signup', 'find-id', 'find-pw']
+              .includes(window.location.pathname)) {
+              window.location.href = '/';
+            }
           }
-        }
-      })
-      .catch((err) => { console.log(err); });
+        })
+        .catch((err) => { console.log(err); });
+    }
   }, []); // Should be run only once!!
 
   return (

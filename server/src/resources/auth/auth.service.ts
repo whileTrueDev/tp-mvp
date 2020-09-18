@@ -1,7 +1,3 @@
-/**
- * AuthService는 user를 검색하고 password 를 확인하는 작업을 합니다
- * validateUser() 메소드가 passport local strategy에서 사용되어 그 역할을 합니다. 
- */
 import bcrypt from 'bcrypt';
 import {
   Injectable, HttpException, HttpStatus
@@ -38,6 +34,10 @@ export class AuthService {
     });
   }
 
+  /**
+   * AuthService는 user를 검색하고 password 를 확인하는 작업을 합니다
+   * validateUser() 메소드가 passport local strategy에서 사용되어 그 역할을 합니다. 
+   */
   // This is for local-strategy and for generating jwt token
   public async validateUser(
     userId: string, plainPassword: string
@@ -87,6 +87,8 @@ export class AuthService {
 
   // Refresh token 재발급
   public async silentRefresh(prevRefreshToken: string): Promise<LoginToken> {
+    const NOW_DATE = new Date();
+
     // 전달받은 refresh token이 만료되었는지 확인
     let verifiedPrevRefreshToken: RefreshTokenData;
     try {
@@ -109,7 +111,7 @@ export class AuthService {
       );
     }
     // 유저 정보 로드
-    const userInfo = await this.usersService.findOne(token.userId);
+    const userInfo = await this.usersService.findOne(verifiedPrevRefreshToken.userId);
     // 새로운 accessToken, refreshToken 생성
     const newAccessToken = this.createAccessToken({
       userId: userInfo.userId,
@@ -117,6 +119,16 @@ export class AuthService {
       roles: userInfo.roles,
       userDI: userInfo.userDI
     });
+
+    // ***************************************************************
+    // refresh token 발급한지 30분 이하인 경우
+    // refresh token 재발급 하지않고 기존의 refresh token 반환
+    const ISSUED_DATE = new Date(verifiedPrevRefreshToken.iat * 1000);
+    const issueNowDiffMinute = Math.floor((NOW_DATE.getTime() - ISSUED_DATE.getTime()) / 60000);
+
+    if (issueNowDiffMinute < 30) {
+      return { accessToken: newAccessToken, refreshToken: prevRefreshToken };
+    }
 
     // refresh토큰 자기자신을 갱신하도록 허용한 토큰인 경우만 refresh token을 갱신
     // ( 2020. 09. 17 현재 이 경우는 (자동로그인)로그인상태유지 허용 시 )

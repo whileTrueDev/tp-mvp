@@ -9,6 +9,7 @@ import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
 import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
 import AppBar from '../../../organisms/shared/Appbar';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 interface NavUserInfoInterface{
   username : string;
@@ -19,6 +20,7 @@ interface NavUserInfoInterface{
 }
 
 const UserDashboard = (): JSX.Element => {
+  const authContextValue = useAuthContext();
   const classes = useLayoutStyles();
 
   // main ref
@@ -53,6 +55,8 @@ const UserDashboard = (): JSX.Element => {
       subscribeEndAt: new Date('2020-09-02')
     },
   ]);
+
+  if (!authContextValue.user.userId) return <div>Loading Component...</div>;
 
   return (
     <>

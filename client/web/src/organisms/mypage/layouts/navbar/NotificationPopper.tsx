@@ -52,7 +52,7 @@ function NotificationPopper({
 }): JSX.Element {
   const classes = useStyles();
   const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
-    url: 'http://localhost:3000/notification',
+    url: '/notification',
     method: 'patch',
   }, {
     manual: true

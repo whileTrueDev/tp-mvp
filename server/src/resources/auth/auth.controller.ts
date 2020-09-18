@@ -51,7 +51,6 @@ export class AuthController {
     @Request() req: express.Request,
     @Res() res: express.Response,
   ): Promise<void> {
-    console.log(req);
     // 헤더로부터 refresh token 비구조화 할당
     const { refresh_token: prevRefreshToken } = req.cookies;
     if (prevRefreshToken) {
