@@ -32,12 +32,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(
+    @Body('stayLogedIn') stayLogedIn: boolean,
     @Request() req: express.Request,
     @Res() res: express.Response,
   ): Promise<void> {
     const {
       accessToken, refreshToken,
-    } = await this.authService.login(req.user as UserLoginPayload);
+    } = await this.authService.login(req.user as UserLoginPayload, stayLogedIn);
 
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
@@ -50,6 +51,7 @@ export class AuthController {
     @Request() req: express.Request,
     @Res() res: express.Response,
   ): Promise<void> {
+    console.log(req);
     // 헤더로부터 refresh token 비구조화 할당
     const { refresh_token: prevRefreshToken } = req.cookies;
     if (prevRefreshToken) {

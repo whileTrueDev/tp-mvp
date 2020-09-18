@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
+import { RefreshTokenData } from '../../interfaces/RefreshTokenData.interface';
 import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
@@ -30,10 +31,10 @@ export class AuthService {
     });
   }
 
-  private createRefreshToken(userId: string): string {
-    // refresh token은 14일의 유효 기한을 가진다.
-    return this.jwtService.sign({ userId }, {
-      expiresIn: '14d'
+  private createRefreshToken(userId: string, stayLogedIn: boolean): string {
+    // refresh token은 자동로그인 동의시 14일, 자동로그인 미동의시 30분의 유효기간을 가진다.
+    return this.jwtService.sign({ userId, refreshSelf: stayLogedIn }, {
+      expiresIn: stayLogedIn ? '14d' : '30m',
     });
   }
 
@@ -56,13 +57,18 @@ export class AuthService {
   }
 
   // This is for jwt strategy
-  public async login(user: UserLoginPayload): Promise<LoginToken> {
+  /**
+   * 유저 로그인 메소드, access, refresh 토큰을 생성합니다.
+   * @param user 유저정보
+   * @param stayLogedIn 자동로그인(로그인상태유지) 동의 플래그 값
+   */
+  public async login(user: UserLoginPayload, stayLogedIn: boolean): Promise<LoginToken> {
     // access token 발급
     const accessToken = this.createAccessToken({
       userId: user.userId, userName: user.name, roles: user.roles, userDI: user.userDI
     });
-    // refresh token 발급
-    const refreshToken = this.createRefreshToken(user.userId);
+    // 로그인 상태 유지에 따라 다른 유지기간의 refresh token 발급
+    const refreshToken = this.createRefreshToken(user.userId, stayLogedIn);
     // refresh token 적재
     this.usersService.saveRefreshToken({
       userId: user.userId, refreshToken
@@ -82,8 +88,11 @@ export class AuthService {
   // Refresh token 재발급
   public async silentRefresh(prevRefreshToken: string): Promise<LoginToken> {
     // 전달받은 refresh token이 만료되었는지 확인
+    let verifiedPrevRefreshToken: RefreshTokenData;
     try {
-      await this.jwtService.verifyAsync(prevRefreshToken);
+      verifiedPrevRefreshToken = await this.jwtService.verifyAsync<RefreshTokenData>(
+        prevRefreshToken
+      );
     } catch (err) {
       throw new HttpException(
         'Error occurred during verifying refresh token',
@@ -91,7 +100,7 @@ export class AuthService {
       );
     }
 
-    // UserTokens 에 해당 refreshToken이 있는지 확인
+    // 토큰 스토어 (RDS - UserTokens테이블) 에 해당 refreshToken이 있는지 확인
     const token = await this.usersService.findOneToken(prevRefreshToken);
     if (!token) {
       throw new HttpException(
@@ -108,8 +117,18 @@ export class AuthService {
       roles: userInfo.roles,
       userDI: userInfo.userDI
     });
-    const newRefreshToken = this.createRefreshToken(userInfo.userId);
 
+    // refresh토큰 자기자신을 갱신하도록 허용한 토큰인 경우만 refresh token을 갱신
+    // ( 2020. 09. 17 현재 이 경우는 (자동로그인)로그인상태유지 허용 시 )
+    // from hwasurr.
+    if (!verifiedPrevRefreshToken.refreshSelf) {
+      // 갱신 허용되지 않은 토큰의 경우 기존의 refresh token을 반환
+      return { accessToken: newAccessToken, refreshToken: prevRefreshToken };
+    }
+    // 새로운 refresh token 을 생성
+    const newRefreshToken = this.createRefreshToken(
+      userInfo.userId, verifiedPrevRefreshToken.refreshSelf
+    );
     // 새로운 refreshToken을 UserTokens에 적재
     this.usersService.saveRefreshToken({
       userId: userInfo.userId, refreshToken: newRefreshToken

@@ -56,7 +56,7 @@ export default function UserMetrics(): JSX.Element {
                   <BorderLinearProgress variant="determinate" value={50} />
                 </div>
                 <CardContent>
-                  <Typography variant="h6" style={{ fontWeight: 'bold' }}>{card}</Typography>
+                  <Typography variant="h6" style={{ fontWeight: 'bold' }}>{card.toLocaleString()}</Typography>
                 </CardContent>
               </Card>
             </Grid>

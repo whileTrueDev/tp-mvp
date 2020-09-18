@@ -42,6 +42,7 @@ export function useLogin(): AuthContextValue {
   const [, doPostRequest] = useAxios({
     url: '/auth/logout', method: 'POST',
   }, { manual: true });
+
   function handleLogout(): void{
     setAccessToken(undefined);
     setUser(defaultUserValue);
