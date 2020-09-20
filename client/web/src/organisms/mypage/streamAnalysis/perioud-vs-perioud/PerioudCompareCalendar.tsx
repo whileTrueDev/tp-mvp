@@ -46,13 +46,21 @@ const useStyles = makeStyles((theme: Theme) => ({
 function PerioudCompareCalendar(props: PerioudCompareCalendarProps): JSX.Element {
   const {
     // handleRangePush, handleResetRange, selectedRangeDate,
-    handlePerioud, base
+    perioud, handlePerioud, base,
   } = props;
   const classes = useStyles();
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
 
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
+
+  React.useEffect(() => {
+    if(perioud.length > 1){
+      setPoint1(perioud[0]);
+      setPoint2(perioud[1]);
+    }
+  },[perioud])
+
 
   /*
     1. point1 == null point2 == null -> insert point1

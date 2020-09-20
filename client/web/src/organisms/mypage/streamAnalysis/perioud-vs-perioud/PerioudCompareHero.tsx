@@ -13,6 +13,7 @@ import { DayStreamsInfo } from './PerioudCompareHero.interface';
 export default function PerioudCompareHero(): JSX.Element {
   const [basePerioud, setBasePerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [comparePerioud, setComparePerioud] = React.useState<Date[]>(new Array<Date>(2));
+
   const handlePerioud = (startAt: Date, endAt: Date, base?: true) => {
     const per = [startAt, endAt];
     if(base){
@@ -41,7 +42,7 @@ export default function PerioudCompareHero(): JSX.Element {
         fontWeight: 500,
         fontSize: '30px',
         fontFamily: 'AppleSDGothicNeo',
-        marginBottom: '28px',}}
+        marginBottom: '60px',}}
     >
         기간 대 기간 분석
       </Typography>
@@ -49,7 +50,8 @@ export default function PerioudCompareHero(): JSX.Element {
         color:'#4d4f5c',
         fontFamily: 'AppleSDGothicNeo',
         fontSize: '12px',
-        lineHeight: '1.11'
+        lineHeight: '1.11',
+       
       }}>
         * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
       </Typography>
@@ -67,13 +69,13 @@ export default function PerioudCompareHero(): JSX.Element {
         기간별 분석을 위한 기간을 설정해 주세요.
       </Typography>
       <Grid container direction="row" xs={12} justify="center">
-        <Grid item style={{ marginRight: '30px' }}>
+        <Grid item style={{ marginRight: '30px',marginTop: '60px' }}>
           <PerioudCompareTextField 
             base
             perioud={basePerioud}
           />
           <Paper elevation={0} 
-            style={{marginTop: '32px',border: 'solid 1px #707070', borderRadius: '10px', paddingTop: '27px',paddingBottom: '20px'}}
+            style={{marginTop: '60px',border: 'solid 1px #707070', borderRadius: '10px', paddingTop: '27px',paddingBottom: '20px'}}
           >
             <Typography align="center" 
             style={{
@@ -92,6 +94,7 @@ export default function PerioudCompareHero(): JSX.Element {
             </Typography>
             <PerioudCompareCalendar
               handlePerioud={handlePerioud}
+              perioud={basePerioud}
               base
             />
           </Paper>
@@ -107,16 +110,16 @@ export default function PerioudCompareHero(): JSX.Element {
           fontFamily: 'AppleSDGothicNeo',
           marginBottom: '28px',
           marginRight: '30px',
-          marginTop: '20px'
+          marginTop: '80px'
           }}>
           VS
         </Typography>
-        <Grid item style={{ marginRight: '30px',}}>
+        <Grid item style={{ marginRight: '30px',marginTop: '60px'}}>
         <PerioudCompareTextField 
             perioud={comparePerioud}
           />
           <Paper elevation={0} 
-            style={{marginTop: '32px', border: 'solid 1px #707070', borderRadius: '10px', paddingTop: '27px',paddingBottom: '20px'}}
+            style={{marginTop: '60px', border: 'solid 1px #707070', borderRadius: '10px', paddingTop: '27px',paddingBottom: '20px'}}
           >
             <Typography align="center" 
             style={{
@@ -134,6 +137,7 @@ export default function PerioudCompareHero(): JSX.Element {
               기간 선택
             </Typography>
             <PerioudCompareCalendar
+              perioud={comparePerioud}
               handlePerioud={handlePerioud}
             />
           </Paper>

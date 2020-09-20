@@ -7,6 +7,7 @@ export interface DayStreamsInfo{
 }
 
 export interface PerioudCompareCalendarProps {
+  perioud: Date[];
   handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
 }
