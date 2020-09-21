@@ -1,148 +1,144 @@
 import React from 'react';
 // material-ui core components
 import {
-  Paper, Typography, Grid, Divider, Button, Collapse,
-  TextField
+  Paper, Typography, Grid, Divider, Button
 } from '@material-ui/core';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import PerioudCompareCalendar from './PerioudCompareCalendar';
+import RangeSelectCaledar from './RangeSelectCalendar';
 import PerioudCompareTextField from './PerioudCompareTextField';
+import PerioudCompareCheckBoxGroup from './PerioudCompareCheckBoxGroup';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
-import { DayStreamsInfo } from './PerioudCompareHero.interface';
+import usePerioudCompareStyles from './PerioudCompareHero.style';
 
 export default function PerioudCompareHero(): JSX.Element {
+  const classes = usePerioudCompareStyles();
   const [basePerioud, setBasePerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [comparePerioud, setComparePerioud] = React.useState<Date[]>(new Array<Date>(2));
+  const [checkStateGroup, setCheckStateGroup] = React.useState({
+    viewer: false,
+    chatCount: false,
+    smileCount: false,
+    // searchKeyWord: string,
+  });
+
+  const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckStateGroup({
+      ...{
+        viewer: false,
+        chatCount: false,
+        smileCount: false,
+        // searchKeyWord: string,
+      },
+      [event.target.name]: event.target.checked
+    });
+  };
 
   const handlePerioud = (startAt: Date, endAt: Date, base?: true) => {
     const per = [startAt, endAt];
-    if(base){
+    if (base) {
       setBasePerioud(per);
-    }
-    else{
+    } else {
       setComparePerioud(per);
     }
   };
 
+  const handleAnalysisButton = () => {
+    // 기간 2개 + 분석 항목 (viewer | chatCount | smileCount)
+    const selectedProperty = Object.keys(checkStateGroup);
+    const anlaysisData = {
+      basePerioud,
+      comparePerioud,
+      condition: selectedProperty[Object.values(checkStateGroup).indexOf(true)]
+    };
+    console.log(anlaysisData);
+    console.log(Object.values(checkStateGroup).indexOf(true));
+  };
+
   return (
-    <div>
-      <Divider
-        style={{ 
-        backgroundColor: '#4b5ac7',
-        width: '200px',
-        marginBottom: '12px',
-        height: '3px'}}
-      />
-      <Typography 
-      style={{ 
-        color: '#000000',
-        letterSpacing: '-1.2px',
-        textAlign: 'left',
-        lineHeight: 1.33,
-        fontWeight: 500,
-        fontSize: '30px',
-        fontFamily: 'AppleSDGothicNeo',
-        marginBottom: '60px',}}
-    >
+    <div className={classes.root}>
+      <Divider className={classes.titleDivider} />
+      <Typography className={classes.mainTitle}>
         기간 대 기간 분석
       </Typography>
-      <Typography align="right" style={{
-        color:'#4d4f5c',
-        fontFamily: 'AppleSDGothicNeo',
-        fontSize: '12px',
-        lineHeight: '1.11',
-       
-      }}>
+      <Typography className={classes.infoText}>
         * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
       </Typography>
-      <Typography
-         style={{ 
-          color: '#4d4f5c',
-          letterSpacing: '-1.2px',
-          textAlign: 'left',
-          lineHeight: 0.87,
-          fontWeight: 500,
-          fontSize: '23px',
-          fontFamily: 'AppleSDGothicNeo',
-          marginBottom: '28px',}}
-      >
+      <Typography className={classes.mainBody}>
         기간별 분석을 위한 기간을 설정해 주세요.
       </Typography>
-      <Grid container direction="row" xs={12} justify="center">
-        <Grid item style={{ marginRight: '30px',marginTop: '60px' }}>
-          <PerioudCompareTextField 
+      <Grid container direction="row" justify="center">
+        <Grid item className={classes.bodyContainer}>
+          <PerioudCompareTextField
             base
             perioud={basePerioud}
+            handlePerioud={handlePerioud}
           />
-          <Paper elevation={0} 
-            style={{marginTop: '60px',border: 'solid 1px #707070', borderRadius: '10px', paddingTop: '27px',paddingBottom: '20px'}}
-          >
-            <Typography align="center" 
-            style={{
-              fontSize: '19px',
-              fontFamily: 'SourceSansPro',
-              lineHeight: 1.53,
-              color: '#4d4f5c',
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
-             <SelectDateIcon style={{ fontSize: '28px', marginRight: '10px' }} />
-              <Typography style={{fontSize: '19px',fontWeight: 'bold', color: '#2f5fac',marginRight: '5px'}}>
+          <Paper elevation={0} className={classes.bodyPapper}>
+            <Typography className={classes.bodyTitle}>
+              <SelectDateIcon className={classes.bodyTitleIcon} />
+              <span
+                style={{ color: '#2f5fac' }}
+                className={classes.bodyTitleHighlite}
+              >
                 기준 방송
-              </Typography>
+              </span>
               기간 선택
             </Typography>
-            <PerioudCompareCalendar
+            <RangeSelectCaledar
               handlePerioud={handlePerioud}
               perioud={basePerioud}
               base
             />
           </Paper>
-          
+
         </Grid>
-        <Typography style={{ 
-          color: '#4d4f5c',
-          letterSpacing: '-1.2px',
-          textAlign: 'left',
-          lineHeight: 0.67,
-          fontWeight: 500,
-          fontSize: '30px',
-          fontFamily: 'AppleSDGothicNeo',
-          marginBottom: '28px',
-          marginRight: '30px',
-          marginTop: '80px'
-          }}>
+        <Typography className={classes.vsText}>
           VS
         </Typography>
-        <Grid item style={{ marginRight: '30px',marginTop: '60px'}}>
-        <PerioudCompareTextField 
+        <Grid item className={classes.bodyContainer}>
+          <PerioudCompareTextField
             perioud={comparePerioud}
+            handlePerioud={handlePerioud}
           />
-          <Paper elevation={0} 
-            style={{marginTop: '60px', border: 'solid 1px #707070', borderRadius: '10px', paddingTop: '27px',paddingBottom: '20px'}}
-          >
-            <Typography align="center" 
-            style={{
-              fontSize: '19px',
-              fontFamily: 'SourceSansPro',
-              lineHeight: 1.53,
-              color: '#4d4f5c',
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
-              <SelectDateIcon style={{ fontSize: '28px', marginRight: '18px' }} />
-              <Typography style={{fontSize: '19px',fontWeight: 'bold',marginRight: '5px'}}>
+          <Paper elevation={0} className={classes.bodyPapper}>
+            <Typography className={classes.bodyTitle}>
+              <SelectDateIcon className={classes.bodyTitleIcon} />
+              <span className={classes.bodyTitleHighlite}>
                 비교 방송
-              </Typography>
+              </span>
               기간 선택
             </Typography>
-            <PerioudCompareCalendar
+            <RangeSelectCaledar
               perioud={comparePerioud}
               handlePerioud={handlePerioud}
             />
           </Paper>
         </Grid>
       </Grid>
+
+      <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
+        확인할 데이터 선택
+      </Typography>
+      <PerioudCompareCheckBoxGroup
+        viewer={checkStateGroup.viewer}
+        chatCount={checkStateGroup.chatCount}
+        smileCount={checkStateGroup.smileCount}
+        handleCheckStateChange={handleCheckStateChange}
+      />
+      <Grid container justify="flex-end">
+        <Button
+          className={classes.anlaysisButton}
+          variant="contained"
+          onClick={handleAnalysisButton}
+          disabled={
+            (Object.values(checkStateGroup).indexOf(true) < 0)
+            || basePerioud.length < 2
+            || comparePerioud.length < 2
+          }
+        >
+          분석하기
+        </Button>
+      </Grid>
+
     </div>
   );
 }

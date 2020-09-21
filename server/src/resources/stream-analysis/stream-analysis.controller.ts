@@ -15,18 +15,19 @@ import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
 import { EachStream } from './dto/eachStream.dto';
 import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
-import { FindDayStreams } from './dto/findDayStreams.dto';
+import { FindAllStreams } from './dto/findAllStreams.dto';
 
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(private readonly streamAnalysisService: StreamAnalysisService) {}
 
   @Get('stream-list')
-  getDaysStreamList(@Query() findDaysStreamRequest: FindDayStreams): Promise<DayStreamsInfo[]> {
+  getDaysStreamList(@Query() findDaysStreamRequest: FindAllStreams): Promise<DayStreamsInfo[]> {
     console.log(findDaysStreamRequest);
     return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
-      findDaysStreamRequest.date
+      findDaysStreamRequest.startDate,
+      findDaysStreamRequest.endDate
     );
   }
 
@@ -40,7 +41,7 @@ export class StreamAnalysisController {
                 { chat_count , smile_count , viewer } || null ]
   */
   @Get('streams')
-  @UseGuards(JwtAuthGuard)  
+  @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
   ): Promise<StreamsInfo[]> {

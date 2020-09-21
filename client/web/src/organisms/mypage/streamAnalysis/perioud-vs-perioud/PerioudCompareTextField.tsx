@@ -1,129 +1,154 @@
-import React from 'react';
-import { Grid, Typography, TextField ,Button,} from '@material-ui/core';
-import { PerioudCompareTextBoxProps } from './PerioudCompareHero.interface';
-import { DatePicker, KeyboardDatePicker,MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from '@date-io/date-fns';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import MomentUtils from "@date-io/moment";
-import moment from "moment";
+import React, { ChangeEvent } from 'react';
+import {
+  Grid, Typography, TextField,
+} from '@material-ui/core';
+import moment from 'moment';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import classnames from 'classnames';
+import { PerioudCompareTextBoxProps, ISODateTextFieldError } from './PerioudCompareHero.interface';
+import useEventTargetValue from '../../../../utils/hooks/useEventTargetValue';
+
+const useStyles = makeStyles((theme: Theme) => ({
+  textField: {
+    '& label.Mui-focused': {
+      color: '#909090',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: '#909090',
+    },
+    width: '178px',
+    height: '35px',
+  },
+  base: {
+    '& .MuiOutlinedInput-root': {
+      '&.Mui-focused fieldset': {
+        borderColor: '#3a86ff',
+      },
+    },
+  },
+  compare: {
+    '& .MuiOutlinedInput-root': {
+      '&.Mui-focused fieldset': {
+        borderColor: '#6e6e6e',
+      },
+    },
+  }
+}));
 
 export default function PerioudCompareTextField(props: PerioudCompareTextBoxProps): JSX.Element {
-  const { base, perioud} = props;
+  const classes = useStyles();
+  const { base, perioud, handlePerioud } = props;
+  const start = useEventTargetValue();
+  const end = useEventTargetValue();
+  const [startDateError, setStartDateError] = React.useState<ISODateTextFieldError>({
+    helperText: '',
+    isError: false
+  });
+  const [endDateError, setEndDateError] = React.useState<ISODateTextFieldError>({
+    helperText: '',
+    isError: false
+  });
 
-  const [startDate, setStartDate] = React.useState<MaterialUiPickersDate>(null);
-  const [endDate, setEndDate] = React.useState<MaterialUiPickersDate>(null);
-  const [endDateError , setEndDateError] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    if (start.value.length > 9) {
+      if (!moment(start.value, 'YYYY-MM-DD').isValid()) {
+        setStartDateError({ helperText: '유효하지 않은 날짜 형식입니다.', isError: true });
+      } else {
+        setStartDateError({ helperText: '', isError: false });
+      }
 
-  const handleDateChange = (newDate: MaterialUiPickersDate, isStart?: true) => {
-    
-    if(isStart){
-      setStartDate(newDate);
-    }
-    else{
-      if(newDate && startDate){
-
-        if(newDate.getDate() > startDate.getDate() && newDate.getMonth() > startDate.getMonth()){
-          setEndDate(newDate);
+      if (end.value.length > 9) {
+        if (!moment(end.value, 'YYYY-MM-DD').isValid()) {
+          setEndDateError({ helperText: '유효하지 않은 날짜 형식입니다.', isError: true });
         }
-        else{
-          setEndDateError(true);
+
+        if (moment(start.value, 'YYYY-MM-DD').isValid()
+        && moment(end.value, 'YYYY-MM-DD').isValid()) {
+          setEndDateError({ helperText: '', isError: false });
+
+          const startDate = new Date(start.value);
+          const endDate = new Date(end.value);
+
+          if (startDate.getTime() <= endDate.getTime()) {
+            handlePerioud(new Date(start.value), new Date(end.value), base);
+          } else {
+            handlePerioud(new Date(end.value), new Date(start.value), base);
+          }
         }
       }
     }
-  }
+  }, [start.value, end.value]);
 
   React.useEffect(() => {
-    if(endDate){
-      console.log(endDate.toISOString());
+    if (perioud[0] && perioud[1]
+      && moment(perioud[0].toISOString(), 'YYYY-MM-DD').isValid()
+      && moment(perioud[1].toISOString(), 'YYYY-MM-DD').isValid()) {
+      start.setValue(perioud[0].toISOString().slice(0, 10));
+      end.setValue(perioud[1].toISOString().slice(0, 10));
     }
-  },[endDate])
+  }, [perioud]);
 
-
-  const [selectedDate, setDate] = React.useState(moment());
-  const [inputValue, setInputValue] = React.useState(moment().format("YYYY-MM-DD"));
-
-  const onDateChange = (date: MaterialUiPickersDate, value?: string | null | undefined)=> {
-    if(date && value){
-      setDate(moment(date));
-      setInputValue(value);
-    }
-
-  };
-
-  const dateFormatter = (str: string) => {
-    return str;
-  };
-
+  React.useEffect(() => {
+    const nowDate = new Date();
+    end.setValue(nowDate.toISOString().slice(0, 10));
+    nowDate.setDate(nowDate.getDate() - 1);
+    start.setValue(nowDate.toISOString().slice(0, 10));
+  }, []);
 
   return (
     <Grid container direction="row" spacing={2}>
       <Grid item>
-      {/* <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
-        <KeyboardDatePicker
-          autoOk={true}
-          style={{width: '178px',height: '35px'}}
-          showTodayButton={true}
-          value={selectedDate}
-          format="yyyy-mm-dd hh:mm:ss"
-          inputValue={inputValue}
-          onChange={onDateChange}
-          rifmFormatter={dateFormatter}
-        />
-      </MuiPickersUtilsProvider> */}
-        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            style={{width: '178px',height: '35px'}}
-            autoOk
-            variant="inline"
-            inputVariant="outlined"
-            label="start"
-            // rifmFormatter={ str => str}
-            value={startDate}
-            format="yyyy-mm-dd hh:mm:ss"
-            inputProps={{ style: {width: '100%', textAlign: 'center'}}}
-            onChange={(date) => handleDateChange(date,true)}
-            open={false}
-          />
-        </MuiPickersUtilsProvider> */}
         <TextField
-          style={{width: '178px',height: '35px'}}
+          placeholder="YYYY-MM-DD"
           variant="outlined"
-          type="date"
+          error={startDateError.isError}
+          helperText={startDateError.helperText}
+          value={start.value}
+          onChange={start.handleChangeISODateNumber}
+          inputProps={{
+            maxLength: 10,
+            style: {
+              textAlign: 'center',
+              fontFamily: 'AppleSDGothicNeo',
+              fontSize: '20px',
+              fontWeight: 440
+            }
+          }}
+          className={classnames({
+            [classes.textField]: true,
+            [classes.base]: base,
+            [classes.compare]: !base
+          })}
         />
       </Grid>
-      <Grid item alignItems="center" style={{height: '100%'}}>
-        <Typography variant="h4">
+      <Grid item style={{ height: '100%', }}>
+        <Typography variant="h5" style={{ paddingTop: '10px' }}>
           ~
         </Typography>
       </Grid>
       <Grid item>
-      {/* <MuiPickersUtilsProvider libInstance={moment} utils={MomentUtils}>
-        <KeyboardDatePicker
-          autoOk={true}
-          style={{width: '178px',height: '35px'}}
-          showTodayButton={true}
-          value={selectedDate}
-          format="YYYY-MM-DD"
-          inputValue={inputValue}
-          onChange={onDateChange}
-          rifmFormatter={dateFormatter}
+        <TextField
+          variant="outlined"
+          placeholder="YYYY-MM-DD"
+          error={endDateError.isError}
+          helperText={endDateError.helperText}
+          value={end.value}
+          onChange={end.handleChangeISODateNumber}
+          inputProps={{
+            maxLength: 10,
+            style: {
+              textAlign: 'center',
+              fontFamily: 'AppleSDGothicNeo',
+              fontSize: '20px',
+              fontWeight: 440
+            }
+          }}
+          className={classnames({
+            [classes.textField]: true,
+            [classes.base]: base,
+            [classes.compare]: !base
+          })}
         />
-      </MuiPickersUtilsProvider> */}
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            style={{width: '178px',height: '35px'}}
-            autoOk
-            variant="inline"
-            format="yyyy-mm-dd"
-            error={endDateError}
-            inputVariant="outlined"
-            label="end"
-            value={endDate}
-            inputProps={{ style: {width: '100%', textAlign: 'center'}}}
-            onChange={(date) => handleDateChange(date)}
-            open={false}
-          />
-        </MuiPickersUtilsProvider>
       </Grid>
     </Grid>
   );

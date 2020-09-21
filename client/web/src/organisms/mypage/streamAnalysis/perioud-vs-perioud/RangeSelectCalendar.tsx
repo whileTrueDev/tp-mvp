@@ -11,23 +11,23 @@ import DateFnsUtils from '@date-io/date-fns';
 import useAxios from 'axios-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import { DayStreamsInfo, PerioudCompareCalendarProps } from './PerioudCompareHero.interface';
 import classnames from 'classnames';
+import { RangeSelectCaledarProps } from './PerioudCompareHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   leftCircleBase: {
     width: '50%',
-    backgroundColor: '#d7e7ff', 
+    backgroundColor: '#d7e7ff',
   },
   leftCircleCompare: {
     width: '50%',
-    backgroundColor: '#909090', 
+    backgroundColor: '#909090',
   },
   rigthCircleBase: {
-    background: "linear-gradient(to left,#d7e7ff 50%, white 50%)" ,
+    background: 'linear-gradient(to left,#d7e7ff 50%, white 50%)',
   },
   rigthCircleCompare: {
-    background: "linear-gradient(to left,#909090 50%, white 50%)" ,
+    background: 'linear-gradient(to left,#909090 50%, white 50%)',
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   rangeDayCompare: {
     backgroundColor: '#909090',
   },
-  selectedDayBase:{
+  selectedDayBase: {
     backgroundColor: '#3a86ff'
   },
   selectedDayCompare: {
@@ -43,9 +43,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-function PerioudCompareCalendar(props: PerioudCompareCalendarProps): JSX.Element {
+function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    // handleRangePush, handleResetRange, selectedRangeDate,
     perioud, handlePerioud, base,
   } = props;
   const classes = useStyles();
@@ -55,12 +54,11 @@ function PerioudCompareCalendar(props: PerioudCompareCalendarProps): JSX.Element
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
 
   React.useEffect(() => {
-    if(perioud.length > 1){
+    if (perioud.length > 1) {
       setPoint1(perioud[0]);
       setPoint2(perioud[1]);
     }
-  },[perioud])
-
+  }, [perioud]);
 
   /*
     1. point1 == null point2 == null -> insert point1
@@ -74,7 +72,7 @@ function PerioudCompareCalendar(props: PerioudCompareCalendarProps): JSX.Element
       setPoint1(newDate);
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
-      if (point1.getDate() <= newDate.getDate()) {
+      if (point1.getTime() <= newDate.getTime()) {
         handlePerioud(point1, newDate, base);
       } else {
         handlePerioud(newDate, point1, base);
@@ -85,38 +83,37 @@ function PerioudCompareCalendar(props: PerioudCompareCalendarProps): JSX.Element
     }
   };
 
-  const leftHalfCircleDay = (dayComponent: JSX.Element) => {
-    return (
-      <div  className={classnames({
-        [classes.leftCircleBase]: base,
-        [classes.leftCircleCompare]: !base
-      })}>
-        {React.cloneElement(dayComponent, 
-          { style: { backgroundColor: base?'#3a86ff' : '#6e6e6e' ,color: 'white'} })
-        }
-      </div>
-    )
-  }
+  const leftHalfCircleDay = (dayComponent: JSX.Element) => (
+    <div className={classnames({
+      [classes.leftCircleBase]: base,
+      [classes.leftCircleCompare]: !base
+    })}
+    >
+      {React.cloneElement(dayComponent,
+        { style: { backgroundColor: base ? '#3a86ff' : '#6e6e6e', color: 'white' } })}
+    </div>
+  );
 
-  const rightHalfCircleDay = (dayComponent: JSX.Element) => {
-    return (
-      <div className={classnames({
-        [classes.rigthCircleBase]: base,
-        [classes.rigthCircleCompare]: !base
-      })}>
-        {React.cloneElement(dayComponent, 
-          { style: { backgroundColor: base?'#3a86ff' : '#6e6e6e',color: 'white' } })
-        }
-      </div>
-    )
-  }
+  const rightHalfCircleDay = (dayComponent: JSX.Element) => (
+    <div className={classnames({
+      [classes.rigthCircleBase]: base,
+      [classes.rigthCircleCompare]: !base
+    })}
+    >
+      {React.cloneElement(dayComponent,
+        { style: { backgroundColor: base ? '#3a86ff' : '#6e6e6e', color: 'white' } })}
+    </div>
+  );
 
-  const rangeInnerDay = (dayComponent: JSX.Element) => {
-    return <div className={classnames({
+  const rangeInnerDay = (dayComponent: JSX.Element) => (
+    <div className={classnames({
       [classes.rangeDayBase]: base,
       [classes.rangeDayCompare]: !base
-    })}>{dayComponent}</div>;
-  } 
+    })}
+    >
+      {dayComponent}
+    </div>
+  );
 
   const renderDayInPicker = (
     date: MaterialUiPickersDate,
@@ -124,60 +121,57 @@ function PerioudCompareCalendar(props: PerioudCompareCalendarProps): JSX.Element
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element
   ) => {
-    if(dayInCurrentMonth && date && point1 && point2){
+    if (dayInCurrentMonth && date && point1 && point2) {
       if (date.getMonth() === point1.getMonth() && point1.getMonth() === point2.getMonth()) {
-        if(point1.getDate() === date.getDate()){
-          if(point1.getDate() > point2.getDate()){
+        if (point1.getDate() === date.getDate()) {
+          if (point1.getDate() > point2.getDate()) {
             return leftHalfCircleDay(dayComponent);
           }
-          else{
-            return rightHalfCircleDay(dayComponent);
-          }
+
+          return rightHalfCircleDay(dayComponent);
         }
-        else if(point2.getDate() === date.getDate()){
-          if(point1.getDate() < point2.getDate()){
+        if (point2.getDate() === date.getDate()) {
+          if (point1.getDate() < point2.getDate()) {
             return leftHalfCircleDay(dayComponent);
           }
-          else{
-            return rightHalfCircleDay(dayComponent);
-          }
+
+          return rightHalfCircleDay(dayComponent);
         }
-        else if (Math.min(point1.getDate(), point2.getDate()) < date.getDate()
-        && date.getDate() < Math.max(point1.getDate(), point2.getDate())){
+        if (Math.min(point1.getDate(), point2.getDate()) < date.getDate()
+        && date.getDate() < Math.max(point1.getDate(), point2.getDate())) {
           return rangeInnerDay(dayComponent);
         }
         return dayComponent;
       }
-      else if(point1.getMonth() !== point2.getMonth() && point1.getMonth() < point2.getMonth()){
-        if(date.getDate() === point1.getDate() && date.getMonth() === point1.getMonth()){
+      if (point1.getMonth() !== point2.getMonth() && point1.getMonth() < point2.getMonth()) {
+        if (date.getDate() === point1.getDate() && date.getMonth() === point1.getMonth()) {
           return rightHalfCircleDay(dayComponent);
         }
-        if(date.getDate() === point2.getDate() && date.getMonth() === point2.getMonth()){
+        if (date.getDate() === point2.getDate() && date.getMonth() === point2.getMonth()) {
           return leftHalfCircleDay(dayComponent);
         }
 
-        if(Math.min(point1.getMonth(),point2.getMonth()) < date.getMonth() 
-          && date.getMonth() < Math.max(point1.getMonth(),point2.getMonth()) ){
+        if (Math.min(point1.getMonth(), point2.getMonth()) < date.getMonth()
+          && date.getMonth() < Math.max(point1.getMonth(), point2.getMonth())) {
           return rangeInnerDay(dayComponent);
         }
-        if((point1.getDate() < date.getDate() && point1.getMonth() === date.getMonth() )
-        || (date.getDate() < point2.getDate() && point2.getMonth() === date.getMonth())){
+        if ((point1.getDate() < date.getDate() && point1.getMonth() === date.getMonth())
+        || (date.getDate() < point2.getDate() && point2.getMonth() === date.getMonth())) {
           return rangeInnerDay(dayComponent);
         }
-      }
-      else if(point1.getMonth() !== point2.getMonth() && point1.getMonth() > point2.getMonth()){
-        if(date.getDate() === point2.getDate() && date.getMonth() === point2.getMonth()){
+      } else if (point1.getMonth() !== point2.getMonth() && point1.getMonth() > point2.getMonth()) {
+        if (date.getDate() === point2.getDate() && date.getMonth() === point2.getMonth()) {
           return rightHalfCircleDay(dayComponent);
         }
-        if(date.getDate() === point1.getDate() && date.getMonth() === point1.getMonth()){
+        if (date.getDate() === point1.getDate() && date.getMonth() === point1.getMonth()) {
           return leftHalfCircleDay(dayComponent);
         }
-        if(Math.min(point1.getMonth(),point2.getMonth()) < date.getMonth() 
-          && date.getMonth() < Math.max(point1.getMonth(),point2.getMonth()) ){
+        if (Math.min(point1.getMonth(), point2.getMonth()) < date.getMonth()
+          && date.getMonth() < Math.max(point1.getMonth(), point2.getMonth())) {
           return rangeInnerDay(dayComponent);
         }
-        if((point1.getDate() > date.getDate() && point1.getMonth() === date.getMonth() )
-        || (date.getDate() > point2.getDate() && point2.getMonth() === date.getMonth())){
+        if ((point1.getDate() > date.getDate() && point1.getMonth() === date.getMonth())
+        || (date.getDate() > point2.getDate() && point2.getMonth() === date.getMonth())) {
           return rangeInnerDay(dayComponent);
         }
       }
@@ -209,4 +203,4 @@ function PerioudCompareCalendar(props: PerioudCompareCalendarProps): JSX.Element
   );
 }
 
-export default PerioudCompareCalendar;
+export default RangeSelectCaledar;

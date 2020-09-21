@@ -37,21 +37,38 @@ export class StreamAnalysisService {
     input   :  userId, date
     output  :  date 의 month 에 해당하는 [ {streamId, platform, title, startAt, airTime}, ... ]
   */
-  async findDayStreamList(userId: string, date: string): Promise<DayStreamsInfo[]> {
-    // 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
-    const originDate = new Date(date);
-    const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
-    const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
+  async findDayStreamList(
+    userId: string,
+    startDate: string, endDate?: string
+  ): Promise<DayStreamsInfo[]> {
+    if (!endDate) {
+      // 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
+      const originDate = new Date(startDate);
+      const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
+      const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
 
-    const DayStreamData = await this.streamsRepository
+      const DayStreamData = await this.streamsRepository
+        .createQueryBuilder('streams')
+        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime'])
+        .where('streams.userId = :id', { id: userId })
+        .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
+        .andWhere('streams.startedAt < :endDate', { endDate: endAt })
+        .execute();
+
+      return DayStreamData;
+    }
+    const startAt = new Date(startDate);
+    const endAt = new Date(endDate);
+    const TermStreamsData = await this.streamsRepository
       .createQueryBuilder('streams')
       .select(['streamId', 'platform', 'title', 'startedAt', 'airTime'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
       .andWhere('streams.startedAt < :endDate', { endDate: endAt })
+      .orderBy('startedAt', 'ASC')
       .execute();
 
-    return DayStreamData;
+    return TermStreamsData;
   }
 
   /*
