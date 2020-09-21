@@ -5,18 +5,15 @@
 # 분석을 한다
 # json 형태의 highlight_json으로 반환한다
 # s3에 저장한다
-import re
-import datetime
+from multiprocessing import Pool
 import pandas as pd
 import numpy as np
 import os
 from dotenv import load_dotenv
 from datetime import date
-from multiprocessing import Process, Pool
 from lib.s3_connector import S3Connector
 from lib.db_connect import DbHandler
-from lib.morphs_analyzer import morphs_analyzer, word_counter, get_line_score, morphs_test
-from lib.__json import json_dumper
+from lib.morphs_analyzer import morphs_analyzer, word_counter
 from lib.warning_eliminator import ChainedAssignent
 from lib.file_converter import FileConverter
 
@@ -98,7 +95,7 @@ def main(data, platform, stream_id):
         print('too short to analyze break the process')
         return False
 
-    score_group = df_highlight.groupby(df_highlight['group']).agg({'sum': sum})
+    # score_group = df_highlight.groupby(df_highlight['group']).agg({'sum': sum})
     score_index_group = []
     score_index = {}
     df_sum = df_highlight.groupby(df_highlight['group']).agg({'sum': sum})
