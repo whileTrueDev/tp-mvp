@@ -15,21 +15,24 @@ const rawTheme: ThemeOptions = {
       light: '#a8c4f9',
       main: '#929ef8',
       dark: '#4b5ac7',
+      contrastText: '#fff'
     },
     secondary: {
       light: lighten('#79e2e0', 0.1),
       main: '#79e2e0',
       dark: darken('#79e2e0', 0.1),
+      contrastText: '#fff'
     },
     info: {
       light: '#9AA2C5',
       main: blueGrey[400],
       dark: blueGrey[600],
-    }
+      contrastText: '#fff'
+    },
   },
   typography: {
-    fontFamily: '"NotoSansKR-Regular", "Sunflower", sans-serif'
-  }
+    fontFamily: '"NotoSansKR-Regular", "Sunflower", sans-serif',
+  },
 };
 
 export default rawTheme;

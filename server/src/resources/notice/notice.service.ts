@@ -13,7 +13,14 @@ export class NoticeService {
   ) {}
 
   async findAll(): Promise<NoticeEntity[]> {
-    return this.noticeRepository.find();
+    const noticeList = await this.noticeRepository.find();
+    const sorted = noticeList.sort((row1, row2) => {
+      if (row2.isImportant) return 1;
+      if (row1.isImportant) return -1;
+      return new Date(row2.createdAt).getTime()
+            - new Date(row1.createdAt).getTime();
+    });
+    return sorted;
   }
 
   async findOne(dto: FindOneNoticeDto): Promise<NoticeEntity> {

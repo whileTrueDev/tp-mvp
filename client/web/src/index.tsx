@@ -30,6 +30,7 @@ import FindPassword from './pages/others/FindPassword';
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
+import Notice from './pages/mainpage/Notice';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -101,7 +102,7 @@ function Index(): JSX.Element {
   }, []); // Should be run only once!!
 
   return (
-    <ThemeProvider theme={truepointTheme}>
+    <ThemeProvider<TruepointTheme> theme={truepointTheme}>
       <CssBaseline />
 
       {/* 로그인 여부 Context */}
@@ -118,7 +119,7 @@ function Index(): JSX.Element {
             <Route exact path="/login" component={Login} />
             <Route exact path="/find-id" component={FindId} />
             <Route exact path="/find-pw" component={FindPassword} />
-
+            <Route exact path="/notice" component={Notice} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             <Route path="/mypage" component={Mypage} />
