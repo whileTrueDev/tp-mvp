@@ -15,6 +15,7 @@ import loadConfig from './config/loadConfig';
 
 import { roles } from './roles/app.roles';
 import { SlackModule } from './resources/slack/slack.module';
+import { NoticeModule } from './resources/notice/notice.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SlackModule } from './resources/slack/slack.module';
     StreamAnalysisModule,
     InquiryModule,
     SlackModule,
+    NoticeModule,
   ]
 })
 export class AppModule { }
