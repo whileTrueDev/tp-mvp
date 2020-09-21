@@ -56,5 +56,4 @@ class FileConverter:
                 start=format_time_list[0], end=format_time_list[1], pure_start=time_list[0], pure_end=time_list[1])
             srt_list.append(test_line)
         return_srt = '\n'.join(srt_list)
-        print(return_srt)
         return return_srt

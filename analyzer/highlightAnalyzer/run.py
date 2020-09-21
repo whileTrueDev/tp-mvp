@@ -9,6 +9,8 @@ import re
 import datetime
 import pandas as pd
 import numpy as np
+import os
+from dotenv import load_dotenv
 from datetime import date
 from multiprocessing import Process, Pool
 from lib.s3_connector import S3Connector
@@ -17,6 +19,8 @@ from lib.morphs_analyzer import morphs_analyzer, word_counter, get_line_score, m
 from lib.__json import json_dumper
 from lib.warning_eliminator import ChainedAssignent
 from lib.file_converter import FileConverter
+
+load_dotenv(verbose=True)
 
 
 def main(data, platform, stream_id):
@@ -67,6 +71,8 @@ def main(data, platform, stream_id):
         df_list['highlight'][get_highlight] = 1
         # 하이라이트인 로우만 따로 모으기
         df_highlight = df_list[df_list['highlight'] == 1]
+        # min-max scale
+        df_highlight['norm'] = (df_highlight['sum']-df_highlight['sum'].min())/(df_highlight['sum'].max()-df_highlight['sum'].min())
         # group 기본값 부여
         df_highlight['group'] = np.nan
     # 같은 그룹끼리 묶는 과정
@@ -84,38 +90,48 @@ def main(data, platform, stream_id):
     # videoid, end_date, 총 index 값 넣기
     highlight_json['videoId'] = stream_id
     highlight_json['start_date'] = df_list.index[0].strftime('%Y-%m-%d %H:%M:%S')
-    highlight_json['end_date'] = df_list.index[-1].strftime('%Y-%m-%d')
+    highlight_json['end_date'] = df_list.index[-1].strftime('%Y-%m-%d %H:%M:%S')
     highlight_json['total_index'] = len(df_list)
     # 하이라이트 시간을 가진 그룹과 인덱스를 가진 그룹으로 만들어서 highlight_json에 넣어준다
     highlight_group = df_highlight.index.groupby(df_highlight['group'])
     if len(highlight_group) == 0:
         print('too short to analyze break the process')
         return False
+
+    score_group = df_highlight.groupby(df_highlight['group']).agg({'sum': sum})
+    score_index_group = []
+    score_index = {}
+    df_sum = df_highlight.groupby(df_highlight['group']).agg({'sum': sum})
+    df_sum['norm'] = df_sum['norm'] = (df_sum['sum']-df_sum['sum'].min())/(df_sum['sum'].max()-df_sum['sum'].min())
+    df_sum.drop('sum', axis=1, inplace=True)
+    for key in highlight_group.keys():
+        score_index['time'] = list(highlight_group[key])
+        score_index['score'] = df_sum.loc[key][0]
+        score_index_group.append(score_index)
+        score_index = {}
     index_group = [i['index'] for v, i in df_highlight.groupby('group')]
     # 그룹이 내림차순이므로 뒤집어 준다
     index_group.reverse()
     # highlight_points에 들어갈 객체
     highlight_point = {}
-
-    for i, v in enumerate(reversed(list(highlight_group.keys()))):
-        highlight_point['start_time'] = str(highlight_group[v][0])
-        highlight_point['end_time'] = str(highlight_group[v][-1])
-        highlight_point['start_index'] = str(index_group[i][0])
-        highlight_point['end_index'] = str(index_group[i][-1])
+    for i, value in enumerate(reversed(score_index_group)):
+        highlight_point['start_time'] = value['time'][0].strftime('%Y-%m-%d %H:%M:%S')
+        highlight_point['end_time'] = value['time'][-1].strftime('%Y-%m-%d %H:%M:%S')
+        highlight_point['start_index'] = int(index_group[i][0])
+        highlight_point['end_index'] = int(index_group[i][-1])
+        highlight_point['score'] = value['score']
         highlight_json['highlight_points'].append(highlight_point)
         highlight_point = {}
-    # metrics json
+# metrics json
     chat_points, smile_points = [[], []]
     metrics_counts = {}
     for i in range(len(df_onair)):
-        metrics_counts['smile_count'] = df_onair['count'][i]
-        metrics_counts['chat_count'] = df_onair['ㅋ'][i]
+        metrics_counts['smile_count'] = int(df_onair['count'][i])
+        metrics_counts['chat_count'] = int(df_onair['ㅋ'][i])
         metrics_json['time_line'].append(metrics_counts)
         metrics_counts = {}
-    chat_count = list(df_onair['count'])
-    smile_count = list(df_onair['ㅋ'])
     chat_points = list(df_highlight['count'])
-    smile_points = list(df_highlight['ㅋ'])
+    smile_points = list(df_highlight['ㅋ'].astype(int))
     metrics_json['videoId'] = stream_id
     metrics_json['start_date'] = df_list.index[0].strftime('%Y-%m-%d %H:%M:%S')
     metrics_json['end_date'] = df_list.index[-1].strftime('%Y-%m-%d %H:%M:%S')
@@ -124,67 +140,37 @@ def main(data, platform, stream_id):
     metrics_json['smile_points'] = smile_points
     creator_id = df['creatorId'].unique()[0]
     today = date.today().strftime("%Y-%m-%d")
+    date_list = today.split('-')
+    year = date_list[0]
+    month = date_list[1]
+    day = date_list[2]
+    converter = FileConverter()
+    srt = converter.return_srt(highlight_json)
+    srt_file_name = '{name}일 방송 하이라이트'.format(name=highlight_json['start_date'])
 
-    for i, v in enumerate(reversed(list(highlight_group.keys()))):
-        highlight_point['start_time'] = str(highlight_group[v][0])
-        highlight_point['end_time'] = str(highlight_group[v][-1])
-        highlight_point['start_index'] = str(index_group[i][0])
-        highlight_point['end_index'] = str(index_group[i][-1])
-        highlight_json['highlight_points'].append(highlight_point)
-        highlight_point = {}
-    # metrics json
-    chat_count, chat_points, smile_count, smile_points = [[], [], [], []]
-    chat_count = list(df_onair['count'])
-    smile_count = list(df_onair['ㅋ'])
-    chat_points = list(df_highlight['count'])
-    smile_points = list(df_highlight['ㅋ'])
-    metrics_json['videoId'] = stream_id
-    metrics_json['end_date'] = df_list.index[-1].strftime('%Y-%m-%d')
-    metrics_json['total_index'] = len(df_list)
-    metrics_json['metrics']['chat_count'] = chat_count
-    metrics_json['metrics']['chat_points'] = chat_points
-    metrics_json['metrics']['smile_count'] = smile_count
-    metrics_json['metrics']['smile_points'] = smile_points
-    creator_id = df['creatorId'].unique()[0]
-    today = date.today().strftime("%Y-%m-%d")
-    # s3 = S3Connector()
-    # s3.upload_json('truepoint', highlight_json, 'highlight_json/{creator_id}/{date}/{stream_id}'.format(creator_id=creator_id, date=today, stream_id=stream_id), stream_id)
-    # s3.upload_json('truepoint', metrics_json, 'metrics_json/{creator_id}/{date}/{stream_id}'.format(creator_id=creator_id, date=today, stream_id=stream_id), stream_id)
+    s3 = S3Connector(os.getenv('AWS_BUCKET_NAME'), stream_id)
+    s3.upload_json(highlight_json, 'highlight_json/{creator_id}/{year}/{month}/{day}/{stream_id}'.format(creator_id=creator_id, year=year, month=month, day=day, stream_id=stream_id))
+    s3.upload_json(metrics_json, 'metrics_json/{creator_id}/{year}/{month}/{day}/{stream_id}'.format(creator_id=creator_id, year=year, month=month, day=day, stream_id=stream_id))
+    s3.upload_srt(year, month, day, creator_id, srt, srt_file_name)
 
 
 if __name__ == '__main__':
-    highlight_json = {'videoId': '39667416302', 'start_date': '2020-09-13', 'end_date': '2020-09-13', 'total_index': 92,
-                      'highlight_points': [{'start_time': '2020-09-13 21:55:00', 'end_time': '2020-09-13 21:55:00', 'start_index': 7, 'end_index': 10},
-                                           {'start_time': '2020-09-13 21:56:00', 'end_time': '2020-09-13 21:56:00', 'start_index': 34, 'end_index': 54},
-                                           {'start_time': '2020-09-13 21:58:30', 'end_time': '2020-09-13 21:58:30', 'start_index': 57, 'end_index': 62}]}
-    converter = FileConverter()
-    srt = converter.return_srt(highlight_json)
-    bucket_name = 'truepoint'
-    stream_id = '123123123'
-
-    s3 = S3Connector(bucket_name, stream_id)
-    creator_id = '134859149'
-    today = '2020_09_18'
-    srt_file_name = '{name}일 방송 하이라이트'.format(name=highlight_json['start_date'])
-    s3.upload_srt('highlight_json/{creator_id}/{date}/{stream_id}'.format(creator_id=creator_id, date=today, stream_id=stream_id), srt, srt_file_name)
-    # s3.upload_json('truepoint', metrics_json, 'metrics_json/{creator_id}/{date}/{stream_id}'.format(creator_id=creator_id, date=today, stream_id=stream_id), stream_id)
     # db state 확인해서 최근 종료된 방송이 있는 지 확인한다
-    # platform_list = [('AfreecaStreams'), ('TwitchStreams'), ('YoutubeStreams')]
-    # db_conn = DbHandler()
-    # with Pool(processes=3) as pool:
-    #     to_analyze = pool.map(db_conn.check_state, platform_list)
-    # afreeca_bool, twitch_bool, youtube_bool = [bool(to_analyze[0]['AfreecaStreams']), bool(to_analyze[1]['TwitchStreams']), bool(to_analyze[2]['YoutubeStreams'])]
-    # data = []
-    # for stream in to_analyze:
-    #     platform = list(stream.keys())[0]
-    #     for stream_id in list(stream.values())[0]:
-    #         if (afreeca_bool or twitch_bool or youtube_bool):
-    #             data.append(db_conn.twitch_chat_call(stream_id, platform))
-
-    #     for i, line in enumerate(data):
-    #         platform = list(line.keys())[0]
-    #         if isinstance(list(line.values())[0], (list)):
-    #             # 유튜브는 streamId == creatorId
-    #             stream_id = line[platform][0]['streamId']
-    #             main(line[platform], platform, stream_id)
-    #             # db_conn.update_state(platform, stream_id)
+    platform_list = [('AfreecaStreams'), ('TwitchStreams'), ('YoutubeStreams')]
+    db_conn = DbHandler()
+    with Pool(processes=3) as pool:
+        to_analyze = pool.map(db_conn.check_state, platform_list)
+        afreeca_bool, twitch_bool, youtube_bool = [bool(to_analyze[0]['AfreecaStreams']), bool(to_analyze[1]['TwitchStreams']), bool(to_analyze[2]['YoutubeStreams'])]
+        data = []
+        for stream in to_analyze:
+            platform = list(stream.keys())[0]
+            for stream_id in list(stream.values())[0]:
+                if (afreeca_bool or twitch_bool or youtube_bool):
+                    data.append(db_conn.twitch_chat_call(stream_id, platform))
+            for i, line in enumerate(data):
+                platform = list(line.keys())[0]
+                if isinstance(list(line.values())[0], (list)):
+                    # 유튜브는 streamId == creatorId
+                    stream_id = line[platform][0]['streamId']
+                    main(line[platform], platform, stream_id)
+                    db_conn.update_state(platform, stream_id)
