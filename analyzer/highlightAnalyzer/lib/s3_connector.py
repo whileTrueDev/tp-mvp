@@ -20,12 +20,17 @@ class S3Connector:
             ContentType='application/json'
         )
 
-    def upload_srt(self, year, month, day, creator_id, json_to_save, file_name):
+    def upload_file(self, year, month, day, creator_id, json_to_save, file_name, file_type):
         s3object = self.s3.Object(
             self.bucket_name,
-            'srt_files/{creator_id}/{year}/{month}/{day}/{stream_id}/{file_name}.srt'.format(
-                year=year, month=month, day=day, creator_id=creator_id, stream_id=self.stream_id, file_name=file_name),
+            'export_files/{creator_id}/{year}/{month}/{day}/{stream_id}/{file_name}.{type}'.format(
+                year=year, month=month, day=day, creator_id=creator_id, stream_id=self.stream_id, file_name=file_name, type=file_type),
         )
-        s3object.put(
-            Body=json_to_save
-        )
+        if file_type == 'txt':
+            s3object.put(
+                Body=(bytes(json.dumps(json_to_save).encode('UTF-8'))),
+            )
+        else:
+            s3object.put(
+                Body=json_to_save
+            )

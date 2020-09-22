@@ -119,6 +119,9 @@ def main(data, platform, stream_id):
         highlight_point['score'] = value['score']
         highlight_json['highlight_points'].append(highlight_point)
         highlight_point = {}
+        start_date = ''.join(highlight_json['start_date'].split(' ')[0].split('-')[1:])+''.join(highlight_json['start_date'].split(' ')[1].split(':')[:2])
+        end_date = ''.join(highlight_json['end_date'].split(' ')[0].split('-')[1:])+''.join(highlight_json['end_date'].split(' ')[1].split(':')[:2])
+        highlight_json_name = '{s_date}_{e_date}_{id}.json'.format(s_date=start_date, e_date=end_date, id=stream_id)
 # metrics json
     chat_points, smile_points = [[], []]
     metrics_counts = {}
@@ -136,19 +139,26 @@ def main(data, platform, stream_id):
     metrics_json['chat_points'] = chat_points
     metrics_json['smile_points'] = smile_points
     creator_id = df['creatorId'].unique()[0]
+    metrics_json_name = '{s_date}_{e_date}_{id}.json'.format(s_date=start_date, e_date=end_date, id=stream_id)
     today = date.today().strftime("%Y-%m-%d")
     date_list = today.split('-')
     year = date_list[0]
     month = date_list[1]
     day = date_list[2]
+
+    highlight_csv = pd.DataFrame(highlight_json).to_csv(sep=',')
     converter = FileConverter()
     srt = converter.return_srt(highlight_json)
     srt_file_name = '{name}일 방송 하이라이트'.format(name=highlight_json['start_date'])
-
+    csv_file_name = '{name}일 방송 하이라이트'.format(name=highlight_json['start_date'])
+    text_file_name = '{name}일 방송 하이라이트'.format(name=highlight_json['start_date'])
     s3 = S3Connector(os.getenv('AWS_BUCKET_NAME'), stream_id)
-    s3.upload_json(highlight_json, 'highlight_json/{creator_id}/{year}/{month}/{day}/{stream_id}'.format(creator_id=creator_id, year=year, month=month, day=day, stream_id=stream_id))
-    s3.upload_json(metrics_json, 'metrics_json/{creator_id}/{year}/{month}/{day}/{stream_id}'.format(creator_id=creator_id, year=year, month=month, day=day, stream_id=stream_id))
-    s3.upload_srt(year, month, day, creator_id, srt, srt_file_name)
+    s3.upload_json(highlight_json, 'highlight_json/{creator_id}/{year}/{month}/{day}/{file_name}'.format(creator_id=creator_id,
+                                                                                                         year=year, month=month, day=day, stream_id=stream_id, file_name=highlight_json_name))
+    s3.upload_json(metrics_json, 'metrics_json/{creator_id}/{year}/{month}/{day}/{file_name}'.format(creator_id=creator_id, year=year, month=month, day=day, file_name=metrics_json_name))
+    s3.upload_file(year, month, day, creator_id, srt, srt_file_name, 'srt')
+    s3.upload_file(year, month, day, creator_id, highlight_csv, csv_file_name, 'csv')
+    s3.upload_file(year, month, day, creator_id, highlight_json, text_file_name, 'txt')
 
 
 if __name__ == '__main__':
@@ -163,11 +173,11 @@ if __name__ == '__main__':
             platform = list(stream.keys())[0]
             for stream_id in list(stream.values())[0]:
                 if (afreeca_bool or twitch_bool or youtube_bool):
-                    data.append(db_conn.twitch_chat_call(stream_id, platform))
+                    data.append(db_conn.chat_call(stream_id, platform))
             for i, line in enumerate(data):
                 platform = list(line.keys())[0]
                 if isinstance(list(line.values())[0], (list)):
                     # 유튜브는 streamId == creatorId
                     stream_id = line[platform][0]['streamId']
                     main(line[platform], platform, stream_id)
-                    db_conn.update_state(platform, stream_id)
+                    # db_conn.update_state(platform, stream_id)
