@@ -1,5 +1,6 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
+import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
@@ -22,6 +23,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Notice():JSX.Element {
   const classes = useStyles();
+  const history = useHistory();
+
+  // Notice number Param
+  const { id: selectedNoticeId } = useParams<{ id: string}>();
+  // 개별 글 보기 스크롤 아래로 내리기
+  React.useEffect(() => {
+    if (selectedNoticeId) {
+      window.scrollTo(0, 300);
+    }
+  }, [selectedNoticeId]);
 
   // Data loading
   const [{ loading, data }] = useAxios<NoticeData[]>({
@@ -35,12 +46,11 @@ export default function Notice():JSX.Element {
   }
 
   // 선택된 개별 공지사항 글을 보여주기 위한 스테이트
-  const [selectedNoticeId, setSelectedNoticeId] = React.useState<number>();
   function handleNoticeClick(num: number):void {
-    setSelectedNoticeId(num);
+    history.push(`/notice/${num}`);
   }
   function handleResetNoticeSelect(): void {
-    setSelectedNoticeId(undefined);
+    history.push('/notice');
   }
 
   return (
@@ -55,7 +65,7 @@ export default function Notice():JSX.Element {
           <Typography variant="h4">공지사항</Typography>
 
           {/* 공지사항 개별 보기 */}
-          {selectedNoticeId ? (
+          {selectedNoticeId && !loading && data ? (
             <div className={classes.contents}>
               <NoticeDetail
                 selectedNoticeId={selectedNoticeId}
@@ -77,7 +87,9 @@ export default function Notice():JSX.Element {
               <div className={classes.contents}>
                 <NoticeCategoryButtonGroup
                   categories={!loading && data
-                    ? Array.from(new Set(data.map((d) => d.category)))
+                    ? Array
+                      .from(new Set(data.map((d) => d.category)))
+                      .sort((x, y) => x.localeCompare(y))
                     : []}
                   onChange={handleCategorySelect}
                   selected={selectedCategory}

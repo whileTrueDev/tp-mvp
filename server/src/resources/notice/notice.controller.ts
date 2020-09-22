@@ -1,22 +1,32 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ValidationPipe } from '../../pipes/validation.pipe';
+import {
+  Controller, Get, Param, Query
+} from '@nestjs/common';
+import { ReadNoticeOutlineDto } from './dto/readNoticeOutline.dto';
 import { NoticeEntity } from './entities/notice.entity';
 import { NoticeService } from './notice.service';
-import { FindOneNoticeDto } from './dto/findOneNotice.dto';
 
 @Controller('notice')
 export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
   @Get()
-  async findAll(): Promise<NoticeEntity[]> {
-    return this.noticeService.findAll();
+  async findAll(
+    @Query('limit') limit: number,
+  ): Promise<NoticeEntity[]> {
+    return this.noticeService.findAll(limit);
   }
 
-  @Get()
+  @Get('outline')
+  async findForDashboard(
+    @Query() readNoticeOutlineDto: ReadNoticeOutlineDto,
+  ): Promise<NoticeEntity[]> {
+    return this.noticeService.findOutline(readNoticeOutlineDto);
+  }
+
+  @Get(':id')
   async findOne(
-    @Query(new ValidationPipe()) findOneNoticeDto: FindOneNoticeDto
+    @Param('id') id: string
   ): Promise<NoticeEntity> {
-    return this.noticeService.findOne(findOneNoticeDto);
+    return this.noticeService.findOne(id);
   }
 }

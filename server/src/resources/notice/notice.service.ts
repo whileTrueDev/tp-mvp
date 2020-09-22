@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FindOneNoticeDto } from './dto/findOneNotice.dto';
+import { ReadNoticeOutlineDto } from './dto/readNoticeOutline.dto';
 import { NoticeEntity } from './entities/notice.entity';
 
 @Injectable()
@@ -12,18 +12,38 @@ export class NoticeService {
 
   ) {}
 
-  async findAll(): Promise<NoticeEntity[]> {
-    const noticeList = await this.noticeRepository.find();
-    const sorted = noticeList.sort((row1, row2) => {
-      if (row2.isImportant) return 1;
-      if (row1.isImportant) return -1;
-      return new Date(row2.createdAt).getTime()
-            - new Date(row1.createdAt).getTime();
-    });
-    return sorted;
+  public async findAll(limit?: number): Promise<NoticeEntity[]> {
+    return this.noticeRepository
+      .createQueryBuilder()
+      .orderBy('isImportant', 'DESC')
+      .addOrderBy('createdAt', 'DESC')
+      .limit(limit)
+      .getMany();
   }
 
-  async findOne(dto: FindOneNoticeDto): Promise<NoticeEntity> {
-    return this.noticeRepository.findOne(dto.id);
+  public async findOutline({
+    important = 2, newOne = 3
+  }: ReadNoticeOutlineDto): Promise<NoticeEntity[]> {
+    // select * from Notice where isImportant = 1 order by createdAt DESC LIMIT 2
+    // select * from Notice where isImportant = 0 order by createdAt DESC LIMIT 3
+    const importantNotice = await this.noticeRepository
+      .createQueryBuilder()
+      .where('isImportant = 1')
+      .orderBy('createdAt', 'DESC')
+      .limit(important)
+      .getMany();
+
+    const newNotice = await this.noticeRepository
+      .createQueryBuilder()
+      .where('isImportant = 0')
+      .orderBy('createdAt', 'DESC')
+      .limit(newOne)
+      .getMany();
+
+    return importantNotice.concat(newNotice);
+  }
+
+  public async findOne(id: string): Promise<NoticeEntity> {
+    return this.noticeRepository.findOne(id);
   }
 }

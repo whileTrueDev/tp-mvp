@@ -97,7 +97,7 @@ function Index(): JSX.Element {
             }
           }
         })
-        .catch((err) => { console.log(err); });
+        .catch((err) => { window.location.href = '/'; });
     }
   }, []); // Should be run only once!!
 
@@ -120,6 +120,7 @@ function Index(): JSX.Element {
             <Route exact path="/find-id" component={FindId} />
             <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/notice" component={Notice} />
+            <Route exact path="/notice/:id" component={Notice} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             <Route path="/mypage" component={Mypage} />

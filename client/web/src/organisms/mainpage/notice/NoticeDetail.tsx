@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 export interface NoticeDetailProps {
   data: NoticeData[];
-  selectedNoticeId: number;
+  selectedNoticeId: string;
   onBackClick: () => void;
   onOtherNoticeClick: (num:number) => void;
 }
@@ -40,8 +40,8 @@ export default function NoticeDetail({
   const TITLE_LENGTH = 15;
 
   // Current Notice
-  const currentNotice = data.find((d) => d.id === selectedNoticeId);
-  const currentNoticeIndex = data.findIndex((d) => d.id === selectedNoticeId);
+  const currentNotice = data.find((d) => d.id === Number(selectedNoticeId));
+  const currentNoticeIndex = data.findIndex((d) => d.id === Number(selectedNoticeId));
 
   // Previous Notice
   const previousNotice = data[currentNoticeIndex - 1];
