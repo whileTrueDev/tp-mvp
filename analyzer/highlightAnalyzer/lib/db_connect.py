@@ -38,7 +38,7 @@ class DbHandler:
         connection = self.conn()
         select_query = 'SELECT videoId as streamId FROM {platform} WHERE needAnalysis = 1'.format(platform=platform)
         if platform == 'TwitchStreams':
-            select_query = 'SELECT streamId FROM {platform} WHERE needAnalysis = 1 order by createdAt desc limit 50'.format(platform=platform)
+            select_query = 'SELECT streamId FROM {platform} WHERE needAnalysis = 1 order by createdAt'.format(platform=platform)
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute(select_query)
         data = cursor.fetchall()
