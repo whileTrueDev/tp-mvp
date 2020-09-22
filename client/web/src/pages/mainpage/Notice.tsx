@@ -47,13 +47,14 @@ export default function Notice():JSX.Element {
     <main>
       <Appbar />
       <ProductHero
-        title="여러분의 기능제안을 기다립니다."
-        content="트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있따면 기능제안 게시판을 통해 제안해주세요."
+        title="공지사항"
+        content="기능 개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
       />
       <section className={classes.noticeSection}>
         <div className={classes.noticeContainer}>
           <Typography variant="h4">공지사항</Typography>
 
+          {/* 공지사항 개별 보기 */}
           {selectedNoticeId ? (
             <div className={classes.contents}>
               <NoticeDetail
@@ -72,6 +73,7 @@ export default function Notice():JSX.Element {
             </div>
           ) : (
             <>
+              {/* 공지사항 목록 보기 */}
               <div className={classes.contents}>
                 <NoticeCategoryButtonGroup
                   categories={!loading && data
