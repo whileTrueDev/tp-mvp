@@ -76,4 +76,9 @@ export class StreamAnalysisController {
       findUserStatisticRequest.nowDate
     );
   }
+
+  @Get('test')
+  getData() :Promise<any> {
+    return this.streamAnalysisService.getData();
+  }
 }
