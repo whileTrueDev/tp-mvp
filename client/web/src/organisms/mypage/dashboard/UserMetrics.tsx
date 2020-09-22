@@ -6,6 +6,7 @@ import {
 import { Rating } from '@material-ui/lab';
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import ChartExample from './ChartExample';
 
 const BorderLinearProgress = withStyles((theme) => ({
   root: { height: 5, borderRadius: 5, },
@@ -252,8 +253,7 @@ export default function UserMetrics(): JSX.Element {
         </Grid>
 
         <Grid item xs={9} container direction="column" alignItems="center">
-          <Typography variant="h1">그래프가</Typography>
-          <Typography variant="h1">위치할 예정</Typography>
+          <ChartExample />
         </Grid>
 
         <Grid item xs={12} container spacing={2} style={{ marginTop: 32 }}>
