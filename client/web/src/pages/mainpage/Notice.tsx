@@ -28,9 +28,16 @@ export default function Notice():JSX.Element {
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
   // 개별 글 보기 스크롤 아래로 내리기
+  const noticeContainerRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     if (selectedNoticeId) {
-      window.scrollTo(0, 300);
+      if (noticeContainerRef
+        && noticeContainerRef.current
+        && noticeContainerRef.current.scrollHeight) {
+        window.scrollTo(0, noticeContainerRef.current.scrollHeight - 100);
+      } else {
+        window.scrollTo(0, 600);
+      }
     }
   }, [selectedNoticeId]);
 
@@ -61,7 +68,7 @@ export default function Notice():JSX.Element {
         content="기능 개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
       />
       <section className={classes.noticeSection}>
-        <div className={classes.noticeContainer}>
+        <div className={classes.noticeContainer} ref={noticeContainerRef}>
           <Typography variant="h4">공지사항</Typography>
 
           {/* 공지사항 개별 보기 */}
