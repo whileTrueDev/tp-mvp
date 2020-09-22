@@ -6,11 +6,13 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import useAxios from 'axios-hooks';
+import moment from 'moment';
 import usePerioudAnalysisHeroStyle from './PerioudAnalysisHero.style';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
 import RangeSelectCalendar from './RangeSelectCalendar';
+import CheckBoxGroup from './CheckBoxGroup';
 import StreamList from './StreamList';
 import { DayStreamsInfo } from './PerioudAnalysisHero.interface';
 
@@ -18,7 +20,24 @@ export default function PerioudAnalysisHero() : JSX.Element {
   const classes = usePerioudAnalysisHeroStyle();
   const [perioud, setPerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);
+  const [checkStateGroup, setCheckStateGroup] = React.useState({
+    viewer: false,
+    chatCount: false,
+    smileCount: false,
+    // searchKeyWord: string,
+  });
 
+  const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckStateGroup({
+      ...{
+        viewer: false,
+        chatCount: false,
+        smileCount: false,
+        // searchKeyWord: string,
+      },
+      [event.target.name]: event.target.checked
+    });
+  };
   const handlePerioud = (startAt: Date, endAt: Date, base?: true) => {
     const per = [startAt, endAt];
     setPerioud(per);
@@ -41,15 +60,18 @@ export default function PerioudAnalysisHero() : JSX.Element {
           startDate: perioud[0].toISOString(),
           endDate: perioud[1].toISOString(),
         }
-      }).then((res) => {
-        console.log(res);
+      }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         setTermStreamsList(res.data);
       });
     }
   }, [perioud]);
 
-  const handleTermStreamList = (newStreams: DayStreamsInfo[]) => {
-    setTermStreamsList(newStreams);
+  const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
+    setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));
+  };
+
+  const handleAnalysisButton = () => {
+    console.log(termStreamsList);
   };
 
   return (
@@ -107,21 +129,36 @@ export default function PerioudAnalysisHero() : JSX.Element {
               {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
               <StreamList
                 termStreamsList={termStreamsList}
-                handleTermStreamList={handleTermStreamList}
+                handleRemoveIconButton={handleRemoveIconButton}
               />
             </Grid>
           </Grid>
-
         </Grid>
-
       </Grid>
-      <Button
-        variant="contained"
-        className={classes.anlaysisButton}
 
-      >
-        분석하기
-      </Button>
+      <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
+        확인할 데이터 선택
+      </Typography>
+      {/* 분석 항목 선택 체크박스 그룹 */}
+      <CheckBoxGroup
+        viewer={checkStateGroup.viewer}
+        chatCount={checkStateGroup.chatCount}
+        smileCount={checkStateGroup.smileCount}
+        handleCheckStateChange={handleCheckStateChange}
+      />
+      <Grid container justify="flex-end">
+        <Button
+          className={classes.anlaysisButton}
+          variant="contained"
+          onClick={handleAnalysisButton}
+          disabled={
+            (Object.values(checkStateGroup).indexOf(true) < 0)
+            || (!(perioud[0] && perioud[1]))
+          }
+        >
+          분석하기
+        </Button>
+      </Grid>
     </div>
   );
 }

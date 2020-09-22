@@ -17,7 +17,7 @@ export interface PerioudCompareTextBoxProps {
   handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
 }
 
-export interface PerioudCompareCheckBoxGroupProps {
+export interface CheckBoxGroupProps {
   handleCheckStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   viewer: boolean;
   chatCount: boolean;

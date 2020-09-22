@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 import RangeSelectCaledar from './RangeSelectCalendar';
 import PerioudCompareTextField from './PerioudCompareTextField';
-import PerioudCompareCheckBoxGroup from './PerioudCompareCheckBoxGroup';
+import CheckBoxGroup from './CheckBoxGroup';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import usePerioudCompareStyles from './PerioudCompareHero.style';
 
@@ -118,12 +118,14 @@ export default function PerioudCompareHero(): JSX.Element {
       <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
         확인할 데이터 선택
       </Typography>
-      <PerioudCompareCheckBoxGroup
+
+      <CheckBoxGroup
         viewer={checkStateGroup.viewer}
         chatCount={checkStateGroup.chatCount}
         smileCount={checkStateGroup.smileCount}
         handleCheckStateChange={handleCheckStateChange}
       />
+      
       <Grid container justify="flex-end">
         <Button
           className={classes.anlaysisButton}
@@ -131,8 +133,8 @@ export default function PerioudCompareHero(): JSX.Element {
           onClick={handleAnalysisButton}
           disabled={
             (Object.values(checkStateGroup).indexOf(true) < 0)
-            || basePerioud.length < 2
-            || comparePerioud.length < 2
+            || !(basePerioud[0] && basePerioud[1])
+            || !(comparePerioud[0] && comparePerioud[1])
           }
         >
           분석하기

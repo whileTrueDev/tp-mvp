@@ -6,7 +6,7 @@ import {
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { PerioudCompareCheckBoxGroupProps } from './PerioudCompareHero.interface';
+import { CheckBoxGroupProps } from './PerioudAnalysisHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -34,8 +34,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   }
 }),);
 
-export default function PerioudCompareCheckBoxGroup(
-  props: PerioudCompareCheckBoxGroupProps
+export default function CheckBoxGroup(
+  props: CheckBoxGroupProps
 ): JSX.Element {
   const {
     viewer, smileCount, chatCount, handleCheckStateChange

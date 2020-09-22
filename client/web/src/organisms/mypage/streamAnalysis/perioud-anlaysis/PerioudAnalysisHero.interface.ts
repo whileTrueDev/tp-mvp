@@ -5,18 +5,21 @@ export interface RangeSelectCaledarProps {
 }
 export interface DayStreamsInfo{
   streamId : string;
+  startedAt: Date;
+  creatorId: string;
   title : string;
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
-  startedAt: Date;
 }
 
 export interface StreamListProps {
   termStreamsList: (DayStreamsInfo)[];
-  handleTermStreamList: (newStreams: DayStreamsInfo[]) => void;
-  // baseStream: DayStreamsInfo|null;
-  // compareStream: DayStreamsInfo|null;
-  // handleSeletedStreams: (newStreams: DayStreamsInfo|null, base?: true | undefined) => void;
-  // handleFullMessage : (isSelectedListFull: boolean) => void;
+  handleRemoveIconButton: (removeStream: DayStreamsInfo) => void;
+}
 
+export interface CheckBoxGroupProps {
+  handleCheckStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  viewer: boolean;
+  chatCount: boolean;
+  smileCount: boolean;
 }

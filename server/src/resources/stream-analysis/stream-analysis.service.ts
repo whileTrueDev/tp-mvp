@@ -10,20 +10,30 @@ import {
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // logic class
+import moment from 'moment';
 import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 // dto
+import { TestRequest } from './dto/TestRequest.dto';
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
-
+// date library
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
-
+interface TimeLine{
+  smile_count: number;
+  chat_count: number;
+}
+interface S3StreamData {
+  start_date: string;
+  end_date: string;
+  time_line: TimeLine[];
+}
 @Injectable()
 export class StreamAnalysisService {
   constructor(
@@ -33,9 +43,103 @@ export class StreamAnalysisService {
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
   ) {}
 
+  /** **************************************************** */
+  async getMetricData(path): Promise<any> {
+    const getParams = {
+      Bucket: process.env.BUCKET_NAME, // your bucket name,
+      Key: path
+    };
+    const returnHighlight = await s3.getObject(getParams).promise();
+    return returnHighlight.Body.toString('utf-8');
+  }
+
+  async getStreamList(testRequest:TestRequest[]): Promise<string[]> {
+    const keyArray = [];
+    const dataArray:S3StreamData[] = [];
+
+    const keyFunc = (stream: any) => new Promise((resolve, reject) => {
+      const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
+      const path = `metrics_json/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Delimiter: '',
+        Prefix: path,
+      };
+
+      s3.listObjects(params).promise()
+        .then((values) => {
+          if (values.Contents) {
+            values.Contents.map((value) => {
+              if (value.Key) keyArray.push(value.Key);
+              resolve();
+            });
+          }
+        });
+    });
+
+    const dataFunc = (key: any) => new Promise((resolve, reject) => {
+      const param = {
+        Bucket: process.env.BUCKET_NAME, // your bucket name,
+        Key: key
+      };
+
+      const streamData = s3.getObject(param).promise()
+        .then((data) => {
+          const JsonData: S3StreamData = JSON.parse(data.Body.toString('utf-8'));
+          dataArray.push({
+            start_date: JsonData.start_date,
+            end_date: JsonData.end_date,
+            time_line: JsonData.time_line,
+          });
+          resolve();
+        });
+
+      return streamData;
+    });
+
+    const calculateData = () => new Promise((resolve, reject) => {
+      const ASCdataArray = dataArray.sort((obj1, obj2) => {
+        if (moment(obj1.start_date) > moment(obj2.start_date)) return 1;
+        if (moment(obj1.start_date) < moment(obj2.start_date)) return -1;
+        return 0;
+      });
+
+      for (let i = 0; i < ASCdataArray.length - 1; i += 1) {
+        const currStream = ASCdataArray[i];
+        const nextStream = ASCdataArray[i + 1];
+
+        if (currStream.end_date > nextStream.start_date) {
+          // crossRangeFunc
+
+           
+        }
+      }
+    });
+
+    const getAllKeys = (list: any[]) => Promise.all(list.map((stream) => keyFunc(stream)));
+    const getAllDatas = (list: any[]) => Promise.all(list.map((stream) => dataFunc(stream)));
+
+    getAllKeys(testRequest).then(() => {
+      console.log('Step1 Clear');
+      console.log('key array : ', keyArray);
+
+      getAllDatas(keyArray)
+        .then(() => {
+          console.log('Step2 Clear');
+
+          calculateData()
+            .then((i) => console.log(i));
+        });
+    });
+
+    return [];
+  }
+
+  /** **************************************************** */
+
   /*
     input   :  userId, date
-    output  :  date 의 month 에 해당하는 [ {streamId, platform, title, startAt, airTime}, ... ]
+    output  :  date 의 month 에 해당하는 [ {streamId, platform, title, startAt, airTime,creatorId}, ... ]
   */
   async findDayStreamList(
     userId: string,
@@ -46,10 +150,9 @@ export class StreamAnalysisService {
       const originDate = new Date(startDate);
       const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
       const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
-
       const DayStreamData = await this.streamsRepository
         .createQueryBuilder('streams')
-        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime'])
+        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime',])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
         .andWhere('streams.startedAt < :endDate', { endDate: endAt })
@@ -61,7 +164,7 @@ export class StreamAnalysisService {
     const endAt = new Date(endDate);
     const TermStreamsData = await this.streamsRepository
       .createQueryBuilder('streams')
-      .select(['streamId', 'platform', 'title', 'startedAt', 'airTime'])
+      .select(['streamId', 'platform', 'title', 'startedAt', 'airTime', 'creatorId'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
       .andWhere('streams.startedAt < :endDate', { endDate: endAt })
@@ -213,3 +316,24 @@ export class StreamAnalysisService {
     };
   }
 }
+
+// async findStreamInfoByTerm(userId: string, startAt: string, endAt: string)
+//   : Promise<StreamsInfo[]> {
+//     const streamsTermData: any[] = await this.streamSummaryRepository
+//       .createQueryBuilder('streamSummary')
+//       .innerJoin(
+//         StreamsEntity,
+//         'streams',
+//         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+//       )
+//       .select(['streamSummary.*', 'viewer', 'chatCount'])
+//       .where('streams.userId = :id', { id: userId })
+//       .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
+//       .andWhere('streams.startedAt <= :endDate', { endDate: endAt })
+//       .execute()
+//       .catch((err) => {
+//         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+//       });
+
+//     return streamsTermData;
+//   }

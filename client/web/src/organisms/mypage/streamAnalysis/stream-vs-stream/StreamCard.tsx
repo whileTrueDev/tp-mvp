@@ -5,6 +5,7 @@ import {
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 import classnames from 'classnames';
+import moment from 'moment';
 // interface
 import { StreamCardProps } from './StreamAnalysisHero.interface';
 
@@ -73,9 +74,9 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
     const endAt = new Date(startDate);
     endAt.setHours(startDate.getHours() + streamLength);
     const airTimeText = `${startDate.getDate()}일
-                             ${startDate.getHours()}시 ${startDate.getMinutes()}분~ 
-                             ${startDate.getDate()}일
-                             ${endAt.getHours()}시 ${endAt.getMinutes()}분`;
+                        ${moment(startDate).format('HH:mm')}~ 
+                        ${endAt.getDate()}일
+                        ${moment(endAt).format('HH:mm')}`;
     return airTimeText;
   };
 

@@ -81,7 +81,8 @@ const useStreamHeroStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'SourceSansPro',
     fontSize: '24px',
     marginTop: '20px',
-    color: '#ffff'
+    color: '#ffff',
+    marginRight: '93.5px'
   },
   alert: {
     borderRadius: '5px',

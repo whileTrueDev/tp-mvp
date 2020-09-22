@@ -148,14 +148,17 @@ export default function StreamsAnalysisHero(): JSX.Element {
         </Grid>
 
       </Grid>
-      <Button
-        variant="contained"
-        className={classes.anlaysisButton}
-        disabled={!(baseStream && compareStream)}
-        onClick={handleAnalysisButton}
-      >
-        분석하기
-      </Button>
+      <Grid container justify="flex-end">
+        <Button
+          variant="contained"
+          className={classes.anlaysisButton}
+          disabled={!(baseStream && compareStream)}
+          onClick={handleAnalysisButton}
+        >
+          분석하기
+        </Button>
+      </Grid>
+
     </div>
   );
 }

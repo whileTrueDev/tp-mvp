@@ -1,5 +1,5 @@
 import {
-  Controller, Get, ParseArrayPipe, Query, UseGuards,
+  Controller, Get, ParseArrayPipe, Query, UseGuards, Body
 } from '@nestjs/common';
 import { StreamAnalysisService } from './stream-analysis.service';
 // pipe
@@ -16,14 +16,19 @@ import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
 import { EachStream } from './dto/eachStream.dto';
 import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
 import { FindAllStreams } from './dto/findAllStreams.dto';
-
+import { TestRequest } from './dto/TestRequest.dto';
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(private readonly streamAnalysisService: StreamAnalysisService) {}
 
+  @Get('test')
+  getTest(@Body() testRequest: TestRequest[]):Promise<any> {
+    console.log(testRequest);
+    return this.streamAnalysisService.getStreamList(testRequest);
+  }
+
   @Get('stream-list')
   getDaysStreamList(@Query() findDaysStreamRequest: FindAllStreams): Promise<DayStreamsInfo[]> {
-    console.log(findDaysStreamRequest);
     return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
       findDaysStreamRequest.startDate,

@@ -47,7 +47,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     excuteGetStreams({
       params: {
         userId: 'userId1',
-        date: clickedDate.toISOString(),
+        startDate: clickedDate.toISOString(),
       }
     }).then((result) => {
       setHasStreamDays(
@@ -78,7 +78,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       excuteGetStreams({
         params: {
           userId: 'userId1',
-          date: newMonth.toISOString(),
+          startDate: newMonth.toISOString(),
         }
       }).then((result) => {
         setHasStreamDays(
@@ -107,7 +107,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       );
     }
 
-    if (getStreamsLoading || getStreamsError) {
+    if (getStreamsLoading || getStreamsError || (getStreamsData && getStreamsData.length === 0)) {
       return <CenterLoading />;
     }
     return dayComponent;
@@ -133,9 +133,6 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
                 variant="static"
                 openTo="date"
                 disableToolbar
-                loadingIndicator={
-                  getStreamsLoading || getStreamsError ? <CenterLoading /> : undefined
-                }
               />
             </Grid>
           </Grid>
