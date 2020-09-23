@@ -96,7 +96,7 @@ export class StreamAnalysisService {
     input   :  userId, nowDate
     output  :  "airTime, viewer, fan" in Streams  +  "chat_count" in StreamSummary 
   */
-  async findUserWeekStreamInfoByUserId(userId: string): Promise<any> {
+  async findUserWeekStreamInfoByUserId(userId: string): Promise<StreamsEntity[]> {
     /*
       streamsInfoArray
       viewer    :  기간내 방송 당 시청자 수  평균
@@ -112,6 +112,8 @@ export class StreamAnalysisService {
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });
+
+    console.log(streams);
 
     return streams;
   }

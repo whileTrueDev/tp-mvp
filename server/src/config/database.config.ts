@@ -16,6 +16,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: database.username,
       password: database.password,
       database: 'TruepointDev',
+      timezone: 'Asia/Seoul',
       synchronize: true,
       autoLoadEntities: true,
     };

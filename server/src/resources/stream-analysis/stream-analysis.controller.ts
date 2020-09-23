@@ -14,6 +14,7 @@ import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
 import { EachStream } from './dto/eachStream.dto';
 import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
+import { StreamsEntity } from './entities/streams.entity';
 
 @Controller('stream-analysis')
 export class StreamAnalysisController {
@@ -68,9 +69,9 @@ export class StreamAnalysisController {
   @Get('user-statistics')
   @UseGuards(JwtAuthGuard)
   getUserStatisticsInfo(
-    @Query(new ValidationPipe()) findUserStatisticRequest: FindUserStatisticInfo
+    @Query() findUserStatisticRequest: FindUserStatisticInfo
   )
-  : Promise<UserStatisticInfo> {
+  : Promise<StreamsEntity[]> {
     return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
       findUserStatisticRequest.userId,
     );

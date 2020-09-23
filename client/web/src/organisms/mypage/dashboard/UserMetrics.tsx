@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import classnames from 'classnames';
 import {
   Card, CardContent,
-  Avatar, Grid, Typography,
+  Avatar, Grid, Typography, Grow
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import ChartExample from './ChartExample';
 
 const BorderLinearProgress = withStyles((theme) => ({
@@ -25,226 +27,37 @@ const TruepointRating = withStyles((theme) => ({
   iconHover: { color: theme.palette.secondary.light },
 }))(Rating);
 
-export default function UserMetrics(): JSX.Element {
-  const data = [
-    {
-      streamId: '123',
-      platform: 'afreeca',
-      userId: 'userId1',
-      creatorId: 'afreecaId1',
-      title: 'TEST_STREAM_123',
-      viewer: 10,
-      fan: 10,
-      startedAt: '2020-09-12T17:00:00.000Z',
-      airTime: 2,
-      chatCount: 10000
-    },
-    {
-      streamId: '124',
-      platform: 'twitch',
-      userId: 'userId1',
-      creatorId: 'twitchId1',
-      title: 'TEST_STREAM_124',
-      viewer: 20,
-      fan: 20,
-      startedAt: '2020-09-12T17:00:00.000Z',
-      airTime: 2,
-      chatCount: 20000
-    },
-    {
-      streamId: '125',
-      platform: 'youtube',
-      userId: 'userId1',
-      creatorId: 'youtubeId1',
-      title: 'TEST_STREAM_125',
-      viewer: 30,
-      fan: 30,
-      startedAt: '2020-09-12T15:00:00.000Z',
-      airTime: 2,
-      chatCount: 10000
-    },
-    {
-      streamId: '126',
-      platform: 'afreeca',
-      userId: 'userId1',
-      creatorId: 'afreecaId1',
-      title: 'TEST_STREAM_126',
-      viewer: 10,
-      fan: 10,
-      startedAt: '2020-09-14T01:01:00.000Z',
-      airTime: 3,
-      chatCount: 20000
-    },
-    {
-      streamId: '127',
-      platform: 'twitch',
-      userId: 'userId1',
-      creatorId: 'twitchId1',
-      title: 'TEST_STREAM_127',
-      viewer: 20,
-      fan: 20,
-      startedAt: '2020-09-13T15:00:00.000Z',
-      airTime: 3,
-      chatCount: 20000
-    },
-    {
-      streamId: '128',
-      platform: 'youtube',
-      userId: 'userId1',
-      creatorId: 'youtubeId1',
-      title: 'TEST_STREAM_128',
-      viewer: 30,
-      fan: 30,
-      startedAt: '2020-09-13T18:00:00.000Z',
-      airTime: 3,
-      chatCount: 30000
-    },
-    {
-      streamId: '129',
-      platform: 'afreeca',
-      userId: 'userId1',
-      creatorId: 'afreecaId1',
-      title: 'TEST_STREAM_129',
-      viewer: 10,
-      fan: 10,
-      startedAt: '2020-09-14T18:00:00.000Z',
-      airTime: 4,
-      chatCount: 30000
-    },
-    {
-      streamId: '130',
-      platform: 'twitch',
-      userId: 'userId1',
-      creatorId: 'twitchId1',
-      title: 'TEST_STREAM_130',
-      viewer: 20,
-      fan: 20,
-      startedAt: '2020-09-14T16:00:00.000Z',
-      airTime: 4,
-      chatCount: 30000
-    },
-    {
-      streamId: '131',
-      platform: 'youtube',
-      userId: 'userId1',
-      creatorId: 'youtubeId1',
-      title: 'TEST_STREAM_131',
-      viewer: 30,
-      fan: 30,
-      startedAt: '2020-09-14T15:00:00.000Z',
-      airTime: 6,
-      chatCount: 40000
-    },
-    {
-      streamId: '132',
-      platform: 'afreeca',
-      userId: 'userId1',
-      creatorId: 'afreecaId1',
-      title: 'TEST_STREAM_132',
-      viewer: 10,
-      fan: 10,
-      startedAt: '2020-09-15T15:00:00.000Z',
-      airTime: 5,
-      chatCount: 50000
-    },
-    {
-      streamId: '133',
-      platform: 'twitch',
-      userId: 'userId1',
-      creatorId: 'twitchId1',
-      title: 'TEST_STREAM_133',
-      viewer: 20,
-      fan: 20,
-      startedAt: '2020-09-15T15:00:00.000Z',
-      airTime: 7,
-      chatCount: 40000
-    },
-    {
-      streamId: '134',
-      platform: 'youtube',
-      userId: 'userId1',
-      creatorId: 'youtubeId1',
-      title: 'TEST_STREAM_134',
-      viewer: 30,
-      fan: 30,
-      startedAt: '2020-09-15T15:00:00.000Z',
-      airTime: 5,
-      chatCount: 40000
-    },
-    {
-      streamId: 'streamId10',
-      platform: 'afreeca',
-      userId: 'userId1',
-      creatorId: 'afreecaId2',
-      title: 'test2 stream',
-      viewer: 100,
-      fan: 100,
-      startedAt: '2020-09-12T17:00:00.000Z',
-      airTime: 7,
-      chatCount: 10000
-    },
-    {
-      streamId: 'streamId3',
-      platform: 'afreeca',
-      userId: 'userId1',
-      creatorId: 'afcreatorId1',
-      title: 'test stream',
-      viewer: 200,
-      fan: 200,
-      startedAt: '2020-09-11T15:00:00.000Z',
-      airTime: 7,
-      chatCount: 20000
-    },
-    {
-      streamId: 'streamId4',
-      platform: 'afreeca',
-      userId: 'userId1',
-      creatorId: 'afcreatorId1',
-      title: 'test stream',
-      viewer: 300,
-      fan: 300,
-      startedAt: '2020-09-12T18:00:00.000Z',
-      airTime: 6,
-      chatCount: 30000
-    },
-    {
-      streamId: 'streamId5',
-      platform: 'youtube',
-      userId: 'userId1',
-      creatorId: 'youtubeId1',
-      title: 'test stream',
-      viewer: 20,
-      fan: 20,
-      startedAt: '2020-09-13T18:00:00.000Z',
-      airTime: 7,
-      chatCount: 2000
-    },
-    {
-      streamId: 'streamId6',
-      platform: 'youtube',
-      userId: 'userId1',
-      creatorId: 'youtubeId1',
-      title: 'test stream',
-      viewer: 10,
-      fan: 10,
-      startedAt: '2020-09-14T16:00:00.000Z',
-      airTime: 6,
-      chatCount: 1000
+const useStyles = makeStyles((theme) => ({
+  card: {
+    cursor: 'pointer',
+    transition: '0.1s linear all',
+    '&:hover': {
+      transform: 'scale(1.05)',
+      boxShadow: theme.shadows[10]
     }
-  ];
+  },
+  selected: {
+    transition: '0.1s linear all',
+  }
+}));
 
+export default function UserMetrics(): JSX.Element {
+  const classes = useStyles();
+  const [selectedCard, setSelectedCard] = useState<number>(0);
+  function handleCardClick(cardindex: number) {
+    setSelectedCard(cardindex);
+  }
   return (
     <>
-      <Grid container spacing={2} style={{ marginBottom: 32 }}>
+      <Grid container spacing={2} style={{ marginBottom: 32 }} alignItems="center">
         <Grid item xs={3} container direction="column" alignItems="center">
           <Avatar
             src="https://avatars0.githubusercontent.com/u/42171155?s=400&u=72c333c5e2c44b64b16b7fef5670182c523d4c96&v=4"
-            style={{ width: 150, height: 150, margin: '32px 32px 8px 32px' }}
+            style={{ width: 150, height: 150, margin: '32px 32px 16px 32px' }}
           />
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <TruepointRating
               name="read-only"
-
               value={0.5}
               precision={0.5}
             />
@@ -257,11 +70,22 @@ export default function UserMetrics(): JSX.Element {
         </Grid>
 
         <Grid item xs={12} container spacing={2} style={{ marginTop: 32 }}>
-          {[1233, 2516, 3434, 45454].map((card) => (
+          {[1233, 2516, 3434, 45454].map((card, index) => (
             <Grid item xs={3} key={card}>
-              <Card>
-                <div style={{ padding: '8px 16px' }}>
+              <Card
+                className={classnames({
+                  [classes.card]: selectedCard !== index,
+                  [classes.selected]: selectedCard === index
+                })}
+                onClick={() => { handleCardClick(index); }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px' }}>
                   <Typography variant="h6">평균시청자</Typography>
+                  {selectedCard === index && (
+                    <Grow in>
+                      <VisibilityIcon color="primary" />
+                    </Grow>
+                  )}
                 </div>
                 <div style={{ padding: '0px 16px' }}>
                   <BorderLinearProgress variant="determinate" value={50} />
