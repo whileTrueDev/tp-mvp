@@ -8,10 +8,10 @@ import {
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
-import useAxios from 'axios-hooks';
+// styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
-
 import classnames from 'classnames';
+// interfaces
 import { RangeSelectCaledarProps } from './PerioudCompareHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({

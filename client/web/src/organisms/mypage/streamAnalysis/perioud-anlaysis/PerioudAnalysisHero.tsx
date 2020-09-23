@@ -1,20 +1,27 @@
 import React from 'react';
-
 // material-ui core components
 import {
   Paper, Typography, Grid, Divider, Button, Collapse
 } from '@material-ui/core';
+// material-ui leb components
 import { Alert } from '@material-ui/lab';
+// axios
 import useAxios from 'axios-hooks';
+// date library
 import moment from 'moment';
+// styles
 import usePerioudAnalysisHeroStyle from './PerioudAnalysisHero.style';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
+// subcomponent
 import RangeSelectCalendar from './RangeSelectCalendar';
 import CheckBoxGroup from './CheckBoxGroup';
 import StreamList from './StreamList';
+// interface
 import { DayStreamsInfo } from './PerioudAnalysisHero.interface';
+// attoms
+import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
 export default function PerioudAnalysisHero() : JSX.Element {
   const classes = usePerioudAnalysisHeroStyle();
@@ -101,7 +108,20 @@ export default function PerioudAnalysisHero() : JSX.Element {
               <SelectDateIcon style={{ fontSize: '32.5px', marginRight: '26px' }} />
               날짜 선택
             </Typography>
+
           </Paper>
+          <Collapse
+            timeout="auto"
+            in={!(perioud[0] && perioud[1])}
+            style={{ height: 'auto', marginLeft: '20px' }}
+          >
+            <Alert
+              severity="info"
+              className={classes.alert}
+            >
+              기간을 선택하시면 방송 리스트를 확인 할 수 있습니다.
+            </Alert>
+          </Collapse>
         </Grid>
         <Grid item container direction="row" xs={12}>
           <Grid className={classes.bodyWrapper} container xs={8} item>
@@ -127,10 +147,15 @@ export default function PerioudAnalysisHero() : JSX.Element {
                 방송 선택
               </Typography>
               {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
-              <StreamList
-                termStreamsList={termStreamsList}
-                handleRemoveIconButton={handleRemoveIconButton}
-              />
+              {getStreamsData && !getStreamsError && !getStreamsLoading ? (
+                <StreamList
+                  termStreamsList={termStreamsList}
+                  handleRemoveIconButton={handleRemoveIconButton}
+                />
+              ) : (
+                <CenterLoading />
+              )}
+
             </Grid>
           </Grid>
         </Grid>

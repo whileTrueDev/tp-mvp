@@ -39,7 +39,7 @@ const usePerioudAnalysisHeroStyles = makeStyles((theme: Theme) => ({
     height: '75px',
     paddingTop: '22.5px',
     paddingBottom: '10.5px',
-    boxShadow: '0'
+    boxShadow: '0',
   },
   subTitle: {
     color: '#4d4f5c',

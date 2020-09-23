@@ -1,11 +1,16 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
+// material-ui core components
 import {
   Grid, Typography, TextField,
 } from '@material-ui/core';
+// date library
 import moment from 'moment';
+// styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
+// interfaces
 import { PerioudCompareTextBoxProps, ISODateTextFieldError } from './PerioudCompareHero.interface';
+// custom hooks
 import useEventTargetValue from '../../../../utils/hooks/useEventTargetValue';
 
 const useStyles = makeStyles((theme: Theme) => ({

@@ -1,15 +1,13 @@
 import React from 'react';
 // material - ui core components
 import {
-  Typography, List, ListItem,
+  Typography, List, ListItem, ListItemIcon
 } from '@material-ui/core';
 // material - ui styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import classnames from 'classnames';
 // interface
-import { Stream } from 'stream';
 import moment from 'moment';
-import { StreamListProps, DayStreamsInfo } from './StreamAnalysisHero.interface';
+import { StreamListProps, DayStreamsInfo } from './StreamCompareHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -39,14 +37,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
     lineHeight: '2.06',
     fontSize: '16px',
-    fontWeight: 'bold'
+    fontWeight: 500
   }
 }));
 
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
     dayStreamsList, handleSeletedStreams, baseStream, compareStream,
-    handleFullMessage
+    handleFullMessage, platformIcon
   } = props;
   const classes = useStyles();
 
@@ -84,6 +82,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
   return (
     <List className={classes.listWrapper}>
       {dayStreamsList && dayStreamsList.map((stream) => (
+
         <ListItem
           key={stream.streamId}
           button
@@ -91,10 +90,15 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           className={classes.listItem}
           onClick={() => handleListStreamClick(stream)}
         >
+          <ListItemIcon>
+            {platformIcon(stream)}
+          </ListItemIcon>
           <Typography className={classes.listItemText}>
             {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
           </Typography>
+
         </ListItem>
+
       ))}
     </List>
   );

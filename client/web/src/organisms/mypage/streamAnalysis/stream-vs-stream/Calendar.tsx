@@ -13,7 +13,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
-import { StreamCalendarProps, DayStreamsInfo } from './StreamAnalysisHero.interface';
+import { StreamCalendarProps, DayStreamsInfo } from './StreamCompareHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   hasStreamDay: {

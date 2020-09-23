@@ -7,16 +7,19 @@ import { Alert } from '@material-ui/lab';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
+import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
+import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
+import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // sub components
 import StreamCalendar from './Calendar';
 import StreamCard from './StreamCard';
 import StreamList from './StreamList';
 // style
-import useStreamHeroStyles from './StreamsAnalysisHero.style';
+import useStreamHeroStyles from './StreamCompareHero.style';
 // interface
-import { DayStreamsInfo } from './StreamAnalysisHero.interface';
+import { DayStreamsInfo } from './StreamCompareHero.interface';
 
-export default function StreamsAnalysisHero(): JSX.Element {
+export default function StreamCompareHero(): JSX.Element {
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
@@ -48,6 +51,25 @@ export default function StreamsAnalysisHero(): JSX.Element {
   React.useEffect(() => {
     if (!compareStream || !baseStream) handleFullMessage(false);
   }, [compareStream, baseStream]);
+
+  const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
+    switch (stream.platform) {
+      case 'afreeca':
+        return (
+          <AfreecaIcon style={{ marginRight: '10px' }} />
+        );
+      case 'twitch':
+        return (
+          <TwitchIcon style={{ marginRight: '10px' }} />
+        );
+      case 'youtube':
+        return (
+          <YoutubeIcon style={{ marginRight: '10px' }} />
+        );
+      default:
+        return <div />;
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -120,27 +142,30 @@ export default function StreamsAnalysisHero(): JSX.Element {
                 compareStream={compareStream}
                 handleSeletedStreams={handleSeletedStreams}
                 handleFullMessage={handleFullMessage}
+                platformIcon={platformIcon}
               />
             </Grid>
           </Grid>
 
           <Grid item xs container direction="column">
             {/* 리스트 클릭시 base , compare 방송 정보 카드 렌더링 */}
-            <Grid item style={{ marginBottom: '22px' }}>
+            <Grid item style={{ marginBottom: '27px' }}>
               {baseStream && (
               <StreamCard
                 stream={baseStream}
                 handleSeletedStreams={handleSeletedStreams}
+                platformIcon={platformIcon}
                 base
               />
               )}
             </Grid>
 
-            <Grid item style={{ marginBottom: '22px' }}>
+            <Grid item style={{ marginBottom: '0px' }}>
               {compareStream && (
               <StreamCard
                 stream={compareStream}
                 handleSeletedStreams={handleSeletedStreams}
+                platformIcon={platformIcon}
               />
               )}
             </Grid>

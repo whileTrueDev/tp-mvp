@@ -1,11 +1,14 @@
 import React from 'react';
+// styles
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+// material-ui core components
 import {
-  Grid, FormLabel, FormControl, FormGroup, FormControlLabel, FormHelperText, Typography,
+  FormControl, FormGroup, FormControlLabel, Typography, Checkbox,
 } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
+// material-ui icons
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+// interface
 import { CheckBoxGroupProps } from './PerioudAnalysisHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({

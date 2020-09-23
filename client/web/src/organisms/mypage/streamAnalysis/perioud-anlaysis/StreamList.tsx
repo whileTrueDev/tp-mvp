@@ -1,15 +1,19 @@
 import React from 'react';
-// material - ui core components
+// material-ui core components
 import {
-  Typography, List, ListItem, IconButton
+  Typography, List, ListItem, IconButton, ListItemIcon
 } from '@material-ui/core';
-// material - ui styles
+//  styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import classnames from 'classnames';
-// interface
-import { Stream } from 'stream';
+// material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
+// date library
 import moment from 'moment';
+// atom svg icons
+import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
+import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
+import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
+// interface
 import { StreamListProps, DayStreamsInfo } from './PerioudAnalysisHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -30,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     '&:hover,select': {
       backgroundColor: theme.palette.primary.light,
     },
-    justifyContent: 'space-between'
   },
   selectedListItem: {
 
@@ -42,6 +45,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineHeight: '2.06',
     fontSize: '16px',
     fontWeight: 500
+  },
+  closeIcon: {
+    marginLeft: '30px',
+    '&:hover,select': {
+      color: 'red',
+    },
   }
 }));
 
@@ -62,6 +71,25 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     return airTimeText;
   };
 
+  const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
+    switch (stream.platform) {
+      case 'afreeca':
+        return (
+          <AfreecaIcon />
+        );
+      case 'twitch':
+        return (
+          <TwitchIcon />
+        );
+      case 'youtube':
+        return (
+          <YoutubeIcon />
+        );
+      default:
+        return <div />;
+    }
+  };
+
   return (
     <List className={classes.listWrapper}>
       {termStreamsList && termStreamsList.map((stream) => (
@@ -70,10 +98,17 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           button
           className={classes.listItem}
         >
+          <ListItemIcon>
+            {platformIcon(stream)}
+          </ListItemIcon>
+
           <Typography className={classes.listItemText}>
             {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
           </Typography>
-          <IconButton onClick={() => handleRemoveIconButton(stream)}>
+          <IconButton
+            className={classes.closeIcon}
+            onClick={() => handleRemoveIconButton(stream)}
+          >
             <ClearOutlinedIcon />
           </IconButton>
         </ListItem>

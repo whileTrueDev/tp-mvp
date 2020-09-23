@@ -65,7 +65,7 @@ const useStreamHeroStyles = makeStyles((theme: Theme) => ({
   bodyTitle: {
     color: '#4d4f5c',
     letterSpacing: 'normal',
-    textAlign: 'left',
+    textAlign: 'center',
     lineHeight: 1.5,
     fontSize: '17px',
     fontFamily: 'SourceSansPro',

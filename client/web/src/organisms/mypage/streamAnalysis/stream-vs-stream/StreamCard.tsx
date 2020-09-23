@@ -1,13 +1,15 @@
 import React from 'react';
+// material-ui core components
 import {
   Card, CardContent, Typography, Grid, IconButton
 } from '@material-ui/core';
+// styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 import classnames from 'classnames';
 import moment from 'moment';
 // interface
-import { StreamCardProps } from './StreamAnalysisHero.interface';
+import { StreamCardProps } from './StreamCompareHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardWrapper: {
@@ -32,14 +34,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   cardBodyWrapper: {
     width: '100%',
     backgroundColor: '#e7ebef',
-    minHeight: '120px',
+    minHeight: '130px',
     paddingTop: '11px',
     paddingBottom: '11px',
   },
   cardBodyCompWrapper: {
     width: '100%',
     backgroundColor: '#a6c1f9',
-    minHeight: '120px',
+    minHeight: '130px',
     paddingTop: '11px',
     paddingBottom: '11px',
   },
@@ -52,7 +54,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineHeight: '1.5',
     overflow: 'auto',
     display: 'flex',
-    marginTop: '4px'
+    marginTop: '4px',
+    alignItems: 'center',
   },
   cardBody: {
     fontSize: '22px',
@@ -66,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function StreamCard(props: StreamCardProps): JSX.Element {
   const {
-    stream, base, handleSeletedStreams,
+    stream, base, handleSeletedStreams, platformIcon
   } = props;
   const classes = useStyles();
 
@@ -97,20 +100,22 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
             [classes.cardTitleWrapper]: base,
             [classes.cardTitleCompWrapper]: !base
           })}
+          direction="row"
           justify="space-between"
         >
+
           <Grid item>
             <Typography variant="body1" className={classes.cardTitle}>
+              {platformIcon(stream)}
               {base ? '기준 방송' : '비교 방송'}
             </Typography>
           </Grid>
-          <Grid item>
-            <IconButton
-              onClick={handleCloseButton}
-            >
-              <ClearOutlinedIcon />
-            </IconButton>
-          </Grid>
+
+          <IconButton
+            onClick={handleCloseButton}
+          >
+            <ClearOutlinedIcon />
+          </IconButton>
 
         </Grid>
         <Grid

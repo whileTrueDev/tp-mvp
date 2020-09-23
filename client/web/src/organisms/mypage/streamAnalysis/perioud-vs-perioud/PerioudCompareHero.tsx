@@ -3,10 +3,13 @@ import React from 'react';
 import {
   Paper, Typography, Grid, Divider, Button
 } from '@material-ui/core';
+// subcomponents
 import RangeSelectCaledar from './RangeSelectCalendar';
 import PerioudCompareTextField from './PerioudCompareTextField';
 import CheckBoxGroup from './CheckBoxGroup';
+// svg icons
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
+// styles
 import usePerioudCompareStyles from './PerioudCompareHero.style';
 
 export default function PerioudCompareHero(): JSX.Element {
@@ -125,7 +128,7 @@ export default function PerioudCompareHero(): JSX.Element {
         smileCount={checkStateGroup.smileCount}
         handleCheckStateChange={handleCheckStateChange}
       />
-      
+
       <Grid container justify="flex-end">
         <Button
           className={classes.anlaysisButton}

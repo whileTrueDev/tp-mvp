@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function StreamsAnalysisBodyTest(): JSX.Element {
+export default function StreamCompareBody(): JSX.Element {
   return (
     <div>
       StreamsAnalysisBodyTest

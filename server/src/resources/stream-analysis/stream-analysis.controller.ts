@@ -16,15 +16,21 @@ import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
 import { EachStream } from './dto/eachStream.dto';
 import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
 import { FindAllStreams } from './dto/findAllStreams.dto';
-import { TestRequest } from './dto/TestRequest.dto';
+import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(private readonly streamAnalysisService: StreamAnalysisService) {}
 
-  @Get('test')
-  getTest(@Body() testRequest: TestRequest[]):Promise<any> {
-    console.log(testRequest);
-    return this.streamAnalysisService.getStreamList(testRequest);
+  /*
+    input   : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
+    output  : [
+      {time_line, total_index, start_date, end_date}, 
+      {time_line, total_index, start_date, end_date}, ... 
+    ]
+  */
+  @Get('streams-term-info')
+  getTest(@Body() s3Request: FindS3StreamInfo[]):Promise<any> {
+    return this.streamAnalysisService.getStreamList(s3Request);
   }
 
   @Get('stream-list')
