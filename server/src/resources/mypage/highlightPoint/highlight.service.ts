@@ -1,6 +1,8 @@
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
+import * as archiver from 'archiver';
+import { resolve } from 'path';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -8,15 +10,18 @@ const s3 = new AWS.S3();
 @Injectable()
 export class HighlightService {
   async getHighlightData(id, year, month, day, fileId): Promise<any> {
+    const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`
     };
+    console.log(getParams.Key);
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
   }
 
   async getMetricsData(id, year, month, day, fileId): Promise<any> {
+    const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`
@@ -45,7 +50,7 @@ export class HighlightService {
     const uniq = [...new Set(keyArray)];
     return uniq;
   }
-  async getStreamListForCalendarBtn(name, year, month, day): Promise<string[]> {
+  async getStreamListForCalendarBtn(name: string, year: string, month: string, day: string): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
@@ -62,6 +67,7 @@ export class HighlightService {
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
     filterEmpty.map((value) => {
+      console.log(value);
       const startAt = value.split('_')[0];
       const finishAt = value.split('_')[1];
       const fileId = value;
@@ -69,7 +75,66 @@ export class HighlightService {
         getState: true, startAt, finishAt, fileId
       };
       returnArray.push(oneStream);
+      console.log(returnArray);
     });
     return returnArray;
+  }
+  async getZipFile(id, year, month, day, streamId, srt, csv, txt): Promise<any> {
+    const boolCsv = Boolean(Number(csv));
+    const boolSrt = Boolean(Number(srt));
+    const boolTxt = Boolean(Number(txt));
+    const getParams = {
+      Bucket: process.env.BUCKET_NAME, // your bucket name,
+      Prefix: `export_files/${id}/${year}/${month}/${day}/${streamId}`,
+    };
+    console.log(boolCsv, boolSrt, boolTxt);
+    const getArray = [];
+    const getFiles = await s3.listObjects(getParams).promise()
+      .then((value) => {
+        value.Contents.map((content) => {
+          getArray.push(content.Key);
+        });
+      });
+    if (!boolSrt) {
+      getArray.map((value, index) => {
+        value.indexOf('srt') !== -1 ? getArray.splice(index, 1) : null;
+      });
+    }
+    if (!boolTxt) {
+      getArray.map((value, index) => {
+        value.indexOf('txt') !== -1 ? getArray.splice(index, 1) : null;
+      });
+    }
+    if (!boolCsv) {
+      getArray.map((value, index) => {
+        value.indexOf('csv') !== -1 ? getArray.splice(index, 1) : null;
+      });
+    }
+
+    const doGetSelectedFiles = await this.getSelectedFile(getArray)
+      .then((value) => value);
+    return doGetSelectedFiles;
+  }
+  async getSelectedFile(fileName): Promise<any> {
+    const zip = archiver.create('zip');
+    const doZip = await Promise.all(fileName.map(async (key) => {
+      const getParams = {
+        Bucket: process.env.BUCKET_NAME, // your bucket name,
+        Key: `${key}`,
+      };
+      const getObj = await s3.getObject(getParams).promise()
+        .then((value) => {
+          const fileData = value.Body.toString('utf-8');
+          const toSaveName = key.split('/')[6];
+          zip.append(fileData, {
+            name: toSaveName
+          });
+        }).catch((err) => {
+          console.log(err);
+        });
+    })).then(() => {
+      zip.finalize();
+    });
+    return zip;
   }
 }

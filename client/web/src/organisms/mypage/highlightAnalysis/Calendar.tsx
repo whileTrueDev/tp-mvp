@@ -44,7 +44,11 @@ function StreamCalendar(props: any) {
 
   const fetchListData = async (name: string, year: string, month: string): Promise<void> => {
     const result = await axios.get('/highlight/list',
-      { params: { name, year, month } })
+      {
+        params: {
+          name, year, month
+        }
+      })
       .then((res) => {
         if (res.data) {
           setStreamDays(res.data);
@@ -66,6 +70,7 @@ function StreamCalendar(props: any) {
       .then((res) => {
         if (res.data.length !== 0) {
           setStreamData(res.data);
+          console.log(res.data);
         } else {
           setStreamData([{
             getState: false, startAt: '', finishAt: '', fileId: ''
@@ -98,7 +103,7 @@ function StreamCalendar(props: any) {
       const year = String(date.getFullYear());
       const month = date.getMonth() + 1;
       const editMonth = makeMonth(month);
-      fetchListData('134859149', year, editMonth);
+      fetchListData('234175534', year, editMonth);
       resolve();
     }
   });
@@ -108,7 +113,7 @@ function StreamCalendar(props: any) {
       const year = String(date.getFullYear());
       const month = makeDay(date.getMonth() + 1);
       const day = makeDay(date.getDate());
-      fetchStreamData('134859149', year, month, day);
+      fetchStreamData('234175534', year, month, day);
       setSelectedDay(Number(day));
       setSelectedDate(date);
       setIsDate(true);
@@ -116,16 +121,9 @@ function StreamCalendar(props: any) {
     }
     resolve();
   });
-  // const getAllData = async (array: any[]) => {
-  //   const dataArray: number[] = [];
-  //   const promises = array.map((value: any) => dataArray.push(value.startAt.getDate()));
-  //   await Promise.all(promises).then(() => {
-  //     setStreamDays(dataArray);
-  //   });
-  // };
 
   React.useEffect(() => {
-    fetchListData('134859149', '2020', '09');
+    fetchListData('234175534', '2020', '09');
   }, []);
   return (
     <Grid container>
@@ -179,11 +177,11 @@ function StreamCalendar(props: any) {
                                   width: '32vw', marginLeft: 32, justifyItems: 'flex-start', backgroundColor: '#theme.palette.primary.light'
                                 }}
                                 id={value.fileId}
-                                onClick={(e) => {
+                                onClick={() => {
                                   handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
                                 }}
                               >
-                                {`${`${String(value.startAt).slice(2, 4)}일  ${value.startAt.slice(2, 6)}:${value.startAt.slice(6, 8)}`} ~ ${String(value.finishAt).slice(2, 4)}일  ${`${value.finishAt.slice(4, 6)}:${value.finishAt.slice(6, 8)}`}`}
+                                {`${`${String(value.startAt).slice(2, 4)}일  ${value.startAt.slice(4, 6)}:${value.startAt.slice(6, 8)}`} ~ ${String(value.finishAt).slice(2, 4)}일  ${`${value.finishAt.slice(4, 6)}:${value.finishAt.slice(6, 8)}`}`}
                               </Button>
                             </Grid>
                           )

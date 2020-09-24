@@ -4,7 +4,10 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import Axios from 'axios';
-
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
+// import * as down from 'js-file-download';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import Card from '../../../atoms/Card/Card';
@@ -14,7 +17,7 @@ interface StreamDate {
   fullDate: Date,
   startAt: string,
   finishAt: string,
-  fileId: string
+  fileId: string,
 }
 
 export default function HighlightAnalysisLayout(): JSX.Element {
@@ -27,16 +30,23 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     fullDate: new Date(),
     startAt: '',
     finishAt: '',
-    fileId: ''
+    fileId: '',
   };
   const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
+  const [isChecked, setIsChecked] = React.useState({
+    srtCheckBox: true,
+    csvCheckBox: true,
+    txtCheckBox: true,
+  });
+  const [downloadUrl, setDownloadUrl] = React.useState<string>('');
   const handleDatePick = (fullDate: Date, startAt: string, finishAt: string, fileId: string) => {
+    // const streamId = fileId.split('_')[2].split('.')[0];
     setSelectedStream({
       fullDate,
       startAt,
       finishAt,
-      fileId
+      fileId,
     });
   };
   const makeMonth = (month: number) => {
@@ -56,7 +66,41 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     const returnDay = String(day);
     return returnDay;
   };
+  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
+  };
 
+  const handleExportClick = async () => {
+    const id = '234175534';
+    const year = String(selectedStream.fullDate.getFullYear());
+    const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
+    const day = makeDay(selectedStream.fullDate.getDate());
+    const streamId = selectedStream.fileId.split('_')[1].split('.')[0];
+    const srt = isChecked.srtCheckBox ? 1 : 0;
+    const csv = isChecked.csvCheckBox ? 1 : 0;
+    const txt = isChecked.txtCheckBox ? 1 : 0;
+    const result = await axios.get('/highlight/export',
+      {
+        params: {
+          id, year, month, day, streamId, srt, txt, csv
+        }
+      })
+      .then((res) => {
+        const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', res.headers.filename);
+        document.body.appendChild(link);
+        link.click();
+        console.log(res);
+        console.log(url);
+        // console.log(res.data.pipe);
+        setDownloadUrl(url);
+        // saveAs(blob, '이름이름');
+      }).catch(() => {
+        alert('지금은 다운로드 할 수 없습니다.');
+      });
+  };
   const fetchHighlightData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
     // 134859149/2020/08/01/09161816_09162001_39667416302.json
     const result = await axios.get('/highlight/highlight-points',
@@ -71,12 +115,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           console.log(res.data);
         }
       }).catch(() => {
-        alert('오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
+        alert('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
       });
   };
 
   const fetchMetricsData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    // 134859149/2020/08/01/09161816_09162001_39667416302.json
     const result = await axios.get('/highlight/metrics',
       {
         params: {
@@ -89,13 +132,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           console.log(res.data);
         }
       }).catch(() => {
-        alert('오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
+        alert('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
       });
   };
 
   const handleAnalyze = (): void => {
     setIsClicked(true);
-    const id = '134859149';
+    const id = '234175534';
     const year = String(selectedStream.fullDate.getFullYear());
     const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
     const day = makeDay(selectedStream.fullDate.getDate());
@@ -170,6 +213,46 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               >
                 분석하기
               </Button>
+              <div>
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      checked={isChecked.srtCheckBox}
+                      onChange={handleCheckbox}
+                      name="srtCheckBox"
+                      color="primary"
+                    />
+                  )}
+                  label="srt"
+                />
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      checked={isChecked.txtCheckBox}
+                      onChange={handleCheckbox}
+                      name="txtCheckBox"
+                      color="primary"
+                    />
+                  )}
+                  label="txt"
+                />
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      checked={isChecked.csvCheckBox}
+                      onChange={handleCheckbox}
+                      name="csvCheckBox"
+                      color="primary"
+                    />
+                  )}
+                  label="csv"
+                />
+                <Button
+                  onClick={handleExportClick}
+                >
+                  편집점 내보내기
+                </Button>
+              </div>
             </div>
           </Grid>
         </Grid>

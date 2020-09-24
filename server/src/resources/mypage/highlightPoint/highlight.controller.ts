@@ -1,5 +1,6 @@
+import express from 'express';
 import {
-  Controller, Param, Get, Query
+  Controller, Param, Get, Query, Res
 } from '@nestjs/common';
 import { HighlightService } from './highlight.service';
 
@@ -14,7 +15,7 @@ export class HighlightController {
   }
   @Get('/stream')
   getStreamListForCalendarBtn(@Query('name') name: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string,) {
-    if (name && year && month) {
+    if (name && year && month && day) {
       return this.highlightService.getStreamListForCalendarBtn(name, year, month, day);
     }
   }
@@ -28,6 +29,18 @@ export class HighlightController {
   getMetricsData(@Query('id') id: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string, @Query('fileId') fileId: string) {
     if (id) {
       return this.highlightService.getMetricsData(id, year, month, day, fileId);
+    }
+  }
+  @Get('/export')
+  async getZipFile(@Query('id') id: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string, @Query('streamId') streamId: string, @Query('srt') srt: number, @Query('csv') csv: number, @Query('txt') txt: number, @Res() res: express.Response) {
+    if (id) {
+      // const fileKey = req.query.fileName;
+      const timestamp = new Date().getTime();
+      const fileName = `${timestamp}.zip`;
+      const zip = await this.highlightService.getZipFile(id, year, month, day, streamId, srt, csv, txt);
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+      zip.pipe(res);
     }
   }
 }
