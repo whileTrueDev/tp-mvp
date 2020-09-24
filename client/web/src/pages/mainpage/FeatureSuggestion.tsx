@@ -31,16 +31,18 @@ export default function FeatureSuggestion(): JSX.Element {
     setSelectedCategory(str);
   }
 
-  const [{ loading, data }] = useAxios<FeatureData[]>({
-    url: '/notice', method: 'GET',
-  });
-
   function handleNoticeClick(num: number): void {
     history.push(`/feature-suggestion/${num}`);
   }
   function handleResetNoticeSelect(): void {
     history.push('/feature-suggestion');
   }
+
+  const [{ loading, data }] = useAxios<FeatureData[]>({
+    url: '/feature', method: 'GET'
+  });
+
+  console.log(data);
   return (
     <div>
       {/* <Appbar /> */}
@@ -84,12 +86,8 @@ export default function FeatureSuggestion(): JSX.Element {
                   <FeatureTable<FeatureData>
                     data={!loading && data
                       ? data
-                        .sort((row1, row2) => {
-                          if (row2.isImportant) return 1;
-                          if (row1.isImportant) return -1;
-                          return new Date(row2.createdAt).getTime()
-                            - new Date(row1.createdAt).getTime();
-                        })
+                        .sort((row1, row2) => new Date(row2.createdAt).getTime()
+                          - new Date(row1.createdAt).getTime())
                         .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))
                       : []}
                     onRowClick={handleNoticeClick}

@@ -100,6 +100,7 @@ function Index(): JSX.Element {
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
             <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
+            <Route exact path="/feature-suggestion/:id" component={FeatureSuggestion} />
             <Route path="/mypage" component={Mypage} />
           </Switch>
 

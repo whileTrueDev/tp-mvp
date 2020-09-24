@@ -6,7 +6,7 @@ import { AccessControlModule } from 'nest-access-control';
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
 import { HighlightModule } from './resources/mypage/highlightPoint/hightlight.module';
-
+import { FeatureModule } from './resources/feature/feature.module';
 import { TypeOrmConfigService } from './config/database.config';
 import { NotificationModule } from './resources/notification/notification.module';
 import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
@@ -27,6 +27,7 @@ import { roles } from './roles/app.roles';
     HighlightModule,
     NotificationModule,
     StreamAnalysisModule,
+    FeatureModule,
   ],
 })
 export class AppModule { }

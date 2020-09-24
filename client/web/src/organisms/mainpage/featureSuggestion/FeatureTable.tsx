@@ -68,16 +68,18 @@ export default function FeatureTable<T extends FeatureData>({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  const progressArray = ['미확인', '개발확정', '반려'];
   return (
     <TableContainer component={Paper} className={classes.container}>
       <Table className={classes.table} aria-label="simple table">
         <TableHead className={classes.tableheader}>
           <TableRow className={classes.tableRow}>
             <TableCell className={classes.tableheaderCell} align="center" width={125}>글번호</TableCell>
-            <TableCell className={classes.tableheaderCell} align="center" width={250}>카테고리</TableCell>
+            <TableCell className={classes.tableheaderCell} align="center" width={200}>카테고리</TableCell>
+            <TableCell className={classes.tableheaderCell} align="center">작성자</TableCell>
             <TableCell className={classes.tableheaderCell} align="center">제목</TableCell>
             <TableCell className={classes.tableheaderCell} align="center" width={250}>작성일</TableCell>
+            <TableCell className={classes.tableheaderCell} align="center" width={150}>진행상태</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -90,17 +92,19 @@ export default function FeatureTable<T extends FeatureData>({
               const isNew = createdAt.getTime() > daysAgo7.getTime();
               return (
                 <TableRow
-                  hover={!row.isImportant}
                   key={row.id}
                   className={classnames({
-                    [classes.tableRow]: true, [classes.important]: row.isImportant
+                    [classes.tableRow]: true
                   })}
                 >
-                  {/* <TableCell align="center" component="th" scope="row">
-                    <Typography>{row.isImportant ? '중요공지' : row.id}</Typography>
-                  </TableCell> */}
+                  <TableCell align="center">
+                    <Typography>{row.id}</Typography>
+                  </TableCell>
                   <TableCell align="center">
                     <Typography>{row.category}</Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography>{row.author}</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography
@@ -114,12 +118,15 @@ export default function FeatureTable<T extends FeatureData>({
                   <TableCell align="center">
                     <Typography>{createdAt.toLocaleString()}</Typography>
                   </TableCell>
+                  <TableCell align="center">
+                    <Typography>{progressArray[row.progress]}</Typography>
+                  </TableCell>
                 </TableRow>
               );
             })}
           {emptyRows > 0 && (
             <TableRow hover style={{ height: 80 * emptyRows }}>
-              <TableCell colSpan={5} />
+              <TableCell colSpan={6} />
             </TableRow>
           )}
         </TableBody>
@@ -132,7 +139,7 @@ export default function FeatureTable<T extends FeatureData>({
                 from, to, count
               }) => `${count}개 중, ${from} ~ ${to}개`}
               rowsPerPageOptions={[]}
-              colSpan={5}
+              colSpan={6}
               count={data.length}
               rowsPerPage={rowsPerPage}
               page={page}

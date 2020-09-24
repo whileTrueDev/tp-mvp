@@ -3,6 +3,8 @@ import Markdown from 'react-markdown/with-html';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import Divider from '@material-ui/core/Divider';
+import Card from '../../../atoms/Card/Card';
 import { FeatureData } from '../../../interfaces/Feature';
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +23,17 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-
+  replyCard: {
+    padding: theme.spacing(2),
+    width: '50%',
+    display: 'column',
+    justifyContent: 'space-between',
+    borderBottom: '1px solid #ddd',
+  },
+  replyTextCard: {
+    backgroundColor: theme.palette.grey[400],
+    padding: theme.spacing(2),
+  }
 }));
 
 export interface FeatureDetailProps {
@@ -69,6 +81,19 @@ export default function FeatureDetail({
             renderers={{ code: ({ value }) => <Markdown source={value} /> }}
           />
         </div>
+        {currentNotice?.reply ? (
+          <div className={classes.replyCard}>
+            <Divider />
+            <Typography variant="h6">
+              관리자 답글
+            </Typography>
+            <Card className={classes.replyTextCard}>
+              <Typography variant="body1">
+                {currentNotice.reply}
+              </Typography>
+            </Card>
+          </div>
+        ) : null}
       </Paper>
 
       <div id="button-set" className={classes.buttonSet}>

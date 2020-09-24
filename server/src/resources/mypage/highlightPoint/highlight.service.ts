@@ -15,7 +15,6 @@ export class HighlightService {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`
     };
-    console.log(getParams.Key);
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
   }
