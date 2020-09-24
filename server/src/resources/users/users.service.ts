@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
+import { SubscribeEntity } from './entities/subscribe.entity';
 import { CheckIdType } from '../../interfaces/certification.interface';
 
 @Injectable()
@@ -13,6 +14,8 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(UserTokenEntity)
     private readonly userTokensRepository: Repository<UserTokenEntity>,
+    @InjectRepository(SubscribeEntity)
+    private readonly subscribeRepository: Repository<SubscribeEntity>,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -101,12 +104,27 @@ export class UsersService {
     output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
               해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
   */
-  async findUserSubscribeInfo(userId: string): Promise<any> {
-    // userId 를 통해 "Subscribe" 조회 -> 구독한 유저 목록 추출
-    // 구독한 유저 목록을 통해 해당 구독 기간 추출
-    // 둘을 합쳐 반환
+  async findUserSubscribeInfo(userId: string): Promise<SubscribeEntity[]> {
+    const targetUserList = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :id', { id: userId })
+      .getMany();
 
-    return userId;
+    return targetUserList;
+  }
+
+  async checkSubscribeValidation(userId: string, targetId: string): Promise<boolean> {
+    const subscribeResult = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :userId', { userId })
+      .andWhere('subscribe.targetUserId = :targetId', { targetId })
+      .getOne();
+
+    if (subscribeResult) {
+      return true;
+    }
+
+    return false;
   }
 
   // **********************************************

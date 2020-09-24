@@ -19,11 +19,20 @@ import RangeSelectCalendar from './RangeSelectCalendar';
 import CheckBoxGroup from './CheckBoxGroup';
 import StreamList from './StreamList';
 // interface
-import { DayStreamsInfo } from './PerioudAnalysisHero.interface';
+import {
+  DayStreamsInfo,
+  AnaysisStreamsInfo,
+  AnaysisStreamsInfoRequest
+} from './PerioudAnalysisHero.interface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
-export default function PerioudAnalysisHero() : JSX.Element {
+interface PerioudAnalysisHeroProps {
+  userId: string;
+}
+
+export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : JSX.Element {
+  const { userId } = props;
   const classes = usePerioudAnalysisHeroStyle();
   const [perioud, setPerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);
@@ -50,6 +59,7 @@ export default function PerioudAnalysisHero() : JSX.Element {
     setPerioud(per);
   };
 
+  /* 기간 내 존재 모든 방송 리스트 요청 */
   const [
     {
       data: getStreamsData,
@@ -59,11 +69,21 @@ export default function PerioudAnalysisHero() : JSX.Element {
       url: 'http://localhost:3000/stream-analysis/stream-list',
     }, { manual: true });
 
+  /* 기간 내 존재 모든 방송 리스트 요청 */
+  const [
+    {
+      data: getAnalysisData,
+      loading: getAnalysisLoading,
+      error: getAnalysisError
+    }, excuteGetAnalysis] = useAxios<AnaysisStreamsInfo[]>({
+      url: 'http://localhost:3000/stream-analysis/streams-term-info',
+    }, { manual: true });
+
   React.useEffect(() => {
     if (perioud[0] && perioud[1]) {
       excuteGetStreams({
         params: {
-          userId: 'userId1',
+          userId,
           startDate: perioud[0].toISOString(),
           endDate: perioud[1].toISOString(),
         }
@@ -78,7 +98,39 @@ export default function PerioudAnalysisHero() : JSX.Element {
   };
 
   const handleAnalysisButton = () => {
-    console.log(termStreamsList);
+    const requestParams: AnaysisStreamsInfoRequest[] = termStreamsList.map((dayStreamInfo) => ({
+      creatorId: dayStreamInfo.creatorId,
+      startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
+      streamId: dayStreamInfo.streamId
+    }));
+
+    console.log(requestParams);
+
+    excuteGetAnalysis({
+      // params: {
+      //   streams: requestParams
+      // }
+      params: {
+        // streams: [{
+        //   creatorId: '203690678',
+        //   startedAt: '2020-09-21T00:00:00',
+        //   streamId: '39796426622'
+        // },
+        // {
+        //   creatorId: '173881569',
+        //   startedAt: '2020-09-22T00:00:00',
+        //   streamId: '09221013_09221229_39805658238'
+        // },
+        // {
+        //   creatorId: '175438165',
+        //   startedAt: '2020-09-22T00:00:00',
+        //   streamId: '39804882894'
+        // }]
+        streams: requestParams
+      }
+    }).then((res) => {
+      console.log(res);
+    });
   };
 
   return (

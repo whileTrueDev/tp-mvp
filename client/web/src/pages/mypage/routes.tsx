@@ -22,7 +22,7 @@ export interface MypageRoute {
   name: string;
   layout: string;
   icon?: (props: SvgIconProps) => JSX.Element;
-  component?: () => JSX.Element;
+  component: (userId: string) => JSX.Element;
   noTab?: boolean; // sidebar에 나타나는가?
   nested?: boolean; // 하위 라우트가 있는가?
   subRoutes?: MypageRoute[]; // 하위 라우트의 정보
@@ -30,14 +30,14 @@ export interface MypageRoute {
 
 const dashboardRoutes: MypageRoute[] = [
   {
-    path: '/main',
+    path: '/main/:userId',
     name: '대시보드',
     icon: DashboardIcon,
     component: Dashboard, // 해당 페이지 컴포넌트를 여기에
     layout: '/mypage',
   },
   {
-    path: '/highlight',
+    path: '/highlight/:userId',
     name: '편집점 분석',
     icon: EditPointAnalysisIcon,
     component: HighlightAnalysis, // 해당 페이지 컴포넌트를 여기에
@@ -47,6 +47,7 @@ const dashboardRoutes: MypageRoute[] = [
     path: '/stream-analysis',
     name: '방송 분석',
     icon: StreamAnalysisIcon,
+    component: Dashboard, // 해당 페이지 컴포넌트를 여기에
     layout: '/mypage',
     nested: true,
     subRoutes: [
@@ -74,6 +75,7 @@ const dashboardRoutes: MypageRoute[] = [
     path: '/channel-analysis',
     name: '채널 분석',
     icon: ChannelAnalysisIcon,
+    component: Dashboard, // 해당 페이지 컴포넌트를 여기에
     layout: '/mypage',
     nested: true,
     subRoutes: [
@@ -97,6 +99,7 @@ const dashboardRoutes: MypageRoute[] = [
     layout: '/mypage',
     icon: MyInfoIcon,
     nested: true,
+    component: Dashboard, // 해당 페이지 컴포넌트를 여기에
     subRoutes: [
       {
         path: '/settings',

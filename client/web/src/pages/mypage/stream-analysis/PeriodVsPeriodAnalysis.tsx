@@ -5,13 +5,13 @@ import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // organisms
 import PerioudCompareHero from '../../../organisms/mypage/streamAnalysis/perioud-vs-perioud/PerioudCompareHero';
 
-export default function PeriodVsPeriodAnalysis(): JSX.Element {
+export default function PeriodVsPeriodAnalysis(userId: string): JSX.Element {
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
-
-        <PerioudCompareHero />
-
+        <PerioudCompareHero
+          userId={userId}
+        />
       </Grid>
     </MypageSectionWrapper>
   );

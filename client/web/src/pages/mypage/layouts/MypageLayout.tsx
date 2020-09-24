@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Switch, Route } from 'react-router-dom';
+// use axios
+import useAxios from 'axios-hooks';
 // material-ui components layout
 import routes from '../routes';
 // css
@@ -10,15 +12,15 @@ import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSideb
 import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
 
 interface NavUserInfoInterface{
-  username : string;
-  subscribePerioud: string;
-  isSubscribe: boolean;
-  subscribeStartAt: Date;
-  subscribeEndAt: Date;
+  userId : string;
+  targetUserId: string;
+  startAt : Date;
+  endAt : Date;
 }
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
+  const [currUser, setCurrUser] = React.useState<string>('');
 
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
@@ -28,30 +30,30 @@ const UserDashboard = (): JSX.Element => {
     }
   });
 
-  // navUserInfoList 하드코딩
-  const [navUserInfoList] = React.useState<NavUserInfoInterface[]>([
+  const [
     {
-      username: 'test1',
-      subscribePerioud: '2019-09-01 ~ 2019-09-3',
-      isSubscribe: true,
-      subscribeStartAt: new Date('2019-09-01'),
-      subscribeEndAt: new Date('2020-09-03')
-    },
-    {
-      username: 'test2',
-      subscribePerioud: '2019-09-01 ~ 2019-09-30',
-      isSubscribe: true,
-      subscribeStartAt: new Date('2019-09-01'),
-      subscribeEndAt: new Date('2020-09-30')
-    },
-    {
-      username: 'test3',
-      subscribePerioud: '2019-09-01 ~ 2019-09-02',
-      isSubscribe: true,
-      subscribeStartAt: new Date('2019-09-01'),
-      subscribeEndAt: new Date('2020-09-02')
-    },
-  ]);
+      data: getSubscribeData,
+      loading: getSubscribeLoading,
+      error: getSubscribeError
+    }, excuteGetSubscribeData] = useAxios<NavUserInfoInterface[]>({
+      url: 'http://localhost:3000/users/subscribe-users',
+      params: {
+        userId: 'qjqdn1568'
+      }
+    });
+
+  const handleChangeCurrUser = (otherUser: string) => {
+    setCurrUser(otherUser);
+  };
+
+  React.useEffect(() => {
+    if (getSubscribeData) { setCurrUser(getSubscribeData[0].targetUserId); }
+    console.log(currUser);
+  }, [getSubscribeData]);
+
+  React.useEffect(() => {
+    console.log(currUser);
+  }, [handleChangeCurrUser]);
 
   return (
     <div className={classes.wrapper}>
@@ -62,25 +64,28 @@ const UserDashboard = (): JSX.Element => {
         <div ref={mainPanel} className={classes.mainPanel}>
           <nav className={classes.appbarWrapper}>
             <Navbar
-              navUserInfoList={navUserInfoList}
+              navUserInfoList={getSubscribeData}
               routes={routes}
+              loading={getSubscribeLoading}
+              error={getSubscribeError}
+              handleChangeCurrUser={handleChangeCurrUser}
             />
           </nav>
           <main>
             <Switch>
               {routes.map((route) => (
-                route.component
+                !route.nested
                   ? (
                     <Route
                       path={route.layout + route.path}
-                      component={route.component}
+                      component={() => route.component(currUser)}
                       key={route.name}
                     />
                   ) : (
                     route.subRoutes && route.subRoutes.map((subRoute) => (
                       <Route
                         path={subRoute.layout + subRoute.path}
-                        component={subRoute.component}
+                        component={() => subRoute.component(currUser)}
                         key={subRoute.name}
                       />
                     ))

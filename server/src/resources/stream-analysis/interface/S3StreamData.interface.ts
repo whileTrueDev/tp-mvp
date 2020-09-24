@@ -9,3 +9,15 @@ export interface S3StreamData {
   time_line: TimeLine[];
   total_index: number;
 }
+
+export interface CombinedTimeLine {
+  smileCount : number;
+  chatCount: number;
+  date: string;
+}
+
+export interface OrganizedData {
+  avgViewer: number;
+  avgChatCount: number;
+  timeLine : CombinedTimeLine[];
+}

@@ -19,7 +19,12 @@ import useStreamHeroStyles from './StreamCompareHero.style';
 // interface
 import { DayStreamsInfo } from './StreamCompareHero.interface';
 
-export default function StreamCompareHero(): JSX.Element {
+interface StreamCompareHeroProps {
+  userId: string;
+}
+
+export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Element {
+  const { userId } = props;
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
@@ -125,6 +130,7 @@ export default function StreamCompareHero(): JSX.Element {
                 setClickedDate={setClickedDate}
                 baseStream={baseStream}
                 compareStream={compareStream}
+                userId={userId}
               />
 
             </Grid>

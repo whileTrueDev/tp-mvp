@@ -8,6 +8,7 @@ import { PlatformAfreecaEntity } from './entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from './entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
+import { SubscribeEntity } from './entities/subscribe.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -16,6 +17,7 @@ import { UserTokenEntity } from './entities/userToken.entity';
     PlatformYoutubeEntity,
     UserEntity,
     UserTokenEntity,
+    SubscribeEntity,
   ]),
   forwardRef(() => AuthModule), // Resolve circular dependencies between Moduels
   ],

@@ -5,6 +5,7 @@ import { StreamAnalysisService } from './stream-analysis.service';
 // pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
 // guard
+// import { SubscribeGuard } from '../../guards/subscribe.guard';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
@@ -29,7 +30,8 @@ export class StreamAnalysisController {
     ]
   */
   @Get('streams-term-info')
-  getTest(@Body() s3Request: FindS3StreamInfo[]):Promise<any> {
+  getTest(@Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
+    s3Request: FindS3StreamInfo[]):Promise<any> {
     return this.streamAnalysisService.getStreamList(s3Request);
   }
 
@@ -61,18 +63,32 @@ export class StreamAnalysisController {
 
   /*
     input   :  params: {
-                startAt: (new Date(0)).toISOString(),
-                endAt: (new Date()).toISOString(),
-                userId: 'userId1'
+                  [ 
+                    {
+                    startAt: (new Date(0)).toISOString(),
+                    endAt: (new Date()).toISOString(),
+                    userId: 'userId1'
+                    },
+                    {
+                    startAt: (new Date(0)).toISOString(),
+                    endAt: (new Date()).toISOString(),
+                    userId: 'userId1'
+                  }
+                  ]
+                    
+                  },
+                  term1: 
               }
     output  :  { chat_count , smile_count , viewer }
   */
   @Get('terms')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(SubscribeGuard)
+  // @UseGuards(JwtAuthGuard)
   getTermStreamsInfo(
     @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
   : Promise<StreamsInfo[]> {
+    console.log(findTermRequest);
     return this.streamAnalysisService.findStreamInfoByTerm(
       findTermRequest.userId,
       findTermRequest.startAt,

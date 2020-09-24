@@ -13,9 +13,11 @@ import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { PasswordDto } from './dto/password.dto';
+import { SubscribeUsers } from './dto/subscribeUsers.dto';
 
 import { UserEntity } from './entities/user.entity';
 import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';
+import { SubscribeEntity } from './entities/subscribe.entity';
 
 @Controller('users')
 export class UsersController {
@@ -75,13 +77,21 @@ export class UsersController {
 
   /*
     input   : userId (로그인한 유저 아이디) 
-    output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
-              해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
+    output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
   */
-  @Get('/valid-subscribe-info')
-  getUserValidSubscribeInfo(@Query('userId') userId:any) {
-    return this.usersService.findUserSubscribeInfo(userId);
+  @Get('/subscribe-users')
+  getUserValidSubscribeInfo(
+    @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
+  )
+  : Promise<SubscribeEntity[]> {
+    return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
   }
+
+  // @Get('subscribe-check-test')
+  // subscribeCheckTest(@Query() req: any) {
+  //   console.log(req);
+  //   return this.usersService.checkSubscribeValidation(req.userId, req.targetId);
+  // }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)

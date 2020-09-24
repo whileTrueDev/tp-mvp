@@ -6,11 +6,13 @@ import { StreamAnalysisController } from './stream-analysis.controller';
 
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+// import { UsersService } from '../users/users.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([StreamsEntity, StreamSummaryEntity]),
-    TypeOrmConfigService
+    TypeOrmConfigService,
+    // UsersService,
   ],
   controllers: [StreamAnalysisController],
   providers: [StreamAnalysisService],

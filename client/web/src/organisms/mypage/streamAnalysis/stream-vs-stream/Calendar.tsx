@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
     clickedDate, handleDayStreamList, setClickedDate,
-    compareStream, baseStream,
+    compareStream, baseStream, userId
   } = props;
   const classes = useStyles();
   const [month, setMonth] = React.useState<Date>();
@@ -46,7 +46,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   React.useEffect(() => {
     excuteGetStreams({
       params: {
-        userId: 'userId1',
+        userId,
         startDate: clickedDate.toISOString(),
       }
     }).then((result) => {

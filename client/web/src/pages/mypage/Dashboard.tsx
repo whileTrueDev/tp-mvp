@@ -4,7 +4,8 @@ import MypageSectionWrapper from '../../atoms/MypageSectionWrapper';
 import SimpleNoticeTable from '../../organisms/mypage/dashboard/SimpleNoticeTable';
 import UserMetrics from '../../organisms/mypage/dashboard/UserMetrics';
 
-export default function Dashboard(): JSX.Element {
+export default function Dashboard(userId : string): JSX.Element {
+  console.log(userId);
   const theme = useTheme();
   return (
     <>

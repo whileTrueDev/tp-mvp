@@ -63,7 +63,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'SourceSansPro',
     color: '#4d4f5c',
     lineHeight: '1.5',
-    overflow: 'auto'
+    overflow: 'auto',
+    width: '100%'
   },
 }));
 
@@ -121,21 +122,21 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
         <Grid
           container
           alignContent="center"
+
           className={classnames({
             [classes.cardBodyWrapper]: base,
             [classes.cardBodyCompWrapper]: !base
           })}
         >
-          <Grid item>
-            <Typography className={classes.cardBody} display="block">
-              {stream.title}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography className={classes.cardBody}>
-              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
-            </Typography>
-          </Grid>
+
+          <Typography className={classes.cardBody} display="block">
+            {stream.title}
+          </Typography>
+
+          <Typography className={classes.cardBody}>
+            {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+          </Typography>
+
         </Grid>
       </CardContent>
     </Card>

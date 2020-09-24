@@ -43,11 +43,10 @@ const StyledMenuItem = withStyles((theme) => ({
 }))(MenuItem);
 
 interface NavUserInfoInterface{
-  username : string;
-  subscribePerioud: string;
-  isSubscribe: boolean;
-  subscribeStartAt: Date;
-  subscribeEndAt: Date;
+  userId : string;
+  targetUserId: string;
+  startAt : Date;
+  endAt : Date;
 }
 
 interface NavbarUserListProps{
@@ -76,11 +75,11 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
     if (navUserInfoList.length > 0) {
       return navUserInfoList.map((user) => (
         <StyledMenuItem
-          key={user.username}
+          key={user.targetUserId}
           onClick={() => { handleSelectedUserIndex(user); handleClose(); }}
         >
           <Cached fontSize="small" style={{ marginRight: 16 }} />
-          <ListItemText primary={user.username} />
+          <ListItemText primary={user.targetUserId} />
         </StyledMenuItem>
       ));
     }
@@ -96,7 +95,7 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
     <div>
       <Button onClick={handleClick} className={classes.useNameButton}>
         <Typography variant="h4" className={classes.title}>
-          {navUserInfoList[selectedUserIndex].username}
+          {navUserInfoList[selectedUserIndex].targetUserId}
         </Typography>
         <Typography variant="h4">
           님

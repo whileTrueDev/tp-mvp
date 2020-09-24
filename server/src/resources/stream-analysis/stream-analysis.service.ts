@@ -16,7 +16,7 @@ import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
-import { S3StreamData } from './interface/S3StreamData.interface';
+import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
 // dto
 import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
@@ -38,20 +38,20 @@ export class StreamAnalysisService {
   ) {}
 
   /*
+    기간 추이 분석
     input   : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
     output  : [
       {time_line, total_index, start_date, end_date}, 
       {time_line, total_index, start_date, end_date}, ... 
     ]
   */
-
-  async getStreamList(s3Request: FindS3StreamInfo[]): Promise<any[]> {
+  async getStreamList(s3Request: FindS3StreamInfo[]): Promise<any> {
     const keyArray : string[] = [];
     const calculatedArray : S3StreamData[] = [];
     const dataArray : S3StreamData[] = [];
 
     /* input param 을 통해 S3 키 배열 생성 함수 정의 */
-    const keyFunc = (stream: any) => new Promise((resolve, reject) => {
+    const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
       const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
       const path = `metrics_json/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
       const params = {
@@ -65,7 +65,7 @@ export class StreamAnalysisService {
           if (values.Contents) {
             values.Contents.map((value) => {
               if (value.Key) keyArray.push(value.Key);
-              resolve();
+              resolveKeys();
             });
           }
         })
@@ -75,7 +75,7 @@ export class StreamAnalysisService {
     });
 
     /* S3 키 배열을 통해 해당 키와 일치하는 모든 방송 조회  함수 정의 */
-    const dataFunc = (key: any) => new Promise<void>((resolve, reject) => {
+    const dataFunc = (key: any) => new Promise<void>((resolveData, reject) => {
       const param = {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
         Key: key
@@ -91,7 +91,7 @@ export class StreamAnalysisService {
             time_line: JsonData.time_line,
             total_index: JsonData.total_index,
           });
-          resolve();
+          resolveData();
         })
         .catch((err) => {
           reject(err);
@@ -158,7 +158,7 @@ export class StreamAnalysisService {
     };
 
     /* 조회된 S3 데이터 리스트 연산 수행 함수 정의 */
-    const calculateData = () => new Promise<S3StreamData[]>((resolve, reject) => {
+    const calculateData = () => new Promise<S3StreamData[]>((resolveCalculate, reject) => {
       /* 시작 날짜 기준 오름 차순 , 시작 날짜 동일 시 방송 길이 기준 오름 차순 */
       const ASCdataArray = dataArray.sort((obj1, obj2) => {
         if (moment(obj1.start_date) > moment(obj2.start_date)) return 1;
@@ -187,13 +187,46 @@ export class StreamAnalysisService {
           } else {
             const currStream = ASCdataArray[i];
             detachFunc(currStream);
-            resolve(calculatedArray);
+            resolveCalculate(calculatedArray);
           }
         }
       } catch (e) {
         reject(e);
       }
     });
+
+    /* 리턴 데이터 포맷 설정 함수 정의 */
+    const organizeData = () => new Promise<OrganizedData>(
+      (resolveOrganize, rejectOrganize) => {
+        const organizeArray: OrganizedData = {
+          avgChatCount: 0,
+          avgViewer: 0,
+          timeLine: []
+        };
+
+        try {
+        /* 각 타임라인 date 삽입과 동시에 병합 */
+          calculatedArray.forEach((s3Data, index) => {
+            s3Data.time_line.forEach((timeline, timelineIndex) => {
+              organizeArray.avgChatCount += timeline.chat_count;
+
+              organizeArray.timeLine.push({
+                smileCount: timeline.smile_count,
+                chatCount: timeline.chat_count,
+                date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss')
+              });
+            });
+            if (index === calculatedArray.length - 1) {
+              organizeArray.avgViewer = 1000; // 평균 시청자수 계산 로직 작성후 추후 추가
+              organizeArray.avgChatCount /= organizeArray.timeLine.length;
+              resolveOrganize(organizeArray);
+            }
+          });
+        } catch (err) {
+          rejectOrganize(err);
+        }
+      }
+    );
 
     /* S3 데이터 조회 Promise.all 함수 선언 */
     const getAllKeys = (list: FindS3StreamInfo[]) => Promise.all(
@@ -203,10 +236,12 @@ export class StreamAnalysisService {
       list.map((stream) => dataFunc(stream))
     );
 
-    /* S3 데이터 조회 후 연산 */
-    const calculatedResult = await getAllKeys(s3Request).then(() => getAllDatas(keyArray)
-      .then(() => calculateData()
-        .then(() => calculatedArray)
+    /* S3 데이터 조회 후 연산 함수 실행 */
+    const result = await getAllKeys(s3Request).then(() => getAllDatas(keyArray) // 조회
+      .then(() => calculateData() // 연산
+        .then(() => organizeData() // 데이터 포맷 변경
+          .then((organizeArray) => organizeArray))
+
         .catch((err) => {
           /* Promise Chain rejected 처리 */
           throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
@@ -214,7 +249,7 @@ export class StreamAnalysisService {
         throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
       }));
 
-    return calculatedResult;
+    return result;
   }
 
   /*
@@ -232,7 +267,7 @@ export class StreamAnalysisService {
       const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
       const DayStreamData = await this.streamsRepository
         .createQueryBuilder('streams')
-        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime', ])
+        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime',])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
         .andWhere('streams.startedAt < :endDate', { endDate: endAt })
@@ -299,7 +334,7 @@ export class StreamAnalysisService {
   }
 
   /*
-    input   :  startAt , endAt , userId
+    input   :  terms: [{startAt , endAt , userId}, {startAt, endAt,userId}]
     output  :  chat_count , smile_count , viewer or subscribe_count
   */
   async findStreamInfoByTerm(userId: string, startAt: string, endAt: string)
@@ -396,24 +431,3 @@ export class StreamAnalysisService {
     };
   }
 }
-
-// async findStreamInfoByTerm(userId: string, startAt: string, endAt: string)
-//   : Promise<StreamsInfo[]> {
-//     const streamsTermData: any[] = await this.streamSummaryRepository
-//       .createQueryBuilder('streamSummary')
-//       .innerJoin(
-//         StreamsEntity,
-//         'streams',
-//         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
-//       )
-//       .select(['streamSummary.*', 'viewer', 'chatCount'])
-//       .where('streams.userId = :id', { id: userId })
-//       .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
-//       .andWhere('streams.startedAt <= :endDate', { endDate: endAt })
-//       .execute()
-//       .catch((err) => {
-//         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
-//       });
-
-//     return streamsTermData;
-//   }

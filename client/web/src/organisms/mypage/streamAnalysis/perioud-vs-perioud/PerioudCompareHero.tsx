@@ -12,7 +12,12 @@ import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIc
 // styles
 import usePerioudCompareStyles from './PerioudCompareHero.style';
 
-export default function PerioudCompareHero(): JSX.Element {
+interface PerioudCompareHeroProps {
+  userId: string;
+}
+
+export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.Element {
+  const { userId } = props;
   const classes = usePerioudCompareStyles();
   const [basePerioud, setBasePerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [comparePerioud, setComparePerioud] = React.useState<Date[]>(new Array<Date>(2));
