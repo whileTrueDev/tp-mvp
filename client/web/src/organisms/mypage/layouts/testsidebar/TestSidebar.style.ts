@@ -14,7 +14,10 @@ const useTestStyle = makeStyles((theme: Theme) => ({
   notSelectedTab: { color: theme.palette.text.disabled, },
   selected: { color: theme.palette.text.primary, fontWeight: 'bold', },
   selectedIndicator: {
-    transform: 'rotate(-90deg)', fontSize: 32, marginTop: '3px'
+    transform: 'rotate(-90deg)',
+    fontSize: 32,
+    marginTop: '3px',
+    color: theme.palette.text.primary
   },
   accordian: {
     boxShadow: 'none',

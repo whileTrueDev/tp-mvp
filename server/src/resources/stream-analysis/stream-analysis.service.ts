@@ -107,13 +107,11 @@ export class StreamAnalysisService {
     const streams = await this.streamsRepository
       .createQueryBuilder('streams')
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt > DATE_SUB(NOW(), INTERVAL 7 DAY)')
+      .andWhere('streams.startedAt > DATE_SUB(NOW(), INTERVAL 14 DAY)')
       .getMany()
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });
-
-    console.log(streams);
 
     return streams;
   }

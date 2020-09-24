@@ -3,7 +3,7 @@ import useAxios from 'axios-hooks';
 import useTheme from '@material-ui/core/styles/useTheme';
 import MypageSectionWrapper from '../../atoms/MypageSectionWrapper';
 import SimpleNoticeTable from '../../organisms/mypage/dashboard/SimpleNoticeTable';
-import UserMetrics from '../../organisms/mypage/dashboard/UserMetrics';
+import UserMetricsSection from '../../organisms/mypage/dashboard/UserMetricsSection';
 
 export default function Dashboard(): JSX.Element {
   const theme = useTheme();
@@ -18,7 +18,7 @@ export default function Dashboard(): JSX.Element {
   return (
     <>
       <MypageSectionWrapper color={theme.palette.info.light} style={{ minHeight: 300 }}>
-        <UserMetrics />
+        <UserMetricsSection />
       </MypageSectionWrapper>
 
       <MypageSectionWrapper>

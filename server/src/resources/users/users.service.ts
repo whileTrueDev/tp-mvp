@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
-import { CheckIdType } from '../../interfaces/certification.interface';
 
 @Injectable()
 export class UsersService {
@@ -20,8 +19,15 @@ export class UsersService {
   }
 
   async findOne(userId: string): Promise<UserEntity> {
-    const user = this.usersRepository.findOne(userId);
+    const user = await this.usersRepository.findOne(userId);
     return user;
+  }
+
+  async findSubscriberInfo(userId: string)
+  : Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
+    return this.usersRepository.findOne(userId, {
+      select: ['nickName', 'afreecaId', 'youtubeId', 'twitchId']
+    });
   }
 
   async remove(userid: string): Promise<void> {
