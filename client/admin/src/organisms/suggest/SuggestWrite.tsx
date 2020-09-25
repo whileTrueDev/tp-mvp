@@ -1,14 +1,14 @@
 import React from 'react';
 import { Typography, Grid } from '@material-ui/core';
-import NoticeMarkdownHelper from '../organisms/markdown_helper/MarkdownHelper';
-import NoticeEditViewer from '../organisms/notice/NoticeEditViewer';
-import NoticeEditer from '../organisms/notice/NoticeEditer';
-import { NoticeData } from './AdminNotice';
-import '../assets/font.css';
-import noticeDataset from './AdminNotice';
+import NoticeMarkdownHelper from '../markdown_helper/MarkdownHelper';
+import SuggestReplyEditViewer from './SuggestEditViewer';
+import SuggestReplyEditor from './SuggestEditor';
+import { SuggestData } from '../../pages/AdminSuggest';
+import '../../assets/font.css';
+import suggestDataset from '../../pages/AdminSuggest';
 
 const initialState = {
-  title: '공지사항', topic: '공지사항', contents: '공지사항작성중',
+  title: '기능제안', topic: '기능제안 답글', contents: '기능제안 답변작성중',
 };
 
 function reducer(state: any, action: any) {
@@ -32,21 +32,23 @@ function reducer(state: any, action: any) {
 }
 
 interface SelectedData{
-  noticeData?: NoticeData;
+  suggestData?: SuggestData;
 }
-export default function NoticeWrite(props: SelectedData) {
-  const { noticeData } = props;
-  const [state, dispatch] = React.useReducer(reducer, noticeData || initialState);
-
+export default function SuggestWrite(props: SelectedData) {
+  const { suggestData } = props;
+  const [state, dispatch] = React.useReducer(reducer, suggestData || initialState);
   const [help, setHelp] = React.useState(false);
+  
   function handleHelpToggle() {
     setHelp(!help);
   }
+
+
   return (
     <div>
       <div style={{ padding: 28 }}>
         <Typography variant="h5">
-        공지사항 글작성
+        기능제안 답변글 작성
         </Typography>
       </div>
 
@@ -55,17 +57,17 @@ export default function NoticeWrite(props: SelectedData) {
 
           {/* 미리보기 */}
           <Grid item xs={12} md={6} lg={4}>
-            <NoticeEditViewer state={state} />
+            <SuggestReplyEditViewer state={state} />
           </Grid>
 
           {/* 글작성 */}
           <Grid item xs={12} md={6} lg={4}>
-            <NoticeEditer
+            <SuggestReplyEditor
               state={state}
               dispatch={dispatch}
               helpToggle={help}
               handleHelpToggle={handleHelpToggle}
-              noticeData={noticeData}
+              suggestData={suggestData}
             />
 
           </Grid>

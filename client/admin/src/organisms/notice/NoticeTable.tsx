@@ -81,7 +81,7 @@ export default function NoticeTable(props: props) {
               {true ? ("[중요공지]") : ""}
               {rowData.title}
               { dateDiff(new Date(), new Date(rowData.regiDate)) < 8 && (
-              <FiberNew style={{ color: '#ff9800' }}/>
+              <FiberNew style={{ color: '#929ef8' }}/>
               )}
             </Typography>
           ),
