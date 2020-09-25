@@ -10,15 +10,16 @@ import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTabl
 import FeatureCategoryButtonGroup from '../../organisms/mainpage/featureSuggestion/FeatureCategoryButtonGroup';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
 import { FeatureData } from '../../interfaces/Feature';
+import Button from '../../atoms/Button/Button';
 
 const useStyles = makeStyles((theme) => ({
-  noticeSection: {
+  featureSection: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center'
   },
-  noticeContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
+  featureContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
   contents: { marginTop: theme.spacing(4) },
 }));
 
@@ -32,7 +33,10 @@ export default function FeatureSuggestion(): JSX.Element {
   }
 
   function handleNoticeClick(num: number): void {
-    history.push(`/feature-suggestion/${num}`);
+    history.push(`/feature-suggestion/read/${num}`);
+  }
+  function handleWriteClick(): void {
+    history.push('/feature-suggestion/write');
   }
   function handleResetNoticeSelect(): void {
     history.push('/feature-suggestion');
@@ -42,7 +46,6 @@ export default function FeatureSuggestion(): JSX.Element {
     url: '/feature', method: 'GET'
   });
 
-  console.log(data);
   return (
     <div>
       {/* <Appbar /> */}
@@ -50,8 +53,8 @@ export default function FeatureSuggestion(): JSX.Element {
         title="기능제안"
         content="기능 개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
       />
-      <section className={classes.noticeSection}>
-        <div className={classes.noticeContainer}>
+      <section className={classes.featureSection}>
+        <div className={classes.featureContainer}>
           <Typography variant="h4">기능제안</Typography>
 
           {/* 공지사항 개별 보기 */}
@@ -92,6 +95,14 @@ export default function FeatureSuggestion(): JSX.Element {
                       : []}
                     onRowClick={handleNoticeClick}
                   />
+
+                </div>
+                <div>
+                  <Button
+                    onClick={handleWriteClick}
+                  >
+                    글쓰기
+                </Button>
                 </div>
               </>
             )}
