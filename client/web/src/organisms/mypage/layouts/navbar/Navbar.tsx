@@ -90,7 +90,7 @@ function Navbar(props: NavbarProps): JSX.Element {
 
               </Grid>
             ) : (
-              <Grid alignItems="flex-end">
+              <Grid>
                 구독 진행 후 사용해 주세요
               </Grid>
 

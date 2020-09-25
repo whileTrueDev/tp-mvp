@@ -116,7 +116,8 @@ export default function PerioudCompareTextField(props: PerioudCompareTextBoxProp
               textAlign: 'center',
               fontFamily: 'AppleSDGothicNeo',
               fontSize: '20px',
-              fontWeight: 440
+              fontWeight: 440,
+              backgroundColor: '#ffff'
             }
           }}
           className={classnames({
@@ -145,7 +146,8 @@ export default function PerioudCompareTextField(props: PerioudCompareTextBoxProp
               textAlign: 'center',
               fontFamily: 'AppleSDGothicNeo',
               fontSize: '20px',
-              fontWeight: 440
+              fontWeight: 440,
+              backgroundColor: '#ffff',
             }
           }}
           className={classnames({

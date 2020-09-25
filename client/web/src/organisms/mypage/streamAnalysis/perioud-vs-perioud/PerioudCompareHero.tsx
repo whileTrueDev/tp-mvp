@@ -13,6 +13,7 @@ import CheckBoxGroup from './CheckBoxGroup';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 // styles
 import usePerioudCompareStyles from './PerioudCompareHero.style';
+import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
 interface PerioudCompareHeroProps {
   userId: string;
@@ -148,6 +149,9 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
         smileCount={checkStateGroup.smileCount}
         handleCheckStateChange={handleCheckStateChange}
       />
+
+      {(getAnalysisError || getAnalysisLoading)
+        && <CenterLoading />}
 
       <Grid container justify="flex-end">
         <Button

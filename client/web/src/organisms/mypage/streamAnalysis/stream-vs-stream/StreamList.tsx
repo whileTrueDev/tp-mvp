@@ -24,12 +24,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: '13.1px',
     paddingBottom: '13.9x',
     borderRadius: '4px',
-    '&:hover,select': {
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light,
+    },
+    '&.Mui-selected': {
       backgroundColor: theme.palette.primary.light,
     }
   },
   selectedListItem: {
-
+    backgroundColor: theme.palette.primary.light,
   },
   listItemText: {
     fontFamily: 'SourceSansPro',
