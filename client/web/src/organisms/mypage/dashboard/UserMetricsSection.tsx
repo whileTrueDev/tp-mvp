@@ -13,6 +13,7 @@ import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
 import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
 import TruepointRating from '../../../atoms/Rating/TruepointRating';
 import getPlatformColor from '../../../utils/getPlatformColor';
+import TestChart from './sub/TestChart';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -92,7 +93,6 @@ export default function UserMetricsSection(): JSX.Element {
       <Grid container spacing={2} style={{ marginBottom: 32 }} alignItems="center">
         <Grid item xs={3} container direction="column" alignItems="center">
           <Avatar
-            // src="https://avatars0.githubusercontent.com/u/42171155?s=400&u=72c333c5e2c44b64b16b7fef5670182c523d4c96&v=4"
             style={{ width: 150, height: 150, margin: '32px 32px 16px 32px' }}
           />
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -100,21 +100,28 @@ export default function UserMetricsSection(): JSX.Element {
             <Typography variant="h6" style={{ fontWeight: 'bold', color: 'white' }}>0.5</Typography>
           </div>
           <div>
-            {PLATFORM_LIST.map((platform) => (
-              <Checkbox
-                key={`${platform}select-button`}
-                checked={selectedPlatform.includes(platform)}
-                onChange={() => { handlePlatformSelect(platform); }}
-                inputProps={{ 'aria-label': `chart-select-${platform}` }}
-                style={{ color: getPlatformColor(platform) }}
-              />
-            ))}
+            {!loading && Array
+              .from(new Set(data.map((d) => d.platform)))
+              .map((platform) => (
+                <Checkbox
+                  key={`${platform}select-button`}
+                  checked={selectedPlatform.includes(platform)}
+                  onChange={() => { handlePlatformSelect(platform); }}
+                  inputProps={{ 'aria-label': `chart-select-${platform}` }}
+                  style={{ color: getPlatformColor(platform) }}
+                />
+              ))}
           </div>
         </Grid>
 
         <Grid item xs={9} container direction="column" alignItems="center">
           {!loading && data && data.length > 0 && (
-            <UserMetricsChart
+            // <UserMetricsChart
+            //   data={data}
+            //   valueField={selectedCard}
+            //   selectedPlatform={selectedPlatform}
+            // />
+            <TestChart
               data={data}
               valueField={selectedCard}
               selectedPlatform={selectedPlatform}
@@ -185,8 +192,8 @@ export default function UserMetricsSection(): JSX.Element {
             marginBottom: 16
           }}
           >
-            <Typography variant="caption">* 통계 데이터는 최근 일주일간의 데이터를 기준으로 산정합니다.</Typography>
-            <Typography variant="caption">* 그래프 데이터는 최근 일주일간 플랫폼별 방송 이력을 기준으로 작성됩니다.</Typography>
+            <Typography variant="caption">* 통계 데이터는 최근 14일간의 데이터를 기준으로 산정합니다.</Typography>
+            <Typography variant="caption">* 그래프 데이터는 최근 14일간 플랫폼별 방송 이력을 기준으로 작성됩니다.</Typography>
           </div>
           )}
         </Grid>
