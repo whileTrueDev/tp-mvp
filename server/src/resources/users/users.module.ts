@@ -25,4 +25,6 @@ import { SubscribeEntity } from './entities/subscribe.entity';
   controllers: [UsersController],
   exports: [UsersService]
 })
-export class UsersModule {}
+export class UsersModule {
+  constructor(private usersService: UsersService) {}
+}

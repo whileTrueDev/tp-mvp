@@ -80,10 +80,11 @@ export class UsersController {
     output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
   */
   @Get('/subscribe-users')
+  // @UseGuards(JwtAuthGuard)
   getUserValidSubscribeInfo(
     @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
   )
-  : Promise<SubscribeEntity[]> {
+  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
     return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
   }
 

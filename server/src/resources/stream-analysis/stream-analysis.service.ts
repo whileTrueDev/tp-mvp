@@ -1,5 +1,5 @@
 import {
-  Injectable, InternalServerErrorException, HttpException, HttpStatus
+  Injectable, InternalServerErrorException, HttpException, HttpStatus, Inject
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -23,6 +23,7 @@ import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+import { UsersService } from '../users/users.service';
 
 // aws s3
 dotenv.config();
@@ -35,6 +36,7 @@ export class StreamAnalysisService {
       private readonly streamsRepository: Repository<StreamsEntity>,
     @InjectRepository(StreamSummaryEntity)
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
+    @Inject(UsersService) private usersService: UsersService
   ) {}
 
   /*
@@ -267,7 +269,7 @@ export class StreamAnalysisService {
       const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
       const DayStreamData = await this.streamsRepository
         .createQueryBuilder('streams')
-        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime',])
+        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime', ])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
         .andWhere('streams.startedAt < :endDate', { endDate: endAt })

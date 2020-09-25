@@ -1,6 +1,7 @@
 import {
-  Controller, Get, ParseArrayPipe, Query, UseGuards, Body
+  Controller, Get, ParseArrayPipe, Query, UseGuards, Inject
 } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
 // pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
@@ -20,21 +21,16 @@ import { FindAllStreams } from './dto/findAllStreams.dto';
 import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 @Controller('stream-analysis')
 export class StreamAnalysisController {
-  constructor(private readonly streamAnalysisService: StreamAnalysisService) {}
+  constructor(
+    private readonly streamAnalysisService: StreamAnalysisService,
+    @Inject(UsersService) private usersService: UsersService
+  ) {}
 
   /*
-    input   : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
-    output  : [
-      {time_line, total_index, start_date, end_date}, 
-      {time_line, total_index, start_date, end_date}, ... 
-    ]
+    캘린더 방송 날짜 표시
+    input   :  { startDate, endDate, targetUserId? , userId }
+    output  :  { chat_count , smile_count , viewer }
   */
-  @Get('streams-term-info')
-  getTest(@Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
-    s3Request: FindS3StreamInfo[]):Promise<any> {
-    return this.streamAnalysisService.getStreamList(s3Request);
-  }
-
   @Get('stream-list')
   getDaysStreamList(@Query() findDaysStreamRequest: FindAllStreams): Promise<DayStreamsInfo[]> {
     return this.streamAnalysisService.findDayStreamList(
@@ -45,6 +41,7 @@ export class StreamAnalysisController {
   }
 
   /*
+    방송 대 방송 분석
     input   :  params: {
                   streams: 
                     [ { streamId: 'streamId1', platform: 'twitch' }, 
@@ -62,23 +59,8 @@ export class StreamAnalysisController {
   }
 
   /*
-    input   :  params: {
-                  [ 
-                    {
-                    startAt: (new Date(0)).toISOString(),
-                    endAt: (new Date()).toISOString(),
-                    userId: 'userId1'
-                    },
-                    {
-                    startAt: (new Date(0)).toISOString(),
-                    endAt: (new Date()).toISOString(),
-                    userId: 'userId1'
-                  }
-                  ]
-                    
-                  },
-                  term1: 
-              }
+    기간 대 기간 분석
+    input   :  
     output  :  { chat_count , smile_count , viewer }
   */
   @Get('terms')
@@ -88,12 +70,25 @@ export class StreamAnalysisController {
     @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
   : Promise<StreamsInfo[]> {
-    console.log(findTermRequest);
     return this.streamAnalysisService.findStreamInfoByTerm(
       findTermRequest.userId,
       findTermRequest.startAt,
       findTermRequest.endAt
     );
+  }
+
+  /*
+    기간 추이 분석
+    input   : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
+    output  : [
+      {time_line, total_index, start_date, end_date}, 
+      {time_line, total_index, start_date, end_date}, ... 
+    ]
+  */
+ @Get('streams-term-info')
+  getTest(@Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
+    s3Request: FindS3StreamInfo[]):Promise<any> {
+    return this.streamAnalysisService.getStreamList(s3Request);
   }
 
   /*
@@ -107,13 +102,13 @@ export class StreamAnalysisController {
   */
   @Get('user-statistics')
   @UseGuards(JwtAuthGuard)
-  getUserStatisticsInfo(
+ getUserStatisticsInfo(
     @Query(new ValidationPipe()) findUserStatisticRequest: FindUserStatisticInfo
-  )
+ )
   : Promise<UserStatisticInfo> {
-    return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
-      findUserStatisticRequest.userId,
-      findUserStatisticRequest.nowDate
-    );
-  }
+   return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
+     findUserStatisticRequest.userId,
+     findUserStatisticRequest.nowDate
+   );
+ }
 }

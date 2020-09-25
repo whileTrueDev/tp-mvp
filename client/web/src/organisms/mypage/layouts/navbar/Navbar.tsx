@@ -30,12 +30,14 @@ export interface NavbarProps {
   loading: boolean;
   error : AxiosError<any> | undefined;
   handleChangeCurrUser : (otheruser: string) => void;
+  userId: string;
 }
 
 function Navbar(props: NavbarProps): JSX.Element {
   const classes = useNavbarStyles();
   const {
-    navUserInfoList, routes, loading, error, handleChangeCurrUser
+    navUserInfoList, routes, loading, error, handleChangeCurrUser,
+    userId
   } = props;
   const [selectedUserIndex, setSelectedUserIndex] = React.useState<number>(0);
   const currDate = new Date();
@@ -49,10 +51,11 @@ function Navbar(props: NavbarProps): JSX.Element {
   return (
     <AppBar className={classes.appBar}>
 
-      {!loading && !error ? (
-        <Toolbar className={classes.container}>
-          {navUserInfoList.length > 0 ? (
-            <Grid container justify="space-between" direction="row">
+      <Toolbar className={classes.container}>
+        {!loading && !error ? (
+
+          <Grid container justify="space-between" direction="row">
+            { navUserInfoList && navUserInfoList.length > 0 ? (
               <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
                 {/* 사용중인 유저 이름 , 클릭시 구독 유저 드롭다운 리스트 */}
                 <Grid item>
@@ -64,7 +67,6 @@ function Navbar(props: NavbarProps): JSX.Element {
                 </Grid>
 
                 {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 */}
-                {/* Case Date Type */}
                 <Grid item className={classes.subscribePeriod}>
                   <EventNoteIcon
                     className={classes.leftGridIcon}
@@ -87,27 +89,25 @@ function Navbar(props: NavbarProps): JSX.Element {
                 </Grid>
 
               </Grid>
-              <Grid item container md={2} alignContent="center">
-                {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
-                <HeaderLinks
-                  routes={routes}
-                  userId={navUserInfoList[selectedUserIndex].userId}
-                />
+            ) : (
+              <Grid alignItems="flex-end">
+                구독 진행 후 사용해 주세요
               </Grid>
-            </Grid>
 
-          ) : (
-            <Grid container justify="space-between" direction="row">
-              <Typography>
-                구독한 유저가 없습니다.
-              </Typography>
+            )}
+            <Grid item container md={2} alignContent="center">
+              {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
+              <HeaderLinks
+                routes={routes}
+                userId={userId}
+              />
             </Grid>
-          )}
-        </Toolbar>
-      ) : (
-        <CenterLoading />
-      )}
+          </Grid>
 
+        ) : (
+          <CenterLoading />
+        )}
+      </Toolbar>
     </AppBar>
   );
 }

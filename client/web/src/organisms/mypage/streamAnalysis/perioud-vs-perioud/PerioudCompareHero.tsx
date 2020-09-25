@@ -3,6 +3,8 @@ import React from 'react';
 import {
   Paper, Typography, Grid, Divider, Button
 } from '@material-ui/core';
+// axios
+import useAxios from 'axios-hooks';
 // subcomponents
 import RangeSelectCaledar from './RangeSelectCalendar';
 import PerioudCompareTextField from './PerioudCompareTextField';
@@ -27,6 +29,15 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
     smileCount: false,
     // searchKeyWord: string,
   });
+
+  const [
+    {
+      data: getAnalysisData,
+      loading: getAnalysisLoading,
+      error: getAnalysisError
+    }, excuteGetAnalysis] = useAxios<any[]>({
+      url: 'http://localhost:3000/stream-analysis/terms',
+    }, { manual: true });
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -75,6 +86,7 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
       </Typography>
       <Grid container direction="row" justify="center">
         <Grid item className={classes.bodyContainer}>
+          {/* 달력 연동 기간 텍스트 박스 */}
           <PerioudCompareTextField
             base
             perioud={basePerioud}
@@ -91,6 +103,7 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
               </span>
               기간 선택
             </Typography>
+            {/* 텍스트 박스 연동 기간 선택 달력 */}
             <RangeSelectCaledar
               handlePerioud={handlePerioud}
               perioud={basePerioud}
@@ -103,6 +116,7 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
           VS
         </Typography>
         <Grid item className={classes.bodyContainer}>
+          {/* 달력 연동 기간 텍스트 박스 */}
           <PerioudCompareTextField
             perioud={comparePerioud}
             handlePerioud={handlePerioud}
@@ -115,6 +129,7 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
               </span>
               기간 선택
             </Typography>
+            {/* 텍스트 박스 연동 기간 선택 달력 */}
             <RangeSelectCaledar
               perioud={comparePerioud}
               handlePerioud={handlePerioud}
@@ -126,7 +141,7 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
       <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
         확인할 데이터 선택
       </Typography>
-
+      {/* 분석 옵션 선택 체크박스 그룹 */}
       <CheckBoxGroup
         viewer={checkStateGroup.viewer}
         chatCount={checkStateGroup.chatCount}

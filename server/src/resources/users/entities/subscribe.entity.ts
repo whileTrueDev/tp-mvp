@@ -1,13 +1,16 @@
 import {
-  Entity, Column, PrimaryColumn
+  Entity, Column, PrimaryGeneratedColumn
 } from 'typeorm';
 
 @Entity({ name: 'Subscribe' })
 export class SubscribeEntity {
-  @PrimaryColumn({ length: 20 })
+  @PrimaryGeneratedColumn()
+  index: number;
+
+  @Column({ length: 20 })
   userId : string;
 
-  @PrimaryColumn({ length: 20 })
+  @Column({ length: 20 })
   targetUserId: string;
 
   @Column()

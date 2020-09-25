@@ -86,7 +86,7 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
           userId,
           startDate: perioud[0].toISOString(),
           endDate: perioud[1].toISOString(),
-        }
+        },
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         setTermStreamsList(res.data);
       });

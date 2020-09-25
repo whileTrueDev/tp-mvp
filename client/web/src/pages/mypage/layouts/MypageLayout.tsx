@@ -21,6 +21,8 @@ interface NavUserInfoInterface{
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
   const [currUser, setCurrUser] = React.useState<string>('');
+  const [validSubscribeUserList,
+    setValidSubscribeUserList] = React.useState<NavUserInfoInterface[]>([]);
 
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
@@ -35,25 +37,29 @@ const UserDashboard = (): JSX.Element => {
       data: getSubscribeData,
       loading: getSubscribeLoading,
       error: getSubscribeError
-    }, excuteGetSubscribeData] = useAxios<NavUserInfoInterface[]>({
-      url: 'http://localhost:3000/users/subscribe-users',
-      params: {
-        userId: 'qjqdn1568'
-      }
-    });
+    }, excuteGetSubscribeData] = useAxios<{
+      validUserList:NavUserInfoInterface[],
+      inValidUserList:NavUserInfoInterface[]}>({
+        url: 'http://localhost:3000/users/subscribe-users',
+        params: {
+          userId: 'qjqdn1568' // logined user id
+        }
+      });
 
   const handleChangeCurrUser = (otherUser: string) => {
     setCurrUser(otherUser);
   };
 
   React.useEffect(() => {
-    if (getSubscribeData) { setCurrUser(getSubscribeData[0].targetUserId); }
-    console.log(currUser);
+    if (getSubscribeData && getSubscribeData.validUserList) {
+      setValidSubscribeUserList(getSubscribeData.validUserList);
+      if (getSubscribeData.validUserList[0]) {
+        setCurrUser(getSubscribeData.validUserList[0].targetUserId);
+      }
+    }
+    // if (getSubscribeData) { if (getSubscribeData && getSubscribeData[0]) 
+    // { setCurrUser(getSubscribeData[0].targetUserId); } }
   }, [getSubscribeData]);
-
-  React.useEffect(() => {
-    console.log(currUser);
-  }, [handleChangeCurrUser]);
 
   return (
     <div className={classes.wrapper}>
@@ -64,11 +70,12 @@ const UserDashboard = (): JSX.Element => {
         <div ref={mainPanel} className={classes.mainPanel}>
           <nav className={classes.appbarWrapper}>
             <Navbar
-              navUserInfoList={getSubscribeData}
+              navUserInfoList={validSubscribeUserList}
               routes={routes}
               loading={getSubscribeLoading}
               error={getSubscribeError}
               handleChangeCurrUser={handleChangeCurrUser}
+              userId="qjqdn1568"
             />
           </nav>
           <main>
