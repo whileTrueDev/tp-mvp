@@ -10,6 +10,7 @@ import useAxios from 'axios-hooks';
 // date library
 import moment from 'moment';
 // styles
+import { seed } from 'shortid';
 import usePerioudAnalysisHeroStyle from './PerioudAnalysisHero.style';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
@@ -21,11 +22,12 @@ import StreamList from './StreamList';
 // interface
 import {
   DayStreamsInfo,
-  AnaysisStreamsInfo,
-  AnaysisStreamsInfoRequest
+  AnaysisStreamsInfoRequest,
+  OrganizedData
 } from './PerioudAnalysisHero.interface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 
 interface PerioudAnalysisHeroProps {
   userId: string;
@@ -42,6 +44,8 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
     smileCount: false,
     // searchKeyWord: string,
   });
+  const [anlaysisData, setAnalysisData] = React.useState<OrganizedData>();
+  const [snackBar, setSnackBar] = React.useState<boolean>(false);
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -75,7 +79,7 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
       data: getAnalysisData,
       loading: getAnalysisLoading,
       error: getAnalysisError
-    }, excuteGetAnalysis] = useAxios<AnaysisStreamsInfo[]>({
+    }, excuteGetAnalysis] = useAxios<OrganizedData>({
       url: 'http://localhost:3000/stream-analysis/streams-term-info',
     }, { manual: true });
 
@@ -93,6 +97,12 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
     }
   }, [perioud]);
 
+  React.useEffect(() => {
+    if (snackBar === true) {
+      setSnackBar(false);
+    }
+  }, [setSnackBar]);
+
   const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
     setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));
   };
@@ -104,37 +114,47 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
       streamId: dayStreamInfo.streamId
     }));
 
-    console.log(requestParams);
+    const selectedCategory = Object.entries(checkStateGroup).filter((state) => state[1] === true);
+    if (selectedCategory.length < 1) {
+      setSnackBar(true);
+    }
 
     excuteGetAnalysis({
-      // params: {
-      //   streams: requestParams
-      // }
+      /* test request params */
       params: {
-        // streams: [{
-        //   creatorId: '203690678',
-        //   startedAt: '2020-09-21T00:00:00',
-        //   streamId: '39796426622'
-        // },
-        // {
-        //   creatorId: '173881569',
-        //   startedAt: '2020-09-22T00:00:00',
-        //   streamId: '09221013_09221229_39805658238'
-        // },
-        // {
-        //   creatorId: '175438165',
-        //   startedAt: '2020-09-22T00:00:00',
-        //   streamId: '39804882894'
-        // }]
-        streams: requestParams
+        category: 'viewer',
+        streams: [{
+          creatorId: '203690678',
+          startedAt: '2020-09-21T00:00:00',
+          streamId: '39796426622'
+        },
+        {
+          creatorId: '173881569',
+          startedAt: '2020-09-22T00:00:00',
+          streamId: '09221013_09221229_39805658238'
+        },
+        {
+          creatorId: '175438165',
+          startedAt: '2020-09-22T00:00:00',
+          streamId: '39804882894'
+        }],
+        /* request params */
+        // streams: requestParams
+        // category: selectedCategory[0][0]
       }
     }).then((res) => {
-      console.log(res);
+      setAnalysisData(res.data);
+    }).catch((err) => {
+      setSnackBar(true);
     });
   };
 
   return (
     <div className={classes.root}>
+      <ErrorSnackBar
+        open={!!getAnalysisError || snackBar}
+        message="오류가 발생 했습니다. 다시 시도해주세요."
+      />
       <Divider className={classes.titleDivider} />
       <Grid container direction="column">
         <Grid item>
@@ -199,14 +219,12 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
                 방송 선택
               </Typography>
               {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
-              {getStreamsData && !getStreamsError && !getStreamsLoading ? (
-                <StreamList
-                  termStreamsList={termStreamsList}
-                  handleRemoveIconButton={handleRemoveIconButton}
-                />
-              ) : (
-                <CenterLoading />
-              )}
+              <StreamList
+                termStreamsList={termStreamsList}
+                handleRemoveIconButton={handleRemoveIconButton}
+              />
+              {(getStreamsError || getStreamsLoading)
+                && <CenterLoading />}
 
             </Grid>
           </Grid>

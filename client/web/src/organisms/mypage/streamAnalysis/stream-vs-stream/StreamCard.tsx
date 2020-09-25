@@ -64,7 +64,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: '#4d4f5c',
     lineHeight: '1.5',
     overflow: 'auto',
-    width: '100%'
+    width: '100%',
+    marginBottom: '10px'
   },
 }));
 

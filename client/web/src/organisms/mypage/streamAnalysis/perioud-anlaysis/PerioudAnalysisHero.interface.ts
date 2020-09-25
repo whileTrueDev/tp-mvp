@@ -3,6 +3,7 @@ export interface RangeSelectCaledarProps {
   handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
 }
+
 export interface DayStreamsInfo{
   streamId : string;
   startedAt: Date;
@@ -15,6 +16,12 @@ export interface CombinedTimeLine {
   smileCount : number;
   chatCount: number;
   date: string;
+}
+export interface OrganizedData {
+  category: 'viewer'|'chat'|'smile';
+  avgViewer: number;
+  avgChatCount: number;
+  timeLine : CombinedTimeLine[];
 }
 export interface AnaysisStreamsInfo {
   avgViewer: number;

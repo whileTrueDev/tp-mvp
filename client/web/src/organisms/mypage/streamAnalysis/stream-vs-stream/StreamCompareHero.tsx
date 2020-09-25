@@ -1,9 +1,11 @@
 import React from 'react';
 // material-ui core components
 import {
-  Paper, Typography, Grid, Divider, Button, Collapse
+  Paper, Typography, Grid, Divider, Button, Collapse,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+// axios
+import useAxios from 'axios-hooks';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
@@ -23,6 +25,22 @@ interface StreamCompareHeroProps {
   userId: string;
 }
 
+interface StreamsCompareCategoryResult {
+    broad1Count: any;
+    broad2Count: any;
+    diff: number;
+    title: string;
+    tag: string;
+    key: string;
+    value: any[];
+    unit: string;
+}
+
+interface StreamComapreResult {
+  compareResult: StreamsCompareCategoryResult[];
+  selectedCategory: 'viewer'|'smile'|'chat';
+}
+
 export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Element {
   const { userId } = props;
   const classes = useStreamHeroStyles();
@@ -31,6 +49,17 @@ export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Ele
   const [baseStream, setBaseStream] = React.useState<DayStreamsInfo|null>(null);
   const [compareStream, setCompareStream] = React.useState<DayStreamsInfo|null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
+  const [snackBar, setSnackBar] = React.useState<boolean>();
+  const [anlaysisData, setAnalysisData] = React.useState<StreamComapreResult>();
+
+  const [
+    {
+      data: getStreamsData,
+      loading: getStreamsLoading,
+      error: getStreamsError
+    }, excuteGetStreams] = useAxios<StreamComapreResult>({
+      url: 'http://localhost:3000/stream-analysis/streams',
+    }, { manual: true });
 
   const handleDayStreamList = (responseList:(DayStreamsInfo)[]) => {
     setDayStreamsList(responseList);
@@ -49,8 +78,21 @@ export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Ele
   };
 
   const handleAnalysisButton = () => {
-    // base, compare 존재시 활성화 , 하단 섹션으로 선택된 base, compare 방송 정보 전달
-    console.log(baseStream, compareStream);
+    // base, compare 존재시 활성화 , 서버 조회 및 연산 요청
+    if (baseStream && compareStream) {
+      excuteGetStreams({
+        params: {
+          streams:
+            [{ streamId: baseStream.streamId, platform: baseStream.platform },
+              { streamId: compareStream.streamId, platform: compareStream.platform }]
+        }
+      }).then((res) => {
+        setAnalysisData(res.data);
+      }).catch((err) => {
+        // console.log(err);
+        // setSnackBar(true);
+      });
+    }
   };
 
   React.useEffect(() => {
