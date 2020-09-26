@@ -8,6 +8,7 @@ import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import Card from '../../../atoms/Card/Card';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
+import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 
 interface StreamDate {
   startAt: Date,
@@ -101,6 +102,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           </Grid>
         </Grid>
       </Paper>
+
+      <TruepointHighlight />
     </Grid>
   );
 }

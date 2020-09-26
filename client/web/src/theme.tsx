@@ -28,7 +28,7 @@ const rawTheme: ThemeOptions = {
     }
   },
   typography: {
-    fontFamily: '"NotoSansKR-Regular", "Sunflower", sans-serif'
+    fontFamily: '"AppleSDGothicNeo", "Sunflower", sans-serif'
   }
 };
 
