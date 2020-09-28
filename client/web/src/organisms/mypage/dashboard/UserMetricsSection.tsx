@@ -23,7 +23,22 @@ const useStyles = makeStyles((theme) => ({
       boxShadow: theme.shadows[10],
     }
   },
-  selected: { transition: '0.1s linear all' }
+  selected: { transition: '0.1s linear all' },
+  avatarContainer: { marginBottom: 32 },
+  avatar: { width: 150, height: 150, margin: '32px 32px 16px 32px' },
+  columnFlexBox: {
+    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+  },
+  cardHeader: { display: 'flex', justifyContent: 'space-between', padding: `${theme.spacing(1)}px ${theme.spacing(2)}px` },
+  cardDivider: { padding: '0px 16px' },
+  cardBody: { padding: '8px 16px', marginBottom: 32 },
+  cardContentString: { fontWeight: 900, lineHeight: 1.43 },
+  helper: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 16,
+    marginBottom: 16
+  }
 }));
 
 export default function UserMetricsSection(): JSX.Element {
@@ -89,12 +104,10 @@ export default function UserMetricsSection(): JSX.Element {
 
   return (
     <>
-      <Grid container spacing={2} style={{ marginBottom: 32 }} alignItems="center">
+      <Grid container spacing={2} className={classes.avatarContainer} alignItems="center">
         <Grid item xs={3} container direction="column" alignItems="center">
-          <Avatar
-            style={{ width: 150, height: 150, margin: '32px 32px 16px 32px' }}
-          />
-          <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+          <Avatar className={classes.avatar} />
+          <div className={classes.columnFlexBox}>
             <TruepointRating name="read-only" value={4.5} precision={0.5} readOnly />
             <Typography variant="caption" style={{ fontWeight: 'bold', color: 'white' }}>(업데이트예정)</Typography>
           </div>
@@ -122,19 +135,13 @@ export default function UserMetricsSection(): JSX.Element {
             />
           )}
           {!loading && data && data.length === 0 && (
-            <div style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
-            }}
-            >
+            <div className={classes.columnFlexBox}>
               <Typography variant="h6">그래프를 표현할 데이터가 없습니다.</Typography>
               <Typography variant="body1">(방송정보가 정상적으로 확인되지 않는 경우, 고객센터에 문의 주시기 바랍니다.)</Typography>
             </div>
           )}
           {false && (
-            <div style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
-            }}
-            >
+            <div className={classes.columnFlexBox}>
               <Typography variant="h6">채널 연동 및 구독 시,</Typography>
               <Typography variant="h6">트루포인트에서만 확인할 수 있는 다양한 통계를 제공받으실 수 있습니다.</Typography>
               <Button variant="contained" color="secondary" style={{ marginTop: 16 }}>채널연동 하러가기</Button>
@@ -155,21 +162,21 @@ export default function UserMetricsSection(): JSX.Element {
                     })}
                     onClick={() => { handleCardSelect(card.name); }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 16px' }}>
+                    <div className={classes.cardHeader}>
                       <Typography variant="h6">{card.nameKr}</Typography>
                       {selectedCard === card.name && (
                       <Grow in><VisibilityIcon color="primary" /></Grow>
                       )}
                     </div>
-                    <div style={{ padding: '0px 16px' }}>
+                    <div className={classes.cardDivider}>
                       {card.value >= 0 ? (
                         <ProgressBar variant="determinate" value={100} />
                       ) : (
                         <RedProgressBar variant="determinate" value={100} />
                       )}
                     </div>
-                    <CardContent style={{ padding: '8px 16px', marginBottom: 32 }}>
-                      <Typography variant="h5" style={{ fontWeight: 900, lineHeight: 1.43 }}>
+                    <CardContent className={classes.cardBody}>
+                      <Typography variant="h5" className={classes.cardContentString}>
                         {card.value.toLocaleString()}
                       </Typography>
                     </CardContent>
@@ -179,13 +186,7 @@ export default function UserMetricsSection(): JSX.Element {
           </>
           )}
           {!loading && data && data.length > 0 && selectedPlatform.length > 0 && (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            marginTop: 16,
-            marginBottom: 16
-          }}
-          >
+          <div className={classes.helper}>
             <Typography variant="caption">* 통계 데이터는 최근 10일간의 데이터를 기준으로 산정합니다.</Typography>
             <Typography variant="caption">* 그래프 데이터는 최근 10일간 플랫폼별 방송 이력을 기준으로 작성됩니다.</Typography>
           </div>
