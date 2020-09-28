@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // material-ui core components
 import { Grid } from '@material-ui/core';
 // material-ui picker components
@@ -36,7 +36,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       url: 'http://localhost:3000/stream-analysis/stream-list',
     }, { manual: true });
 
-  React.useEffect(() => {
+  useEffect(() => {
     excuteGetStreams({
       params: {
         userId: subscribe.currUser.targetUserId,

@@ -356,7 +356,7 @@ export class StreamAnalysisService {
           'streams',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
         )
-        .select(['streamSummary.*', 'viewer', 'chatCount'])
+        .select(['streamSummary.*', 'viewer', 'chatCount', 'title'])
         .where('streamSummary.streamId = :id', { id: streams[0].streamId })
         .andWhere('streamSummary.platform = :platform', { platform: streams[0].platform })
         .execute()
@@ -372,19 +372,13 @@ export class StreamAnalysisService {
             'streams',
             'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
           )
-          .select(['streamSummary.*', 'viewer', 'chatCount'])
+          .select(['streamSummary.*', 'viewer', 'chatCount', 'title'])
           .where('streamSummary.streamId = :id', { id: streams[1].streamId })
           .andWhere('streamSummary.platform = :platform', { platform: streams[1].platform })
           .execute()
           .catch((err) => {
             throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
           });
-
-        // 비교분석을 위한 데이터 전처리
-
-        if (streamInfoBase.length === 0 || streamInfoCompare.length === 0) {
-          return [null, null];
-        }
 
         const streamData = [streamInfoBase[0], streamInfoCompare[0]];
         return calculateStreamData(streamData);
@@ -428,6 +422,20 @@ export class StreamAnalysisService {
         })
       )
         .then((timeline) => {
+          // timeline의 첫 번째 array가 존재하지 않는경우.
+          if (timeline[0].length === 0) {
+            resolve({
+              error: '기준 방송 기간의 데이터가 존재하지 않습니다.'
+            });
+            return;
+          }
+          // timeline의 두 번째 array가 존재하지 않는경우.
+          if (timeline[1].length === 0) {
+            resolve({
+              error: '비교 방송 기간의 데이터가 존재하지 않습니다.'
+            });
+            return;
+          }
           // 2. 지표별 그래프를 위한 데이터 구현
           const metrics = timeline.map((period) => period.reduce((sum, element) => [
             sum[0] + Number(element.viewer),

@@ -1,30 +1,25 @@
 import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
-import { Button, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';
 
 // organisms
 import StreamCompareSection from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareSection';
-import StreamCompareBody from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareBody';
 
 export default function StreamAnalysis(): JSX.Element {
   const [data, setData] = useState<metricInterface[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const [, getRequest] = useAxios(
+  const [{ loading, error }, getRequest] = useAxios(
     '/stream-analysis/streams', { manual: true }
   );
 
-  const onSubmit = () => {
+  const handleSubmit = (streams: {streamId: string, platform: string}[]) => {
     setOpen(false);
     getRequest({
       params: {
-        streams:
-        [
-          { streamId: 's1', platform: 'afreeca' },
-          { streamId: 's5', platform: 'afreeca' }
-        ]
+        streams
       }
     })
       .then((res) => {
@@ -36,11 +31,13 @@ export default function StreamAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
-        <StreamCompareSection />
-        <StreamCompareBody />
+        <Grid item>
+          <StreamCompareSection handleSubmit={handleSubmit} loading={loading} error={error} />
+        </Grid>
+        <Grid item>
+          <StreamMetrics open={open} metricData={data} />
+        </Grid>
       </Grid>
-      <Button onClick={onSubmit}>와우</Button>
-      <StreamMetrics open={open} metricData={data} />
     </MypageSectionWrapper>
   );
 }

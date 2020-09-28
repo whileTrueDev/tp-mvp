@@ -3,8 +3,6 @@ import React, { useContext, useState } from 'react';
 import {
   Paper, Typography, Grid, Divider, Button
 } from '@material-ui/core';
-// axios
-import useAxios from 'axios-hooks';
 // subcomponents
 import RangeSelectCaledar from './RangeSelectCalendar';
 import PeriodCompareTextField from './PeriodCompareTextField';
@@ -19,7 +17,8 @@ import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // contexterLoa
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-export default function PeriodCompareSection(): JSX.Element {
+export default function PeriodCompareSection(props: any): JSX.Element {
+  const { loading, error, handleSubmit } = props;
   const classes = usePeriodCompareStyles();
   const subscribe = useContext(SubscribeContext);
   const [basePeriod, setBasePeriod] = useState<Date[]>(new Array<Date>(2));
@@ -28,19 +27,7 @@ export default function PeriodCompareSection(): JSX.Element {
     viewer: false,
     chat: false,
     smile: false,
-    // searchKeyWord: string,
   });
-  /* 분석 결과 데이터 */
-  const [analysisResultData, setResultData] = useState();
-
-  const [
-    {
-      data: getAnalysisData,
-      loading: getAnalysisLoading,
-      error: getAnalysisError
-    }, excuteGetAnalysis] = useAxios({
-    url: 'http://localhost:3000/stream-analysis/terms',
-  }, { manual: true });
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -48,7 +35,6 @@ export default function PeriodCompareSection(): JSX.Element {
         viewer: false,
         chat: false,
         smile: false,
-        // searchKeyWord: string,
       },
       [event.target.name]: event.target.checked
     });
@@ -66,31 +52,23 @@ export default function PeriodCompareSection(): JSX.Element {
   const handleAnalysisButton = () => {
     // 타겟 유저 아이디 + 기간 2개 + 분석 항목 (viewer | chatCount | smileCount)
     const selectedCategory = Object.keys(checkStateGroup);
-    excuteGetAnalysis({
+    handleSubmit({
+      category: [selectedCategory[Object.values(checkStateGroup).indexOf(true)]], // 다중 선택으로 변경시 [] 제거
       params: {
         userId: subscribe.currUser.targetUserId,
         baseStartAt: basePeriod[0].toISOString(),
         baseEndAt: basePeriod[1].toISOString(),
         compareStartAt: comparePeriod[0].toISOString(),
         compareEndAt: comparePeriod[1].toISOString(),
-        category: selectedCategory[Object.values(checkStateGroup).indexOf(true)]
       }
-    }).then((res) => {
-      console.log(res.data);
-      if (res.data) setResultData(res.data);
     });
   };
 
-  /* 분석 결과 데이터 확인 코드 */
-  React.useEffect(() => {
-    console.log(analysisResultData);
-  }, [analysisResultData]);
-
   return (
     <div className={classes.root}>
-      {getAnalysisLoading
+      {loading
         && <CenterLoading />}
-      {getAnalysisError
+      {error
       && (
       <ErrorSnackBar
         message="오류가 발생했습니다. 다시 시도해주세요."

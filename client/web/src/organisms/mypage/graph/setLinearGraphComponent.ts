@@ -56,7 +56,7 @@ const setSeries = (metrics: string[], chart: am4charts.XYChart, opposite?: numbe
   });
 };
 
-export default function setComponent(data: any, name?: string, opposite?: number): am4charts.XYChart {
+export default function setComponent(data: any, selectedMetric: string[], name?: string, opposite?: number,): am4charts.XYChart {
   am4core.useTheme(am4themes_animated);
   const chart : am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);
   chart.data = data;
@@ -68,7 +68,7 @@ export default function setComponent(data: any, name?: string, opposite?: number
   dateAxis.skipEmptyPeriods = true;
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd';
   dateAxis.dateFormats.setKey('day', 'MM-dd');
-  setSeries(['viewer', 'smile'], chart, opposite);
+  setSeries(selectedMetric, chart, opposite);
 
   // ****************************** cursor ***************************
   // Make a panning cursor

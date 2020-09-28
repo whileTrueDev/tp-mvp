@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // material-ui core components
 import {
   Paper, Typography, Grid, Divider, Button, Collapse,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 // axios
-import useAxios from 'axios-hooks';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
@@ -40,23 +39,20 @@ interface StreamComapreResult {
   selectedCategory: 'viewer'|'smile'|'chat';
 }
 
-export default function StreamCompareSection(): JSX.Element {
+interface StreamCompareSectionPropInterface {
+  handleSubmit: (streams: {streamId: string, platform: string}[]) => void;
+  loading: boolean;
+  error: any;
+}
+
+export default function StreamCompareSection(props: StreamCompareSectionPropInterface): JSX.Element {
+  const { handleSubmit, loading, error } = props;
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
   const [baseStream, setBaseStream] = React.useState<DayStreamsInfo|null>(null);
   const [compareStream, setCompareStream] = React.useState<DayStreamsInfo|null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
-  const [analysisResultData, setResultData] = React.useState<StreamComapreResult>();
-
-  const [
-    {
-      data: getStreamsData,
-      loading: getStreamsLoading,
-      error: getStreamsError
-    }, excuteGetStreams] = useAxios<StreamComapreResult>({
-      url: 'http://localhost:3000/stream-analysis/streams',
-    }, { manual: true });
 
   const handleDayStreamList = (responseList:(DayStreamsInfo)[]) => {
     setDayStreamsList(responseList);
@@ -77,20 +73,16 @@ export default function StreamCompareSection(): JSX.Element {
   const handleAnalysisButton = () => {
     // base, compare 존재시 활성화 , 서버 조회 및 연산 요청
     if (baseStream && compareStream) {
-      excuteGetStreams({
-        params: {
-          streams:
-            [{ streamId: baseStream.streamId, platform: baseStream.platform },
-              { streamId: compareStream.streamId, platform: compareStream.platform }]
-        }
-      }).then((res) => {
-        console.log(res.data);
-        setResultData(res.data);
-      });
+      handleSubmit(
+        [
+          { streamId: baseStream.streamId, platform: baseStream.platform },
+          { streamId: compareStream.streamId, platform: compareStream.platform }
+        ]
+      );
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!compareStream || !baseStream) handleFullMessage(false);
   }, [compareStream, baseStream]);
 
@@ -115,13 +107,13 @@ export default function StreamCompareSection(): JSX.Element {
 
   return (
     <div className={classes.root}>
-      {getStreamsError
+      {error
       && (
       <ErrorSnackBar
         message="오류가 발생 했습니다. 다시 시도해주세요."
       />
       )}
-      {getStreamsLoading
+      {loading
       && <CenterLoading />}
       <Divider className={classes.titleDivider} />
       <Grid container direction="column">
