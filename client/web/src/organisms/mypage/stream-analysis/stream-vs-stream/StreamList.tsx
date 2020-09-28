@@ -7,7 +7,7 @@ import {
 // material - ui styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
 // interface
-import { StreamListProps, DayStreamsInfo } from './StreamCompareHero.interface';
+import { StreamListProps, DayStreamsInfo } from './StreamCompareSectioninterface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {

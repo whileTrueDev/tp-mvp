@@ -6,7 +6,7 @@ import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetri
 import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';
 
 // organisms
-import StreamCompareHero from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareHero';
+import StreamCompareSection from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareSection';
 import StreamCompareBody from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareBody';
 
 export default function StreamAnalysis(): JSX.Element {
@@ -36,7 +36,7 @@ export default function StreamAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
-        <StreamCompareHero />
+        <StreamCompareSection />
         <StreamCompareBody />
       </Grid>
       <Button onClick={onSubmit}>와우</Button>

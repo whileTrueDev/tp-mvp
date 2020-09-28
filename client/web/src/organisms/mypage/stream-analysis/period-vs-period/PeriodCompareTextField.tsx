@@ -9,7 +9,7 @@ import moment from 'moment';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interfaces
-import { periodCompareTextBoxProps, ISODateTextFieldError } from './PeriodCompareHero.interface';
+import { periodCompareTextBoxProps, ISODateTextFieldError } from './PeriodCompareSection.interface';
 // custom hooks
 import useEventTargetValue from '../../../../utils/hooks/useEventTargetValue';
 
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export default function periodCompareTextField(props: periodCompareTextBoxProps): JSX.Element {
+export default function PeriodCompareTextField(props: periodCompareTextBoxProps): JSX.Element {
   const classes = useStyles();
   const { base, period, handleperiod } = props;
   const start = useEventTargetValue();

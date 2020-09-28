@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 // material-ui core components
 import {
   Paper, Typography, Grid, Divider, Button
@@ -7,24 +7,24 @@ import {
 import useAxios from 'axios-hooks';
 // subcomponents
 import RangeSelectCaledar from './RangeSelectCalendar';
-import periodCompareTextField from './PeriodCompareTextField';
+import PeriodCompareTextField from './PeriodCompareTextField';
 import CheckBoxGroup from './CheckBoxGroup';
 // svg icons
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 // styles
-import useperiodCompareStyles from './PeriodCompareHero.style';
+import useperiodCompareStyles from './PeriodCompareSection.style';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // contexterLoa
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-export default function periodCompareHero(): JSX.Element {
+export default function PeriodCompareSection(): JSX.Element {
   const classes = useperiodCompareStyles();
-  const subscribe = React.useContext(SubscribeContext);
-  const [baseperiod, setBaseperiod] = React.useState<Date[]>(new Array<Date>(2));
-  const [compareperiod, setCompareperiod] = React.useState<Date[]>(new Array<Date>(2));
-  const [checkStateGroup, setCheckStateGroup] = React.useState({
+  const subscribe = useContext(SubscribeContext);
+  const [baseperiod, setBaseperiod] = useState<Date[]>(new Array<Date>(2));
+  const [compareperiod, setCompareperiod] = useState<Date[]>(new Array<Date>(2));
+  const [checkStateGroup, setCheckStateGroup] = useState({
     viewer: false,
     chat: false,
     smile: false,
@@ -32,7 +32,7 @@ export default function periodCompareHero(): JSX.Element {
   });
   // 서버 수정 코드 확인 후 타입 정의 할 것.
   /* 분석 결과 */
-  const [resultData, setResultData] = React.useState<any[]>();
+  const [resultData, setResultData] = useState<any[]>();
 
   const [
     {
@@ -102,7 +102,7 @@ export default function periodCompareHero(): JSX.Element {
       <Grid container direction="row" justify="center">
         <Grid item className={classes.bodyContainer}>
           {/* 달력 연동 기간 텍스트 박스 */}
-          <periodCompareTextField
+          <PeriodCompareTextField
             base
             period={baseperiod}
             handleperiod={handleperiod}
@@ -132,7 +132,7 @@ export default function periodCompareHero(): JSX.Element {
         </Typography>
         <Grid item className={classes.bodyContainer}>
           {/* 달력 연동 기간 텍스트 박스 */}
-          <periodCompareTextField
+          <PeriodCompareTextField
             period={compareperiod}
             handleperiod={handleperiod}
           />

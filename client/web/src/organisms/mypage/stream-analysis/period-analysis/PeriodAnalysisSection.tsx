@@ -8,7 +8,7 @@ import { Alert } from '@material-ui/lab';
 // axios
 import useAxios from 'axios-hooks';
 // styles
-import useperiodAnalysisHeroStyle from './PeriodAnalysisHero.style';
+import useperiodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
@@ -21,14 +21,14 @@ import {
   DayStreamsInfo,
   AnaysisStreamsInfoRequest,
   OrganizedData
-} from './PeriodAnalysisHero.interface';
+} from './PeriodAnalysisSection.interface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-export default function periodAnalysisHero() : JSX.Element {
+export default function PeriodAnalysisSection() : JSX.Element {
   const classes = useperiodAnalysisHeroStyle();
   const [period, setperiod] = React.useState<Date[]>(new Array<Date>(2));
   const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);

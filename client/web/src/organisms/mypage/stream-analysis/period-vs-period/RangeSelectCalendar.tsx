@@ -12,7 +12,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interfaces
-import { RangeSelectCaledarProps } from './periodCompareHero.interface';
+import { RangeSelectCaledarProps } from './PeriodCompareSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   leftCircleBase: {

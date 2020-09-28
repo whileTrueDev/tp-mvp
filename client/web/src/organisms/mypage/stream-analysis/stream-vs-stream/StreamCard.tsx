@@ -9,7 +9,7 @@ import {
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // interface
-import { StreamCardProps } from './StreamCompareHero.interface';
+import { StreamCardProps } from './StreamCompareSectioninterface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardWrapper: {

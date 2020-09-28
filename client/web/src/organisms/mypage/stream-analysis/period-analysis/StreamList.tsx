@@ -14,7 +14,7 @@ import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // interface
-import { StreamListProps, DayStreamsInfo } from './PeriodAnalysisHero.interface';
+import { StreamListProps, DayStreamsInfo } from './PeriodAnalysisSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
