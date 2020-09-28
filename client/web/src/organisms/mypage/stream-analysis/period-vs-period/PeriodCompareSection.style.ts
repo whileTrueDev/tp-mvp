@@ -1,6 +1,6 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 
-const usePerioudCompareStyles = makeStyles((theme: Theme) => ({
+const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
     marginTop: '135px',
@@ -98,4 +98,4 @@ const usePerioudCompareStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export default usePerioudCompareStyles;
+export default usePeriodCompareStyles;

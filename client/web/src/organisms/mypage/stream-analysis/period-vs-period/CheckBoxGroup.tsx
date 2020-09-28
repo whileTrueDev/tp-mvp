@@ -9,7 +9,7 @@ import {
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 // interface
-import { CheckBoxGroupProps } from './PerioudAnalysisHero.interface';
+import { CheckBoxGroupProps } from './PeriodCompareSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {

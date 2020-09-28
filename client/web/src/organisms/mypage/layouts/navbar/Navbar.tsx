@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 // @material-ui/core components
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -7,8 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import Chip from '@material-ui/core/Chip';
 // @material-ui/icons
 import EventNoteIcon from '@material-ui/icons/EventNote';
-// core components
-import moment from 'moment';
+// core components 
 import useNavbarStyles from './Navbar.style';
 import HeaderLinks from './HeaderLinks';
 import NavbarUserList from './NavbarUserList';

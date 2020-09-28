@@ -7,14 +7,14 @@ export interface DayStreamsInfo{
 }
 
 export interface RangeSelectCaledarProps {
-  perioud: Date[];
-  handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
+  period: Date[];
+  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
 }
-export interface PerioudCompareTextBoxProps {
+export interface periodCompareTextBoxProps {
   base?: true;
-  perioud: Date[];
-  handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
+  period: Date[];
+  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
 }
 
 export interface CheckBoxGroupProps {

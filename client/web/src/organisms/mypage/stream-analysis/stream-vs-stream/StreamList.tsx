@@ -1,20 +1,13 @@
 import React from 'react';
-// material-ui core components
-import {
-  Typography, List, ListItem, IconButton, ListItemIcon
-} from '@material-ui/core';
-//  styles
-import { makeStyles, Theme } from '@material-ui/core/styles';
-// material-ui icons
-import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
-// date library
 import moment from 'moment';
-// atom svg icons
-import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
-import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
-import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
+// material - ui core components
+import {
+  Typography, List, ListItem, ListItemIcon
+} from '@material-ui/core';
+// material - ui styles
+import { makeStyles, Theme } from '@material-ui/core/styles';
 // interface
-import { StreamListProps, DayStreamsInfo } from './PerioudAnalysisHero.interface';
+import { StreamListProps, DayStreamsInfo } from './StreamCompareSectioninterface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -31,12 +24,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: '13.1px',
     paddingBottom: '13.9x',
     borderRadius: '4px',
-    '&:hover,select': {
+    '&:hover': {
       backgroundColor: theme.palette.primary.light,
     },
+    '&.Mui-selected': {
+      backgroundColor: theme.palette.primary.light,
+    }
   },
   selectedListItem: {
-
+    backgroundColor: theme.palette.primary.light,
   },
   listItemText: {
     fontFamily: 'SourceSansPro',
@@ -45,18 +41,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineHeight: '2.06',
     fontSize: '16px',
     fontWeight: 500
-  },
-  closeIcon: {
-    marginLeft: '30px',
-    '&:hover,select': {
-      color: 'red',
-    },
   }
 }));
 
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
-    termStreamsList, handleRemoveIconButton
+    dayStreamsList, handleSeletedStreams, baseStream, compareStream,
+    handleFullMessage, platformIcon
   } = props;
   const classes = useStyles();
 
@@ -67,51 +58,50 @@ export default function StreamList(props: StreamListProps): JSX.Element {
                          ${moment(startDate).format('HH:mm')}~ 
                          ${endAt.getDate()}일
                          ${moment(endAt).format('HH:mm')}`;
-
     return airTimeText;
   };
 
-  const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
-    switch (stream.platform) {
-      case 'afreeca':
-        return (
-          <AfreecaIcon />
-        );
-      case 'twitch':
-        return (
-          <TwitchIcon />
-        );
-      case 'youtube':
-        return (
-          <YoutubeIcon />
-        );
-      default:
-        return <div />;
+  const handleListStreamClick = (stream: DayStreamsInfo) => {
+    if (baseStream && compareStream) {
+      handleFullMessage(true);
+    } else if (baseStream && !compareStream) {
+      handleSeletedStreams(stream);
+    } else if (!baseStream && compareStream) {
+      handleSeletedStreams(stream, true);
+    } else {
+      handleSeletedStreams(stream, true);
     }
+  };
+
+  const isSelectedListItem = (listStream: DayStreamsInfo):boolean => {
+    if (baseStream || compareStream) {
+      return (listStream.streamId === baseStream?.streamId
+    || listStream.streamId === compareStream?.streamId);
+    }
+
+    return false;
   };
 
   return (
     <List className={classes.listWrapper}>
-      {termStreamsList && termStreamsList.map((stream) => (
+      {dayStreamsList && dayStreamsList.map((stream) => (
+
         <ListItem
           key={stream.streamId}
           button
+          selected={isSelectedListItem(stream)}
           className={classes.listItem}
+          onClick={() => handleListStreamClick(stream)}
         >
           <ListItemIcon>
             {platformIcon(stream)}
           </ListItemIcon>
-
           <Typography className={classes.listItemText}>
             {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
           </Typography>
-          <IconButton
-            className={classes.closeIcon}
-            onClick={() => handleRemoveIconButton(stream)}
-          >
-            <ClearOutlinedIcon />
-          </IconButton>
+
         </ListItem>
+
       ))}
     </List>
   );

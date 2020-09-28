@@ -31,15 +31,15 @@ export interface StreamCalendarProps {
 }
 
 export interface RangeSelectCaledarProps {
-  perioud: Date[];
-  handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
+  period: Date[];
+  handleperiod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
 }
 
-export interface PerioudCompareTextBoxProps {
+export interface periodCompareTextBoxProps {
   base?: true;
-  perioud: Date[];
-  handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
+  period: Date[];
+  handleperiod: (startAt: Date, endAt: Date, base?: true) => void;
 }
 
 export interface CheckBoxGroupProps {

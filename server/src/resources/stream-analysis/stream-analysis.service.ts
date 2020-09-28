@@ -11,7 +11,7 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
-import dataArray from './data';
+import { dataArray } from './s3TestData.test';
 // logic class
 import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface

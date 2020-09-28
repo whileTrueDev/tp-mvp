@@ -1,9 +1,8 @@
 export interface RangeSelectCaledarProps {
-  perioud: Date[];
-  handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
+  period: Date[];
+  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
 }
-
 export interface DayStreamsInfo{
   streamId : string;
   startedAt: Date;

@@ -1,6 +1,6 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 
-const useStreamHeroStyles = makeStyles((theme: Theme) => ({
+const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
     marginTop: '135px',
@@ -91,4 +91,4 @@ const useStreamHeroStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export default useStreamHeroStyles;
+export default useStreamSectionStyles;

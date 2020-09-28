@@ -8,7 +8,7 @@ import { Alert } from '@material-ui/lab';
 // axios
 import useAxios from 'axios-hooks';
 // styles
-import usePerioudAnalysisHeroStyle from './PerioudAnalysisHero.style';
+import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
@@ -21,16 +21,16 @@ import {
   DayStreamsInfo,
   AnaysisStreamsInfoRequest,
   OrganizedData
-} from './PerioudAnalysisHero.interface';
+} from './PeriodAnalysisSection.interface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-export default function PerioudAnalysisHero() : JSX.Element {
-  const classes = usePerioudAnalysisHeroStyle();
-  const [perioud, setPerioud] = React.useState<Date[]>(new Array<Date>(2));
+export default function PeriodAnalysisSection() : JSX.Element {
+  const classes = usePeriodAnalysisHeroStyle();
+  const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
   const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [checkStateGroup, setCheckStateGroup] = React.useState({
     viewer: false,
@@ -54,9 +54,9 @@ export default function PerioudAnalysisHero() : JSX.Element {
     });
   };
 
-  const handlePerioud = (startAt: Date, endAt: Date, base?: true) => {
+  const handlePeriod = (startAt: Date, endAt: Date, base?: true) => {
     const per = [startAt, endAt];
-    setPerioud(per);
+    setPeriod(per);
   };
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
@@ -80,18 +80,18 @@ export default function PerioudAnalysisHero() : JSX.Element {
     }, { manual: true });
 
   React.useEffect(() => {
-    if (perioud[0] && perioud[1]) {
+    if (period[0] && period[1]) {
       excuteGetStreams({
         params: {
           userId: subscribe.currUser.targetUserId,
-          startDate: perioud[0].toISOString(),
-          endDate: perioud[1].toISOString(),
+          startDate: period[0].toISOString(),
+          endDate: period[1].toISOString(),
         },
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         setTermStreamsList(res.data);
       });
     }
-  }, [perioud]);
+  }, [period]);
 
   const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
     setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));
@@ -162,7 +162,7 @@ export default function PerioudAnalysisHero() : JSX.Element {
           </Paper>
           <Collapse
             timeout="auto"
-            in={!(perioud[0] && perioud[1])}
+            in={!(period[0] && period[1])}
             style={{ height: 'auto', marginLeft: '20px' }}
           >
             <Alert
@@ -184,8 +184,8 @@ export default function PerioudAnalysisHero() : JSX.Element {
               </Typography>
               {/* Custom Date Range Picker 달력 컴포넌트 */}
               <RangeSelectCalendar
-                handlePerioud={handlePerioud}
-                perioud={perioud}
+                handlePeriod={handlePeriod}
+                period={period}
                 base
               />
             </Grid>
@@ -226,7 +226,7 @@ export default function PerioudAnalysisHero() : JSX.Element {
           onClick={handleAnalysisButton}
           disabled={
             (Object.values(checkStateGroup).indexOf(true) < 0)
-            || (!(perioud[0] && perioud[1]))
+            || (!(period[0] && period[1]))
           }
         >
           분석하기

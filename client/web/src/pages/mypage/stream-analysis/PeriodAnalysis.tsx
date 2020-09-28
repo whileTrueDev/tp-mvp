@@ -4,7 +4,7 @@ import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
 
-import PerioudAnalysisHero from '../../../organisms/mypage/streamAnalysis/perioud-anlaysis/PerioudAnalysisHero';
+import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 
 export default function PeriodAnalysis(): JSX.Element {
   const [data, setData] = useState<timelineInterface | null>(null);
@@ -24,7 +24,7 @@ export default function PeriodAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       {/* 상단 섹션 */}
-      <PerioudAnalysisHero />
+      <PeriodAnalysisSection />
       {open && data && <PeriodGraph data={data} loading={loading} />}
     </MypageSectionWrapper>
   );

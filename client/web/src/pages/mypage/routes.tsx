@@ -84,7 +84,7 @@ const dashboardRoutes: MypageRoute[] = [
         component: VideoAnalysis // 해당 페이지 컴포넌트를 여기에
       },
       {
-        path: '/each-perioud',
+        path: '/each-period',
         name: '기간별 분석',
         layout: '/mypage/channel-analysis',
         component: PeriodAnalysis// 해당 페이지 컴포넌트를 여기에

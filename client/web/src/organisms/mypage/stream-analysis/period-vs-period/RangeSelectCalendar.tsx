@@ -5,15 +5,14 @@ import { Grid } from '@material-ui/core';
 import {
   MuiPickersUtilsProvider, DatePicker
 } from '@material-ui/pickers';
-// material-ui datepicker type
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-// interface
-import { RangeSelectCaledarProps } from './PerioudAnalysisHero.interface';
+// interfaces
+import { RangeSelectCaledarProps } from './PeriodCompareSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   leftCircleBase: {
@@ -46,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    perioud, handlePerioud, base,
+    period, handlePeriod, base,
   } = props;
   const classes = useStyles();
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
@@ -55,14 +54,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
 
   React.useEffect(() => {
-    if (perioud.length > 1) {
-      setPoint1(perioud[0]);
-      setPoint2(perioud[1]);
+    if (period.length > 1) {
+      setPoint1(period[0]);
+      setPoint2(period[1]);
     }
-  }, [perioud]);
+  }, [period]);
 
   /*
-    순서를 바꾸더라도 선택 기능 유지
     1. point1 == null point2 == null -> insert point1
     2. point1 != null point2 == null -> insert point2
     3. point1 != null point2 != null -> init point1, point2 , insert point1
@@ -75,9 +73,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
       if (point1.getTime() <= newDate.getTime()) {
-        handlePerioud(point1, newDate, base);
+        handlePeriod(point1, newDate, base);
       } else {
-        handlePerioud(newDate, point1, base);
+        handlePeriod(newDate, point1, base);
       }
     } else if (point1 !== null && point2 !== null) {
       setPoint1(null); setPoint2(null);
@@ -85,7 +83,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     }
   };
 
-  /* 왼쪽 반원 오른쪽 사각형인 뒷배경 달력 날짜 컴포넌트 클로닝 */
   const leftHalfCircleDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.leftCircleBase]: base,
@@ -97,7 +94,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     </div>
   );
 
-  /* 왼쪽 사각형 오른쪽 반원인 뒷배경 달력 날짜 컴포넌트 클로닝 */
   const rightHalfCircleDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.rigthCircleBase]: base,
@@ -109,7 +105,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     </div>
   );
 
-  /* 사각형 뒷배경 달력 날짜 컴포넌트 스타일 */
   const rangeInnerDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.rangeDayBase]: base,
@@ -120,14 +115,12 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     </div>
   );
 
-  /* 달력 선택 기간 렌더링 */
   const renderDayInPicker = (
     date: MaterialUiPickersDate,
     selectedDate: MaterialUiPickersDate,
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element
   ) => {
-    /* 동일 달 일 때 */
     if (dayInCurrentMonth && date && point1 && point2) {
       if (date.getMonth() === point1.getMonth() && point1.getMonth() === point2.getMonth()) {
         if (point1.getDate() === date.getDate()) {
@@ -150,7 +143,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         }
         return dayComponent;
       }
-      /* 다른 달 point1 보다 point2 가 이후 일때 */
       if (point1.getMonth() !== point2.getMonth() && point1.getMonth() < point2.getMonth()) {
         if (date.getDate() === point1.getDate() && date.getMonth() === point1.getMonth()) {
           return rightHalfCircleDay(dayComponent);
@@ -168,7 +160,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
           return rangeInnerDay(dayComponent);
         }
       } else if (point1.getMonth() !== point2.getMonth() && point1.getMonth() > point2.getMonth()) {
-        /* 다른 달 point1 보다 point2 가 이후 일때 */
         if (date.getDate() === point2.getDate() && date.getMonth() === point2.getMonth()) {
           return rightHalfCircleDay(dayComponent);
         }

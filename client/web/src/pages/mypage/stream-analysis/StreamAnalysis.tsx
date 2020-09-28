@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
+import { Button, Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';
 
 // organisms
-import StreamCompareHero from '../../../organisms/mypage/streamAnalysis/stream-vs-stream/StreamCompareHero';
-import StreamCompareBody from '../../../organisms/mypage/streamAnalysis/stream-vs-stream/StreamCompareBody';
+import StreamCompareSection from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareSection';
+import StreamCompareBody from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareBody';
 
 export default function StreamAnalysis(): JSX.Element {
   const [data, setData] = useState<metricInterface[]>([]);
@@ -37,7 +36,7 @@ export default function StreamAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
-        <StreamCompareHero />
+        <StreamCompareSection />
         <StreamCompareBody />
       </Grid>
       <Button onClick={onSubmit}>와우</Button>

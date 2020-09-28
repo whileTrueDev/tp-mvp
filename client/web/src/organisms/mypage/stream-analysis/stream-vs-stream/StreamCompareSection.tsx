@@ -17,9 +17,9 @@ import StreamCalendar from './Calendar';
 import StreamCard from './StreamCard';
 import StreamList from './StreamList';
 // style
-import useStreamHeroStyles from './StreamCompareHero.style';
+import useStreamHeroStyles from './StreamCompareSection.style';
 // interface
-import { DayStreamsInfo } from './StreamCompareHero.interface';
+import { DayStreamsInfo } from './StreamCompareSectioninterface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
@@ -40,7 +40,7 @@ interface StreamComapreResult {
   selectedCategory: 'viewer'|'smile'|'chat';
 }
 
-export default function StreamCompareHero(): JSX.Element {
+export default function StreamCompareSection(): JSX.Element {
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
@@ -85,6 +85,7 @@ export default function StreamCompareHero(): JSX.Element {
               { streamId: compareStream.streamId, platform: compareStream.platform }]
         }
       }).then((res) => {
+        console.log(res.data);
         setAnalysisData(res.data);
       }).catch(() => {
         setSnackBar(true);
