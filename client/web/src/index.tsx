@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { AxiosResponse, AxiosError } from 'axios';
 import {
   BrowserRouter, Switch, Route,
 } from 'react-router-dom';
@@ -12,7 +11,7 @@ import {
 import { configure } from 'axios-hooks';
 import * as serviceWorker from './serviceWorker';
 import axios from './utils/axios';
-
+import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
 import defaultTheme from './theme';
 import './assets/truepoint.css';
@@ -31,6 +30,7 @@ import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
+import useAutoLogin from './utils/hooks/useAutoLogin';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -46,60 +46,16 @@ function Index(): JSX.Element {
   } = useLogin();
 
   // *******************************************
-  // Axios Configurations
-
-  // Response Interceptors
-  function onResponseFulfilled(request: AxiosResponse): AxiosResponse {
-    return request;
-  }
-  function onResponseRejected(err: AxiosError): any {
-    if (err.response && err.response.status === 401) {
-      // Unauthorized Error 인 경우
-      return axios.post('/auth/silent-refresh')
-        .then((res) => {
-          const token = res.data.access_token;
-          // 새로받은 access token을 axios 기본 헤더로 설정
-          axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-          // React Context 변경
-          handleLogin(token);
-          // 실패 요청을 재 요청
-          const failedRequest = err.config;
-          failedRequest.headers['cache-control'] = 'no-cache';
-          return axios(failedRequest);
-        })
-        .catch(() => {
-          window.location.href = '/';
-          return Promise.reject(err); // 로그인으로 강제 이동
-        });
-    }
-    return Promise.reject(err);
-  }
-  axios.interceptors.response.use(
-    onResponseFulfilled, onResponseRejected
-  );
   // axios-hooks configuration
+  axios.interceptors.response.use(
+    onResponseFulfilled,
+    makeResponseRejectedHandler(handleLogin)
+  );
   configure({ axios });
 
   // *******************************************
-  // 자동로그인 체크하여 유효한 refresh token이 있는 경우 자동 로그인
-  React.useLayoutEffect(() => {
-    if (!user.userId) {
-      console.log('refreshing!...');
-      axios.post('/auth/silent-refresh')
-        .then((res) => {
-          if (res.data) {
-            handleLogin(res.data.access_token);
-            console.log('refreshed!...');
-            // login, signup, find-id, find-pw인 경우 메인페이지로 이동
-            if (['/login', '/signup', 'find-id', 'find-pw']
-              .includes(window.location.pathname)) {
-              window.location.href = '/';
-            }
-          }
-        })
-        .catch((err) => { window.location.href = '/'; });
-    }
-  }, []); // Should be run only once!!
+  // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
+  useAutoLogin(user.userId, handleLogin);
 
   return (
     <ThemeProvider<TruepointTheme> theme={truepointTheme}>

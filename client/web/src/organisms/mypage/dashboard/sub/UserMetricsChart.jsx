@@ -15,6 +15,19 @@ const capitalize = (s) => {
 };
 
 export default function UserMetricsChart({ data, selectedPlatform, valueField = 'viewer' }) {
+  let unit = '명';
+  switch (valueField) {
+    case 'chatCount': unit = '개';
+      break;
+    case 'fan': unit = '명';
+      break;
+    case 'airTime': unit = '시간';
+      break;
+    case 'viewer':
+    default: unit = '명';
+      break;
+  }
+
   useLayoutEffect(() => {
     const chart = am4core.create('chartdiv', am4charts.XYChart);
 
@@ -46,10 +59,7 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
     function createLineSeries(field, color) {
       const lineSeries = chart.series.push(new am4charts.LineSeries());
       // lineSeries.name = field;
-      lineSeries.tooltipText = `${capitalize(field)}: {valueY}명[/]
-      {realName}
-      {title}
-      `;
+      lineSeries.tooltipText = `${capitalize(field)}: {valueY}${unit}[/]\n{realName}\n{title}`;
       lineSeries.tooltip.background.zIndex = 1;
       lineSeries.dataFields.categoryX = 'category';
       lineSeries.dataFields.valueY = field;
@@ -93,8 +103,6 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
     const chartData = [];
 
     const generatedGroupByData = makeGroupedData(data, valueField);
-
-    console.log('generatedGroupByData', generatedGroupByData);
 
     // process data ant prepare it for the chart
     Object.keys(generatedGroupByData).forEach((date) => {
@@ -189,17 +197,20 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
       });
     });
 
-    chart.data = chartData.sort((a, b) => b.startedAt - a.startedAt);
+    chart.data = chartData
+      .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
 
     // last tick
     const range = categoryAxis.axisRanges.create();
-    range.category = chart.data[chart.data.length - 1].category;
+    if (chart.data[chart.data.length - 1]) {
+      range.category = chart.data[chart.data.length - 1].category;
+    }
     range.label.disabled = true;
     range.tick.location = 1;
     range.grid.location = 1;
 
     return () => { chart.dispose(); };
-  }, [data, valueField, selectedPlatform]);
+  }, [data, valueField, selectedPlatform, unit]);
 
   return (
     <div id="chartdiv" style={{ width: '100%', height: '300px' }} />

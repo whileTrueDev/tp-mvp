@@ -8,12 +8,11 @@ import {
 } from '@material-ui/core';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import { UserMetrics } from '../../../interfaces/UserMetrics';
-import UserMetricsChart from './sub/UserMetricsChart';
 import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
 import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
 import TruepointRating from '../../../atoms/Rating/TruepointRating';
 import getPlatformColor from '../../../utils/getPlatformColor';
-import TestChart from './sub/TestChart';
+import UserMetricsChart from './sub/UserMetricsChart';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -95,12 +94,12 @@ export default function UserMetricsSection(): JSX.Element {
           <Avatar
             style={{ width: 150, height: 150, margin: '32px 32px 16px 32px' }}
           />
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <TruepointRating name="read-only" value={0.5} precision={0.5} />
-            <Typography variant="h6" style={{ fontWeight: 'bold', color: 'white' }}>0.5</Typography>
+          <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+            <TruepointRating name="read-only" value={4.5} precision={0.5} readOnly />
+            <Typography variant="caption" style={{ fontWeight: 'bold', color: 'white' }}>(업데이트예정)</Typography>
           </div>
           <div>
-            {!loading && Array
+            {!loading && data && Array
               .from(new Set(data.map((d) => d.platform)))
               .map((platform) => (
                 <Checkbox
@@ -116,13 +115,8 @@ export default function UserMetricsSection(): JSX.Element {
 
         <Grid item xs={9} container direction="column" alignItems="center">
           {!loading && data && data.length > 0 && (
-            // <UserMetricsChart
-            //   data={data}
-            //   valueField={selectedCard}
-            //   selectedPlatform={selectedPlatform}
-            // />
-            <TestChart
-              data={data}
+            <UserMetricsChart
+              data={data.filter((d) => selectedPlatform.includes(d.platform))}
               valueField={selectedCard}
               selectedPlatform={selectedPlatform}
             />
@@ -149,7 +143,7 @@ export default function UserMetricsSection(): JSX.Element {
         </Grid>
 
         <Grid item xs={12} container spacing={2} style={{ marginTop: 32 }}>
-          {!loading && (
+          {!loading && data && (
           <>
             {makeData(data.filter((d) => selectedPlatform.includes(d.platform)))
               .map((card) => (
@@ -184,7 +178,7 @@ export default function UserMetricsSection(): JSX.Element {
               ))}
           </>
           )}
-          {!loading && data.length > 0 && selectedPlatform.length > 0 && (
+          {!loading && data && data.length > 0 && selectedPlatform.length > 0 && (
           <div style={{
             display: 'flex',
             flexDirection: 'column',
@@ -192,8 +186,8 @@ export default function UserMetricsSection(): JSX.Element {
             marginBottom: 16
           }}
           >
-            <Typography variant="caption">* 통계 데이터는 최근 14일간의 데이터를 기준으로 산정합니다.</Typography>
-            <Typography variant="caption">* 그래프 데이터는 최근 14일간 플랫폼별 방송 이력을 기준으로 작성됩니다.</Typography>
+            <Typography variant="caption">* 통계 데이터는 최근 10일간의 데이터를 기준으로 산정합니다.</Typography>
+            <Typography variant="caption">* 그래프 데이터는 최근 10일간 플랫폼별 방송 이력을 기준으로 작성됩니다.</Typography>
           </div>
           )}
         </Grid>
