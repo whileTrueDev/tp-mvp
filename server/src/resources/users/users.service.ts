@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
+import { SubscribeEntity } from './entities/subscribe.entity';
 import { CheckIdType } from '../../interfaces/certification.interface';
 
 @Injectable()
@@ -13,6 +14,8 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(UserTokenEntity)
     private readonly userTokensRepository: Repository<UserTokenEntity>,
+    @InjectRepository(SubscribeEntity)
+    private readonly subscribeRepository: Repository<SubscribeEntity>,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -96,6 +99,51 @@ export class UsersService {
     }
   }
 
+  /*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
+              해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
+  */
+  async findUserSubscribeInfo(userId: string)
+  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
+    const nowDate = (new Date()).toISOString();
+    const validUserList = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :id', { id: userId })
+      .andWhere('subscribe.startAt <= :now', { now: nowDate })
+      .andWhere('subscribe.endAt >= :now', { now: nowDate })
+      .getMany();
+
+    const inValidUserList = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :id', { id: userId })
+      .andWhere('subscribe.startAt > :now OR subscribe.endAt < :now', { now: nowDate })
+      .getMany();
+
+    return { validUserList, inValidUserList };
+  }
+
+  /*
+    input   : userId (로그인한 유저 아이디) ,targetUserId (분석 요청할 유저 아이디)
+    output  : true | false
+  */
+  async checkSubscribeValidation(userId: string, targetId: string): Promise<boolean> {
+    const nowDate = (new Date()).toISOString();
+    const subscribeResult = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :userId', { userId })
+      .andWhere('subscribe.targetUserId = :targetId', { targetId })
+      .andWhere('subscribe.startAt <= :now', { now: nowDate })
+      .andWhere('subscribe.endAt >= :now', { now: nowDate })
+      .getOne();
+
+    if (subscribeResult) {
+      return true;
+    }
+
+    return false;
+  }
+
   // **********************************************
   // User Tokens 관련
 
@@ -119,3 +167,19 @@ export class UsersService {
     return this.userTokensRepository.save(newTokenEntity);
   }
 }
+
+/*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
+              해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
+  */
+// async findUserAllSubscribeInfo(userId: string): Promise<SubscribeEntity[]> {
+//   const targetUserList = await this.subscribeRepository
+//     .createQueryBuilder('subscribe')
+//     .where('subscribe.userId = :id', { id: userId })
+//     .andWhere('subscribe.startAt >= :now', { now: nowDate })
+//     .andWhere('subscribe.end <= :now', { now: nowDate })
+//     .getMany();
+
+//   return targetUserList;
+// }

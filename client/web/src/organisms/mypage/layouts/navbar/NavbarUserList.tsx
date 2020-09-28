@@ -10,6 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import Cached from '@material-ui/icons/Cached';
 // styles
 import useNavbarStyles from './Navbar.style';
+// context
+import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
 const StyledMenu = withStyles((theme) => ({
   paper: {
@@ -42,26 +44,21 @@ const StyledMenuItem = withStyles((theme) => ({
   },
 }))(MenuItem);
 
-interface NavUserInfoInterface{
-  username : string;
-  subscribePerioud: string;
-  isSubscribe: boolean;
-  subscribeStartAt: Date;
-  subscribeEndAt: Date;
+export interface SubscribeUserInfo {
+  userId: string;
+  targetUserId: string;
+  startAt: string;
+  endAt: string;
 }
 
 interface NavbarUserListProps{
-  navUserInfoList: NavUserInfoInterface[];
-  selectedUserIndex: number;
-  handleSelectedUserIndex: (user: NavUserInfoInterface) => void;
+  navUserInfoList: SubscribeUserInfo[];
 }
 
-export default function NavbarUserList(props: NavbarUserListProps): JSX.Element {
-  const {
-    navUserInfoList, handleSelectedUserIndex, selectedUserIndex
-  } = props;
+export default function NavbarUserList(): JSX.Element {
   const classes = useNavbarStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const subscribe = React.useContext(SubscribeContext);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -73,14 +70,14 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
 
   const subscribeUserListItem = (): JSX.Element[] | JSX.Element => {
     // 구독한 유저가 1명이라도 존재 할 경우 (자기 자신 포함)
-    if (navUserInfoList.length > 0) {
-      return navUserInfoList.map((user) => (
+    if (subscribe.validSubscribeUserList.length > 0) {
+      return subscribe.validSubscribeUserList.map((user) => (
         <StyledMenuItem
-          key={user.username}
-          onClick={() => { handleSelectedUserIndex(user); handleClose(); }}
+          key={user.targetUserId}
+          onClick={() => { subscribe.handleCurrTargetUser(user); handleClose(); }}
         >
           <Cached fontSize="small" style={{ marginRight: 16 }} />
-          <ListItemText primary={user.username} />
+          <ListItemText primary={user.targetUserId} />
         </StyledMenuItem>
       ));
     }
@@ -96,7 +93,7 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
     <div>
       <Button onClick={handleClick} className={classes.useNameButton}>
         <Typography variant="h4" className={classes.title}>
-          {navUserInfoList[selectedUserIndex].username}
+          {subscribe.currUser.targetUserId}
         </Typography>
         <Typography variant="h4">
           님

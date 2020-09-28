@@ -4,6 +4,8 @@ import { Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
+// organisms
+import PerioudCompareHero from '../../../organisms/mypage/streamAnalysis/perioud-vs-perioud/PerioudCompareHero';
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [timeLineData, setTimeLine] = useState<any>(null);
@@ -29,6 +31,9 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
 
   return (
     <MypageSectionWrapper>
+      <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
+        <PerioudCompareHero />
+      </Grid>
       <Grid container direction="column" spacing={8}>
         <Grid item container direction="row">
           <Grid item xs={6}>
