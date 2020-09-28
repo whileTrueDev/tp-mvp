@@ -4,13 +4,11 @@ import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 
 import PerioudAnalysisHero from '../../../organisms/mypage/streamAnalysis/perioud-anlaysis/PerioudAnalysisHero';
 
-export default function PeriodAnalysis(userId?: string): JSX.Element {
+export default function PeriodAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       {/* 상단 섹션 */}
-      <PerioudAnalysisHero
-        userId={userId || ''}
-      />
+      <PerioudAnalysisHero />
 
     </MypageSectionWrapper>
   );

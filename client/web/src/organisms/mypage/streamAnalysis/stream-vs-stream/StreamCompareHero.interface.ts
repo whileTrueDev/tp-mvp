@@ -28,7 +28,6 @@ export interface StreamCalendarProps {
   baseStream: DayStreamsInfo|null;
   compareStream: DayStreamsInfo|null;
   setClickedDate: React.Dispatch<React.SetStateAction<Date>>;
-  userId: string;
 }
 
 export interface RangeSelectCaledarProps {

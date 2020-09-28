@@ -20,10 +20,9 @@ import StreamList from './StreamList';
 import useStreamHeroStyles from './StreamCompareHero.style';
 // interface
 import { DayStreamsInfo } from './StreamCompareHero.interface';
-
-interface StreamCompareHeroProps {
-  userId: string;
-}
+// attoms
+import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 
 interface StreamsCompareCategoryResult {
     broad1Count: any;
@@ -41,15 +40,14 @@ interface StreamComapreResult {
   selectedCategory: 'viewer'|'smile'|'chat';
 }
 
-export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Element {
-  const { userId } = props;
+export default function StreamCompareHero(): JSX.Element {
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
   const [baseStream, setBaseStream] = React.useState<DayStreamsInfo|null>(null);
   const [compareStream, setCompareStream] = React.useState<DayStreamsInfo|null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
-  const [snackBar, setSnackBar] = React.useState<boolean>();
+  const [snackBar, setSnackBar] = React.useState<boolean>(false);
   const [anlaysisData, setAnalysisData] = React.useState<StreamComapreResult>();
 
   const [
@@ -88,9 +86,8 @@ export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Ele
         }
       }).then((res) => {
         setAnalysisData(res.data);
-      }).catch((err) => {
-        // console.log(err);
-        // setSnackBar(true);
+      }).catch(() => {
+        setSnackBar(true);
       });
     }
   };
@@ -120,6 +117,14 @@ export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Ele
 
   return (
     <div className={classes.root}>
+      {getStreamsError
+      && (
+      <ErrorSnackBar
+        message="오류가 발생 했습니다. 다시 시도해주세요."
+      />
+      )}
+      {getStreamsLoading
+      && <CenterLoading />}
       <Divider className={classes.titleDivider} />
       <Grid container direction="column">
         <Grid item>
@@ -172,7 +177,6 @@ export default function StreamCompareHero(props:StreamCompareHeroProps): JSX.Ele
                 setClickedDate={setClickedDate}
                 baseStream={baseStream}
                 compareStream={compareStream}
-                userId={userId}
               />
 
             </Grid>

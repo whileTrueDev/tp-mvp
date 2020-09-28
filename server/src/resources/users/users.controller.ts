@@ -80,7 +80,7 @@ export class UsersController {
     output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
   */
   @Get('/subscribe-users')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   getUserValidSubscribeInfo(
     @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
   )

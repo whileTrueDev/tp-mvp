@@ -17,18 +17,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface ErrorSnackBarPorps {
-  open: boolean;
   message: string;
 }
 
 export default function ErrorSnackBar(props: ErrorSnackBarPorps) {
   const classes = useStyles();
-  const { open, message } = props;
-  const [snackBarOpen, setSnackBarOpen] = React.useState<boolean>();
-
-  React.useEffect(() => {
-    setSnackBarOpen(open);
-  }, [open]);
+  const { message } = props;
+  const [snackBarOpen, setSnackBarOpen] = React.useState<boolean>(true);
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -42,7 +37,7 @@ export default function ErrorSnackBar(props: ErrorSnackBarPorps) {
     <div className={classes.root}>
       <Snackbar
         open={snackBarOpen}
-        autoHideDuration={1000}
+        autoHideDuration={1500}
         style={{
           left: '70%',
           bottom: '70%'

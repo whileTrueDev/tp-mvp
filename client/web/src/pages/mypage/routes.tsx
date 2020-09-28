@@ -16,14 +16,13 @@ import PeriodVsPeriodAnalysis from './stream-analysis/PeriodVsPeriodAnalysis';
 import VideoAnalysis from './channel-analysis/VideoAnalysis';
 import Settings from './my-office/Settings';
 import Subscribe from './my-office/Subscribe';
-import LayoutDefault from '../../organisms/mypage/layouts/LayoutDefault';
 
 export interface MypageRoute {
   path: string;
   name: string;
   layout: string;
   icon?: (props: SvgIconProps) => JSX.Element;
-  component: (userId?: string) => JSX.Element;
+  component?: () => JSX.Element;
   noTab?: boolean; // sidebar에 나타나는가?
   nested?: boolean; // 하위 라우트가 있는가?
   subRoutes?: MypageRoute[]; // 하위 라우트의 정보
@@ -48,7 +47,6 @@ const dashboardRoutes: MypageRoute[] = [
     path: '/stream-analysis',
     name: '방송 분석',
     icon: StreamAnalysisIcon,
-    component: LayoutDefault, // 해당 페이지 컴포넌트를 여기에
     layout: '/mypage',
     nested: true,
     subRoutes: [
@@ -76,7 +74,6 @@ const dashboardRoutes: MypageRoute[] = [
     path: '/channel-analysis',
     name: '채널 분석',
     icon: ChannelAnalysisIcon,
-    component: LayoutDefault, // 해당 페이지 컴포넌트를 여기에
     layout: '/mypage',
     nested: true,
     subRoutes: [
@@ -100,7 +97,6 @@ const dashboardRoutes: MypageRoute[] = [
     layout: '/mypage',
     icon: MyInfoIcon,
     nested: true,
-    component: LayoutDefault, // 해당 페이지 컴포넌트를 여기에
     subRoutes: [
       {
         path: '/settings',

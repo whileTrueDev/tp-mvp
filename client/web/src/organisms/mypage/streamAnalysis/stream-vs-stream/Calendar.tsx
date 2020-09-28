@@ -14,13 +14,16 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
 import { StreamCalendarProps, DayStreamsInfo } from './StreamCompareHero.interface';
+// context
+import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
     clickedDate, handleDayStreamList, setClickedDate,
-    compareStream, baseStream, userId
+    compareStream, baseStream,
   } = props;
   // const classes = useStyles();
+  const subscribe = React.useContext(SubscribeContext);
   const [month, setMonth] = React.useState<Date>();
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
@@ -36,7 +39,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   React.useEffect(() => {
     excuteGetStreams({
       params: {
-        userId,
+        userId: subscribe.currUser.targetUserId,
         startDate: clickedDate.toISOString(),
       }
     }).then((result) => {
@@ -44,7 +47,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
       );
     });
-  }, []);
+  }, [subscribe.currUser]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);

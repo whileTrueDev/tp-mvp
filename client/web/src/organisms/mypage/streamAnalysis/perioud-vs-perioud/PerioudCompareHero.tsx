@@ -13,15 +13,15 @@ import CheckBoxGroup from './CheckBoxGroup';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 // styles
 import usePerioudCompareStyles from './PerioudCompareHero.style';
+// attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
+// contexterLoa
+import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-interface PerioudCompareHeroProps {
-  userId: string;
-}
-
-export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.Element {
-  const { userId } = props;
+export default function PerioudCompareHero(): JSX.Element {
   const classes = usePerioudCompareStyles();
+  const subscribe = React.useContext(SubscribeContext);
   const [basePerioud, setBasePerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [comparePerioud, setComparePerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [checkStateGroup, setCheckStateGroup] = React.useState({
@@ -67,10 +67,9 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
   const handleAnalysisButton = () => {
     // 기간 2개 + 분석 항목 (viewer | chatCount | smileCount)
     const selectedCategory = Object.keys(checkStateGroup);
-
     excuteGetAnalysis({
       params: {
-        userId,
+        userId: subscribe.currUser.targetUserId,
         basePerioud,
         comparePerioud,
         category: selectedCategory[Object.values(checkStateGroup).indexOf(true)]
@@ -82,6 +81,14 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
 
   return (
     <div className={classes.root}>
+      {getAnalysisLoading
+        && <CenterLoading />}
+      {getAnalysisError
+      && (
+      <ErrorSnackBar
+        message="오류가 발생했습니다. 다시 시도해주세요."
+      />
+      )}
       <Divider className={classes.titleDivider} />
       <Typography className={classes.mainTitle}>
         기간 대 기간 분석
@@ -156,9 +163,6 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
         smile={checkStateGroup.smile}
         handleCheckStateChange={handleCheckStateChange}
       />
-
-      {(getAnalysisError || getAnalysisLoading)
-        && <CenterLoading />}
 
       <Grid container justify="flex-end">
         <Button

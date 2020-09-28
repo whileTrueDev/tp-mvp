@@ -25,13 +25,10 @@ import {
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
+// context
+import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-interface PerioudAnalysisHeroProps {
-  userId: string;
-}
-
-export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : JSX.Element {
-  const { userId } = props;
+export default function PerioudAnalysisHero() : JSX.Element {
   const classes = usePerioudAnalysisHeroStyle();
   const [perioud, setPerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);
@@ -43,6 +40,7 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
   });
   const [anlaysisData, setAnalysisData] = React.useState<OrganizedData>();
   const [snackBar, setSnackBar] = React.useState<boolean>(false);
+  const subscribe = React.useContext(SubscribeContext);
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -85,7 +83,7 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
     if (perioud[0] && perioud[1]) {
       excuteGetStreams({
         params: {
-          userId,
+          userId: subscribe.currUser.targetUserId,
           startDate: perioud[0].toISOString(),
           endDate: perioud[1].toISOString(),
         },
@@ -94,12 +92,6 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
       });
     }
   }, [perioud]);
-
-  React.useEffect(() => {
-    if (snackBar === true) {
-      setSnackBar(false);
-    }
-  }, [setSnackBar, snackBar]);
 
   const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
     setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));
@@ -132,10 +124,15 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
 
   return (
     <div className={classes.root}>
+      {getAnalysisError
+      && (
       <ErrorSnackBar
-        open={!!getAnalysisError || snackBar}
         message="오류가 발생 했습니다. 다시 시도해주세요."
       />
+      )}
+      {getAnalysisLoading
+      && <CenterLoading />}
+
       <Divider className={classes.titleDivider} />
       <Grid container direction="column">
         <Grid item>
