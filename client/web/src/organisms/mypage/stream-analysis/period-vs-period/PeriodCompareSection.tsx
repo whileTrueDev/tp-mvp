@@ -30,18 +30,17 @@ export default function PeriodCompareSection(): JSX.Element {
     smile: false,
     // searchKeyWord: string,
   });
-  // 서버 수정 코드 확인 후 타입 정의 할 것.
-  /* 분석 결과 */
-  const [resultData, setResultData] = useState<any[]>();
+  /* 분석 결과 데이터 */
+  const [analysisResultData, setResultData] = useState();
 
   const [
     {
       data: getAnalysisData,
       loading: getAnalysisLoading,
       error: getAnalysisError
-    }, excuteGetAnalysis] = useAxios<any[]>({
-      url: 'http://localhost:3000/stream-analysis/terms',
-    }, { manual: true });
+    }, excuteGetAnalysis] = useAxios({
+    url: 'http://localhost:3000/stream-analysis/terms',
+  }, { manual: true });
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -81,6 +80,11 @@ export default function PeriodCompareSection(): JSX.Element {
       if (res.data) setResultData(res.data);
     });
   };
+
+  /* 분석 결과 데이터 확인 코드 */
+  React.useEffect(() => {
+    console.log(analysisResultData);
+  }, [analysisResultData]);
 
   return (
     <div className={classes.root}>

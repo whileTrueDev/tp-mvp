@@ -47,8 +47,7 @@ export default function StreamCompareSection(): JSX.Element {
   const [baseStream, setBaseStream] = React.useState<DayStreamsInfo|null>(null);
   const [compareStream, setCompareStream] = React.useState<DayStreamsInfo|null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
-  const [snackBar, setSnackBar] = React.useState<boolean>(false);
-  const [anlaysisData, setAnalysisData] = React.useState<StreamComapreResult>();
+  const [analysisResultData, setResultData] = React.useState<StreamComapreResult>();
 
   const [
     {
@@ -86,9 +85,7 @@ export default function StreamCompareSection(): JSX.Element {
         }
       }).then((res) => {
         console.log(res.data);
-        setAnalysisData(res.data);
-      }).catch(() => {
-        setSnackBar(true);
+        setResultData(res.data);
       });
     }
   };

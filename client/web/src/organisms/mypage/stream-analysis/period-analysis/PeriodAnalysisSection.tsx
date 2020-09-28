@@ -38,8 +38,8 @@ export default function PeriodAnalysisSection() : JSX.Element {
     smile: false,
     // searchKeyWord: string,
   });
-  const [anlaysisData, setAnalysisData] = React.useState<OrganizedData>();
-  const [snackBar, setSnackBar] = React.useState<boolean>(false);
+  /* 분석 결과 데이터 */
+  const [analysisResultData, setResultData] = React.useState<OrganizedData>();
   const subscribe = React.useContext(SubscribeContext);
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,9 +105,6 @@ export default function PeriodAnalysisSection() : JSX.Element {
     }));
 
     const selectedCategory = Object.entries(checkStateGroup).filter((state) => state[1] === true);
-    if (selectedCategory.length < 1) {
-      setSnackBar(true);
-    }
 
     excuteGetAnalysis({
       /* request params */
@@ -116,9 +113,7 @@ export default function PeriodAnalysisSection() : JSX.Element {
         category: selectedCategory[0][0]
       }
     }).then((res) => {
-      setAnalysisData(res.data);
-    }).catch(() => {
-      setSnackBar(true);
+      setResultData(res.data);
     });
   };
 
