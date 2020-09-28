@@ -1,6 +1,6 @@
 export interface RangeSelectCaledarProps {
-  perioud: Date[];
-  handlePerioud: (startAt: Date, endAt: Date, base?: true) => void;
+  period: Date[];
+  handleperiod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
 }
 

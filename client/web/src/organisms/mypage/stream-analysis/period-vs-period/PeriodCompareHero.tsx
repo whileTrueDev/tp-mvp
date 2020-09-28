@@ -7,23 +7,23 @@ import {
 import useAxios from 'axios-hooks';
 // subcomponents
 import RangeSelectCaledar from './RangeSelectCalendar';
-import PerioudCompareTextField from './PerioudCompareTextField';
+import periodCompareTextField from './PeriodCompareTextField';
 import CheckBoxGroup from './CheckBoxGroup';
 // svg icons
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 // styles
-import usePerioudCompareStyles from './PerioudCompareHero.style';
+import useperiodCompareStyles from './PeriodCompareHero.style';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // contexterLoa
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-export default function PerioudCompareHero(): JSX.Element {
-  const classes = usePerioudCompareStyles();
+export default function periodCompareHero(): JSX.Element {
+  const classes = useperiodCompareStyles();
   const subscribe = React.useContext(SubscribeContext);
-  const [basePerioud, setBasePerioud] = React.useState<Date[]>(new Array<Date>(2));
-  const [comparePerioud, setComparePerioud] = React.useState<Date[]>(new Array<Date>(2));
+  const [baseperiod, setBaseperiod] = React.useState<Date[]>(new Array<Date>(2));
+  const [compareperiod, setCompareperiod] = React.useState<Date[]>(new Array<Date>(2));
   const [checkStateGroup, setCheckStateGroup] = React.useState({
     viewer: false,
     chat: false,
@@ -55,12 +55,12 @@ export default function PerioudCompareHero(): JSX.Element {
     });
   };
 
-  const handlePerioud = (startAt: Date, endAt: Date, base?: true) => {
+  const handleperiod = (startAt: Date, endAt: Date, base?: true) => {
     const per = [startAt, endAt];
     if (base) {
-      setBasePerioud(per);
+      setBaseperiod(per);
     } else {
-      setComparePerioud(per);
+      setCompareperiod(per);
     }
   };
 
@@ -70,8 +70,8 @@ export default function PerioudCompareHero(): JSX.Element {
     excuteGetAnalysis({
       params: {
         userId: subscribe.currUser.targetUserId,
-        basePerioud,
-        comparePerioud,
+        baseperiod,
+        compareperiod,
         category: selectedCategory[Object.values(checkStateGroup).indexOf(true)]
       }
     }).then((res) => {
@@ -102,10 +102,10 @@ export default function PerioudCompareHero(): JSX.Element {
       <Grid container direction="row" justify="center">
         <Grid item className={classes.bodyContainer}>
           {/* 달력 연동 기간 텍스트 박스 */}
-          <PerioudCompareTextField
+          <periodCompareTextField
             base
-            perioud={basePerioud}
-            handlePerioud={handlePerioud}
+            period={baseperiod}
+            handleperiod={handleperiod}
           />
           <Paper elevation={0} className={classes.bodyPapper}>
             <Typography className={classes.bodyTitle}>
@@ -120,8 +120,8 @@ export default function PerioudCompareHero(): JSX.Element {
             </Typography>
             {/* 텍스트 박스 연동 기간 선택 달력 */}
             <RangeSelectCaledar
-              handlePerioud={handlePerioud}
-              perioud={basePerioud}
+              handleperiod={handleperiod}
+              period={baseperiod}
               base
             />
           </Paper>
@@ -132,9 +132,9 @@ export default function PerioudCompareHero(): JSX.Element {
         </Typography>
         <Grid item className={classes.bodyContainer}>
           {/* 달력 연동 기간 텍스트 박스 */}
-          <PerioudCompareTextField
-            perioud={comparePerioud}
-            handlePerioud={handlePerioud}
+          <periodCompareTextField
+            period={compareperiod}
+            handleperiod={handleperiod}
           />
           <Paper elevation={0} className={classes.bodyPapper}>
             <Typography className={classes.bodyTitle}>
@@ -146,8 +146,8 @@ export default function PerioudCompareHero(): JSX.Element {
             </Typography>
             {/* 텍스트 박스 연동 기간 선택 달력 */}
             <RangeSelectCaledar
-              perioud={comparePerioud}
-              handlePerioud={handlePerioud}
+              period={compareperiod}
+              handleperiod={handleperiod}
             />
           </Paper>
         </Grid>
@@ -171,8 +171,8 @@ export default function PerioudCompareHero(): JSX.Element {
           onClick={handleAnalysisButton}
           disabled={
             (Object.values(checkStateGroup).indexOf(true) < 0)
-            || !(basePerioud[0] && basePerioud[1])
-            || !(comparePerioud[0] && comparePerioud[1])
+            || !(baseperiod[0] && baseperiod[1])
+            || !(compareperiod[0] && compareperiod[1])
           }
         >
           분석하기

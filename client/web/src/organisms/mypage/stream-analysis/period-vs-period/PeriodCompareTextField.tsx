@@ -9,7 +9,7 @@ import moment from 'moment';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interfaces
-import { PerioudCompareTextBoxProps, ISODateTextFieldError } from './PerioudCompareHero.interface';
+import { periodCompareTextBoxProps, ISODateTextFieldError } from './PeriodCompareHero.interface';
 // custom hooks
 import useEventTargetValue from '../../../../utils/hooks/useEventTargetValue';
 
@@ -40,9 +40,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export default function PerioudCompareTextField(props: PerioudCompareTextBoxProps): JSX.Element {
+export default function periodCompareTextField(props: periodCompareTextBoxProps): JSX.Element {
   const classes = useStyles();
-  const { base, perioud, handlePerioud } = props;
+  const { base, period, handleperiod } = props;
   const start = useEventTargetValue();
   const end = useEventTargetValue();
   const [startDateError, setStartDateError] = React.useState<ISODateTextFieldError>({
@@ -75,9 +75,9 @@ export default function PerioudCompareTextField(props: PerioudCompareTextBoxProp
           const endDate = new Date(end.value);
 
           if (startDate.getTime() <= endDate.getTime()) {
-            handlePerioud(new Date(start.value), new Date(end.value), base);
+            handleperiod(new Date(start.value), new Date(end.value), base);
           } else {
-            handlePerioud(new Date(end.value), new Date(start.value), base);
+            handleperiod(new Date(end.value), new Date(start.value), base);
           }
         }
       }
@@ -85,13 +85,13 @@ export default function PerioudCompareTextField(props: PerioudCompareTextBoxProp
   }, [start.value, end.value]);
 
   React.useEffect(() => {
-    if (perioud[0] && perioud[1]
-      && moment(perioud[0].toISOString(), 'YYYY-MM-DD').isValid()
-      && moment(perioud[1].toISOString(), 'YYYY-MM-DD').isValid()) {
-      start.setValue(perioud[0].toISOString().slice(0, 10));
-      end.setValue(perioud[1].toISOString().slice(0, 10));
+    if (period[0] && period[1]
+      && moment(period[0].toISOString(), 'YYYY-MM-DD').isValid()
+      && moment(period[1].toISOString(), 'YYYY-MM-DD').isValid()) {
+      start.setValue(period[0].toISOString().slice(0, 10));
+      end.setValue(period[1].toISOString().slice(0, 10));
     }
-  }, [perioud]);
+  }, [period]);
 
   React.useEffect(() => {
     const nowDate = new Date();

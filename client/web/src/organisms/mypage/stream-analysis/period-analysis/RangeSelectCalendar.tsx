@@ -13,7 +13,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interface
-import { RangeSelectCaledarProps } from './PerioudAnalysisHero.interface';
+import { RangeSelectCaledarProps } from './PeriodAnalysisHero.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   leftCircleBase: {
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    perioud, handlePerioud, base,
+    period, handleperiod, base,
   } = props;
   const classes = useStyles();
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
@@ -55,11 +55,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
 
   React.useEffect(() => {
-    if (perioud.length > 1) {
-      setPoint1(perioud[0]);
-      setPoint2(perioud[1]);
+    if (period.length > 1) {
+      setPoint1(period[0]);
+      setPoint2(period[1]);
     }
-  }, [perioud]);
+  }, [period]);
 
   /*
     순서를 바꾸더라도 선택 기능 유지
@@ -75,9 +75,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
       if (point1.getTime() <= newDate.getTime()) {
-        handlePerioud(point1, newDate, base);
+        handleperiod(point1, newDate, base);
       } else {
-        handlePerioud(newDate, point1, base);
+        handleperiod(newDate, point1, base);
       }
     } else if (point1 !== null && point2 !== null) {
       setPoint1(null); setPoint2(null);

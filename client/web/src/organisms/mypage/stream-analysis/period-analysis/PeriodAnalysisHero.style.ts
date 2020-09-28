@@ -1,6 +1,6 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 
-const usePerioudAnalysisHeroStyles = makeStyles((theme: Theme) => ({
+const useperiodAnalysisHeroStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
     marginTop: '135px',
@@ -91,4 +91,4 @@ const usePerioudAnalysisHeroStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export default usePerioudAnalysisHeroStyles;
+export default useperiodAnalysisHeroStyles;

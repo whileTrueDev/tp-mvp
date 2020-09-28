@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
-import Button from '@material-ui/core/Button';
+import { Button, Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';
 
 // organisms
-import StreamCompareHero from '../../../organisms/mypage/streamAnalysis/stream-vs-stream/StreamCompareHero';
-import StreamCompareBody from '../../../organisms/mypage/streamAnalysis/stream-vs-stream/StreamCompareBody';
+import StreamCompareHero from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareHero';
+import StreamCompareBody from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareBody';
 
 export default function StreamAnalysis(): JSX.Element {
   const [data, setData] = useState<metricInterface[]>([]);

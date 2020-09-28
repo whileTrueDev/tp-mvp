@@ -101,8 +101,8 @@ export class UsersService {
 
   /*
     input   : userId (로그인한 유저 아이디) 
-    output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
-              해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
+    output  : [{userId, subscribeperiod}, {userId, subscribeperiod} ... ]
+              해당 유저가 구독한 유저 정보 리스트 {userId, subscribeperiod}
   */
   async findUserSubscribeInfo(userId: string)
   : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
@@ -170,8 +170,8 @@ export class UsersService {
 
 /*
     input   : userId (로그인한 유저 아이디) 
-    output  : [{userId, subscribePerioud}, {userId, subscribePerioud} ... ]
-              해당 유저가 구독한 유저 정보 리스트 {userId, subscribePerioud}
+    output  : [{userId, subscribeperiod}, {userId, subscribeperiod} ... ]
+              해당 유저가 구독한 유저 정보 리스트 {userId, subscribeperiod}
   */
 // async findUserAllSubscribeInfo(userId: string): Promise<SubscribeEntity[]> {
 //   const targetUserList = await this.subscribeRepository
