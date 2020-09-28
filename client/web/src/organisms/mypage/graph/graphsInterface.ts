@@ -17,6 +17,7 @@ export interface metricInterface {
 export interface timelineGraphInterface {
   smile_count: number,
   chat_count: number,
+  viewer?: number,
   date: number
 }
 

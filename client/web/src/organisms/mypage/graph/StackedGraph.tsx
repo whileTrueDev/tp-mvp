@@ -5,6 +5,7 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import { metricGraphInterface } from './graphsInterface';
+import graphColor from './Color';
 
 export default function Index({ name, comeData }:
   {name: string, comeData: metricGraphInterface[]}): JSX.Element {
@@ -14,7 +15,7 @@ export default function Index({ name, comeData }:
   useLayoutEffect(() => {
     // Create chart instance
     const chart = am4core.create(`chartdiv_${name}`, am4charts.XYChart);
-    chart.paddingRight = 20;
+    chart.paddingRight = 18;
     chart.paddingLeft = 0;
 
     chart.data = comeData;
@@ -60,12 +61,8 @@ export default function Index({ name, comeData }:
       return series;
     }
 
-    const interfaceColors = new am4core.InterfaceColorSet();
-    const positiveColor = interfaceColors.getFor('positive');
-    const negativeColor = interfaceColors.getFor('negative');
-
-    createSeries('broad1', 'A', negativeColor.lighten(0.5));
-    createSeries('broad2', 'B', positiveColor);
+    createSeries('broad1', 'A', am4core.color(graphColor.broad1));
+    createSeries('broad2', 'B', am4core.color(graphColor.broad2));
 
     chartRef.current = chart;
 

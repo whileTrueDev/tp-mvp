@@ -18,8 +18,8 @@ export default function StreamAnalysis(): JSX.Element {
       params: {
         streams:
         [
-          { streamId: 'streamId1', platform: 'twitch' },
-          { streamId: 'streamId2', platform: 'twitch' }
+          { streamId: 's1', platform: 'afreeca' },
+          { streamId: 's5', platform: 'afreeca' }
         ]
       }
     })

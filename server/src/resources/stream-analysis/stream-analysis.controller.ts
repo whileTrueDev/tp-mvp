@@ -43,16 +43,27 @@ export class StreamAnalysisController {
               }
     output  :  { chat_count , smile_count , viewer }
   */
-  @Get('terms')
-  @UseGuards(JwtAuthGuard)
+  @Get('periods')
+  // @UseGuards(JwtAuthGuard)
   getTermStreamsInfo(
-    @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
+  // @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
   : Promise<StreamsInfo[]> {
-    return this.streamAnalysisService.findStreamInfoByTerm(
-      findTermRequest.userId,
-      findTermRequest.startAt,
-      findTermRequest.endAt
+    return this.streamAnalysisService.findStreamInfoByPeriods(
+      // findTermRequest.userId,
+      // findTermRequest.startAt,
+      // findTermRequest.endAt
+      'userId1',
+      [
+        {
+          startAt: '2020-00-00T00:00:00',
+          endAt: '2020-09-20T00:00:00'
+        },
+        {
+          startAt: '2020-00-00T00:00:00',
+          endAt: '2020-10-20T00:00:00'
+        },
+      ]
     );
   }
 

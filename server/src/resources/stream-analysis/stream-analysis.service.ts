@@ -17,7 +17,6 @@ import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
 
-// 
 const calculateStreamData = (streamData : StreamsInfo[]) => {
   const template = [
     {
@@ -82,7 +81,7 @@ export class StreamAnalysisService {
   async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId)
   : Promise<any> {
     if (streams[0]) {
-      const streamInfoBase: StreamsInfo = await this.streamSummaryRepository
+      const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
         .innerJoin(
           StreamsEntity,
@@ -98,7 +97,7 @@ export class StreamAnalysisService {
         });
 
       if (streams[1]) {
-        const streamInfoCompare: StreamsInfo = await this.streamSummaryRepository
+        const streamInfoCompare: StreamsInfo[] = await this.streamSummaryRepository
           .createQueryBuilder('streamSummary')
           .innerJoin(
             StreamsEntity,
@@ -114,6 +113,9 @@ export class StreamAnalysisService {
           });
 
         // 비교분석을 위한 데이터 전처리
+        if (streamInfoBase.length === 0 || streamInfoCompare.length === 0) {
+          return [null, null];
+        }
         const streamData = [streamInfoBase[0], streamInfoCompare[0]];
         return calculateStreamData(streamData);
       }
@@ -126,25 +128,55 @@ export class StreamAnalysisService {
     input   :  startAt , endAt , userId
     output  :  chat_count , smile_count , viewer or subscribe_count
   */
-  async findStreamInfoByTerm(userId: string, startAt: string, endAt: string)
-  : Promise<StreamsInfo[]> {
-    const streamsTermData: any[] = await this.streamSummaryRepository
-      .createQueryBuilder('streamSummary')
-      .innerJoin(
-        StreamsEntity,
-        'streams',
-        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+  async findStreamInfoByPeriods(userId: string, periods: {startAt: string, endAt: string}[])
+  : Promise<any> {
+    // 전달되는 형태가 두개의 기간으로 전달되어야한다.
+    return new Promise((resolve, reject) => {
+      Promise.all(
+        periods.map(({ startAt, endAt }) => {
+          // 1. 곡선 그래프를 위한 데이터 구현
+          const query = `
+          SELECT ROUND(AVG(viewer)) as viewer, 
+            ROUND(AVG(chatCount)) as chatCount,  
+            ROUND(AVG(smileCount)) AS smileCount, 
+            DATE_FORMAT(startedAt, "%Y-%m-%d") AS date
+          FROM Streams JOIN StreamSummary
+          USING (streamId, platform)
+          WHERE userId IN (
+            SELECT targetUserId 
+            FROM Subscribe 
+            WHERE userId = ?
+          )
+          AND startedAt BETWEEN ? AND ?
+          GROUP BY date
+          ORDER BY date`;
+          return this.streamSummaryRepository
+            .query(query, [userId, startAt, endAt])
+            .catch((err) => {
+              throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+            });
+        })
       )
-      .select(['streamSummary.*', 'viewer', 'chatCount'])
-      .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
-      .andWhere('streams.startedAt <= :endDate', { endDate: endAt })
-      .execute()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
-      });
+        .then((timeline) => {
+          // 2. 지표별 그래프를 위한 데이터 구현
+          const metrics = timeline.map((period) => period.reduce((sum, element) => [
+            sum[0] + Number(element.viewer),
+            sum[1] + Number(element.chatCount),
+            sum[2] + Number(element.smileCount)
+          ], [0, 0, 0]))
+            .map((sums, index) => ({
+              viewer: Math.round(sums[0] / timeline[index].length),
+              chatCount: Math.round(sums[1] / timeline[index].length),
+              smileCount: Math.round(sums[2] / timeline[index].length),
+            }));
 
-    return streamsTermData;
+          resolve({
+            timeline,
+            type: 'periods',
+            metrics: calculateStreamData(metrics)
+          });
+        });
+    });
   }
 
   /*
@@ -228,17 +260,26 @@ export class StreamAnalysisService {
         out = data.time_line.map((element, inindex) => {
           const standard = new Date(data.start_date);
           standard.setSeconds(standard.getSeconds() + (30 * inindex));
-          //
-          return { ...element, date: standard };
+          if (inindex % 6 === 0) {
+            return ({ ...element, date: standard, viewer: Math.random() * 1000 });
+          }
+          return ({ ...element, date: standard });
+
+          // return { ...element, date: standard };
         });
       } else {
         data.time_line.forEach((element, inindex) => {
           const standard = new Date(data.start_date);
           standard.setSeconds(standard.getSeconds() + (30 * inindex));
-          out.push({ ...element, date: standard });
+          if (inindex % 6 === 0) {
+            out.push({ ...element, date: standard, viewer: Math.round(Math.random() * 1000) });
+          } else {
+            out.push({ ...element, date: standard });
+          }
         });
       }
     });
+
     return {
       start_date: '2020-09-16 18:21:00',
       end_date: '2020-09-19 16:50:00',

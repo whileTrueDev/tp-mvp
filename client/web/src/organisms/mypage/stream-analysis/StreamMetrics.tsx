@@ -3,13 +3,11 @@ import {
   Grid, Typography, Card, CardContent,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import PermIdentityIcon from '@material-ui/icons/PermIdentity';
-import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
-import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import shortid from 'shortid';
 import classnames from 'classnames';
 import StackedGraph from '../graph/StackedGraph';
 import { metricInterface } from '../graph/graphsInterface';
+import MetricIcons from '../../../atoms/Graph-icons/MetricIcons';
 
 const useStyles = makeStyles(() => ({
   center: {
@@ -22,12 +20,6 @@ const useStyles = makeStyles(() => ({
     fontSize: '22px',
     fontWeight: 'bold',
     color: '#575757'
-  },
-  icon: {
-    width: '50.5px',
-    height: '50.5px',
-    // fontSize: '50px',
-    color: '#d9dbe6'
   },
   card: {
     width: '100%',
@@ -50,21 +42,22 @@ const useStyles = makeStyles(() => ({
 interface StreamAnalysisPropInterface {
   open: boolean;
   metricData: metricInterface[];
+  type?: string;
 }
 
 export default function StreamAnalysis(
-  { open, metricData }: StreamAnalysisPropInterface
+  { open, metricData, type }: StreamAnalysisPropInterface
 ): JSX.Element {
   const classes = useStyles();
 
   const iconArray: any[] = [
-    <PermIdentityIcon className={classes.icon} key="viewer" />,
-    <InsertEmoticonIcon className={classes.icon} key="smile" />,
-    <QuestionAnswerIcon className={classes.icon} key="chat" />
+    <MetricIcons name="viewer" key="viewer" />,
+    <MetricIcons name="smile" key="smile" />,
+    <MetricIcons name="chat" key="chat" />
   ];
 
   return (
-    <Grid container direction="column" spacing={10}>
+    <Grid container direction="column" spacing={8}>
       {/* {!open && metricData && (
         <Grid item className={classes.center}>
           <CircularProgress />
@@ -88,7 +81,13 @@ export default function StreamAnalysis(
                      <Grid container direction="row" justify="center" spacing={1}>
                        <Grid item>
                          <Typography className={classes.main}>
-                           1번 방송이 2번 방송보다
+                           1번
+                           {' '}
+                           {type ? '기간' : '방송' }
+                           이 2번
+                           {' '}
+                           {type ? '기간' : '방송' }
+                           보다
                            {' '}
                            {element.title}
                            가
@@ -109,7 +108,9 @@ export default function StreamAnalysis(
                      <Grid container direction="row" justify="center" spacing={2}>
                        <Grid item>
                          <Typography className={classes.main}>
-                           1번 방송
+                           1번
+                           {' '}
+                           {type ? '기간' : '방송' }
                          </Typography>
                        </Grid>
                        <Grid item>
@@ -125,7 +126,9 @@ export default function StreamAnalysis(
                        </Grid>
                        <Grid item>
                          <Typography className={classes.main}>
-                           2번 방송
+                           2번
+                           {' '}
+                           {type ? '기간' : '방송' }
                          </Typography>
                        </Grid>
                        <Grid item>

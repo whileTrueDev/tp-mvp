@@ -17,7 +17,7 @@ import { UserTokenEntity } from './entities/userToken.entity';
     UserEntity,
     UserTokenEntity,
   ]),
-  forwardRef(() => AuthModule), // Resolve circular dependencies between Moduels
+  forwardRef(() => AuthModule), // Resolve circular dependencies between Modules
   ],
   providers: [UsersService],
   controllers: [UsersController],
