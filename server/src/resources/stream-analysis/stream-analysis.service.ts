@@ -5,13 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   Repository,
 } from 'typeorm';
-import dataArray from './data';
 
 // aws
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
+import dataArray from './data';
 // logic class
 import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
@@ -385,7 +385,7 @@ export class StreamAnalysisService {
         if (streamInfoBase.length === 0 || streamInfoCompare.length === 0) {
           return [null, null];
         }
-        
+
         const streamData = [streamInfoBase[0], streamInfoCompare[0]];
         return calculateStreamData(streamData);
       }

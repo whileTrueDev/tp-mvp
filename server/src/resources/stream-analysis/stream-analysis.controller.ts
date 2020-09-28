@@ -67,29 +67,31 @@ export class StreamAnalysisController {
 
   @Get('terms')
   getTermStreamsInfo(
-  // @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
+  @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
   : Promise<StreamsInfo[]> {
     return this.streamAnalysisService.findStreamInfoByPeriods(
-      // findTermRequest.userId,
-      // findTermRequest.startAt,
-      // findTermRequest.endAt
-      'userId1',
+      findTermRequest.userId,
       [
-        {
-          startAt: '2020-00-00T00:00:00',
-          endAt: '2020-09-20T00:00:00'
-        },
-        {
-          startAt: '2020-00-00T00:00:00',
-          endAt: '2020-10-20T00:00:00'
-        },
+        { startAt: findTermRequest.baseStartAt, endAt: findTermRequest.baseEndAt },
+        { startAt: findTermRequest.compareStartAt, endAt: findTermRequest.compareEndAt },
       ]
+      // 'userId1',
+      // [
+      //   {
+      //     startAt: '2020-00-00T00:00:00',
+      //     endAt: '2020-09-20T00:00:00'
+      //   },
+      //   {
+      //     startAt: '2020-00-00T00:00:00',
+      //     endAt: '2020-10-20T00:00:00'
+      //   },
+      // ]
     );
   }
-  
+
   @Get('periods')
-   getPeriodsStreamsInfo(
+  getPeriodsStreamsInfo(
   // @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
   : Promise<StreamsInfo[]> {
@@ -143,15 +145,14 @@ export class StreamAnalysisController {
     @Query(new ValidationPipe()) findUserStatisticRequest: FindUserStatisticInfo
  )
   : Promise<UserStatisticInfo> {
-    return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
-      findUserStatisticRequest.userId,
-      findUserStatisticRequest.nowDate
-    );
-  }
+   return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
+     findUserStatisticRequest.userId,
+     findUserStatisticRequest.nowDate
+   );
+ }
 
   @Get('test')
   getData() :Promise<any> {
     return this.streamAnalysisService.getData();
   }
-
 }

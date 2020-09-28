@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';

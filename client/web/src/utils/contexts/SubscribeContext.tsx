@@ -1,6 +1,7 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
 import { AxiosError } from 'axios';
+import AuthContext from './AuthContext';
 
 export interface SubscribeUserInfo {
   userId: string;

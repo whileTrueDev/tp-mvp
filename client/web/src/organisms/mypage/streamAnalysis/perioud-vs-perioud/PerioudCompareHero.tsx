@@ -65,16 +65,19 @@ export default function PerioudCompareHero(): JSX.Element {
   };
 
   const handleAnalysisButton = () => {
-    // 기간 2개 + 분석 항목 (viewer | chatCount | smileCount)
+    // 타겟 유저 아이디 + 기간 2개 + 분석 항목 (viewer | chatCount | smileCount)
     const selectedCategory = Object.keys(checkStateGroup);
     excuteGetAnalysis({
       params: {
         userId: subscribe.currUser.targetUserId,
-        basePerioud,
-        comparePerioud,
+        baseStartAt: basePerioud[0].toISOString(),
+        baseEndAt: basePerioud[1].toISOString(),
+        compareStartAt: comparePerioud[0].toISOString(),
+        compareEndAt: comparePerioud[1].toISOString(),
         category: selectedCategory[Object.values(checkStateGroup).indexOf(true)]
       }
     }).then((res) => {
+      console.log(res.data);
       if (res.data) setResultData(res.data);
     });
   };
