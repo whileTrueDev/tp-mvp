@@ -56,8 +56,6 @@ const UserDashboard = (): JSX.Element => {
     },
   ]);
 
-  if (!authContextValue.user.userId) return <div>Loading Component...</div>;
-
   return (
     <>
       <AppBar />
