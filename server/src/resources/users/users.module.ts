@@ -19,7 +19,7 @@ import { SubscribeEntity } from './entities/subscribe.entity';
     UserTokenEntity,
     SubscribeEntity,
   ]),
-  forwardRef(() => AuthModule), // Resolve circular dependencies between Moduels
+  forwardRef(() => AuthModule), // Resolve circular dependencies between Modules
   ],
   providers: [UsersService],
   controllers: [UsersController],

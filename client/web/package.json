@@ -52,7 +52,9 @@
     ]
   },
   "devDependencies": {
+    "@amcharts/amcharts4": "^4.10.2",
     "@types/classnames": "^2.2.10",
+    "@types/core-js": "^2.5.4",
     "@types/jest": "^24.0.0",
     "@types/jwt-decode": "^2.2.1",
     "@types/node": "^12.0.0",
@@ -64,6 +66,7 @@
     "@types/shortid": "0.0.29",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
     "@typescript-eslint/parser": "^3.9.0",
+    "core-js": "^3.6.5",
     "eslint": "^6.6.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",
