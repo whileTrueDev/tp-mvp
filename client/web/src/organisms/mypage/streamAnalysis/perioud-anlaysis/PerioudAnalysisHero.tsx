@@ -7,10 +7,7 @@ import {
 import { Alert } from '@material-ui/lab';
 // axios
 import useAxios from 'axios-hooks';
-// date library
-import moment from 'moment';
 // styles
-import { seed } from 'shortid';
 import usePerioudAnalysisHeroStyle from './PerioudAnalysisHero.style';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
@@ -40,8 +37,8 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
   const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [checkStateGroup, setCheckStateGroup] = React.useState({
     viewer: false,
-    chatCount: false,
-    smileCount: false,
+    chat: false,
+    smile: false,
     // searchKeyWord: string,
   });
   const [anlaysisData, setAnalysisData] = React.useState<OrganizedData>();
@@ -51,13 +48,14 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
     setCheckStateGroup({
       ...{
         viewer: false,
-        chatCount: false,
-        smileCount: false,
+        chat: false,
+        smile: false,
         // searchKeyWord: string,
       },
       [event.target.name]: event.target.checked
     });
   };
+
   const handlePerioud = (startAt: Date, endAt: Date, base?: true) => {
     const per = [startAt, endAt];
     setPerioud(per);
@@ -101,7 +99,7 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
     if (snackBar === true) {
       setSnackBar(false);
     }
-  }, [setSnackBar]);
+  }, [setSnackBar, snackBar]);
 
   const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
     setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));
@@ -120,31 +118,14 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
     }
 
     excuteGetAnalysis({
-      /* test request params */
+      /* request params */
       params: {
-        category: 'viewer',
-        streams: [{
-          creatorId: '203690678',
-          startedAt: '2020-09-21T00:00:00',
-          streamId: '39796426622'
-        },
-        {
-          creatorId: '173881569',
-          startedAt: '2020-09-22T00:00:00',
-          streamId: '09221013_09221229_39805658238'
-        },
-        {
-          creatorId: '175438165',
-          startedAt: '2020-09-22T00:00:00',
-          streamId: '39804882894'
-        }],
-        /* request params */
-        // streams: requestParams
-        // category: selectedCategory[0][0]
+        streams: requestParams,
+        category: selectedCategory[0][0]
       }
     }).then((res) => {
       setAnalysisData(res.data);
-    }).catch((err) => {
+    }).catch(() => {
       setSnackBar(true);
     });
   };
@@ -237,8 +218,8 @@ export default function PerioudAnalysisHero(props: PerioudAnalysisHeroProps) : J
       {/* 분석 항목 선택 체크박스 그룹 */}
       <CheckBoxGroup
         viewer={checkStateGroup.viewer}
-        chatCount={checkStateGroup.chatCount}
-        smileCount={checkStateGroup.smileCount}
+        chat={checkStateGroup.chat}
+        smile={checkStateGroup.smile}
         handleCheckStateChange={handleCheckStateChange}
       />
       <Grid container justify="flex-end">

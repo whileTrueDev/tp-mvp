@@ -15,22 +15,12 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
 import { StreamCalendarProps, DayStreamsInfo } from './StreamCompareHero.interface';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  hasStreamDay: {
-    backgroundColor: theme.palette.primary.light,
-  },
-  selectedDay: {
-    backgroundColor: theme.palette.primary.light,
-    color: theme.palette.primary.dark
-  }
-}));
-
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
     clickedDate, handleDayStreamList, setClickedDate,
     compareStream, baseStream, userId
   } = props;
-  const classes = useStyles();
+  // const classes = useStyles();
   const [month, setMonth] = React.useState<Date>();
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 

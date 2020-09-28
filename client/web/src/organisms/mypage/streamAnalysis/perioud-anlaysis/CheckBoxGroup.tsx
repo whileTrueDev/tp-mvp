@@ -41,7 +41,7 @@ export default function CheckBoxGroup(
   props: CheckBoxGroupProps
 ): JSX.Element {
   const {
-    viewer, smileCount, chatCount, handleCheckStateChange
+    viewer, smile, chat, handleCheckStateChange
   } = props;
   const classes = useStyles();
 
@@ -69,9 +69,9 @@ export default function CheckBoxGroup(
           <FormControlLabel
             control={(
               <Checkbox
-                checked={chatCount}
+                checked={chat}
                 onChange={handleCheckStateChange}
-                name="chatCount"
+                name="chat"
                 size="medium"
                 checkedIcon={<CheckBoxIcon className={classes.checkBoxIcons} />}
                 icon={<CheckBoxOutlineBlankIcon className={classes.checkBoxIcons} />}
@@ -88,9 +88,9 @@ export default function CheckBoxGroup(
           <FormControlLabel
             control={(
               <Checkbox
-                checked={smileCount}
+                checked={smile}
                 onChange={handleCheckStateChange}
-                name="smileCount"
+                name="smile"
                 checkedIcon={<CheckBoxIcon className={classes.checkBoxIcons} />}
                 icon={<CheckBoxOutlineBlankIcon className={classes.checkBoxIcons} />}
                 className={classes.checkBox}

@@ -20,8 +20,8 @@ export interface PerioudCompareTextBoxProps {
 export interface CheckBoxGroupProps {
   handleCheckStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   viewer: boolean;
-  chatCount: boolean;
-  smileCount: boolean;
+  chat: boolean;
+  smile: boolean;
 }
 export interface ISODateTextFieldError {
   helperText: string;

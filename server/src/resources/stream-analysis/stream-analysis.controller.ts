@@ -13,6 +13,7 @@ import { StreamsInfo } from './interface/streamsInfo.interface';
 import { UserStatisticInfo } from './interface/userStatisticInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 // dto
+import { Category } from './dto/category.dto';
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
 import { EachStream } from './dto/eachStream.dto';
@@ -54,7 +55,7 @@ export class StreamAnalysisController {
   @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
-  ): Promise<StreamsInfo[]> {
+  ): Promise<any> {
     return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
 
@@ -86,9 +87,12 @@ export class StreamAnalysisController {
     ]
   */
  @Get('streams-term-info')
-  getTest(@Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
-    s3Request: FindS3StreamInfo[]):Promise<any> {
-    return this.streamAnalysisService.getStreamList(s3Request);
+  getTest(
+    @Query('category') category: Category,
+    @Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
+      s3Request: FindS3StreamInfo[]
+  ):Promise<any> {
+    return this.streamAnalysisService.getStreamList(category, s3Request);
   }
 
   /*

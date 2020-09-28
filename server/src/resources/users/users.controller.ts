@@ -80,19 +80,13 @@ export class UsersController {
     output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
   */
   @Get('/subscribe-users')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   getUserValidSubscribeInfo(
     @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
   )
   : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
     return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
   }
-
-  // @Get('subscribe-check-test')
-  // subscribeCheckTest(@Query() req: any) {
-  //   console.log(req);
-  //   return this.usersService.checkSubscribeValidation(req.userId, req.targetId);
-  // }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)

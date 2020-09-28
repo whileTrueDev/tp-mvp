@@ -18,6 +18,7 @@ import { StreamsInfo } from './interface/streamsInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
 // dto
+import { Category } from './dto/category.dto';
 import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
@@ -28,6 +29,56 @@ import { UsersService } from '../users/users.service';
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
+
+const calculateStreamData = (streamData : StreamsInfo[]) => {
+  const template = [
+    {
+      title: '평균 시청자 수',
+      tag: 'viewer',
+      key: 'viewer',
+      value: [],
+      unit: '명'
+    },
+    {
+      title: '웃음 발생 수',
+      tag: 'smile',
+      key: 'smileCount',
+      value: [],
+      unit: '회'
+    },
+    {
+      title: '채팅 발생 수',
+      tag: 'chat',
+      key: 'chatCount',
+      value: [],
+      unit: '회'
+    }
+  ];
+
+  const result = template.map((element) => {
+    const broad1Count = streamData[0][element.key];
+    const broad2Count = streamData[1][element.key];
+    const sum = broad1Count + broad2Count;
+    const broad1 = sum === 0 ? 0 : Math.round((broad1Count / sum) * 100);
+    const broad2 = sum === 0 ? 0 : Math.round((broad2Count / sum) * 100);
+    const returnValue = {
+      ...element,
+      broad1Count,
+      broad2Count,
+      diff: broad2 - broad1
+    };
+    returnValue.value.push(
+      {
+        category: '',
+        broad1: -1 * broad1,
+        broad2
+      }
+    );
+    delete returnValue.key;
+    return returnValue;
+  });
+  return result;
+};
 
 @Injectable()
 export class StreamAnalysisService {
@@ -47,7 +98,7 @@ export class StreamAnalysisService {
       {time_line, total_index, start_date, end_date}, ... 
     ]
   */
-  async getStreamList(s3Request: FindS3StreamInfo[]): Promise<any> {
+  async getStreamList(category: Category, s3Request: FindS3StreamInfo[]): Promise<any> {
     const keyArray : string[] = [];
     const calculatedArray : S3StreamData[] = [];
     const dataArray : S3StreamData[] = [];
@@ -203,7 +254,8 @@ export class StreamAnalysisService {
         const organizeArray: OrganizedData = {
           avgChatCount: 0,
           avgViewer: 0,
-          timeLine: []
+          timeLine: [],
+          category
         };
 
         try {
@@ -243,14 +295,13 @@ export class StreamAnalysisService {
       .then(() => calculateData() // 연산
         .then(() => organizeData() // 데이터 포맷 변경
           .then((organizeArray) => organizeArray))
-
         .catch((err) => {
           /* Promise Chain rejected 처리 */
           throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
         })).catch((err) => {
         throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
       }));
-
+    // console.log(result);
     return result;
   }
 
@@ -269,7 +320,7 @@ export class StreamAnalysisService {
       const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
       const DayStreamData = await this.streamsRepository
         .createQueryBuilder('streams')
-        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime', ])
+        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime',])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
         .andWhere('streams.startedAt < :endDate', { endDate: endAt })
@@ -296,7 +347,7 @@ export class StreamAnalysisService {
     output  :  chat_count , smile_count , viewer
   */
   async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId)
-  : Promise<StreamsInfo[]> {
+ : Promise<any> {
     if (streams[0]) {
       const streamInfoBase: StreamsInfo = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
@@ -328,7 +379,10 @@ export class StreamAnalysisService {
           .catch((err) => {
             throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
           });
-        return [streamInfoBase, streamInfoCompare];
+
+        // 비교분석을 위한 데이터 전처리
+        const streamData = [streamInfoBase[0], streamInfoCompare[0]];
+        return calculateStreamData(streamData);
       }
       return [streamInfoBase, null];
     }

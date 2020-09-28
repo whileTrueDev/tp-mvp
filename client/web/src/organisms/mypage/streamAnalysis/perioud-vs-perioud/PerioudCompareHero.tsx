@@ -26,10 +26,13 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
   const [comparePerioud, setComparePerioud] = React.useState<Date[]>(new Array<Date>(2));
   const [checkStateGroup, setCheckStateGroup] = React.useState({
     viewer: false,
-    chatCount: false,
-    smileCount: false,
+    chat: false,
+    smile: false,
     // searchKeyWord: string,
   });
+  // 서버 수정 코드 확인 후 타입 정의 할 것.
+  /* 분석 결과 */
+  const [resultData, setResultData] = React.useState<any[]>();
 
   const [
     {
@@ -44,8 +47,8 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
     setCheckStateGroup({
       ...{
         viewer: false,
-        chatCount: false,
-        smileCount: false,
+        chat: false,
+        smile: false,
         // searchKeyWord: string,
       },
       [event.target.name]: event.target.checked
@@ -63,14 +66,18 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
 
   const handleAnalysisButton = () => {
     // 기간 2개 + 분석 항목 (viewer | chatCount | smileCount)
-    const selectedProperty = Object.keys(checkStateGroup);
-    const anlaysisData = {
-      basePerioud,
-      comparePerioud,
-      condition: selectedProperty[Object.values(checkStateGroup).indexOf(true)]
-    };
-    console.log(anlaysisData);
-    console.log(Object.values(checkStateGroup).indexOf(true));
+    const selectedCategory = Object.keys(checkStateGroup);
+
+    excuteGetAnalysis({
+      params: {
+        userId,
+        basePerioud,
+        comparePerioud,
+        category: selectedCategory[Object.values(checkStateGroup).indexOf(true)]
+      }
+    }).then((res) => {
+      if (res.data) setResultData(res.data);
+    });
   };
 
   return (
@@ -145,8 +152,8 @@ export default function PerioudCompareHero(props: PerioudCompareHeroProps): JSX.
       {/* 분석 옵션 선택 체크박스 그룹 */}
       <CheckBoxGroup
         viewer={checkStateGroup.viewer}
-        chatCount={checkStateGroup.chatCount}
-        smileCount={checkStateGroup.smileCount}
+        chat={checkStateGroup.chat}
+        smile={checkStateGroup.smile}
         handleCheckStateChange={handleCheckStateChange}
       />
 

@@ -1,3 +1,5 @@
+import { Category } from '../dto/category.dto';
+
 export interface TimeLine{
   smile_count: number;
   chat_count: number;
@@ -20,4 +22,5 @@ export interface OrganizedData {
   avgViewer: number;
   avgChatCount: number;
   timeLine : CombinedTimeLine[];
+  category: Category;
 }
