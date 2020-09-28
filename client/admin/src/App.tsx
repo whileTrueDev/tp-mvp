@@ -14,7 +14,7 @@ import AdminAlarm from './pages/AdminAlarm';
 import AdminNotice from './pages/AdminNotice';
 import AdminSuggest from './pages/AdminSuggest';
 import NoticeWrite from './pages/NoticeWrite';
-import NoticeSidebar from './organisms/notice/NoticeSidebar';
+import Sidebar from './organisms/Sidebar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -83,7 +83,7 @@ export const routes: ListProps[] = [
       index: 2,
       name: '메시지보내기',
       description: '메시지를 보냅니다.',
-      path: '/admin_message',
+      path: '/admin_alarm',
       icon: MessageIcon
     },
     {
@@ -106,7 +106,7 @@ export default function App(){
       <Grid container className={classes.root}>
 
       <BrowserRouter>
-        <NoticeSidebar {...routes} /> 
+        <Sidebar {...routes} /> 
 
         <main className={classes.content}>
           <div className={classes.selectBar} />

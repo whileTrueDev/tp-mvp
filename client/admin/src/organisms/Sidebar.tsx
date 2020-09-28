@@ -11,7 +11,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Link, NavLink } from 'react-router-dom';
-import { ListProps, routes } from '../../App';
+import { ListProps, routes } from '../App';
 import {IconButton} from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -117,7 +117,7 @@ function makeTitle() {
   return `${routeName} - ${menuUserType}`;
 }
 
-export default function PermanentDrawerLeft(props: ListProps[]):JSX.Element {
+export default function Sidebar(props: ListProps[]):JSX.Element {
   const classes = useStyles();
   const { selectedIndex, handleListItemClick } = useDrawerSelectedItem();
   const [drawerOpen, setDrawerOpen] = React.useState(true);

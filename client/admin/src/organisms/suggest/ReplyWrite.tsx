@@ -1,20 +1,28 @@
 import React from 'react';
 import { Typography, Grid } from '@material-ui/core';
 import NoticeMarkdownHelper from '../markdown_helper/MarkdownHelper';
-import SuggestReplyEditViewer from './SuggestEditViewer';
-import SuggestReplyEditor from './SuggestEditor';
-import { SuggestData } from '../../pages/AdminSuggest';
+import SuggestReplyEditViewer from './ReplyEditViewer';
+import SuggestReplyEditor from './ReplyEditor';
+import { SuggestData, replyData } from '../../pages/AdminSuggest';
 import '../../assets/font.css';
-import suggestDataset from '../../pages/AdminSuggest';
+// import suggestDataset from '../../pages/AdminSuggest';
 
 const initialState = {
-  title: '기능제안', topic: '기능제안 답글', contents: '기능제안 답변작성중',
+  title: '기능제안', categori: '기능제안 답글', contents: '기능제안 답변작성중',
 };
+interface ActionProps {
+  type: string;
+  title: string;
+  categori: string;
+  contents: string;
+}
 
-function reducer(state: any, action: any) {
+function reducer(state: any, action: ActionProps) {
+  //action은 type을 정의.
   const {
-    type, title, topic, contents,
+    type, title, categori, contents,
   } = action;
+
   switch (type) {
     case 'reset':
       return initialState;
@@ -22,21 +30,21 @@ function reducer(state: any, action: any) {
       return { ...state, title };
     case 'handleTopic':
       if (state.title.indexOf(']') > 0) {
-        return { ...state, topic, title: `[${topic}]${state.title.split(']')[1]}` };
+        return { ...state, categori, title: `[${categori}]${state.title.split(']')[1]}` };
       }
-      return { ...state, topic, title: `[${topic}] ${state.title}` };
+      return { ...state, categori, title: `[${categori}] ${state.title}` };
     case 'handleContents':
       return { ...state, contents };
     default: throw Error(`unexpected action.type: ${action.type}`);
   }
 }
 
-interface SelectedData{
-  suggestData?: SuggestData;
+interface replyDataProps{
+  replyData?: replyData;
 }
-export default function SuggestWrite(props: SelectedData) {
-  const { suggestData } = props;
-  const [state, dispatch] = React.useReducer(reducer, suggestData || initialState);
+export default function ReplyWrite(props: replyDataProps) {
+  const { replyData } = props;
+  const [state, dispatch] = React.useReducer(reducer, replyData || initialState);
   const [help, setHelp] = React.useState(false);
   
   function handleHelpToggle() {
@@ -67,7 +75,7 @@ export default function SuggestWrite(props: SelectedData) {
               dispatch={dispatch}
               helpToggle={help}
               handleHelpToggle={handleHelpToggle}
-              suggestData={suggestData}
+              replyData={replyData}
             />
 
           </Grid>

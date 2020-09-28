@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react';
 import { Typography, useMediaQuery } from '@material-ui/core';
-import { FiberNew } from '@material-ui/icons';
 import MaterialTable from 'material-table';
 import {
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
@@ -30,7 +29,7 @@ function dateDiff(date1: any, date2: any) {
 }
 
 interface props {
-  suggestData: any;
+  userData: any;
   handleEditModeOff: () => void; 
   handleData: (Data: any) => void;
 }
@@ -61,59 +60,18 @@ const localization = {
 };
 
 //기능제안 목록 테이블
-export default function SuggestTable(props: props) {
-  const { suggestData, handleData, handleEditModeOff } = props;
+export default function UserlistTable(props: props) {
+  const { userData, handleData, handleEditModeOff } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
     <MaterialTable
-      title="기능 제안"
+      title="이용자 목록"
       columns={[
-        { title: '카테고리', field: 'categori', render: rowData => (<Typography>{rowData.categori}</Typography>) },
-        {
-          title: '제목',
-          field: 'title',
-          render: rowData => (
-            <Typography className="title">
-              {true ? ("[신규 제안]") : ""}
-              {rowData.title}
-              { dateDiff(new Date(), new Date(rowData.regiDate)) < 8 && (
-              <FiberNew style={{ color: '#929ef8' }}/>
-              )}
-            </Typography>
-          ),
-        },
-        {
-          title: '작성일',
-          field: 'regiDate',
-          render: rowData => (
-            <Typography>{new Date(rowData.regiDate).toLocaleString()}</Typography>
-          ),
-        },
-        {
-          title: '작성자',
-          field: 'writer',
-          render: rowData => (
-            <Typography>{rowData.writer}</Typography>
-          ),
-        },
-        {
-          title: '진행상태',
-          field: 'status',
-          render: rowData => (
-          <Typography className="상태">{rowData.status}</Typography>
-          )
-        },
-        {
-          title: '답변여부',
-          field: 'isReplied',
-          render: rowData => (
-          <Typography className="상태">{rowData.isReplied? "답변완료": "미답변"}</Typography>
-          )
-        },
+        { title: '사용자', field: 'userName', render: rowData => (<Typography>{rowData.userName}</Typography>) },
         
       ]}
-      data={suggestData}
+      data={userData}
       onRowClick={(e, rowData: any) => {
           handleData(rowData);
           handleEditModeOff();
@@ -125,6 +83,7 @@ export default function SuggestTable(props: props) {
         rowStyle: {
           height: 65,
         },
+        selection: true,
         headerStyle: { backgroundColor: '#f5f5f5', color: '#555555' },
         searchFieldAlignment: 'right',     
       }}

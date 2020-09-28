@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, makeStyles } from '@material-ui/core';
 import useFetch from './useFetch';
+
 // organisms
 import NoticeTable from '../organisms/notice/NoticeTable';
 import NoticePreview from '../organisms/notice/NoticePreView';

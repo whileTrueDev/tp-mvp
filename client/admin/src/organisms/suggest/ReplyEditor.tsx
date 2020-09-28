@@ -1,25 +1,28 @@
 import React from 'react';
 import {
-  Typography, Paper, TextField, FormControl, Button,
-  InputLabel, MenuItem, Select, Divider,
+  Typography, Paper, TextField, FormControl, Button,Grid,
+  InputLabel, MenuItem, Select, Divider,makeStyles
 } from '@material-ui/core';
-import { SuggestData } from '../../pages/AdminSuggest';
+import { replyData } from '../../pages/AdminSuggest';
 
 
-interface SuggestReplyEditData{
-  state: SuggestData;
+interface ReplyEditData{
+  state: replyData;
   dispatch: React.Dispatch<any>;
   helpToggle: boolean;
   handleHelpToggle: () => void;
-  suggestData?: SuggestData;
+  replyData?: replyData;
 }
 
+const useStyles = makeStyles((theme) => ({
+  deleteButton: { marginBottom: 5, marginRight: -5}
+}))
 
-export default function SuggestReplyEditor(props: SuggestReplyEditData) {
+export default function SuggestReplyEditor(props: ReplyEditData) {
   const {
-    state, dispatch, handleHelpToggle, helpToggle, suggestData,
+    state, dispatch, handleHelpToggle, helpToggle, replyData,
   } = props;
-  
+  const classes = useStyles();
   return (
     <Paper>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: 14 }}>
@@ -55,7 +58,7 @@ export default function SuggestReplyEditor(props: SuggestReplyEditData) {
           <InputLabel htmlFor="demo-controlled-open-select">구분</InputLabel>
           <Select
             variant="outlined"
-            value={state.topic}
+            value={state.categori}
             onChange={e => dispatch({ type: 'handleTopic', topic: e.target.value })}
             inputProps={{
               name: 'age',
@@ -76,24 +79,25 @@ export default function SuggestReplyEditor(props: SuggestReplyEditData) {
           variant="outlined"
           rows={24}
           style={{ width: '100%', padding: 5 }}
-          value={state.contents}
           onChange={e => dispatch({ type: 'handleContents', contents: e.target.value })}
           margin="normal"
         />
       </div>
 
       <div style={{ padding: 14, display: 'flex', justifyContent: 'flex-end' }}>
-        {suggestData ? (
-          <Button
+        <Grid container spacing={0}> 
+        <Grid item xs={6} lg={4}>
+        <Button
             variant="contained"
             color="primary"
-            disabled={!state.contents || !state.title || !state.topic}
+            // disabled={!state.contents || !state.title || !state.categori}
             onClick={() => {
               if (window.confirm(`기능제안 답변\n${state.title}\n정말로 답변을 수정하시겠습니까?`)) {
                 // noticeUpdate.handleUpdateRequest({
                 //   code: noticeData.code,
-                //   topic: state.topic,
+                //   categori: state.categori,
                 //   title: state.title,
+                //   status: state.status,
                 //   contents: state.contents,
                 // });
                  state.isReplied=true;
@@ -103,26 +107,22 @@ export default function SuggestReplyEditor(props: SuggestReplyEditData) {
           >
                   해당 답변글 수정
           </Button>
-        ) : (
-          <Button
+          </Grid> 
+          <Grid item xs={6} lg={2}>
+            <Button
+            className={classes.deleteButton}
+            color="secondary"
             variant="contained"
-            color="primary"
-            disabled={!state.contents || !state.title || !state.topic}
             onClick={() => {
-              if (window.confirm(`답변글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
-                // noticeUpload.handleUpdateRequest({
-                //   topic: state.topic,
-                //   title: state.title,
-                //   contents: state.contents,
-                // });
-                state.isReplied = true;
+              if (window.confirm(`정말로\n${state.title}\n답변을 삭제하시겠습니까?`)) {
                 window.location.reload();
               }
             }}
           >
-                  답변 업로드
-          </Button>
-        )}
+          답변삭제
+        </Button>
+        </Grid>
+     </Grid> 
       </div>
     </Paper>
   );

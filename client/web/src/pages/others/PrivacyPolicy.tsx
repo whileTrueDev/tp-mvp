@@ -63,18 +63,16 @@ export default function PrivacyPolicy(): JSX.Element {
             <div className={classes.root}>
               <div className={classes.content}>
                 {terms.map((term: Terms) => (
-                  term.map((subterm: Terms) => (
                     <div key={shortid.generate()} className={classes.policyWrapper}>
-                      <h3 className={classes.h3} key={shortid.generate()}>{subterm.title}</h3>
-                      <h4 className={classes.h4} key={shortid.generate()}>{subterm.subtitle}</h4>
+                      <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
+                      <h4 className={classes.h4} key={shortid.generate()}>{term.subtitle}</h4>
                       <div key={shortid.generate()} className={classes.text}>
-                        {subterm.text.split('\n').map((sentence) => (
+                        {term.text.split('\n').map((sentence) => (
                           <p key={shortid.generate()}>{sentence}</p>
                         ))}
-                        ))
                       </div>
                     </div>
-                  ))))}
+                  ))}
               </div>
             </div>
           </Grid>

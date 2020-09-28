@@ -1,20 +1,20 @@
 import React from 'react';
 import {
-  Typography, Paper, Divider, Button, Grid
+  Typography, Paper, Divider, Button, Grid, Table
 } from '@material-ui/core';
 import { SuggestData } from '../../pages/AdminSuggest';
-import SelectStatusButton from './SelectStatusButton';
-// import { NoticeData } from '../pages/AdminNotice';
+import StatusChangeButton from './StatusChangeButton';
+import CostomTableRow from './CostomTableRow';
 
 const Markdown = require('react-markdown');
 
 // interface SuggestData {
-//   title?: string;
-//   topic?: string;
+//   title: string;
+//   topic: string;
 //   regiDate: string;
 //   writer: string;
-//   contents?: string;
-//   status?: boolean;
+//   contents: string;
+//   status: string;
 // }
 
 interface SuggestReplyEditData {
@@ -30,67 +30,39 @@ export default function SuggestPreview(props: Props) {
   const { selectedData, handleEditModeOn } = props;
   return (
     <Paper>
-      <div style={{ padding: 50 }}>
+       <div style={{ padding: 28 }}>
         <Typography variant="h4">
-          {selectedData.title}
+        {selectedData.title}
         </Typography>
-
-        <div style={{ display: 'flex', marginTop: 10, justifyContent: 'space-bwtween' }}>
-
-          <Typography variant="subtitle1">
-            {`${selectedData.topic},`}
-                    &emsp;
-          </Typography>
-          <Typography variant="subtitle1">
-            {new Date(selectedData.regiDate).toLocaleString()}
-          </Typography>
-          <Typography variant="subtitle1">
-            {`,${selectedData.writer} ,`}
-        </Typography>
-        <Typography variant="subtitle1">
-        {`${selectedData.status}`}
-        </Typography>
+        <div style={{ display: 'flex', marginTop: 5,marginBottom: 5,justifyContent: 'space-bwtween' }}>
+          <Table size='small'>
+            <CostomTableRow title={'작성자'} data={selectedData.writer}/>
+            <CostomTableRow title={'날짜'} data={new Date(selectedData.regiDate).toLocaleString()}/>
+            <CostomTableRow title={'카테고리'} data={selectedData.categori}/>
+            <CostomTableRow title={'진행상황'} data={selectedData.status}/>
+          </Table>
         </div>
-
         {selectedData.contents && (
           <div>
             <Grid container spacing={0}>
               <Grid item xs={6} lg={2}>
                 <Button
-                 // style={{ marginLeft: 5, marginRight: 5 }}
                   color="primary"
                   variant="contained"
-                  onClick= {event => {
-                    handleEditModeOn();}}
+                  onClick= {handleEditModeOn}
                 >
                   답변하기
                 </Button>
               </Grid>
 
-              <Grid item xs={6} lg={2}>
-                <Button
-                  //style={{ marginLeft: 5, marginRight: 5 }}
-                  color="secondary"
-                  variant="contained"
-                  onClick={() => {
-                    if (window.confirm(`정말로\n${selectedData.title}\n답변을 삭제하시겠습니까?`)) {
-                      window.location.reload();
-                    }
-                  }}
-                >
-                삭제하기
-                </Button>
-              </Grid>
-              
               <Grid item xs={6} lg={3}>
-                <SelectStatusButton/>
+                <StatusChangeButton selectedData={selectedData}/>
               </Grid>
+
             </Grid>
           </div>
         )}
-
       </div>
-
       <Divider />
 
       <div style={{ padding: 28, maxHeight: 750, overflow: 'scroll' }}>

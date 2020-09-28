@@ -1,24 +1,25 @@
 import React from 'react';
 import {
-  Typography, Paper, Divider,
+  Typography, Paper, Divider,Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Markdown from 'react-markdown/with-html';
 import { SuggestData } from '../../pages/AdminSuggest';
 
 const useStyles = makeStyles((theme) => ({
-  markdown: { fontSize: theme.typography.body1.fontSize }
+  markdown: { fontSize: theme.typography.body1.fontSize },
+  deleteButton: { marginBottom: 5, marginRight: -5}
 }))
 
 interface SuggesEdittData{
   state: SuggestData;
 }
-export default function NoticeEditViewer(props: SuggesEdittData) {
+export default function SuggestReplyEditViewer(props: SuggesEdittData) {
   const { state } = props;
   const classes = useStyles();
   return (
     <div>
-      <Paper>
+      <Paper style={{alignItems: 'center',justifyContent: 'center'}}>
         <div style={{ padding: 14 }}>
 
           <Typography variant="h5">
@@ -28,6 +29,7 @@ export default function NoticeEditViewer(props: SuggesEdittData) {
         </div>
 
         <div style={{ padding: 14 }}>
+        
           <Typography variant="h4">{state.title}</Typography>
         </div>
         {state.title && (<Divider />)}
@@ -37,7 +39,7 @@ export default function NoticeEditViewer(props: SuggesEdittData) {
           source={state.contents}
           escapeHtml={false}
           />
-        </div>
+          </div>
       </Paper>
 
     </div>
