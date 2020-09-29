@@ -5,7 +5,6 @@ import {  CssBaseline, ThemeProvider, createMuiTheme, Grid, makeStyles } from '@
 import ListIcon from '@material-ui/icons/List';
 import EditIcon from '@material-ui/icons/Edit';
 import MessageIcon from '@material-ui/icons/Message';
-
 import {
   BrowserRouter, Switch, Route
 } from 'react-router-dom';
@@ -18,6 +17,7 @@ import Sidebar from './organisms/Sidebar';
 
 const useStyles = makeStyles(theme => ({
   root: {
+  
     overflow: 'auto',
     position: 'relative',
     float: 'right',
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   // toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(3),
     marginTop: '70px',
     minHeight: 'calc(100vh - 123px)',
@@ -96,17 +96,27 @@ export const routes: ListProps[] = [
 ];
 
 
-export default function App(){
+export default function App(location: any){
 
   const classes = useStyles();
+
+  // const [currentComponentPath, setComponentPath] = React.useState('');
+
+  // React.useEffect(() => {
+  //   routes.forEach((route) => {
+  //     if (location.pathname === route.path) {
+  //       setComponentPath(route.path);
+  //     }
+  //   });
+  // }, [location.pathname]);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Grid container className={classes.root}>
-
+    
       <BrowserRouter>
-        <Sidebar {...routes} /> 
+        <Sidebar routes={routes} location={location} /> 
 
         <main className={classes.content}>
           <div className={classes.selectBar} />
@@ -118,6 +128,7 @@ export default function App(){
           </Switch>
         </main>
       </BrowserRouter>
+      
       </Grid>
   </ThemeProvider>
   );

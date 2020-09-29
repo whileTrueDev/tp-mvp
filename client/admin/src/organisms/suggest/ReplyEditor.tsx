@@ -26,8 +26,8 @@ export default function SuggestReplyEditor(props: ReplyEditData) {
   return (
     <Paper>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: 14 }}>
-        <Typography variant="h5">
-            기능제안 답변 작성 칸
+        <Typography variant="h6">
+            기능제안 답변작성 칸
         </Typography>
 
         <Button
@@ -85,22 +85,14 @@ export default function SuggestReplyEditor(props: ReplyEditData) {
       </div>
 
       <div style={{ padding: 14, display: 'flex', justifyContent: 'flex-end' }}>
-        <Grid container spacing={0}> 
-        <Grid item xs={6} lg={4}>
+        <Grid container spacing={1}> 
+        <Grid item xs={6} lg={6}>
         <Button
             variant="contained"
             color="primary"
-            // disabled={!state.contents || !state.title || !state.categori}
             onClick={() => {
               if (window.confirm(`기능제안 답변\n${state.title}\n정말로 답변을 수정하시겠습니까?`)) {
-                // noticeUpdate.handleUpdateRequest({
-                //   code: noticeData.code,
-                //   categori: state.categori,
-                //   title: state.title,
-                //   status: state.status,
-                //   contents: state.contents,
-                // });
-                 state.isReplied=true;
+                // 백앤드로 업로드
                  window.location.reload();
               }
             }}
@@ -108,13 +100,14 @@ export default function SuggestReplyEditor(props: ReplyEditData) {
                   해당 답변글 수정
           </Button>
           </Grid> 
-          <Grid item xs={6} lg={2}>
+          <Grid item xs={6} lg={6}>
             <Button
             className={classes.deleteButton}
             color="secondary"
             variant="contained"
             onClick={() => {
               if (window.confirm(`정말로\n${state.title}\n답변을 삭제하시겠습니까?`)) {
+                //백엔드로 업로드
                 window.location.reload();
               }
             }}

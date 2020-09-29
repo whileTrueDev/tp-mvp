@@ -46,10 +46,7 @@ export default function StatusChangebutton(props: statusProps) {
         <MenuItem  onClick={() => {
               selectedData.status = "검토중"
               if (window.confirm(`상태를\n${selectedData.status}\n 으로 업로드 하시겠습니까?`)) {
-                // noticeUpload.handleUpdateRequest({
-                //   status: selectedData.status
-                // });
-                selectedData.isReplied = true;
+              //백엔드에 상태 업로드
                 window.location.reload();
               }
             }}>
@@ -58,20 +55,14 @@ export default function StatusChangebutton(props: statusProps) {
         <MenuItem  onClick={() => {
               selectedData.status = "기능개발중"
               if (window.confirm(`상태를\n${selectedData.status}\n 으로 업로드 하시겠습니까?`)) {
-                // noticeUpload.handleUpdateRequest({
-                //   status: selectedData.status
-                // });
-                selectedData.isReplied = true;
+               //백엔드에 상태 업로드
                 window.location.reload();
               }
             }}>기능개발중</MenuItem>
         <MenuItem onClick={() => {
               selectedData.status = "구현완료"
               if (window.confirm(`상태를\n${selectedData.status}\n 으로 업로드 하시겠습니까?`)) {
-                // noticeUpload.handleUpdateRequest({
-                //   status: selectedData.status
-                // });
-                selectedData.isReplied = true;
+               //백엔드에 상태 업로드
                 window.location.reload();
               }
             }}>구현완료</MenuItem>

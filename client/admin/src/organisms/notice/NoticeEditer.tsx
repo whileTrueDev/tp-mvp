@@ -22,7 +22,7 @@ export default function NoticeEditer(props: NoticeEditData) {
   return (
     <Paper>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: 14 }}>
-        <Typography variant="h5">
+        <Typography variant="h6">
             공지사항 글 작성 칸
         </Typography>
 
@@ -54,7 +54,7 @@ export default function NoticeEditer(props: NoticeEditData) {
           <InputLabel htmlFor="demo-controlled-open-select">구분</InputLabel>
           <Select
             variant="outlined"
-            value={state.topic}
+            value={state.categori}
             onChange={e => dispatch({ type: 'handleTopic', topic: e.target.value })}
             inputProps={{
               name: 'age',
@@ -88,16 +88,10 @@ export default function NoticeEditer(props: NoticeEditData) {
           <Button
             variant="contained"
             color="primary"
-            disabled={!state.contents || !state.title || !state.topic}
+            disabled={!state.contents || !state.title || !state.categori}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n정말로 수정 하시겠습니까?`)) {
-                // noticeUpdate.handleUpdateRequest({
-                //   code: noticeData.code,
-                //   topic: state.topic,
-                //   title: state.title,
-                //   contents: state.contents,
-                // });
-                // window.location.reload();
+                window.location.reload();
               }
             }}
           >
@@ -107,14 +101,9 @@ export default function NoticeEditer(props: NoticeEditData) {
           <Button
             variant="contained"
             color="primary"
-            disabled={!state.contents || !state.title || !state.topic}
+            disabled={!state.contents || !state.title || !state.categori}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
-                // noticeUpload.handleUpdateRequest({
-                //   topic: state.topic,
-                //   title: state.title,
-                //   contents: state.contents,
-                // });
                 window.location.reload();
               }
             }}

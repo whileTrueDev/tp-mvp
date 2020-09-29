@@ -8,19 +8,6 @@ import CostomTableRow from './CostomTableRow';
 
 const Markdown = require('react-markdown');
 
-// interface SuggestData {
-//   title: string;
-//   topic: string;
-//   regiDate: string;
-//   writer: string;
-//   contents: string;
-//   status: string;
-// }
-
-interface SuggestReplyEditData {
-  state: SuggestData;
-}
-
 interface Props {
   selectedData: SuggestData;
   handleEditModeOn: () => void;
@@ -44,8 +31,8 @@ export default function SuggestPreview(props: Props) {
         </div>
         {selectedData.contents && (
           <div>
-            <Grid container spacing={0}>
-              <Grid item xs={6} lg={2}>
+            <Grid container spacing={1}>
+              <Grid item xs={12} lg={3}>
                 <Button
                   color="primary"
                   variant="contained"
@@ -55,7 +42,7 @@ export default function SuggestPreview(props: Props) {
                 </Button>
               </Grid>
 
-              <Grid item xs={6} lg={3}>
+              <Grid item xs={12} lg={3}>
                 <StatusChangeButton selectedData={selectedData}/>
               </Grid>
 

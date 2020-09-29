@@ -15,9 +15,11 @@ import { ListProps, routes } from '../App';
 import {IconButton} from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
+import { RouterSharp } from '@material-ui/icons';
 
 const drawerWidth = 240;
 
+//style정의
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -97,6 +99,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.common.black,
   },
 }));
+
+//사이드바 드로어에서 선택된 페이지의 인덱스를 처리
 function useDrawerSelectedItem() {
   const [selectedIndex, setSelectedIndex] = React.useState(null);
   function handleListItemClick(evt: any, index: any) {
@@ -105,25 +109,36 @@ function useDrawerSelectedItem() {
   return { selectedIndex, handleListItemClick };
 }
 
-function makeTitle() {
-  let routeName = '';
-  let menuUserType = '';
-  routes.forEach((route) => {
-  
-      routeName = route.name;
-      menuUserType = '일반 관리';
-  
-  });
-  return `${routeName} - ${menuUserType}`;
+/*
+sidebar의 프롭스
+routes: 사이드바에있는 메뉴의 목록
+location: 현재 클릭된 페이지의위치 
+ */
+interface Props {
+  routes: ListProps[];
+  location: any;
 }
 
-export default function Sidebar(props: ListProps[]):JSX.Element {
+
+export default function Sidebar(props: Props):JSX.Element {
+  
+  const {routes, location} = props;
   const classes = useStyles();
   const { selectedIndex, handleListItemClick } = useDrawerSelectedItem();
   const [drawerOpen, setDrawerOpen] = React.useState(true);
+
+  function makeTitle() {
+    let routeName = '';
+    routes.forEach((route) => {
+      if(route.index===selectedIndex){
+        routeName = route.name;
+      }
+    });
+    return `${routeName}`;
+  }
  
   return (
-    <div>
+    <div >
       <AppBar position="fixed"  className={classnames(classes.appBar, {
           [classes.appBarShift]: drawerOpen,
         })}>
@@ -139,9 +154,9 @@ export default function Sidebar(props: ListProps[]):JSX.Element {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
+           <Typography variant="h6" noWrap>
             {makeTitle()}
-          </Typography>
+          </Typography> 
         </Toolbar>
       </AppBar>
 
@@ -201,7 +216,6 @@ export default function Sidebar(props: ListProps[]):JSX.Element {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography paragraph>
-         메뉴를 선택해주세요
         </Typography>
       </main>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {makeStyles, Grid} from '@material-ui/core';
+import { Grid,Typography } from '@material-ui/core';
 //organisms
 import UserlistTable from '../organisms/alarm_message/Userlist';
 import MessageTable from '../organisms/alarm_message/MessageForm';
@@ -48,7 +48,12 @@ export default function AdminAlarm(){
   };
   
   return(
-  <div style={{ marginTop: 48 }}>
+  <div>
+    <div style={{ padding: 28 }}>
+        <Typography variant="h5">
+        메시지 보내기
+        </Typography>
+      </div>
     <Grid container spacing={2}>
 
       <Grid item xs={12} lg={6}>
@@ -59,13 +64,13 @@ export default function AdminAlarm(){
      </Grid>
 
      <Grid item xs={12} lg={6}>
-          {anchorEl&&data && (
-            <MessageTable
-            anchorEl={anchorEl}
-            data={data}
-            handleClose={handleClose}
-            />
-          )}
+        {anchorEl&&data && (
+          <MessageTable
+          anchorEl={anchorEl}
+          data={data}
+          handleClose={handleClose}
+          />
+        )}
           </Grid>
 
      </Grid>

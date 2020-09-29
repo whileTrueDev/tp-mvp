@@ -8,7 +8,8 @@ const Markdown = require('react-markdown');
 
 interface NoticeData {
   title?: string;
-  topic?: string;
+  code?: number;
+  categori?: string;
   regiDate: string;
   contents?: string;
   isImportant?: boolean;
@@ -28,9 +29,12 @@ export default function NoticePreview(props: Props) {
         </Typography>
 
         <div style={{ display: 'flex', marginTop: 10, justifyContent: 'space-bwtween' }}>
-
+        <Typography variant="subtitle1">
+            {`글번호 : ${selectedData.code},`}
+                    &emsp;
+          </Typography>
           <Typography variant="subtitle1">
-            {`${selectedData.topic},`}
+            {`${selectedData.categori},`}
                     &emsp;
           </Typography>
           <Typography variant="subtitle1">

@@ -20,9 +20,9 @@ export default function SuggestReplyEditViewer(props: SuggesEdittData) {
   return (
     <div>
       <Paper style={{alignItems: 'center',justifyContent: 'center'}}>
-        <div style={{ padding: 14 }}>
+        <div style={{ padding: 12 }}>
 
-          <Typography variant="h5">
+          <Typography variant="h6">
               기능제안 답변 글작성 미리보기
           </Typography>
           <Divider />
@@ -30,7 +30,7 @@ export default function SuggestReplyEditViewer(props: SuggesEdittData) {
 
         <div style={{ padding: 14 }}>
         
-          <Typography variant="h4">{state.title}</Typography>
+          <Typography variant="h5">{state.title}</Typography>
         </div>
         {state.title && (<Divider />)}
         <div style={{ padding: 14 }}>

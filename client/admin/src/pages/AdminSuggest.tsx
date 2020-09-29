@@ -1,12 +1,12 @@
 import React from 'react';
-import { Grid, makeStyles } from '@material-ui/core';
-import useFetch from './useFetch';
+import { Grid, makeStyles, Typography } from '@material-ui/core';
+
 // organisms
 import SuggestTable from '../organisms/suggest/SuggestTable';
 import SuggestPreview from '../organisms/suggest/SuggestPreView';
 import ReplyWrite from '../organisms/suggest/ReplyWrite';
 
-//기능제안 데이터를 관리하는 interface이다
+//기능제안 데이터를 관리하는 props
 export interface SuggestData {
   title?: string;
   categori?: string;
@@ -17,6 +17,7 @@ export interface SuggestData {
   isReplied?: boolean;  // 답변여부
 }
 
+//답변 데이터를 관리하는 props
 export interface replyData {
   title?: string;
   categori: string;
@@ -26,12 +27,6 @@ export interface replyData {
   status?: string;  // 검토중, 진행중 상태
   isReplied?: boolean;  // 답변여부 
 }
-
-
-interface SuggestReplyEditData {
-  state: SuggestData;
-}
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -103,9 +98,8 @@ isReplied: false,
 // :noticeData[] --> noticeData의 타입을 가지는 배열을 만든다.
 export default function SuggestBoard() {
   const classes = useStyles();
-  // var { state } = props;
+ 
   // 기능제안 선택을 위한 State
-  // useState<NoticeData> 제네릭타입 //
   var [selectedData, setSelectedData] = React.useState<SuggestData>({title: "",
   categori: "",
   contents: "",
@@ -114,12 +108,12 @@ export default function SuggestBoard() {
   status: "",
   });
   
-var[replyData, setReplyData] = React.useState<replyData>({title: "",
-categori: "",
-contents: "",
-replyDate: "",
-writer: "관리자",
-status: ""});
+  var[replyData, setReplyData] = React.useState<replyData>({title: "",
+  categori: "",
+  contents: "",
+  replyDate: "",
+  writer: "관리자",
+  status: ""});
 
   function handleSelectedData(data: SuggestData) {
     setSelectedData(data);
@@ -141,7 +135,12 @@ status: ""});
   }
 
   return (
-    <div style={{ marginTop: 48 }}>
+    <div>
+      <div style={{ padding: 28 }}>
+        <Typography variant="h5">
+        기능제안
+        </Typography>
+      </div>
   
      <Grid container spacing={2}>
           <Grid item xs={12} lg={6}>

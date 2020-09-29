@@ -72,7 +72,7 @@ export default function NoticeTable(props: props) {
       icons={tableIcons}
       columns={[
         { title: '글번호', field: 'code', render: rowData => (<Typography>{rowData.code}</Typography>) },
-        { title: '구분', field: 'topic', render: rowData => (<Typography>{rowData.topic}</Typography>) },
+        { title: '카테고리', field: 'categori', render: rowData => (<Typography>{rowData.categori}</Typography>) },
         {
           title: '글제목',
           field: 'title',

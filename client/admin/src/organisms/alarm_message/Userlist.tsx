@@ -1,10 +1,13 @@
 import React, { forwardRef } from 'react';
-import { Typography, useMediaQuery } from '@material-ui/core';
+import { useMediaQuery, Button } from '@material-ui/core';
 import MaterialTable from 'material-table';
 import {
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
-  LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
+  LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search
 } from '@material-ui/icons';
+import AvatarWithName from './AvatarWithName';
+//massage Form
+import DualMessageForm from './AllTransmisisonForm';
 
 const tableIcons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
@@ -23,15 +26,10 @@ const tableIcons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
-//최신일을 계산해주는 함수
-function dateDiff(date1: any, date2: any) {
-  return Math.ceil((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24));
-}
 
-interface props {
+interface Props {
   userData: any;
-  handleEditModeOff: () => void; 
-  handleData: (Data: any) => void;
+  handleClick: (event: any, d: any) => void; 
 }
 
 //table 레이아웃조정
@@ -60,21 +58,48 @@ const localization = {
 };
 
 //기능제안 목록 테이블
-export default function UserlistTable(props: props) {
-  const { userData, handleData, handleEditModeOff } = props;
+export default function UserlistTable(props: Props) {
+  
+  const { userData, handleClick } = props;
+  const [list, setList] = React.useState([]);
+
+  //DialogOpen
+  const [open, setOpen] = React.useState(false);
+
+  //handleOpen(v: boolean) => void;
+  function handleOpen() {
+    var v=true
+    setOpen(v);
+  }
+  //handleClose()=>void;
+  function handleClose() {
+    setOpen(false);
+  }
+  
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
+    <>
+    <Button
+      variant = "contained"
+      color="primary"
+      onClick={handleOpen}
+    >
+        체크한 인원에 대한 일괄전송 내용작성
+      </Button>
     <MaterialTable
-      title="이용자 목록"
+      title="회원 목록"
       columns={[
-        { title: '사용자', field: 'userName', render: rowData => (<Typography>{rowData.userName}</Typography>) },
-        
+        { title: '사용자', field: 'userName', render: rowData => (
+          <AvatarWithName name={rowData.userName} logo={null} />
+        ) },
       ]}
       data={userData}
       onRowClick={(e, rowData: any) => {
-          handleData(rowData);
-          handleEditModeOff();
+          handleClick(e, rowData);
+      }}
+      onSelectionChange={(rowData: any) => {
+        setList(rowData);
       }}
       options={{
         search: true,
@@ -90,5 +115,13 @@ export default function UserlistTable(props: props) {
       localization={localization}
       icons={tableIcons}
     />
+     <DualMessageForm
+        list={list} 
+        open={open} 
+        handleOpen={handleOpen} 
+        handleClose={handleClose}
+        setList={setList}  
+      />
+  </>
   );
 }

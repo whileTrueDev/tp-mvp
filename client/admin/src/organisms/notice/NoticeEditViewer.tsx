@@ -21,7 +21,7 @@ export default function NoticeEditViewer(props: NoticeEditData) {
       <Paper>
         <div style={{ padding: 14 }}>
 
-          <Typography variant="h5">
+          <Typography variant="h6">
               공지사항 글작성 미리보기
           </Typography>
           <Divider />

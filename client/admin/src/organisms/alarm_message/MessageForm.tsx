@@ -5,11 +5,7 @@ import {
 } from '@material-ui/core';
 import AvatarWithName from './AvatarWithName';
 import Skeleton from '@material-ui/lab/Skeleton';
-interface sendMessageData {
-  userName: string;
-  title: string;
-  contents: string;
-}
+
 interface Props{
   data: any;
   anchorEl: any;
@@ -44,7 +40,7 @@ export default function MessageTable(props: Props) {
   const { anchorEl, data, handleClose } = props;
   
   const [title, setTitle] = React.useState('');
-  
+
   function handleTitle(e: any) {
     setTitle(e.target.value);
   }
@@ -58,16 +54,9 @@ export default function MessageTable(props: Props) {
   const classes = useStyles();
 
   function handleSendClick() {
-    // 이전 채팅 목록에 현재 보낸 채팅이 추가되어야 함.
-    const now = new Date();
+
     if (title && content) {
       if (window.confirm(`정말로 ${data.name}에게 메시지를 보내시겠습니까?`)) {
-        // 데이터 보내기 함수
-        // updateRequest.handleUpdateRequest({
-        //   type: data.type, id: data.id, title, content, date: now,
-        // });
-
-        // 제목, 내용, 초기화
         setTitle('');
         setContent('');
       }
@@ -109,25 +98,6 @@ export default function MessageTable(props: Props) {
           <Skeleton height={50} />
           <br />
         </div>
-          <div>
-            {/* {notificationData.payload.map(message => (
-              <div key={shortid.generate()} style={{ marginBottom: 5 }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Chip
-                    label={new Date(message.date).toLocaleString()}
-                    variant="outlined"
-                  />
-                  {message.readState
-                    ? <Check style={{ color: 'rgb(50, 205, 50)', fontSize: 15 }} />
-                    : <QueryBuilder style={{ color: '#afafafaf', fontSize: 15 }} />}
-                </div>
-                <div style={{ padding: 6 }}>
-                  <Typography variant="h6">{`${message.title}`}</Typography>
-                  <Typography style={{ marginLeft: 20 }}>{`${message.content}`}</Typography>
-                </div>
-              </div>
-            )} */}
-          </div>
       </div>
       <Divider />
 

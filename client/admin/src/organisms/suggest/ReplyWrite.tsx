@@ -55,7 +55,7 @@ export default function ReplyWrite(props: replyDataProps) {
   return (
     <div>
       <div style={{ padding: 28 }}>
-        <Typography variant="h5">
+        <Typography variant="h6">
         기능제안 답변글 작성
         </Typography>
       </div>
