@@ -81,6 +81,7 @@ const calculateStreamData = (streamData : StreamsInfo[]) => {
     delete returnValue.key;
     return returnValue;
   });
+
   return result;
 };
 
