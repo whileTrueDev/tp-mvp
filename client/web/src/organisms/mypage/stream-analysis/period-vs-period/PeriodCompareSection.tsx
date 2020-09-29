@@ -16,9 +16,13 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // contexterLoa
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+// interface
+import { PeriodCompareProps } from './PeriodCompareSection.interface';
 
-export default function PeriodCompareSection(props: any): JSX.Element {
-  const { loading, error, handleSubmit } = props;
+export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
+  const {
+    loading, error, handleSubmit,
+  } = props;
   const classes = usePeriodCompareStyles();
   const subscribe = useContext(SubscribeContext);
   const [basePeriod, setBasePeriod] = useState<Date[]>(new Array<Date>(2));
@@ -31,11 +35,7 @@ export default function PeriodCompareSection(props: any): JSX.Element {
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
-      ...{
-        viewer: false,
-        chat: false,
-        smile: false,
-      },
+      ...checkStateGroup,
       [event.target.name]: event.target.checked
     });
   };
@@ -50,10 +50,15 @@ export default function PeriodCompareSection(props: any): JSX.Element {
   };
 
   const handleAnalysisButton = () => {
-    // 타겟 유저 아이디 + 기간 2개 + 분석 항목 (viewer | chatCount | smileCount)
-    const selectedCategory = Object.keys(checkStateGroup);
+    /* 카테고리 복수 선택 */
+    const selectedCategory: string[] = Object
+      .entries(checkStateGroup)
+      .filter((pair) => pair[1]).map((pair) => pair[0]);
+
+    /* 타겟 유저 아이디 + 기간 2개 요청 */
+    console.log(basePeriod, comparePeriod);
     handleSubmit({
-      category: [selectedCategory[Object.values(checkStateGroup).indexOf(true)]], // 다중 선택으로 변경시 [] 제거
+      category: selectedCategory,
       params: {
         userId: subscribe.currUser.targetUserId,
         baseStartAt: basePeriod[0].toISOString(),

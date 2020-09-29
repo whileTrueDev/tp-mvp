@@ -1,3 +1,21 @@
+import { AxiosError } from 'axios';
+
+export interface PeriodRequestArray {
+  streams : {
+    creatorId: string;
+    streamId: string;
+    startedAt: string;
+  }[]
+}
+export interface PeriodAnalysisProps {
+  loading: boolean;
+  error : AxiosError<any> | undefined;
+  handleSubmit : ({ category, params }: {
+    category: string[];
+    params: PeriodRequestArray;
+}) => void
+}
+
 export interface RangeSelectCaledarProps {
   period: Date[];
   handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
@@ -17,7 +35,6 @@ export interface CombinedTimeLine {
   date: string;
 }
 export interface OrganizedData {
-  category: 'viewer'|'chat'|'smile';
   avgViewer: number;
   avgChatCount: number;
   timeLine : CombinedTimeLine[];

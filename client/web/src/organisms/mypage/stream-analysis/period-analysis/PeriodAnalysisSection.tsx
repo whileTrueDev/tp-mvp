@@ -19,8 +19,9 @@ import StreamList from './StreamList';
 // interface
 import {
   DayStreamsInfo,
-  AnaysisStreamsInfoRequest,
-  OrganizedData
+  OrganizedData,
+  PeriodAnalysisProps,
+  AnaysisStreamsInfoRequest
 } from './PeriodAnalysisSection.interface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
@@ -28,7 +29,7 @@ import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-export default function PeriodAnalysisSection(props: any) : JSX.Element {
+export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.Element {
   const { loading, error, handleSubmit } = props;
   const classes = usePeriodAnalysisHeroStyle();
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
@@ -39,18 +40,11 @@ export default function PeriodAnalysisSection(props: any) : JSX.Element {
     smile: false,
     // searchKeyWord: string,
   });
-  /* 분석 결과 데이터 */
-  const [analysisResultData, setResultData] = React.useState<OrganizedData>();
   const subscribe = React.useContext(SubscribeContext);
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
-      ...{
-        viewer: false,
-        chat: false,
-        smile: false,
-        // searchKeyWord: string,
-      },
+      ...checkStateGroup,
       [event.target.name]: event.target.checked
     });
   };
@@ -69,16 +63,6 @@ export default function PeriodAnalysisSection(props: any) : JSX.Element {
     }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
       url: 'http://localhost:3000/stream-analysis/stream-list',
     }, { manual: true });
-
-  // /* 기간 내 존재 모든 방송 리스트 요청 */
-  // const [
-  //   {
-  //     data: getAnalysisData,
-  //     loading: getAnalysisLoading,
-  //     error: getAnalysisError
-  //   }, excuteGetAnalysis] = useAxios<OrganizedData>({
-  //     url: 'http://localhost:3000/stream-analysis/streams-term-info',
-  //   }, { manual: true });
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
@@ -105,14 +89,16 @@ export default function PeriodAnalysisSection(props: any) : JSX.Element {
       streamId: dayStreamInfo.streamId
     }));
 
-    const selectedCategory = Object.entries(checkStateGroup).filter((state) => state[1] === true);
+    const selectedCategory: string[] = Object
+      .entries(checkStateGroup)
+      .filter((pair) => pair[1]).map((pair) => pair[0]);
 
     // 현재 백엔드로 요청시에 오류남 => 파라미터가 너무 많아서 그런듯, get이 아닌 body를 사용하는 방식?
     handleSubmit({
+      category: selectedCategory,
       /* request params */
       params: {
         streams: requestParams,
-        category: selectedCategory[0][0]
       }
     });
   };

@@ -45,7 +45,9 @@ interface StreamCompareSectionPropInterface {
   error: any;
 }
 
-export default function StreamCompareSection(props: StreamCompareSectionPropInterface): JSX.Element {
+export default function StreamCompareSection(
+  props: StreamCompareSectionPropInterface
+): JSX.Element {
   const { handleSubmit, loading, error } = props;
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>([]);

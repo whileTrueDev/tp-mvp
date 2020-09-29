@@ -7,21 +7,36 @@ import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterfa
 
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 
+interface PeriodRequestArray {
+  streams : {
+    creatorId: string;
+    streamId: string;
+    startedAt: string;
+  }[]
+}
+
 export default function PeriodAnalysis(): JSX.Element {
   const [data, setData] = useState<timelineInterface | null>(null);
   const [open, setOpen] = useState<boolean>(false);
+  const [selectedMetric, selectMetric] = useState<string[]>([]);
   const [{ error, loading }, getRequest] = useAxios(
     '/stream-analysis/streams-term-info', { manual: true }
   );
 
-  const handleSubmit = (params: any) => {
-    getRequest(params)
+  const handleSubmit = ({ category, params }
+    : {category: string[], params: PeriodRequestArray}) => {
+    getRequest({ params })
       .then((res) => {
         console.log(res.data);
         setData(res.data);
         setOpen(true);
+        selectMetric(category);
       });
   };
+
+  // React.useEffect(() => {
+  //   console.log(selectedMetric);
+  // }, [selectedMetric]);
 
   return (
     <MypageSectionWrapper>

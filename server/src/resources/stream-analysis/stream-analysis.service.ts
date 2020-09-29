@@ -99,7 +99,7 @@ export class StreamAnalysisService {
       {time_line, total_index, start_date, end_date}, ... 
     ]
   */
-  async getStreamList(category: Category, s3Request: FindS3StreamInfo[]): Promise<any> {
+  async getStreamList(s3Request: FindS3StreamInfo[]): Promise<any> {
     const keyArray : string[] = [];
     const calculatedArray : S3StreamData[] = [];
     const dataArray : S3StreamData[] = [];
@@ -119,9 +119,9 @@ export class StreamAnalysisService {
           if (values.Contents) {
             values.Contents.map((value) => {
               if (value.Key) keyArray.push(value.Key);
-              resolveKeys();
             });
           }
+          resolveKeys();
         })
         .catch((err) => {
           reject(err);
@@ -130,6 +130,8 @@ export class StreamAnalysisService {
 
     /* S3 키 배열을 통해 해당 키와 일치하는 모든 방송 조회  함수 정의 */
     const dataFunc = (key: any) => new Promise<void>((resolveData, reject) => {
+      if (keyArray.length < 1) reject(new Error('Empty S3 Key Array ...'));
+
       const param = {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
         Key: key
@@ -214,6 +216,7 @@ export class StreamAnalysisService {
     /* 조회된 S3 데이터 리스트 연산 수행 함수 정의 */
     const calculateData = () => new Promise<S3StreamData[]>((resolveCalculate, reject) => {
       /* 시작 날짜 기준 오름 차순 , 시작 날짜 동일 시 방송 길이 기준 오름 차순 */
+      if (dataArray.length < 1) reject(new Error('Empty S3 Data Array ...'));
       const ASCdataArray = dataArray.sort((obj1, obj2) => {
         if (moment(obj1.start_date) > moment(obj2.start_date)) return 1;
         if (moment(obj1.start_date) < moment(obj2.start_date)) return -1;
@@ -256,7 +259,6 @@ export class StreamAnalysisService {
           avgChatCount: 0,
           avgViewer: 0,
           timeLine: [],
-          category
         };
 
         try {
@@ -296,13 +298,15 @@ export class StreamAnalysisService {
       .then(() => calculateData() // 연산
         .then(() => organizeData() // 데이터 포맷 변경
           .then((organizeArray) => organizeArray))
-        .catch((err) => {
+        .catch((err: Error) => {
           /* Promise Chain rejected 처리 */
+          console.log('[Error] : ', err.message);
           throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
-        })).catch((err) => {
-        throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
+        })).catch((err: Error) => {
+        console.log('[Error] : ', err.message);
+        throw new InternalServerErrorException(err);
       }));
-    // console.log(result);
+
     return result;
   }
 
@@ -321,7 +325,12 @@ export class StreamAnalysisService {
       const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
       const DayStreamData = await this.streamsRepository
         .createQueryBuilder('streams')
-        .select(['streamId', 'platform', 'title', 'startedAt', 'airTime', ])
+        .innerJoin(
+          StreamSummaryEntity,
+          'streamSummary',
+          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+        )
+        .select(['streams.*'])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
         .andWhere('streams.startedAt < :endDate', { endDate: endAt })
@@ -333,11 +342,16 @@ export class StreamAnalysisService {
     const endAt = new Date(endDate);
     const TermStreamsData = await this.streamsRepository
       .createQueryBuilder('streams')
-      .select(['streamId', 'platform', 'title', 'startedAt', 'airTime', 'creatorId'])
+      .innerJoin(
+        StreamSummaryEntity,
+        'streamSummary',
+        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+      )
+      .select(['streams.*'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
       .andWhere('streams.startedAt < :endDate', { endDate: endAt })
-      .orderBy('startedAt', 'ASC')
+      .orderBy('streams.startedAt', 'ASC')
       .execute();
 
     return TermStreamsData;

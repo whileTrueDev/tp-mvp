@@ -7,6 +7,14 @@ import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
 // organisms
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
 
+export interface PeriodsRequestParams {
+  userId: string;
+  baseStartAt: string;
+  baseEndAt: string;
+  compareStartAt: string;
+  compareEndAt: string;
+}
+
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [timeLineData, setTimeLine] = useState<any>(null);
   const [metricData, setMetric] = useState<any>(null);
@@ -19,11 +27,12 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
     '/stream-analysis/periods', { manual: true }
   );
 
-  const handleSubmit = ({ category, params }: {category: string[], params: any}) => {
+  const handleSubmit = ({ category, params }
+    : {category: string[], params: PeriodsRequestParams}) => {
     selectMetric(category); // 다중 선택으로 변경시 []을 제거한다.
     setOpen(false);
     setMetricOpen(false);
-    getRequest(params)
+    getRequest({ params })
       .then((res) => {
         if (res.data.hasOwnProperty('error')) {
           alert(res.data.error);
@@ -41,7 +50,11 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
         <Grid item>
-          <PeriodCompareSection loading={loading} error={error} handleSubmit={handleSubmit} />
+          <PeriodCompareSection
+            loading={loading}
+            error={error}
+            handleSubmit={handleSubmit}
+          />
         </Grid>
         {open && (
         <Grid item container direction="column" spacing={8}>

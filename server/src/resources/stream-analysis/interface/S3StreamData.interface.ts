@@ -22,5 +22,4 @@ export interface OrganizedData {
   avgViewer: number;
   avgChatCount: number;
   timeLine : CombinedTimeLine[];
-  category: Category;
 }

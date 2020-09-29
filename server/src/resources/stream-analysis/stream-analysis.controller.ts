@@ -13,7 +13,6 @@ import { StreamsInfo } from './interface/streamsInfo.interface';
 import { UserStatisticInfo } from './interface/userStatisticInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 // dto
-import { Category } from './dto/category.dto';
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
 import { EachStream } from './dto/eachStream.dto';
@@ -61,7 +60,7 @@ export class StreamAnalysisController {
 
   /*
     기간 대 기간 분석
-    input   :  
+    input   :  { userId, baseStartAt, baseEndAt, compareStartAt, compareEndAt }
     output  :  { chat_count , smile_count , viewer }
   */
 
@@ -81,7 +80,7 @@ export class StreamAnalysisController {
 
   /*
     기간 추이 분석
-    input   : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
+    input   : streams : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
     output  : [
       {time_line, total_index, start_date, end_date}, 
       {time_line, total_index, start_date, end_date}, ... 
@@ -89,11 +88,10 @@ export class StreamAnalysisController {
   */
  @Get('streams-term-info')
   getTest(
-    @Query('category') category: Category,
     @Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
       s3Request: FindS3StreamInfo[]
   ):Promise<any> {
-    return this.streamAnalysisService.getStreamList(category, s3Request);
+    return this.streamAnalysisService.getStreamList(s3Request);
   }
 
   /*
