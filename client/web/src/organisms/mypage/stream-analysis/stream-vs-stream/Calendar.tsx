@@ -9,7 +9,6 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
 import useAxios from 'axios-hooks';
-import { makeStyles, Theme } from '@material-ui/core/styles';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
@@ -22,10 +21,9 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     clickedDate, handleDayStreamList, setClickedDate,
     compareStream, baseStream,
   } = props;
-  // const classes = useStyles();
   const subscribe = React.useContext(SubscribeContext);
-  const [month, setMonth] = React.useState<Date>();
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
+  const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
 
   const [
     {
@@ -40,14 +38,14 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     excuteGetStreams({
       params: {
         userId: subscribe.currUser.targetUserId,
-        startDate: clickedDate.toISOString(),
+        startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
       }
     }).then((result) => {
       setHasStreamDays(
         result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
       );
     });
-  }, [subscribe.currUser]);
+  }, [subscribe.currUser, currMonth, excuteGetStreams]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);
@@ -66,11 +64,10 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
 
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
     if (newMonth) {
-      setMonth(newMonth);
-      setClickedDate(newMonth);
+      setCurrMonth(newMonth);
       excuteGetStreams({
         params: {
-          userId: 'userId1',
+          userId: subscribe.currUser.targetUserId,
           startDate: newMonth.toISOString(),
         }
       }).then((result) => {

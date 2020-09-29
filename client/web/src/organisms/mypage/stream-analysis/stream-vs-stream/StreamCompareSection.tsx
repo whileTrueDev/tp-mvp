@@ -22,6 +22,8 @@ import { DayStreamsInfo } from './StreamCompareSectioninterface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
+// context
+import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
 interface StreamsCompareCategoryResult {
     broad1Count: any;
@@ -49,6 +51,7 @@ export default function StreamCompareSection(
   props: StreamCompareSectionPropInterface
 ): JSX.Element {
   const { handleSubmit, loading, error } = props;
+  const subscribe = React.useContext(SubscribeContext);
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>([]);
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
@@ -83,6 +86,15 @@ export default function StreamCompareSection(
       );
     }
   };
+
+  /* 네비바 유저 전환시 이전 값 초기화 */
+  React.useEffect(() => {
+    setBaseStream(null);
+    setCompareStream(null);
+    setFullMessageOpen(false);
+    setClickedDate(new Date());
+    setDayStreamsList([]);
+  }, [subscribe.currUser]);
 
   useEffect(() => {
     if (!compareStream || !baseStream) handleFullMessage(false);

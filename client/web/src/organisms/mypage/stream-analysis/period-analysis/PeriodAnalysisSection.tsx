@@ -51,8 +51,14 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
   };
 
   const handlePeriod = (startAt: Date, endAt: Date) => {
-    const per = [startAt, endAt];
-    setPeriod(per);
+    const _period = {
+      startAt, endAt
+    };
+    /* 하루 선택시 이틀로 자동 변경 */
+    if (_period.endAt.getDate() === _period.startAt.getDate()) {
+      _period.endAt.setDate(_period.endAt.getDate() + 1);
+    }
+    setPeriod([_period.startAt, _period.endAt]);
   };
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
@@ -76,7 +82,18 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
         setTermStreamsList(res.data);
       });
     }
-  }, [period]);
+  }, [period, subscribe.currUser.targetUserId, excuteGetStreams]);
+
+  /* 네비바 유저 전환시 이전 값 초기화 */
+  React.useEffect(() => {
+    setPeriod(new Array<Date>(2));
+    setCheckStateGroup({
+      viewer: false,
+      chat: false,
+      smile: false,
+    });
+    setTermStreamsList([]);
+  }, [subscribe.currUser]);
 
   const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
     setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));

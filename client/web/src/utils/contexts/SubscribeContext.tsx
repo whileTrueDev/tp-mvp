@@ -1,7 +1,6 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
 import { AxiosError } from 'axios';
-import AuthContext from './AuthContext';
 
 export interface SubscribeUserInfo {
   userId: string;
@@ -35,7 +34,7 @@ const SubscribeContext = React.createContext<SubscribeContextValue>({
   loading: false
 });
 
-export function useSubscribe(userId?: string): SubscribeContextValue {
+export function useSubscribe(): SubscribeContextValue {
   const [
     currUser,
     setCurrUser
@@ -65,12 +64,11 @@ export function useSubscribe(userId?: string): SubscribeContextValue {
         userId: 'qjqdn1568', // logined user id
       }
     }).then((res) => {
-      console.log(res);
       setValidSubscribeUSerList(res.data.validUserList);
       setInvalidSubscribeUserList(res.data.inValidUserList);
       setCurrUser(res.data.validUserList[0]);
     });
-  }, []);
+  }, [excuteGetSubscribeData]);
 
   return {
     currUser,

@@ -82,7 +82,7 @@ export default function PeriodCompareTextField(props: periodCompareTextBoxProps)
         }
       }
     }
-  }, [start.value, end.value]);
+  }, [start.value, end.value, base]);
 
   React.useEffect(() => {
     if (period[0] && period[1]
@@ -92,13 +92,6 @@ export default function PeriodCompareTextField(props: periodCompareTextBoxProps)
       end.setValue(period[1].toISOString().slice(0, 10));
     }
   }, [period]);
-
-  React.useEffect(() => {
-    const nowDate = new Date();
-    end.setValue(nowDate.toISOString().slice(0, 10));
-    nowDate.setDate(nowDate.getDate() - 1);
-    start.setValue(nowDate.toISOString().slice(0, 10));
-  }, []);
 
   return (
     <Grid container direction="row" spacing={2}>
