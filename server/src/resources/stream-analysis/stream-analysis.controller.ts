@@ -23,7 +23,7 @@ import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 export class StreamAnalysisController {
   constructor(
     private readonly streamAnalysisService: StreamAnalysisService,
-    @Inject(UsersService) private usersService: UsersService
+    @Inject(UsersService) private usersService: UsersService  
   ) {}
 
   /*

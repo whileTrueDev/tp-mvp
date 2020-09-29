@@ -70,7 +70,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       setClickedDate(newMonth);
       excuteGetStreams({
         params: {
-          userId: 'userId1',
+          userId: subscribe.currUser.targetUserId,
           startDate: newMonth.toISOString(),
         }
       }).then((result) => {

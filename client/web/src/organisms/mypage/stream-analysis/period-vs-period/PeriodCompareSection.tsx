@@ -41,13 +41,31 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   };
 
   const handlePeriod = (startAt: Date, endAt: Date, base?: true) => {
-    const per = [startAt, endAt];
+    const period = {
+      startAt, endAt
+    };
+
+    /* 하루 선택시 이틀로 자동 변경 */
+    if (period.endAt.getDate() === period.startAt.getDate()) {
+      period.endAt.setDate(period.endAt.getDate() + 1);
+    }
     if (base) {
-      setBasePeriod(per);
+      setBasePeriod([period.startAt, period.endAt]);
     } else {
-      setComparePeriod(per);
+      setComparePeriod([period.startAt, period.endAt]);
     }
   };
+
+  /* 네비바 유저 전환시 이전 값 초기화 */
+  React.useEffect(() => {
+    setBasePeriod(new Array<Date>(2));
+    setComparePeriod(new Array<Date>(2));
+    setCheckStateGroup({
+      viewer: false,
+      chat: false,
+      smile: false,
+    });
+  }, [subscribe.currUser]);
 
   const handleAnalysisButton = () => {
     /* 카테고리 복수 선택 */
