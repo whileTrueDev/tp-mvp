@@ -1,5 +1,3 @@
-import { Category } from '../dto/category.dto';
-
 export interface TimeLine{
   smile_count: number;
   chat_count: number;
@@ -13,13 +11,15 @@ export interface S3StreamData {
 }
 
 export interface CombinedTimeLine {
-  smileCount : number;
-  chatCount: number;
+  smile_count : number;
+  chat_count: number;
   date: string;
 }
 
 export interface OrganizedData {
-  avgViewer: number;
-  avgChatCount: number;
-  timeLine : CombinedTimeLine[];
+  start_date: string;
+  end_date: string;
+  view_count: number;
+  chat_count: number;
+  value : CombinedTimeLine[];
 }

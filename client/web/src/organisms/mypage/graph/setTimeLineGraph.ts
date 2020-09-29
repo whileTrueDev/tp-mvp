@@ -4,14 +4,14 @@ import am4themes_kelly from '@amcharts/amcharts4/themes/kelly';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import graphColor from './Color';
 
-export default function setComponent(data: any, theme: any, name?: string): am4charts.XYChart {
+export default function setComponent(data: any, theme: any): am4charts.XYChart {
   am4core.useTheme(am4themes_kelly);
   am4core.useTheme(am4themes_animated);
 
   const lightColor = am4core.color(theme.palette.primary.light);
   const darkColor = am4core.color(theme.palette.primary.dark);
 
-  const chart : am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);
+  const chart : am4charts.XYChart = am4core.create('chartdiv', am4charts.XYChart);
   chart.data = data;
   chart.dateFormatter.inputDateFormat = 'i';
   chart.paddingRight = 15;
@@ -21,7 +21,8 @@ export default function setComponent(data: any, theme: any, name?: string): am4c
   dateAxis.skipEmptyPeriods = true;
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd HH:mm:ss';
   dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
-  // dateAxis.dateFormats.setKey('minute', 'MM-dd HH:mm');
+  dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
+  // dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
   // dateAxis.groupData = true;
 
   // ****************************** smile count series ***************************
@@ -85,6 +86,7 @@ export default function setComponent(data: any, theme: any, name?: string): am4c
   viewer_series.strokeWidth = 2.5;
   viewer_series.tensionX = 0.8;
   viewer_series.tooltipText = '평균 시청자 수: [bold]{viewer}[/]';
+  viewer_series.hidden = true; // 기본 그래프 설정.
 
   // ****************************** cursor ***************************
   // Make a panning cursor

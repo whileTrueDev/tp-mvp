@@ -11,15 +11,18 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
-import { dataArray } from './s3TestData.test';
+// import { dataArray } from './s3TestData.test';
 // logic class
 import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
+import { PeriodAnalysis } from './interface/periodAnalysis.interface';
+import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
+import { StreamAnalysis } from './interface/streamAnalysis.interface';
+
 // dto
-import { Category } from './dto/category.dto';
 import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
@@ -92,225 +95,6 @@ export class StreamAnalysisService {
   ) {}
 
   /*
-    기간 추이 분석
-    input   : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
-    output  : [
-      {time_line, total_index, start_date, end_date}, 
-      {time_line, total_index, start_date, end_date}, ... 
-    ]
-  */
-  async getStreamList(s3Request: FindS3StreamInfo[]): Promise<any> {
-    const keyArray : string[] = [];
-    const calculatedArray : S3StreamData[] = [];
-    const dataArray : S3StreamData[] = [];
-
-    /* input param 을 통해 S3 키 배열 생성 함수 정의 */
-    const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
-      const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
-      const path = `metrics_json/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
-      const params = {
-        Bucket: process.env.BUCKET_NAME,
-        Delimiter: '',
-        Prefix: path,
-      };
-
-      s3.listObjects(params).promise()
-        .then((values) => {
-          if (values.Contents) {
-            values.Contents.map((value) => {
-              if (value.Key) keyArray.push(value.Key);
-            });
-          }
-          resolveKeys();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-
-    /* S3 키 배열을 통해 해당 키와 일치하는 모든 방송 조회  함수 정의 */
-    const dataFunc = (key: any) => new Promise<void>((resolveData, reject) => {
-      if (keyArray.length < 1) reject(new Error('Empty S3 Key Array ...'));
-
-      const param = {
-        Bucket: process.env.BUCKET_NAME, // your bucket name,
-        Key: key
-      };
-
-      const streamData = s3.getObject(param).promise()
-        .then((data) => {
-          /* S3 body 에서 Obejct Array 로 변경 */
-          const JsonData: S3StreamData = JSON.parse(data.Body.toString('utf-8'));
-          dataArray.push({
-            start_date: JsonData.start_date,
-            end_date: JsonData.end_date,
-            time_line: JsonData.time_line,
-            total_index: JsonData.total_index,
-          });
-          resolveData();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-
-      return streamData;
-    });
-
-    /* 분리된 방송 처리 함수 정의 */
-    const detachFunc = (stream: S3StreamData): void => {
-      calculatedArray.push(stream);
-    };
-
-    /* 겹처진 방송 처리 함수 정의 */
-    const crossFunc = (currStream: S3StreamData, nextStream: S3StreamData): S3StreamData => {
-      let gapSize = 0; // 두 방송의 갭 인덱스 크기
-      let gapStartIndex = 0; // 현재 방송에서 갭 시작 인덱스 위치
-      let isContained = false; // 현재 방송이 다음 방송을 포함 하는 경우 플래그
-
-      /* 현재 방송에 다음 방송이 포함 되는 경우 (끝점 일치 포함) */
-      if (moment(currStream.end_date) >= moment(nextStream.end_date)) {
-        isContained = true;
-        const timeDuration = moment(nextStream.start_date).diff(moment(currStream.start_date), 'seconds');
-        gapSize = nextStream.total_index;
-        gapStartIndex = Math.round(timeDuration / 30);
-      } else {
-        /* 현재 방송에 다음 방송이 일부 겹치는 경우 */
-        const timeDuration = moment(currStream.end_date).diff(moment(nextStream.start_date), 'seconds');
-        gapSize = Math.round(timeDuration / 30);
-        gapStartIndex = currStream.total_index - gapSize;
-      }
-
-      const nextStreamTimeline = nextStream.time_line;
-      let i = gapStartIndex;
-      let j = 0;
-
-      try {
-        for (i = gapStartIndex; i < gapStartIndex + gapSize; i += 1) {
-          nextStreamTimeline[j].chat_count += currStream.time_line[i].chat_count;
-          nextStreamTimeline[j].smile_count += currStream.time_line[i].smile_count;
-          j += 1;
-        }
-
-        const currTimeline = currStream.time_line.slice(0, gapStartIndex);
-        const combinedTimeLine = currTimeline.concat(nextStreamTimeline);
-
-        /* 현재 방송과 다음 방송의 포함 관계에 따른 리턴값 설정 */
-        const combiendS3StreamData = {
-          start_date: currStream.start_date,
-          end_date: isContained ? currStream.end_date : nextStream.end_date,
-          time_line: isContained ? combinedTimeLine.concat(
-            currStream.time_line.splice(gapStartIndex + gapSize - 1, currStream.time_line.length)
-          ) : combinedTimeLine,
-          total_index: isContained
-            ? currStream.total_index : currStream.total_index + nextStream.total_index - gapSize,
-        };
-
-        return combiendS3StreamData;
-      } catch (e) {
-        return {
-          ...currStream
-        };
-      }
-    };
-
-    /* 조회된 S3 데이터 리스트 연산 수행 함수 정의 */
-    const calculateData = () => new Promise<S3StreamData[]>((resolveCalculate, reject) => {
-      /* 시작 날짜 기준 오름 차순 , 시작 날짜 동일 시 방송 길이 기준 오름 차순 */
-      if (dataArray.length < 1) reject(new Error('Empty S3 Data Array ...'));
-      const ASCdataArray = dataArray.sort((obj1, obj2) => {
-        if (moment(obj1.start_date) > moment(obj2.start_date)) return 1;
-        if (moment(obj1.start_date) < moment(obj2.start_date)) return -1;
-        if (moment(obj1.start_date) === moment(obj2.start_date)) {
-          if (obj1.time_line.length >= obj2.time_line.length) return 1;
-          return -1;
-        }
-        return 0;
-      });
-
-      /* S3 방송 리스트 순차처리 */
-      try {
-        for (let i = 0; i <= ASCdataArray.length - 1; i += 1) {
-          if (i !== ASCdataArray.length - 1) {
-            /* 루프 현재 방송과 다음 방송의 겹침 여부 판단 후 로직 수행 */
-            const currStream = ASCdataArray[i];
-            const nextStream = ASCdataArray[i + 1];
-            if (moment(currStream.end_date) >= moment(nextStream.start_date)) {
-              /* 겹쳐진 방송은 하나로 합쳐 다음 루프 수행 */
-              ASCdataArray[i + 1] = crossFunc(currStream, nextStream);
-            } else {
-              /* 분리 혹은 루프의 마지막 방송일 경우 결과배열에 삽입 후 루프 수행 */
-              detachFunc(currStream);
-            }
-          } else {
-            const currStream = ASCdataArray[i];
-            detachFunc(currStream);
-            resolveCalculate(calculatedArray);
-          }
-        }
-      } catch (e) {
-        reject(e);
-      }
-    });
-
-    /* 리턴 데이터 포맷 설정 함수 정의 */
-    const organizeData = () => new Promise<OrganizedData>(
-      (resolveOrganize, rejectOrganize) => {
-        const organizeArray: OrganizedData = {
-          avgChatCount: 0,
-          avgViewer: 0,
-          timeLine: [],
-        };
-
-        try {
-        /* 각 타임라인 date 삽입과 동시에 병합 */
-          calculatedArray.forEach((s3Data, index) => {
-            s3Data.time_line.forEach((timeline, timelineIndex) => {
-              organizeArray.avgChatCount += timeline.chat_count;
-
-              organizeArray.timeLine.push({
-                smileCount: timeline.smile_count,
-                chatCount: timeline.chat_count,
-                date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss')
-              });
-            });
-            if (index === calculatedArray.length - 1) {
-              organizeArray.avgViewer = 1000; // 평균 시청자수 계산 로직 작성후 추후 추가
-              organizeArray.avgChatCount /= organizeArray.timeLine.length;
-              resolveOrganize(organizeArray);
-            }
-          });
-        } catch (err) {
-          rejectOrganize(err);
-        }
-      }
-    );
-
-    /* S3 데이터 조회 Promise.all 함수 선언 */
-    const getAllKeys = (list: FindS3StreamInfo[]) => Promise.all(
-      list.map((stream) => keyFunc(stream))
-    );
-    const getAllDatas = (list: string[]) => Promise.all(
-      list.map((stream) => dataFunc(stream))
-    );
-
-    /* S3 데이터 조회 후 연산 함수 실행 */
-    const result = await getAllKeys(s3Request).then(() => getAllDatas(keyArray) // 조회
-      .then(() => calculateData() // 연산
-        .then(() => organizeData() // 데이터 포맷 변경
-          .then((organizeArray) => organizeArray))
-        .catch((err: Error) => {
-          /* Promise Chain rejected 처리 */
-          console.log('[Error] : ', err.message);
-          throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
-        })).catch((err: Error) => {
-        console.log('[Error] : ', err.message);
-        throw new InternalServerErrorException(err);
-      }));
-
-    return result;
-  }
-
-  /*
     input   :  userId, date
     output  :  date 의 month 에 해당하는 [ {streamId, platform, title, startAt, airTime,creatorId}, ... ]
   */
@@ -361,7 +145,7 @@ export class StreamAnalysisService {
     input   :  streamId , platform
     output  :  chat_count , smile_count , viewer
   */
-  async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId): Promise<any> {
+  async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId): Promise<(StreamAnalysis| null)[]> {
     if (streams[0]) {
       const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
@@ -397,19 +181,51 @@ export class StreamAnalysisService {
         const streamData = [streamInfoBase[0], streamInfoCompare[0]];
         return calculateStreamData(streamData);
       }
-      return [streamInfoBase, null];
+      // return [streamInfoBase, null];
     }
     return [null, null];
   }
 
   /*
+    기간 대 기간을 비교하기 위한 service
     input   :  terms: [{startAt , endAt , userId}, {startAt, endAt,userId}]
-    output  :  chat_count , smile_count , viewer or subscribe_count
+    output  :  
+    { 
+      timeline : [
+        {viewer, chatCount, smileCount, date}, 
+        {viewer, chatCount, smileCount, date},
+        ...
+      ],
+      type: 'periods',
+      metrics: [  
+        {
+          title: '평균 시청자 수',
+          tag: 'viewer',
+          key: 'viewer',
+          value: [],
+          unit: '명'
+        },
+        {
+          title: '웃음 발생 수',
+          tag: 'smile',
+          key: 'smileCount',
+          value: [],
+          unit: '회'
+        },
+        {
+          title: '채팅 발생 수',
+          tag: 'chat',
+          key: 'chatCount',
+          value: [],
+          unit: '회'
+        }
+      ]
+    }
   */
   async findStreamInfoByPeriods(userId: string, periods: {startAt: string, endAt: string}[])
-  : Promise<any> {
+  : Promise<PeriodsAnalysis> {
     // 전달되는 형태가 두개의 기간으로 전달되어야한다.
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       Promise.all(
         periods.map(({ startAt, endAt }) => {
           // 1. 곡선 그래프를 위한 데이터 구현
@@ -436,21 +252,6 @@ export class StreamAnalysisService {
         })
       )
         .then((timeline) => {
-          // timeline의 첫 번째 array가 존재하지 않는경우.
-          if (timeline[0].length === 0) {
-            resolve({
-              error: '기준 방송 기간의 데이터가 존재하지 않습니다.'
-            });
-            return;
-          }
-          // timeline의 두 번째 array가 존재하지 않는경우.
-          if (timeline[1].length === 0) {
-            resolve({
-              error: '비교 방송 기간의 데이터가 존재하지 않습니다.'
-            });
-            return;
-          }
-          // 2. 지표별 그래프를 위한 데이터 구현
           const metrics = timeline.map((period) => period.reduce((sum, element) => [
             sum[0] + Number(element.viewer),
             sum[1] + Number(element.chatCount),
@@ -544,40 +345,237 @@ export class StreamAnalysisService {
     };
   }
 
-  async getData(): Promise<any> {
-    let out = [];
-    // dataArray를 하나씩 돌면서 
-    dataArray.forEach((data, index) => {
-      if (index === 0) {
-        out = data.time_line.map((element, inindex) => {
-          const standard = new Date(data.start_date);
-          standard.setSeconds(standard.getSeconds() + (30 * inindex));
-          if (inindex % 6 === 0) {
-            return ({ ...element, date: standard, viewer: Math.random() * 1000 });
-          }
-          return ({ ...element, date: standard });
+  /*
+    기간 추이 분석
+    input   : streams: [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
+    output  : {
+      start_date,
+      end_date,
+      chat_count,
+      view_count,
+      value: [
+        {
+          smile_count,
+          chat_count,
+          viewer => 분석기에 아직 탑재 미완료.
+          date
+        },
+        { smile_count, chat_count, viewer, date },
+        ...
+      ],
+    }
+  */
+  async findStreamInfoByPeriod(s3Request: FindS3StreamInfo[]): Promise<PeriodAnalysis> {
+    const keyArray : string[] = [];
+    const calculatedArray : S3StreamData[] = [];
+    const dataArray : S3StreamData[] = [];
 
-          // return { ...element, date: standard };
-        });
-      } else {
-        data.time_line.forEach((element, inindex) => {
-          const standard = new Date(data.start_date);
-          standard.setSeconds(standard.getSeconds() + (30 * inindex));
-          if (inindex % 6 === 0) {
-            out.push({ ...element, date: standard, viewer: Math.round(Math.random() * 1000) });
-          } else {
-            out.push({ ...element, date: standard });
+    /* input param 을 통해 S3 키 배열 생성 함수 정의 */
+    const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
+      const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
+      const path = `metrics_json/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Delimiter: '',
+        Prefix: path,
+      };
+
+      s3.listObjects(params).promise()
+        .then((values) => {
+          if (values.Contents) {
+            values.Contents.map((value) => {
+              if (value.Key) keyArray.push(value.Key);
+            });
           }
+          resolveKeys();
+        })
+        .catch((err) => {
+          reject(err);
         });
+    });
+
+    /* S3 키 배열을 통해 해당 키와 일치하는 모든 방송 조회  함수 정의 */
+    const dataFunc = (key: any) => new Promise<void>((resolveData, reject) => {
+      if (keyArray.length < 1) reject(new Error('Empty S3 Key Array ...'));
+
+      const param = {
+        Bucket: process.env.BUCKET_NAME, // your bucket name,
+        Key: key
+      };
+
+      const streamData = s3.getObject(param).promise()
+        .then((data) => {
+        /* S3 body 에서 Obejct Array 로 변경 */
+          const JsonData: S3StreamData = JSON.parse(data.Body.toString('utf-8'));
+          dataArray.push({
+            start_date: JsonData.start_date,
+            end_date: JsonData.end_date,
+            time_line: JsonData.time_line,
+            total_index: JsonData.total_index,
+          });
+          resolveData();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+
+      return streamData;
+    });
+
+    /* 분리된 방송 처리 함수 정의 */
+    const detachFunc = (stream: S3StreamData): void => {
+      calculatedArray.push(stream);
+    };
+
+    /* 겹처진 방송 처리 함수 정의 */
+    const crossFunc = (currStream: S3StreamData, nextStream: S3StreamData): S3StreamData => {
+      let gapSize = 0; // 두 방송의 갭 인덱스 크기
+      let gapStartIndex = 0; // 현재 방송에서 갭 시작 인덱스 위치
+      let isContained = false; // 현재 방송이 다음 방송을 포함 하는 경우 플래그
+
+      /* 현재 방송에 다음 방송이 포함 되는 경우 (끝점 일치 포함) */
+      if (moment(currStream.end_date) >= moment(nextStream.end_date)) {
+        isContained = true;
+        const timeDuration = moment(nextStream.start_date).diff(moment(currStream.start_date), 'seconds');
+        gapSize = nextStream.total_index;
+        gapStartIndex = Math.round(timeDuration / 30);
+      } else {
+      /* 현재 방송에 다음 방송이 일부 겹치는 경우 */
+        const timeDuration = moment(currStream.end_date).diff(moment(nextStream.start_date), 'seconds');
+        gapSize = Math.round(timeDuration / 30);
+        gapStartIndex = currStream.total_index - gapSize;
+      }
+
+      const nextStreamTimeline = nextStream.time_line;
+      let i = gapStartIndex;
+      let j = 0;
+
+      try {
+        for (i = gapStartIndex; i < gapStartIndex + gapSize; i += 1) {
+          nextStreamTimeline[j].chat_count += currStream.time_line[i].chat_count;
+          nextStreamTimeline[j].smile_count += currStream.time_line[i].smile_count;
+          j += 1;
+        }
+
+        const currTimeline = currStream.time_line.slice(0, gapStartIndex);
+        const combinedTimeLine = currTimeline.concat(nextStreamTimeline);
+
+        /* 현재 방송과 다음 방송의 포함 관계에 따른 리턴값 설정 */
+        const combiendS3StreamData = {
+          start_date: currStream.start_date,
+          end_date: isContained ? currStream.end_date : nextStream.end_date,
+          time_line: isContained ? combinedTimeLine.concat(
+            currStream.time_line.splice(gapStartIndex + gapSize - 1, currStream.time_line.length)
+          ) : combinedTimeLine,
+          total_index: isContained
+            ? currStream.total_index : currStream.total_index + nextStream.total_index - gapSize,
+        };
+
+        return combiendS3StreamData;
+      } catch (e) {
+        return {
+          ...currStream
+        };
+      }
+    };
+
+    /* 조회된 S3 데이터 리스트 연산 수행 함수 정의 */
+    const calculateData = () => new Promise<S3StreamData[]>((resolveCalculate, reject) => {
+    /* 시작 날짜 기준 오름 차순 , 시작 날짜 동일 시 방송 길이 기준 오름 차순 */
+      if (dataArray.length < 1) reject(new Error('Empty S3 Data Array ...'));
+      const ASCdataArray = dataArray.sort((obj1, obj2) => {
+        if (moment(obj1.start_date) > moment(obj2.start_date)) return 1;
+        if (moment(obj1.start_date) < moment(obj2.start_date)) return -1;
+        if (moment(obj1.start_date) === moment(obj2.start_date)) {
+          if (obj1.time_line.length >= obj2.time_line.length) return 1;
+          return -1;
+        }
+        return 0;
+      });
+
+      /* S3 방송 리스트 순차처리 */
+      try {
+        for (let i = 0; i <= ASCdataArray.length - 1; i += 1) {
+          if (i !== ASCdataArray.length - 1) {
+          /* 루프 현재 방송과 다음 방송의 겹침 여부 판단 후 로직 수행 */
+            const currStream = ASCdataArray[i];
+            const nextStream = ASCdataArray[i + 1];
+            if (moment(currStream.end_date) >= moment(nextStream.start_date)) {
+            /* 겹쳐진 방송은 하나로 합쳐 다음 루프 수행 */
+              ASCdataArray[i + 1] = crossFunc(currStream, nextStream);
+            } else {
+            /* 분리 혹은 루프의 마지막 방송일 경우 결과배열에 삽입 후 루프 수행 */
+              detachFunc(currStream);
+            }
+          } else {
+            const currStream = ASCdataArray[i];
+            detachFunc(currStream);
+            resolveCalculate(calculatedArray);
+          }
+        }
+      } catch (e) {
+        reject(e);
       }
     });
 
-    return {
-      start_date: '2020-09-16 18:21:00',
-      end_date: '2020-09-19 16:50:00',
-      view_count: 247,
-      chat_count: 1300,
-      value: out
-    };
+    /* 리턴 데이터 포맷 설정 함수 정의 */
+    const organizeData = () => new Promise<OrganizedData>(
+      (resolveOrganize, rejectOrganize) => {
+        const organizeArray: OrganizedData = {
+          start_date: calculatedArray[0].start_date,
+          end_date: calculatedArray[calculatedArray.length - 1].end_date,
+          chat_count: 0,
+          view_count: 0,
+          value: [],
+        };
+
+        try {
+          /* 각 타임라인 date 삽입과 동시에 병합 */
+          calculatedArray.forEach((s3Data, index) => {
+            s3Data.time_line.forEach((timeline, timelineIndex) => {
+              organizeArray.chat_count += timeline.chat_count;
+
+              organizeArray.value.push({
+                smile_count: timeline.smile_count,
+                chat_count: timeline.chat_count,
+                date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss')
+              });
+            });
+            if (index === calculatedArray.length - 1) {
+              organizeArray.view_count = 1000; // 평균 시청자수 계산 로직 작성후 추후 추가
+              organizeArray.chat_count = Math.round(organizeArray.chat_count / organizeArray.value.length);
+
+              resolveOrganize(organizeArray);
+            }
+          });
+        } catch (err) {
+          rejectOrganize(err);
+        }
+      }
+    );
+
+    /* S3 데이터 조회 Promise.all 함수 선언 */
+    const getAllKeys = (list: FindS3StreamInfo[]) => Promise.all(
+      list.map((stream) => keyFunc(stream))
+    );
+    const getAllDatas = (list: string[]) => Promise.all(
+      list.map((stream) => dataFunc(stream))
+    );
+
+    /* S3 데이터 조회 후 연산 함수 실행 */
+    const result = await getAllKeys(s3Request).then(() => getAllDatas(keyArray) // 조회
+      .then(() => calculateData() // 연산
+        .then(() => organizeData() // 데이터 포맷 변경
+          .then((organizeArray) => organizeArray))
+        .catch((err: Error) => {
+        /* Promise Chain rejected 처리 */
+          console.log('[Error] : ', err.message);
+          throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
+        })).catch((err: Error) => {
+        console.log('[Error] : ', err.message);
+        throw new InternalServerErrorException(err);
+      }));
+
+    return result;
   }
 }

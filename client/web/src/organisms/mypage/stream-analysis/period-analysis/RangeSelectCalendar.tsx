@@ -10,12 +10,12 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
 // styles
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interface
 import { RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   leftCircleBase: {
     width: '50%',
     backgroundColor: '#d7e7ff',
