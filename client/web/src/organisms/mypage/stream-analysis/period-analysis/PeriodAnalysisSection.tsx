@@ -19,7 +19,6 @@ import StreamList from './StreamList';
 // interface
 import {
   DayStreamsInfo,
-  OrganizedData,
   PeriodAnalysisProps,
   AnaysisStreamsInfoRequest
 } from './PeriodAnalysisSection.interface';
@@ -63,7 +62,6 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
   /* 기간 내 존재 모든 방송 리스트 요청 */
   const [
     {
-      data: getStreamsData,
       loading: getStreamsLoading,
       error: getStreamsError
     }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
@@ -82,7 +80,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
         setTermStreamsList(res.data);
       });
     }
-  }, [period]);
+  }, [period, subscribe.currUser.targetUserId, excuteGetStreams]);
 
   /* 네비바 유저 전환시 이전 값 초기화 */
   React.useEffect(() => {

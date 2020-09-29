@@ -34,10 +34,6 @@ export default function PeriodAnalysis(): JSX.Element {
       });
   };
 
-  // React.useEffect(() => {
-  //   console.log(selectedMetric);
-  // }, [selectedMetric]);
-
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2}>

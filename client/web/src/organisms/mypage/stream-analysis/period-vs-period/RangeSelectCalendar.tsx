@@ -79,34 +79,28 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const classes = useStyles();
   const subscribe = React.useContext(SubscribeContext);
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
-
+  const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
 
-  const [month, setMonth] = React.useState<Date>();
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
-  const [
-    {
-      data: getStreamsData,
-      loading: getStreamsLoading,
-      error: getStreamsError
-    }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-      url: 'http://localhost:3000/stream-analysis/stream-list',
-    }, { manual: true });
+  const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
+    url: 'http://localhost:3000/stream-analysis/stream-list',
+  }, { manual: true });
 
   React.useEffect(() => {
     excuteGetStreams({
       params: {
         userId: subscribe.currUser.targetUserId,
-        startDate: currDate ? currDate.toISOString() : (new Date()).toISOString(),
+        startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
       }
     }).then((result) => {
       setHasStreamDays(
         result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
       );
     });
-  }, [subscribe.currUser]);
+  }, [subscribe.currUser, excuteGetStreams, currMonth]);
 
   React.useEffect(() => {
     if (period.length > 1) {
@@ -139,9 +133,8 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   };
 
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
+    if (newMonth) setCurrMonth(newMonth);
     if (newMonth) {
-      setMonth(newMonth);
-      // setCurrDate(newMonth);
       excuteGetStreams({
         params: {
           userId: subscribe.currUser.targetUserId,
