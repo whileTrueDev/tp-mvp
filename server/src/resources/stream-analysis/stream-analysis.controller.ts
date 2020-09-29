@@ -9,9 +9,12 @@ import { ValidationPipe } from '../../pipes/validation.pipe';
 // import { SubscribeGuard } from '../../guards/subscribe.guard';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // interface
-import { StreamsInfo } from './interface/streamsInfo.interface';
 import { UserStatisticInfo } from './interface/userStatisticInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
+import { PeriodAnalysis } from './interface/periodAnalysis.interface';
+import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
+import { StreamAnalysis } from './interface/streamAnalysis.interface';
+
 // dto
 import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
@@ -47,28 +50,24 @@ export class StreamAnalysisController {
                     [ { streamId: 'streamId1', platform: 'twitch' }, 
                       { streamId: 'streamId2', platform: 'twitch' }] 
                 } 
-    output  :  [{ chat_count , smile_count , viewer } || null ,
-                { chat_count , smile_count , viewer } || null ]
   */
   @Get('streams')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) 본인인증에 대한 오류가 남.
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
-  ): Promise<any> {
+  ): Promise<(StreamAnalysis | null)[]> {
     return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
 
   /*
     기간 대 기간 분석
     input   :  { userId, baseStartAt, baseEndAt, compareStartAt, compareEndAt }
-    output  :  { chat_count , smile_count , viewer }
   */
-
   @Get('periods')
   getPeriodsStreamsInfo(
   @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
-  : Promise<StreamsInfo[]> {
+  : Promise<PeriodsAnalysis> {
     return this.streamAnalysisService.findStreamInfoByPeriods(
       findTermRequest.userId,
       [
@@ -81,17 +80,13 @@ export class StreamAnalysisController {
   /*
     기간 추이 분석
     input   : streams : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
-    output  : [
-      {time_line, total_index, start_date, end_date}, 
-      {time_line, total_index, start_date, end_date}, ... 
-    ]
   */
- @Get('streams-term-info')
+ @Get('period')
   getTest(
     @Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
       s3Request: FindS3StreamInfo[]
-  ):Promise<any> {
-    return this.streamAnalysisService.getStreamList(s3Request);
+  ):Promise<PeriodAnalysis> {
+    return this.streamAnalysisService.findStreamInfoByPeriod(s3Request);
   }
 
   /*
@@ -114,9 +109,4 @@ export class StreamAnalysisController {
      findUserStatisticRequest.nowDate
    );
  }
-
-  @Get('test')
-  getData() :Promise<any> {
-    return this.streamAnalysisService.getData();
-  }
 }

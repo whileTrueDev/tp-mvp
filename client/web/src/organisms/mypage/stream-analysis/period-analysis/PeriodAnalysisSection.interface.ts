@@ -13,7 +13,7 @@ export interface PeriodAnalysisProps {
   handleSubmit : ({ category, params }: {
     category: string[];
     params: PeriodRequestArray;
-}) => void
+  }) => void
 }
 
 export interface RangeSelectCaledarProps {

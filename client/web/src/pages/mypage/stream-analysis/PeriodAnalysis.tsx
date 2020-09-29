@@ -20,17 +20,15 @@ export default function PeriodAnalysis(): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
   const [{ error, loading }, getRequest] = useAxios(
-    '/stream-analysis/streams-term-info', { manual: true }
+    '/stream-analysis/period', { manual: true }
   );
-
   const handleSubmit = ({ category, params }
     : {category: string[], params: PeriodRequestArray}) => {
+    selectMetric(category);
     getRequest({ params })
       .then((res) => {
-        console.log(res.data);
         setData(res.data);
         setOpen(true);
-        selectMetric(category);
       });
   };
 
@@ -41,12 +39,12 @@ export default function PeriodAnalysis(): JSX.Element {
           {/* 상단 섹션 */}
           <PeriodAnalysisSection error={error} loading={loading} handleSubmit={handleSubmit} />
         </Grid>
-        {open && data
-        && (
-          <Grid item>
-            <PeriodGraph data={data} loading={loading} />
-          </Grid>
-        )}
+        <Grid item>
+          {open && data
+          && (
+          <PeriodGraph data={data} loading={loading} selectedMetric={selectedMetric} />
+          )}
+        </Grid>
       </Grid>
     </MypageSectionWrapper>
   );

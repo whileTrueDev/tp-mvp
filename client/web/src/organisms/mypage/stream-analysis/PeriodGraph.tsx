@@ -43,8 +43,8 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-export default function PeriodAnalysis({ data, loading }: {
-  data: timelineInterface, loading: boolean
+export default function PeriodAnalysis({ data, loading, selectedMetric }: {
+  data: timelineInterface, loading: boolean, selectedMetric: string[]
 }): JSX.Element {
   const classes = useStyles();
 
@@ -54,7 +54,7 @@ export default function PeriodAnalysis({ data, loading }: {
       { !loading && (
       <Grid container direction="column" justify="center" spacing={2}>
         <Grid item>
-          <TimeLineGraph data={data.value} />
+          <TimeLineGraph data={data.value} selectedMetric={selectedMetric} />
         </Grid>
         <Grid item>
           <Card className={classes.card} variant="outlined">
