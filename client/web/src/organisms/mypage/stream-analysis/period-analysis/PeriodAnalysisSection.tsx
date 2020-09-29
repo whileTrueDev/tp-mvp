@@ -94,13 +94,17 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
     // 현재 백엔드로 요청시에 오류남 => 파라미터가 너무 많아서 그런듯, get이 아닌 body를 사용하는 방식?
-    handleSubmit({
-      category: selectedCategory,
-      /* request params */
-      params: {
-        streams: requestParams,
-      }
-    });
+    if (termStreamsList.length < 1) {
+      alert('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요');
+    } else {
+      handleSubmit({
+        category: selectedCategory,
+        /* request params */
+        params: {
+          streams: requestParams,
+        }
+      });
+    }
   };
 
   return (

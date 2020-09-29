@@ -56,7 +56,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
     /* 타겟 유저 아이디 + 기간 2개 요청 */
-    console.log(basePeriod, comparePeriod);
     handleSubmit({
       category: selectedCategory,
       params: {
