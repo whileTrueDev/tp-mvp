@@ -1,9 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 700,
+    height: 600,
     background: 'linear-gradient(to bottom, #929ef8, #a8c4f9)'
   },
   wraper: {
@@ -11,7 +11,7 @@ const styles = makeStyles(() => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'left',
-    height: 700
+    height: 600
   },
   main: {
     margin: '20px 0px 20px 0px',
@@ -24,7 +24,7 @@ const styles = makeStyles(() => ({
   },
   mainTitle: {
     fontFamily: 'AppleSDGothicNeo',
-    fontSize: 60,
+    fontSize: 55,
     fontWeight: 900,
     color: 'white',
     margin: 0
@@ -45,36 +45,60 @@ const styles = makeStyles(() => ({
   buttonLine: {
     animation: '$lineSpread 1.2s ease-in-out',
     borderBottom: '1px solid white',
-    width: 500
+    width: 600
   },
-  logoEffect: {
+  imgWraper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  mainSVGEffect: {
     animationDelay: '1.5s',
     animationIterationCount: 'infinite',
-    animation: '$logoEffect 1s ease-in-out',
-    width: 200,
-    height: 200,
+    animation: '$mainSVGEffect 2s ease-in-out',
     visibility: 'hidden',
     position: 'relative',
-    background: 'url(\'./images/logo/truepointLogo.png\') no-repeat center center'
+  },
+  subSVGEffect: {
+    width: 350,
+    animationDelay: '1.5s',
+    animationIterationCount: 'infinite',
+    animation: '$subSVGEffect 2s ease-in-out',
+    visibility: 'hidden',
+    position: 'relative',
+    marginTop: theme.spacing(4)
   },
   '@keyframes lineSpread': {
     '0%': {
       width: 0
     },
     '100%': {
-      width: 500
+      width: 600
     }
   },
-  '@keyframes logoEffect': {
+  '@keyframes mainSVGEffect': {
     '0%': {
       visibility: 'visible',
       top: 0
     },
     '50%': {
-      top: -10
+      top: -20
     },
     '100%': {
       top: -0
+    }
+  },
+  '@keyframes subSVGEffect': {
+    '0%': {
+      visibility: 'visible',
+      width: 350
+    },
+    '50%': {
+      width: 300
+    },
+    '100%': {
+      width: 350
     }
   },
 }));

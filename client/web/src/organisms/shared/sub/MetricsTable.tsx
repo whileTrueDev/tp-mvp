@@ -3,6 +3,7 @@ import { TablePagination } from '@material-ui/core';
 import Table from '../../../atoms/Table/MaterialTable';
 import {TableCell, TableRow, TableBody} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import shortid from 'shortid';
 
 const styles = makeStyles(() => ({
   row: {
@@ -18,7 +19,7 @@ const styles = makeStyles(() => ({
 }));
 
 
-function highlightTerm(rowData: any): string {
+export function highlightTerm(rowData: any): string {
   function getFormatDate(date: Date): string {
     const getHours = date.getHours();
     const getMinutes = date.getMinutes();
@@ -54,6 +55,7 @@ interface TableProps {
   pageSize: number,
   handlePage: any,
   handlePageSize: any,
+  type: string
   handleClick?: (a: any) => void
 }
 
@@ -65,7 +67,8 @@ export default function MaterialTable({
   page,
   pageSize,
   handlePage,
-  handlePageSize
+  handlePageSize,
+  type
 }: TableProps): JSX.Element {
   const classes = styles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
@@ -84,7 +87,7 @@ export default function MaterialTable({
           {
             width: '180px',
             align: 'center',
-            title: '트루포인트 점수',
+            title: type === '트루포인트 편집점' ? '트루포인트 점수' : '횟수'
           },
         ]}
         data={metrics}
@@ -116,7 +119,7 @@ export default function MaterialTable({
                 : metrics
               ).map((eachRow: any) => (
                 <TableRow
-                  key={eachRow.start_index}
+                  key={shortid.generate()}
                   className={
                     eachRow.tableData.id === row.index
                       ? classes.selectedRow
