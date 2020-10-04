@@ -180,7 +180,7 @@ export default function MetricsAccordian(): JSX.Element {
                   pageSize={pageSize}
                   type="채팅 기반 편집점"
                 /> */}
-                <Chart data={metricsData.chat_points} />
+                <Chart data={metricsData.chat_points} chartType="chat" />
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
@@ -228,7 +228,7 @@ export default function MetricsAccordian(): JSX.Element {
                   pageSize={pageSize2}
                   type="웃음 기반 편집점"
                 /> */}
-                <Chart data={metricsData.smile_points} />
+                {/* <Chart data={metricsData.smile_points} chartType="smile"/> */}
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
