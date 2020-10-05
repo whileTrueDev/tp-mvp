@@ -22,13 +22,13 @@ jobs:
         run: |
           cd server
           yarn
-          yarn lint
           result=`yarn lint`
           echo "::set-output name=result::$result"
         env:
           CI: true
 
       - name: Create Comment
+        if: ${{ failure() }}
         uses: peter-evans/create-or-update-comment@v1
         with:
           issue-number: 1
