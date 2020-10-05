@@ -18,22 +18,15 @@ jobs:
       - name: Use Nodejs
         uses: actions/setup-node@v1
 
-      - name: Lint Nest application
-        id: lint
+      - name: Install Dependenties
         run: |
           cd server
           yarn
-          result=`yarn lint`
-          echo "::set-output name=result::$result"
         env:
           CI: true
 
-      - name: Create FailtComment
-        if: ${{ failure() }}
-        uses: peter-evans/create-or-update-comment@v1
+      - name: Check with ESLint
+        uses: tinovyatkin/action-eslint@v1
         with:
-          issue-number: ${{ github.event.number }}
-          body: |
-            ### ESlint log
-            ${{ steps.lint.outputs.result }}
-          reactions: "+1"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          check-name: eslint
