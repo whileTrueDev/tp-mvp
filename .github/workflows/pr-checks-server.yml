@@ -18,10 +18,21 @@ jobs:
       - name: Use Nodejs
         uses: actions/setup-node@v1
 
-      - name: Test Nest application
+      - name: Lint Nest application
         run: |
           cd server
           yarn
           yarn lint
+          result=`yarn lint`
+          echo "::set-output name=result::$result"
         env:
           CI: true
+
+      - name: Create Comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: 1
+          body: |
+            ### ESlint log
+            ${{ steps.lint.outputs.result }}
+          reactions: "+1"
