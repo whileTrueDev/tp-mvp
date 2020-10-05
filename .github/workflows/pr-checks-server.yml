@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-node@v1
 
       - name: Lint Nest application
+        id: lint
         run: |
           cd server
           yarn
@@ -27,11 +28,11 @@ jobs:
         env:
           CI: true
 
-      - name: Create Comment
+      - name: Create FailtComment
         if: ${{ failure() }}
         uses: peter-evans/create-or-update-comment@v1
         with:
-          issue-number: 24
+          issue-number: ${{ github.event.number }}
           body: |
             ### ESlint log
             ${{ steps.lint.outputs.result }}
