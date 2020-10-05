@@ -7,8 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Button from '../../../atoms/Button/Button';
 import MetricsTitle from '../../shared/sub/MetricsTitle';
 import MetricsTable from '../../shared/sub/MetricsTable';
-import HighlightGraph from './HighlightGraph';
-import {graphCSS, initialPoint} from './TruepointHighlight';
+import {initialPoint} from './TruepointHighlight';
 import Chart from './Chart';
 
 interface PointType {
@@ -170,7 +169,7 @@ export default function MetricsAccordian(): JSX.Element {
               pointNumber={metricsTestData.chat_points.length}
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
-              <Grid item md={8}>
+              <Grid item md={7}>
                 {/* <HighlightGraph
                   data={metricsData}
                   classes={graphCSS}
@@ -180,7 +179,7 @@ export default function MetricsAccordian(): JSX.Element {
                   pageSize={pageSize}
                   type="채팅 기반 편집점"
                 /> */}
-                <Chart data={metricsData.chat_points} chartType="chat" />
+                {/* <Chart data={metricsData.chat_points} chartType="chat" /> */}
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
@@ -218,17 +217,15 @@ export default function MetricsAccordian(): JSX.Element {
               pointNumber={metricsTestData.smile_points.length}
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
-              <Grid item md={8}>
-                {/* <HighlightGraph
-                  data={metricsData}
-                  classes={graphCSS}
+              <Grid item md={7}>
+                <Chart
+                  data={metricsData.smile_points}
+                  chartType="smile"
                   highlight={point2}
                   handleClick={setPoint2}
                   handlePage={setPage2}
                   pageSize={pageSize2}
-                  type="웃음 기반 편집점"
-                /> */}
-                {/* <Chart data={metricsData.smile_points} chartType="smile"/> */}
+                />
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>

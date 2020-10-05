@@ -5,6 +5,7 @@ import MetricsTable from '../../shared/sub/MetricsTable';
 import MetricsTitle from '../../shared/sub/MetricsTitle';
 import Button from '../../../atoms/Button/Button';
 import HighlightGraph from './HighlightGraph';
+import Chart from './Chart';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -45,15 +46,15 @@ const styles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: 331,
+    height: 50,
     fontFamily: 'AppleSDGothicNeo',
-    fontSize: 60,
+    fontSize: 30,
     fontWeight: 700,
     textAlign: 'center',
     color: '#ff3e7a',
     '&>span': {
       color: 'black',
-      fontSize: 30
+      fontSize: 20
     }
   },
   detailWraper: {
@@ -240,27 +241,15 @@ export default function TruepointHighlight(): JSX.Element {
         <Grid container direction="column" alignItems="center" justify="center">
           <Grid container direction="row" alignItems="center" justify="space-around">
             <Grid item md={7}>
-              { point.rank
-                ? (
-                  <div className={classes.contentLeft}>
-                    <div className={classes.rank}>
-                      {point.rank}위
-                      <span>편집점</span>
-                    </div>
-                    <div className={classes.detailWraper}>
-                      <div className={classes.detail}>채팅 발생수 : 13</div>
-                      <div className={classes.detail}>웃음 발생수 : 13</div>
-                      <div className={classes.detail}>추후 지표 업데이트 예정</div>
-                    </div>
+              { point.rank && (
+                <div className={classes.contentLeft}>
+                  <div className={classes.rank}>
+                    {point.rank}위
+                    <span>편집점</span>
                   </div>
-                )
-                : (
-                  <div className={classes.beforeClcik}>
-                    오른쪽 하이라이트 정보 또는
-                    아래 타임라인을 클릭해주세요.
-                  </div>
-                )
+                </div>)
               }
+              {/* <Chart data={testData.highlight_points} chartType="highlight"/> */}
             </Grid>
             <Grid item md={5} className={classes.contentRight}>
               <div className={classes.buttonWraper}>

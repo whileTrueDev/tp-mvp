@@ -5,80 +5,109 @@ import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
 interface ChartProps {
   data: any,
-  chartType: string
+  chartType: string,
+  highlight?: any,
+  handleClick: (a: any) => void,
+  handlePage: any,
+  pageSize: number
 }
 
 const metricSetting: any = {
   smile: {
     name: '웃음 발생 수',
-    valueY: 'smileCount',
-    tooltipText: '웃음 발생 수: [bold]{smileCount}[/]',
+    valueY: 'score',
+    dateX: 'start_time',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
   },
   chat: {
     name: '채팅 발생 수',
-    valueY: 'chatCount',
-    tooltipText: '채팅 발생 수: [bold]{chatCount}[/]',
+    valueY: 'score',
+    dateX: 'start_time',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a'
+  },
+  highlight: {
+    name: '트루포인트 편집점',
+    valueY: 'score',
+    dateX: 'start_time',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a'
   }
 };
 
-const setSeries = (metricsType: string, chart: am4charts.XYChart): void => {
-  const setting = metricSetting[`${metricsType}`];
-  const valueAxis: any = chart.yAxes.push(new am4charts.ValueAxis());
-  if (chart.yAxes.indexOf(valueAxis) !== 0) {
-    valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
-  }
-  const series : any = chart.series.push(new am4charts.LineSeries());
-  series.yAxis = valueAxis;
-  series.dataFields.valueY = setting.valueY;
-  series.dataFields.dateX = 'date';
-  series.name = setting.name;
-  series.tooltipText = setting.tooltipText;
-  series.strokeWidth = 2.5;
-  series.tensionX = 0.8;
-  series.tooltip.getFillFromObject = false;
-  series.stroke = setting.color; // red`
-  series.tooltip.background.fill = setting.color;
-  // Drop-shaped tooltips
-  series.tooltip.background.cornerRadius = 20;
-  series.tooltip.background.strokeOpacity = 0;
-  series.tooltip.pointerOrientation = 'vertical';
-  series.tooltip.label.minWidth = 40;
-  series.tooltip.label.minHeight = 40;
-  series.tooltip.label.textAlign = 'middle';
-  series.tooltip.label.textValign = 'middle';
-};
-
-export default function Chart({ data, chartType }: ChartProps): JSX.Element {
+export default function Chart({
+  data,
+  chartType,
+  highlight,
+  handleClick,
+  handlePage,
+  pageSize
+}: ChartProps): JSX.Element {
   am4core.useTheme(am4themes_animated);
-  const chart = am4core.create('chartdiv', am4charts.XYChart);
+  const chart = am4core.create(`${chartType}chartdiv`, am4charts.XYChart);
   chart.data = data;
 
-  // Create axes
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.renderer.minGridDistance = 60;
   dateAxis.skipEmptyPeriods = true;
-  dateAxis.tooltipDateFormat = 'yyyy-MM-dd';
-  dateAxis.dateFormats.setKey('day', 'MM-dd');
-
-  // Create series
-  const series = chart.series.push(new am4charts.LineSeries());
-  series.dataFields.valueY = 'value';
-  series.dataFields.dateX = 'date';
-  series.tooltipText = '{value}';
-
-  // series.tooltip.pointerOrientation = 'vertical';
+  dateAxis.tooltipDateFormat = 'HH:mm:ss';
+  dateAxis.dateFormats.setKey('second', 'yyyy-MM-dd HH:mm:ss');
 
   chart.cursor = new am4charts.XYCursor();
-  chart.cursor.snapToSeries = series;
   chart.cursor.xAxis = dateAxis;
   chart.scrollbarX = new am4core.Scrollbar();
+  chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
-  // chan
-  chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd';
+  const setSeries = (metricsType: string, getChart: am4charts.XYChart): void => {
+    const setting = metricSetting[metricsType];
+    const valueAxis: any = getChart.yAxes.push(new am4charts.ValueAxis());
+    if (chart.yAxes.indexOf(valueAxis) !== 0) {
+      valueAxis.syncWithAxis = getChart.yAxes.getIndex(0);
+    }
+    const series : any = getChart.series.push(new am4charts.LineSeries());
+    series.yAxis = valueAxis;
+    series.dataFields.valueY = setting.valueY;
+    series.dataFields.dateX = setting.dateX;
+    series.name = setting.name;
+    series.tooltipText = setting.tooltipText;
+    series.strokeWidth = 2.5;
+    series.tensionX = 0.8;
+    series.stroke = am4core.color('#7E8CF7');
+    series.tooltip.background.cornerRadius = 20;
+    series.tooltip.getFillFromObject = false;
+    series.tooltip.pointerOrientation = 'vertical';
+    series.tooltip.label.textAlign = 'middle';
+    series.tooltip.label.textValign = 'middle';
+    series.tooltip.background.fill = am4core.color(setting.tooltipColor);
+
+    const bullet = series.bullets.push(new am4charts.CircleBullet());
+    console.log(bullet)
+    bullet.circle.strokeWidth = 2;
+    bullet.circle.radius = 4;
+    bullet.circle.fill = am4core.color(setting.tooltipColor);
+    bullet.disabled = false;
+    bullet.events.on('hit', (ev: any) => {
+      const point = ev.target.dataItem.dataContext;
+      handleClick({
+        start_index: point.start_index,
+        end_index: point.end_index,
+        index: point.tableData.id
+      })
+      handlePage(Math.floor(point.tableData.id / pageSize));
+    });
+
+    const bullethover = bullet.states.create('hover');
+    bullethover.properties.scale = 2;
+  };
 
   setSeries(chartType, chart);
 
+  // if (highlight) {
+  //   bullet.states
+  // }
+
   return (
-    <div id="chartdiv" />
+    <div id={`${chartType}chartdiv`} style={{width: '100%', height: 350}} />
   );
 }
