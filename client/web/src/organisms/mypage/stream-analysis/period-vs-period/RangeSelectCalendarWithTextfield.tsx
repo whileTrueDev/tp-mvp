@@ -109,13 +109,13 @@ export default function RangeSelectCalendarWithTextfield(
         if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(end.value, 'YYYY-MM-DD'))) {
           const endDate = new Date(e.target.value);
           endDate.setDate(endDate.getDate() + 1);
-          handlePeriod(new Date(e.target.value), endDate);
+          handlePeriod(new Date(e.target.value), endDate, base);
           end.setValue(endDate.toISOString().slice(0, 10));
         } else {
-          handlePeriod(new Date(e.target.value), new Date(end.value));
+          handlePeriod(new Date(e.target.value), new Date(end.value), base);
         }
       } else {
-        handlePeriod(new Date(end.value), new Date(e.target.value));
+        handlePeriod(new Date(end.value), new Date(e.target.value), base);
         const tempDate = end.value;
         start.setValue(tempDate);
         end.setValue(e.target.value);
@@ -131,17 +131,17 @@ export default function RangeSelectCalendarWithTextfield(
       && e.target.value.length > 9
     ) {
       if (moment(e.target.value, 'YYYY-MM-DD') >= moment(start.value, 'YYYY-MM-DD')) {
-        handlePeriod(new Date(start.value), new Date(e.target.value));
+        handlePeriod(new Date(start.value), new Date(e.target.value), base);
         if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(start.value, 'YYYY-MM-DD'))) {
           const endDate = new Date(e.target.value);
           endDate.setDate(endDate.getDate() + 1);
-          handlePeriod(new Date(e.target.value), endDate);
+          handlePeriod(new Date(e.target.value), endDate, base);
           end.setValue(endDate.toISOString().slice(0, 10));
         } else {
-          handlePeriod(new Date(e.target.value), new Date(end.value));
+          handlePeriod(new Date(e.target.value), new Date(end.value), base);
         }
       } else {
-        handlePeriod(new Date(e.target.value), new Date(start.value));
+        handlePeriod(new Date(e.target.value), new Date(start.value), base);
         const tempDate = start.value;
         end.setValue(tempDate);
         start.setValue(e.target.value);

@@ -38,14 +38,10 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   };
 
   const handlePeriod = (startAt: Date, endAt: Date, base?: true) => {
-    const period = {
-      startAt, endAt
-    };
-
     if (base) {
-      setBasePeriod([period.startAt, period.endAt]);
+      setBasePeriod([startAt, endAt]);
     } else {
-      setComparePeriod([period.startAt, period.endAt]);
+      setComparePeriod([startAt, endAt]);
     }
   };
 
@@ -78,6 +74,16 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       }
     });
   };
+
+  React.useEffect(() => {
+    console.log('base start', basePeriod[0]);
+    console.log('base end', basePeriod[1]);
+  }, [basePeriod]);
+
+  React.useEffect(() => {
+    console.log('compare', comparePeriod[0]);
+    console.log('compare', comparePeriod[1]);
+  }, [comparePeriod]);
 
   return (
     <div className={classes.root}>
