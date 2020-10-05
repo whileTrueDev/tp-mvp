@@ -5,8 +5,11 @@ import { createBrowserHistory } from 'history';
 import { Router, Route } from 'react-router-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { configure } from 'axios-hooks';
+import axios from './util/axios';
 
 const history =  createBrowserHistory();
+configure({ axios });
 
 ReactDOM.render(
   

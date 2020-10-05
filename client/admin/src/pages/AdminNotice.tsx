@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import useAxios from 'axios-hooks';
 import { Grid, Typography } from '@material-ui/core';
 // organisms
 import NoticeTable from '../organisms/notice/NoticeTable';
@@ -53,6 +54,16 @@ export default function NoticeBoard() {
   // 공지사항 선택을 위한 State
   // useState<NoticeData> 제네릭타입 //
   const [selectedData, setSelectedData] = React.useState<NoticeData>();
+  const [{ error, loading }, getRequest] = useAxios(
+    '/admin/notice', { manual: true }
+  );
+
+  useEffect(()=>{
+    getRequest()
+    .then((row)=>{
+      console.log(row.data);
+    })
+  }, [])
 
   function handleSelectedData(data: NoticeData) {
     setSelectedData(data);
