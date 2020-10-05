@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef, useEffect} from 'react';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
@@ -106,6 +106,10 @@ export default function Chart({
   // if (highlight) {
   //   bullet.states
   // }
+
+  useEffect(() => {
+    
+  })
 
   return (
     <div id={`${chartType}chartdiv`} style={{width: '100%', height: 350}} />
