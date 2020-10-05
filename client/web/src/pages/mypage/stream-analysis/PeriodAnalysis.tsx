@@ -4,7 +4,7 @@ import { Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
-
+import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 
 interface PeriodRequestArray {
@@ -22,6 +22,7 @@ export default function PeriodAnalysis(): JSX.Element {
   const [{ error, loading }, getRequest] = useAxios(
     '/stream-analysis/period', { manual: true }
   );
+  const subscribe = React.useContext(SubscribeContext);
   const handleSubmit = ({ category, params }
     : {category: string[], params: PeriodRequestArray}) => {
     selectMetric(category);
@@ -32,12 +33,21 @@ export default function PeriodAnalysis(): JSX.Element {
       });
   };
 
+  React.useEffect(() => {
+    setOpen(false);
+  }, [subscribe.currUser]);
+
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2}>
         <Grid item>
           {/* 상단 섹션 */}
-          <PeriodAnalysisSection error={error} loading={loading} handleSubmit={handleSubmit} />
+          <PeriodAnalysisSection
+            error={error}
+            loading={loading}
+            handleSubmit={handleSubmit}
+            // handleGraphOpen={handleGraphOpen}
+          />
         </Grid>
         <Grid item>
           {open && data

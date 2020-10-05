@@ -9,13 +9,18 @@ export interface DayStreamsInfo{
 }
 export interface RangeSelectCaledarProps {
   period: Date[];
-  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
+  handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?:true) => void;
   base?: true;
 }
 export interface periodCompareTextBoxProps {
   base?: true;
   period: Date[];
-  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
+  handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?:true) => void;
+}
+export interface PeriodCompareCalendarAndTextfieldProps{
+  base?: true;
+  period: Date[];
+  handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?:true) => void;
 }
 
 export interface CheckBoxGroupProps {

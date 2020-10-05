@@ -125,8 +125,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
   };
 
   return (
-  // <div className={classes.root}> 해당 스타일로 인해 그래프와 상단영역이 겹쳐지는 문제 발생
-    <Grid container direction="column">
+    <Grid style={{ marginTop: '135px', height: 'auto' }}>
       <Grid item>
         {error
           && (
@@ -240,6 +239,5 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
         </Grid>
       </Grid>
     </Grid>
-  // </div>
   );
 }

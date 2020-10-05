@@ -4,6 +4,7 @@ import { Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
+import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // organisms
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
 
@@ -22,7 +23,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
   const [metricOpen, setMetricOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
-
+  const subscribe = React.useContext(SubscribeContext);
   const [{ loading, error }, getRequest] = useAxios(
     '/stream-analysis/periods', { manual: true }
   );
@@ -45,6 +46,10 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
         }
       });
   };
+
+  React.useEffect(() => {
+    setOpen(false);
+  }, [subscribe.currUser]);
 
   return (
     <MypageSectionWrapper>

@@ -115,12 +115,14 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     3. point1 != null point2 != null -> init point1, point2 , insert point1
   */
   const handleDate = (newDate: MaterialUiPickersDate) => {
+    // handlePeiodChangeFlag('toCal');
     if (newDate) setCurrDate(newDate);
 
     if (newDate && point1 === null && point2 === null) {
       setPoint1(newDate);
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
+
       if (point1.getTime() <= newDate.getTime()) {
         handlePeriod(point1, newDate, base);
       } else {
