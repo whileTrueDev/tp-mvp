@@ -1,0 +1,27 @@
+name: Dev PR Checks - "server"
+
+on:
+  pull_request:
+    branches: [master, dev]
+    paths:
+      - "server/**"
+
+jobs:
+  dev-pr-checks-server:
+    name: dev-pr-checks-server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Nodejs
+        uses: actions/setup-node@v1
+
+      - name: Test Nest application
+        run: |
+          cd server
+          yarn
+          yarn lint
+        env:
+          CI: true
