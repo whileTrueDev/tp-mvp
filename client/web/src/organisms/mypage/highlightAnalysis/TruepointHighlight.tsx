@@ -249,7 +249,14 @@ export default function TruepointHighlight(): JSX.Element {
                   </div>
                 </div>)
               }
-              {/* <Chart data={testData.highlight_points} chartType="highlight"/> */}
+              <Chart
+                data={testData.highlight_points}
+                chartType="highlight"
+                highlight={point}
+                handleClick={setPoint}
+                handlePage={setPage}
+                pageSize={pageSize}
+              />
             </Grid>
             <Grid item md={5} className={classes.contentRight}>
               <div className={classes.buttonWraper}>

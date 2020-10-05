@@ -43,6 +43,28 @@ const styles = makeStyles((theme) => ({
     width: '100%',
     marginBottom: 20
   },
+  contentLeft: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  rank: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: 50,
+    fontFamily: 'AppleSDGothicNeo',
+    fontSize: 30,
+    fontWeight: 700,
+    textAlign: 'center',
+    color: '#ff3e7a',
+    '&>span': {
+      color: 'black',
+      fontSize: 20
+    }
+  },
 }));
 
 // S3로 부터 호출되는 데이터
@@ -170,16 +192,22 @@ export default function MetricsAccordian(): JSX.Element {
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
-                {/* <HighlightGraph
-                  data={metricsData}
-                  classes={graphCSS}
+                { point.rank && (
+                  <div className={classes.contentLeft}>
+                    <div className={classes.rank}>
+                      {point.rank}위
+                      <span>편집점</span>
+                    </div>
+                  </div>)
+                }
+                <Chart
+                  data={metricsData.chat_points}
+                  chartType="chat"
                   highlight={point}
                   handleClick={setPoint}
                   handlePage={setPage}
                   pageSize={pageSize}
-                  type="채팅 기반 편집점"
-                /> */}
-                {/* <Chart data={metricsData.chat_points} chartType="chat" /> */}
+                />
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
@@ -218,6 +246,14 @@ export default function MetricsAccordian(): JSX.Element {
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
+                { point2.rank && (
+                  <div className={classes.contentLeft}>
+                    <div className={classes.rank}>
+                      {point2.rank}위
+                      <span>편집점</span>
+                    </div>
+                  </div>)
+                }
                 <Chart
                   data={metricsData.smile_points}
                   chartType="smile"
