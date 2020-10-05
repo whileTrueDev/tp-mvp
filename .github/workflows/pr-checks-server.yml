@@ -18,15 +18,23 @@ jobs:
       - name: Use Nodejs
         uses: actions/setup-node@v1
 
-      - name: Install Dependenties
+      - name: Lint Nest application
+        id: lint
         run: |
           cd server
           yarn
+          yarn lint
         env:
           CI: true
 
-      - name: Check with ESLint
-        uses: tinovyatkin/action-eslint@v1
+      - name: Create FailtComment
+        if: ${{ failure() }}
+        uses: peter-evans/create-or-update-comment@v1
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          check-name: eslint
+          issue-number: ${{ github.event.number }}
+          body: |
+            **ESLint Failed**
+            Check your code on your local environment  
+            server 폴더에서 `yarn lint`를 통해 eslint 검사를 실행하고  
+            규칙에 맞지 않는 부분을 확인하세요.
+          reactions: "+1"
