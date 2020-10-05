@@ -41,6 +41,7 @@ export class HighlightService {
       });
     return keyArray;
   }
+
   async getStreamList(name, year, month, day): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,

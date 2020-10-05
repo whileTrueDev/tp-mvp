@@ -13,9 +13,11 @@ import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { PasswordDto } from './dto/password.dto';
+import { SubscribeUsers } from './dto/subscribeUsers.dto';
 
 import { UserEntity } from './entities/user.entity';
 import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';
+import { SubscribeEntity } from './entities/subscribe.entity';
 
 @Controller('users')
 export class UsersController {
@@ -72,6 +74,19 @@ export class UsersController {
   //   }
   //   throw new ForbiddenException();
   // }
+
+  /*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
+  */
+  @Get('/subscribe-users')
+  // @UseGuards(JwtAuthGuard)
+  getUserValidSubscribeInfo(
+    @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
+  )
+  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
+    return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
+  }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)

@@ -1,8 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
+import useAxios from 'axios-hooks';
+import { Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
+import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
+import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
+
+import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
+
+interface PeriodRequestArray {
+  streams : {
+    creatorId: string;
+    streamId: string;
+    startedAt: string;
+  }[]
+}
 
 export default function PeriodAnalysis(): JSX.Element {
+  const [data, setData] = useState<timelineInterface | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedMetric, selectMetric] = useState<string[]>([]);
+  const [{ error, loading }, getRequest] = useAxios(
+    '/stream-analysis/period', { manual: true }
+  );
+  const handleSubmit = ({ category, params }
+    : {category: string[], params: PeriodRequestArray}) => {
+    selectMetric(category);
+    getRequest({ params })
+      .then((res) => {
+        setData(res.data);
+        setOpen(true);
+      });
+  };
+
   return (
-    <MypageSectionWrapper>PeriodAnalysis</MypageSectionWrapper>
+    <MypageSectionWrapper>
+      <Grid container direction="column" spacing={2}>
+        <Grid item>
+          {/* 상단 섹션 */}
+          <PeriodAnalysisSection error={error} loading={loading} handleSubmit={handleSubmit} />
+        </Grid>
+        <Grid item>
+          {open && data
+          && (
+          <PeriodGraph data={data} loading={loading} selectedMetric={selectedMetric} />
+          )}
+        </Grid>
+      </Grid>
+    </MypageSectionWrapper>
   );
 }

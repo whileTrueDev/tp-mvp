@@ -1,8 +1,8 @@
 export interface StreamsInfo {
-  streamId: string;
-  platform: string;
+  streamId?: string;
+  platform?: string;
   smileCount: number;
-  createdAt: Date;
+  createdAt?: Date;
   chatCount: number;
-  viewer: number;
+  viewer?: number;
 }

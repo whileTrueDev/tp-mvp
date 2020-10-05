@@ -4,12 +4,17 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 // @material-ui icons
+import EmojiObjectsOutlinedIcon from '@material-ui/icons/EmojiObjectsOutlined';
 import Cached from '@material-ui/icons/Cached';
 // styles
 import useNavbarStyles from './Navbar.style';
+// context
+import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
 const StyledMenu = withStyles((theme) => ({
   paper: {
@@ -33,38 +38,60 @@ const StyledMenu = withStyles((theme) => ({
 
 const StyledMenuItem = withStyles((theme) => ({
   root: {
-    '&:focus': {
-      backgroundColor: theme.palette.primary.main,
-      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.common.white,
-      },
+    // '&:focus': {
+    //   backgroundColor: theme.palette.primary.dark,
+    //   '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+    //     color: theme.palette.common.white,
+    //   },
+    // },
+    '&.Mui-selected': {
+      backgroundColor: theme.palette.primary.dark,
+      color: '#FFFF',
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark,
+        color: '#FFFF',
+      }
     },
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+      color: '#FFFF',
+    }
   },
+
 }))(MenuItem);
 
-interface NavUserInfoInterface{
-  username : string;
-  subscribePerioud: string;
-  isSubscribe: boolean;
-  subscribeStartAt: Date;
-  subscribeEndAt: Date;
+const StyledToolTip = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: theme.palette.primary.light,
+    color: 'black',
+    maxWidth: '425px',
+  },
+  arrow: {
+    color: theme.palette.primary.light,
+    fontSize: '30px'
+  }
+}))(Tooltip);
+
+export interface SubscribeUserInfo {
+  userId: string;
+  targetUserId: string;
+  startAt: string;
+  endAt: string;
 }
 
 interface NavbarUserListProps{
-  navUserInfoList: NavUserInfoInterface[];
-  selectedUserIndex: number;
-  handleSelectedUserIndex: (user: NavUserInfoInterface) => void;
+  navUserInfoList: SubscribeUserInfo[];
 }
 
-export default function NavbarUserList(props: NavbarUserListProps): JSX.Element {
-  const {
-    navUserInfoList, handleSelectedUserIndex, selectedUserIndex
-  } = props;
+export default function NavbarUserList(): JSX.Element {
   const classes = useNavbarStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const subscribe = React.useContext(SubscribeContext);
+  const [tooltipOpen, setTooltipOpen] = React.useState<boolean>(true);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    setTooltipOpen(false);
   };
 
   const handleClose = () => {
@@ -73,16 +100,23 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
 
   const subscribeUserListItem = (): JSX.Element[] | JSX.Element => {
     // 구독한 유저가 1명이라도 존재 할 경우 (자기 자신 포함)
-    if (navUserInfoList.length > 0) {
-      return navUserInfoList.map((user) => (
-        <StyledMenuItem
-          key={user.username}
-          onClick={() => { handleSelectedUserIndex(user); handleClose(); }}
-        >
-          <Cached fontSize="small" style={{ marginRight: 16 }} />
-          <ListItemText primary={user.username} />
-        </StyledMenuItem>
-      ));
+    if (subscribe.validSubscribeUserList.length > 0) {
+      return (
+        <List style={{ padding: '0px' }}>
+          {subscribe.validSubscribeUserList.map((user) => (
+            <StyledMenuItem
+              key={user.targetUserId}
+              button
+              selected={subscribe.currUser.targetUserId === user.targetUserId}
+              onClick={() => { subscribe.handleCurrTargetUser(user); handleClose(); }}
+            >
+              <Cached fontSize="small" style={{ marginRight: 16 }} />
+              <ListItemText primary={user.targetUserId} />
+            </StyledMenuItem>
+          ))}
+        </List>
+
+      );
     }
     // 구독한 유저가 존재 하지 않을 경우
     return (
@@ -92,22 +126,40 @@ export default function NavbarUserList(props: NavbarUserListProps): JSX.Element 
     );
   };
 
+  const tooltipText = (): JSX.Element => (
+    <Typography
+      style={{ fontSize: '17px', width: '500px', padding: '15px', }}
+    >
+      <EmojiObjectsOutlinedIcon style={{ fontSize: '24px', marginRight: '8px', color: 'yellow' }} />
+      클릭하시면 구독한 유저를 선택 할 수 있습니다.
+    </Typography>
+  );
+
   return (
     <div>
-      <Button onClick={handleClick} className={classes.useNameButton}>
-        <Typography variant="h4" className={classes.title}>
-          {navUserInfoList[selectedUserIndex].username}
-        </Typography>
-        <Typography variant="h4">
-          님
-        </Typography>
-      </Button>
+      <StyledToolTip
+        title={tooltipText()}
+        placement="bottom-start"
+        open={tooltipOpen}
+        arrow
+      >
+        <Button onClick={handleClick} className={classes.useNameButton}>
+          <Typography variant="h4" className={classes.title}>
+            {subscribe.currUser.targetUserId}
+          </Typography>
+          <Typography variant="h4">
+            님
+          </Typography>
+        </Button>
+      </StyledToolTip>
+
       <StyledMenu
         id="customized-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        style={{ padding: '0px' }}
       >
         {subscribeUserListItem()}
 
