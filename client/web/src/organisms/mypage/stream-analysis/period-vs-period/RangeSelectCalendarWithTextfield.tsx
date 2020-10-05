@@ -105,15 +105,13 @@ export default function RangeSelectCalendarWithTextfield(
       && moment(end.value, 'YYYY-MM-DD').isValid()
       && e.target.value.length > 9
     ) {
-      if (moment(e.target.value, 'YYYY-MM-DD') <= moment(end.value, 'YYYY-MM-DD')) {
-        if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(end.value, 'YYYY-MM-DD'))) {
-          const endDate = new Date(e.target.value);
-          endDate.setDate(endDate.getDate() + 1);
-          handlePeriod(new Date(e.target.value), endDate, base);
-          end.setValue(endDate.toISOString().slice(0, 10));
-        } else {
-          handlePeriod(new Date(e.target.value), new Date(end.value), base);
-        }
+      if (moment(e.target.value, 'YYYY-MM-DD').isBefore(moment(end.value, 'YYYY-MM-DD'))) {
+        handlePeriod(new Date(e.target.value), new Date(end.value), base);
+      } else if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(end.value, 'YYYY-MM-DD'))) {
+        const endDate = new Date(e.target.value);
+        endDate.setDate(endDate.getDate() + 1);
+        handlePeriod(new Date(e.target.value), endDate, base);
+        end.setValue(endDate.toISOString().slice(0, 10));
       } else {
         handlePeriod(new Date(end.value), new Date(e.target.value), base);
         const tempDate = end.value;
@@ -130,16 +128,13 @@ export default function RangeSelectCalendarWithTextfield(
       && moment(start.value, 'YYYY-MM-DD').isValid()
       && e.target.value.length > 9
     ) {
-      if (moment(e.target.value, 'YYYY-MM-DD') >= moment(start.value, 'YYYY-MM-DD')) {
-        handlePeriod(new Date(start.value), new Date(e.target.value), base);
-        if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(start.value, 'YYYY-MM-DD'))) {
-          const endDate = new Date(e.target.value);
-          endDate.setDate(endDate.getDate() + 1);
-          handlePeriod(new Date(e.target.value), endDate, base);
-          end.setValue(endDate.toISOString().slice(0, 10));
-        } else {
-          handlePeriod(new Date(e.target.value), new Date(end.value), base);
-        }
+      if (moment(e.target.value, 'YYYY-MM-DD').isAfter(moment(start.value, 'YYYY-MM-DD'))) {
+        handlePeriod(new Date(e.target.value), new Date(end.value), base);
+      } else if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(start.value, 'YYYY-MM-DD'))) {
+        const endDate = new Date(e.target.value);
+        endDate.setDate(endDate.getDate() + 1);
+        handlePeriod(new Date(e.target.value), endDate, base);
+        end.setValue(endDate.toISOString().slice(0, 10));
       } else {
         handlePeriod(new Date(e.target.value), new Date(start.value), base);
         const tempDate = start.value;

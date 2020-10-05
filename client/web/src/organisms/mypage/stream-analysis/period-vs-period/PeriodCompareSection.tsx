@@ -75,16 +75,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     });
   };
 
-  React.useEffect(() => {
-    console.log('base start', basePeriod[0]);
-    console.log('base end', basePeriod[1]);
-  }, [basePeriod]);
-
-  React.useEffect(() => {
-    console.log('compare', comparePeriod[0]);
-    console.log('compare', comparePeriod[1]);
-  }, [comparePeriod]);
-
   return (
     <div className={classes.root}>
       {loading
