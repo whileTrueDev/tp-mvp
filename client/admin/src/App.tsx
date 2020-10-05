@@ -69,28 +69,28 @@ export const routes: ListProps[] = [
       index: 0,
       name: '공지사항 리스트',
       description: '공지사항 목록을 봅니다.',
-      path: '/admin_notice',
+      path: '/admin/notice',
       icon: ListIcon
     },
     {
       index: 1,
       name: '공지사항 글 작성',
       description: '공지사항글을 작성합니다.',
-      path: '/admin_notice_write',
+      path: '/admin/notice-write',
       icon: EditIcon
     },
     {
       index: 2,
       name: '메시지보내기',
       description: '메시지를 보냅니다.',
-      path: '/admin_alarm',
+      path: '/admin/alarm',
       icon: MessageIcon
     },
     {
       index: 3,
       name: '기능제안',
       description: '기능제안 관리',
-      path: '/admin_suggest',
+      path: '/admin/suggest',
       icon: EditIcon
     },
 ];
@@ -121,10 +121,10 @@ export default function App(location: any){
         <main className={classes.content}>
           <div className={classes.selectBar} />
           <Switch>
-            <Route exact path="/admin_notice" component={AdminNotice} />
-            <Route exact path="/admin_alarm" component={AdminAlarm} />
-            <Route exact path="/admin_suggest" component={AdminSuggest} />
-            <Route exact path="/admin_notice_write" component={NoticeWrite} />
+            <Route exact path="/admin/notice" component={AdminNotice} />
+            <Route exact path="/admin/alarm" component={AdminAlarm} />
+            <Route exact path="/admin/suggest" component={AdminSuggest} />
+            <Route exact path="/admin/notice-write" component={NoticeWrite} />
           </Switch>
         </main>
       </BrowserRouter>
