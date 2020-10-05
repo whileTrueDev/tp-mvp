@@ -31,7 +31,7 @@ jobs:
         if: ${{ failure() }}
         uses: peter-evans/create-or-update-comment@v1
         with:
-          issue-number: 1
+          issue-number: 24
           body: |
             ### ESlint log
             ${{ steps.lint.outputs.result }}
