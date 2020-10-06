@@ -1,8 +1,9 @@
 import React from 'react';
 import axios from '../axios';
 
+/* eslint-disable react-hooks/exhaustive-deps */
 export default function useAutoLogin(
-  userId: any, handleLogin: (s:string) => void
+  userId: any, handleLogin: (s: string) => void
 ): void {
   // *******************************************
   // 자동로그인 체크하여 유효한 refresh token이 있는 경우 자동 로그인
@@ -36,3 +37,4 @@ export default function useAutoLogin(
     }
   }, []); // Should be run only once!!
 }
+/* eslint-enable react-hooks/exhaustive-deps */

@@ -34,10 +34,9 @@ jobs:
           issue-number: ${{ github.event.number }}
           body: |
             [**ESLint Failed**]
-            Check your code on your local environment  
+            Check your code on your local environment.  
             `server` 폴더에서 `yarn lint`를 통해 eslint 검사를 실행하고  
             규칙에 맞지 않는 부분을 확인하세요.
 
-            [ESlint 로그 확인](https://github.com/whileTrueDev/tp-mvp/runs/1207840952?check_suite_focus=true)
-            ${{ github.repository }}/actions/runs/${{ github.run_id }}
+            [Github Actions 탭에서 ESlint 로그 확인하기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           reactions: "+1"
