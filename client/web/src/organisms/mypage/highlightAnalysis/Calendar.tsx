@@ -70,7 +70,6 @@ function StreamCalendar(props: any) {
       .then((res) => {
         if (res.data.length !== 0) {
           setStreamData(res.data);
-          console.log(res.data);
         } else {
           setStreamData([{
             getState: false, startAt: '', finishAt: '', fileId: ''

@@ -1,9 +1,9 @@
 import express from 'express';
 import {
-  Controller, Param, Get, Query, Res
+  Controller, Param, Get, Query, Res, Req
 } from '@nestjs/common';
+import * as fs from 'fs';
 import { HighlightService } from './highlight.service';
-
 @Controller('highlight')
 export class HighlightController {
   constructor(private readonly highlightService: HighlightService) { }
@@ -32,14 +32,16 @@ export class HighlightController {
     }
   }
   @Get('/export')
-  async getZipFile(@Query('id') id: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string, @Query('streamId') streamId: string, @Query('srt') srt: number, @Query('csv') csv: number, @Query('txt') txt: number, @Res() res: express.Response) {
+  async getZipFile(@Query('id') id: string, @Query('year') year: string, @Query('month') month: string, @Query('day') day: string, @Query('streamId') streamId: string, @Query('srt') srt: number, @Query('csv') csv: number, @Query('txt') txt: number, @Req() req: express.Request, @Res() res: express.Response) {
     if (id) {
-      // const fileKey = req.query.fileName;
       const timestamp = new Date().getTime();
-      const fileName = `${timestamp}.zip`;
+      const fileName = `${timestamp}`;
       const zip = await this.highlightService.getZipFile(id, year, month, day, streamId, srt, csv, txt);
-      res.setHeader('Content-Type', 'application/zip');
-      res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+      res.set({
+        'Content-Type': 'text/html; charset=utf-8',
+        'Content-Disposition': `attachment; filename=${fileName}.zip`,
+        'Access-Control-Expose-Headers': 'Content-Disposition',
+      });
       zip.pipe(res);
     }
   }

@@ -11,6 +11,7 @@ import FeatureCategoryButtonGroup from '../../organisms/mainpage/featureSuggesti
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
 import { FeatureData } from '../../interfaces/Feature';
 import Button from '../../atoms/Button/Button';
+import useAuthContext from '../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -24,24 +25,24 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function FeatureSuggestion(): JSX.Element {
+  const authContext = useAuthContext();
   const classes = useStyles();
   const history = useHistory();
-  const { id: selectedNoticeId } = useParams<{ id: string }>();
+  const { id: selectedSuggestionId } = useParams<{ id: string }>();
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
   function handleCategorySelect(str: string): void {
     setSelectedCategory(str);
   }
 
-  function handleNoticeClick(num: number): void {
+  function handleFeatureClick(num: number): void {
     history.push(`/feature-suggestion/read/${num}`);
   }
   function handleWriteClick(): void {
     history.push('/feature-suggestion/write');
   }
-  function handleResetNoticeSelect(): void {
+  function handleResetFeatureSelect(): void {
     history.push('/feature-suggestion');
   }
-
   const [{ loading, data }] = useAxios<FeatureData[]>({
     url: '/feature', method: 'GET'
   });
@@ -58,16 +59,16 @@ export default function FeatureSuggestion(): JSX.Element {
           <Typography variant="h4">기능제안</Typography>
 
           {/* 공지사항 개별 보기 */}
-          {selectedNoticeId && !loading && data ? (
+          {selectedSuggestionId && !loading && data ? (
             <div className={classes.contents}>
               <FeatureDetail
-                selectedNoticeId={selectedNoticeId}
+                selectedSuggestionId={selectedSuggestionId}
                 data={data
                   .sort((row1, row2) => new Date(row2.createdAt).getTime()
                     - new Date(row1.createdAt).getTime())
                   .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))}
-                onOtherNoticeClick={handleNoticeClick}
-                onBackClick={handleResetNoticeSelect}
+                onOtherFeatureClick={handleFeatureClick}
+                onBackClick={handleResetFeatureSelect}
               />
             </div>
           ) : (
@@ -78,7 +79,7 @@ export default function FeatureSuggestion(): JSX.Element {
                     categories={!loading && data
                       ? Array
                         .from(new Set(data.map((d) => d.category)))
-                        .sort((x, y) => x.localeCompare(y))
+                        .sort()
                       : []}
                     onChange={handleCategorySelect}
                     selected={selectedCategory}
@@ -93,16 +94,18 @@ export default function FeatureSuggestion(): JSX.Element {
                           - new Date(row1.createdAt).getTime())
                         .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))
                       : []}
-                    onRowClick={handleNoticeClick}
+                    onRowClick={handleFeatureClick}
                   />
 
                 </div>
                 <div>
-                  <Button
-                    onClick={handleWriteClick}
-                  >
-                    글쓰기
-                </Button>
+                  {authContext.user.userId ? (
+                    <Button
+                      onClick={handleWriteClick}
+                    >
+                      글쓰기
+                    </Button>
+                  ) : null}
                 </div>
               </>
             )}

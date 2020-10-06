@@ -8,7 +8,7 @@ export class FeatureEntity {
   id: number;
 
   @Column({ comment: '기능제안 구분' })
-  category: string;
+  category: number;
 
   @Column({ comment: '기능제안 작성자, 기본값 있음', default: 'TruePoint' })
   author: string;
@@ -19,11 +19,11 @@ export class FeatureEntity {
   @Column('text', { comment: '기능제안 내용' })
   content: string;
 
-  @Column('text', { comment: '관리자 답변' })
-  reply: string;
+  @Column('text', { comment: '관리자 답변', nullable: true })
+  reply: string | null;
 
-  @Column({ comment: '답변상태 플래그' })
-  progress: boolean;
+  @Column({ comment: '답변상태 플래그 0=미확인, 1=승인, 2=보류' })
+  progress: number;
 
   @CreateDateColumn()
   createdAt: Date;

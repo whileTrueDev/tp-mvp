@@ -29,7 +29,14 @@ export default function FeatureCategoryButtonGroup({
   onChange, selected, categories
 }: NoticeCategoryButtonGroupProps): JSX.Element {
   const classes = useStyles();
-
+  const categoryTab = (value: number) => {
+    switch (value) {
+      case 0: return (<Typography> 홈페이지관련 </Typography>);
+      case 1: return (<Typography> 편집점관련 </Typography>);
+      case 2: return (<Typography> 기타 </Typography>);
+      default: return (<Typography> 전체 </Typography>);
+    }
+  };
   return (
     <div className={classes.container}>
       {['전체'].concat(categories).map((category) => (
@@ -43,7 +50,7 @@ export default function FeatureCategoryButtonGroup({
           })}
         >
           <Typography className={classnames({ [classes.selectedText]: selected === category })}>
-            {category}
+            {categoryTab(Number(category))}
           </Typography>
         </Button>
       ))}

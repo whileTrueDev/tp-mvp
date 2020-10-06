@@ -68,7 +68,22 @@ export default function FeatureTable<T extends FeatureData>({
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const progressArray = ['미확인', '개발확정', '반려'];
+  const categoryTab = (value: number) => {
+    switch (value) {
+      case 0: return (<Typography> 홈페이지관련 </Typography>);
+      case 1: return (<Typography> 편집점관련 </Typography>);
+      case 2: return (<Typography> 기타 </Typography>);
+      default: return (<Typography> 기타 </Typography>);
+    }
+  };
+  const progressTab = (value: number) => {
+    switch (value) {
+      case 1: return (<Typography> 개발확정 </Typography>);
+      case 2: return (<Typography> 개발보류 </Typography>);
+      default: return (<Typography> 미확인 </Typography>);
+    }
+  };
+
   return (
     <TableContainer component={Paper} className={classes.container}>
       <Table className={classes.table} aria-label="simple table">
@@ -101,7 +116,7 @@ export default function FeatureTable<T extends FeatureData>({
                     <Typography>{row.id}</Typography>
                   </TableCell>
                   <TableCell align="center">
-                    <Typography>{row.category}</Typography>
+                    {categoryTab(Number(row.category))}
                   </TableCell>
                   <TableCell align="center">
                     <Typography>{row.author}</Typography>
@@ -119,7 +134,7 @@ export default function FeatureTable<T extends FeatureData>({
                     <Typography>{createdAt.toLocaleString()}</Typography>
                   </TableCell>
                   <TableCell align="center">
-                    <Typography>{progressArray[row.progress]}</Typography>
+                    {progressTab(Number(row.progress))}
                   </TableCell>
                 </TableRow>
               );

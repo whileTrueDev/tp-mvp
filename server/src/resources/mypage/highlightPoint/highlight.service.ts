@@ -66,7 +66,6 @@ export class HighlightService {
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
     filterEmpty.map((value) => {
-      console.log(value);
       const startAt = value.split('_')[0];
       const finishAt = value.split('_')[1];
       const fileId = value;
@@ -74,7 +73,6 @@ export class HighlightService {
         getState: true, startAt, finishAt, fileId
       };
       returnArray.push(oneStream);
-      console.log(returnArray);
     });
     return returnArray;
   }
@@ -86,7 +84,6 @@ export class HighlightService {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Prefix: `export_files/${id}/${year}/${month}/${day}/${streamId}`,
     };
-    console.log(boolCsv, boolSrt, boolTxt);
     const getArray = [];
     const getFiles = await s3.listObjects(getParams).promise()
       .then((value) => {
@@ -110,8 +107,7 @@ export class HighlightService {
       });
     }
 
-    const doGetSelectedFiles = await this.getSelectedFile(getArray)
-      .then((value) => value);
+    const doGetSelectedFiles = await this.getSelectedFile(getArray).then((value) => value);
     return doGetSelectedFiles;
   }
   async getSelectedFile(fileName): Promise<any> {

@@ -1,11 +1,16 @@
 import React from 'react';
 import Markdown from 'react-markdown/with-html';
+import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Paper, Typography } from '@material-ui/core';
+import {
+  Button, ButtonGroup, Paper, Typography
+} from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import Divider from '@material-ui/core/Divider';
 import Card from '../../../atoms/Card/Card';
 import { FeatureData } from '../../../interfaces/Feature';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
+import FeatureWriteForm from './FeatureWriteForm';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize, },
@@ -38,112 +43,154 @@ const useStyles = makeStyles((theme) => ({
 
 export interface FeatureDetailProps {
   data: FeatureData[];
-  selectedNoticeId: string;
+  selectedSuggestionId: string;
   onBackClick: () => void;
-  onOtherNoticeClick: (num: number) => void;
+  onOtherFeatureClick: (num: number) => void;
 }
 export default function FeatureDetail({
-  data, onBackClick, selectedNoticeId,
-  onOtherNoticeClick
+  data, onBackClick, selectedSuggestionId,
+  onOtherFeatureClick
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
-
+  const authContext = useAuthContext();
+  const [editState, setEditState] = React.useState(false);
+  const [, deleteRequest] = useAxios(
+    { url: '/feature/upload-delete', method: 'delete' }, { manual: true }
+  );
   // length of title to render on Next/Previous button
   const TITLE_LENGTH = 15;
 
-  // Current Notice
-  const currentNotice = data.find((d) => d.id === Number(selectedNoticeId));
-  const currentNoticeIndex = data.findIndex((d) => d.id === Number(selectedNoticeId));
+  // Current Feature
+  const currentSuggestion = data.find((d) => d.id === Number(selectedSuggestionId));
+  const currentSuggestionIndex = data.findIndex((d) => d.id === Number(selectedSuggestionId));
 
-  // Previous Notice
-  const previousNotice = data[currentNoticeIndex - 1];
+  // Previous Feature
+  const previousFeature = data[currentSuggestionIndex - 1];
 
-  // Next Notice
-  const nextNotice = data[currentNoticeIndex + 1];
-
+  // Next Feature
+  const nextFeature = data[currentSuggestionIndex + 1];
+  const handleEditButton = () => {
+    setEditState(true);
+  };
+  const doDelete = () => {
+    const doConfirm = window.confirm('삭제 하시겠습니까?');
+    if (doConfirm) {
+      deleteRequest({ params: { data: currentSuggestion?.id } });
+    }
+  };
   return (
     <div>
-      <Paper component="article">
-        <div className={classes.title}>
-          <Typography variant="h6" className={classes.titleText}>
-            {currentNotice?.title}
-          </Typography>
-          <Typography color="textSecondary">
-            {`${currentNotice?.category} • ${new Date(currentNotice!.createdAt).toLocaleString()}`}
-          </Typography>
-        </div>
-
-        <div className={classes.contentsText}>
-          <Markdown
-            className={classes.markdown}
-            source={currentNotice?.content}
-            escapeHtml={false}
-            renderers={{ code: ({ value }) => <Markdown source={value} /> }}
-          />
-        </div>
-        {currentNotice?.reply ? (
-          <div className={classes.replyCard}>
-            <Divider />
-            <Typography variant="h6">
-              관리자 답글
-            </Typography>
-            <Card className={classes.replyTextCard}>
-              <Typography variant="body1">
-                {currentNotice.reply}
+      {!editState ? (
+        <div>
+          <Paper component="article">
+            <div className={classes.title}>
+              <Typography variant="h6" className={classes.titleText}>
+                {currentSuggestion?.title}
               </Typography>
-            </Card>
-          </div>
-        ) : null}
-      </Paper>
+              <Typography color="textSecondary">
+                {`${currentSuggestion?.category} • ${new Date(currentSuggestion!.createdAt).toLocaleString()}`}
+              </Typography>
+            </div>
 
-      <div id="button-set" className={classes.buttonSet}>
-        <Button
-          style={{ width: '25%' }}
-          size="large"
-          disabled={currentNoticeIndex === 0}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            onOtherNoticeClick(previousNotice.id);
-          }}
-        >
-          <KeyboardArrowLeft />
-          {currentNoticeIndex !== 0 && (
-            <Typography>
-              {previousNotice.title.length > TITLE_LENGTH
-                ? `${previousNotice.title.slice(0, TITLE_LENGTH)}...`
-                : previousNotice.title}
-            </Typography>
-          )}
-        </Button>
-        <Button
-          style={{ width: '10%' }}
-          size="large"
-          variant="contained"
-          onClick={() => { onBackClick(); }}
-        >
-          목록으로
-        </Button>
-        <Button
-          style={{ width: '25%' }}
-          size="large"
-          disabled={currentNoticeIndex === data.length - 1}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            onOtherNoticeClick(nextNotice.id);
-          }}
-        >
-          {currentNoticeIndex !== data.length - 1 && (
-            <Typography>
-              {nextNotice.title.length > TITLE_LENGTH
-                ? `${nextNotice.title.slice(0, TITLE_LENGTH)}...`
-                : nextNotice.title}
-            </Typography>
-          )}
-          <KeyboardArrowRight />
-        </Button>
-      </div>
+            <div className={classes.contentsText}>
+              <Markdown
+                className={classes.markdown}
+                source={currentSuggestion?.content}
+                escapeHtml={false}
+                renderers={{ code: ({ value }) => <Markdown source={value} /> }}
+              />
+            </div>
+            {currentSuggestion?.reply ? (
+              <div className={classes.replyCard}>
+                <Divider />
+                <Typography variant="h6">
+                  관리자 답글
+                </Typography>
+                <Card className={classes.replyTextCard}>
+                  <Typography variant="body1">
+                    {currentSuggestion.reply}
+                  </Typography>
+                </Card>
+              </div>
+            ) : null}
+          </Paper>
+
+          <div id="button-set" className={classes.buttonSet}>
+            <Button
+              style={{ width: '25%' }}
+              size="large"
+              disabled={currentSuggestionIndex === 0}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                onOtherFeatureClick(previousFeature.id);
+              }}
+            >
+              <KeyboardArrowLeft />
+              {currentSuggestionIndex !== 0 && (
+                <Typography>
+                  {previousFeature.title.length > TITLE_LENGTH
+                    ? `${previousFeature.title.slice(0, TITLE_LENGTH)}...`
+                    : previousFeature.title}
+                </Typography>
+              )}
+            </Button>
+            <Button
+              style={{ width: '10%' }}
+              size="large"
+              variant="contained"
+              onClick={() => { onBackClick(); }}
+            >
+              목록으로
+            </Button>
+            <Button
+              style={{ width: '25%' }}
+              size="large"
+              disabled={currentSuggestionIndex === data.length - 1}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                onOtherFeatureClick(nextFeature.id);
+              }}
+            >
+              {currentSuggestionIndex !== data.length - 1 && (
+                <Typography>
+                  {nextFeature.title.length > TITLE_LENGTH
+                    ? `${nextFeature.title.slice(0, TITLE_LENGTH)}...`
+                    : nextFeature.title}
+                </Typography>
+              )}
+              <KeyboardArrowRight />
+            </Button>
+          </div>
+          {currentSuggestion?.author === authContext.user.userId
+            ? (
+              <ButtonGroup disableElevation variant="contained" color="primary">
+                <Button
+                  size="large"
+                  variant="contained"
+                  color="primary"
+                  onClick={handleEditButton}
+                >
+                  수정
+                </Button>
+                <Button
+                  size="large"
+                  variant="contained"
+                  color="secondary"
+                  onClick={doDelete}
+                >
+                  삭제
+                </Button>
+              </ButtonGroup>
+            ) : null}
+        </div>
+      )
+        : (
+          <FeatureWriteForm
+            editData={currentSuggestion}
+          />
+        )}
     </div>
   );
 }

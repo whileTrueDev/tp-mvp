@@ -103,6 +103,7 @@ function Index(): JSX.Element {
             <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
             <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
             <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
+            <Route exact path="/feature-suggestion/read/:id/edit" component={FeatureSuggestionWrite} />
             <Route path="/mypage" component={Mypage} />
           </Switch>
 

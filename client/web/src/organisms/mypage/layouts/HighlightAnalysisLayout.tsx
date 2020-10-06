@@ -4,9 +4,8 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import Axios from 'axios';
-import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox, { CheckboxProps } from '@material-ui/core/Checkbox';
+import Checkbox from '@material-ui/core/Checkbox';
 // import * as down from 'js-file-download';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
@@ -79,25 +78,32 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     const srt = isChecked.srtCheckBox ? 1 : 0;
     const csv = isChecked.csvCheckBox ? 1 : 0;
     const txt = isChecked.txtCheckBox ? 1 : 0;
+
+    // function str2bytes(str: any) {
+    //   const bytes = new Uint8Array(str.length);
+    //   for (let i = 0; i < str.length; i += 1) {
+    //     bytes[i] = str.charCodeAt(i);
+    //   }
+    //   return bytes;
+    // }
     const result = await axios.get('/highlight/export',
       {
         params: {
           id, year, month, day, streamId, srt, txt, csv
-        }
+        },
       })
       .then((res) => {
+        console.log(res.data);
         const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
+        const filename = res.headers;
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', res.headers.filename);
+        link.setAttribute('download', 'test.zip');
         document.body.appendChild(link);
         link.click();
-        console.log(res);
-        console.log(url);
-        // console.log(res.data.pipe);
         setDownloadUrl(url);
-        // saveAs(blob, '이름이름');
-      }).catch(() => {
+      }).catch((err) => {
+        console.log(err);
         alert('지금은 다운로드 할 수 없습니다.');
       });
   };
