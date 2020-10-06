@@ -146,7 +146,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
           <Grid
             container
             direction="row"
-            justify="flex-start"
+            justify="center"
             alignItems="center"
           >
             {(getStreamsLoading || getStreamsError)

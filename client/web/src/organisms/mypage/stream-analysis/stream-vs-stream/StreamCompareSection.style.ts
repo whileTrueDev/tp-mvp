@@ -70,6 +70,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     fontSize: '17px',
     fontFamily: 'SourceSansPro',
     marginLeft: '45.5px',
+    marginRight: '35.5px',
     display: 'flex',
     marginBottom: '5px',
   },
