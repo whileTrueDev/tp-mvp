@@ -8,19 +8,20 @@ import '../../assets/font.css';
 // import suggestDataset from '../../pages/AdminSuggest';
 
 const initialState = {
-  title: '기능제안', categori: '기능제안 답글', contents: '기능제안 답변작성중',
+  title: '기능제안', category: '기능제안 답글', contents: '기능제안 답변작성중',
 };
+
 interface ActionProps {
   type: string;
   title: string;
-  categori: string;
+  category: string;
   contents: string;
 }
 
 function reducer(state: any, action: ActionProps) {
   //action은 type을 정의.
   const {
-    type, title, categori, contents,
+    type, title, category, contents,
   } = action;
 
   switch (type) {
@@ -30,9 +31,9 @@ function reducer(state: any, action: ActionProps) {
       return { ...state, title };
     case 'handleTopic':
       if (state.title.indexOf(']') > 0) {
-        return { ...state, categori, title: `[${categori}]${state.title.split(']')[1]}` };
+        return { ...state, category, title: `[${category}]${state.title.split(']')[1]}` };
       }
-      return { ...state, categori, title: `[${categori}] ${state.title}` };
+      return { ...state, category, title: `[${category}] ${state.title}` };
     case 'handleContents':
       return { ...state, contents };
     default: throw Error(`unexpected action.type: ${action.type}`);
@@ -42,6 +43,7 @@ function reducer(state: any, action: ActionProps) {
 interface replyDataProps{
   replyData?: replyData;
 }
+
 export default function ReplyWrite(props: replyDataProps) {
   const { replyData } = props;
   const [state, dispatch] = React.useReducer(reducer, replyData || initialState);

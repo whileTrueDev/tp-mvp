@@ -8,7 +8,7 @@ import NoticeWrite from './NoticeWrite';
 
 export interface NoticeData {
   title?: string;
-  categori?: string;
+  category?: string;
   code?: number;
   regiDate: string;
   contents?: string;
@@ -18,7 +18,7 @@ export interface NoticeData {
 
 export const noticeDataset: NoticeData[] = [{
   title: "제목",
-  categori: "업데이트",
+  category: "업데이트",
   code: 1,
   contents: "공지사항",
   regiDate: "2020-09-22",
@@ -26,21 +26,21 @@ export const noticeDataset: NoticeData[] = [{
 },
 {
   title: "제목2",
-  categori: '업데이트',
+  category: '업데이트',
   code: 2,
   contents: "공지사항2",
   regiDate: "2020-09-22",
   isImportant: false,
 },
 {title: "제목",
-categori: "필독",
+category: "필독",
 code: 3,
 contents: "공지사항",
 regiDate: "2020-09-22",
 isImportant: true,
 },
 {title: "제목",
-categori: "필독",
+category: "필독",
 code: 4,
 contents: "공지사항",
 regiDate: "2020-09-22",
@@ -71,9 +71,11 @@ export default function NoticeBoard() {
 
   // 수정 모드를 위한 State
   const [editMode, setEditMode] = React.useState(false);
+  
   function handleEditModeOn() {
     setEditMode(true);
   }
+
   function handleEditModeOff() {
     setEditMode(false);
   }

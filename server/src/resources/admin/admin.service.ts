@@ -3,15 +3,30 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NoticeEntity } from './entities/notice.entity';
-import { Notice } from './dto/notice.dto';
-import { NoticeGetRequest } from './dto/noticeGetRequest.dto';
-import { NoticePatch } from './dto/noticePatchRequest.dto';
-import { NoticeDelete } from './dto/noticeDeleteRequest.dto';
 
+// notice (공지사항)
+import { NoticeEntity } from './entities/notice.entity';
+import { Notice } from './dto/notice/notice.dto';
+import { NoticeGetRequest } from './dto/notice/noticeGetRequest.dto';
+import { NoticePatch } from './dto/notice/noticePatchRequest.dto';
+import { NoticeDelete } from './dto/notice/noticeDeleteRequest.dto';
+
+// notification (개인알림)
 import { NotificationEntity } from './entities/notification.entity';
-import { NotificationGetRequest } from './dto/notificationGet.dto';
-import { NotificationPostRequest } from './dto/notificationPost.dto';
+import { NotificationGetRequest } from './dto/notification/notificationGet.dto';
+import { NotificationPostRequest } from './dto/notification/notificationPost.dto';
+
+// feature suggestion (기능제안)
+import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
+import { FeatureSuggestionPatchRequest } from './dto/feature/featureSuggestionPatch.dto';
+import { FeatureSuggestionDeleteRequest } from './dto/feature/featureSuggestionDelete.dto';
+
+// feature suggestion reply (기능제안에 대한 답변)
+import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
+import { ReplyPostRequest } from './dto/reply/replyPost.dto';
+import { ReplyGetRequest } from './dto/reply/replyGetRequest.dto';
+import { ReplyPatchRequest } from './dto/reply/replyPatchRequest.dto';
+import { ReplyDeleteRequest } from './dto/reply/replyDeleteRequest.dto';
 
 @Injectable()
 export class AdminService {
@@ -20,6 +35,8 @@ export class AdminService {
     private readonly noticeRepository: Repository<NoticeEntity>,
     @InjectRepository(NotificationEntity)
     private readonly notificationRepository: Repository<NotificationEntity>,
+    @InjectRepository(FeatureSuggestionEntity)
+    private readonly featureSuggestionRepository: Repository<FeatureSuggestionEntity>,
   ) {}
 
   // get - 모든 notice 조회 
@@ -160,6 +177,115 @@ export class AdminService {
     `;
     return this.notificationRepository
       .query(query, [userId, title, content])
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+      });
+  }
+
+  // get - 모든 feature suggestion 조회 (단일 조회가 의미가 없다.)
+  async getFeatureSuggestion() : Promise<FeatureSuggestionEntity[]> {
+    const query = `
+    SELECT *
+    FROM FeatureSuggestionTest
+    ORDER BY createdAt DESC
+      `;
+    return this.featureSuggestionRepository
+      .query(query, [])
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+      });
+  }
+
+  // patch - feature suggestion의 상태 수정
+  async patchFeatureSuggestion(data: FeatureSuggestionPatchRequest): Promise<any> {
+    const {
+      state, id
+    } = data;
+    const query = `
+    UPDATE FeatureSuggestionTest
+    SET  state = ?
+    WHERE suggestionId = ?
+    `;
+
+    return this.noticeRepository.query(query, [state, id])
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+      });
+  }
+
+  //  delete - feature suggestion의 삭제
+  async deleteFeatureSuggestion(req :FeatureSuggestionDeleteRequest) : Promise<any> {
+    const query = `
+    DELETE FROM FeatureSuggestionTest
+    WHERE id = ?
+    `;
+
+    return this.noticeRepository
+      .query(query, [req.id])
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+      });
+  }
+
+  // get - 모든 feature suggestion reply 조회 (단일 조회가 의미가 없다.)
+  async getReply(req: ReplyGetRequest) : Promise<FeatureSuggestionReplyEntity[]> {
+    const { id } = req;
+    const query = `
+      SELECT *
+      FROM FeatureSuggestionReplyTest
+      WHERE suggestionId = ?
+      ORDER BY createdAt DESC
+        `;
+    return this.featureSuggestionRepository
+      .query(query, [id])
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+      });
+  }
+
+  // post - feature suggestion reply 생성
+  async loadReply(data: ReplyPostRequest): Promise<any> {
+    const {
+      suggestionId, content, author
+    } = data;
+    const query = `
+      INSERT INTO FeatureSuggestionReplyTest
+      (suggestionId, content, author) 
+      VALUES (?, ?, ?)
+      `;
+
+    return this.noticeRepository.query(query, [suggestionId, content, author])
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+      });
+  }
+
+  // patch - feature suggestion reply 수정
+  async patchReply(data: ReplyPatchRequest): Promise<any> {
+    const {
+      author, content, id
+    } = data;
+    const query = `
+    UPDATE FeatureSuggestionReplyTest
+    SET  author = ?,  content = ?
+    WHERE replyId = ?
+    `;
+
+    return this.noticeRepository.query(query, [author, content, id])
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+      });
+  }
+
+  //  delete - feature suggestion의 삭제
+  async deleteReply(req :ReplyDeleteRequest) : Promise<any> {
+    const query = `
+    DELETE FROM FeatureSuggestionReplyTest
+    WHERE replyId = ?
+    `;
+
+    return this.noticeRepository
+      .query(query, [req.id])
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
       });

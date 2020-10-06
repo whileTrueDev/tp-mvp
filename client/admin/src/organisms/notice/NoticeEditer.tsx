@@ -54,7 +54,7 @@ export default function NoticeEditer(props: NoticeEditData) {
           <InputLabel htmlFor="demo-controlled-open-select">구분</InputLabel>
           <Select
             variant="outlined"
-            value={state.categori}
+            value={state.category}
             onChange={e => dispatch({ type: 'handleTopic', topic: e.target.value })}
             inputProps={{
               name: 'age',
@@ -88,7 +88,7 @@ export default function NoticeEditer(props: NoticeEditData) {
           <Button
             variant="contained"
             color="primary"
-            disabled={!state.contents || !state.title || !state.categori}
+            disabled={!state.contents || !state.title || !state.category}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n정말로 수정 하시겠습니까?`)) {
                 window.location.reload();
@@ -101,7 +101,7 @@ export default function NoticeEditer(props: NoticeEditData) {
           <Button
             variant="contained"
             color="primary"
-            disabled={!state.contents || !state.title || !state.categori}
+            disabled={!state.contents || !state.title || !state.category}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
                 window.location.reload();

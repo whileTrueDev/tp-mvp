@@ -58,7 +58,7 @@ export default function SuggestReplyEditor(props: ReplyEditData) {
           <InputLabel htmlFor="demo-controlled-open-select">구분</InputLabel>
           <Select
             variant="outlined"
-            value={state.categori}
+            value={state.category}
             onChange={e => dispatch({ type: 'handleTopic', topic: e.target.value })}
             inputProps={{
               name: 'age',

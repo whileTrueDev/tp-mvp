@@ -2,10 +2,10 @@ import {
   Entity, Column, PrimaryGeneratedColumn, CreateDateColumn
 } from 'typeorm';
 
-@Entity({ name: 'NoticeTest' })
-export class NoticeEntity {
+@Entity({ name: 'FeatureSuggestionTest' })
+export class FeatureSuggestionEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  suggestionId: number;
 
   @Column({
     type: 'varchar',
@@ -13,25 +13,34 @@ export class NoticeEntity {
   })
   category: string;
 
-  @Column({
-    type: 'varchar',
-    length: 50
-  })
-  author: string;
-
   @Column()
   title: string;
 
   @Column()
   content: string;
 
+  @Column({
+    type: 'varchar',
+    length: 50
+  })
+  author: string;
+
+  @Column({
+    type: 'varchar',
+    length: 20
+  })
+  userId: string;
+
   @Column({ type: 'tinyint', default: 0 })
-  isImportant: number;
+  state: number;
+
+  @Column({ type: 'smallint', default: 0 })
+  like: number;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  constructor(partial: Partial<NoticeEntity>) {
+  constructor(partial: Partial<FeatureSuggestionEntity>) {
     Object.assign(this, partial);
   }
 }

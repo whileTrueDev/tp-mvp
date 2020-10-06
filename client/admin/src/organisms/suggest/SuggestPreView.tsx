@@ -25,7 +25,7 @@ export default function SuggestPreview(props: Props) {
           <Table size='small'>
             <CostomTableRow title={'작성자'} data={selectedData.writer}/>
             <CostomTableRow title={'날짜'} data={new Date(selectedData.regiDate).toLocaleString()}/>
-            <CostomTableRow title={'카테고리'} data={selectedData.categori}/>
+            <CostomTableRow title={'카테고리'} data={selectedData.category}/>
             <CostomTableRow title={'진행상황'} data={selectedData.status}/>
           </Table>
         </div>

@@ -9,7 +9,7 @@ const Markdown = require('react-markdown');
 interface NoticeData {
   title?: string;
   code?: number;
-  categori?: string;
+  category?: string;
   regiDate: string;
   contents?: string;
   isImportant?: boolean;
@@ -34,7 +34,7 @@ export default function NoticePreview(props: Props) {
                     &emsp;
           </Typography>
           <Typography variant="subtitle1">
-            {`${selectedData.categori},`}
+            {`${selectedData.category},`}
                     &emsp;
           </Typography>
           <Typography variant="subtitle1">
