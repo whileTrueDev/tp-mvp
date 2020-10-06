@@ -27,6 +27,8 @@ import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
+import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
+import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
@@ -98,6 +100,10 @@ function Index(): JSX.Element {
             <Route exact path="/find-pw" component={FindPassword} />
             <Route exact path="/privacypolicy" component={PrivacyPolicy} />
             <Route exact path="/termsofuse" component={TermsOfUse} />
+            <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
+            <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
+            <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
+            <Route exact path="/feature-suggestion/read/:id/edit" component={FeatureSuggestionWrite} />
             <Route path="/mypage" component={Mypage} />
           </Switch>
 
