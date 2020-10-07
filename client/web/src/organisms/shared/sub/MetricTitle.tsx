@@ -59,16 +59,16 @@ const styles = makeStyles((theme) => ({
   }
 }));
 
-interface metricsTitleProps {
+interface MetricTitleProps {
   mainTitle?: string,
   subTitle: string,
   iconSrc: string,
   pointNumber: number
 }
 
-export default function MetricsTitle({
+export default function MetricTitle({
   mainTitle, subTitle, iconSrc, pointNumber
-}: metricsTitleProps): JSX.Element {
+}: MetricTitleProps): JSX.Element {
   const classes = styles();
 
   return (
@@ -94,13 +94,16 @@ export default function MetricsTitle({
           <Grid item className={classes.contentSub}>
             <img src="/images/analyticsPage/quotesLeft.png" alt="quotes" className={classes.quotes} />
             분석된 하이라이트 포인트는
-            <span className={classes.point}>{pointNumber}개</span>
+            <span className={classes.point}>
+              {pointNumber}
+              개
+            </span>
             입니다.
             <img src="/images/analyticsPage/quotesRight.png" alt="quotes" className={classes.quotes} />
           </Grid>
           <svg className={classes.svg}>
             <polyline points="0,0 10,10 20,0" />
-          </svg> 
+          </svg>
         </Grid>
       </Grid>
     </Grid>

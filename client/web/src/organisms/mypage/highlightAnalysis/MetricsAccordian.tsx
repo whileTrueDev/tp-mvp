@@ -1,13 +1,15 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Accordion, AccordionSummary,
-  AccordionDetails, Typography, Grid } from '@material-ui/core';
+import {
+  Accordion, AccordionSummary,
+  AccordionDetails, Typography, Grid
+} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Paper from '@material-ui/core/Paper';
 import Button from '../../../atoms/Button/Button';
-import MetricsTitle from '../../shared/sub/MetricsTitle';
+import MetricTitle from '../../shared/sub/MetricTitle';
 import MetricsTable from '../../shared/sub/MetricsTable';
-import {initialPoint} from './TruepointHighlight';
+import { initialPoint } from './TruepointHighlight';
 import Chart from './Chart';
 
 interface PointType {
@@ -74,54 +76,53 @@ const metricsTestData = {
   end_date: '2020-09-16 18:39:30',
   total_index: 38,
   time_line: [{ smile_count: 2, chat_count: 0.0 },
-    { smile_count: 8, chat_count: 8.0 },
-    { smile_count: 5, chat_count: 2.0 },
-    { smile_count: 3, chat_count: 0.0 },
-    { smile_count: 1, chat_count: 2.0 },
-    { smile_count: 2, chat_count: 1.0 },
-    { smile_count: 4, chat_count: 11.0 },
-    { smile_count: 3, chat_count: 0.0 },
-    { smile_count: 4, chat_count: 3.0 },
-    { smile_count: 3, chat_count: 16.0 },
-    { smile_count: 0, chat_count: 0.0 },
-    { smile_count: 1, chat_count: 0.0 },
-    { smile_count: 4, chat_count: 13.0 },
-    { smile_count: 1, chat_count: 0.0 },
-    { smile_count: 1, chat_count: 0.0 },
-    { smile_count: 2, chat_count: 2.0 },
-    { smile_count: 3, chat_count: 5.0 },
-    { smile_count: 3, chat_count: 0.0 },
-    { smile_count: 6, chat_count: 0.0 },
-    { smile_count: 5, chat_count: 0.0 },
-    { smile_count: 3, chat_count: 2.0 },
-    { smile_count: 3, chat_count: 3.0 },
-    { smile_count: 5, chat_count: 10.0 },
-    { smile_count: 2, chat_count: 16.0 },
-    { smile_count: 4, chat_count: 0.0 },
-    { smile_count: 5, chat_count: 6.0 },
-    { smile_count: 6, chat_count: 3.0 },
-    { smile_count: 3, chat_count: 0.0 },
-    { smile_count: 3, chat_count: 0.0 },
-    { smile_count: 1, chat_count: 0.0 },
-    { smile_count: 0, chat_count: 0.0 },
-    { smile_count: 0, chat_count: 0.0 },
-    { smile_count: 1, chat_count: 0.0 },
-    { smile_count: 2, chat_count: 4.0 },
-    { smile_count: 0, chat_count: 0.0 },
-    { smile_count: 0, chat_count: 0.0 },
-    { smile_count: 0, chat_count: 0.0 },
-    { smile_count: 1, chat_count: 16.0 }],
+  { smile_count: 8, chat_count: 8.0 },
+  { smile_count: 5, chat_count: 2.0 },
+  { smile_count: 3, chat_count: 0.0 },
+  { smile_count: 1, chat_count: 2.0 },
+  { smile_count: 2, chat_count: 1.0 },
+  { smile_count: 4, chat_count: 11.0 },
+  { smile_count: 3, chat_count: 0.0 },
+  { smile_count: 4, chat_count: 3.0 },
+  { smile_count: 3, chat_count: 16.0 },
+  { smile_count: 0, chat_count: 0.0 },
+  { smile_count: 1, chat_count: 0.0 },
+  { smile_count: 4, chat_count: 13.0 },
+  { smile_count: 1, chat_count: 0.0 },
+  { smile_count: 1, chat_count: 0.0 },
+  { smile_count: 2, chat_count: 2.0 },
+  { smile_count: 3, chat_count: 5.0 },
+  { smile_count: 3, chat_count: 0.0 },
+  { smile_count: 6, chat_count: 0.0 },
+  { smile_count: 5, chat_count: 0.0 },
+  { smile_count: 3, chat_count: 2.0 },
+  { smile_count: 3, chat_count: 3.0 },
+  { smile_count: 5, chat_count: 10.0 },
+  { smile_count: 2, chat_count: 16.0 },
+  { smile_count: 4, chat_count: 0.0 },
+  { smile_count: 5, chat_count: 6.0 },
+  { smile_count: 6, chat_count: 3.0 },
+  { smile_count: 3, chat_count: 0.0 },
+  { smile_count: 3, chat_count: 0.0 },
+  { smile_count: 1, chat_count: 0.0 },
+  { smile_count: 0, chat_count: 0.0 },
+  { smile_count: 0, chat_count: 0.0 },
+  { smile_count: 1, chat_count: 0.0 },
+  { smile_count: 2, chat_count: 4.0 },
+  { smile_count: 0, chat_count: 0.0 },
+  { smile_count: 0, chat_count: 0.0 },
+  { smile_count: 0, chat_count: 0.0 },
+  { smile_count: 1, chat_count: 16.0 }],
   chat_points: [2, 5, 9, 10, 12, 15, 20, 22, 25, 27, 30],
   smile_points: [2, 5, 9, 10, 12, 15, 20, 22, 25, 27, 30]
-}
+};
 
 // data에는 테스트 데이터, pointsType에는 smile_points 혹은 chat_points 들어감
-const getMetricsPoint = (data:any): any => {
-
+const getMetricsPoint = (data: any): any => {
   const originStartTime = new Date(data.start_date);
 
-  function getDate(index:number) {
-    const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index))
+  function getDate(index: number) {
+    const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
     const getYears = Time.getFullYear();
     const getMonths = Time.getMonth();
     const getDays = Time.getDay();
@@ -134,16 +135,18 @@ const getMetricsPoint = (data:any): any => {
     const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
     const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
 
-    return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`
+    return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
   }
 
   function insertPoints(target: number, countType: string) {
-    const time = getDate(target)
-    const returnDict = {start_time: time, end_time: time, start_index: String(target), end_index: String(target), score: data.time_line[target][countType]}
-    return returnDict
+    const time = getDate(target);
+    const returnDict = {
+      start_time: time, end_time: time, start_index: String(target), end_index: String(target), score: data.time_line[target][countType]
+    };
+    return returnDict;
   }
 
-  const resultData: {chat_points: PointType[], smile_points: PointType[]} = {
+  const resultData: { chat_points: PointType[], smile_points: PointType[] } = {
     chat_points: [],
     smile_points: []
   };
@@ -161,7 +164,7 @@ const getMetricsPoint = (data:any): any => {
     resultData.smile_points.push(eachData);
   });
 
-  return resultData
+  return resultData;
 };
 
 const metricsData = getMetricsPoint(metricsTestData);
@@ -185,21 +188,22 @@ export default function MetricsAccordian(): JSX.Element {
         </AccordionSummary>
         <AccordionDetails className={classes.wraper}>
           <Grid item md={12}>
-            <MetricsTitle
+            <MetricTitle
               subTitle="채팅 발생 수 기반 편집점"
               iconSrc="/images/logo/truepointLogo.png"
               pointNumber={metricsTestData.chat_points.length}
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
-                { point.rank && (
+                {point.rank && (
                   <div className={classes.contentLeft}>
                     <div className={classes.rank}>
-                      {point.rank}위
+                      {point.rank}
+                      위
                       <span>편집점</span>
                     </div>
-                  </div>)
-                }
+                  </div>
+                )}
                 <Chart
                   data={metricsData.chat_points}
                   chartType="chat"
@@ -211,7 +215,7 @@ export default function MetricsAccordian(): JSX.Element {
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
-                  <Button onClick={() => {}} style={{color: 'white'}}>
+                  <Button onClick={() => { }} style={{ color: 'white' }}>
                     편집점 내보내기
                   </Button>
                 </div>
@@ -239,21 +243,22 @@ export default function MetricsAccordian(): JSX.Element {
         </AccordionSummary>
         <AccordionDetails className={classes.wraper}>
           <Grid item md={12}>
-            <MetricsTitle
+            <MetricTitle
               subTitle="웃음 발생 수 기반 편집점"
               iconSrc="/images/logo/truepointLogo.png"
               pointNumber={metricsTestData.smile_points.length}
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
-                { point2.rank && (
+                {point2.rank && (
                   <div className={classes.contentLeft}>
                     <div className={classes.rank}>
-                      {point2.rank}위
+                      {point2.rank}
+                      위
                       <span>편집점</span>
                     </div>
-                  </div>)
-                }
+                  </div>
+                )}
                 <Chart
                   data={metricsData.smile_points}
                   chartType="smile"
@@ -265,7 +270,7 @@ export default function MetricsAccordian(): JSX.Element {
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
-                  <Button onClick={() => {}} style={{color: 'white'}}>
+                  <Button onClick={() => { }} style={{ color: 'white' }}>
                     편집점 내보내기
                   </Button>
                 </div>
