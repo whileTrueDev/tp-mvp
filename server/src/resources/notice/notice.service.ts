@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ReadNoticeOutlineDto } from './dto/readNoticeOutline.dto';
 import { NoticeEntity } from './entities/notice.entity';
 
 @Injectable()
@@ -21,9 +20,7 @@ export class NoticeService {
       .getMany();
   }
 
-  public async findOutline({
-    important = 2, newOne = 3
-  }: ReadNoticeOutlineDto): Promise<NoticeEntity[]> {
+  public async findOutline(important = 2): Promise<NoticeEntity[]> {
     // select * from Notice where isImportant = 1 order by createdAt DESC LIMIT 2
     // select * from Notice where isImportant = 0 order by createdAt DESC LIMIT 3
     const importantNotice = await this.noticeRepository
@@ -37,13 +34,13 @@ export class NoticeService {
       .createQueryBuilder()
       .where('isImportant = 0')
       .orderBy('createdAt', 'DESC')
-      .limit(newOne)
+      .limit(5 - importantNotice.length)
       .getMany();
 
     return importantNotice.concat(newNotice);
   }
 
-  public async findOne(id: string): Promise<NoticeEntity> {
+  public async findOne(id: number): Promise<NoticeEntity> {
     return this.noticeRepository.findOne(id);
   }
 }

@@ -1,7 +1,6 @@
 import {
-  Controller, Get, Param, Query
+  Controller, Get, Param, ParseIntPipe, Query
 } from '@nestjs/common';
-import { ReadNoticeOutlineDto } from './dto/readNoticeOutline.dto';
 import { NoticeEntity } from './entities/notice.entity';
 import { NoticeService } from './notice.service';
 
@@ -18,14 +17,14 @@ export class NoticeController {
 
   @Get('outline')
   async findForDashboard(
-    @Query() readNoticeOutlineDto: ReadNoticeOutlineDto,
+    @Query('important', ParseIntPipe) important: number,
   ): Promise<NoticeEntity[]> {
-    return this.noticeService.findOutline(readNoticeOutlineDto);
+    return this.noticeService.findOutline(important);
   }
 
   @Get(':id')
   async findOne(
-    @Param('id') id: string
+    @Param('id', ParseIntPipe) id: number
   ): Promise<NoticeEntity> {
     return this.noticeService.findOne(id);
   }
