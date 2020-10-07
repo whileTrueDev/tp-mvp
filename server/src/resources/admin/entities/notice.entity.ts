@@ -25,8 +25,8 @@ export class NoticeEntity {
   @Column()
   content: string;
 
-  @Column({ type: 'tinyint', default: 0 })
-  isImportant: number;
+  @Column({ type: 'boolean', default: 0 })
+  isImportant: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

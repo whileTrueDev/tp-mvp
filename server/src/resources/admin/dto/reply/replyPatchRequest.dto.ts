@@ -1,10 +1,11 @@
 import {
+  IsNumber,
   IsString
 } from 'class-validator';
 
 export class ReplyPatchRequest {
-  @IsString()
-  id: string;
+  @IsNumber()
+  id: number;
 
   @IsString()
   author: string;

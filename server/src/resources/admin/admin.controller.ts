@@ -16,18 +16,15 @@ import { NotificationPostRequest } from './dto/notification/notificationPost.dto
 // notice dto
 import { Notice } from './dto/notice/notice.dto';
 import { NoticeGetRequest } from './dto/notice/noticeGetRequest.dto';
-import { NoticePatch } from './dto/notice/noticePatchRequest.dto';
-import { NoticeDelete } from './dto/notice/noticeDeleteRequest.dto';
+import { NoticePatchRequest } from './dto/notice/noticePatchRequest.dto';
 
 // feature suggestion dto
 import { FeatureSuggestionPatchRequest } from './dto/feature/featureSuggestionPatch.dto';
-import { FeatureSuggestionDeleteRequest } from './dto/feature/featureSuggestionDelete.dto';
 
 // feature suggestion reply dto
 import { ReplyGetRequest } from './dto/reply/replyGetRequest.dto';
 import { ReplyPostRequest } from './dto/reply/replyPost.dto';
 import { ReplyPatchRequest } from './dto/reply/replyPatchRequest.dto';
-import { ReplyDeleteRequest } from './dto/reply/replyDeleteRequest.dto';
 
 import { ValidationPipe } from '../../pipes/validation.pipe';
 
@@ -53,14 +50,14 @@ export class AdminController {
 
   @Patch('notice')
   async updateNotice(
-    @Body(new ValidationPipe()) data: NoticePatch
+    @Body(new ValidationPipe()) data: NoticePatchRequest
   ): Promise<boolean> {
     return this.adminService.patchNotice(data);
   }
 
   @Delete('notice')
   async deleteNotice(
-    @Body(new ValidationPipe()) data: NoticeDelete
+    @Body(new ValidationPipe()) data: Pick<NoticePatchRequest, 'id'>
   ): Promise<boolean> {
     return this.adminService.deleteNotice(data);
   }
@@ -80,7 +77,7 @@ export class AdminController {
   @UseInterceptors(ClassSerializerInterceptor)
   async createNotification(
     @Body(new ValidationPipe()) data: NotificationPostRequest
-  ): Promise<any> {
+  ): Promise<boolean> {
     return this.adminService.postNotification(data);
   }
   // ********************************* notification end *****************************
@@ -100,25 +97,25 @@ export class AdminController {
 
   @Delete('feature-suggestion')
   async deleteSuggestion(
-    @Body(new ValidationPipe()) data: FeatureSuggestionDeleteRequest
+    @Body(new ValidationPipe()) data: Pick<FeatureSuggestionPatchRequest, 'id'>
   ): Promise<boolean> {
     return this.adminService.deleteFeatureSuggestion(data);
-  }
-
-  @Get('suggestion-reply')
-  getReply(
-      @Query(new ValidationPipe()) req: ReplyGetRequest
-  ): Promise<FeatureSuggestionReplyEntity[]> {
-    return this.adminService.getReply(req);
   }
   // ********************************* feature suggestion end *****************************
 
   // ********************************* feature suggestion reply *****************************
+  @Get('suggestion-reply')
+  async getReply(
+      @Query(new ValidationPipe()) req: ReplyGetRequest
+  ): Promise<FeatureSuggestionReplyEntity[]> {
+    return this.adminService.getReply(req);
+  }
+
   @Post('suggestion-reply')
   @UseInterceptors(ClassSerializerInterceptor)
   async createReply(
     @Body(new ValidationPipe()) data: ReplyPostRequest
-  ): Promise<FeatureSuggestionReplyEntity> {
+  ): Promise<boolean> {
     return this.adminService.loadReply(data);
   }
 
@@ -131,7 +128,7 @@ export class AdminController {
 
   @Delete('suggestion-reply')
   async deleteReply(
-    @Body(new ValidationPipe()) data: ReplyDeleteRequest
+    @Body(new ValidationPipe()) data: Pick<ReplyPatchRequest, 'id'>
   ): Promise<boolean> {
     return this.adminService.deleteReply(data);
   }

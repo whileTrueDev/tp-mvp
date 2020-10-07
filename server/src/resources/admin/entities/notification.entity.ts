@@ -13,8 +13,8 @@ export class NotificationEntity {
   @Column()
   content: string;
 
-  @Column({ type: 'tinyint', default: 0 })
-  readState: number;
+  @Column({ type: 'boolean', default: 0 })
+  readState: boolean;
 
   @Column({
     type: 'varchar',

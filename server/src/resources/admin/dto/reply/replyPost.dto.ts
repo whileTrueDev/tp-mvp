@@ -1,10 +1,11 @@
 import {
+  IsNumber,
   IsString
 } from 'class-validator';
 
 export class ReplyPostRequest {
-  @IsString()
-  suggestionId: string;
+  @IsNumber()
+  suggestionId: number;
 
   @IsString()
   content: string;

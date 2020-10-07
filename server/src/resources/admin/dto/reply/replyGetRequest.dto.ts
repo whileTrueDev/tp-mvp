@@ -1,9 +1,9 @@
 import {
-  IsString, IsOptional
+  IsNumberString, IsOptional
 } from 'class-validator';
 
 export class ReplyGetRequest {
-  @IsString()
+  @IsNumberString()
   @IsOptional()
-  id: string;
+  id: number;
 }
