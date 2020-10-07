@@ -2,7 +2,7 @@ name: Dev PR Checks - "server"
 
 on:
   pull_request:
-    branches: [master, dev]
+    branches: [마스터, 데브, 로 브랜치 설정해야 합니다]
     paths:
       - "server/**"
 
