@@ -33,6 +33,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     finishAt: '',
     fileId: '',
   };
+  const [highlightData, setHighlightData] = React.useState(null);
+  const [metricsData, setMetricsData] = React.useState(null);
   const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
   const [isChecked, setIsChecked] = React.useState({
@@ -119,8 +121,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       })
       .then((res) => {
         if (res.data) {
-          // 데이터 리턴값
-          console.log(res.data);
+          setHighlightData(res.data);
         }
       }).catch(() => {
         alert('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
@@ -136,8 +137,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       })
       .then((res) => {
         if (res.data) {
-          // 데이터 리턴값
-          console.log(res.data);
+          setMetricsData(res.data);
         }
       }).catch(() => {
         alert('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
@@ -265,8 +265,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           </Grid>
         </Grid>
       </Paper>
-      <TruepointHighlight />
-      <MetricsAccordian />
+      { !isClicked && highlightData && metricsData && (
+        <>
+          <TruepointHighlight highlightData={highlightData} />
+          <MetricsAccordian metricsData={metricsData} />
+        </>
+      )}
     </Grid>
   );
 }

@@ -1,9 +1,11 @@
 import React from 'react';
-import { TablePagination } from '@material-ui/core';
-import Table from '../../../atoms/Table/MaterialTable';
-import {TableCell, TableRow, TableBody} from '@material-ui/core';
+import {
+  TablePagination, TableCell, TableRow, TableBody
+} from '@material-ui/core';
+
 import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
+import Table from '../../../atoms/Table/MaterialTable';
 
 const styles = makeStyles(() => ({
   row: {
@@ -17,7 +19,6 @@ const styles = makeStyles(() => ({
     background: 'linear-gradient(to right, #f0a9b3, #ff3e7a)'
   }
 }));
-
 
 export function highlightTerm(rowData: any): string {
   function getFormatDate(date: Date): string {
@@ -41,7 +42,7 @@ export function highlightTerm(rowData: any): string {
 }
 
 export function rank(row:any, arr:any): number | null {
-  const sorted = arr.sort((a:any, b:any) => {return (b.score - a.score)});
+  const sorted = arr.sort((a:any, b:any) => (b.score - a.score));
   const ranking = sorted.indexOf(row);
   if (ranking > -1) return ranking + 1;
   return null;
@@ -90,8 +91,7 @@ export default function MaterialTable({
             title: type === '트루포인트 편집점' ? '트루포인트 점수' : '횟수'
           },
         ]}
-        data={metrics}
-        // data={!metrics.loading ? metrics.payload : []}
+        data={metrics || []}
         onRowClick={(e, rowData:any) => {
           if (handleClick) {
             handleClick({
@@ -139,11 +139,13 @@ export default function MaterialTable({
                     }
                   }}
                 >
-                  <TableCell style={{padding: 10}} component="th" scope="row" align="center">
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
                     {highlightTerm(eachRow)}
                   </TableCell>
-                  <TableCell style={{padding: 10}} align="center">
-                    {eachRow.score}
+                  <TableCell style={{ padding: 10 }} align="center">
+                    { type === '트루포인트 편집점'
+                      ? Math.round(eachRow.score * 100)
+                      : eachRow.score}
                   </TableCell>
                 </TableRow>
               ))}
@@ -162,7 +164,7 @@ export default function MaterialTable({
           search: false,
           pageSize: 5,
           pageSizeOptions: [5, 10],
-          headerStyle: { backgroundColor: '#929ef8', color: 'white'},
+          headerStyle: { backgroundColor: '#929ef8', color: 'white' },
           draggable: false,
           paginationType: 'stepped',
         }}
@@ -170,4 +172,3 @@ export default function MaterialTable({
     </>
   );
 }
-

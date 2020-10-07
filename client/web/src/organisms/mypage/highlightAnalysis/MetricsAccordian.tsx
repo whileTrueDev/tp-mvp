@@ -1,13 +1,15 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Accordion, AccordionSummary,
-  AccordionDetails, Typography, Grid } from '@material-ui/core';
+import {
+  Accordion, AccordionSummary,
+  AccordionDetails, Typography, Grid
+} from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Paper from '@material-ui/core/Paper';
 import Button from '../../../atoms/Button/Button';
-import MetricsTitle from '../../shared/sub/MetricsTitle';
+import MetricTitle from '../../shared/sub/MetricTitle';
 import MetricsTable from '../../shared/sub/MetricsTable';
-import {initialPoint} from './TruepointHighlight';
+import { initialPoint } from './TruepointHighlight';
 import Chart from './Chart';
 
 interface PointType {
@@ -113,15 +115,14 @@ const metricsTestData = {
     { smile_count: 1, chat_count: 16.0 }],
   chat_points: [2, 5, 9, 10, 12, 15, 20, 22, 25, 27, 30],
   smile_points: [2, 5, 9, 10, 12, 15, 20, 22, 25, 27, 30]
-}
+};
 
 // data에는 테스트 데이터, pointsType에는 smile_points 혹은 chat_points 들어감
 const getMetricsPoint = (data:any): any => {
-
   const originStartTime = new Date(data.start_date);
 
   function getDate(index:number) {
-    const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index))
+    const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
     const getYears = Time.getFullYear();
     const getMonths = Time.getMonth();
     const getDays = Time.getDay();
@@ -134,13 +135,15 @@ const getMetricsPoint = (data:any): any => {
     const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
     const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
 
-    return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`
+    return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
   }
 
   function insertPoints(target: number, countType: string) {
-    const time = getDate(target)
-    const returnDict = {start_time: time, end_time: time, start_index: String(target), end_index: String(target), score: data.time_line[target][countType]}
-    return returnDict
+    const time = getDate(target);
+    const returnDict = {
+      start_time: time, end_time: time, start_index: String(target), end_index: String(target), score: data.time_line[target][countType]
+    };
+    return returnDict;
   }
 
   const resultData: {chat_points: PointType[], smile_points: PointType[]} = {
@@ -161,12 +164,15 @@ const getMetricsPoint = (data:any): any => {
     resultData.smile_points.push(eachData);
   });
 
-  return resultData
+  return resultData;
 };
 
-const metricsData = getMetricsPoint(metricsTestData);
+interface MetricsAccordianProps {
+  metricsData: any;
+}
 
-export default function MetricsAccordian(): JSX.Element {
+export default function MetricsAccordian({ metricsData }: MetricsAccordianProps): JSX.Element {
+  const metricsAllData = getMetricsPoint(metricsData);
   const classes = styles();
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
@@ -185,23 +191,24 @@ export default function MetricsAccordian(): JSX.Element {
         </AccordionSummary>
         <AccordionDetails className={classes.wraper}>
           <Grid item md={12}>
-            <MetricsTitle
-              subTitle="채팅 발생 수 기반 편집점"
-              iconSrc="/images/logo/truepointLogo.png"
-              pointNumber={metricsTestData.chat_points.length}
+            <MetricTitle
+              subTitle="채팅 편집점"
+              iconSrc="/images/analyticsPage/logo_chat.svg"
+              pointNumber={metricsAllData.chat_points.length}
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
                 { point.rank && (
                   <div className={classes.contentLeft}>
                     <div className={classes.rank}>
-                      {point.rank}위
+                      {point.rank}
+                      위
                       <span>편집점</span>
                     </div>
-                  </div>)
-                }
+                  </div>
+                )}
                 <Chart
-                  data={metricsData.chat_points}
+                  data={metricsAllData.chat_points}
                   chartType="chat"
                   highlight={point}
                   handleClick={setPoint}
@@ -211,12 +218,12 @@ export default function MetricsAccordian(): JSX.Element {
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
-                  <Button onClick={() => {}} style={{color: 'white'}}>
+                  <Button onClick={() => {}} style={{ color: 'white' }}>
                     편집점 내보내기
                   </Button>
                 </div>
                 <MetricsTable
-                  metrics={metricsData.chat_points}
+                  metrics={metricsAllData.chat_points}
                   title="채팅 발생 정보"
                   handleClick={setPoint}
                   row={point}
@@ -239,23 +246,24 @@ export default function MetricsAccordian(): JSX.Element {
         </AccordionSummary>
         <AccordionDetails className={classes.wraper}>
           <Grid item md={12}>
-            <MetricsTitle
-              subTitle="웃음 발생 수 기반 편집점"
-              iconSrc="/images/logo/truepointLogo.png"
-              pointNumber={metricsTestData.smile_points.length}
+            <MetricTitle
+              subTitle="웃음 편집점"
+              iconSrc="/images/analyticsPage/logo_smile.svg"
+              pointNumber={metricsAllData.smile_points.length}
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
                 { point2.rank && (
                   <div className={classes.contentLeft}>
                     <div className={classes.rank}>
-                      {point2.rank}위
+                      {point2.rank}
+                      위
                       <span>편집점</span>
                     </div>
-                  </div>)
-                }
+                  </div>
+                )}
                 <Chart
-                  data={metricsData.smile_points}
+                  data={metricsAllData.smile_points}
                   chartType="smile"
                   highlight={point2}
                   handleClick={setPoint2}
@@ -265,12 +273,12 @@ export default function MetricsAccordian(): JSX.Element {
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
-                  <Button onClick={() => {}} style={{color: 'white'}}>
+                  <Button onClick={() => {}} style={{ color: 'white' }}>
                     편집점 내보내기
                   </Button>
                 </div>
                 <MetricsTable
-                  metrics={metricsData.smile_points}
+                  metrics={metricsAllData.smile_points}
                   title="웃음 발생 정보"
                   handleClick={setPoint2}
                   row={point2}
