@@ -15,8 +15,8 @@ import Chart from './Chart';
 interface PointType {
   start_time: string;
   end_time: string;
-  start_index: string;
-  end_index: string;
+  start_index: number;
+  end_index: number;
   score: any;
 }
 
@@ -141,7 +141,7 @@ const getMetricsPoint = (data:any): any => {
   function insertPoints(target: number, countType: string) {
     const time = getDate(target);
     const returnDict = {
-      start_time: time, end_time: time, start_index: String(target), end_index: String(target), score: data.time_line[target][countType]
+      start_time: time, end_time: time, start_index: target, end_index: target, score: data.time_line[target][countType]
     };
     return returnDict;
   }

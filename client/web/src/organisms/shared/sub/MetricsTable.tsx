@@ -2,7 +2,6 @@ import React from 'react';
 import {
   TablePagination, TableCell, TableRow, TableBody
 } from '@material-ui/core';
-
 import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
@@ -51,13 +50,13 @@ export function rank(row:any, arr:any): number | null {
 interface TableProps {
   metrics: any,
   title: string,
-  row?: any,
+  row: any,
   page: number,
   pageSize: number,
   handlePage: any,
   handlePageSize: any,
   type: string
-  handleClick?: (a: any) => void
+  handleClick: (a: any) => void
 }
 
 export default function MaterialTable({
@@ -77,7 +76,6 @@ export default function MaterialTable({
   return (
     <>
       <Table
-        // isLoading={metrics.loading}
         title={title}
         columns={[
           {
@@ -92,19 +90,18 @@ export default function MaterialTable({
           },
         ]}
         data={metrics || []}
-        onRowClick={(e, rowData:any) => {
-          if (handleClick) {
-            handleClick({
-              startTime: highlightTerm(rowData).slice(0, 8),
-              endTime: highlightTerm(rowData).slice(9),
-              start_index: rowData.start_index,
-              end_index: rowData.end_index,
-              score: rowData.score,
-              rank: rank(rowData, [...metrics]),
-              index: rowData.tableData.id
-            });
-          }
-        }}
+        // onRowClick={(e, rowData:any) => {
+        //   console.log(rowData)
+        //   handleClick({
+        //     startTime: highlightTerm(rowData).slice(0, 8),
+        //     endTime: highlightTerm(rowData).slice(9),
+        //     start_index: rowData.start_index,
+        //     end_index: rowData.end_index,
+        //     score: rowData.score,
+        //     rank: rank(rowData, [...metrics]),
+        //     index: rowData.tableData.id
+        //   });
+        // }}
         components={{
           Pagination: (props) => (
             <TablePagination
@@ -127,6 +124,7 @@ export default function MaterialTable({
                   }
                   onClick={() => {
                     if (handleClick) {
+                      console.log(eachRow);
                       handleClick({
                         startTime: highlightTerm(eachRow).slice(0, 8),
                         endTime: highlightTerm(eachRow).slice(9),

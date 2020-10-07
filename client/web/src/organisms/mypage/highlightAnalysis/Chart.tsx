@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
@@ -44,7 +44,6 @@ export default function Chart({
   handlePage,
   pageSize
 }: ChartProps): JSX.Element {
-
   const chartRef = useRef<any>(null);
 
   useEffect(() => {
@@ -97,7 +96,7 @@ export default function Chart({
           start_index: point.start_index,
           end_index: point.end_index,
           index: point.tableData.id
-        })
+        });
         handlePage(Math.floor(point.tableData.id / pageSize));
       });
 
@@ -110,12 +109,10 @@ export default function Chart({
         series2.dataFields.dateX = setting.dateX;
         series2.data = [data[highlight.index]];
         series2.stroke = am4core.color(setting.tooltipColor);
-        series2.showTooltipOn = 'always'
         const bullet2 = series2.bullets.push(new am4charts.CircleBullet());
         bullet2.circle.strokeWidth = 6;
         bullet2.circle.radius = 12;
         bullet2.circle.fill = am4core.color(setting.tooltipColor);
-        
       }
     };
 
@@ -125,10 +122,10 @@ export default function Chart({
 
     return () => {
       chart.dispose();
-    }
-  }, [highlight, pageSize, chartType, data, handleClick, handlePage])
+    };
+  }, [highlight, pageSize, chartType, data, handleClick, handlePage]);
 
   return (
-    <div id={`${chartType}chartdiv`} style={{width: '100%', height: 350}} />
+    <div id={`${chartType}chartdiv`} style={{ width: '100%', height: 350 }} />
   );
 }
