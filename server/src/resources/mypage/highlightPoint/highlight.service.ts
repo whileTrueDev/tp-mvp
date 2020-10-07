@@ -107,7 +107,7 @@ export class HighlightService {
       });
     }
 
-    const doGetSelectedFiles = await this.getSelectedFile(getArray).then((value) => value);
+    const doGetSelectedFiles = await this.getSelectedFile(getArray);
     return doGetSelectedFiles;
   }
   async getSelectedFile(fileName): Promise<any> {
