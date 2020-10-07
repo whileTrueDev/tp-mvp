@@ -109,6 +109,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     }
   }, [period]);
 
+  React.useEffect(() => {
+    setPoint1(null);
+    setPoint2(null);
+  }, [subscribe.currUser]);
+
   /*
     1. point1 == null point2 == null -> insert point1
     2. point1 != null point2 == null -> insert point2

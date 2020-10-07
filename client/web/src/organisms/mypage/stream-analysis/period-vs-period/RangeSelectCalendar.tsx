@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base,
+    period, handlePeriod, base
   } = props;
   const classes = useStyles();
   const subscribe = React.useContext(SubscribeContext);
@@ -108,6 +108,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       setPoint2(period[1]);
     }
   }, [period]);
+
+  React.useEffect(() => {
+    setPoint1(null);
+    setPoint2(null);
+  }, [subscribe.currUser]);
 
   /*
     1. point1 == null point2 == null -> insert point1

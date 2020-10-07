@@ -14,6 +14,7 @@ export interface SubscribeContextValue {
   validSubscribeUserList: SubscribeUserInfo[];
   invalidSubscribeUserList: SubscribeUserInfo[];
   handleCurrTargetUser: (changeUser: SubscribeUserInfo) => void;
+  handleLoginUserId : (userId: string) => void;
   error: AxiosError<any> | undefined,
   loading: boolean,
 }
@@ -30,6 +31,7 @@ const SubscribeContext = React.createContext<SubscribeContextValue>({
   validSubscribeUserList: [],
   invalidSubscribeUserList: [],
   handleCurrTargetUser: () => {},
+  handleLoginUserId: () => {},
   error: undefined,
   loading: false
 });
@@ -48,6 +50,12 @@ export function useSubscribe(): SubscribeContextValue {
     setInvalidSubscribeUserList
   ] = React.useState<SubscribeUserInfo[]>([]);
 
+  const [loginUserId, setLoginUserId] = React.useState<string>('qjqdn1568');
+
+  function handleLoginUserId(userId: string) {
+    setLoginUserId(userId);
+  }
+
   function handleCurrTargetUser(newTagetUser: SubscribeUserInfo) {
     setCurrUser(newTagetUser);
   }
@@ -61,20 +69,21 @@ export function useSubscribe(): SubscribeContextValue {
   React.useEffect(() => {
     excuteGetSubscribeData({
       params: {
-        userId: 'qjqdn1568', // logined user id
+        userId: loginUserId, // logined user id
       }
     }).then((res) => {
       setValidSubscribeUSerList(res.data.validUserList);
       setInvalidSubscribeUserList(res.data.inValidUserList);
       setCurrUser(res.data.validUserList[0]);
     });
-  }, [excuteGetSubscribeData]);
+  }, [excuteGetSubscribeData, loginUserId]);
 
   return {
     currUser,
     validSubscribeUserList,
     invalidSubscribeUserList,
     handleCurrTargetUser,
+    handleLoginUserId,
     error,
     loading
   };

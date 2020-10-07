@@ -46,7 +46,7 @@ function Index(): JSX.Element {
   const {
     currUser,
     invalidSubscribeUserList, validSubscribeUserList, handleCurrTargetUser,
-    loading, error
+    handleLoginUserId, loading, error
   } = useSubscribe();
 
   // *******************************************
@@ -99,6 +99,7 @@ function Index(): JSX.Element {
           invalidSubscribeUserList,
           validSubscribeUserList,
           handleCurrTargetUser,
+          handleLoginUserId,
           loading,
           error
         }}

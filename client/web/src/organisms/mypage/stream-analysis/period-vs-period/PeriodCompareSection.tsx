@@ -4,6 +4,7 @@ import {
   Typography, Grid, Divider, Button
 } from '@material-ui/core';
 // subcomponents
+import { sub } from 'date-fns/esm';
 import RangeSelectCalendarWithTextfield from './RangeSelectCalendarWithTextfield';
 import CheckBoxGroup from './CheckBoxGroup';
 // styles

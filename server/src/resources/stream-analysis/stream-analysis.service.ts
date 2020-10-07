@@ -237,11 +237,7 @@ export class StreamAnalysisService {
             DATE_FORMAT(startedAt, "%Y-%m-%d") AS date
           FROM Streams JOIN StreamSummary
           USING (streamId, platform)
-          WHERE userId IN (
-            SELECT targetUserId 
-            FROM Subscribe 
-            WHERE userId = ?
-          )
+          WHERE userId = ?
           AND startedAt BETWEEN ? AND ?
           GROUP BY date
           ORDER BY date`;

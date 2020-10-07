@@ -35,6 +35,7 @@ export class StreamAnalysisController {
     output  :  { chat_count , smile_count , viewer }
   */
   @Get('stream-list')
+  @UseGuards(JwtAuthGuard)
   getDaysStreamList(@Query() findDaysStreamRequest: FindAllStreams): Promise<DayStreamsInfo[]> {
     return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
@@ -52,7 +53,7 @@ export class StreamAnalysisController {
                 } 
   */
   @Get('streams')
-  // @UseGuards(JwtAuthGuard) 본인인증에 대한 오류가 남.
+  @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
   ): Promise<(StreamAnalysis | null)[]> {
@@ -64,6 +65,7 @@ export class StreamAnalysisController {
     input   :  { userId, baseStartAt, baseEndAt, compareStartAt, compareEndAt }
   */
   @Get('periods')
+  @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
   @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
   )
@@ -82,6 +84,7 @@ export class StreamAnalysisController {
     input   : streams : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
   */
  @Get('period')
+ @UseGuards(JwtAuthGuard)
   getTest(
     @Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
       s3Request: FindS3StreamInfo[]
