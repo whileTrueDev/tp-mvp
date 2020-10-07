@@ -1,8 +1,8 @@
 import {
-  IsString
+  IsNumber
 } from 'class-validator';
 
 export class NoticeDelete {
-  @IsString()
-  id: string;
+  @IsNumber()
+  id: number;
 }

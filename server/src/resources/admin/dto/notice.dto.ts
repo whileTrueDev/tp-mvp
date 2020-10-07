@@ -1,5 +1,5 @@
 import {
-  IsString, IsOptional
+  IsString, IsOptional, IsInt
 } from 'class-validator';
 
 export class Notice {
@@ -19,6 +19,6 @@ export class Notice {
   @IsString()
   content: string;
 
-  @IsString()
+  @IsInt()
   isImportant: number;
 }

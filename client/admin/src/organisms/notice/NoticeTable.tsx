@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { Typography, useMediaQuery } from '@material-ui/core';
 import { FiberNew } from '@material-ui/icons';
 import MaterialTable from 'material-table';
+import useAxios from 'axios-hooks';
 import {
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
@@ -12,7 +13,7 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props: any, ref) => <Clear {...props} ref={ref} />),
   ResetSearch: forwardRef((props: any, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props: any, ref) => <Delete {...props} ref={ref} />),
+  delete: forwardRef((props: any, ref) => <Delete {...props} ref={ref} />),
   Filter: forwardRef((props: any, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props: any, ref) => <FirstPage {...props} ref={ref} />),
   LastPage: forwardRef((props: any, ref) => <LastPage {...props} ref={ref} />),
@@ -29,6 +30,15 @@ interface props {
   noticeData: any;
   handleEditModeOff: () => void; 
   handleData: (Data: any) => void;  
+}
+interface noticeData {
+  title?: string;
+  author: string;
+  category?: string;
+  code?: number;
+  createdAt: string;
+  content: string;
+  isImportant: number;
 }
 
 //최신일을 계산해주는 함수
@@ -65,22 +75,27 @@ const localization = {
 export default function NoticeTable(props: props) {
   const { noticeData, handleData, handleEditModeOff } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
+  
+  const [{ error, loading, data }, executeDelete] = useAxios(
+    { url:'http://localhost:3000/admin/notice', method: 'DELETE'}, { manual: true }
+   );
 
+  console.log(noticeData);
   return (
     <MaterialTable
       title="공지 사항"
       icons={tableIcons}
       columns={[
-        { title: '글번호', field: 'code', render: rowData => (<Typography>{rowData.code}</Typography>) },
-        { title: '카테고리', field: 'categori', render: rowData => (<Typography>{rowData.categori}</Typography>) },
+        { title: '글번호', field: 'id', render: rowData => (<Typography>{rowData.id}</Typography>) },
+        { title: '카테고리', field: 'category', render: rowData => (<Typography>{rowData.category}</Typography>) },
+        { title : '중요공지', field: 'isImportant', render: rowData => (<Typography>{rowData.isImportant ? ("[중요]") : "[일반]"}</Typography>)},
         {
           title: '글제목',
           field: 'title',
-          render: rowData => (
+          render: rowData  => (
             <Typography className="title">
-              {true ? ("[중요공지]") : ""}
               {rowData.title}
-              { dateDiff(new Date(), new Date(rowData.regiDate)) < 8 && (
+              { dateDiff(new Date(), new Date(rowData.createdAt)) < 8 && (
               <FiberNew style={{ color: '#929ef8' }}/>
               )}
             </Typography>
@@ -88,9 +103,16 @@ export default function NoticeTable(props: props) {
         },
         {
           title: '작성일',
-          field: 'regiDate',
+          field: 'createdAt',
           render: rowData => (
-            <Typography>{new Date(rowData.regiDate).toLocaleString()}</Typography>
+            <Typography>{new Date(rowData.createdAt).toLocaleString()}</Typography>
+          ),
+        },
+        {
+          title: '작성자',
+          field: 'author',
+          render: rowData => (
+            <Typography>{rowData.author}</Typography>
           ),
         },
       ]}

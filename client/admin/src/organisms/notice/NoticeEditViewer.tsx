@@ -34,7 +34,7 @@ export default function NoticeEditViewer(props: NoticeEditData) {
         <div style={{ padding: 14 }}>
         <Markdown
           className={classes.markdown}
-          source={state.contents}
+          source={state.content}
           escapeHtml={false}
           />
         </div>

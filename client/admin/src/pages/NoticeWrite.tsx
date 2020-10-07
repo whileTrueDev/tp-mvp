@@ -8,25 +8,32 @@ import '../assets/font.css';
 import noticeDataset from './AdminNotice';
 
 const initialState = {
-  title: '공지사항', topic: '공지사항', contents: '공지사항작성중',
+  title: '공지사항', topic: '공지사항', content: '공지사항작성중',
 };
 
 function reducer(state: any, action: any) {
   const {
-    type, title, topic, contents,
+    type, title, category, content, isImportant, author
   } = action;
   switch (type) {
     case 'reset':
       return initialState;
     case 'handleTitle':
       return { ...state, title };
-    case 'handleTopic':
+    
+    case 'handleCategory':
       if (state.title.indexOf(']') > 0) {
-        return { ...state, topic, title: `[${topic}]${state.title.split(']')[1]}` };
+        return { ...state, category, title: `[${category}]${state.title.split(']')[1]}` };
       }
-      return { ...state, topic, title: `[${topic}] ${state.title}` };
-    case 'handleContents':
-      return { ...state, contents };
+      return { ...state, category, title: `[${category}] ${state.title}` };
+
+    case 'handleContent':
+      return { ...state, content };
+    case 'handleisImportant':
+      return {...state, isImportant};
+    case 'handleAuthor':
+        return {...state, author};
+
     default: throw Error(`unexpected action.type: ${action.type}`);
   }
 }

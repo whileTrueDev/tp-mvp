@@ -31,6 +31,7 @@ export class AdminController {
   async createNotice(
     @Body(new ValidationPipe()) data: Notice
   ): Promise<NoticeEntity> {
+    console.log(data);
     return this.adminService.loadNotice(data);
   }
 
@@ -43,8 +44,9 @@ export class AdminController {
 
   @Delete('notice')
   async deleteNotice(
-    @Body(new ValidationPipe()) data: NoticeDelete
+    @Body() data: NoticeDelete
   ): Promise<boolean> {
+    console.log(data);
     return this.adminService.deleteNotice(data);
   }
 
