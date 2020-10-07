@@ -92,7 +92,6 @@ export class StreamAnalysisService {
       private readonly streamsRepository: Repository<StreamsEntity>,
     @InjectRepository(StreamSummaryEntity)
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
-    @Inject(UsersService) private usersService: UsersService
   ) {}
 
   /*
