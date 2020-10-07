@@ -69,7 +69,7 @@ export default function SuggestTable(props: props) {
     <MaterialTable
       title="기능 제안"
       columns={[
-        { title: '카테고리', field: 'categori', render: rowData => (<Typography>{rowData.categori}</Typography>) },
+        { title: '카테고리', field: 'category', render: rowData => (<Typography>{rowData.category}</Typography>) },
         {
           title: '제목',
           field: 'title',

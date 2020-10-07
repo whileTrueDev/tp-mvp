@@ -1,4 +1,4 @@
-import React ,{useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Typography, Paper, Divider, Button,
 } from '@material-ui/core';
@@ -17,17 +17,17 @@ interface NoticeData {
 }
 
 interface Props {
-  selectedData: NoticeData; 
+  selectedData: NoticeData;
   handleEditModeOn: () => void;
 }
 
 export default function NoticePreview(props: Props) {
   const { selectedData, handleEditModeOn } = props;
-  
-  //데이터 가져오기
+
+  // 데이터 가져오기
   const [{ error, loading, data }, executeDelete] = useAxios(
-    { url:'http://localhost:3000/admin/notice', method: 'DELETE'}, { manual: true }
-   );
+    { url: 'http://localhost:3000/admin/notice', method: 'DELETE' }, { manual: true }
+  );
 
   return (
     <Paper>
@@ -37,13 +37,13 @@ export default function NoticePreview(props: Props) {
         </Typography>
 
         <div style={{ display: 'flex', marginTop: 10, justifyContent: 'space-bwtween' }}>
-        <Typography variant="subtitle1">
+          <Typography variant="subtitle1">
             {`글번호 : ${selectedData.id},`}
-                    &emsp;
+            &emsp;
           </Typography>
           <Typography variant="subtitle1">
             {`${selectedData.category},`}
-                    &emsp;
+            &emsp;
           </Typography>
           <Typography variant="subtitle1">
             {new Date(selectedData.createdAt).toLocaleString()}
@@ -58,7 +58,7 @@ export default function NoticePreview(props: Props) {
               variant="contained"
               onClick={handleEditModeOn}
             >
-            글 수정 하기
+              글 수정 하기
             </Button>
 
             <Button
@@ -75,7 +75,7 @@ export default function NoticePreview(props: Props) {
                 window.location.reload();
               }}
             >
-            삭제하기
+              삭제하기
             </Button>
           </div>
         )}
@@ -83,7 +83,6 @@ export default function NoticePreview(props: Props) {
       </div>
 
       <Divider />
-
 
       <div style={{ padding: 28, maxHeight: 750, overflow: 'scroll' }}>
         <Markdown

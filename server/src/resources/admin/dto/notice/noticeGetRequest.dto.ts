@@ -1,9 +1,9 @@
 import {
-  IsString, IsOptional
+  IsNumberString, IsOptional
 } from 'class-validator';
 
 export class NoticeGetRequest {
-  @IsString()
+  @IsNumberString()
   @IsOptional()
-  id: string;
+  id: number;
 }

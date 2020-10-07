@@ -2,19 +2,22 @@ import {
   Entity, Column, PrimaryGeneratedColumn, CreateDateColumn
 } from 'typeorm';
 
-@Entity({ name: 'NotificationTest' })
-export class NotificationEntity {
+@Entity({ name: 'FeatureSuggestionReplyTest' })
+export class FeatureSuggestionReplyEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  replyId: number;
 
   @Column()
-  title: string;
+  suggestionId: number;
 
   @Column()
   content: string;
 
-  @Column({ type: 'boolean', default: 0 })
-  readState: boolean;
+  @Column({
+    type: 'varchar',
+    length: 50
+  })
+  author: string;
 
   @Column({
     type: 'varchar',
@@ -25,7 +28,7 @@ export class NotificationEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  constructor(partial: Partial<NotificationEntity>) {
+  constructor(partial: Partial<FeatureSuggestionReplyEntity>) {
     Object.assign(this, partial);
   }
 }

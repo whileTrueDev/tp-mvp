@@ -1,10 +1,11 @@
 import {
-  IsString, IsInt,
+  IsNumber, IsString, IsOptional
 } from 'class-validator';
 
-export class NoticePatch {
-  @IsInt()
-  id: string;
+export class Notice {
+  @IsNumber()
+  @IsOptional()
+  id: number;
 
   @IsString()
   category: string;
@@ -18,6 +19,6 @@ export class NoticePatch {
   @IsString()
   content: string;
 
-  @IsInt()
-  isImportant: number;
+  @IsNumber()
+  isImportant: boolean;
 }

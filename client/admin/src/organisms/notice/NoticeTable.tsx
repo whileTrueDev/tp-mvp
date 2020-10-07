@@ -1,12 +1,12 @@
 import React, { forwardRef } from 'react';
 import { Typography, useMediaQuery } from '@material-ui/core';
-import { FiberNew } from '@material-ui/icons';
-import MaterialTable from 'material-table';
-import useAxios from 'axios-hooks';
 import {
+  FiberNew,
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
+import MaterialTable from 'material-table';
+import useAxios from 'axios-hooks';
 
 const tableIcons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
@@ -25,11 +25,11 @@ const tableIcons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
-//noticeTable 함수의 props
+// noticeTable 함수의 props
 interface props {
   noticeData: any;
-  handleEditModeOff: () => void; 
-  handleData: (Data: any) => void;  
+  handleEditModeOff: () => void;
+  handleData: (Data: any) => void;
 }
 interface noticeData {
   title?: string;
@@ -41,12 +41,12 @@ interface noticeData {
   isImportant: number;
 }
 
-//최신일을 계산해주는 함수
+// 최신일을 계산해주는 함수
 function dateDiff(date1: any, date2: any) {
   return Math.ceil((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-//table 레이아웃조정
+// table 레이아웃조정
 const localization = {
   body: {
     deleteTooltip: '캠페인 삭제',
@@ -71,14 +71,13 @@ const localization = {
   },
 };
 
-
 export default function NoticeTable(props: props) {
   const { noticeData, handleData, handleEditModeOff } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
-  
+
   const [{ error, loading, data }, executeDelete] = useAxios(
-    { url:'http://localhost:3000/admin/notice', method: 'DELETE'}, { manual: true }
-   );
+    { url: 'http://localhost:3000/admin/notice', method: 'DELETE' }, { manual: true }
+  );
 
   console.log(noticeData);
   return (
@@ -86,17 +85,17 @@ export default function NoticeTable(props: props) {
       title="공지 사항"
       icons={tableIcons}
       columns={[
-        { title: '글번호', field: 'id', render: rowData => (<Typography>{rowData.id}</Typography>) },
-        { title: '카테고리', field: 'category', render: rowData => (<Typography>{rowData.category}</Typography>) },
-        { title : '중요공지', field: 'isImportant', render: rowData => (<Typography>{rowData.isImportant ? ("[중요]") : "[일반]"}</Typography>)},
+        { title: '글번호', field: 'id', render: (rowData) => (<Typography>{rowData.id}</Typography>) },
+        { title: '카테고리', field: 'category', render: (rowData) => (<Typography>{rowData.category}</Typography>) },
+        { title: '중요공지', field: 'isImportant', render: (rowData) => (<Typography>{rowData.isImportant ? ('[중요]') : '[일반]'}</Typography>) },
         {
           title: '글제목',
           field: 'title',
-          render: rowData  => (
+          render: (rowData) => (
             <Typography className="title">
               {rowData.title}
               { dateDiff(new Date(), new Date(rowData.createdAt)) < 8 && (
-              <FiberNew style={{ color: '#929ef8' }}/>
+              <FiberNew style={{ color: '#929ef8' }} />
               )}
             </Typography>
           ),
@@ -104,14 +103,14 @@ export default function NoticeTable(props: props) {
         {
           title: '작성일',
           field: 'createdAt',
-          render: rowData => (
+          render: (rowData) => (
             <Typography>{new Date(rowData.createdAt).toLocaleString()}</Typography>
           ),
         },
         {
           title: '작성자',
           field: 'author',
-          render: rowData => (
+          render: (rowData) => (
             <Typography>{rowData.author}</Typography>
           ),
         },
@@ -129,7 +128,7 @@ export default function NoticeTable(props: props) {
           height: 65,
         },
         headerStyle: { backgroundColor: '#f5f5f5', color: '#555555' },
-        searchFieldAlignment: 'right',     
+        searchFieldAlignment: 'right',
       }}
       localization={localization}
     />
