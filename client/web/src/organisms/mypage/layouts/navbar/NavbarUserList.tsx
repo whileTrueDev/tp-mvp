@@ -77,11 +77,11 @@ export default function NavbarUserList(): JSX.Element {
   const classes = useNavbarStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const subscribe = React.useContext(SubscribeContext);
-  const [tooltipOpen, setTooltipOpen] = React.useState<boolean>(true);
+  const [tooltipOpen, setTooltipOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (subscribe.validSubscribeUserList.length < 2) setTooltipOpen(false);
-    else {
+    if (subscribe.validSubscribeUserList.length > 1) {
+      setTooltipOpen(true);
       setTimeout(() => {
         setTooltipOpen(false);
       }, 5000);
