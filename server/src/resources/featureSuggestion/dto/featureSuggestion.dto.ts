@@ -1,8 +1,8 @@
 import {
-  IsString, IsNumber, Length
+  IsString, IsNumber
 } from 'class-validator';
 
-export class FeatureDto {
+export class FeatureSuggestionDto {
   @IsNumber()
   postId: number;
   @IsString()

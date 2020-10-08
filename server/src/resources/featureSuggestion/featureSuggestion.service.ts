@@ -5,8 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { Repository } from 'typeorm';
 // import { ReadNoticeOutlineDto } from './dto/readNoticeOutline.dto';
-import { FeatureEntity } from './entities/feature.entity';
-import { DUMMY } from './feature.mock';
+import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -19,17 +18,17 @@ const s3 = new AWS.S3();
 //   });
 // }
 @Injectable()
-export class FeatureService {
+export class FeatureSuggestionService {
   constructor(
-    @InjectRepository(FeatureEntity)
-    private readonly FeatureRepository: Repository<FeatureEntity>,
+    @InjectRepository(FeatureSuggestionEntity)
+    private readonly FeatureRepository: Repository<FeatureSuggestionEntity>,
   ) { }
 
   async insertFeatureSuggestion(state) {
     await this.FeatureRepository
       .createQueryBuilder()
       .insert()
-      .into('Feature')
+      .into('FeatureSuggestion')
       .values([
         {
           category: state.category, author: state.userId, title: state.title, content: state.contents, reply: null, progress: 0,
@@ -42,17 +41,17 @@ export class FeatureService {
     const postId = state[1];
     await this.FeatureRepository
       .createQueryBuilder()
-      .update('Feature', {
+      .update('FeatureSuggestion', {
         category: initialData.category, author: state.userId, title: initialData.title, content: initialData.contents, reply: null, progress: 0,
       })
-      .where('Feature.id = :id', { id: postId })
+      .where('FeatureSuggestion.id = :id', { id: postId })
       .execute();
   }
   async deleteFeatureSuggestion(postId) {
     await this.FeatureRepository
       .createQueryBuilder()
       .delete()
-      .from('Feature')
+      .from('FeatureSuggestion')
       .where('id = :id', { id: postId })
       .execute();
   }

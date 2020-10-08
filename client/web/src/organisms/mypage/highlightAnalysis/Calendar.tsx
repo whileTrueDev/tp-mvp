@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper, Typography, makeStyles } from '@material-ui/core';
-import Axios from 'axios';
+import useAxios from 'axios-hooks';
 import {
   Calendar, MuiPickersUtilsProvider
 } from '@material-ui/pickers';
@@ -34,39 +34,35 @@ function StreamCalendar(props: any) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [isDataLoading, setDataIsLoading] = React.useState(true);
   const [selectedDay, setSelectedDay] = React.useState(0);
-
-  const axios = Axios.create({
-    baseURL: 'http://localhost:3000',
-    withCredentials: true
-  });
-
   const [isDate, setIsDate] = React.useState(false);
-
+  const [, getHighlightList] = useAxios(
+    { url: '/highlight/list' }, { manual: true }
+  );
+  const [, getStreamList] = useAxios(
+    { url: '/highlight/stream' }, { manual: true }
+  );
   const fetchListData = async (name: string, year: string, month: string): Promise<void> => {
-    const result = await axios.get('/highlight/list',
-      {
-        params: {
-          name, year, month
-        }
-      })
-      .then((res) => {
-        if (res.data) {
-          setStreamDays(res.data);
-          setIsLoading(false);
-        }
-      }).catch(() => {
-        alert('오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
-      });
+    getHighlightList({
+      params: {
+        name, year, month
+      }
+    }).then((res) => {
+      if (res.data) {
+        setStreamDays(res.data);
+        setIsLoading(false);
+      }
+    }).catch(() => {
+      alert('오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
+    });
   };
 
   const fetchStreamData = async (name: string, year: string, month: string, day: string): Promise<void> => {
     // 달력-> 날짜 선택시 해당 일의 방송을 로드
-    const result = await axios.get('/highlight/stream',
-      {
-        params: {
-          name, year, month, day
-        }
-      })
+    getStreamList({
+      params: {
+        name, year, month, day
+      }
+    })
       .then((res) => {
         if (res.data.length !== 0) {
           setStreamData(res.data);

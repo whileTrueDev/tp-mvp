@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import Axios from 'axios';
+import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 // import * as down from 'js-file-download';
@@ -23,10 +23,7 @@ interface StreamDate {
 
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
-  const axios = Axios.create({
-    baseURL: 'http://localhost:3000',
-    withCredentials: true
-  });
+
   const data: StreamDate = {
     fullDate: new Date(),
     startAt: '',
@@ -40,7 +37,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     csvCheckBox: true,
     txtCheckBox: true,
   });
-  const [downloadUrl, setDownloadUrl] = React.useState<string>('');
+  // const [downloadUrl, setDownloadUrl] = React.useState<string>('');
   const handleDatePick = (fullDate: Date, startAt: string, finishAt: string, fileId: string) => {
     // const streamId = fileId.split('_')[2].split('.')[0];
     setSelectedStream({
@@ -50,6 +47,15 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       fileId,
     });
   };
+  const [, doExport] = useAxios(
+    { url: '/highlight/export', method: 'get' }, { manual: true }
+  );
+  const [, getHighlightPoints] = useAxios(
+    { url: '/highlight/highlight-points', method: 'get' }, { manual: true }
+  );
+  const [, getMetricsData] = useAxios(
+    { url: '/highlight/metrics', method: 'get' }, { manual: true }
+  );
   const makeMonth = (month: number) => {
     if (month < 10) {
       const edit = `0${month}`;
@@ -88,22 +94,21 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     //   }
     //   return bytes;
     // }
-    const result = await axios.get('/highlight/export',
-      {
-        params: {
-          id, year, month, day, streamId, srt, txt, csv
-        },
-      })
+    doExport({
+      params: {
+        id, year, month, day, streamId, srt, txt, csv
+      }
+    })
       .then((res) => {
         console.log(res.data);
         const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
-        const filename = res.headers;
+        // const filename = res.headers;
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', 'test.zip');
         document.body.appendChild(link);
         link.click();
-        setDownloadUrl(url);
+        // setDownloadUrl(url);
       }).catch((err) => {
         console.log(err);
         alert('지금은 다운로드 할 수 없습니다.');
@@ -111,12 +116,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
   const fetchHighlightData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
     // 134859149/2020/08/01/09161816_09162001_39667416302.json
-    const result = await axios.get('/highlight/highlight-points',
-      {
-        params: {
-          id, year, month, day, fileId
-        }
-      })
+    getHighlightPoints({
+      params: {
+        id, year, month, day, fileId
+      }
+    })
       .then((res) => {
         if (res.data) {
           // 데이터 리턴값
@@ -128,12 +132,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   const fetchMetricsData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    const result = await axios.get('/highlight/metrics',
+    getMetricsData(
       {
         params: {
           id, year, month, day, fileId
         }
-      })
+      }
+    )
       .then((res) => {
         if (res.data) {
           // 데이터 리턴값

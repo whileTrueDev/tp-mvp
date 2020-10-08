@@ -2,15 +2,15 @@ import {
   Column, CreateDateColumn, Entity, PrimaryGeneratedColumn
 } from 'typeorm';
 
-@Entity('Feature')
-export class FeatureEntity {
+@Entity('FeatureSuggestion')
+export class FeatureSuggestionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ comment: '기능제안 구분' })
   category: number;
 
-  @Column({ comment: '기능제안 작성자, 기본값 있음', default: 'TruePoint' })
+  @Column({ comment: '기능제안 작성자' })
   author: string;
 
   @Column({ comment: '기능제안 제목' })

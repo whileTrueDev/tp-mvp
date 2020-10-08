@@ -1,5 +1,3 @@
-import { SpawnSyncOptionsWithBufferEncoding } from 'child_process';
-
 export interface FeatureData {
   id: number;
   category: string;

@@ -8,8 +8,8 @@ import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 const useStyles = makeStyles((theme) => ({
   featureSection: {
     display: 'flex',
-    margin: theme.spacing(3),
-    padding: theme.spacing(3),
+    margin: theme.spacing(8),
+    padding: theme.spacing(2),
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start'
@@ -27,8 +27,8 @@ export default function FeatureSuggestionWrite(): JSX.Element {
         content="기능 개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
       />
       <div className={classes.featureSection}>
-        <Typography variant="h4">기능제안</Typography>
-        <Typography variant="h6">ipsum Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt non laudantium sint sunt, quos quam libero. Aliquam vel dicta,</Typography>
+        <Typography variant="h4">기능제안 게시판</Typography>
+        <Typography variant="h6">기능개선이 필요한 사이트 및 상세정보를 적어주시면 정확하고 빠르게 답변이 가능합니다.</Typography>
       </div>
       <FeatureWriteForm />
     </div>
