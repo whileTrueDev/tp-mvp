@@ -16,6 +16,7 @@ export class UserEntity {
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }
+
   @Column({ primary: true, length: 20 })
   userId!: string
 
@@ -73,4 +74,7 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  @OneToMany((type) => SubscribeEntity, (subscribe) => subscribe.user)
+  subscribe? : SubscribeEntity[];
 }

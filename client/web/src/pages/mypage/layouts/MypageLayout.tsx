@@ -8,6 +8,7 @@ import useLayoutStyles from './MypageLayout.style';
 import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
 import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
+import AppBar from '../../../organisms/shared/Appbar';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
@@ -21,42 +22,45 @@ const UserDashboard = (): JSX.Element => {
   });
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.conatiner}>
-        <aside className={classes.sidebarWrapper}>
-          <TestSidebar routes={routes.filter((r) => !r.noTab)} />
-        </aside>
-        <div ref={mainPanel} className={classes.mainPanel}>
-          <nav className={classes.appbarWrapper}>
-            <Navbar routes={routes} />
-          </nav>
-          <main>
-            <Switch>
-              {routes.map((route) => (
-                route.nested
-                  ? (
-                    route.subRoutes && route.subRoutes.map((subRoute) => (
+    <>
+      <AppBar />
+      <div className={classes.wrapper}>
+        <div className={classes.conatiner}>
+          <aside className={classes.sidebarWrapper}>
+            <TestSidebar routes={routes.filter((r) => !r.noTab)} />
+          </aside>
+          <div ref={mainPanel} className={classes.mainPanel}>
+            <nav className={classes.appbarWrapper}>
+              <Navbar routes={routes} />
+            </nav>
+            <main>
+              <Switch>
+                {routes.map((route) => (
+                  route.nested
+                    ? (
+                      route.subRoutes && route.subRoutes.map((subRoute) => (
+                        <Route
+                          path={subRoute.layout + subRoute.path}
+                          component={subRoute.component}
+                          key={subRoute.name}
+                        />
+                      ))
+                    ) : (
                       <Route
-                        path={subRoute.layout + subRoute.path}
-                        component={subRoute.component}
-                        key={subRoute.name}
+                        path={route.layout + route.path}
+                        component={route.component}
+                        key={route.name}
                       />
-                    ))
-                  ) : (
-                    <Route
-                      path={route.layout + route.path}
-                      component={route.component}
-                      key={route.name}
-                    />
-                  )
-              ))}
+                    )
+                ))}
 
-            </Switch>
-          </main>
+              </Switch>
+            </main>
+          </div>
         </div>
+        <MypageFooter />
       </div>
-      <MypageFooter />
-    </div>
+    </>
   );
 };
 

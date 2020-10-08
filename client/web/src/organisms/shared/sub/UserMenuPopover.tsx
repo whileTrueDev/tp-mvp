@@ -1,16 +1,16 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
   Paper, Typography, Divider, Avatar,
-  List, ListItem, Popover, PopoverProps
+  List, ListItem, Popover, PopoverProps,
 } from '@material-ui/core';
 import {
   AccountBox, ExitToApp,
   Brightness7 as LightThemeIcon,
   Brightness4 as DarkThemeIcon,
 } from '@material-ui/icons';
-import THEME_TYPE from '../../../interfaces/ThemeType';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import { TruepointTheme } from '../../../interfaces/TruepointTheme';
 
 const useStyles = makeStyles((theme) => ({
   container: { width: 330, display: 'block' },
@@ -37,14 +37,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface UserMenuPopperProps extends Omit<PopoverProps, 'children'> {
-  themeType: THEME_TYPE;
   anchorEl: HTMLElement | null;
-  handleThemeChange: () => void;
 }
 export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element {
   const classes = useStyles();
+  const theme = useTheme<TruepointTheme>();
   const {
-    open, anchorEl, onClose, themeType, handleThemeChange, className, ...prop
+    open, anchorEl, onClose, ...prop
   } = props;
 
   const authContext = useAuthContext();
@@ -83,9 +82,9 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
             <ListItem
               button
               className={classes.menulistItem}
-              onClick={handleThemeChange}
+              onClick={theme.handleThemeChange}
             >
-              {themeType === 'light' ? (
+              {theme.palette.type === 'light' ? (
                 <>
                   <LightThemeIcon color="action" />
                   <Typography className={classes.menuText} variant="body1">어두운 테마로 변경</Typography>

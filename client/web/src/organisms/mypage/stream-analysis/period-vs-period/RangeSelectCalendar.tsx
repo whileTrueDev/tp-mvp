@@ -28,10 +28,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: '#909090',
   },
   rigthCircleBase: {
-    background: 'linear-gradient(to left,#d7e7ff 50%, white 50%)',
+    background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
   },
   rigthCircleCompare: {
-    background: 'linear-gradient(to left,#909090 50%, white 50%)',
+    background: `linear-gradient(to left,#909090 50%, ${theme.palette.background.paper} 50%)`,
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base,
+    period, handlePeriod, base
   } = props;
   const classes = useStyles();
   const subscribe = React.useContext(SubscribeContext);
@@ -86,7 +86,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
   const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-    url: 'http://localhost:3000/stream-analysis/stream-list',
+    url: '/stream-analysis/stream-list',
   }, { manual: true });
 
   React.useEffect(() => {
@@ -109,18 +109,25 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     }
   }, [period]);
 
+  React.useEffect(() => {
+    setPoint1(null);
+    setPoint2(null);
+  }, [subscribe.currUser]);
+
   /*
     1. point1 == null point2 == null -> insert point1
     2. point1 != null point2 == null -> insert point2
     3. point1 != null point2 != null -> init point1, point2 , insert point1
   */
   const handleDate = (newDate: MaterialUiPickersDate) => {
+    // handlePeiodChangeFlag('toCal');
     if (newDate) setCurrDate(newDate);
 
     if (newDate && point1 === null && point2 === null) {
       setPoint1(newDate);
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
+
       if (point1.getTime() <= newDate.getTime()) {
         handlePeriod(point1, newDate, base);
       } else {

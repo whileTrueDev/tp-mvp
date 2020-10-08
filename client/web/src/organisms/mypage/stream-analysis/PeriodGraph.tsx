@@ -8,35 +8,24 @@ import TimeLineGraph from '../graph/TimeLineGraph';
 import { timelineInterface } from '../graph/graphsInterface';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   center: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column'
   },
-  head: {
-    fontSize: '22px',
-    fontWeight: 'bold',
-    color: '#575757'
-  },
-  icon: {
-    width: '50.5px',
-    height: '50.5px',
-    color: '#d9dbe6'
-  },
   card: {
     width: '100%',
     height: '94px',
     borderRadius: '4px',
     backgroundColor: '#959abb',
-    borderColor: '#fff',
     borderWidth: 0
   },
   main: {
     fontSize: '18px',
     fontWeight: 'normal',
-    color: '#4d4f5c'
+    color: theme.palette.text.primary
   },
   bold: {
     fontWeight: 'bold'

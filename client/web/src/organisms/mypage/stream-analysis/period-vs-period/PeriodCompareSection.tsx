@@ -1,14 +1,11 @@
 import React, { useContext, useState } from 'react';
 // material-ui core components
 import {
-  Paper, Typography, Grid, Divider, Button
+  Typography, Grid, Divider, Button
 } from '@material-ui/core';
 // subcomponents
-import RangeSelectCaledar from './RangeSelectCalendar';
-import PeriodCompareTextField from './PeriodCompareTextField';
+import RangeSelectCalendarWithTextfield from './RangeSelectCalendarWithTextfield';
 import CheckBoxGroup from './CheckBoxGroup';
-// svg icons
-import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 // styles
 import usePeriodCompareStyles from './PeriodCompareSection.style';
 // attoms
@@ -41,18 +38,10 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   };
 
   const handlePeriod = (startAt: Date, endAt: Date, base?: true) => {
-    const period = {
-      startAt, endAt
-    };
-
-    /* 하루 선택시 이틀로 자동 변경 */
-    if (period.endAt.getDate() === period.startAt.getDate()) {
-      period.endAt.setDate(period.endAt.getDate() + 1);
-    }
     if (base) {
-      setBasePeriod([period.startAt, period.endAt]);
+      setBasePeriod([startAt, endAt]);
     } else {
-      setComparePeriod([period.startAt, period.endAt]);
+      setComparePeriod([startAt, endAt]);
     }
   };
 
@@ -107,59 +96,21 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         기간별 분석을 위한 기간을 설정해 주세요.
       </Typography>
       <Grid container direction="row" justify="center">
-        <Grid item className={classes.bodyContainer}>
-          {/* 달력 연동 기간 텍스트 박스 */}
-          <PeriodCompareTextField
-            base
-            period={basePeriod}
-            handlePeriod={handlePeriod}
-          />
-          <Paper elevation={0} className={classes.bodyPapper}>
-            <Typography className={classes.bodyTitle}>
-              <SelectDateIcon className={classes.bodyTitleIcon} />
-              <span
-                style={{ color: '#2f5fac' }}
-                className={classes.bodyTitleHighlite}
-              >
-                기준 방송
-              </span>
-              기간 선택
-            </Typography>
-            {/* 텍스트 박스 연동 기간 선택 달력 */}
-            <RangeSelectCaledar
-              handlePeriod={handlePeriod}
-              period={basePeriod}
-              base
-            />
-          </Paper>
+        <RangeSelectCalendarWithTextfield
+          period={basePeriod}
+          handlePeriod={handlePeriod}
+          base
+        />
 
-        </Grid>
         <Typography className={classes.vsText}>
           VS
         </Typography>
-        <Grid item className={classes.bodyContainer}>
-          {/* 달력 연동 기간 텍스트 박스 */}
-          <PeriodCompareTextField
-            period={comparePeriod}
-            handlePeriod={handlePeriod}
-          />
-          <Paper elevation={0} className={classes.bodyPapper}>
-            <Typography className={classes.bodyTitle}>
-              <SelectDateIcon className={classes.bodyTitleIcon} />
-              <span className={classes.bodyTitleHighlite}>
-                비교 방송
-              </span>
-              기간 선택
-            </Typography>
-            {/* 텍스트 박스 연동 기간 선택 달력 */}
-            <RangeSelectCaledar
-              period={comparePeriod}
-              handlePeriod={handlePeriod}
-            />
-          </Paper>
-        </Grid>
-      </Grid>
 
+        <RangeSelectCalendarWithTextfield
+          period={comparePeriod}
+          handlePeriod={handlePeriod}
+        />
+      </Grid>
       <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
         확인할 데이터 선택
       </Typography>

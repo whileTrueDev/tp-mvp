@@ -38,12 +38,6 @@ const StyledMenu = withStyles((theme) => ({
 
 const StyledMenuItem = withStyles((theme) => ({
   root: {
-    // '&:focus': {
-    //   backgroundColor: theme.palette.primary.dark,
-    //   '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-    //     color: theme.palette.common.white,
-    //   },
-    // },
     '&.Mui-selected': {
       backgroundColor: theme.palette.primary.dark,
       color: '#FFFF',
@@ -79,19 +73,26 @@ export interface SubscribeUserInfo {
   endAt: string;
 }
 
-interface NavbarUserListProps{
-  navUserInfoList: SubscribeUserInfo[];
-}
-
 export default function NavbarUserList(): JSX.Element {
   const classes = useNavbarStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const subscribe = React.useContext(SubscribeContext);
-  const [tooltipOpen, setTooltipOpen] = React.useState<boolean>(true);
+  const [tooltipOpen, setTooltipOpen] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (subscribe.validSubscribeUserList.length > 1) {
+      setTooltipOpen(true);
+      setTimeout(() => {
+        setTooltipOpen(false);
+      }, 5000);
+    }
+  }, [subscribe.validSubscribeUserList]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-    setTooltipOpen(false);
+    if (subscribe.validSubscribeUserList.length > 1) {
+      setAnchorEl(event.currentTarget);
+      setTooltipOpen(false);
+    }
   };
 
   const handleClose = () => {
@@ -115,7 +116,6 @@ export default function NavbarUserList(): JSX.Element {
             </StyledMenuItem>
           ))}
         </List>
-
       );
     }
     // 구독한 유저가 존재 하지 않을 경우

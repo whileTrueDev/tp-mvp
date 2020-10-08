@@ -5,7 +5,6 @@ import { Repository, } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
-import { CheckIdType } from '../../interfaces/certification.interface';
 
 @Injectable()
 export class UsersService {
@@ -23,8 +22,15 @@ export class UsersService {
   }
 
   async findOne(userId: string): Promise<UserEntity> {
-    const user = this.usersRepository.findOne(userId);
+    const user = await this.usersRepository.findOne(userId);
     return user;
+  }
+
+  async findSubscriberInfo(userId: string)
+  : Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
+    return this.usersRepository.findOne(userId, {
+      select: ['nickName', 'afreecaId', 'youtubeId', 'twitchId']
+    });
   }
 
   async remove(userid: string): Promise<void> {
@@ -106,18 +112,17 @@ export class UsersService {
   */
   async findUserSubscribeInfo(userId: string)
   : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
-    const nowDate = (new Date()).toISOString();
     const validUserList = await this.subscribeRepository
       .createQueryBuilder('subscribe')
       .where('subscribe.userId = :id', { id: userId })
-      .andWhere('subscribe.startAt <= :now', { now: nowDate })
-      .andWhere('subscribe.endAt >= :now', { now: nowDate })
+      .andWhere('subscribe.startAt <= NOW()')
+      .andWhere('subscribe.endAt >= NOW()')
       .getMany();
 
     const inValidUserList = await this.subscribeRepository
       .createQueryBuilder('subscribe')
       .where('subscribe.userId = :id', { id: userId })
-      .andWhere('subscribe.startAt > :now OR subscribe.endAt < :now', { now: nowDate })
+      .andWhere('subscribe.startAt > NOW() OR subscribe.endAt < NOW()')
       .getMany();
 
     return { validUserList, inValidUserList };
@@ -128,13 +133,12 @@ export class UsersService {
     output  : true | false
   */
   async checkSubscribeValidation(userId: string, targetId: string): Promise<boolean> {
-    const nowDate = (new Date()).toISOString();
     const subscribeResult = await this.subscribeRepository
       .createQueryBuilder('subscribe')
       .where('subscribe.userId = :userId', { userId })
       .andWhere('subscribe.targetUserId = :targetId', { targetId })
-      .andWhere('subscribe.startAt <= :now', { now: nowDate })
-      .andWhere('subscribe.endAt >= :now', { now: nowDate })
+      .andWhere('subscribe.startAt <= NOW()')
+      .andWhere('subscribe.endAt >= NOW()')
       .getOne();
 
     if (subscribeResult) {
@@ -167,19 +171,3 @@ export class UsersService {
     return this.userTokensRepository.save(newTokenEntity);
   }
 }
-
-/*
-    input   : userId (로그인한 유저 아이디) 
-    output  : [{userId, subscribeperiod}, {userId, subscribeperiod} ... ]
-              해당 유저가 구독한 유저 정보 리스트 {userId, subscribeperiod}
-  */
-// async findUserAllSubscribeInfo(userId: string): Promise<SubscribeEntity[]> {
-//   const targetUserList = await this.subscribeRepository
-//     .createQueryBuilder('subscribe')
-//     .where('subscribe.userId = :id', { id: userId })
-//     .andWhere('subscribe.startAt >= :now', { now: nowDate })
-//     .andWhere('subscribe.end <= :now', { now: nowDate })
-//     .getMany();
-
-//   return targetUserList;
-// }

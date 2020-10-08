@@ -11,14 +11,14 @@ import DateFnsUtils from '@date-io/date-fns';
 // axios
 import useAxios from 'axios-hooks';
 // styles
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interfaces
 import { DayStreamsInfo, RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
 // context 
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   leftCircleBase: {
     width: '50%',
     backgroundColor: '#d7e7ff',
@@ -28,10 +28,10 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#909090',
   },
   rigthCircleBase: {
-    background: 'linear-gradient(to left,#d7e7ff 50%, white 50%)',
+    background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
   },
   rigthCircleCompare: {
-    background: 'linear-gradient(to left,#909090 50%, white 50%)',
+    background: `linear-gradient(to left,#909090 50%, ${theme.palette.background.paper} 50%)`,
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',
@@ -86,7 +86,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
   const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-    url: 'http://localhost:3000/stream-analysis/stream-list',
+    url: '/stream-analysis/stream-list',
   }, { manual: true });
 
   React.useEffect(() => {
@@ -108,6 +108,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       setPoint2(period[1]);
     }
   }, [period]);
+
+  React.useEffect(() => {
+    setPoint1(null);
+    setPoint2(null);
+  }, [subscribe.currUser]);
 
   /*
     1. point1 == null point2 == null -> insert point1

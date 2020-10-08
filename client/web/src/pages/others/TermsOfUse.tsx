@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, Grid } from '@material-ui/core';
 import shortid from 'shortid';
 import AgreementSource from './source/AgreementSource';
+import AppBar from '../../organisms/shared/Appbar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,6 +64,7 @@ export default function TermsOfUse(): JSX.Element {
   const classes = useStyles();
   return (
     <div>
+      <AppBar />
       <div className={classes.contentBox}>
         <div className={classes.root}>
           <Grid container direction="row" alignItems="center" justify="space-between">
