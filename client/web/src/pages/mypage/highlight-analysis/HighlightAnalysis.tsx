@@ -22,12 +22,12 @@ export default function HighlightAnalysis(): JSX.Element {
       </Grid>
       <Grid
         container
-        justify="flex-end"
-        spacing={3}
+        justify="center"
+        spacing={1}
       >
         <Grid
           item
-          style={{ margin: '5vw' }}
+          style={{ width: '100%' }}
         >
           <HighlightAnalysisLayout />
         </Grid>
