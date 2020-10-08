@@ -11,10 +11,10 @@ const useStyles = makeStyles((theme) => ({
   deleteButton: { marginBottom: 5, marginRight: -5}
 }))
 
-interface ReplyEdittData{
+interface ReplyEditData{
   state: replyData[];
 }
-export default function SuggestReplyEditViewer(props: ReplyEdittData) {
+export default function SuggestReplyEditViewer(props: ReplyEditData) {
   const { state } = props;
   const classes = useStyles();
   console.log(state);

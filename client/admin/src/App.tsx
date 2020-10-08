@@ -100,16 +100,6 @@ export default function App(location: any){
 
   const classes = useStyles();
 
-  // const [currentComponentPath, setComponentPath] = React.useState('');
-
-  // React.useEffect(() => {
-  //   routes.forEach((route) => {
-  //     if (location.pathname === route.path) {
-  //       setComponentPath(route.path);
-  //     }
-  //   });
-  // }, [location.pathname]);
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

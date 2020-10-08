@@ -15,7 +15,7 @@ export interface SuggestData {
   content?: string;
   author?: string;  // 검토중, 진행중 상태
   state?: string;
-  like?: boolean;  // 답변여부
+  like?: Number;  // 답변여부
 }
 
 //답변 데이터를 관리하는 props
@@ -67,11 +67,6 @@ export default function SuggestBoard() {
   state: "",
   });
   
-//   var[replyData, setReplyData] = React.useState<replyData>({title: "",
-//   content: "",
-//   createdAt: "",
-//   replyId: "관리자",
-//  });
 
   const [{data: suggestData, loading: getLoading}] = useAxios({
     url: "http://localhost:3000/admin/feature-suggestion", method: "GET"
@@ -94,10 +89,6 @@ export default function SuggestBoard() {
     setSelectedData(data);
   }
   
-  // function handleReplyData(data: replyData) {
-  //   setReplyData(data);
-  // }
-
   // 수정 모드를 위한 State
   const [editMode, setEditMode] = React.useState(false);
 

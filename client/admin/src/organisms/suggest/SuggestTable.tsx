@@ -108,7 +108,7 @@ export default function SuggestTable(props: props) {
           title: '좋아요',
           field: 'like',
           render: rowData => (
-          <Typography className="상태">{rowData.like? "좋아요": "미답변"}</Typography>
+          <Typography className="상태">{rowData.like}</Typography>
           )
         },
         
