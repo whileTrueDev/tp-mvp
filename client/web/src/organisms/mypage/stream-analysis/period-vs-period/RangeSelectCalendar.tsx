@@ -28,10 +28,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: '#909090',
   },
   rigthCircleBase: {
-    background: 'linear-gradient(to left,#d7e7ff 50%, white 50%)',
+    background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
   },
   rigthCircleCompare: {
-    background: 'linear-gradient(to left,#909090 50%, white 50%)',
+    background: `linear-gradient(to left,#909090 50%, ${theme.palette.background.paper} 50%)`,
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',
