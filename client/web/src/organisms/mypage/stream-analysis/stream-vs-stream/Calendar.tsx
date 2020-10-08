@@ -52,7 +52,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       loading: getStreamsLoading,
       error: getStreamsError
     }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-      url: 'http://localhost:3000/stream-analysis/stream-list',
+      url: '/stream-analysis/stream-list',
     }, { manual: true });
 
   useEffect(() => {

@@ -55,7 +55,7 @@ function NotificationPopper({
   const classes = useStyles();
   const auth = React.useContext(AuthContext);
   const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
-    url: 'http://localhost:3000/notification',
+    url: '/notification',
     method: 'patch',
   }, {
     manual: true

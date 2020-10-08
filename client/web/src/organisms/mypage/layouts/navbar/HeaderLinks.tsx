@@ -42,7 +42,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   // 개인 알림 - GET Request
   // userId 쿠키 or 헤더 토큰에서 추출
   const [{ data: getData, loading: getLoading, error: getError }, excuteGet] = useAxios({
-    url: 'http://localhost:3000/notification',
+    url: '/notification',
     params: {
       userId,
     }

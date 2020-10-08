@@ -86,7 +86,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
   const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-    url: 'http://localhost:3000/stream-analysis/stream-list',
+    url: '/stream-analysis/stream-list',
   }, { manual: true });
 
   React.useEffect(() => {

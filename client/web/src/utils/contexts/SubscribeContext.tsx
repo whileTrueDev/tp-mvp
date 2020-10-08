@@ -63,7 +63,7 @@ export function useSubscribe(): SubscribeContextValue {
   const [{ error, loading }, excuteGetSubscribeData] = useAxios<{
       validUserList:SubscribeUserInfo[],
       inValidUserList:SubscribeUserInfo[]}>({
-        url: 'http://localhost:3000/users/subscribe-users',
+        url: '/users/subscribe-users',
       }, { manual: true });
 
   React.useEffect(() => {

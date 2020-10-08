@@ -67,7 +67,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
       loading: getStreamsLoading,
       error: getStreamsError
     }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-      url: 'http://localhost:3000/stream-analysis/stream-list',
+      url: '/stream-analysis/stream-list',
     }, { manual: true });
 
   React.useEffect(() => {
