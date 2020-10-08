@@ -7,13 +7,13 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     height: '700px'
   },
   titleDivider: {
-    backgroundColor: '#4b5ac7',
+    backgroundColor: theme.palette.primary.main,
     width: '200px',
     marginBottom: '12px',
     height: '3px'
   },
   mainTitle: {
-    color: '#000000',
+    color: theme.palette.text.primary,
     letterSpacing: '-1.2px',
     textAlign: 'left',
     lineHeight: 1.33,
@@ -23,7 +23,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     marginBottom: '28px',
   },
   mainBody: {
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     letterSpacing: 'normal',
     textAlign: 'left',
     lineHeight: 1.5,
@@ -33,8 +33,8 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   },
   bodyPapper: {
     borderRadius: '12px',
-    border: 'solid 1px #707070',
-    backgroundColor: '#ffffff',
+    border: `solid 1px ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
     width: '276px',
     height: '75px',
     paddingTop: '22.5px',
@@ -42,7 +42,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     boxShadow: '0'
   },
   subTitle: {
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     letterSpacing: 'normal',
     textAlign: 'left',
     lineHeight: 1.5,
@@ -55,15 +55,15 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   bodyWrapper: {
     borderRadius: '12px',
     hegith: '292px',
-    border: 'solid 1px #707070',
-    backgroundColor: '#ffffff',
+    border: `solid 1px ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
     paddingTop: '22.5px',
     paddingBottom: '18.5px',
     paddingRight: '0px',
     marginRight: '42px',
   },
   bodyTitle: {
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     letterSpacing: 'normal',
     textAlign: 'center',
     lineHeight: 1.5,
@@ -82,8 +82,11 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'SourceSansPro',
     fontSize: '24px',
     marginTop: '20px',
-    color: '#ffff',
-    marginRight: '93.5px'
+    marginRight: '93.5px',
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light
+    }
   },
   alert: {
     borderRadius: '5px',

@@ -13,7 +13,7 @@ import { CheckBoxGroupProps } from './PeriodCompareSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
-    marginTop: '37px'
+    marginTop: theme.spacing(4)
   },
   formGroup: {
     flexDirection: 'row',
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: 600,
     lineHeight: 1,
     textAlign: 'center',
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     marginRight: '55px'
   },
   checkBox: {

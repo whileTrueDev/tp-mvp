@@ -179,7 +179,6 @@ export default function RangeSelectCalendarWithTextfield(
                 fontFamily: 'AppleSDGothicNeo',
                 fontSize: '20px',
                 fontWeight: 440,
-                backgroundColor: '#ffff'
               }
             }}
             className={classnames({
@@ -209,7 +208,6 @@ export default function RangeSelectCalendarWithTextfield(
                 fontFamily: 'AppleSDGothicNeo',
                 fontSize: '20px',
                 fontWeight: 440,
-                backgroundColor: '#ffff',
               },
             }}
             className={classnames({

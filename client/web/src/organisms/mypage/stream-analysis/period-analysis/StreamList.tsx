@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   listItem: {
     width: '100%',
     height: '50px',
-    backgroundColor: '#ffff',
+    backgroundColor: theme.palette.background.paper,
     paddingLeft: '29.1px',
     paddingTop: '13.1px',
     paddingBottom: '13.9x',
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   listItemText: {
     fontFamily: 'SourceSansPro',
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     textAlign: 'left',
     lineHeight: '2.06',
     fontSize: '16px',
