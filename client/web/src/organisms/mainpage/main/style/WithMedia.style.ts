@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     padding: '30px 0px 30px 0px'
@@ -13,7 +13,7 @@ const styles = makeStyles(() => ({
   },
   mainTopLine: {
     width: 0,
-    borderRight: '2px dotted #a8c4f9',
+    borderRight: `2px dotted ${theme.palette.primary.light}`,
     height: '150px'
   },
   mainTitle: {

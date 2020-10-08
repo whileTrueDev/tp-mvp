@@ -4,7 +4,7 @@ const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 600,
-    background: 'linear-gradient(to bottom, #929ef8, #a8c4f9)'
+    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`
   },
   wraper: {
     display: 'flex',

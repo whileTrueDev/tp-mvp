@@ -21,6 +21,14 @@ interface StreamDate {
   fileId: string,
 }
 
+interface PointType {
+  start_time: string;
+  end_time: string;
+  start_index: number;
+  end_index: number;
+  score: any;
+}
+
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
   const axios = Axios.create({
@@ -73,6 +81,56 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
   };
 
+  // Metrics 데이터 전처리 함수
+  const getMetricsPoint = (metric:any): any => {
+    const originStartTime = new Date(metric.start_date);
+
+    function getDate(index:number) {
+      const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
+      const getYears = Time.getFullYear();
+      const getMonths = Time.getMonth();
+      const getDays = Time.getDay();
+      const getHours = Time.getHours();
+      const getMinutes = Time.getMinutes();
+      const getSeconds = Time.getSeconds();
+      const months = getMonths >= 10 ? String(getMonths) : `0${getMonths}`;
+      const days = getDays >= 10 ? String(getDays) : `0${getDays}`;
+      const hours = getHours >= 10 ? String(getHours) : `0${getHours}`;
+      const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
+      const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
+
+      return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
+    }
+
+    function insertPoints(target: number, countType: string) {
+      const time = getDate(target);
+      const returnDict = {
+        start_time: time, end_time: time, start_index: target, end_index: target, score: metric.time_line[target][countType]
+      };
+      return returnDict;
+    }
+
+    const resultData: {chat_points: PointType[], smile_points: PointType[]} = {
+      chat_points: [],
+      smile_points: []
+    };
+
+    const chatHighlight = metric.chat_points;
+    const smileHighlight = metric.smile_points;
+
+    chatHighlight.forEach((item: number) => {
+      const eachData = insertPoints(item, 'chat_count');
+      resultData.chat_points.push(eachData);
+    });
+
+    smileHighlight.forEach((item: number) => {
+      const eachData = insertPoints(item, 'smile_count');
+      resultData.smile_points.push(eachData);
+    });
+
+    return resultData;
+  };
+
   const handleExportClick = async () => {
     const id = '234175534';
     const year = String(selectedStream.fullDate.getFullYear());
@@ -122,6 +180,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       .then((res) => {
         if (res.data) {
           setHighlightData(res.data);
+          console.log(res.data);
         }
       }).catch(() => {
         alert('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
@@ -137,7 +196,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       })
       .then((res) => {
         if (res.data) {
-          setMetricsData(res.data);
+          console.log(res.data);
+          setMetricsData(getMetricsPoint(res.data));
         }
       }).catch(() => {
         alert('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.');

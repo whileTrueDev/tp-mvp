@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
   row: {
     height: 30,
     '&:hover': {
@@ -15,7 +15,7 @@ const styles = makeStyles(() => ({
   },
   selectedRow: {
     height: 30,
-    background: 'linear-gradient(to right, #f0a9b3, #ff3e7a)'
+    background: `linear-gradient(to right, ${theme.palette.success.light}, ${theme.palette.success.main})`
   }
 }));
 
@@ -90,18 +90,6 @@ export default function MaterialTable({
           },
         ]}
         data={metrics || []}
-        // onRowClick={(e, rowData:any) => {
-        //   console.log(rowData)
-        //   handleClick({
-        //     startTime: highlightTerm(rowData).slice(0, 8),
-        //     endTime: highlightTerm(rowData).slice(9),
-        //     start_index: rowData.start_index,
-        //     end_index: rowData.end_index,
-        //     score: rowData.score,
-        //     rank: rank(rowData, [...metrics]),
-        //     index: rowData.tableData.id
-        //   });
-        // }}
         components={{
           Pagination: (props) => (
             <TablePagination
@@ -124,7 +112,6 @@ export default function MaterialTable({
                   }
                   onClick={() => {
                     if (handleClick) {
-                      console.log(eachRow);
                       handleClick({
                         startTime: highlightTerm(eachRow).slice(0, 8),
                         endTime: highlightTerm(eachRow).slice(9),

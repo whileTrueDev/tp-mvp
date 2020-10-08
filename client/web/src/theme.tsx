@@ -25,6 +25,10 @@ const rawTheme: ThemeOptions = {
       light: '#9AA2C5',
       main: blueGrey[400],
       dark: blueGrey[600],
+    },
+    success: {
+      light: '#f0a9b3',
+      main: '#ff3e7a'
     }
   },
   typography: {

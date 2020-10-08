@@ -32,32 +32,32 @@ const styles = makeStyles((theme) => ({
   },
   timelineChecker: {
     height: 5,
-    backgroundColor: '#ff3e7a',
+    backgroundColor: theme.palette.success.main,
     borderRadius: 3
   },
   lower: {
-    backgroundColor: '#a8c4f9',
+    backgroundColor: theme.palette.primary.light,
     '&:hover': {
       cursor: 'pointer',
-      background: '#ff3e7a',
+      background: theme.palette.success.main,
     }
   },
   middle: {
     backgroundColor: '#7E8CF7',
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: '#ff3e7a',
+      backgroundColor: theme.palette.success.main,
     }
   },
   high: {
     backgroundColor: '#495DF9',
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: '#ff3e7a',
+      backgroundColor: theme.palette.success.main,
     }
   },
   clickedPoint: {
-    backgroundColor: '#ff3e7a',
+    backgroundColor: theme.palette.success.main,
   }
 }));
 

@@ -51,7 +51,7 @@ const styles = makeStyles((theme) => ({
     fontSize: 30,
     fontWeight: 700,
     textAlign: 'center',
-    color: '#ff3e7a',
+    color: theme.palette.success.main,
     '&>span': {
       color: 'black',
       fontSize: 20
@@ -74,7 +74,7 @@ const styles = makeStyles((theme) => ({
     margin: '10px 0px 0px 0px',
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 12,
-    borderLeft: '3px solid #ff3e7a',
+    borderLeft: `3px solid ${theme.palette.success.main}`,
     backgroundColor: '#EBECEE',
     paddingLeft: 10
   },
