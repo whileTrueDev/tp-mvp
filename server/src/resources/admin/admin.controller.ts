@@ -59,7 +59,6 @@ export class AdminController {
   async deleteNotice(
     @Body(new ValidationPipe()) data: Pick<NoticePatchRequest, 'id'>
   ): Promise<boolean> {
-    console.log(data);
     return this.adminService.deleteNotice(data);
   }
   // ********************************* notice end *****************************
