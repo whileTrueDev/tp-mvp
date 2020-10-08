@@ -45,7 +45,6 @@ export class AdminController {
   async createNotice(
     @Body(new ValidationPipe()) data: Notice
   ): Promise<NoticeEntity> {
-    console.log(data);
     return this.adminService.loadNotice(data);
   }
 
