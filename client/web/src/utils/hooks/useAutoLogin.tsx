@@ -34,5 +34,6 @@ export default function useAutoLogin(
           return Promise.reject(err);
         });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Should be run only once!!
 }
