@@ -180,7 +180,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       .then((res) => {
         if (res.data) {
           setHighlightData(res.data);
-          console.log(res.data);
         }
       }).catch(() => {
         alert('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
@@ -196,7 +195,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       })
       .then((res) => {
         if (res.data) {
-          console.log(res.data);
           setMetricsData(getMetricsPoint(res.data));
         }
       }).catch(() => {

@@ -153,6 +153,7 @@ export default function MaterialTable({
           draggable: false,
           paginationType: 'stepped',
         }}
+        style={{ boxShadow: 'none' }}
       />
     </>
   );
