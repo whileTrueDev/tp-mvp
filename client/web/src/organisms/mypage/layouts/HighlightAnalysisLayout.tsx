@@ -262,6 +262,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                 />
                 <Button
                   onClick={handleExportClick}
+                  disabled={isClicked || Boolean(!selectedStream.fileId)}
                 >
                   편집점 내보내기
                 </Button>
