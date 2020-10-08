@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
   },
-  tableRow: { height: 80, },
+  tableRow: { height: 40, },
   tablefooterRow: { height: 40 },
   important: {
     backgroundColor: theme.palette.action.hover,
