@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AccessControlModule } from 'nest-access-control';
 
+import { AdminModule } from './resources/admin/admin.module';
+
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
 import { HighlightModule } from './resources/mypage/highlightPoint/hightlight.module';
@@ -32,6 +34,7 @@ import { NoticeModule } from './resources/notice/notice.module';
     InquiryModule,
     SlackModule,
     NoticeModule,
-  ]
+    AdminModule
+  ],
 })
 export class AppModule { }

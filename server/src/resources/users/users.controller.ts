@@ -8,9 +8,11 @@ import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { PasswordDto } from './dto/password.dto';
+import { SubscribeUsers } from './dto/subscribeUsers.dto';
 
 import { UserEntity } from './entities/user.entity';
 import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';
+import { SubscribeEntity } from './entities/subscribe.entity';
 
 @Controller('users')
 export class UsersController {
@@ -61,6 +63,34 @@ export class UsersController {
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto
   ) : Promise<boolean> {
     return this.usersService.findPW(userDI, password);
+  }
+
+  // @Get('/:id')
+  // @UseGuards(JwtAuthGuard, ACGuard)
+  // @UseRoles({ resource: 'profile', action: 'read', possession: 'own' })
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // async find(
+  //   @Param('id') id: string,
+  //   @Req() req: LogedInExpressRequest,
+  // ): Promise<UserEntity> {
+  //   const { user } = req;
+  //   if (user.userId === id) {
+  //     return this.usersService.findOne(user.userId);
+  //   }
+  //   throw new ForbiddenException();
+  // }
+
+  /*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
+  */
+  @Get('/subscribe-users')
+  // @UseGuards(JwtAuthGuard)
+  getUserValidSubscribeInfo(
+    @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
+  )
+  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
+    return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
   }
 
   @Post()

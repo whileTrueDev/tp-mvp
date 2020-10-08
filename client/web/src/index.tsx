@@ -31,6 +31,7 @@ import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
 import useAutoLogin from './utils/hooks/useAutoLogin';
+import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -44,6 +45,12 @@ function Index(): JSX.Element {
   const {
     user, accessToken, handleLogout, handleLogin
   } = useLogin();
+  /* subscribe 목록의 유저 전환 컨택스트 */
+  const {
+    currUser,
+    invalidSubscribeUserList, validSubscribeUserList, handleCurrTargetUser,
+    handleLoginUserId, loading, error
+  } = useSubscribe();
 
   // *******************************************
   // axios-hooks configuration
@@ -68,21 +75,32 @@ function Index(): JSX.Element {
       >
         <KakaoTalk />
         {/* 페이지 컴포넌트 */}
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/" component={Main} />
-            <Route exact path="/signup" component={Regist} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/find-id" component={FindId} />
-            <Route exact path="/find-pw" component={FindPassword} />
-            <Route exact path="/notice" component={Notice} />
-            <Route exact path="/notice/:id" component={Notice} />
-            <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-            <Route exact path="/termsofuse" component={TermsOfUse} />
-            <Route path="/mypage" component={Mypage} />
-          </Switch>
-
-        </BrowserRouter>
+        <SubscribeContext.Provider value={{
+          currUser,
+          invalidSubscribeUserList,
+          validSubscribeUserList,
+          handleCurrTargetUser,
+          handleLoginUserId,
+          loading,
+          error
+        }}
+        >
+          <BrowserRouter>
+            <Switch>
+              <Route exact path="/" component={Main} />
+              <Route exact path="/signup" component={Regist} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/find-id" component={FindId} />
+              <Route exact path="/find-pw" component={FindPassword} />
+              <Route exact path="/notice" component={Notice} />
+              <Route exact path="/notice/:id" component={Notice} />
+              <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+              <Route exact path="/termsofuse" component={TermsOfUse} />
+              <Route path="/mypage" component={Mypage} />
+            </Switch>
+            {/* 페이지 컴포넌트 */}
+          </BrowserRouter>
+        </SubscribeContext.Provider>
       </AuthContext.Provider>
     </ThemeProvider>
   );

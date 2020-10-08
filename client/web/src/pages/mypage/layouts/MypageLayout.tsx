@@ -10,14 +10,6 @@ import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSideb
 import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
 import AppBar from '../../../organisms/shared/Appbar';
 
-interface NavUserInfoInterface{
-  username : string;
-  subscribePerioud: string;
-  isSubscribe: boolean;
-  subscribeStartAt: Date;
-  subscribeEndAt: Date;
-}
-
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
 
@@ -29,31 +21,6 @@ const UserDashboard = (): JSX.Element => {
     }
   });
 
-  // navUserInfoList 하드코딩
-  const [navUserInfoList] = React.useState<NavUserInfoInterface[]>([
-    {
-      username: 'test1',
-      subscribePerioud: '2019-09-01 ~ 2019-09-3',
-      isSubscribe: true,
-      subscribeStartAt: new Date('2019-09-01'),
-      subscribeEndAt: new Date('2020-09-03')
-    },
-    {
-      username: 'test2',
-      subscribePerioud: '2019-09-01 ~ 2019-09-30',
-      isSubscribe: true,
-      subscribeStartAt: new Date('2019-09-01'),
-      subscribeEndAt: new Date('2020-09-30')
-    },
-    {
-      username: 'test3',
-      subscribePerioud: '2019-09-01 ~ 2019-09-02',
-      isSubscribe: true,
-      subscribeStartAt: new Date('2019-09-01'),
-      subscribeEndAt: new Date('2020-09-02')
-    },
-  ]);
-
   return (
     <>
       <AppBar />
@@ -64,29 +31,26 @@ const UserDashboard = (): JSX.Element => {
           </aside>
           <div ref={mainPanel} className={classes.mainPanel}>
             <nav className={classes.appbarWrapper}>
-              <Navbar
-                navUserInfoList={navUserInfoList}
-                routes={routes}
-              />
+              <Navbar routes={routes} />
             </nav>
             <main>
               <Switch>
                 {routes.map((route) => (
-                  route.component
+                  route.nested
                     ? (
+                      route.subRoutes && route.subRoutes.map((subRoute) => (
+                        <Route
+                          path={route.layout + route.path}
+                          component={route.component}
+                          key={route.name}
+                        />
+                      ))
+                    ) : (
                       <Route
                         path={route.layout + route.path}
                         component={route.component}
                         key={route.name}
                       />
-                    ) : (
-                      route.subRoutes && route.subRoutes.map((subRoute) => (
-                        <Route
-                          path={subRoute.layout + subRoute.path}
-                          component={subRoute.component}
-                          key={subRoute.name}
-                        />
-                      ))
                     )
                 ))}
 

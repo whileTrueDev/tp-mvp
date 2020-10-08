@@ -26,13 +26,13 @@ export interface Notification {
   dateform: string;
   readState: number;
 }
-
 interface HeaderLinksProps {
   routes: MypageRouteType[];
+  userId: string;
 }
 
 function HeaderLinks(props: HeaderLinksProps): JSX.Element {
-  const { routes } = props;
+  const { routes, userId } = props;
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const classes = useNavbarStyles();
   const {

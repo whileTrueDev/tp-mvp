@@ -7,6 +7,8 @@ import {
 import MenuItem from '@material-ui/core/MenuItem';
 // types
 import useAxios from 'axios-hooks';
+// context
+import AuthContext from '../../../../utils/contexts/AuthContext';
 
 export interface Notification {
   index: number;
@@ -51,6 +53,7 @@ function NotificationPopper({
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element {
   const classes = useStyles();
+  const auth = React.useContext(AuthContext);
   const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
     url: '/notification',
     method: 'patch',
@@ -62,7 +65,7 @@ function NotificationPopper({
     if (notification.readState === UNREAD_STATE) {
       excutePatch({
         data: {
-          userId: 'test2', // userId (client login user)
+          userId: auth.user.userId, // userId (client login user)
           index: notification.index,
         }
       });
