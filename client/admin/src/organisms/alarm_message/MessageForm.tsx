@@ -5,6 +5,10 @@ import {
 } from '@material-ui/core';
 import AvatarWithName from './AvatarWithName';
 import Skeleton from '@material-ui/lab/Skeleton';
+import useAxios from 'axios-hooks';
+import shortid from 'shortid';
+import { QueryBuilder } from '@material-ui/icons';
+import Check from '@material-ui/icons/Check';
 
 interface Props{
   data: any;
@@ -41,6 +45,12 @@ export default function MessageTable(props: Props) {
   
   const [title, setTitle] = React.useState('');
 
+  const [{data: getData, loading: getLoading}] = useAxios({
+    url: 'http://localhost:3000/admin/notification', method: "GET"
+  })
+  const [{data: postData}, executePost] = useAxios({
+    url: 'http://localhost:3000/admin/notification', method: "POST"
+  })
   function handleTitle(e: any) {
     setTitle(e.target.value);
   }
@@ -59,6 +69,13 @@ export default function MessageTable(props: Props) {
       if (window.confirm(`정말로 ${data.name}에게 메시지를 보내시겠습니까?`)) {
         setTitle('');
         setContent('');
+        executePost({
+          data: {
+            userId : [data.userId],
+            title : title,
+            content: content,
+          }
+        })
       }
     } else {
       alert('제목 또는 내용이 없습니다.');
@@ -87,17 +104,40 @@ export default function MessageTable(props: Props) {
       <Divider />
 
       <div className={classes.field}>
-        <div>
-          <Skeleton width="50%" />
-          <Skeleton height={50} />
-          <br />
-          <Skeleton width="50%" />
-          <Skeleton height={50} />
-          <br />
-          <Skeleton width="50%" />
-          <Skeleton height={50} />
-          <br />
+        {getLoading && (
+          <div>
+            <Skeleton width="50%" />
+            <Skeleton height={50} />
+            <br />
+            <Skeleton width="50%" />
+            <Skeleton height={50} />
+            <br />
+            <Skeleton width="50%" />
+            <Skeleton height={50} />
+            <br />
         </div>
+        )}
+        {!getLoading && (
+           <div>
+           {getData.map((message: any) => (
+             <div key={shortid.generate()} style={{ marginBottom: 5 }}>
+               <div style={{ display: 'flex', alignItems: 'center' }}>
+                 <Chip
+                   label={new Date(message.createdAt).toLocaleString()}
+                   variant="outlined"
+                 />
+                 {message.readState
+                   ? <Check style={{ color: 'rgb(50, 205, 50)', fontSize: 15 }} />
+                   : <QueryBuilder style={{ color: '#afafafaf', fontSize: 15 }} />}
+               </div>
+               <div style={{ padding: 6 }}>
+                 <Typography variant="h6">{`${message.title}`}</Typography>
+                 <Typography style={{ marginLeft: 20 }}>{`${message.content}`}</Typography>
+               </div>
+             </div>
+           ))}
+         </div>
+        )}
       </div>
       <Divider />
 

@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import shortid from 'shortid';
 import DialogActions from '@material-ui/core/DialogActions';
+import useAxios from 'axios-hooks';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -40,6 +41,10 @@ interface Props{
 export default function DualMessageForm(props: Props) {
   const classes = useStyles();
   const {  list ,open , handleClose, setList } = props;
+  
+  const [{data}, executePost] = useAxios({
+    url:'http://localhost:3000/admin/notification', method:'POST'
+  });
 
   // For text
   const [title, setTitle] = React.useState('');
@@ -60,6 +65,13 @@ export default function DualMessageForm(props: Props) {
       if (window.confirm(`정말로 이분들에게 메시지를 보내시겠습니까?`)) {
         setTitle('');
         setContent('');
+        executePost({
+          data: {
+            userId: list.map((id: any) => {return id.id}),
+            title: title,
+            content: content
+          }
+        })
         handleClose();
       }
     } else {
@@ -103,7 +115,7 @@ export default function DualMessageForm(props: Props) {
           {list.map((user: any) => {
             return (
               <Chip
-                label={user.name}
+                label={user.userId}
                 variant="outlined"
                 key={shortid.generate()}
                 onDelete={() => {cancleList(user)}}

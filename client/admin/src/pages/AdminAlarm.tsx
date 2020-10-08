@@ -3,40 +3,22 @@ import { Grid,Typography } from '@material-ui/core';
 //organisms
 import UserlistTable from '../organisms/alarm_message/Userlist';
 import MessageTable from '../organisms/alarm_message/MessageForm';
+import useAxios from 'axios-hooks';
 
 export interface userData {
-  userName: string;
-  logo?: string;
+  userId: string;
 }
 
-
-export const userDataSet: userData[] = [
-{
-  userName: "박상은",
-  logo: "",
-},
-{
-  userName: "박상은",
-  logo: ""
-
-},
-{
-  userName: "박상은",
-  logo: ""
-
-},
-{
-  userName: "박상은",
-  logo: ""
-
-},
-];
 
 
 export default function AdminAlarm(){
  
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [data, setData] = React.useState();
+  const [selectedData, setData] = React.useState();
+
+  const [{data}] = useAxios({
+    url: 'http://localhost:3000/admin/notification', method: "GET"
+  })
   
   const handleClick = (event: any, d: any) => {
     setAnchorEl(event.currentTarget);
@@ -58,7 +40,7 @@ export default function AdminAlarm(){
 
       <Grid item xs={12} lg={6}>
         <UserlistTable
-          userData={userDataSet}
+          userData={data}
           handleClick={handleClick}
           />
      </Grid>
@@ -67,7 +49,7 @@ export default function AdminAlarm(){
         {anchorEl&&data && (
           <MessageTable
           anchorEl={anchorEl}
-          data={data}
+          data={selectedData}
           handleClose={handleClose}
           />
         )}
