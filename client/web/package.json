@@ -30,6 +30,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-slick": "^0.27.11",
+    "short-id": "^0.1.0-1",
     "shortid": "^2.2.15",
     "slick-carousel": "^1.8.1",
     "typescript": "~3.7.2"
@@ -54,13 +55,13 @@
     ]
   },
   "devDependencies": {
-    "@amcharts/amcharts4": "^4.10.2",
+    "@amcharts/amcharts4": "^4.10.5",
     "@types/classnames": "^2.2.10",
     "@types/core-js": "^2.5.4",
     "@types/jest": "^24.0.0",
     "@types/jwt-decode": "^2.2.1",
     "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
+    "@types/react": "^16.9.49",
     "@types/react-datepicker": "^3.1.1",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",

@@ -1,10 +1,10 @@
 import {
-  IsString
+  IsString, IsArray
 } from 'class-validator';
 
 export class NotificationPostRequest {
-  @IsString()
-  userId: string;
+  @IsArray()
+  userId: string[];
 
   @IsString()
   title: string;

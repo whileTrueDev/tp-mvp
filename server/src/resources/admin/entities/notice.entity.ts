@@ -7,10 +7,16 @@ export class NoticeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 50
+  })
   category: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 50
+  })
   author: string;
 
   @Column()
@@ -19,8 +25,8 @@ export class NoticeEntity {
   @Column()
   content: string;
 
-  @Column()
-  isImportant: number;
+  @Column({ type: 'boolean', default: 0 })
+  isImportant: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
