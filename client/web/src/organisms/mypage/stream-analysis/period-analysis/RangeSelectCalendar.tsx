@@ -11,14 +11,14 @@ import DateFnsUtils from '@date-io/date-fns';
 // axios
 import useAxios from 'axios-hooks';
 // styles
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interfaces
 import { DayStreamsInfo, RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
 // context 
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   leftCircleBase: {
     width: '50%',
     backgroundColor: '#d7e7ff',
@@ -28,10 +28,10 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#909090',
   },
   rigthCircleBase: {
-    background: 'linear-gradient(to left,#d7e7ff 50%, white 50%)',
+    background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
   },
   rigthCircleCompare: {
-    background: 'linear-gradient(to left,#909090 50%, white 50%)',
+    background: `linear-gradient(to left,#909090 50%, ${theme.palette.background.paper} 50%)`,
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',

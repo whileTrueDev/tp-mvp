@@ -9,7 +9,7 @@ import StackedGraph from '../graph/StackedGraph';
 import { metricInterface } from '../graph/graphsInterface';
 import MetricIcons from '../../../atoms/Graph-icons/MetricIcons';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   center: {
     display: 'flex',
     justifyContent: 'center',
@@ -19,20 +19,19 @@ const useStyles = makeStyles(() => ({
   head: {
     fontSize: '22px',
     fontWeight: 'bold',
-    color: '#575757'
+    marginTop: theme.spacing(1),
+    color: theme.palette.text.secondary
   },
   card: {
-    width: '100%',
     height: '94px',
     borderRadius: '4px',
     backgroundColor: '#959abb',
-    borderColor: '#fff',
     borderWidth: 0
   },
   main: {
     fontSize: '18px',
     fontWeight: 'normal',
-    color: '#4d4f5c'
+    color: theme.palette.text.primary
   },
   bold: {
     fontWeight: 'bold'
@@ -57,7 +56,7 @@ export default function StreamAnalysis(
   ];
 
   return (
-    <Grid container direction="column" spacing={8}>
+    <Grid container direction="column" spacing={1}>
       {/* {!open && metricData && (
         <Grid item className={classes.center}>
           <CircularProgress />
@@ -65,7 +64,7 @@ export default function StreamAnalysis(
       )}  => 로딩도 멈추는 현상 */}
       {open
        && (metricData.map((element, index) => (
-         <Grid item container direction="row" key={shortid.generate()}>
+         <Grid item xs={12} container direction="row" key={shortid.generate()}>
            <Grid item xs={2} className={classes.center}>
              {iconArray[index]}
              <Typography className={classes.head}>{element.title}</Typography>

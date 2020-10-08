@@ -119,7 +119,7 @@ function NotificationPopper({
                     </span>
                   </Typography>
                   <Typography variant="caption" gutterBottom noWrap>
-                    <span>{`${noti.dateform} / ONAD`}</span>
+                    <span>{`${noti.dateform} / TruePoint`}</span>
                   </Typography>
                 </div>
               </MenuItem>

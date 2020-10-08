@@ -25,7 +25,9 @@ const metricSetting: any = {
 };
 
 // 선택된 metric list
-const setSeries = (metrics: string[], chart: am4charts.XYChart, opposite?: number): void => {
+const setSeries = (
+  metrics: string[], chart: am4charts.XYChart, opposite?: number, fontColor?: string
+): void => {
   metrics.forEach((element, index) => {
     const setting = metricSetting[`${element}`];
     const valueAxis: any = chart.yAxes.push(new am4charts.ValueAxis());
@@ -33,6 +35,7 @@ const setSeries = (metrics: string[], chart: am4charts.XYChart, opposite?: numbe
     if (chart.yAxes.indexOf(valueAxis) !== 0) {
       valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
     }
+    valueAxis.renderer.labels.template.fill = am4core.color(fontColor || '#000');
 
     const series : any = chart.series.push(new am4charts.LineSeries());
     series.yAxis = valueAxis;
@@ -56,7 +59,9 @@ const setSeries = (metrics: string[], chart: am4charts.XYChart, opposite?: numbe
   });
 };
 
-export default function setComponent(data: any, selectedMetric: string[], name?: string, opposite?: number,): am4charts.XYChart {
+export default function setComponent(
+  data: any, selectedMetric: string[], name?: string, opposite?: number, fontColor?: string
+): am4charts.XYChart {
   am4core.useTheme(am4themes_animated);
   const chart : am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);
   chart.data = data;
@@ -68,13 +73,15 @@ export default function setComponent(data: any, selectedMetric: string[], name?:
   dateAxis.skipEmptyPeriods = true;
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd';
   dateAxis.dateFormats.setKey('day', 'MM-dd');
-  setSeries(selectedMetric, chart, opposite);
-
+  setSeries(selectedMetric, chart, opposite, fontColor);
+  dateAxis.renderer.labels.template.fill = am4core.color(fontColor || '#000');
   // ****************************** cursor ***************************
   // Make a panning cursor
   chart.cursor = new am4charts.XYCursor();
   chart.cursor.xAxis = dateAxis;
-  chart.legend = new am4charts.Legend();
+  const legend = new am4charts.Legend();
+  legend.labels.template.fill = am4core.color(fontColor || '#000');
+  chart.legend = legend;
 
   return chart;
 }

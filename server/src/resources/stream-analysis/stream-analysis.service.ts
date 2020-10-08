@@ -12,8 +12,6 @@ import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
 // import { dataArray } from './s3TestData.test';
-// logic class
-import { UserStatisticInfo } from './class/userStatisticInfo.class';
 // interface
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
@@ -28,7 +26,6 @@ import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
-import { UsersService } from '../users/users.service';
 
 // aws s3
 dotenv.config();
@@ -272,14 +269,7 @@ export class StreamAnalysisService {
     input   :  userId, nowDate
     output  :  "airTime, viewer, fan" in Streams  +  "chat_count" in StreamSummary 
   */
-  async findUserWeekStreamInfoByUserId(userId: string, nowDate: string): Promise<any> {
-    // ISO Date String --> 요일 기준 YYYY-MM-DD 00:00:00:000 변환
-    const nowAt = new Date(nowDate);
-    const startAt = new Date(nowAt);
-    startAt.setDate(startAt.getDate() - 7);
-    nowAt.setHours(0, 0, 0, 0);
-    startAt.setHours(0, 0, 0, 0);
-
+  async findUserWeekStreamInfoByUserId(userId: string): Promise<StreamsEntity[]> {
     /*
       streamsInfoArray
       viewer    :  기간내 방송 당 시청자 수  평균
@@ -287,58 +277,16 @@ export class StreamAnalysisService {
       length    :  기간내 방송 당 방송 시간 평균 
       chatCount :  기간내 총 채팅 발생 수 -> 단순 합산
     */
-    const streamsInfoArray: StreamsEntity[] = await this.streamsRepository
+    const streams = await this.streamsRepository
       .createQueryBuilder('streams')
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt > :startDate', { startDate: startAt.toISOString() })
-      .andWhere('streams.startedAt < :nowDate', { nowDate: nowAt.toISOString() })
+      .andWhere('streams.startedAt > DATE_SUB(NOW(), INTERVAL 10 DAY)')
       .getMany()
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
       });
 
-    const twitchData = new UserStatisticInfo();
-    const afreecaData = new UserStatisticInfo();
-    const youtubeData = new UserStatisticInfo();
-    const allPlatformData = new UserStatisticInfo();
-
-    streamsInfoArray.forEach((data) => {
-      allPlatformData.pushData(data);
-      switch (data.platform) {
-        case 'twitch': {
-          twitchData.pushData(data);
-          break;
-        }
-        case 'afreeca': {
-          afreecaData.pushData(data);
-          break;
-        }
-        case 'youtube': {
-          youtubeData.pushData(data);
-          break;
-        }
-        default: {
-          // data 오류
-          throw new HttpException(
-            'Invalid Array Data Format ... ',
-            HttpStatus.INTERNAL_SERVER_ERROR
-          );
-        }
-      }
-    });
-
-    // streamInfoArray legnth 0 일 경우 initial value return
-    allPlatformData.calculateData();
-    twitchData.calculateData();
-    afreecaData.calculateData();
-    youtubeData.calculateData();
-
-    return {
-      allPlatformData,
-      twitchData,
-      afreecaData,
-      youtubeData
-    };
+    return streams;
   }
 
   /*

@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { AxiosResponse, AxiosError } from 'axios';
 import {
-  BrowserRouter, Switch, Route
+  BrowserRouter, Switch, Route,
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
@@ -12,12 +11,11 @@ import {
 import { configure } from 'axios-hooks';
 import * as serviceWorker from './serviceWorker';
 import axios from './utils/axios';
-
+import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
 import defaultTheme from './theme';
 import './assets/truepoint.css';
 // Pages and organisms
-import Appbar from './organisms/shared/Appbar';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
@@ -30,18 +28,23 @@ import FindPassword from './pages/others/FindPassword';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
+import { TruepointTheme } from './interfaces/TruepointTheme';
+import Notice from './pages/mainpage/Notice';
+import useAutoLogin from './utils/hooks/useAutoLogin';
 import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 function Index(): JSX.Element {
+  // *******************************************
+  // Theme Configurations
+  const { themeType, handleThemeChange } = useTruepointThemeType();
+  const THEME = createMuiTheme({
+    ...defaultTheme, palette: { ...defaultTheme.palette, type: themeType, },
+  });
+  const truepointTheme: TruepointTheme = { ...THEME, handleThemeChange };
+
   const {
     user, accessToken, handleLogout, handleLogin
   } = useLogin();
-  const { themeType, handleThemeChange } = useTruepointThemeType();
-  const THEME = createMuiTheme({
-    ...defaultTheme,
-    palette: { ...defaultTheme.palette, type: themeType, },
-  });
-
   /* subscribe 목록의 유저 전환 컨택스트 */
   const {
     currUser,
@@ -50,42 +53,19 @@ function Index(): JSX.Element {
   } = useSubscribe();
 
   // *******************************************
-  // Axios Configurations
-
-  // Response Interceptors
-  function onResponseFulfilled(request: AxiosResponse): AxiosResponse {
-    return request;
-  }
-  function onResponseRejected(err: AxiosError): any {
-    if (err.response && err.response.status === 401) {
-      // Unauthorized Error 인 경우
-      return axios.post('/auth/silent-refresh')
-        .then((res) => {
-          const token = res.data.access_token;
-          // 새로받은 access token을 axios 기본 헤더로 설정
-          axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-          // React Context 변경
-          handleLogin(token);
-          // 실패 요청을 재 요청
-          const failedRequest = err.config;
-          failedRequest.headers['cache-control'] = 'no-cache';
-          return axios(failedRequest);
-        })
-        .catch(() => Promise.reject(err)); // 로그인으로 이동
-    }
-    return Promise.reject(err);
-  }
-  axios.interceptors.response.use(
-    onResponseFulfilled, onResponseRejected
-  );
   // axios-hooks configuration
+  axios.interceptors.response.use(
+    onResponseFulfilled,
+    makeResponseRejectedHandler(handleLogin)
+  );
   configure({ axios });
 
-  // Axios Configurations
   // *******************************************
+  // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
+  useAutoLogin(user.userId, handleLogin);
 
   return (
-    <ThemeProvider theme={THEME}>
+    <ThemeProvider<TruepointTheme> theme={truepointTheme}>
       <CssBaseline />
 
       {/* 로그인 여부 Context */}
@@ -94,6 +74,7 @@ function Index(): JSX.Element {
       }}
       >
         <KakaoTalk />
+        {/* 페이지 컴포넌트 */}
         <SubscribeContext.Provider value={{
           currUser,
           invalidSubscribeUserList,
@@ -104,21 +85,20 @@ function Index(): JSX.Element {
           error
         }}
         >
-          {/* 페이지 컴포넌트 */}
           <BrowserRouter>
-            <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
-
             <Switch>
               <Route exact path="/" component={Main} />
               <Route exact path="/signup" component={Regist} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/find-id" component={FindId} />
               <Route exact path="/find-pw" component={FindPassword} />
+              <Route exact path="/notice" component={Notice} />
+              <Route exact path="/notice/:id" component={Notice} />
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
               <Route path="/mypage" component={Mypage} />
             </Switch>
-
+            {/* 페이지 컴포넌트 */}
           </BrowserRouter>
         </SubscribeContext.Provider>
       </AuthContext.Provider>

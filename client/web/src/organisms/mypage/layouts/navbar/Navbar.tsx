@@ -41,43 +41,40 @@ function Navbar(props: NavbarProps): JSX.Element {
         {!subscribe.loading && !subscribe.error ? (
 
           <Grid container justify="space-between" direction="row">
-            { subscribe.validSubscribeUserList
-            && subscribe.validSubscribeUserList.length > 0 ? (
-              <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
-                {/* 사용중인 유저 이름 , 클릭시 구독 유저 드롭다운 리스트 */}
-                <Grid item>
-                  <NavbarUserList />
-                </Grid>
+            <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
+              { subscribe.validSubscribeUserList
+              && subscribe.validSubscribeUserList.length > 0
+              && (
+                <>
+                  <Grid item>
+                    {/* 사용중인 유저 이름 , 클릭시 구독 유저 드롭다운 리스트 */}
+                    <NavbarUserList />
+                  </Grid>
 
-                {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 */}
-                <Grid item className={classes.subscribePeriod}>
-                  <EventNoteIcon
-                    className={classes.leftGridIcon}
-                    style={{ padding: 0, margin: 0 }}
-                  />
-                  <Typography variant="h5">
-                    {`${moment(subscribe.currUser.startAt).format('YYYY-MM-DD')} ~
-                      ${moment(subscribe.currUser.endAt).format('YYYY-MM-DD')}`}
-                  </Typography>
-                </Grid>
+                  {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 */}
+                  <Grid item className={classes.subscribePeriod}>
+                    <EventNoteIcon
+                      className={classes.leftGridIcon}
+                      style={{ padding: 0, margin: 0 }}
+                    />
+                    <Typography variant="h5">
+                      {`${moment(subscribe.currUser.startAt).format('YYYY-MM-DD')} ~
+                    ${moment(subscribe.currUser.endAt).format('YYYY-MM-DD')}`}
+                    </Typography>
+                  </Grid>
 
-                <Grid item>
-                  {moment(subscribe.currUser.endAt)
-                    >= moment(currDate.toISOString())
-                    ? (
-                      <Chip label="구독중" className={classes.subscribeChip} />
-                    ) : (
-                      <Chip label="구독 만료" className={classes.notSubscribeChip} />
-                    )}
-                </Grid>
-
-              </Grid>
-              ) : (
-                <Grid>
-                  구독 진행 후 사용해 주세요
-                </Grid>
-
+                  <Grid item>
+                    {moment(subscribe.currUser.endAt)
+                  >= moment(currDate.toISOString())
+                      ? (
+                        <Chip label="구독중" className={classes.subscribeChip} />
+                      ) : (
+                        <Chip label="구독 만료" className={classes.notSubscribeChip} />
+                      )}
+                  </Grid>
+                </>
               )}
+            </Grid>
             <Grid item container md={2} alignContent="center">
               {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
               <HeaderLinks

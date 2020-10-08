@@ -3,8 +3,9 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_kelly from '@amcharts/amcharts4/themes/kelly';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import graphColor from './Color';
+import { TruepointTheme } from '../../../interfaces/TruepointTheme';
 
-export default function setComponent(data: any, theme: any): am4charts.XYChart {
+export default function setComponent(data: any, theme: TruepointTheme): am4charts.XYChart {
   am4core.useTheme(am4themes_kelly);
   am4core.useTheme(am4themes_animated);
 
@@ -22,11 +23,13 @@ export default function setComponent(data: any, theme: any): am4charts.XYChart {
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd HH:mm:ss';
   dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
   dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
+  dateAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   // dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
   // dateAxis.groupData = true;
 
   // ****************************** smile count series ***************************
   const valueAxis: any = chart.yAxes.push(new am4charts.ValueAxis());
+  valueAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   valueAxis.renderer.opposite = true;
   if (chart.yAxes.indexOf(valueAxis) !== 0) {
     valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
@@ -56,6 +59,7 @@ export default function setComponent(data: any, theme: any): am4charts.XYChart {
   // ****************************** chat count series ***************************
   const new_series : any = chart.series.push(new am4charts.LineSeries());
   const chatAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  chatAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   chatAxis.renderer.opposite = true;
   new_series.yAxis = chatAxis;
   new_series.dataFields.valueY = 'chat_count';
@@ -75,6 +79,7 @@ export default function setComponent(data: any, theme: any): am4charts.XYChart {
   // ****************************** chat count series ***************************
   const viewer_series : any = chart.series.push(new am4charts.LineSeries());
   const viewerAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  viewerAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   viewer_series.yAxis = viewerAxis;
   viewer_series.dataFields.valueY = 'viewer';
   viewer_series.dataFields.dateX = 'date';
@@ -113,7 +118,9 @@ export default function setComponent(data: any, theme: any): am4charts.XYChart {
   // dateAxis.start = 0.75;
   dateAxis.keepSelection = true;
   // And, for a good measure, let's add a legend
-  chart.legend = new am4charts.Legend();
+  const legend = new am4charts.Legend();
+  legend.labels.template.fill = am4core.color(theme.palette.text.secondary);
+  chart.legend = legend;
 
   return chart;
 }
