@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  Typography, Paper, TextField, FormControl, Button, Popover,
-  InputLabel, MenuItem, Select, Divider,makeStyles, Chip,
+  Typography,  TextField,  Button, Popover,
+    Divider,makeStyles, Chip,
 } from '@material-ui/core';
 import AvatarWithName from './AvatarWithName';
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -66,11 +66,11 @@ export default function MessageTable(props: Props) {
   function handleSendClick() {
 
     if (title && content) {
-      if (window.confirm(`정말로 ${data.name}에게 메시지를 보내시겠습니까?`)) {
+      if (window.confirm(`정말로 ${data.userId}에게 메시지를 보내시겠습니까?`)) {
         setTitle('');
         setContent('');
         executePost({
-          data: {
+          data : {
             userId : [data.userId],
             title : title,
             content: content,
@@ -99,7 +99,7 @@ export default function MessageTable(props: Props) {
   >
     <div className={classes.container}>
       {data && (
-        <AvatarWithName name={data.name} logo={data.logo ? data.logo : null} />
+        <AvatarWithName name={data.userId} logo={data.logo ? data.logo : null} />
       )}
       <Divider />
 

@@ -5,7 +5,6 @@ import NoticeEditViewer from '../organisms/notice/NoticeEditViewer';
 import NoticeEditer from '../organisms/notice/NoticeEditer';
 import { NoticeData } from './AdminNotice';
 import '../assets/font.css';
-import noticeDataset from './AdminNotice';
 
 const initialState = {
   title: '공지사항', topic: '공지사항', content: '공지사항작성중',

@@ -32,7 +32,7 @@ function dateDiff(date1: any, date2: any) {
 interface props {
   suggestData: any;
   handleEditModeOff: () => void; 
-  handleData: (Data: any) => void;
+     handleData: (Data: any) => void;
 }
 
 //table 레이아웃조정
@@ -77,7 +77,7 @@ export default function SuggestTable(props: props) {
             <Typography className="title">
               {true ? ("[신규 제안]") : ""}
               {rowData.title}
-              { dateDiff(new Date(), new Date(rowData.regiDate)) < 8 && (
+              { dateDiff(new Date(), new Date(rowData.createdAt)) < 8 && (
               <FiberNew style={{ color: '#929ef8' }}/>
               )}
             </Typography>
@@ -85,30 +85,30 @@ export default function SuggestTable(props: props) {
         },
         {
           title: '작성일',
-          field: 'regiDate',
+          field: 'createdAt',
           render: rowData => (
-            <Typography>{new Date(rowData.regiDate).toLocaleString()}</Typography>
+            <Typography>{new Date(rowData.createdAt).toLocaleString()}</Typography>
           ),
         },
         {
           title: '작성자',
-          field: 'writer',
+          field: 'author',
           render: rowData => (
-            <Typography>{rowData.writer}</Typography>
+            <Typography>{rowData.author}</Typography>
           ),
         },
         {
           title: '진행상태',
-          field: 'status',
+          field: 'state',
           render: rowData => (
-          <Typography className="상태">{rowData.status}</Typography>
+          <Typography className="상태">{rowData.state}</Typography>
           )
         },
         {
-          title: '답변여부',
-          field: 'isReplied',
+          title: '좋아요',
+          field: 'like',
           render: rowData => (
-          <Typography className="상태">{rowData.isReplied? "답변완료": "미답변"}</Typography>
+          <Typography className="상태">{rowData.like? "좋아요": "미답변"}</Typography>
           )
         },
         

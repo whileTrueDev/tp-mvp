@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  Typography, Paper, TextField, FormControl, Button,Grid,
-  InputLabel, MenuItem, Select, Divider,makeStyles
+  Typography, Paper, TextField, Button,Grid,
+   Divider,makeStyles
 } from '@material-ui/core';
 import { replyData } from '../../pages/AdminSuggest';
 
@@ -9,9 +9,8 @@ import { replyData } from '../../pages/AdminSuggest';
 interface ReplyEditData{
   state: replyData;
   dispatch: React.Dispatch<any>;
-  helpToggle: boolean;
   handleHelpToggle: () => void;
-  replyData?: replyData;
+
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -20,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SuggestReplyEditor(props: ReplyEditData) {
   const {
-    state, dispatch, handleHelpToggle, helpToggle, replyData,
+    state, dispatch, handleHelpToggle
   } = props;
   const classes = useStyles();
   return (
@@ -41,45 +40,23 @@ export default function SuggestReplyEditor(props: ReplyEditData) {
 
       <div style={{ padding: 14 }}>
         <TextField
-          id="title-textfield"
-          label="제목을 작성하세요."
+          id="author-textfield"
+          label="작성자명을 작성하세요."
           variant="outlined"
           style={{ width: '65%', padding: 5 }}
-          value={state.title}
-          onChange={e => dispatch({ type: 'handleTitle', title: e.target.value })}
+          value={state.author}
+          onChange={e => dispatch({ type: 'handleAuthor', title: e.target.value })}
           margin="normal"
         />
 
-        <FormControl style={{
-          margin: 10,
-          minWidth: 120,
-        }}
-        >
-          <InputLabel htmlFor="demo-controlled-open-select">구분</InputLabel>
-          <Select
-            variant="outlined"
-            value={state.category}
-            onChange={e => dispatch({ type: 'handleTopic', topic: e.target.value })}
-            inputProps={{
-              name: 'age',
-              id: 'demo-controlled-open-select',
-            }}
-          >
-            <MenuItem value="기타">기타</MenuItem>
-            <MenuItem value="비교분석">비교분석</MenuItem>
-            <MenuItem value="편집점분석">편집점분석</MenuItem>
-            <MenuItem value="사이트관련">사이트관련</MenuItem>
-          </Select>
-        </FormControl>
-
         <TextField
           multiline
-          id="contents-textfield"
+          id="content-textfield"
           label="내용을 마크다운으로 작성하세요."
           variant="outlined"
           rows={24}
           style={{ width: '100%', padding: 5 }}
-          onChange={e => dispatch({ type: 'handleContents', contents: e.target.value })}
+          onChange={e => dispatch({ type: 'handleContent', content: e.target.value })}
           margin="normal"
         />
       </div>
@@ -91,7 +68,7 @@ export default function SuggestReplyEditor(props: ReplyEditData) {
             variant="contained"
             color="primary"
             onClick={() => {
-              if (window.confirm(`기능제안 답변\n${state.title}\n정말로 답변을 수정하시겠습니까?`)) {
+              if (window.confirm(`기능제안 답변\n정말로 답변을 수정하시겠습니까?`)) {
                 // 백앤드로 업로드
                  window.location.reload();
               }
@@ -106,7 +83,7 @@ export default function SuggestReplyEditor(props: ReplyEditData) {
             color="secondary"
             variant="contained"
             onClick={() => {
-              if (window.confirm(`정말로\n${state.title}\n답변을 삭제하시겠습니까?`)) {
+              if (window.confirm(`정말로 해당 답변을 삭제하시겠습니까?`)) {
                 //백엔드로 업로드
                 window.location.reload();
               }

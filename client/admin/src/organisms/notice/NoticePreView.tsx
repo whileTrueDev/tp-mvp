@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Typography, Paper, Divider, Button,
 } from '@material-ui/core';
-// import { NoticeData } from '../pages/AdminNotice';
 import useAxios from 'axios-hooks';
 
 const Markdown = require('react-markdown');

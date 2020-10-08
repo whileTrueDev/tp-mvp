@@ -75,6 +75,7 @@ export default function UserlistTable(props: Props) {
   function handleClose() {
     setOpen(false);
   }
+
   
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
@@ -87,6 +88,7 @@ export default function UserlistTable(props: Props) {
     >
         체크한 인원에 대한 일괄전송 내용작성
       </Button>
+
     <MaterialTable
       title="회원 목록"
       columns={[

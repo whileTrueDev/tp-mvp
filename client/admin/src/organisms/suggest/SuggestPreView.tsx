@@ -15,6 +15,12 @@ interface Props {
 
 export default function SuggestPreview(props: Props) {
   const { selectedData, handleEditModeOn } = props;
+  const [state, setState] = React.useState("");
+
+  function handleClick(data: string) {
+    setState(data);
+  }
+  
   return (
     <Paper>
        <div style={{ padding: 28 }}>
@@ -23,13 +29,13 @@ export default function SuggestPreview(props: Props) {
         </Typography>
         <div style={{ display: 'flex', marginTop: 5,marginBottom: 5,justifyContent: 'space-bwtween' }}>
           <Table size='small'>
-            <CostomTableRow title={'작성자'} data={selectedData.writer}/>
-            <CostomTableRow title={'날짜'} data={new Date(selectedData.regiDate).toLocaleString()}/>
+            <CostomTableRow title={'작성자'} data={selectedData.author}/>
+            <CostomTableRow title={'날짜'} data={new Date(selectedData.createdAt).toLocaleString()}/>
             <CostomTableRow title={'카테고리'} data={selectedData.category}/>
-            <CostomTableRow title={'진행상황'} data={selectedData.status}/>
+            <CostomTableRow title={'진행상황'} data={selectedData.state}/>
           </Table>
         </div>
-        {selectedData.contents && (
+        {selectedData.content && (
           <div>
             <Grid container spacing={1}>
               <Grid item xs={12} lg={3}>
@@ -38,12 +44,14 @@ export default function SuggestPreview(props: Props) {
                   variant="contained"
                   onClick= {handleEditModeOn}
                 >
-                  답변하기
+                  답변목록보기
                 </Button>
               </Grid>
 
               <Grid item xs={12} lg={3}>
-                <StatusChangeButton selectedData={selectedData}/>
+                <StatusChangeButton 
+                selectedData={selectedData}
+                />
               </Grid>
 
             </Grid>
@@ -54,7 +62,7 @@ export default function SuggestPreview(props: Props) {
 
       <div style={{ padding: 28, maxHeight: 750, overflow: 'scroll' }}>
         <Markdown
-          source={selectedData.contents}
+          source={selectedData.content}
           escapeHtml={false}
           renderers={{ code: ({ value }: {value: any}) => <Markdown source={value} /> }}
         />

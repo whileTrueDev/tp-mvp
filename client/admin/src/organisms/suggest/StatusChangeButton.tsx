@@ -14,11 +14,15 @@ const useStyles = makeStyles({
 
 interface statusProps {
   selectedData: SuggestData;
+
 }
+
+
 export default function StatusChangebutton(props: statusProps) {
-  const {selectedData}  = props
+  const {selectedData}  = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
+ 
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -44,24 +48,24 @@ export default function StatusChangebutton(props: statusProps) {
         onClose={handleClose}
       >
         <MenuItem  onClick={() => {
-              selectedData.status = "검토중"
-              if (window.confirm(`상태를\n${selectedData.status}\n 으로 업로드 하시겠습니까?`)) {
+              selectedData.state = "검토중"
+              if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
               //백엔드에 상태 업로드
                 window.location.reload();
               }
             }}>
               검토중
-      </MenuItem>
+       </MenuItem>
         <MenuItem  onClick={() => {
-              selectedData.status = "기능개발중"
-              if (window.confirm(`상태를\n${selectedData.status}\n 으로 업로드 하시겠습니까?`)) {
+              selectedData.state = "기능개발중"
+              if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
                //백엔드에 상태 업로드
                 window.location.reload();
               }
             }}>기능개발중</MenuItem>
         <MenuItem onClick={() => {
-              selectedData.status = "구현완료"
-              if (window.confirm(`상태를\n${selectedData.status}\n 으로 업로드 하시겠습니까?`)) {
+              selectedData.state = "구현완료"
+              if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
                //백엔드에 상태 업로드
                 window.location.reload();
               }

@@ -15,11 +15,11 @@ export default function AdminAlarm(){
  
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedData, setData] = React.useState();
-
   const [{data}] = useAxios({
     url: 'http://localhost:3000/admin/notification', method: "GET"
   })
-  
+ 
+
   const handleClick = (event: any, d: any) => {
     setAnchorEl(event.currentTarget);
     setData(d);
@@ -46,7 +46,7 @@ export default function AdminAlarm(){
      </Grid>
 
      <Grid item xs={12} lg={6}>
-        {anchorEl&&data && (
+        {anchorEl&& selectedData && (
           <MessageTable
           anchorEl={anchorEl}
           data={selectedData}
