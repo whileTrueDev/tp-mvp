@@ -3,7 +3,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
-    marginTop: '135px',
+    marginTop: theme.spacing(4),
     // height: '700px'
   },
   titleDivider: {

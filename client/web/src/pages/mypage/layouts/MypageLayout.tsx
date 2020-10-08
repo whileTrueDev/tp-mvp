@@ -40,9 +40,9 @@ const UserDashboard = (): JSX.Element => {
                     ? (
                       route.subRoutes && route.subRoutes.map((subRoute) => (
                         <Route
-                          path={route.layout + route.path}
-                          component={route.component}
-                          key={route.name}
+                          path={subRoute.layout + subRoute.path}
+                          component={subRoute.component}
+                          key={subRoute.name}
                         />
                       ))
                     ) : (

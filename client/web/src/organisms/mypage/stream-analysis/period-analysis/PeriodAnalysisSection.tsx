@@ -125,7 +125,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
   };
 
   return (
-    <Grid style={{ marginTop: '135px', height: 'auto' }}>
+    <Grid className={classes.root}>
       <Grid item>
         {error
           && (

@@ -3,8 +3,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
-    marginTop: '135px',
-    height: '700px'
+    marginTop: theme.spacing(4),
   },
   titleDivider: {
     backgroundColor: '#4b5ac7',
