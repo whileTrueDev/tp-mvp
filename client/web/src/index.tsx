@@ -30,6 +30,7 @@ import FindPassword from './pages/others/FindPassword';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
+import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 function Index(): JSX.Element {
   const {
@@ -40,6 +41,13 @@ function Index(): JSX.Element {
     ...defaultTheme,
     palette: { ...defaultTheme.palette, type: themeType, },
   });
+
+  /* subscribe 목록의 유저 전환 컨택스트 */
+  const {
+    currUser,
+    invalidSubscribeUserList, validSubscribeUserList, handleCurrTargetUser,
+    handleLoginUserId, loading, error
+  } = useSubscribe();
 
   // *******************************************
   // Axios Configurations
@@ -86,22 +94,33 @@ function Index(): JSX.Element {
       }}
       >
         <KakaoTalk />
-        {/* 페이지 컴포넌트 */}
-        <BrowserRouter>
-          <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
+        <SubscribeContext.Provider value={{
+          currUser,
+          invalidSubscribeUserList,
+          validSubscribeUserList,
+          handleCurrTargetUser,
+          handleLoginUserId,
+          loading,
+          error
+        }}
+        >
+          {/* 페이지 컴포넌트 */}
+          <BrowserRouter>
+            <Appbar themeType={themeType} handleThemeChange={handleThemeChange} />
 
-          <Switch>
-            <Route exact path="/" component={Main} />
-            <Route exact path="/signup" component={Regist} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/find-id" component={FindId} />
-            <Route exact path="/find-pw" component={FindPassword} />
-            <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-            <Route exact path="/termsofuse" component={TermsOfUse} />
-            <Route path="/mypage" component={Mypage} />
-          </Switch>
+            <Switch>
+              <Route exact path="/" component={Main} />
+              <Route exact path="/signup" component={Regist} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/find-id" component={FindId} />
+              <Route exact path="/find-pw" component={FindPassword} />
+              <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+              <Route exact path="/termsofuse" component={TermsOfUse} />
+              <Route path="/mypage" component={Mypage} />
+            </Switch>
 
-        </BrowserRouter>
+          </BrowserRouter>
+        </SubscribeContext.Provider>
       </AuthContext.Provider>
     </ThemeProvider>
   );
