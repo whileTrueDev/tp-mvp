@@ -14,7 +14,7 @@ export interface SuggestData {
   createdAt: string;
   content?: string;
   author?: string;  // 검토중, 진행중 상태
-  state?: string;
+  state: number;
   like?: Number;  // 답변여부
 }
 
@@ -64,7 +64,7 @@ export default function SuggestBoard() {
   content: "",
   createdAt: "",
   author: "",
-  state: "",
+  state: 0
   });
   
 

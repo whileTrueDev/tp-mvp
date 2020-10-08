@@ -65,6 +65,19 @@ export default function SuggestTable(props: props) {
   const { suggestData, handleData, handleEditModeOff } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
+  function handleState(Case: number){
+  
+    switch(Case){
+      case 1:
+        return "검토중";
+      case 2:
+        return "기능구현중";
+      case 3:
+        return "구현완료";
+    }
+
+  }
+
   return (
     <MaterialTable
       title="기능 제안"
@@ -101,7 +114,7 @@ export default function SuggestTable(props: props) {
           title: '진행상태',
           field: 'state',
           render: rowData => (
-          <Typography className="상태">{rowData.state}</Typography>
+          <Typography className="상태">{handleState(rowData.state)}</Typography>
           )
         },
         {

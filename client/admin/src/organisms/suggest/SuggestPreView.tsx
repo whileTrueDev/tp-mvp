@@ -20,6 +20,18 @@ export default function SuggestPreview(props: Props) {
   function handleClick(data: string) {
     setState(data);
   }
+
+  function handleState(Case: number){
+    switch(Case){
+      case 1:
+        return "검토중";
+      case 2:
+        return "기능구현중";
+      case 3:
+        return "구현완료";
+    }
+
+  }
   
   return (
     <Paper>
@@ -32,7 +44,7 @@ export default function SuggestPreview(props: Props) {
             <CostomTableRow title={'작성자'} data={selectedData.author}/>
             <CostomTableRow title={'날짜'} data={new Date(selectedData.createdAt).toLocaleString()}/>
             <CostomTableRow title={'카테고리'} data={selectedData.category}/>
-            <CostomTableRow title={'진행상황'} data={selectedData.state}/>
+            <CostomTableRow title={'진행상태'} data={handleState(selectedData.state)}/>
           </Table>
         </div>
         {selectedData.content && (

@@ -4,6 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {makeStyles} from '@material-ui/core';
 import { SuggestData } from '../../pages/AdminSuggest';
+import useAxios from 'axios-hooks';
 
 const useStyles = makeStyles({
   button: {
@@ -23,6 +24,9 @@ export default function StatusChangebutton(props: statusProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
  
+  const [{data},executePatch] = useAxios({
+    url: 'http://localhost:3000/admin/feature-suggestion',method: 'PATCH'
+  })
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -48,25 +52,44 @@ export default function StatusChangebutton(props: statusProps) {
         onClose={handleClose}
       >
         <MenuItem  onClick={() => {
-              selectedData.state = "검토중"
+              selectedData.state = 1
+              console.log(selectedData);
               if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
               //백엔드에 상태 업로드
+              executePatch({
+                data: {
+                  id: selectedData.suggestionId,
+                  state: selectedData.state
+                }
+              })
                 window.location.reload();
               }
             }}>
               검토중
        </MenuItem>
         <MenuItem  onClick={() => {
-              selectedData.state = "기능개발중"
+              selectedData.state = 2
               if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
                //백엔드에 상태 업로드
+               executePatch({
+                data: {
+                  id: selectedData.suggestionId,
+                  state: selectedData.state
+                }
+              })
                 window.location.reload();
               }
-            }}>기능개발중</MenuItem>
+            }}>기능 구현중</MenuItem>
         <MenuItem onClick={() => {
-              selectedData.state = "구현완료"
+              selectedData.state = 3
               if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
                //백엔드에 상태 업로드
+               executePatch({
+                data: {
+                  id: selectedData.suggestionId,
+                  state: selectedData.state
+                }
+              })
                 window.location.reload();
               }
             }}>구현완료</MenuItem>
