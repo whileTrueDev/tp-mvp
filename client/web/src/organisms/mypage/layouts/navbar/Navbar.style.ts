@@ -8,7 +8,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     boxShadow: 'none',
     position: 'relative',
     display: 'block',
-    zIndex: 9999,
+    zIndex: 1200,
     backgroundColor: theme.palette.primary.dark,
   },
   container: {

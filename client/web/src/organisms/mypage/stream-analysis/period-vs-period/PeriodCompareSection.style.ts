@@ -3,17 +3,17 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
-    marginTop: '135px',
+    marginTop: theme.spacing(4),
     // height: '700px'
   },
   titleDivider: {
-    backgroundColor: '#4b5ac7',
+    backgroundColor: theme.palette.primary.main,
     width: '200px',
     marginBottom: '12px',
     height: '3px'
   },
   mainTitle: {
-    color: '#000000',
+    color: theme.palette.text.primary,
     letterSpacing: '-1.2px',
     textAlign: 'left',
     lineHeight: 1.33,
@@ -23,14 +23,14 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     marginBottom: '60px',
   },
   infoText: {
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     fontFamily: 'AppleSDGothicNeo',
     fontSize: '12px',
     lineHeight: '1.11',
     textAlign: 'right'
   },
   mainBody: {
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     letterSpacing: '-1.2px',
     textAlign: 'left',
     lineHeight: 0.87,
@@ -45,7 +45,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   },
   bodyPapper: {
     marginTop: '60px',
-    border: 'solid 1px #707070',
+    border: `solid 1px ${theme.palette.divider}`,
     borderRadius: '10px',
     paddingTop: '27px',
     paddingBottom: '20px'
@@ -54,7 +54,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     fontSize: '19px',
     fontFamily: 'SourceSansPro',
     lineHeight: 1.53,
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     display: 'flex',
     justifyContent: 'center',
     textAlign: 'center'
@@ -69,7 +69,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     marginRight: '18px'
   },
   vsText: {
-    color: '#4d4f5c',
+    color: theme.palette.text.secondary,
     letterSpacing: '-1.2px',
     textAlign: 'left',
     lineHeight: 0.67,
@@ -88,8 +88,11 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'SourceSansPro',
     fontSize: '24px',
     marginTop: '20px',
-    color: '#ffff',
-    marginRight: '93.5px'
+    marginRight: '93.5px',
+    color: theme.palette.common.white,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light
+    }
   },
   alert: {
     borderRadius: '5px',

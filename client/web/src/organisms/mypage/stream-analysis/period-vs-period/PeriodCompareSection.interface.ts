@@ -9,15 +9,19 @@ export interface DayStreamsInfo{
 }
 export interface RangeSelectCaledarProps {
   period: Date[];
-  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
+  handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?:true) => void;
   base?: true;
 }
 export interface periodCompareTextBoxProps {
   base?: true;
   period: Date[];
-  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
+  handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?:true) => void;
 }
-
+export interface PeriodCompareCalendarAndTextfieldProps{
+  base?: true;
+  period: Date[];
+  handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?:true) => void;
+}
 export interface CheckBoxGroupProps {
   handleCheckStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   viewer: boolean;
@@ -28,7 +32,6 @@ export interface ISODateTextFieldError {
   helperText: string;
   isError: boolean;
 }
-
 export interface PeriodsRequestParams {
   userId: string;
   baseStartAt: string;
@@ -36,7 +39,6 @@ export interface PeriodsRequestParams {
   compareStartAt: string;
   compareEndAt: string;
 }
-
 export interface PeriodCompareProps {
   loading: boolean;
   error : AxiosError<any> | undefined;

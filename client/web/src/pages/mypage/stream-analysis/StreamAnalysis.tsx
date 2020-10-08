@@ -4,7 +4,7 @@ import { Grid } from '@material-ui/core';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';
-
+import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // organisms
 import StreamCompareSection from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareSection';
 
@@ -14,7 +14,7 @@ export default function StreamAnalysis(): JSX.Element {
   const [{ loading, error }, getRequest] = useAxios(
     '/stream-analysis/streams', { manual: true }
   );
-
+  const subscribe = React.useContext(SubscribeContext);
   const handleSubmit = (streams: {streamId: string, platform: string}[]) => {
     setOpen(false);
     getRequest({
@@ -27,6 +27,10 @@ export default function StreamAnalysis(): JSX.Element {
         setOpen(true);
       });
   };
+
+  React.useEffect(() => {
+    setOpen(false);
+  }, [subscribe.currUser]);
 
   return (
     <MypageSectionWrapper>

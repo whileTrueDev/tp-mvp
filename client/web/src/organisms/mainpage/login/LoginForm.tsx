@@ -4,9 +4,10 @@ import { useHistory, Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
-  Button, TextField,
+  Button, TextField, Checkbox, FormControlLabel, Tooltip, Typography
 } from '@material-ui/core';
-
+import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
+import CheckedCheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
@@ -15,7 +16,8 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
-  formWidth: { width: 300, textAlign: 'center' },
+  formWidth: { width: 300 },
+  alignCenter: { textAlign: 'center' },
   button: { width: 130, boxShadow: 'none', padding: 8 },
   buttonset: { display: 'flex', justifyContent: 'space-between', width: '100%' },
 }));
@@ -34,6 +36,12 @@ export default function LoginForm(): JSX.Element {
   const userIdRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
+  // 로그인 상태 유지 불린
+  const [stayLogedIn, setStayLogedIn] = useState<boolean>(false);
+  function handleStayLogedInToggle() {
+    setStayLogedIn((prev) => !prev);
+  }
+
   // API Requests
   const [{ loading }, executePost] = useAxios(
     { method: 'POST', url: '/auth/login' },
@@ -47,7 +55,8 @@ export default function LoginForm(): JSX.Element {
       executePost({
         data: {
           userId: userIdRef.current.value,
-          password: passwordRef.current.value
+          password: passwordRef.current.value,
+          stayLogedIn, // 자동 로그인 여부
         }
       }).then((res) => {
         if (res && res.data) {
@@ -76,7 +85,9 @@ export default function LoginForm(): JSX.Element {
         onSubmit={handleLoginSubmit}
         className={classes.formWidth}
       >
-        <TruepointLogo />
+        <div className={classes.alignCenter}>
+          <TruepointLogo />
+        </div>
 
         <TextField
           className={classnames(classes.upperSpace, classes.formWidth)}
@@ -98,6 +109,24 @@ export default function LoginForm(): JSX.Element {
           inputRef={passwordRef}
           autoComplete="off"
         />
+        <Tooltip
+          title={(<Typography variant="body2">개인정보 보호를 위해 개인 PC에서만 사용하시기 바랍니다.</Typography>)}
+          placement="right"
+        >
+          <FormControlLabel
+            control={(
+              <Checkbox
+                icon={<CheckCircleIcon />}
+                checkedIcon={<CheckedCheckCircleIcon />}
+                checked={stayLogedIn}
+                onChange={handleStayLogedInToggle}
+                name="checkedA"
+                color="secondary"
+              />
+            )}
+            label="로그인 상태 유지"
+          />
+        </Tooltip>
 
         {/* 로그인 실패 도움말 */}
         {helperText && helperTextValue && (
@@ -129,7 +158,7 @@ export default function LoginForm(): JSX.Element {
           </Button>
         </div>
 
-        <div className={classes.upperSpace}>
+        <div className={classnames(classes.upperSpace, classes.alignCenter)}>
           <Button component={Link} to="/find-id">아이디 찾기</Button>
           |
           <Button component={Link} to="/find-pw">비밀번호 찾기</Button>

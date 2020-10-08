@@ -1,6 +1,7 @@
 import React, {
   useRef, useLayoutEffect
 } from 'react';
+import useTheme from '@material-ui/core/styles/useTheme';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
@@ -11,6 +12,8 @@ export default function Index({ name, comeData }:
   {name: string, comeData: metricGraphInterface[]}): JSX.Element {
   am4core.useTheme(am4themes_animated);
   const chartRef = useRef<any>(null);
+
+  const theme = useTheme();
 
   useLayoutEffect(() => {
     // Create chart instance
@@ -36,7 +39,7 @@ export default function Index({ name, comeData }:
     valueAxis.renderer.labels.template.disabled = false;
     valueAxis.renderer.ticks.template.disabled = true;
     valueAxis.renderer.labels.template.adapter.add('text', (text) => `${Math.abs(Number(text))}%`);
-    valueAxis.renderer.labels.template.fill = am4core.color('#575757');
+    valueAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
     // // Legend
     // chart.legend = new am4charts.Legend();
     // chart.legend.position = 'right';
