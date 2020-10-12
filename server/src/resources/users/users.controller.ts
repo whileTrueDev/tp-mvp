@@ -1,21 +1,18 @@
 import {
-  Controller, Post, Body, Get,
-  UseGuards, UseInterceptors,
-  ClassSerializerInterceptor, Req, ForbiddenException, Param, Query, Patch
+  Controller, Post, Body, Get, UseInterceptors,
+  ClassSerializerInterceptor, Query, Patch, UseGuards
 } from '@nestjs/common';
-import {
-  UseRoles, ACGuard,
-} from 'nest-access-control';
-import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { PasswordDto } from './dto/password.dto';
+import { SubscribeUsers } from './dto/subscribeUsers.dto';
 
 import { UserEntity } from './entities/user.entity';
 import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';
+import { SubscribeEntity } from './entities/subscribe.entity';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +20,16 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
   ) {}
+
+  // 구독자가 피구독자의 데이터에 접근하는 경우
+  // 프로필 데이터 (채널 연동 정보, 닉네임)
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async findSubscriberInfo(
+    @Query('userId') userId: string
+  ): Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
+    return this.usersService.findSubscriberInfo(userId);
+  }
 
   // get request에 반응하는 router, 함수정의
   @Get('/id')
@@ -72,6 +79,19 @@ export class UsersController {
   //   }
   //   throw new ForbiddenException();
   // }
+
+  /*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
+  */
+  @Get('/subscribe-users')
+  // @UseGuards(JwtAuthGuard)
+  getUserValidSubscribeInfo(
+    @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
+  )
+  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
+    return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
+  }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
