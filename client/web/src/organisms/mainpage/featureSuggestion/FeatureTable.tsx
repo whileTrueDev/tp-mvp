@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   newIcon: { marginLeft: theme.spacing(1) }
 }));
 
-export interface FeatureTable<T> {
+export interface FeatureTableProps<T> {
   data: T[];
   onRowClick: (num: number) => void;
   categoryTabSwitch: (value: number) => JSX.Element;
@@ -45,7 +45,7 @@ export default function FeatureTable<T extends FeatureData>({
   data,
   onRowClick,
   categoryTabSwitch,
-}: FeatureTable<T>): JSX.Element {
+}: FeatureTableProps<T>): JSX.Element {
   const classes = useStyles();
 
   // For Pagination

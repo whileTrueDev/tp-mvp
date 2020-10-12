@@ -10,6 +10,7 @@ import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDet
 import { FeatureData } from '../../interfaces/FeatureSuggestion';
 import Button from '../../atoms/Button/Button';
 import useAuthContext from '../../utils/hooks/useAuthContext';
+import Appbar from '../../organisms/shared/Appbar';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -54,7 +55,7 @@ export default function FeatureSuggestion(): JSX.Element {
   };
   return (
     <div>
-      {/* <Appbar /> */}
+      <Appbar />
       <ProductHero
         title="기능제안"
         content={'트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해주세요.\n궁금하신 사항은 고객센터로 연락 부탁드립니다.'}
@@ -77,7 +78,8 @@ export default function FeatureSuggestion(): JSX.Element {
                 categoryTabSwitch={categoryTabSwitch}
               />
             </div>
-          ) : (
+          )
+            : (
               <>
                 {/* 공지사항 목록 보기 */}
                 <div className={classes.contents}>
