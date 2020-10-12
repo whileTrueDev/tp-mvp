@@ -231,12 +231,14 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         justify="flex-end"
       >
         <Grid item direction="column">
-          <Button
-            onClick={handleAnalyze}
-            disabled={isClicked || Boolean(!selectedStream.fileId)}
-          >
-            분석하기
-          </Button>
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              onClick={handleAnalyze}
+              disabled={isClicked || Boolean(!selectedStream.fileId)}
+            >
+              분석하기
+            </Button>
+          </div>
           <div>
             <FormControlLabel
               control={(
