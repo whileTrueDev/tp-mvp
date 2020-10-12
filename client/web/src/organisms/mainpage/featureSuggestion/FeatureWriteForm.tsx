@@ -1,15 +1,13 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import useAxios from 'axios-hooks';
 import Button from '../../../atoms/Button/Button';
-import { featureReducer, initialState } from './Feature.reducer';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -55,7 +53,7 @@ export default function FeatureWriteForm(props: any) {
   });
   const history = useHistory();
   const classes = useStyles();
-  const [selectedFile, setSelectedFile] = React.useState(null);
+  // const [selectedFile, setSelectedFile] = React.useState(null);
   const imageObject = React.useRef<HTMLInputElement | null>(null);
   const handleImageUpload = () => {
     if (imageObject && imageObject.current && imageObject.current.files) {
@@ -87,12 +85,12 @@ export default function FeatureWriteForm(props: any) {
     if (editData) {
       editPostRequest({ data: [state, editData.id] }).then(() => {
         alert('수정 되었습니다');
-        history.push('/feature-suggestion');
+        window.location.replace('/feature-suggestion');
       });
     } else {
       postRequest({ data: state }).then(() => {
         alert('등록 되었습니다');
-        history.push('/feature-suggestion');
+        window.location.replace('/feature-suggestion');
       });
     }
     // if (imageObject && imageObject.current) {
@@ -145,7 +143,7 @@ export default function FeatureWriteForm(props: any) {
             }}
           >
             <option value="0">홈페이지 개선</option>
-            <option value="1">편집전 관련</option>
+            <option value="1">편집점 관련</option>
             <option value="2">기타</option>
           </Select>
         </FormControl>

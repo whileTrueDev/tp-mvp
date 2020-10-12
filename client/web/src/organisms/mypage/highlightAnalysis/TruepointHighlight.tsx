@@ -144,7 +144,7 @@ export default function TruepointHighlight({
         <Grid container direction="column" alignItems="center" justify="center">
           <Grid container direction="row" alignItems="center" justify="space-around">
             <Grid item md={7}>
-              { point.rank && (
+              {point.rank && (
                 <div className={classes.contentLeft}>
                   <div className={classes.rank}>
                     {point.rank}

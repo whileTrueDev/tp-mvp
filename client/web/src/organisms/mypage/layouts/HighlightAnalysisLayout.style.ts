@@ -1,16 +1,14 @@
 import { makeStyles } from '@material-ui/core';
 
 const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
-  root: {
-    padding: 30
-  },
+  root: { padding: theme.spacing(4) },
   title: {
     fontWeight: 'bold',
     fontSize: '30px'
   },
   sub: {
     fontSize: 22,
-    color: '#4d4f5c'
+    color: theme.palette.text.secondary
   },
   checkedStream: {
     padding: 30
@@ -18,15 +16,14 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
   checkedStreamFont: {
     fontSize: 22,
     fontweight: 'bold',
-    color: '#4d4f5c'
+    color: theme.palette.text.secondary
   },
   cardText: {
     fontsize: 40,
     fontWeight: 'bold',
-    color: '#4d4f5c'
+    color: theme.palette.text.secondary
   },
   card: {
-    width: '15vw',
     height: '2vw',
     paddingTop: 6,
     textAlign: 'center',

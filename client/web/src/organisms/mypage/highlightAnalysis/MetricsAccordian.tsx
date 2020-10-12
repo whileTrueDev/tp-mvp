@@ -91,7 +91,7 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
-                { point.rank && (
+                {point.rank && (
                   <div className={classes.contentLeft}>
                     <div className={classes.rank}>
                       {point.rank}
@@ -146,7 +146,7 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
             />
             <Grid container direction="row" alignItems="center" justify="space-around">
               <Grid item md={7}>
-                { point2.rank && (
+                {point2.rank && (
                   <div className={classes.contentLeft}>
                     <div className={classes.rank}>
                       {point2.rank}

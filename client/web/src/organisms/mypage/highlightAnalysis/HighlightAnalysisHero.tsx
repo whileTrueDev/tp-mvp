@@ -14,7 +14,6 @@ export default function HighlightAnalysisHero(): JSX.Element {
         justify="center"
         alignItems="center"
         spacing={3}
-        className={classes.paper}
       >
         <Grid item xs={3}>
           <Card className={classes.leftCard}>

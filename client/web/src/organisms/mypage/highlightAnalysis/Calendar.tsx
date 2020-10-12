@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper, Typography, makeStyles } from '@material-ui/core';
-import Axios from 'axios';
+import useAxios from 'axios-hooks';
 import {
   Calendar, MuiPickersUtilsProvider
 } from '@material-ui/pickers';
@@ -34,39 +34,35 @@ function StreamCalendar(props: any) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [isDataLoading, setDataIsLoading] = React.useState(true);
   const [selectedDay, setSelectedDay] = React.useState(0);
-
-  const axios = Axios.create({
-    baseURL: 'http://localhost:3000',
-    withCredentials: true
-  });
-
   const [isDate, setIsDate] = React.useState(false);
-
+  const [, getHighlightList] = useAxios(
+    { url: '/highlight/list' }, { manual: true }
+  );
+  const [, getStreamList] = useAxios(
+    { url: '/highlight/stream' }, { manual: true }
+  );
   const fetchListData = async (name: string, year: string, month: string): Promise<void> => {
-    const result = await axios.get('/highlight/list',
-      {
-        params: {
-          name, year, month
-        }
-      })
-      .then((res) => {
-        if (res.data) {
-          setStreamDays(res.data);
-          setIsLoading(false);
-        }
-      }).catch(() => {
-        alert('오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
-      });
+    getHighlightList({
+      params: {
+        name, year, month
+      }
+    }).then((res) => {
+      if (res.data) {
+        setStreamDays(res.data);
+        setIsLoading(false);
+      }
+    }).catch(() => {
+      alert('오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
+    });
   };
 
   const fetchStreamData = async (name: string, year: string, month: string, day: string): Promise<void> => {
     // 달력-> 날짜 선택시 해당 일의 방송을 로드
-    const result = await axios.get('/highlight/stream',
-      {
-        params: {
-          name, year, month, day
-        }
-      })
+    getStreamList({
+      params: {
+        name, year, month, day
+      }
+    })
       .then((res) => {
         if (res.data.length !== 0) {
           setStreamData(res.data);
@@ -125,84 +121,80 @@ function StreamCalendar(props: any) {
     fetchListData('234175534', '2020', '09');
   }, []);
   return (
-    <Grid container>
+    <div>
       {!isLoading ? (
-        <Grid item xs={12}>
-          <Paper style={{ width: '50vw', padding: 20 }}>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <Typography variant="h5">
-                날짜선택
-              </Typography>
-              <Grid
-                container
-                direction="row"
-                justify="flex-start"
-                alignItems="center"
-              >
-                <Grid item>
-                  <Calendar
-                    date={selectedDate}
-                    onChange={handleDateChange}
-                    disableFuture
-                    onMonthChange={handleMonthChange}
-                    renderDay={(day: any, selectedDate, dayInCurrentMonth, dayComponent) => {
-                      const newDate = new Date(day);
-                      const isStream = streamDays.includes(Number(newDate.getDate()));
-                      return (
-                        (isStream && dayInCurrentMonth) ? (
-                          <div
-                            className={classes.day}
-                          >
-                            {dayComponent}
-                          </div>
-                        ) : (<div>{dayComponent}</div>)
-                      );
-                    }}
-                  />
-                </Grid>
-                {isDate && !isDataLoading ? (
-                  <Grid item>
-                    <Grid
-                      container
-                      direction="column"
-                      spacing={3}
-                    >
-                      <div>
-                        {streamData.map((value) => (
-                          (selectedDate && value.getState) ? (
-                            <Grid item key={value.fileId}>
-                              <Button
-                                style={{
-                                  width: '32vw', marginLeft: 32, justifyItems: 'flex-start', backgroundColor: '#theme.palette.primary.light'
-                                }}
-                                id={value.fileId}
-                                onClick={() => {
-                                  handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
-                                }}
-                              >
-                                {`${`${String(value.startAt).slice(2, 4)}일  ${value.startAt.slice(4, 6)}:${value.startAt.slice(6, 8)}`} ~ ${String(value.finishAt).slice(2, 4)}일  ${`${value.finishAt.slice(4, 6)}:${value.finishAt.slice(6, 8)}`}`}
-                              </Button>
-                            </Grid>
-                          )
-                            : null
-                        ))}
-                      </div>
-                    </Grid>
-                  </Grid>
-                )
-                  : (
-                    <div style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-                      <Typography variant="h6" style={{ fontWeight: 'bold' }}>
-                        날짜를 선택해주세요.
-                      </Typography>
-                    </div>
-                  )}
+        <Paper style={{ padding: 20 }}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <Typography variant="h5">
+              날짜선택
+            </Typography>
+            <Grid
+              container
+              direction="row"
+              justify="flex-start"
+              alignItems="center"
+            >
+              <Grid item>
+                <Calendar
+                  date={selectedDate}
+                  onChange={handleDateChange}
+                  disableFuture
+                  onMonthChange={handleMonthChange}
+                  renderDay={(day: any, selectedDate, dayInCurrentMonth, dayComponent) => {
+                    const newDate = new Date(day);
+                    const isStream = streamDays.includes(Number(newDate.getDate()));
+                    return (
+                      (isStream && dayInCurrentMonth) ? (
+                        <div
+                          className={classes.day}
+                        >
+                          {dayComponent}
+                        </div>
+                      ) : (<div>{dayComponent}</div>)
+                    );
+                  }}
+                />
               </Grid>
-            </MuiPickersUtilsProvider>
-          </Paper>
-        </Grid>
+              {isDate && !isDataLoading ? (
+                <Grid item>
+                  <Grid
+                    container
+                    direction="column"
+                    spacing={3}
+                  >
+                    <div>
+                      {streamData.map((value) => (
+                        (selectedDate && value.getState) ? (
+                          <Grid item key={value.fileId}>
+                            <Button
+                              style={{
+                                width: '32vw', marginLeft: 32, justifyItems: 'flex-start', backgroundColor: '#theme.palette.primary.light'
+                              }}
+                              id={value.fileId}
+                              onClick={() => {
+                                handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
+                              }}
+                            >
+                              {`${`${String(value.startAt).slice(2, 4)}일  ${value.startAt.slice(4, 6)}:${value.startAt.slice(6, 8)}`} ~ ${String(value.finishAt).slice(2, 4)}일  ${`${value.finishAt.slice(4, 6)}:${value.finishAt.slice(6, 8)}`}`}
+                            </Button>
+                          </Grid>
+                        ) : null
+                      ))}
+                    </div>
+                  </Grid>
+                </Grid>
+              ) : (
+                <div style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                  <Typography variant="h6" style={{ fontWeight: 'bold' }}>
+                    날짜를 선택해주세요.
+                  </Typography>
+                </div>
+              )}
+            </Grid>
+          </MuiPickersUtilsProvider>
+        </Paper>
       ) : null}
-    </Grid>
+    </div>
   );
 }
 

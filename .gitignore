@@ -51,3 +51,6 @@ server/.idea
 __pycache__
 analyzer/highlightAnalyzer/.pylintrc
 analyzer/highlightAnalyzer/user_dictionary.txt
+
+# IDE -Visual Studio
+.vs

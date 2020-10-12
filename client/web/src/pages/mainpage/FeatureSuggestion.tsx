@@ -3,15 +3,14 @@ import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
-
-import Appbar from '../../organisms/shared/Appbar';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
 import FeatureCategoryButtonGroup from '../../organisms/mainpage/featureSuggestion/FeatureCategoryButtonGroup';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
-import { FeatureData } from '../../interfaces/Feature';
+import { FeatureData } from '../../interfaces/FeatureSuggestion';
 import Button from '../../atoms/Button/Button';
 import useAuthContext from '../../utils/hooks/useAuthContext';
+import Appbar from '../../organisms/shared/Appbar';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -46,13 +45,20 @@ export default function FeatureSuggestion(): JSX.Element {
   const [{ loading, data }] = useAxios<FeatureData[]>({
     url: '/feature', method: 'GET'
   });
-
+  const categoryTabSwitch = (value: number) => {
+    switch (value) {
+      case 0: return (<Typography> 홈페이지관련 </Typography>);
+      case 1: return (<Typography> 편집점관련 </Typography>);
+      case 2: return (<Typography> 기타 </Typography>);
+      default: return (<Typography> 전체 </Typography>);
+    }
+  };
   return (
     <div>
-      {/* <Appbar /> */}
+      <Appbar />
       <ProductHero
         title="기능제안"
-        content="기능 개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
+        content={'트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해주세요.\n궁금하신 사항은 고객센터로 연락 부탁드립니다.'}
       />
       <section className={classes.featureSection}>
         <div className={classes.featureContainer}>
@@ -69,9 +75,11 @@ export default function FeatureSuggestion(): JSX.Element {
                   .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))}
                 onOtherFeatureClick={handleFeatureClick}
                 onBackClick={handleResetFeatureSelect}
+                categoryTabSwitch={categoryTabSwitch}
               />
             </div>
-          ) : (
+          )
+            : (
               <>
                 {/* 공지사항 목록 보기 */}
                 <div className={classes.contents}>
@@ -83,6 +91,7 @@ export default function FeatureSuggestion(): JSX.Element {
                       : []}
                     onChange={handleCategorySelect}
                     selected={selectedCategory}
+                    categoryTabSwitch={categoryTabSwitch}
                   />
                 </div>
 
@@ -95,6 +104,7 @@ export default function FeatureSuggestion(): JSX.Element {
                         .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))
                       : []}
                     onRowClick={handleFeatureClick}
+                    categoryTabSwitch={categoryTabSwitch}
                   />
 
                 </div>

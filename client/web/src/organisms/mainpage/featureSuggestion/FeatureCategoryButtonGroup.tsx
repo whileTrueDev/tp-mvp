@@ -24,19 +24,13 @@ export interface NoticeCategoryButtonGroupProps {
   onChange: (str: string) => void;
   selected: string;
   categories: string[];
+  categoryTabSwitch: (value: number) => JSX.Element;
 }
 export default function FeatureCategoryButtonGroup({
-  onChange, selected, categories
+  onChange, selected, categories, categoryTabSwitch
 }: NoticeCategoryButtonGroupProps): JSX.Element {
   const classes = useStyles();
-  const categoryTab = (value: number) => {
-    switch (value) {
-      case 0: return (<Typography> 홈페이지관련 </Typography>);
-      case 1: return (<Typography> 편집점관련 </Typography>);
-      case 2: return (<Typography> 기타 </Typography>);
-      default: return (<Typography> 전체 </Typography>);
-    }
-  };
+
   return (
     <div className={classes.container}>
       {['전체'].concat(categories).map((category) => (
@@ -50,7 +44,7 @@ export default function FeatureCategoryButtonGroup({
           })}
         >
           <Typography className={classnames({ [classes.selectedText]: selected === category })}>
-            {categoryTab(Number(category))}
+            {categoryTabSwitch(Number(category))}
           </Typography>
         </Button>
       ))}

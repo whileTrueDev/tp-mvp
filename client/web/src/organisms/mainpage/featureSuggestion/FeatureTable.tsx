@@ -5,9 +5,8 @@ import {
   TableFooter, Typography, Table, TableBody, TableCell,
   TableContainer, TableHead, TableRow, TablePagination, Paper
 } from '@material-ui/core';
-import { FiberNew } from '@material-ui/icons';
 import TablePaginationActions from '../../../atoms/Table/TablePaginationActions';
-import { FeatureData } from '../../../interfaces/Feature';
+import { FeatureData } from '../../../interfaces/FeatureSuggestion';
 
 const useStyles = makeStyles((theme) => ({
   container: { boxShadow: 'none' },
@@ -16,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
   },
-  tableRow: { height: 80, },
+  tableRow: { height: 40, },
   tablefooterRow: { height: 40 },
   important: {
     backgroundColor: theme.palette.action.hover,
@@ -36,23 +35,22 @@ const useStyles = makeStyles((theme) => ({
   newIcon: { marginLeft: theme.spacing(1) }
 }));
 
-export interface FeatureTable<T> {
+export interface FeatureTableProps<T> {
   data: T[];
   onRowClick: (num: number) => void;
+  categoryTabSwitch: (value: number) => JSX.Element;
+
 }
 export default function FeatureTable<T extends FeatureData>({
   data,
   onRowClick,
-}: FeatureTable<T>): JSX.Element {
+  categoryTabSwitch,
+}: FeatureTableProps<T>): JSX.Element {
   const classes = useStyles();
-
-  // For "NEW" flag
-  const daysAgo7 = new Date();
-  daysAgo7.setDate(daysAgo7.getDate() - 7);
 
   // For Pagination
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const emptyRows = rowsPerPage - Math.min(
     rowsPerPage, data.length - page * rowsPerPage
@@ -67,14 +65,6 @@ export default function FeatureTable<T extends FeatureData>({
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-  const categoryTab = (value: number) => {
-    switch (value) {
-      case 0: return (<Typography> 홈페이지관련 </Typography>);
-      case 1: return (<Typography> 편집점관련 </Typography>);
-      case 2: return (<Typography> 기타 </Typography>);
-      default: return (<Typography> 기타 </Typography>);
-    }
   };
   const progressTab = (value: number) => {
     switch (value) {
@@ -104,7 +94,6 @@ export default function FeatureTable<T extends FeatureData>({
           )
             .map((row) => {
               const createdAt = new Date(row.createdAt);
-              const isNew = createdAt.getTime() > daysAgo7.getTime();
               return (
                 <TableRow
                   key={row.id}
@@ -116,7 +105,7 @@ export default function FeatureTable<T extends FeatureData>({
                     <Typography>{row.id}</Typography>
                   </TableCell>
                   <TableCell align="center">
-                    {categoryTab(Number(row.category))}
+                    {categoryTabSwitch(Number(row.category))}
                   </TableCell>
                   <TableCell align="center">
                     <Typography>{row.author}</Typography>
@@ -127,7 +116,6 @@ export default function FeatureTable<T extends FeatureData>({
                       className={classes.linkText}
                     >
                       {row.title}
-                      {isNew ? <FiberNew fontSize="large" className={classes.newIcon} color="secondary" /> : ''}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">

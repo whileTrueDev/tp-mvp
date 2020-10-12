@@ -8,7 +8,7 @@ import {
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import Divider from '@material-ui/core/Divider';
 import Card from '../../../atoms/Card/Card';
-import { FeatureData } from '../../../interfaces/Feature';
+import { FeatureData } from '../../../interfaces/FeatureSuggestion';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import FeatureWriteForm from './FeatureWriteForm';
 
@@ -46,10 +46,11 @@ export interface FeatureDetailProps {
   selectedSuggestionId: string;
   onBackClick: () => void;
   onOtherFeatureClick: (num: number) => void;
+  categoryTabSwitch: (value: number) => JSX.Element;
 }
 export default function FeatureDetail({
   data, onBackClick, selectedSuggestionId,
-  onOtherFeatureClick
+  onOtherFeatureClick, categoryTabSwitch
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
@@ -76,6 +77,7 @@ export default function FeatureDetail({
     const doConfirm = window.confirm('삭제 하시겠습니까?');
     if (doConfirm) {
       deleteRequest({ params: { data: currentSuggestion?.id } });
+      window.location.replace('/feature-suggestion');
     }
   };
   return (
@@ -88,7 +90,8 @@ export default function FeatureDetail({
                 {currentSuggestion?.title}
               </Typography>
               <Typography color="textSecondary">
-                {`${currentSuggestion?.category} • ${new Date(currentSuggestion!.createdAt).toLocaleString()}`}
+                {categoryTabSwitch(Number(currentSuggestion?.category))}
+                {new Date(currentSuggestion!.createdAt).toLocaleString()}
               </Typography>
             </div>
 

@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import Axios from 'axios';
+import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 // import * as down from 'js-file-download';
@@ -32,10 +32,7 @@ interface PointType {
 
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
-  const axios = Axios.create({
-    baseURL: 'http://localhost:3000',
-    withCredentials: true
-  });
+
   const data: StreamDate = {
     fullDate: new Date(),
     startAt: '',
@@ -51,7 +48,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     csvCheckBox: true,
     txtCheckBox: true,
   });
-  const [downloadUrl, setDownloadUrl] = React.useState<string>('');
+  // const [downloadUrl, setDownloadUrl] = React.useState<string>('');
   const handleDatePick = (fullDate: Date, startAt: string, finishAt: string, fileId: string) => {
     // const streamId = fileId.split('_')[2].split('.')[0];
     setSelectedStream({
@@ -61,6 +58,15 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       fileId,
     });
   };
+  const [, doExport] = useAxios(
+    { url: '/highlight/export', method: 'get' }, { manual: true }
+  );
+  const [, getHighlightPoints] = useAxios(
+    { url: '/highlight/highlight-points', method: 'get' }, { manual: true }
+  );
+  const [, getMetricsData] = useAxios(
+    { url: '/highlight/metrics', method: 'get' }, { manual: true }
+  );
   const makeMonth = (month: number) => {
     if (month < 10) {
       const edit = `0${month}`;
@@ -149,22 +155,21 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     //   }
     //   return bytes;
     // }
-    const result = await axios.get('/highlight/export',
-      {
-        params: {
-          id, year, month, day, streamId, srt, txt, csv
-        },
-      })
+    doExport({
+      params: {
+        id, year, month, day, streamId, srt, txt, csv
+      }
+    })
       .then((res) => {
         console.log(res.data);
         const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
-        const filename = res.headers;
+        // const filename = res.headers;
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', 'test.zip');
         document.body.appendChild(link);
         link.click();
-        setDownloadUrl(url);
+        // setDownloadUrl(url);
       }).catch((err) => {
         console.log(err);
         alert('지금은 다운로드 할 수 없습니다.');
@@ -172,12 +177,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
   const fetchHighlightData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
     // 134859149/2020/08/01/09161816_09162001_39667416302.json
-    const result = await axios.get('/highlight/highlight-points',
-      {
-        params: {
-          id, year, month, day, fileId
-        }
-      })
+    getHighlightPoints({
+      params: {
+        id, year, month, day, fileId
+      }
+    })
       .then((res) => {
         if (res.data) {
           setHighlightData(res.data);
@@ -188,12 +192,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   const fetchMetricsData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    const result = await axios.get('/highlight/metrics',
+    getMetricsData(
       {
         params: {
           id, year, month, day, fileId
         }
-      })
+      }
+    )
       .then((res) => {
         if (res.data) {
           setMetricsData(getMetricsPoint(res.data));
@@ -221,12 +226,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   return (
-    <Grid
-      container
-      direction="column"
-    >
-      <Paper className={classes.root}>
-        <Grid item className={classes.root}>
+    <Paper className={classes.root}>
+      <Grid
+        container
+        direction="column"
+      >
+        <Grid item xs={12} className={classes.root}>
           <Grid item xs={3}>
             <Divider variant="middle" component="hr" />
           </Grid>
@@ -239,89 +244,101 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Divider variant="middle" />
         </Grid>
         <Grid
+          item
+          xs={12}
           container
           direction="row"
           alignItems="center"
         >
-          <Grid item className={classes.root}>
+          <Grid item xs={12} className={classes.root}>
             <Typography variant="h4" className={classes.checkedStreamFont}>
               선택된 방송 &gt;
             </Typography>
           </Grid>
           <Grid item>
             {selectedStream.fileId
-              ? (
+              && (
                 <Card className={classes.card}>
                   <Typography className={classes.cardText}>
                     {`${`${String(selectedStream.startAt).slice(2, 4)}일  ${selectedStream.startAt.slice(4, 6)}:${selectedStream.startAt.slice(6, 8)}`} ~ ${String(selectedStream.finishAt).slice(2, 4)}일  ${`${selectedStream.finishAt.slice(4, 6)}:${selectedStream.finishAt.slice(6, 8)}`}`}
                   </Typography>
                 </Card>
-              ) : (null)}
+              )}
           </Grid>
         </Grid>
         <Grid
+          item
+          xs={12}
           container
+          className={classes.root}
           direction="column"
           justify="flex-start"
-          alignItems="flex-end"
         >
-          <Grid item className={classes.root}>
-            <Calendar
-              handleDatePick={handleDatePick}
-              setSelectedStream={setSelectedStream}
-              selectedStream={selectedStream}
+          <Calendar
+            handleDatePick={handleDatePick}
+            setSelectedStream={setSelectedStream}
+            selectedStream={selectedStream}
+          />
+        </Grid>
+      </Grid>
+
+      <Grid
+        item
+        container
+        xs={12}
+        className={classes.root}
+        justify="flex-end"
+      >
+        <Grid item direction="column">
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              onClick={handleAnalyze}
+              disabled={isClicked || Boolean(!selectedStream.fileId)}
+            >
+              분석하기
+            </Button>
+          </div>
+          <div>
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={isChecked.srtCheckBox}
+                  onChange={handleCheckbox}
+                  name="srtCheckBox"
+                  color="primary"
+                />
+              )}
+              label="srt"
             />
-          </Grid>
-          <Grid item xs={3}>
-            <div>
-              <Button
-                onClick={handleAnalyze}
-                disabled={isClicked || Boolean(!selectedStream.fileId)}
-              >
-                분석하기
-              </Button>
-              <div>
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      checked={isChecked.srtCheckBox}
-                      onChange={handleCheckbox}
-                      name="srtCheckBox"
-                      color="primary"
-                    />
-                  )}
-                  label="srt"
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={isChecked.txtCheckBox}
+                  onChange={handleCheckbox}
+                  name="txtCheckBox"
+                  color="primary"
                 />
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      checked={isChecked.txtCheckBox}
-                      onChange={handleCheckbox}
-                      name="txtCheckBox"
-                      color="primary"
-                    />
-                  )}
-                  label="txt"
+              )}
+              label="txt"
+            />
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={isChecked.csvCheckBox}
+                  onChange={handleCheckbox}
+                  name="csvCheckBox"
+                  color="primary"
                 />
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      checked={isChecked.csvCheckBox}
-                      onChange={handleCheckbox}
-                      name="csvCheckBox"
-                      color="primary"
-                    />
-                  )}
-                  label="csv"
-                />
-                <Button
-                  onClick={handleExportClick}
-                >
-                  편집점 내보내기
-                </Button>
-              </div>
-            </div>
-          </Grid>
+              )}
+              label="csv"
+            />
+            <Button
+              onClick={handleExportClick}
+              disabled={isClicked || Boolean(!selectedStream.fileId)}
+            >
+              편집점 내보내기
+            </Button>
+          </div>
         </Grid>
       </Paper>
       <Loading clickOpen={isClicked} lodingTime={10000} />

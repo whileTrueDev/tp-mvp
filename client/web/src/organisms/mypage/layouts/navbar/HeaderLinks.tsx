@@ -26,13 +26,13 @@ export interface Notification {
   dateform: string;
   readState: number;
 }
-
 interface HeaderLinksProps {
   routes: MypageRouteType[];
+  userId: string;
 }
 
 function HeaderLinks(props: HeaderLinksProps): JSX.Element {
-  const { routes } = props;
+  const { routes, userId } = props;
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const classes = useNavbarStyles();
   const {
@@ -41,27 +41,27 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
 
   // 개인 알림 - GET Request
   // userId 쿠키 or 헤더 토큰에서 추출
-  const [{ data: getData, loading: getLoading, error: getError }, excuteGet] = useAxios({
-    url: 'http://localhost:3000/notification',
-    params: {
-      userId: 'testtest',
-    }
-  });
+  const [{ data: getData, loading: getLoading, error: getError }, executeGet] = useAxios({
+    url: '/notification',
+  }, { manual: true });
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
+
   React.useEffect(() => {
+    executeGet({ params: { userId: 'testtest' } });
     if (changeReadState) {
-      excuteGet();
+      executeGet({ params: { userId: 'testtest' } });
       setChangeReadState(false);
     }
-  }, [changeReadState, excuteGet]);
+  }, [changeReadState, executeGet]);
 
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
       <Hidden smDown>
         <Tooltip title="홈으로 이동">
           <IconButton
+            style={{ color: 'white' }}
             aria-label="to-home"
             to={routes[0].layout + routes[0].path}
             component={Link}
@@ -73,7 +73,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
 
       <Tooltip title="알림">
         <IconButton
-          style={{ marginRight: '27px' }}
+          style={{ marginRight: '24px', color: 'white' }}
           aria-label="notifications"
           ref={notificationRef}
           onClick={(e): void => {
@@ -85,8 +85,13 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
               ? (getData.filter((noti: Notification) => noti.readState === 0).length)
               : (null)}
             color="secondary"
-          />
-          <Notifications className={classes.rightGridIcon} />
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <Notifications className={classes.rightGridIcon} />
+          </Badge>
         </IconButton>
       </Tooltip>
 
