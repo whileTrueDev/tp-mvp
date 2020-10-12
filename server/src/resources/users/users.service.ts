@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
-import { CheckIdType } from '../../interfaces/certification.interface';
+import { SubscribeEntity } from './entities/subscribe.entity';
 
 @Injectable()
 export class UsersService {
@@ -13,6 +13,8 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(UserTokenEntity)
     private readonly userTokensRepository: Repository<UserTokenEntity>,
+    @InjectRepository(SubscribeEntity)
+    private readonly subscribeRepository: Repository<SubscribeEntity>,
   ) {}
 
   async findAll(): Promise<UserEntity[]> {
@@ -20,8 +22,15 @@ export class UsersService {
   }
 
   async findOne(userId: string): Promise<UserEntity> {
-    const user = this.usersRepository.findOne(userId);
+    const user = await this.usersRepository.findOne(userId);
     return user;
+  }
+
+  async findSubscriberInfo(userId: string)
+  : Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
+    return this.usersRepository.findOne(userId, {
+      select: ['nickName', 'afreecaId', 'youtubeId', 'twitchId']
+    });
   }
 
   async remove(userid: string): Promise<void> {
@@ -94,6 +103,49 @@ export class UsersService {
     } catch {
       throw new HttpException('findPW error', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  /*
+    input   : userId (로그인한 유저 아이디) 
+    output  : [{userId, subscribeperiod}, {userId, subscribeperiod} ... ]
+              해당 유저가 구독한 유저 정보 리스트 {userId, subscribeperiod}
+  */
+  async findUserSubscribeInfo(userId: string)
+  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
+    const validUserList = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :id', { id: userId })
+      .andWhere('subscribe.startAt <= NOW()')
+      .andWhere('subscribe.endAt >= NOW()')
+      .getMany();
+
+    const inValidUserList = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :id', { id: userId })
+      .andWhere('subscribe.startAt > NOW() OR subscribe.endAt < NOW()')
+      .getMany();
+
+    return { validUserList, inValidUserList };
+  }
+
+  /*
+    input   : userId (로그인한 유저 아이디) ,targetUserId (분석 요청할 유저 아이디)
+    output  : true | false
+  */
+  async checkSubscribeValidation(userId: string, targetId: string): Promise<boolean> {
+    const subscribeResult = await this.subscribeRepository
+      .createQueryBuilder('subscribe')
+      .where('subscribe.userId = :userId', { userId })
+      .andWhere('subscribe.targetUserId = :targetId', { targetId })
+      .andWhere('subscribe.startAt <= NOW()')
+      .andWhere('subscribe.endAt >= NOW()')
+      .getOne();
+
+    if (subscribeResult) {
+      return true;
+    }
+
+    return false;
   }
 
   // **********************************************

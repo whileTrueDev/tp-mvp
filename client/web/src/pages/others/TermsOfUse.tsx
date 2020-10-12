@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, Grid } from '@material-ui/core';
 import shortid from 'shortid';
 import AgreementSource from './source/AgreementSource';
+import AppBar from '../../organisms/shared/Appbar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,12 +57,14 @@ const useStyles = makeStyles((theme) => ({
 interface Terms {
  title: string,
  text : string
-}
+
+    }
 
 export default function TermsOfUse(): JSX.Element {
   const classes = useStyles();
   return (
     <div>
+      <AppBar />
       <div className={classes.contentBox}>
         <div className={classes.root}>
           <Grid container direction="row" alignItems="center" justify="space-between">
@@ -71,9 +74,8 @@ export default function TermsOfUse(): JSX.Element {
           </Grid>
           <Grid container>
             <div className={classes.root}>
-              <h2 className={classes.h2}>크리에이터 계약</h2>
               <div className={classes.content}>
-                {AgreementSource[0].map((term: Terms) => (
+                {AgreementSource.map((term: Terms) => (
                   <div key={shortid.generate()} className={classes.policyWrapper}>
                     <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
                     <div key={shortid.generate()} className={classes.text}>
@@ -83,46 +85,7 @@ export default function TermsOfUse(): JSX.Element {
                     </div>
                   </div>
                 ))}
-              </div>
-              <h2 className={classes.h2}>합의내용</h2>
-              <div className={classes.content}>
-                {AgreementSource[1].map((term: Terms) => (
-                  <div key={shortid.generate()} className={classes.policyWrapper}>
-                    <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
-                    <div key={shortid.generate()} className={classes.text}>
-                      {term.text.split('\n').map((sentence) => (
-                        <p key={shortid.generate()}>{sentence}</p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <h2 className={classes.h2}>개인 정보 보호 계약</h2>
-              <div className={classes.content}>
-                {AgreementSource[2].map((term: Terms) => (
-                  <div key={shortid.generate()} className={classes.policyWrapper}>
-                    <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
-                    <div key={shortid.generate()} className={classes.text}>
-                      {term.text.split('\n').map((sentence) => (
-                        <p key={shortid.generate()}>{sentence}</p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <h2 className={classes.h2}>세금안내</h2>
-              <div className={classes.content}>
-                {AgreementSource[3].map((term: Terms) => (
-                  <div key={shortid.generate()} className={classes.policyWrapper}>
-                    <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
-                    <div key={shortid.generate()} className={classes.text}>
-                      {term.text.split('\n').map((sentence) => (
-                        <p key={shortid.generate()}>{sentence}</p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              </div>       
             </div>
           </Grid>
         </div>

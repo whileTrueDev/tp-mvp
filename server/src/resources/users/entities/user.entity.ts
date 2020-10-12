@@ -1,12 +1,14 @@
 import {
-  Entity, Column, OneToOne, CreateDateColumn, UpdateDateColumn
+  Entity, Column, OneToOne, CreateDateColumn, UpdateDateColumn, OneToMany
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 // Related Entities
+import { IsOptional } from 'class-validator';
 import { PlatformTwitchEntity } from './platformTwitch.entity';
 import { PlatformAfreecaEntity } from './platformAfreeca.entity';
 import { PlatformYoutubeEntity } from './platformYoutube.entity';
+import { SubscribeEntity } from './subscribe.entity';
 
 @Entity({ name: 'UserTest' })
 export class UserEntity {
@@ -72,4 +74,7 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updatedAt?: Date;
+
+  @OneToMany((type) => SubscribeEntity, (subscribe) => subscribe.user)
+  subscribe? : SubscribeEntity[];
 }
