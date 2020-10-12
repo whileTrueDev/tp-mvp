@@ -1,4 +1,5 @@
-import React, {useRef, useEffect} from 'react';
+import React, { useRef, useEffect } from 'react';
+import useTheme from '@material-ui/core/styles/useTheme';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
@@ -44,6 +45,7 @@ export default function Chart({
   handlePage,
   pageSize
 }: ChartProps): JSX.Element {
+  const theme = useTheme();
 
   const chartRef = useRef<any>(null);
 
@@ -57,10 +59,24 @@ export default function Chart({
     dateAxis.skipEmptyPeriods = true;
     dateAxis.tooltipDateFormat = 'HH:mm:ss';
     dateAxis.dateFormats.setKey('second', 'yyyy-MM-dd HH:mm:ss');
+    // 라벨 글자 색 변경
+    dateAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
 
     chart.cursor = new am4charts.XYCursor();
     chart.cursor.xAxis = dateAxis;
     chart.scrollbarX = new am4core.Scrollbar();
+    // scrollbar 색 변경
+    chart.scrollbarX.background.fill = am4core.color(theme.palette.action.disabled);
+    chart.scrollbarX.thumb.background.fill = am4core.color(theme.palette.action.focus);
+    const scrollbarThumbHover = chart.scrollbarX.thumb.background.states.getKey('hover');
+    const scrollbarHover = chart.scrollbarX.background.states.getKey('hover');
+    if (scrollbarHover) {
+      scrollbarHover.properties.fill = am4core.color(theme.palette.action.hover);
+    }
+    if (scrollbarThumbHover) {
+      scrollbarThumbHover.properties.fill = am4core.color(theme.palette.action.hover);
+    }
+
     chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
     const setSeries = (metricsType: string, getChart: am4charts.XYChart): void => {
@@ -69,6 +85,9 @@ export default function Chart({
       if (chart.yAxes.indexOf(valueAxis) !== 0) {
         valueAxis.syncWithAxis = getChart.yAxes.getIndex(0);
       }
+      // 라벨 글자 색 변경
+      valueAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
+
       const series : any = getChart.series.push(new am4charts.LineSeries());
       series.yAxis = valueAxis;
       series.dataFields.valueY = setting.valueY;
@@ -97,7 +116,7 @@ export default function Chart({
           start_index: point.start_index,
           end_index: point.end_index,
           index: point.tableData.id
-        })
+        });
         handlePage(Math.floor(point.tableData.id / pageSize));
       });
 
@@ -110,12 +129,11 @@ export default function Chart({
         series2.dataFields.dateX = setting.dateX;
         series2.data = [data[highlight.index]];
         series2.stroke = am4core.color(setting.tooltipColor);
-        series2.showTooltipOn = 'always'
+        series2.showTooltipOn = 'always';
         const bullet2 = series2.bullets.push(new am4charts.CircleBullet());
         bullet2.circle.strokeWidth = 6;
         bullet2.circle.radius = 12;
         bullet2.circle.fill = am4core.color(setting.tooltipColor);
-        
       }
     };
 
@@ -125,10 +143,10 @@ export default function Chart({
 
     return () => {
       chart.dispose();
-    }
-  }, [highlight, pageSize, chartType, data, handleClick, handlePage])
+    };
+  }, [highlight, pageSize, chartType, data, handleClick, handlePage, theme]);
 
   return (
-    <div id={`${chartType}chartdiv`} style={{width: '100%', height: 350}} />
+    <div id={`${chartType}chartdiv`} style={{ width: '100%', height: 350 }} />
   );
 }

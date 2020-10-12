@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {rank} from '../../shared/sub/MetricsTable';
+import { rank } from '../../shared/sub/MetricsTable';
 
 interface Graphstyle {
   classes: any,
@@ -35,7 +35,7 @@ export default function HighlightGraph({
     }
     return className;
   }
-  
+
   const dataType = (innerDataType:string): any => {
     let highlightType;
     switch (innerDataType) {
@@ -46,13 +46,13 @@ export default function HighlightGraph({
         highlightType = data.smile_points;
         break;
       default:
-        highlightType = data.highlight_points
+        highlightType = data.highlight_points;
         break;
     }
     return highlightType;
-  }
+  };
 
-  const dataArray = dataType(type)
+  const dataArray = dataType(type);
 
   return (
     <div className={design.root}>
@@ -86,13 +86,14 @@ export default function HighlightGraph({
                   ? (design.clickedPoint)
                   : (caseByPoint(point.score))
               }
-              onClick={() => {handleClick({
-                start_index: point.start_index,
-                end_index: point.end_index,
-                rank: rank(point, [...dataArray]),
-                index
-              });
-              handlePage(Math.floor(index / pageSize));
+              onClick={() => {
+                handleClick({
+                  start_index: point.start_index,
+                  end_index: point.end_index,
+                  rank: rank(point, [...dataArray]),
+                  index
+                });
+                handlePage(Math.floor(index / pageSize));
               }}
             />
           ))}

@@ -167,12 +167,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   return (
-    <Grid
-      container
-      direction="column"
-    >
-      <Paper className={classes.root}>
-        <Grid item className={classes.root}>
+    <Paper className={classes.root}>
+      <Grid
+        container
+        direction="column"
+      >
+        <Grid item xs={12} className={classes.root}>
           <Grid item xs={3}>
             <Divider variant="middle" component="hr" />
           </Grid>
@@ -185,94 +185,103 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Divider variant="middle" />
         </Grid>
         <Grid
+          item
+          xs={12}
           container
           direction="row"
           alignItems="center"
         >
-          <Grid item className={classes.root}>
+          <Grid item xs={12} className={classes.root}>
             <Typography variant="h4" className={classes.checkedStreamFont}>
               선택된 방송 &gt;
             </Typography>
           </Grid>
           <Grid item>
             {selectedStream.fileId
-              ? (
+              && (
                 <Card className={classes.card}>
                   <Typography className={classes.cardText}>
                     {`${`${String(selectedStream.startAt).slice(2, 4)}일  ${selectedStream.startAt.slice(4, 6)}:${selectedStream.startAt.slice(6, 8)}`} ~ ${String(selectedStream.finishAt).slice(2, 4)}일  ${`${selectedStream.finishAt.slice(4, 6)}:${selectedStream.finishAt.slice(6, 8)}`}`}
                   </Typography>
                 </Card>
-              ) : (null)}
+              )}
           </Grid>
         </Grid>
         <Grid
+          item
+          xs={12}
           container
+          className={classes.root}
           direction="column"
           justify="flex-start"
-          alignItems="flex-end"
         >
-          <Grid item className={classes.root}>
-            <Calendar
-              handleDatePick={handleDatePick}
-              setSelectedStream={setSelectedStream}
-              selectedStream={selectedStream}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <div>
-              <Button
-                onClick={handleAnalyze}
-                disabled={isClicked || Boolean(!selectedStream.fileId)}
-              >
-                분석하기
-              </Button>
-              <div>
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      checked={isChecked.srtCheckBox}
-                      onChange={handleCheckbox}
-                      name="srtCheckBox"
-                      color="primary"
-                    />
-                  )}
-                  label="srt"
-                />
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      checked={isChecked.txtCheckBox}
-                      onChange={handleCheckbox}
-                      name="txtCheckBox"
-                      color="primary"
-                    />
-                  )}
-                  label="txt"
-                />
-                <FormControlLabel
-                  control={(
-                    <Checkbox
-                      checked={isChecked.csvCheckBox}
-                      onChange={handleCheckbox}
-                      name="csvCheckBox"
-                      color="primary"
-                    />
-                  )}
-                  label="csv"
-                />
-                <Button
-                  onClick={handleExportClick}
-                  disabled={isClicked || Boolean(!selectedStream.fileId)}
-                >
-                  편집점 내보내기
-                </Button>
-              </div>
-            </div>
-          </Grid>
+          <Calendar
+            handleDatePick={handleDatePick}
+            setSelectedStream={setSelectedStream}
+            selectedStream={selectedStream}
+          />
         </Grid>
-      </Paper>
+      </Grid>
+      <Grid
+        item
+        container
+        xs={12}
+        className={classes.root}
+        direction="column"
+        justify="flex-start"
+      >
+        <div>
+          <Button
+            onClick={handleAnalyze}
+            disabled={isClicked || Boolean(!selectedStream.fileId)}
+          >
+            분석하기
+          </Button>
+          <div>
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={isChecked.srtCheckBox}
+                  onChange={handleCheckbox}
+                  name="srtCheckBox"
+                  color="primary"
+                />
+                )}
+              label="srt"
+            />
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={isChecked.txtCheckBox}
+                  onChange={handleCheckbox}
+                  name="txtCheckBox"
+                  color="primary"
+                />
+                )}
+              label="txt"
+            />
+            <FormControlLabel
+              control={(
+                <Checkbox
+                  checked={isChecked.csvCheckBox}
+                  onChange={handleCheckbox}
+                  name="csvCheckBox"
+                  color="primary"
+                />
+                )}
+              label="csv"
+            />
+            <Button
+              onClick={handleExportClick}
+              disabled={isClicked || Boolean(!selectedStream.fileId)}
+            >
+              편집점 내보내기
+            </Button>
+          </div>
+        </div>
+      </Grid>
       <TruepointHighlight />
       <MetricsAccordian />
-    </Grid>
+    </Paper>
   );
 }

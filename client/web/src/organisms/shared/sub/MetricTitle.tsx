@@ -34,7 +34,7 @@ const styles = makeStyles((theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 18,
     padding: theme.spacing(2),
-    backgroundColor: '#d9dbe6',
+    backgroundColor: theme.palette.action.focus,
     borderRadius: 4,
     marginLeft: theme.spacing(4)
   },
@@ -53,8 +53,8 @@ const styles = makeStyles((theme) => ({
     marginLeft: theme.spacing(10),
     width: 20,
     height: 10,
-    fill: '#d9dbe6',
-    stroke: '#d9dbe6',
+    fill: theme.palette.action.focus,
+    stroke: theme.palette.action.focus,
     strokeWidth: '1px',
   }
 }));
