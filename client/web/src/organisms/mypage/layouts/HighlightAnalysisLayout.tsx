@@ -222,15 +222,15 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           />
         </Grid>
       </Grid>
+
       <Grid
         item
         container
         xs={12}
         className={classes.root}
-        direction="column"
-        justify="flex-start"
+        justify="flex-end"
       >
-        <div>
+        <Grid item direction="column">
           <Button
             onClick={handleAnalyze}
             disabled={isClicked || Boolean(!selectedStream.fileId)}
@@ -246,7 +246,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                   name="srtCheckBox"
                   color="primary"
                 />
-                )}
+              )}
               label="srt"
             />
             <FormControlLabel
@@ -257,7 +257,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                   name="txtCheckBox"
                   color="primary"
                 />
-                )}
+              )}
               label="txt"
             />
             <FormControlLabel
@@ -268,7 +268,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                   name="csvCheckBox"
                   color="primary"
                 />
-                )}
+              )}
               label="csv"
             />
             <Button
@@ -278,7 +278,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               편집점 내보내기
             </Button>
           </div>
-        </div>
+        </Grid>
       </Grid>
       <TruepointHighlight />
       <MetricsAccordian />
