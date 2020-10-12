@@ -8,6 +8,8 @@ import {
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
+import koLocale from 'date-fns/locale/ko';
+
 import useAxios from 'axios-hooks';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -142,7 +144,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
           <Grid
             container
             direction="row"

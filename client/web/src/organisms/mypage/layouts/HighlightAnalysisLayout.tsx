@@ -112,7 +112,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     function insertPoints(target: number, countType: string) {
       const time = getDate(target);
       const returnDict = {
-        start_time: time, end_time: time, start_index: target, end_index: target, score: metric.time_line[target][countType]
+        start_time: time,
+        end_time: time,
+        start_index: target,
+        end_index: target,
+        score: metric.time_line[target][countType]
       };
       return returnDict;
     }
@@ -340,7 +344,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             </Button>
           </div>
         </Grid>
-      </Paper>
+      </Grid>
       <Loading clickOpen={isClicked} lodingTime={10000} />
       { !isClicked && highlightData && metricsData && (
         <>
@@ -348,6 +352,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <MetricsAccordian metricsData={metricsData} />
         </>
       )}
-    </Grid>
+    </Paper>
   );
 }

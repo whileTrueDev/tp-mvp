@@ -5,6 +5,7 @@ import {
   Calendar, MuiPickersUtilsProvider
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import koLocale from 'date-fns/locale/ko';
 import Grid from '@material-ui/core/Grid';
 import Button from '../../../atoms/Button/Button';
 
@@ -124,7 +125,7 @@ function StreamCalendar(props: any) {
     <div>
       {!isLoading ? (
         <Paper style={{ padding: 20 }}>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
             <Typography variant="h5">
               날짜선택
             </Typography>

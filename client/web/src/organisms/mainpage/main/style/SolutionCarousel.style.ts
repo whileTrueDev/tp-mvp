@@ -42,13 +42,14 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
     paddingTop: 20,
     height: 350,
+    outline: 'none',
   },
   content: {
     margin: 'auto',
     width: '90%',
     height: '85%',
     background: 'white',
-    boxShadow: '0px 0px 2px 1px #cfcfcf'
+    boxShadow: '0px 0px 2px 1px #cfcfcf',
   },
   dot: {
     fontFamily: 'AppleSDGothicNeo',

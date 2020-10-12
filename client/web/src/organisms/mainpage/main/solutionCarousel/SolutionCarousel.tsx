@@ -6,7 +6,6 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 export default function SolutionCarousel(): JSX.Element {
-
   const classes = styles();
 
   const settings = {
