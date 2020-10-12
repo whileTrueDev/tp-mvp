@@ -72,7 +72,7 @@ export default function Index({ name, comeData }:
     return () => {
       chart.dispose();
     };
-  }, [name, comeData]);
+  }, [name, comeData, theme.palette.text.secondary]);
 
   return (
     <div>

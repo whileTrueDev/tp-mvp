@@ -129,7 +129,6 @@ export default function Chart({
         series2.dataFields.dateX = setting.dateX;
         series2.data = [data[highlight.index]];
         series2.stroke = am4core.color(setting.tooltipColor);
-        series2.showTooltipOn = 'always';
         const bullet2 = series2.bullets.push(new am4charts.CircleBullet());
         bullet2.circle.strokeWidth = 6;
         bullet2.circle.radius = 12;

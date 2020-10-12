@@ -34,7 +34,7 @@ const styles = makeStyles((theme) => ({
   },
   card: {
     margin: '20px auto',
-    border: '2px solid #929ef8',
+    border: `2px solid ${theme.palette.primary.main}`,
     borderRadius: '10px',
     padding: theme.spacing(8, 3),
     width: '70%',
@@ -49,10 +49,10 @@ const styles = makeStyles((theme) => ({
     minWidth: 30,
     marginTop: theme.spacing(2),
     borderRadius: 3,
-    border: '1px solid #929ef8',
+    border: `1px solid ${theme.palette.primary.main}`,
     width: '100%',
     '&:hover': {
-      border: '1px solid #929ef8'
+      border: `1px solid ${theme.palette.primary.main}`
     }
   },
   textField: {
@@ -61,9 +61,9 @@ const styles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   checkboxRoot: {
-    color: '#929ef8',
+    color: theme.palette.primary.main,
     '&$checked': {
-      color: '#929ef8',
+      color: theme.palette.primary.main,
     },
   },
   detailWrap: {
@@ -75,7 +75,7 @@ const styles = makeStyles((theme) => ({
   checked: {},
   button: {
     width: '200px',
-    background: '#929ef8',
+    background: theme.palette.primary.main,
     color: 'white',
     height: '50px',
     fontSize: '20px',
@@ -87,14 +87,14 @@ const styles = makeStyles((theme) => ({
   detailTitle: {
     fontFamily: 'AppleSDGothicNeo',
     fontWeight: 600,
-    color: '#929ef8',
+    color: theme.palette.primary.main,
     [theme.breakpoints.down('sm')]: {
       fontSize: '15px',
     }
   },
   inputStyle: {
-    boxShadow: '0px 0px 5px #00ace0',
-    border: '1px solid #a8c4f9'
+    boxShadow: `0px 0px 5px ${theme.palette.secondary.light}`,
+    border: `1px solid ${theme.palette.primary.light}`
   },
   buttonProgress: {
     color: theme.palette.primary.main,

@@ -7,6 +7,7 @@ import {
 } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
+import koLocale from 'date-fns/locale/ko';
 import DateFnsUtils from '@date-io/date-fns';
 // axios
 import useAxios from 'axios-hooks';
@@ -286,7 +287,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   };
 
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
       <Grid
         container
         direction="row"

@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 500
@@ -34,7 +33,7 @@ const styles = makeStyles(() => ({
     width: '100%',
     position: 'relative',
     top: -350,
-    background: 'linear-gradient(to bottom, #929ef8, #a8c4f9)'
+    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`
   },
   carousel: {
     display: 'flex',
@@ -43,13 +42,14 @@ const styles = makeStyles(() => ({
     alignItems: 'center',
     paddingTop: 20,
     height: 350,
+    outline: 'none',
   },
   content: {
     margin: 'auto',
     width: '90%',
     height: '85%',
     background: 'white',
-    boxShadow: '0px 0px 2px 1px #cfcfcf'
+    boxShadow: '0px 0px 2px 1px #cfcfcf',
   },
   dot: {
     fontFamily: 'AppleSDGothicNeo',

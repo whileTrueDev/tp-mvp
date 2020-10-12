@@ -1,11 +1,12 @@
 import React from 'react';
-import { TablePagination } from '@material-ui/core';
-import Table from '../../../atoms/Table/MaterialTable';
-import {TableCell, TableRow, TableBody} from '@material-ui/core';
+import {
+  TablePagination, TableCell, TableRow, TableBody
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
+import Table from '../../../atoms/Table/MaterialTable';
 
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
   row: {
     height: 30,
     '&:hover': {
@@ -14,10 +15,9 @@ const styles = makeStyles(() => ({
   },
   selectedRow: {
     height: 30,
-    background: 'linear-gradient(to right, #f0a9b3, #ff3e7a)'
+    background: `linear-gradient(to right, ${theme.palette.success.light}, ${theme.palette.success.main})`
   }
 }));
-
 
 export function highlightTerm(rowData: any): string {
   function getFormatDate(date: Date): string {
@@ -41,7 +41,7 @@ export function highlightTerm(rowData: any): string {
 }
 
 export function rank(row:any, arr:any): number | null {
-  const sorted = arr.sort((a:any, b:any) => {return (b.score - a.score)});
+  const sorted = arr.sort((a:any, b:any) => (b.score - a.score));
   const ranking = sorted.indexOf(row);
   if (ranking > -1) return ranking + 1;
   return null;
@@ -50,13 +50,13 @@ export function rank(row:any, arr:any): number | null {
 interface TableProps {
   metrics: any,
   title: string,
-  row?: any,
+  row: any,
   page: number,
   pageSize: number,
   handlePage: any,
   handlePageSize: any,
   type: string
-  handleClick?: (a: any) => void
+  handleClick: (a: any) => void
 }
 
 export default function MaterialTable({
@@ -76,7 +76,6 @@ export default function MaterialTable({
   return (
     <>
       <Table
-        // isLoading={metrics.loading}
         title={title}
         columns={[
           {
@@ -90,21 +89,7 @@ export default function MaterialTable({
             title: type === '트루포인트 편집점' ? '트루포인트 점수' : '횟수'
           },
         ]}
-        data={metrics}
-        // data={!metrics.loading ? metrics.payload : []}
-        onRowClick={(e, rowData:any) => {
-          if (handleClick) {
-            handleClick({
-              startTime: highlightTerm(rowData).slice(0, 8),
-              endTime: highlightTerm(rowData).slice(9),
-              start_index: rowData.start_index,
-              end_index: rowData.end_index,
-              score: rowData.score,
-              rank: rank(rowData, [...metrics]),
-              index: rowData.tableData.id
-            });
-          }
-        }}
+        data={metrics || []}
         components={{
           Pagination: (props) => (
             <TablePagination
@@ -139,11 +124,13 @@ export default function MaterialTable({
                     }
                   }}
                 >
-                  <TableCell style={{padding: 10}} component="th" scope="row" align="center">
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
                     {highlightTerm(eachRow)}
                   </TableCell>
-                  <TableCell style={{padding: 10}} align="center">
-                    {eachRow.score}
+                  <TableCell style={{ padding: 10 }} align="center">
+                    { type === '트루포인트 편집점'
+                      ? Math.round(eachRow.score * 100)
+                      : eachRow.score}
                   </TableCell>
                 </TableRow>
               ))}
@@ -162,12 +149,12 @@ export default function MaterialTable({
           search: false,
           pageSize: 5,
           pageSizeOptions: [5, 10],
-          headerStyle: { backgroundColor: '#929ef8', color: 'white'},
+          headerStyle: { backgroundColor: '#929ef8', color: 'white' },
           draggable: false,
           paginationType: 'stepped',
         }}
+        style={{ boxShadow: 'none' }}
       />
     </>
   );
 }
-
