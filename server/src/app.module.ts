@@ -7,7 +7,7 @@ import { AdminModule } from './resources/admin/admin.module';
 
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
-import { HighlightModule } from './resources/mypage/highlightPoint/hightlight.module';
+import { HighlightModule } from './resources/highlightPoint/hightlight.module';
 import { FeatureModule } from './resources/featureSuggestion/featureSuggestion.module';
 import { InquiryModule } from './resources/inquiry/inquiry.module';
 import { TypeOrmConfigService } from './config/database.config';

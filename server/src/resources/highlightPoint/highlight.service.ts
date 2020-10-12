@@ -2,7 +2,6 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import * as archiver from 'archiver';
-import { resolve } from 'path';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -10,7 +9,7 @@ const s3 = new AWS.S3();
 @Injectable()
 export class HighlightService {
   async getHighlightData(id, year, month, day, fileId): Promise<any> {
-    const editFile = fileId.split('.')[0];
+    // const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`
@@ -20,7 +19,7 @@ export class HighlightService {
   }
 
   async getMetricsData(id, year, month, day, fileId): Promise<any> {
-    const editFile = fileId.split('.')[0];
+    // const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`
@@ -36,9 +35,9 @@ export class HighlightService {
       Prefix: `highlight_json/${name}/${year}/${month}`
     };
     const keyArray = [];
-    const returnList = await s3.listObjects(params).promise()
+    s3.listObjects(params).promise()
       .then((value) => {
-        value.Contents.map((v) => {
+        value.Contents.forEach((v) => {
           const getKey = v.Key.split('/')[4];
           // 공백제거
           if (v.Key.split('/')[4].length !== 0) {
@@ -49,7 +48,9 @@ export class HighlightService {
     const uniq = [...new Set(keyArray)];
     return uniq;
   }
-  async getStreamListForCalendarBtn(name: string, year: string, month: string, day: string): Promise<string[]> {
+  async getStreamListForCalendarBtn(
+    name: string, year: string, month: string, day: string
+  ): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
@@ -57,15 +58,15 @@ export class HighlightService {
     };
     const keyArray = [];
     const returnArray = [];
-    const returnList = await s3.listObjects(params).promise()
+    await s3.listObjects(params).promise()
       .then((value) => {
-        value.Contents.map((v) => {
+        value.Contents.forEach((v) => {
           const getKey = v.Key.split('/')[5];
           keyArray.push(getKey);
         });
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
-    filterEmpty.map((value) => {
+    filterEmpty.forEach((value) => {
       const startAt = value.split('_')[0];
       const finishAt = value.split('_')[1];
       const fileId = value;
@@ -85,25 +86,31 @@ export class HighlightService {
       Prefix: `export_files/${id}/${year}/${month}/${day}/${streamId}`,
     };
     const getArray = [];
-    const getFiles = await s3.listObjects(getParams).promise()
+    await s3.listObjects(getParams).promise()
       .then((value) => {
-        value.Contents.map((content) => {
+        value.Contents.forEach((content) => {
           getArray.push(content.Key);
         });
       });
     if (!boolSrt) {
-      getArray.map((value, index) => {
-        value.indexOf('srt') !== -1 ? getArray.splice(index, 1) : null;
+      getArray.forEach((value, index) => {
+        if (value.indexOf('srt') !== -1) {
+          getArray.splice(index, 1);
+        }
       });
     }
     if (!boolTxt) {
-      getArray.map((value, index) => {
-        value.indexOf('txt') !== -1 ? getArray.splice(index, 1) : null;
+      getArray.forEach((value, index) => {
+        if (value.indexOf('txt') !== -1) {
+          getArray.splice(index, 1);
+        }
       });
     }
     if (!boolCsv) {
-      getArray.map((value, index) => {
-        value.indexOf('csv') !== -1 ? getArray.splice(index, 1) : null;
+      getArray.forEach((value, index) => {
+        if (value.indexOf('csv') !== -1) {
+          getArray.splice(index, 1);
+        }
       });
     }
 
@@ -112,12 +119,12 @@ export class HighlightService {
   }
   async getSelectedFile(fileName): Promise<any> {
     const zip = archiver.create('zip');
-    const doZip = await Promise.all(fileName.map(async (key) => {
+    Promise.all(fileName.map(async (key) => {
       const getParams = {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
         Key: `${key}`,
       };
-      const getObj = await s3.getObject(getParams).promise()
+      await s3.getObject(getParams).promise()
         .then((value) => {
           const fileData = value.Body.toString('utf-8');
           const toSaveName = key.split('/')[6];
