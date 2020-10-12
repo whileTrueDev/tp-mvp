@@ -12,7 +12,7 @@ const useStyles1 = makeStyles((theme: Theme) => createStyles({
     flexShrink: 0,
     marginLeft: theme.spacing(2.5),
   },
-}),);
+}));
 
 interface TablePaginationActionsProps {
   count: number;
@@ -21,7 +21,7 @@ interface TablePaginationActionsProps {
   onChangePage: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
 }
 
-export default function TablePaginationActions(props: TablePaginationActionsProps):JSX.Element {
+export default function TablePaginationActions(props: TablePaginationActionsProps): JSX.Element {
   const classes = useStyles1();
   const theme = useTheme();
   const {

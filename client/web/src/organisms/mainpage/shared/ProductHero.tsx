@@ -27,14 +27,14 @@ export default function ProductHero({
           ))}
         </div>
         {learnMoreOnClick && (
-        <div className={classes.mainExcept}>
-          <Button className={classes.button} onClick={() => { learnMoreOnClick(); }}>
-            자세히 보기
-          </Button>
-          <div className={classes.buttonLine} />
-          <div className={classes.logoEffect} />
-        </div>
-        ) }
+          <div className={classes.mainExcept}>
+            <Button className={classes.button} onClick={() => { learnMoreOnClick(); }}>
+              자세히 보기
+            </Button>
+            <div className={classes.buttonLine} />
+            <div className={classes.logoEffect} />
+          </div>
+        )}
       </Container>
     </div>
   );

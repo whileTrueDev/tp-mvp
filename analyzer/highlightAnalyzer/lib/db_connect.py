@@ -38,7 +38,7 @@ class DbHandler:
         connection = self.conn()
         select_query = 'SELECT videoId as streamId FROM {platform} WHERE needAnalysis = 1'.format(platform=platform)
         if platform == 'TwitchStreams':
-            select_query = 'SELECT streamId FROM {platform} WHERE needAnalysis = 1'.format(platform=platform)
+            select_query = 'SELECT streamId FROM {platform} WHERE needAnalysis = 1 order by createdAt'.format(platform=platform)
         cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute(select_query)
         data = cursor.fetchall()
@@ -68,9 +68,9 @@ class DbHandler:
         cursor.close()
         connection.close()
 
-    def twitch_chat_call(self, stream_id, platform):
+    def chat_call(self, stream_id, platform):
         '''
-            twitch에 채팅 불러오는 함수
+            채팅 불러오는 함수
         '''
         connection = self.conn()
         result = {}

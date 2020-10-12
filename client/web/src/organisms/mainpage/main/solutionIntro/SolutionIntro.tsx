@@ -15,7 +15,7 @@ export default function SolutionIntro(): JSX.Element {
         <div className={classes.solutionWraper}>
 
           <div className={classes.solution}>
-            <img src="./images/logo/logo192.png" alt="solution_one" className={classes.stepOne} />
+            <img src="/images/main/solutionfirst.svg" alt="solutionFirst" className={classes.stepOne} />
             <div className={classes.mainContent}>
               <div className={classes.eachTitle}>
                 {source.solutionIntro.title.stepOne}
@@ -37,11 +37,11 @@ export default function SolutionIntro(): JSX.Element {
                 <p key={shortid.generate()} className={classes.eachContent}>{row}</p>
               ))}
             </div>
-            <img src="./images/logo/logo192.png" alt="solution_one" className={classes.stepTwo} />
+            <img src="/images/main/solutionsecond.svg" alt="solutionSecond" className={classes.stepTwo} />
           </div>
 
           <div className={classes.solution}>
-            <img src="./images/logo/logo192.png" alt="solution_one" className={classes.stepThree} />
+            <img src="/images/main/solutionthird.svg" alt="solutionThird" className={classes.stepThree} />
             <div className={classes.stepThreeLine} />
             <div className={classes.mainContent}>
               <div className={classes.eachTitle}>
