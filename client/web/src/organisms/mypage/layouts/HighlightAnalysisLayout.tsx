@@ -13,6 +13,7 @@ import Card from '../../../atoms/Card/Card';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
+import Loading from '../../shared/sub/Loading';
 
 interface StreamDate {
   fullDate: Date,
@@ -323,6 +324,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           </Grid>
         </Grid>
       </Paper>
+      <Loading clickOpen={isClicked} lodingTime={10000} />
       { !isClicked && highlightData && metricsData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
