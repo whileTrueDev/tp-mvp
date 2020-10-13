@@ -7,8 +7,8 @@
     "build": "tsc",
     "start": "tsc --watch",
     "start:dev": "tsc --watch",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-pattern '/dist/'",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix --ignore-pattern '/dist/'",
     "lint:commit:fix": "eslint --fix"
   },
   "dependencies": {
