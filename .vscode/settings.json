@@ -1,4 +1,7 @@
 {
+    // staging 없이 커밋시, 자동 staging 이후 커밋 기능 비활성화
+    "git.enableSmartCommit": false,
+    "git.suggestSmartCommit": false,
     "eslint.workingDirectories": [
         {
             "mode": "auto"
