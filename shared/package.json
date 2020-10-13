@@ -1,0 +1,17 @@
+{
+  "name": "@truepoint/shared",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc --watch",
+    "start:dev": "tsc --watch",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "lint:commit:fix": "eslint --fix"
+  },
+  "dependencies": {
+    "class-validator": "^0.12.2"
+  }
+}

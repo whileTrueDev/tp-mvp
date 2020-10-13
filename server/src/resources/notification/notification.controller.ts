@@ -1,16 +1,18 @@
 import {
-  Controller, Get, Body, Patch, Query, UseGuards
+  Controller, Get, Body, Patch, Query, UseGuards,
 } from '@nestjs/common';
+import { FindAllNotifications } from '@truepoint/shared/dist/dto/FindNotification.dto';
+
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { NotificationService } from './notification.service';
 import { NotificationEntity } from './entities/notification.entity';
 import { ChangeReadState } from './dto/changeReadState.dto';
-import { FindAllNotifications } from './dto/findAllNotifications.dto';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
+
   /*
     input   :  userId
     output  :  NotificationEntity[]
@@ -18,7 +20,7 @@ export class NotificationController {
   @Get()
   @UseGuards(JwtAuthGuard)
   findAllUserNotifications(
-    @Query(new ValidationPipe()) findRequest: FindAllNotifications
+    @Query(new ValidationPipe()) findRequest: FindAllNotifications,
   ): Promise<NotificationEntity[]> {
     return this.notificationService.findAll(findRequest);
   }
@@ -30,7 +32,7 @@ export class NotificationController {
   @Patch()
   @UseGuards(JwtAuthGuard)
   updateNotificationReadState(
-    @Body(new ValidationPipe()) changeReadState: ChangeReadState
+    @Body(new ValidationPipe()) changeReadState: ChangeReadState,
   ): Promise<boolean> {
     return this.notificationService.changeReadState(changeReadState);
   }

@@ -1,5 +1,6 @@
 import { RolesBuilder } from 'nest-access-control';
 
+// eslint-disable-next-line no-shadow
 export enum AppRoles {
   USER = 'user',
   GUEST = 'guest'

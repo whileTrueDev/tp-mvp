@@ -1,6 +1,6 @@
 {
-  "name": "server1",
-  "version": "0.0.1",
+  "name": "@truepoint/server",
+  "version": "1.0.0",
   "description": "",
   "author": "",
   "private": true,
@@ -30,6 +30,7 @@
     "@nestjs/passport": "^7.1.0",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/typeorm": "^7.1.0",
+    "@truepoint/shared": "1.0.0",
     "@types/archiver": "^3.1.0",
     "accesscontrol": "^2.2.1",
     "archiver": "^5.0.2",

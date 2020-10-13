@@ -10,7 +10,11 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
-  }
+    "incremental": true,
+  },
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ]
 }
