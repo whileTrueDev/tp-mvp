@@ -18,16 +18,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   subcontent: { marginTop: theme.spacing(2) },
-  content: { width: '100%', marginTop: theme.spacing(4), },
-  selectButton: { width: '100%', padding: 16, borderBottom: `1px solid ${theme.palette.divider}`, },
+  content: { width: '100%', marginTop: theme.spacing(4) },
+  selectButton: { width: '100%', padding: 16, borderBottom: `1px solid ${theme.palette.divider}` },
   fullButton: {
-    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%'
+    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%',
   },
   inputField: { width: '100%' },
-  helper: { marginTop: 32, minWidth: 300, maxWidth: 500, },
+  helper: { marginTop: 32, minWidth: 300, maxWidth: 500 },
 }));
 
 export default function FindAccountForm(): JSX.Element {
@@ -40,18 +40,18 @@ export default function FindAccountForm(): JSX.Element {
   }
   // 에러 알림창 렌더링을 위한 스테이트
   const [helperText, setHelperOpen] = React.useState<string>();
-  function handleHelperOpen(errorMessage:string):void { setHelperOpen(errorMessage); }
-  function handleHelperClose():void { setHelperOpen(undefined); }
+  function handleHelperOpen(errorMessage: string): void { setHelperOpen(errorMessage); }
+  function handleHelperClose(): void { setHelperOpen(undefined); }
 
   // **************************************************
   // Request auth/certification
   const [certificateRequest, doGetRequest] = useAxios(
-    '/auth/certification', { manual: true }
+    '/auth/certification', { manual: true },
   );
 
   // Check registed user
   const [, checkIdRequest] = useAxios(
-    '/users/check-id', { manual: true }
+    '/users/check-id', { manual: true },
   );
 
   // **************************************************
@@ -66,7 +66,7 @@ export default function FindAccountForm(): JSX.Element {
           // user 고유 아이디
           const { userDI } = res.data;
           checkIdRequest({
-            params: { userDI }
+            params: { userDI },
           }).then((inres) => {
             if (inres.data) {
               setUserDI(userDI);
@@ -102,7 +102,7 @@ export default function FindAccountForm(): JSX.Element {
       const confirmPw = passwordConfirmRef.current.value;
       if (pw === confirmPw) {
         doChangePWRequest({
-          data: { userDI: userDIState, password: pw }
+          data: { userDI: userDIState, password: pw },
         }).then((res) => {
           if (res.data) {
             handleNext();
@@ -172,7 +172,7 @@ export default function FindAccountForm(): JSX.Element {
             inputRef={passwordConfirmRef}
             autoComplete="off"
             className={classes.inputField}
-            inputProps={{ required: true, }}
+            inputProps={{ required: true }}
           />
           <Button
             variant="contained"

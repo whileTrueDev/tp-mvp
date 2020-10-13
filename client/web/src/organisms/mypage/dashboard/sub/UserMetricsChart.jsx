@@ -125,7 +125,7 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
                 if (!tempArray[alreadyPushedIndex].youtube) {
                   tempArray[alreadyPushedIndex] = {
                     ...tempArray[alreadyPushedIndex],
-                    [itemName]: item.value
+                    [itemName]: item.value,
                   };
                 } else {
                   // 그 안에 해당 플랫폼 데이터가 있는 경우
@@ -134,7 +134,7 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
                     realName: new Date(item.startedAt).toLocaleTimeString(),
                     [itemName]: item.value,
                     date,
-                    startedAt: item.startedAt
+                    startedAt: item.startedAt,
                   });
                 }
               } else {
@@ -143,7 +143,7 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
                   realName: new Date(item.startedAt).toLocaleTimeString(),
                   [itemName]: item.value,
                   date,
-                  startedAt: item.startedAt
+                  startedAt: item.startedAt,
                 });
               }
             });
@@ -153,7 +153,7 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
             // 배열에 이미 동일한 날의 한개이상의 데이터가 있는 경우
             tempArray[alreadyPushedIndex] = {
               ...tempArray[alreadyPushedIndex],
-              [itemName]: providerData[itemName].value
+              [itemName]: providerData[itemName].value,
             };
           } else {
             count += 1;
@@ -162,7 +162,7 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
               realName: new Date(providerData[itemName].startedAt).toLocaleTimeString(),
               [itemName]: providerData[itemName].value,
               date,
-              startedAt: providerData[itemName].startedAt
+              startedAt: providerData[itemName].startedAt,
             });
           }
         }

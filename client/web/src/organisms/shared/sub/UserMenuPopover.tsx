@@ -28,12 +28,12 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   menulistItem: {
-    height: 40, paddingLeft: theme.spacing(2), paddingRight: theme.spacing(4)
+    height: 40, paddingLeft: theme.spacing(2), paddingRight: theme.spacing(4),
   },
-  menuText: { marginLeft: theme.spacing(2) }
+  menuText: { marginLeft: theme.spacing(2) },
 }));
 
 export interface UserMenuPopperProps extends Omit<PopoverProps, 'children'> {

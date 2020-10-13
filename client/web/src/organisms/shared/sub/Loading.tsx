@@ -15,7 +15,7 @@ const styles = makeStyles((theme) => ({
     transform: 'translate(-50%, -50%)',
     width: '50vmin',
     left: '40%',
-    top: '50%'
+    top: '50%',
   },
   textTop: {
     height: '50%',
@@ -26,7 +26,7 @@ const styles = makeStyles((theme) => ({
     top: 0,
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   textBottom: {
     bottom: 0,
@@ -48,15 +48,15 @@ const styles = makeStyles((theme) => ({
       fontWeight: 800,
       color: theme.palette.primary.main,
       padding: '2vmin 0',
-      position: 'absolute'
-    }
+      position: 'absolute',
+    },
   },
   textTopIn: {
     fontSize: '60px',
     padding: '2vmin 0',
     position: 'absolute',
     '&> span': {
-      display: 'block'
+      display: 'block',
     },
     textAlign: 'right',
     fontWeight: 800,
@@ -75,29 +75,29 @@ const styles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    fontWeight: 800
+    fontWeight: 800,
   },
   '@keyframes showTopText': {
     '0%': {
-      transform: 'translate3d(0, 100%, 0)'
+      transform: 'translate3d(0, 100%, 0)',
     },
     '40%': {
-      transform: 'translate3d(0, 50%, 0)'
+      transform: 'translate3d(0, 50%, 0)',
     },
     '60%': {
-      transform: 'translate3d(0, 50%, 0)'
+      transform: 'translate3d(0, 50%, 0)',
     },
     '100%': {
-      transform: 'translate3d(0, 0, 0)'
-    }
+      transform: 'translate3d(0, 0, 0)',
+    },
   },
   '@keyframes showBottomText': {
     '0%': {
-      transform: 'translate3d(0, -100%, 0)'
+      transform: 'translate3d(0, -100%, 0)',
     },
     '100%': {
-      transform: 'translate3d(0, 0, 0)'
-    }
+      transform: 'translate3d(0, 0, 0)',
+    },
   },
   wordCarousel: {
     height: 65,
@@ -121,16 +121,16 @@ const styles = makeStyles((theme) => ({
       fontWeight: 800,
       height: 45,
       marginBottom: 45,
-      display: 'block'
-    }
+      display: 'block',
+    },
   },
   flip: {
     animation: '$flip 6s cubic-bezier(0.23, 1, 0.32, 1.2) forwards',
     animationDelay: '4s',
-    visibility: 'hidden'
+    visibility: 'hidden',
   },
   styledText: {
-    color: theme.palette.success.main
+    color: theme.palette.success.main,
   },
   '@keyframes flip': {
     '0%': { marginTop: -270, visibility: 'visible' },
@@ -140,18 +140,18 @@ const styles = makeStyles((theme) => ({
     '66%': { marginTop: -90, visibility: 'visible' },
     '71%': { marginTop: 0, visibility: 'visible' },
     '99.99%': { marginTop: 0, visibility: 'visible' },
-    '100%': { marginTop: -270, visibility: 'visible' }
-  }
+    '100%': { marginTop: -270, visibility: 'visible' },
+  },
 }));
 
 interface LoadingComponentProps {
-  clickOpen: boolean,
-  lodingTime: number
+  clickOpen: boolean;
+  lodingTime: number;
 }
 
 export default function LoadingComponent({
   clickOpen,
-  lodingTime
+  lodingTime,
 }: LoadingComponentProps): JSX.Element {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
@@ -187,8 +187,20 @@ export default function LoadingComponent({
                       <stop offset="5%" stopColor="#929ef8" />
                       <stop offset="95%" stopColor="#4b5ac7" />
                     </linearGradient>
-                    <pattern id="wave" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse">
-                      <path id="wavePath" d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z" mask="url(#mask)" fill="url(#gradient)">
+                    <pattern
+                      id="wave"
+                      x="0"
+                      y="0"
+                      width="100"
+                      height="20"
+                      patternUnits="userSpaceOnUse"
+                    >
+                      <path
+                        id="wavePath"
+                        d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z"
+                        mask="url(#mask)"
+                        fill="url(#gradient)"
+                      >
                         <animateTransform
                           attributeName="transform"
                           begin="0s"
@@ -201,8 +213,28 @@ export default function LoadingComponent({
                       </path>
                     </pattern>
                   </defs>
-                  <text textAnchor="middle" x="50" y="15" fontSize="17" fill="url(#wave)" fillOpacity="0.9">TRUEPOINT:</text>
-                  <text textAnchor="middle" x="50" y="15" fontSize="17" fill="url(#gradient)" fillOpacity="0.5">TRUEPOINT:</text>
+                  <text
+                    textAnchor="middle"
+                    x="50"
+                    y="15"
+                    fontSize="17"
+                    fill="url(#wave)"
+                    fillOpacity="0.9"
+                  >
+                    TRUEPOINT:
+
+                  </text>
+                  <text
+                    textAnchor="middle"
+                    x="50"
+                    y="15"
+                    fontSize="17"
+                    fill="url(#gradient)"
+                    fillOpacity="0.5"
+                  >
+                    TRUEPOINT:
+
+                  </text>
                 </svg>
               </div>
             </div>

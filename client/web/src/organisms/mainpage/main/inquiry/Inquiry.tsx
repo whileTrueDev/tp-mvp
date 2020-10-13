@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
   Checkbox, FormControlLabel, Button,
-  Typography, Input, Container, Grid, CircularProgress
+  Typography, Input, Container, Grid, CircularProgress,
 } from '@material-ui/core';
 import styles from '../style/Inquiry.style';
 import axios from '../../../../utils/axios';
@@ -12,7 +12,7 @@ const initialContent = {
   name: '',
   content: '',
   privacyAgreement: false,
-  email: ''
+  email: '',
 };
 
 const InquiryResult: any = {};
@@ -63,7 +63,7 @@ export default function Inquiry(): JSX.Element {
           }
         })
         .catch((err) => {
-          console.log(err.response);
+          // console.log(err.response);
           setLoading(false);
           alert('불편을 드려 대단히 죄송합니다.\n문의 요청중 오류가 발생했습니다.\ntruepointceo@gmail.com 메일로 보내주시면 감사하겠습니다.');
         });

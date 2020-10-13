@@ -1,12 +1,12 @@
 import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import {
-  Card, CardHeader, CardContent
+  Card, CardHeader, CardContent,
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   buttonWrapper: {
-    display: 'flex', alignItems: 'center', flexDirection: 'row-reverse', padding: 5
+    display: 'flex', alignItems: 'center', flexDirection: 'row-reverse', padding: 5,
   },
   root: {
     width: '100%',
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     },
     marginBotton: '20px',
-    marginTop: '20px'
+    marginTop: '20px',
   },
 }));
 
@@ -30,7 +30,7 @@ interface CustomCardProps {
   backgroundColor?: boolean;
 }
 export default function CustomCard({
-  iconComponent, secondComponent, buttonComponent, children, backgroundColor
+  iconComponent, secondComponent, buttonComponent, children, backgroundColor,
 }: CustomCardProps): JSX.Element {
   const classes = useStyles();
   return (

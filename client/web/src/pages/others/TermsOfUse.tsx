@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   contentBox: {
     width: '80%',
     margin: '0px auto',
-    wordBreak: 'keep-all'
+    wordBreak: 'keep-all',
   },
   header: {
     fontWeight: 300,
@@ -23,10 +23,10 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     marginTop: 30,
-    fontSize: 20
+    fontSize: 20,
   },
   policyWrapper: {
-    marginTop: theme.spacing(8)
+    marginTop: theme.spacing(8),
   },
   h1: {
     letterSpacing: 0,
@@ -55,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Terms {
- title: string,
- text : string
+ title: string;
+ text: string;
 
     }
 
@@ -85,7 +85,7 @@ export default function TermsOfUse(): JSX.Element {
                     </div>
                   </div>
                 ))}
-              </div>       
+              </div>
             </div>
           </Grid>
         </div>

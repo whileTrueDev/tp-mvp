@@ -14,14 +14,14 @@ const styles = makeStyles((theme) => ({
     wordBreak: 'keep-all',
     [theme.breakpoints.down('sm')]: {
       fontSize: '25px',
-    }
+    },
   },
   subTitle: {
     fontFamily: 'AppleSDGothicNeo',
     wordBreak: 'keep-all',
     [theme.breakpoints.down('sm')]: {
       fontSize: '20px',
-    }
+    },
   },
   contentWraper: {
     margin: '20px auto',
@@ -30,7 +30,7 @@ const styles = makeStyles((theme) => ({
   },
   cardWrapper: {
     zIndex: 1,
-    width: '100%'
+    width: '100%',
   },
   card: {
     margin: '20px auto',
@@ -40,7 +40,7 @@ const styles = makeStyles((theme) => ({
     width: '70%',
     [theme.breakpoints.down('xs')]: {
       width: '100%',
-    }
+    },
   },
   cardContent: {
     marginBottom: theme.spacing(5),
@@ -52,8 +52,8 @@ const styles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.primary.main}`,
     width: '100%',
     '&:hover': {
-      border: `1px solid ${theme.palette.primary.main}`
-    }
+      border: `1px solid ${theme.palette.primary.main}`,
+    },
   },
   textField: {
     width: '100%',
@@ -70,7 +70,7 @@ const styles = makeStyles((theme) => ({
     padding: '0 16px',
     [theme.breakpoints.down('xs')]: {
       padding: '0 10px',
-    }
+    },
   },
   checked: {},
   button: {
@@ -82,7 +82,7 @@ const styles = makeStyles((theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     [theme.breakpoints.down('xs')]: {
       width: '150px',
-    }
+    },
   },
   detailTitle: {
     fontFamily: 'AppleSDGothicNeo',
@@ -90,11 +90,11 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     [theme.breakpoints.down('sm')]: {
       fontSize: '15px',
-    }
+    },
   },
   inputStyle: {
     boxShadow: `0px 0px 5px ${theme.palette.secondary.light}`,
-    border: `1px solid ${theme.palette.primary.light}`
+    border: `1px solid ${theme.palette.primary.light}`,
   },
   buttonProgress: {
     color: theme.palette.primary.main,

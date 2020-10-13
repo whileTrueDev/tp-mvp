@@ -1,18 +1,20 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Link, Typography } from '@material-ui/core';
+import {
+  Container, Grid, Link, Typography,
+} from '@material-ui/core';
 
 const styles = makeStyles((theme) => ({
   root: {
     width: '90%',
     display: 'flex',
     flexDirection: 'column',
-    margin: '20px auto'
+    margin: '20px auto',
   },
   iconsWrapper: {
     height: 30,
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   icons: {
     display: 'flex',
@@ -62,7 +64,7 @@ const styles = makeStyles((theme) => ({
     listStyle: 'none',
     display: 'flex',
     flexDirection: 'row',
-    padding: 0
+    padding: 0,
   },
   listItem: {
     paddingTop: theme.spacing(2),
@@ -77,7 +79,7 @@ const styles = makeStyles((theme) => ({
       paddingLeft: '15px',
     },
     [theme.breakpoints.down('sm')]: {
-      marginLeft: 15
+      marginLeft: 15,
     },
   },
   corp: {
@@ -95,7 +97,6 @@ const styles = makeStyles((theme) => ({
 }));
 
 export default function Footer(): JSX.Element {
-
   const classes = styles();
 
   return (

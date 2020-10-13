@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   contentBox: {
     width: '80%',
     margin: '0px auto',
-    wordBreak: 'keep-all'
+    wordBreak: 'keep-all',
   },
   header: {
     fontWeight: 300,
@@ -23,10 +23,10 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     marginTop: 30,
-    fontSize: 25
+    fontSize: 25,
   },
   policyWrapper: {
-    marginTop: theme.spacing(8)
+    marginTop: theme.spacing(8),
   },
   h1: {
     letterSpacing: 0,
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   h4: {
     fontSize: 30,
-  }
+  },
 }));
 
 interface Terms {
@@ -65,16 +65,16 @@ export default function PrivacyPolicy(): JSX.Element {
             <div className={classes.root}>
               <div className={classes.content}>
                 {terms.map((term: Terms) => (
-                    <div key={shortid.generate()} className={classes.policyWrapper}>
-                      <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
-                      <h4 className={classes.h4} key={shortid.generate()}>{term.subtitle}</h4>
-                      <div key={shortid.generate()} className={classes.text}>
-                        {term.text.split('\n').map((sentence) => (
-                          <p key={shortid.generate()}>{sentence}</p>
-                        ))}
-                      </div>
+                  <div key={shortid.generate()} className={classes.policyWrapper}>
+                    <h3 className={classes.h3} key={shortid.generate()}>{term.title}</h3>
+                    <h4 className={classes.h4} key={shortid.generate()}>{term.subtitle}</h4>
+                    <div key={shortid.generate()} className={classes.text}>
+                      {term.text.split('\n').map((sentence) => (
+                        <p key={shortid.generate()}>{sentence}</p>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
             </div>
           </Grid>

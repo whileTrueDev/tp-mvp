@@ -4,24 +4,24 @@ import { rank } from '../../shared/sub/MetricsTable';
 
 const styles = makeStyles((theme) => ({
   root: {
-    marginTop: 20
+    marginTop: 20,
   },
   wraper: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 25
+    height: 25,
   },
   wraper2: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    height: 25
+    height: 25,
   },
   firstContent: {
-    width: 550
+    width: 550,
   },
   arrowSVG: {
     width: 30,
@@ -33,41 +33,41 @@ const styles = makeStyles((theme) => ({
   timelineChecker: {
     height: 5,
     backgroundColor: theme.palette.success.main,
-    borderRadius: 3
+    borderRadius: 3,
   },
   lower: {
     backgroundColor: theme.palette.primary.light,
     '&:hover': {
       cursor: 'pointer',
       background: theme.palette.success.main,
-    }
+    },
   },
   middle: {
     backgroundColor: '#7E8CF7',
     '&:hover': {
       cursor: 'pointer',
       backgroundColor: theme.palette.success.main,
-    }
+    },
   },
   high: {
     backgroundColor: '#495DF9',
     '&:hover': {
       cursor: 'pointer',
       backgroundColor: theme.palette.success.main,
-    }
+    },
   },
   clickedPoint: {
     backgroundColor: theme.palette.success.main,
-  }
+  },
 }));
 
 interface Graphstyle {
-  classes: any,
-  highlight: any,
-  handleClick: (a: any) => void,
-  handlePage: any,
-  pageSize: number,
-  data: any,
+  classes: any;
+  highlight: any;
+  handleClick: (a: any) => void;
+  handlePage: any;
+  pageSize: number;
+  data: any;
 }
 
 export default function HighlightGraph({
@@ -76,7 +76,7 @@ export default function HighlightGraph({
   handleClick,
   handlePage,
   pageSize,
-  data
+  data,
 }: Graphstyle): JSX.Element {
   const highlightStyleSheet = makeStyles(classes);
   const design = highlightStyleSheet();
@@ -109,9 +109,14 @@ export default function HighlightGraph({
           <polyline points="0,0 15,10 0,20" />
         </svg>
         <div className={design.grid}>
-          {data.highlight_points.map((point:any, index:number) => (
+          {data.highlight_points.map((point: any, index: number) => (
             <div
-              onKeyDown={() => {}}
+              onKeyDown={() => {
+                /**
+                  * @hwasurr 2020.10.13 eslint error 처리 도중 처리
+                  * 빈 화살표 함수 => 이후 처리 바람
+                  * */
+              }}
               tabIndex={0}
               role="button"
               aria-label="click highlight point"
@@ -119,7 +124,7 @@ export default function HighlightGraph({
               style={{
                 gridColumn: `${point.start_index} / ${Number(point.end_index) + 1}`,
                 gridRow: 1,
-                height: 20
+                height: 20,
               }}
               className={
                 highlight.index === index
@@ -131,7 +136,7 @@ export default function HighlightGraph({
                   start_index: point.start_index,
                   end_index: point.end_index,
                   rank: rank(point, [...data.highlight_points]),
-                  index
+                  index,
                 });
                 handlePage(Math.floor(index / pageSize));
               }}

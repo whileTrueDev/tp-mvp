@@ -14,28 +14,28 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   head: {
     fontSize: '22px',
     fontWeight: 'bold',
     marginTop: theme.spacing(1),
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
   card: {
     height: '94px',
     borderRadius: '4px',
     backgroundColor: '#959abb',
-    borderWidth: 0
+    borderWidth: 0,
   },
   main: {
     fontSize: '18px',
     fontWeight: 'normal',
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   bold: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 }));
 
 interface StreamAnalysisPropInterface {
@@ -45,14 +45,14 @@ interface StreamAnalysisPropInterface {
 }
 
 export default function StreamAnalysis(
-  { open, metricData, type }: StreamAnalysisPropInterface
+  { open, metricData, type }: StreamAnalysisPropInterface,
 ): JSX.Element {
   const classes = useStyles();
 
   const iconArray: any[] = [
     <MetricIcons name="viewer" key="viewer" />,
     <MetricIcons name="smile" key="smile" />,
-    <MetricIcons name="chat" key="chat" />
+    <MetricIcons name="chat" key="chat" />,
   ];
 
   return (

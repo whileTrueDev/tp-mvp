@@ -13,7 +13,7 @@ import { CheckBoxGroupProps } from './PeriodCompareSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
-    marginTop: theme.spacing(4)
+    marginTop: theme.spacing(4),
   },
   formGroup: {
     flexDirection: 'row',
@@ -26,22 +26,22 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     lineHeight: 1,
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    marginRight: '55px'
+    marginRight: '55px',
   },
   checkBox: {
-    color: '#3b86ff'
+    color: '#3b86ff',
   },
   checkBoxIcons: {
     fontSize: '30px',
-    color: '#3b86ff'
-  }
-}),);
+    color: '#3b86ff',
+  },
+}));
 
 export default function CheckBoxGroup(
-  props: CheckBoxGroupProps
+  props: CheckBoxGroupProps,
 ): JSX.Element {
   const {
-    viewer, smile, chat, handleCheckStateChange
+    viewer, smile, chat, handleCheckStateChange,
   } = props;
   const classes = useStyles();
 

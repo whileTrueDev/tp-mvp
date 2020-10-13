@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 // material-ui core components
 import {
-  Typography, List, ListItem, IconButton, ListItemIcon
+  Typography, List, ListItem, IconButton, ListItemIcon,
 } from '@material-ui/core';
 //  styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     padding: '0px',
     maxHeight: '292px',
-    overflow: 'auto'
+    overflow: 'auto',
   },
   listItem: {
     width: '100%',
@@ -44,19 +44,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
     lineHeight: '2.06',
     fontSize: '16px',
-    fontWeight: 500
+    fontWeight: 500,
   },
   closeIcon: {
     marginLeft: '30px',
     '&:hover,select': {
       color: 'red',
     },
-  }
+  },
 }));
 
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
-    termStreamsList, handleRemoveIconButton
+    termStreamsList, handleRemoveIconButton,
   } = props;
   const classes = useStyles();
 

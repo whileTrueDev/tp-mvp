@@ -12,7 +12,7 @@ export default function Dashboard(): JSX.Element {
   const [{ loading, data }] = useAxios({
     url: '/notice/outline',
     method: 'GET',
-    params: { important: 2 }
+    params: { important: 2 },
   });
 
   return (

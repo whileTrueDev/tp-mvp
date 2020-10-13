@@ -7,8 +7,8 @@ const useStyles = makeStyles(() => ({
     right: 50,
     position: 'fixed',
     bottom: 50,
-    zIndex: 6
-  }
+    zIndex: 6,
+  },
 }));
 
 function moveToTalk() {

@@ -1,7 +1,7 @@
 import React from 'react';
 // material-ui core components
 import {
-  Paper, Typography, Grid, Divider, Button, Collapse
+  Paper, Typography, Grid, Divider, Button, Collapse,
 } from '@material-ui/core';
 // material-ui leb components
 import { Alert } from '@material-ui/lab';
@@ -20,7 +20,7 @@ import StreamList from './StreamList';
 import {
   DayStreamsInfo,
   PeriodAnalysisProps,
-  AnaysisStreamsInfoRequest
+  AnaysisStreamsInfoRequest,
 } from './PeriodAnalysisSection.interface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
@@ -28,9 +28,9 @@ import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.Element {
+export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
-    loading, error, handleSubmit
+    loading, error, handleSubmit,
   } = props;
   const classes = usePeriodAnalysisHeroStyle();
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
@@ -46,13 +46,13 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
       ...checkStateGroup,
-      [event.target.name]: event.target.checked
+      [event.target.name]: event.target.checked,
     });
   };
 
   const handlePeriod = (startAt: Date, endAt: Date) => {
     const _period = {
-      startAt, endAt
+      startAt, endAt,
     };
     /* 하루 선택시 이틀로 자동 변경 */
     if (_period.endAt.getDate() === _period.startAt.getDate()) {
@@ -65,7 +65,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
   const [
     {
       loading: getStreamsLoading,
-      error: getStreamsError
+      error: getStreamsError,
     }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
       url: '/stream-analysis/stream-list',
     }, { manual: true });
@@ -103,7 +103,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
     const requestParams: AnaysisStreamsInfoRequest[] = termStreamsList.map((dayStreamInfo) => ({
       creatorId: dayStreamInfo.creatorId,
       startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
-      streamId: dayStreamInfo.streamId
+      streamId: dayStreamInfo.streamId,
     }));
 
     const selectedCategory: string[] = Object
@@ -119,7 +119,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
         /* request params */
         params: {
           streams: requestParams,
-        }
+        },
       });
     }
   };
@@ -178,7 +178,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps) : JSX.
           </Grid>
           <Grid item container direction="row" xs={12}>
             <Grid className={classes.bodyWrapper} container xs={8} item>
-              <Grid item xs style={{ width: '310px', }}>
+              <Grid item xs style={{ width: '310px' }}>
                 <Typography
                   className={classes.bodyTitle}
                 >

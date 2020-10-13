@@ -29,15 +29,15 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   center: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
-  content: { width: '100%', marginTop: theme.spacing(4), },
+  content: { width: '100%', marginTop: theme.spacing(4) },
 }));
 
 export default useStyles;

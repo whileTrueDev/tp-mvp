@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  makeStyles, createStyles, Theme, useTheme
+  makeStyles, createStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import {
@@ -25,7 +25,7 @@ export default function TablePaginationActions(props: TablePaginationActionsProp
   const classes = useStyles1();
   const theme = useTheme();
   const {
-    count, page, rowsPerPage, onChangePage
+    count, page, rowsPerPage, onChangePage,
   } = props;
 
   const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {

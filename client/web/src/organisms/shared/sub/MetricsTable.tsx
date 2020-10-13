@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TablePagination, TableCell, TableRow, TableBody
+  TablePagination, TableCell, TableRow, TableBody,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
@@ -10,15 +10,17 @@ const styles = makeStyles((theme) => ({
   row: {
     height: 30,
     '&:hover': {
-      cursor: 'pointer'
-    }
+      cursor: 'pointer',
+    },
   },
   selectedRow: {
     height: 30,
-    background: `linear-gradient(to right, ${theme.palette.success.light}, ${theme.palette.success.main})`
-  }
+    background: `linear-gradient(to right, ${theme.palette.success.light}, ${theme.palette.success.main})`,
+  },
 }));
 
+// @hwasurr - 10.13 eslint 버그 수정중 disalbe함. 이후 rowData 타입 올바르게 작성해주십시오.
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function highlightTerm(rowData: any): string {
   function getFormatDate(date: Date): string {
     const getHours = date.getHours();
@@ -40,23 +42,25 @@ export function highlightTerm(rowData: any): string {
   return `${resultStartTime}~${resultEndTime}`;
 }
 
-export function rank(row:any, arr:any): number | null {
-  const sorted = arr.sort((a:any, b:any) => (b.score - a.score));
+// @hwasurr - 10.13 eslint 버그 수정중 disalbe함. 이후 row ,arr 타입 올바르게 작성해주십시오.
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function rank(row: any, arr: any): number | null {
+  const sorted = arr.sort((a: any, b: any) => (b.score - a.score));
   const ranking = sorted.indexOf(row);
   if (ranking > -1) return ranking + 1;
   return null;
 }
 
 interface TableProps {
-  metrics: any,
-  title: string,
-  row: any,
-  page: number,
-  pageSize: number,
-  handlePage: any,
-  handlePageSize: any,
-  type: string
-  handleClick: (a: any) => void
+  metrics: any;
+  title: string;
+  row: any;
+  page: number;
+  pageSize: number;
+  handlePage: any;
+  handlePageSize: any;
+  type: string;
+  handleClick: (a: any) => void;
 }
 
 export default function MaterialTable({
@@ -68,7 +72,7 @@ export default function MaterialTable({
   pageSize,
   handlePage,
   handlePageSize,
-  type
+  type,
 }: TableProps): JSX.Element {
   const classes = styles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
@@ -86,7 +90,7 @@ export default function MaterialTable({
           {
             width: '180px',
             align: 'center',
-            title: type === '트루포인트 편집점' ? '트루포인트 점수' : '횟수'
+            title: type === '트루포인트 편집점' ? '트루포인트 점수' : '횟수',
           },
         ]}
         data={metrics || []}
@@ -119,7 +123,7 @@ export default function MaterialTable({
                         end_index: eachRow.end_index,
                         score: eachRow.score,
                         rank: rank(eachRow, [...metrics]),
-                        index: eachRow.tableData.id
+                        index: eachRow.tableData.id,
                       });
                     }
                   }}
@@ -140,7 +144,7 @@ export default function MaterialTable({
                 </TableRow>
               )}
             </TableBody>
-          )
+          ),
         }}
         onChangePage={handlePage}
         onChangeRowsPerPage={handlePageSize}

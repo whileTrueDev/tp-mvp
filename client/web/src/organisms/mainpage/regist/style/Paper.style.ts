@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.success.light,
     },
   },
-  divider: { width: 2, height: 28, margin: 10, },
+  divider: { width: 2, height: 28, margin: 10 },
   container: {
     ...theme.mixins.gutters(),
     paddingTop: theme.spacing(1),
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    fontSize: 13
+    fontSize: 13,
   },
   inDialogContent: {
     outline: 'none',
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   end: {
-    fontSize: '12px'
+    fontSize: '12px',
   },
   buttonStyle: {
     flex: 1,
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   box: {
     padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
@@ -63,9 +63,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 1000,
     border: `1px solid ${theme.palette.divider}`,
   },
-  content: { width: '100%', marginTop: theme.spacing(4), },
+  content: { width: '100%', marginTop: theme.spacing(4) },
   fullButton: {
-    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%'
+    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%',
   },
 }));
 

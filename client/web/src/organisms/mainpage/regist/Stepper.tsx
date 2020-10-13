@@ -23,7 +23,7 @@ function RegistStepper(): JSX.Element {
       url: '/users',
       method: 'post',
     },
-    { manual: true }
+    { manual: true },
   );
 
   function handleNext(): void {
@@ -45,11 +45,11 @@ function RegistStepper(): JSX.Element {
     const returnUser = {
       ...user,
       ...certificationInfo,
-      marketingAgreement
+      marketingAgreement,
     };
 
     postRequest({
-      data: returnUser
+      data: returnUser,
     })
       .then((res) => {
         if (res.data) {

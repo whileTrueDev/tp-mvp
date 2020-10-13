@@ -43,6 +43,6 @@ export default function useAnchorEl(): {
     setAnchorEl(null);
   };
   return {
-    open, anchorEl, handleAnchorOpen, handleAnchorOpenWithRef, handleAnchorClose
+    open, anchorEl, handleAnchorOpen, handleAnchorOpenWithRef, handleAnchorClose,
   };
 }

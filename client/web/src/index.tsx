@@ -9,7 +9,6 @@ import {
 } from '@material-ui/core';
 
 import { configure } from 'axios-hooks';
-import * as serviceWorker from './serviceWorker';
 import axios from './utils/axios';
 import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
@@ -40,25 +39,25 @@ function Index(): JSX.Element {
   // Theme Configurations
   const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
-    ...defaultTheme, palette: { ...defaultTheme.palette, type: themeType, },
+    ...defaultTheme, palette: { ...defaultTheme.palette, type: themeType },
   });
   const truepointTheme: TruepointTheme = { ...THEME, handleThemeChange };
 
   const {
-    user, accessToken, handleLogout, handleLogin
+    user, accessToken, handleLogout, handleLogin,
   } = useLogin();
   /* subscribe 목록의 유저 전환 컨택스트 */
   const {
     currUser,
     invalidSubscribeUserList, validSubscribeUserList, handleCurrTargetUser,
-    handleLoginUserId, loading, error
+    handleLoginUserId, loading, error,
   } = useSubscribe();
 
   // *******************************************
   // axios-hooks configuration
   axios.interceptors.response.use(
     onResponseFulfilled,
-    makeResponseRejectedHandler(handleLogin)
+    makeResponseRejectedHandler(handleLogin),
   );
   configure({ axios });
 
@@ -72,7 +71,7 @@ function Index(): JSX.Element {
 
       {/* 로그인 여부 Context */}
       <AuthContext.Provider value={{
-        user, accessToken, handleLogin, handleLogout
+        user, accessToken, handleLogin, handleLogout,
       }}
       >
         <KakaoTalk />
@@ -84,7 +83,7 @@ function Index(): JSX.Element {
           handleCurrTargetUser,
           handleLoginUserId,
           loading,
-          error
+          error,
         }}
         >
           <BrowserRouter>
@@ -99,7 +98,11 @@ function Index(): JSX.Element {
               <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
               <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
               <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
-              <Route exact path="/feature-suggestion/read/:id/edit" component={FeatureSuggestionWrite} />
+              <Route
+                exact
+                path="/feature-suggestion/read/:id/edit"
+                component={FeatureSuggestionWrite}
+              />
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
               <Route path="/mypage" component={Mypage} />
@@ -114,10 +117,5 @@ function Index(): JSX.Element {
 
 ReactDOM.render(
   <Index />,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();

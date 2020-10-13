@@ -16,10 +16,10 @@ import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
 import Loading from '../../shared/sub/Loading';
 
 interface StreamDate {
-  fullDate: Date,
-  startAt: string,
-  finishAt: string,
-  fileId: string,
+  fullDate: Date;
+  startAt: string;
+  finishAt: string;
+  fileId: string;
 }
 
 interface PointType {
@@ -59,13 +59,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     });
   };
   const [, doExport] = useAxios(
-    { url: '/highlight/export', method: 'get' }, { manual: true }
+    { url: '/highlight/export', method: 'get' }, { manual: true },
   );
   const [, getHighlightPoints] = useAxios(
-    { url: '/highlight/highlight-points', method: 'get' }, { manual: true }
+    { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
   );
   const [, getMetricsData] = useAxios(
-    { url: '/highlight/metrics', method: 'get' }, { manual: true }
+    { url: '/highlight/metrics', method: 'get' }, { manual: true },
   );
   const makeMonth = (month: number) => {
     if (month < 10) {
@@ -89,10 +89,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   // Metrics 데이터 전처리 함수
-  const getMetricsPoint = (metric:any): any => {
+  const getMetricsPoint = (metric: any): any => {
     const originStartTime = new Date(metric.start_date);
 
-    function getDate(index:number) {
+    function getDate(index: number) {
       const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
       const getYears = Time.getFullYear();
       const getMonths = Time.getMonth();
@@ -116,14 +116,14 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         end_time: time,
         start_index: target,
         end_index: target,
-        score: metric.time_line[target][countType]
+        score: metric.time_line[target][countType],
       };
       return returnDict;
     }
 
-    const resultData: {chat_points: PointType[], smile_points: PointType[]} = {
+    const resultData: {chat_points: PointType[]; smile_points: PointType[]} = {
       chat_points: [],
-      smile_points: []
+      smile_points: [],
     };
 
     const chatHighlight = metric.chat_points;
@@ -161,11 +161,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     // }
     doExport({
       params: {
-        id, year, month, day, streamId, srt, txt, csv
-      }
+        id, year, month, day, streamId, srt, txt, csv,
+      },
     })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
         // const filename = res.headers;
         const link = document.createElement('a');
@@ -175,16 +175,17 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         link.click();
         // setDownloadUrl(url);
       }).catch((err) => {
-        console.log(err);
+        // console.log(err);
         alert('지금은 다운로드 할 수 없습니다.');
       });
   };
-  const fetchHighlightData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
+  const fetchHighlightData = async (
+    id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
     // 134859149/2020/08/01/09161816_09162001_39667416302.json
     getHighlightPoints({
       params: {
-        id, year, month, day, fileId
-      }
+        id, year, month, day, fileId,
+      },
     })
       .then((res) => {
         if (res.data) {
@@ -195,13 +196,14 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       });
   };
 
-  const fetchMetricsData = async (id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
+  const fetchMetricsData = async (
+    id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
     getMetricsData(
       {
         params: {
-          id, year, month, day, fileId
-        }
-      }
+          id, year, month, day, fileId,
+        },
+      },
     )
       .then((res) => {
         if (res.data) {
@@ -278,11 +280,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           direction="column"
           justify="flex-start"
         >
-          <Calendar
-            handleDatePick={handleDatePick}
-            setSelectedStream={setSelectedStream}
-            selectedStream={selectedStream}
-          />
+          <Calendar handleDatePick={handleDatePick} />
         </Grid>
       </Grid>
 

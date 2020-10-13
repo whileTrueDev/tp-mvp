@@ -4,7 +4,7 @@ import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Card, CardContent,
-  Avatar, Grid, Typography, Grow, Checkbox, Button
+  Avatar, Grid, Typography, Grow, Checkbox, Button,
 } from '@material-ui/core';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import { UserMetrics } from '../../../interfaces/UserMetrics';
@@ -21,13 +21,13 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       transform: 'scale(1.05)',
       boxShadow: theme.shadows[10],
-    }
+    },
   },
   selected: { transition: '0.1s linear all' },
   avatarContainer: { marginBottom: 32 },
   avatar: { width: 150, height: 150, margin: '32px 32px 16px 32px' },
   columnFlexBox: {
-    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
   },
   cardHeader: { display: 'flex', justifyContent: 'space-between', padding: `${theme.spacing(1)}px ${theme.spacing(2)}px` },
   cardDivider: { padding: '0px 16px' },
@@ -37,8 +37,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     marginTop: 16,
-    marginBottom: 16
-  }
+    marginBottom: 16,
+  },
 }));
 
 export default function UserMetricsSection(): JSX.Element {
@@ -50,22 +50,22 @@ export default function UserMetricsSection(): JSX.Element {
   const [{ loading, data }] = useAxios<UserMetrics[]>({
     url: 'stream-analysis/user-statistics',
     method: 'GET',
-    params: { userId: 'userId1' }
+    params: { userId: 'userId1' },
   });
 
   // **************************************************
   // 데이터 생성
-  function makeData(d: UserMetrics[]): {name:string, value:number, nameKr: string}[] {
-    const result:any[] = [];
+  function makeData(d: UserMetrics[]): {name: string; value: number; nameKr: string}[] {
+    const result: any[] = [];
 
     if (d.length > 0) {
       const sortedData = d.sort((
-        a, b
+        a, b,
       ) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
       const fanDelta = sortedData[sortedData.length - 1].fan - sortedData[0].fan;
 
       let count = 0;
-      const reduced:any = sortedData.reduce((prev, current) => {
+      const reduced: any = sortedData.reduce((prev, current) => {
         count += 1;
         const prev1 = prev;
         prev1['평균 방송시간'] += current.airTime;
@@ -158,7 +158,7 @@ export default function UserMetricsSection(): JSX.Element {
                   <Card
                     className={classnames({
                       [classes.card]: selectedCard !== card.name,
-                      [classes.selected]: selectedCard === card.name
+                      [classes.selected]: selectedCard === card.name,
                     })}
                     onClick={() => { handleCardSelect(card.name); }}
                   >

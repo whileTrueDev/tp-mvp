@@ -14,9 +14,9 @@ export interface SubscribeContextValue {
   validSubscribeUserList: SubscribeUserInfo[];
   invalidSubscribeUserList: SubscribeUserInfo[];
   handleCurrTargetUser: (changeUser: SubscribeUserInfo) => void;
-  handleLoginUserId : (userId: string) => void;
-  error: AxiosError<any> | undefined,
-  loading: boolean,
+  handleLoginUserId: (userId: string) => void;
+  error: AxiosError<any> | undefined;
+  loading: boolean;
 }
 
 const defaultTargetUserValue = {
@@ -30,24 +30,26 @@ const SubscribeContext = React.createContext<SubscribeContextValue>({
   currUser: defaultTargetUserValue,
   validSubscribeUserList: [],
   invalidSubscribeUserList: [],
+  /* eslint-disable @typescript-eslint/no-empty-function */
   handleCurrTargetUser: () => {},
   handleLoginUserId: () => {},
+  /* eslint-enable @typescript-eslint/no-empty-function */
   error: undefined,
-  loading: false
+  loading: false,
 });
 
 export function useSubscribe(): SubscribeContextValue {
   const [
     currUser,
-    setCurrUser
+    setCurrUser,
   ] = React.useState<SubscribeUserInfo>(defaultTargetUserValue);
   const [
     validSubscribeUserList,
-    setValidSubscribeUSerList
+    setValidSubscribeUSerList,
   ] = React.useState<SubscribeUserInfo[]>([]);
   const [
     invalidSubscribeUserList,
-    setInvalidSubscribeUserList
+    setInvalidSubscribeUserList,
   ] = React.useState<SubscribeUserInfo[]>([]);
 
   const [loginUserId, setLoginUserId] = React.useState<string>('qjqdn1568');
@@ -61,8 +63,8 @@ export function useSubscribe(): SubscribeContextValue {
   }
 
   const [{ error, loading }, excuteGetSubscribeData] = useAxios<{
-      validUserList:SubscribeUserInfo[],
-      inValidUserList:SubscribeUserInfo[]}>({
+      validUserList: SubscribeUserInfo[];
+      inValidUserList: SubscribeUserInfo[];}>({
         url: '/users/subscribe-users',
       }, { manual: true });
 
@@ -70,7 +72,7 @@ export function useSubscribe(): SubscribeContextValue {
     excuteGetSubscribeData({
       params: {
         userId: loginUserId, // logined user id
-      }
+      },
     }).then((res) => {
       setValidSubscribeUSerList(res.data.validUserList);
       setInvalidSubscribeUserList(res.data.inValidUserList);
@@ -85,7 +87,7 @@ export function useSubscribe(): SubscribeContextValue {
     handleCurrTargetUser,
     handleLoginUserId,
     error,
-    loading
+    loading,
   };
 }
 

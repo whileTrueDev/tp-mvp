@@ -3,7 +3,7 @@ import React from 'react';
 import { Grid } from '@material-ui/core';
 // material-ui picker components
 import {
-  MuiPickersUtilsProvider, DatePicker
+  MuiPickersUtilsProvider, DatePicker,
 } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
@@ -41,13 +41,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: '#909090',
   },
   selectedDayBase: {
-    backgroundColor: '#3a86ff'
+    backgroundColor: '#3a86ff',
   },
   selectedDayCompare: {
-    backgroundColor: '#6e6e6e'
+    backgroundColor: '#6e6e6e',
   },
   hasStreamDayDotContainer: {
-    position: 'relative'
+    position: 'relative',
   },
   hasStreamDayDotBase: {
     position: 'absolute',
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: '#3a86ff',
     right: '50%',
     transform: 'translateX(1px)',
-    top: '80%'
+    top: '80%',
   },
   hasStreamDayDotCompare: {
     position: 'absolute',
@@ -69,8 +69,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: '#6e6e6e',
     right: '50%',
     transform: 'translateX(1px)',
-    top: '80%'
-  }
+    top: '80%',
+  },
 }));
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
@@ -95,10 +95,10 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       params: {
         userId: subscribe.currUser.targetUserId,
         startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
-      }
+      },
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
+        result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
       );
     });
   }, [subscribe.currUser, excuteGetStreams, currMonth]);
@@ -145,10 +145,10 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         params: {
           userId: subscribe.currUser.targetUserId,
           startDate: newMonth.toISOString(),
-        }
+        },
       }).then((result) => {
         setHasStreamDays(
-          result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
+          result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
         );
       });
     }
@@ -157,7 +157,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const leftHalfCircleDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.leftCircleBase]: base,
-      [classes.leftCircleCompare]: !base
+      [classes.leftCircleCompare]: !base,
     })}
     >
       {React.cloneElement(dayComponent,
@@ -168,7 +168,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const rightHalfCircleDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.rigthCircleBase]: base,
-      [classes.rigthCircleCompare]: !base
+      [classes.rigthCircleCompare]: !base,
     })}
     >
       {React.cloneElement(dayComponent,
@@ -180,7 +180,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     <div className={classnames({
       [classes.rangeDayBase]: base,
       [classes.rangeDayCompare]: !base,
-      [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate())
+      [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
     })}
     >
       {dayComponent}
@@ -196,7 +196,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     date: MaterialUiPickersDate,
     selectedDate: MaterialUiPickersDate,
     dayInCurrentMonth: boolean,
-    dayComponent: JSX.Element
+    dayComponent: JSX.Element,
   ) => {
     if (dayInCurrentMonth && date && point1 && point2) {
       if (date.getMonth() === point1.getMonth() && point1.getMonth() === point2.getMonth()) {
@@ -220,7 +220,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         }
         return (
           <div className={classnames({
-            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate())
+            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
           })}
           >
             {dayComponent}
@@ -269,7 +269,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     if (date) {
       return (
         <div className={classnames({
-          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate())
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
         })}
         >
           {dayComponent}

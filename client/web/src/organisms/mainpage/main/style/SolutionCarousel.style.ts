@@ -3,28 +3,28 @@ import { makeStyles } from '@material-ui/core/styles';
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 500
+    height: 500,
   },
   mainSubTitle: {
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 20,
     fontWeight: 600,
-    padding: '30px 0px 5px 0px'
+    padding: '30px 0px 5px 0px',
   },
   mainTitle: {
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 25,
     fontWeight: 700,
-    padding: '5px 0px 30px 0px'
+    padding: '5px 0px 30px 0px',
   },
   slider: {
     '&>ul>li': {
-      width: 80
-    }
+      width: 80,
+    },
   },
   front: {
     '&>*': {
-      zIndex: 200
+      zIndex: 200,
     },
   },
   back: {
@@ -33,7 +33,7 @@ const styles = makeStyles((theme) => ({
     width: '100%',
     position: 'relative',
     top: -350,
-    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`
+    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   carousel: {
     display: 'flex',
@@ -54,8 +54,8 @@ const styles = makeStyles((theme) => ({
   dot: {
     fontFamily: 'AppleSDGothicNeo',
     width: 80,
-    height: 40
-  }
+    height: 40,
+  },
 }));
 
 export default styles;

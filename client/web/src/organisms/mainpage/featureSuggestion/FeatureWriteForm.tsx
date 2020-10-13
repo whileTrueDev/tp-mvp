@@ -15,20 +15,20 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     margin: theme.spacing(8),
     justifyContent: 'center',
-    alighItems: 'center'
+    alighItems: 'center',
   },
 
   form: {
     width: '70%',
   },
   title: {
-    margin: theme.spacing(3)
+    margin: theme.spacing(3),
   },
   titleInput: {
-    width: '400px'
+    width: '400px',
   },
   contents: {
-    margin: theme.spacing(2)
+    margin: theme.spacing(2),
   },
 }));
 interface FeatureSuggestion {
@@ -36,12 +36,20 @@ interface FeatureSuggestion {
   category: string | number;
   contents: string;
   userId: string;
-  image: any
+  image: any;
 }
-interface ImageObject<T> {
-  readonly current: T | null;
-}
-export default function FeatureWriteForm(props: any) {
+// @hwasurr
+// eslint error 정리 중 주석 처리 - 사용하지 않는 interface
+// @leejineun 처리 부탁드립니다.
+// interface ImageObject<T> {
+//   readonly current: T | null;
+// }
+
+// @hwasurr
+// eslint error 정리 중 disalbe 처리 - any 타입 정의
+// @leejineun 처리 부탁드립니다.
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default function FeatureWriteForm(props: any): JSX.Element {
   const { editData } = props;
   const authContext = useAuthContext();
   const [state, setState] = React.useState<FeatureSuggestion>({
@@ -49,7 +57,7 @@ export default function FeatureWriteForm(props: any) {
     category: '0',
     contents: '',
     userId: authContext.user.userId,
-    image: null
+    image: null,
   });
   const history = useHistory();
   const classes = useStyles();
@@ -76,10 +84,10 @@ export default function FeatureWriteForm(props: any) {
   };
 
   const [, postRequest] = useAxios(
-    { url: '/feature/upload', method: 'post' }, { manual: true }
+    { url: '/feature/upload', method: 'post' }, { manual: true },
   );
   const [, editPostRequest] = useAxios(
-    { url: '/feature/upload-edit', method: 'patch' }, { manual: true }
+    { url: '/feature/upload-edit', method: 'patch' }, { manual: true },
   );
   const handleSubmit = () => {
     if (editData) {
@@ -111,7 +119,7 @@ export default function FeatureWriteForm(props: any) {
         contents: editData.content,
       });
     }
-  }, []);
+  }, [editData, setState, state]);
   return (
     <div className={classes.root}>
       <Typography className={classes.contents} variant="h4">글쓰기</Typography>

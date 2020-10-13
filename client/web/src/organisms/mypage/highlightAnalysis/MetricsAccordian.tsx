@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Accordion, AccordionSummary,
-  AccordionDetails, Typography, Grid
+  AccordionDetails, Typography, Grid,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Paper from '@material-ui/core/Paper';
@@ -17,7 +17,7 @@ const styles = makeStyles((theme) => ({
     width: '100%',
   },
   wraper: {
-    padding: theme.spacing(4)
+    padding: theme.spacing(4),
   },
   heading: {
     fontSize: 20,
@@ -35,7 +35,7 @@ const styles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20
+    marginBottom: 20,
   },
   contentLeft: {
     display: 'flex',
@@ -56,8 +56,8 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.success.main,
     '&>span': {
       color: 'black',
-      fontSize: 20
-    }
+      fontSize: 20,
+    },
   },
 }));
 
@@ -111,7 +111,15 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
-                  <Button onClick={() => {}} style={{ color: 'white' }}>
+                  <Button
+                    onClick={() => {
+                      /**
+                      * @hwasurr 2020.10.13 eslint error 처리 도중 처리
+                      * 빈 화살표 함수 => 이후 처리 바람
+                      * */
+                    }}
+                    style={{ color: 'white' }}
+                  >
                     편집점 내보내기
                   </Button>
                 </div>
@@ -166,7 +174,15 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
               </Grid>
               <Grid item md={4} className={classes.contentRight}>
                 <div className={classes.buttonWraper}>
-                  <Button onClick={() => {}} style={{ color: 'white' }}>
+                  <Button
+                    onClick={() => {
+                      /**
+                      * @hwasurr 2020.10.13 eslint error 처리 도중 처리
+                      * 빈 화살표 함수 => 이후 처리 바람
+                      * */
+                    }}
+                    style={{ color: 'white' }}
+                  >
                     편집점 내보내기
                   </Button>
                 </div>

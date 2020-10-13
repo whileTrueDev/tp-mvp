@@ -4,14 +4,14 @@ const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 600,
-    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`
+    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   wraper: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'left',
-    height: 600
+    height: 600,
   },
   main: {
     margin: '20px 0px 20px 0px',
@@ -27,7 +27,7 @@ const styles = makeStyles((theme) => ({
     fontSize: 55,
     fontWeight: 900,
     color: 'white',
-    margin: 0
+    margin: 0,
   },
   mainContent: {
     fontFamily: 'AppleSDGothicNeo',
@@ -45,13 +45,13 @@ const styles = makeStyles((theme) => ({
   buttonLine: {
     animation: '$lineSpread 1.2s ease-in-out',
     borderBottom: '1px solid white',
-    width: 600
+    width: 600,
   },
   imgWraper: {
     marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   mainSVGEffect: {
     animationDelay: '1.5s',
@@ -67,39 +67,39 @@ const styles = makeStyles((theme) => ({
     animation: '$subSVGEffect 2s ease-in-out',
     visibility: 'hidden',
     position: 'relative',
-    marginTop: theme.spacing(4)
+    marginTop: theme.spacing(4),
   },
   '@keyframes lineSpread': {
     '0%': {
-      width: 0
+      width: 0,
     },
     '100%': {
-      width: 600
-    }
+      width: 600,
+    },
   },
   '@keyframes mainSVGEffect': {
     '0%': {
       visibility: 'visible',
-      top: 0
+      top: 0,
     },
     '50%': {
-      top: -20
+      top: -20,
     },
     '100%': {
-      top: -0
-    }
+      top: -0,
+    },
   },
   '@keyframes subSVGEffect': {
     '0%': {
       visibility: 'visible',
-      width: 350
+      width: 350,
     },
     '50%': {
-      width: 300
+      width: 300,
     },
     '100%': {
-      width: 350
-    }
+      width: 350,
+    },
   },
 }));
 

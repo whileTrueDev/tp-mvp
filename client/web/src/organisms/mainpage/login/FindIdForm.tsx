@@ -20,16 +20,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   subcontent: { marginTop: theme.spacing(2) },
-  content: { width: '100%', marginTop: theme.spacing(4), },
-  selectButton: { width: '100%', padding: 16, borderBottom: `1px solid ${theme.palette.divider}`, },
+  content: { width: '100%', marginTop: theme.spacing(4) },
+  selectButton: { width: '100%', padding: 16, borderBottom: `1px solid ${theme.palette.divider}` },
   fullButton: {
-    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%'
+    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%',
   },
   inputField: { width: '100%' },
-  helper: { marginTop: 32, minWidth: 300, maxWidth: 500, },
+  helper: { marginTop: 32, minWidth: 300, maxWidth: 500 },
 }));
 
 export default function FindAccountForm(): JSX.Element {
@@ -65,7 +65,7 @@ export default function FindAccountForm(): JSX.Element {
   // Request for finding Id
   const [foundedId, setFoundedId] = React.useState<string>();
   const [{ loading }, getRequest] = useAxios(
-    '/users/id', { manual: true }
+    '/users/id', { manual: true },
   );
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
@@ -73,7 +73,7 @@ export default function FindAccountForm(): JSX.Element {
       const username = usernameRef.current.value;
       const usermail = usermailRef.current.value;
       getRequest({
-        params: { name: username, mail: usermail }
+        params: { name: username, mail: usermail },
       }).then((res) => {
         if (res.data) {
           const { userId } = res.data;
@@ -97,7 +97,7 @@ export default function FindAccountForm(): JSX.Element {
   const iamport = useIamportCertification((impUid) => {
     // iamport 본인인증 이후 실행될 Id 조회 함수
     getRequest({
-      params: { impUid }
+      params: { impUid },
     }).then((res) => {
       if (res.data) {
         const { userId } = res.data;
@@ -170,7 +170,7 @@ export default function FindAccountForm(): JSX.Element {
             inputRef={usermailRef}
             autoComplete="off"
             className={classes.inputField}
-            inputProps={{ required: true, }}
+            inputProps={{ required: true }}
           />
           <Button
             variant="contained"

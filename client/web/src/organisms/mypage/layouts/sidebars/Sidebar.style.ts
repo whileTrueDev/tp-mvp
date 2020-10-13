@@ -10,7 +10,7 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: '0'
+    padding: '0',
   },
   drawerPaper: {
     border: 'none',
@@ -78,7 +78,7 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
   },
   listIcon: {
     fontSize: '32px',
-    color: 'black'
+    color: 'black',
   },
   accordianList: {
     width: 'parent',
@@ -106,7 +106,7 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
     paddingLeft: '0px',
     paddingRight: '0px',
     '&:hover': {
-      backgroundColor: theme.palette.primary.light // 마우스 가져갈때
+      backgroundColor: theme.palette.primary.light, // 마우스 가져갈때
     },
   },
   accordianHeaderButton: {
@@ -123,7 +123,7 @@ const useSiedebarStyles = makeStyles((theme: Theme) => ({
   },
   selectedTab: {
     fontWeight: 'bold',
-    color: 'black'
+    color: 'black',
   },
   notSelectedTab: {
     color: '#868e96',

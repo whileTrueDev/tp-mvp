@@ -37,18 +37,18 @@ export type StepAction = { type: 'id'; value: string }
 // reducer를 사용하여 Error를 handling하자
 export function myReducer(
   state: StepState,
-  action: StepAction
+  action: StepAction,
 ): StepState {
   switch (action.type) {
     case 'id': {
       const idReg = /^[A-za-z]+[a-z0-9]{5,15}$/g;
       if (idReg.test(action.value)) {
         return {
-          ...state, id: false, checkDuplication: true, idValue: action.value
+          ...state, id: false, checkDuplication: true, idValue: action.value,
         };
       }
       return {
-        ...state, id: true, checkDuplication: true, idValue: action.value
+        ...state, id: true, checkDuplication: true, idValue: action.value,
       };
     }
     // (?=.*[0-9])

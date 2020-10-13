@@ -9,7 +9,7 @@ export function onResponseFulfilled(request: AxiosResponse): AxiosResponse {
 }
 
 export function makeResponseRejectedHandler(
-  handleLogin: (token:string) => void
+  handleLogin: (token: string) => void,
 ): (err: AxiosError) => any {
   function onResponseRejected(err: AxiosError): any {
     if (err.response && err.response.status === 401) {

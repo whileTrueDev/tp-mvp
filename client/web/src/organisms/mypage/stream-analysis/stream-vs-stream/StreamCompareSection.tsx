@@ -25,30 +25,34 @@ import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
-interface StreamsCompareCategoryResult {
-    broad1Count: any;
-    broad2Count: any;
-    diff: number;
-    title: string;
-    tag: string;
-    key: string;
-    value: any[];
-    unit: string;
-}
+/**
+ * @hwasurr - 2020.10.13 eslint error 정리 중 주석 처리
+ * 사용하지 않는 interface.. 처리 부탁드립니다.
+ */
+// interface StreamsCompareCategoryResult {
+//     broad1Count: any;
+//     broad2Count: any;
+//     diff: number;
+//     title: string;
+//     tag: string;
+//     key: string;
+//     value: any[];
+//     unit: string;
+// }
 
-interface StreamComapreResult {
-  compareResult: StreamsCompareCategoryResult[];
-  selectedCategory: 'viewer'|'smile'|'chat';
-}
+// interface StreamComapreResult {
+//   compareResult: StreamsCompareCategoryResult[];
+//   selectedCategory: 'viewer'|'smile'|'chat';
+// }
 
 interface StreamCompareSectionPropInterface {
-  handleSubmit: (streams: {streamId: string, platform: string}[]) => void;
+  handleSubmit: (streams: {streamId: string; platform: string}[]) => void;
   loading: boolean;
   error: any;
 }
 
 export default function StreamCompareSection(
-  props: StreamCompareSectionPropInterface
+  props: StreamCompareSectionPropInterface,
 ): JSX.Element {
   const { handleSubmit, loading, error } = props;
   const subscribe = React.useContext(SubscribeContext);
@@ -59,7 +63,7 @@ export default function StreamCompareSection(
   const [compareStream, setCompareStream] = React.useState<DayStreamsInfo|null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
 
-  const handleDayStreamList = (responseList:(DayStreamsInfo)[]) => {
+  const handleDayStreamList = (responseList: (DayStreamsInfo)[]) => {
     setDayStreamsList(responseList);
   };
 
@@ -81,8 +85,8 @@ export default function StreamCompareSection(
       handleSubmit(
         [
           { streamId: baseStream.streamId, platform: baseStream.platform },
-          { streamId: compareStream.streamId, platform: compareStream.platform }
-        ]
+          { streamId: compareStream.streamId, platform: compareStream.platform },
+        ],
       );
     }
   };
@@ -166,7 +170,7 @@ export default function StreamCompareSection(
         </Grid>
         <Grid item container direction="row" xs={12}>
           <Grid className={classes.bodyWrapper} container xs={8} item>
-            <Grid item xs style={{ width: '310px', }}>
+            <Grid item xs style={{ width: '310px' }}>
               <Typography
                 className={classes.bodyTitle}
               >

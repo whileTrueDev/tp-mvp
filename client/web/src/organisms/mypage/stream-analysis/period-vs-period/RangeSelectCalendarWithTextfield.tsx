@@ -1,7 +1,7 @@
 import React from 'react';
 // material-ui core components
 import {
-  Grid, Typography, TextField, Paper
+  Grid, Typography, TextField, Paper,
 } from '@material-ui/core';
 // date library
 import moment from 'moment';
@@ -14,7 +14,7 @@ import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIc
 // interfaces
 import {
   PeriodCompareCalendarAndTextfieldProps,
-  ISODateTextFieldError
+  ISODateTextFieldError,
 } from './PeriodCompareSection.interface';
 // custom hooks
 import useEventTargetValue from '../../../../utils/hooks/useEventTargetValue';
@@ -45,26 +45,26 @@ const useStyles = makeStyles((theme: Theme) => ({
         borderColor: '#6e6e6e',
       },
     },
-  }
+  },
 }));
 
 export default function RangeSelectCalendarWithTextfield(
-  props: PeriodCompareCalendarAndTextfieldProps
+  props: PeriodCompareCalendarAndTextfieldProps,
 ): JSX.Element {
   const textClasses = useStyles();
   const classes = usePeriodCompareStyles();
   const {
-    base, handlePeriod
+    base, handlePeriod,
   } = props;
   const start = useEventTargetValue();
   const end = useEventTargetValue();
   const [startDateError, setStartDateError] = React.useState<ISODateTextFieldError>({
     helperText: '',
-    isError: false
+    isError: false,
   });
   const [endDateError, setEndDateError] = React.useState<ISODateTextFieldError>({
     helperText: '',
-    isError: false
+    isError: false,
   });
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
 
@@ -146,7 +146,7 @@ export default function RangeSelectCalendarWithTextfield(
 
   const handleTextFieldPeriod = (startAt: Date, endAt: Date) => {
     const periodObj = {
-      startAt, endAt
+      startAt, endAt,
     };
 
     /* 하루 선택시 이틀로 자동 변경 */
@@ -179,16 +179,16 @@ export default function RangeSelectCalendarWithTextfield(
                 fontFamily: 'AppleSDGothicNeo',
                 fontSize: '20px',
                 fontWeight: 440,
-              }
+              },
             }}
             className={classnames({
               [textClasses.textField]: true,
               [textClasses.base]: base,
-              [textClasses.compare]: !base
+              [textClasses.compare]: !base,
             })}
           />
         </Grid>
-        <Grid item style={{ height: '100%', }}>
+        <Grid item style={{ height: '100%' }}>
           <Typography variant="h5" style={{ paddingTop: '10px' }}>
             ~
           </Typography>
@@ -213,7 +213,7 @@ export default function RangeSelectCalendarWithTextfield(
             className={classnames({
               [textClasses.textField]: true,
               [textClasses.base]: base,
-              [textClasses.compare]: !base
+              [textClasses.compare]: !base,
             })}
           />
         </Grid>

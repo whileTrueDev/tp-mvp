@@ -21,8 +21,10 @@ const defaultUserValue = {
 const AuthContext = React.createContext<AuthContextValue>({
   user: defaultUserValue,
   accessToken: '',
+  /* eslint-disable @typescript-eslint/no-empty-function */
   handleLogin: () => {},
-  handleLogout: () => {}
+  handleLogout: () => {},
+  /* eslint-enable @typescript-eslint/no-empty-function */
 });
 
 export function useLogin(): AuthContextValue {
@@ -47,7 +49,7 @@ export function useLogin(): AuthContextValue {
     setAccessToken(undefined);
     setUser(defaultUserValue);
     // 백엔드 요청
-    doPostRequest({ data: { userId: user.userId, } })
+    doPostRequest({ data: { userId: user.userId } })
       .then((res) => {
         if (res.data && res.data.success) {
           window.location.href = '/';
@@ -55,7 +57,7 @@ export function useLogin(): AuthContextValue {
       })
       .catch((err) => {
         // 올바르게 로그아웃되지 않음.
-        console.log(err);
+        // console.log(err);
         window.location.href = '/';
       });
   }

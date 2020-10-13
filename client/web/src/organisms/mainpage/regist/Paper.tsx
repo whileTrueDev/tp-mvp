@@ -28,7 +28,7 @@ type CheckAction = { key: 'checkedA'; value: boolean }
 
 const reducer = (
   state: CheckState<boolean>,
-  action: CheckAction
+  action: CheckAction,
 ): CheckState<boolean> => {
   switch (action.key) {
     case 'checkedA':
@@ -53,13 +53,13 @@ interface Props {
 function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Element {
   const classes = useStyles();
   const [state, dispatch] = useReducer(
-    reducer, { checkedA: false, checkedB: false, checkedC: false }
+    reducer, { checkedA: false, checkedB: false, checkedC: false },
   );
 
   const [selectTerm, setTerm] = useState({
     text: '',
     title: '',
-    state: ''
+    state: '',
   });
   const [open, setOpen] = useState(false);
 

@@ -33,8 +33,8 @@ export default function ProductHero(): JSX.Element {
             </div>
           </Grid>
           <Grid item md={4} className={classes.imgWraper}>
-            <img src="/images/main/heromain.svg" alt="HeroMain" className={classes.mainSVGEffect}/>
-            <img src="/images/main/herosub.svg" alt="HeroSub" className={classes.subSVGEffect}/>
+            <img src="/images/main/heromain.svg" alt="HeroMain" className={classes.mainSVGEffect} />
+            <img src="/images/main/herosub.svg" alt="HeroSub" className={classes.subSVGEffect} />
           </Grid>
         </Grid>
       </Container>

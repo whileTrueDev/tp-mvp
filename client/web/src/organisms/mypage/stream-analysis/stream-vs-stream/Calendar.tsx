@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 // material-ui picker components
 import {
-  MuiPickersUtilsProvider, DatePicker
+  MuiPickersUtilsProvider, DatePicker,
 } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
@@ -31,11 +31,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderColor: '#3a86ff',
     right: '50%',
     transform: 'translateX(1px)',
-    top: '80%'
+    top: '80%',
   },
   hasStreamDayDotContainer: {
-    position: 'relative'
-  }
+    position: 'relative',
+  },
 }));
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
@@ -52,7 +52,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     {
       data: getStreamsData,
       loading: getStreamsLoading,
-      error: getStreamsError
+      error: getStreamsError,
     }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
       url: '/stream-analysis/stream-list',
     }, { manual: true });
@@ -62,10 +62,10 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       params: {
         userId: subscribe.currUser.targetUserId,
         startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
-      }
+      },
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
+        result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
       );
     });
   }, [subscribe.currUser, currMonth, excuteGetStreams]);
@@ -92,10 +92,10 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         params: {
           userId: subscribe.currUser.targetUserId,
           startDate: newMonth.toISOString(),
-        }
+        },
       }).then((result) => {
         setHasStreamDays(
-          result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate())
+          result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
         );
       });
     }
@@ -105,19 +105,19 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     date: MaterialUiPickersDate,
     selectedDate: MaterialUiPickersDate,
     dayInCurrentMonth: boolean,
-    dayComponent: JSX.Element
+    dayComponent: JSX.Element,
   ) => {
     if (date && hasStreamDays.includes(date.getDate())) {
       if ((compareStream && (new Date(compareStream.startedAt)).getDate() === date.getDate())
       || (baseStream && (new Date(baseStream.startedAt)).getDate() === date.getDate())) {
         return (
           <div className={classnames({
-            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate())
+            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
           })}
           >
             {React.cloneElement(dayComponent, { style: { color: '#3a86ff' } })}
             <div className={classnames({
-              [classes.hasStreamDayDot]: hasStreamDays.includes(date.getDate())
+              [classes.hasStreamDayDot]: hasStreamDays.includes(date.getDate()),
             })}
             />
           </div>
@@ -126,12 +126,12 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
 
       return (
         <div className={classnames({
-          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate())
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
         })}
         >
           {dayComponent}
           <div className={classnames({
-            [classes.hasStreamDayDot]: hasStreamDays.includes(date.getDate())
+            [classes.hasStreamDayDot]: hasStreamDays.includes(date.getDate()),
           })}
           />
         </div>

@@ -50,11 +50,12 @@ module.exports = {
     'linebreak-style': 'off',
     'no-useless-constructor': 0,
     'max-len': ["error", {
-      code: 100, tabWidth: 2, ignoreComments: true, ignoreTrailingComments: true,
+      code: 120, tabWidth: 2, ignoreComments: true, ignoreTrailingComments: true, ignoreStrings: true,
       ignoreUrls: true, ignoreTemplateLiterals: true,
       ignorePattern: "^import\\s.+\\sfrom\\s.+;$",
     }],
-    'max-params': ["warn", 3],
+    'max-params': ["warn", 4],
+    "no-shadow": 2,
     /**
      * import rules
      */
@@ -84,7 +85,7 @@ module.exports = {
     "@typescript-eslint/no-use-before-define": 2,
     // do not allow unused variables
     '@typescript-eslint/no-unused-vars': 2,
-
+    '@typescript-eslint/camelcase': 'off',
     /**
      * React rules
      */

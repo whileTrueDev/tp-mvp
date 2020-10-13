@@ -41,6 +41,7 @@
   "scripts": {
     "build": "lerna run build",
     "lint:commit:fix": "yarn workspaces run lint:commit:fix",
+    "lint:fix": "yarn workspaces run lint:fix",
     "lint": "yarn workspaces run lint"
   },
   "lint-staged": {

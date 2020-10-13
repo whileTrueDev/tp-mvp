@@ -5,12 +5,12 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
 interface ChartProps {
-  data: any,
-  chartType: string,
-  highlight?: any,
-  handleClick: (a: any) => void,
-  handlePage: any,
-  pageSize: number
+  data: any;
+  chartType: string;
+  highlight?: any;
+  handleClick: (a: any) => void;
+  handlePage: any;
+  pageSize: number;
 }
 
 const metricSetting: any = {
@@ -26,15 +26,15 @@ const metricSetting: any = {
     valueY: 'score',
     dateX: 'start_time',
     tooltipText: '[bold]{score}[/]',
-    tooltipColor: '#ff3e7a'
+    tooltipColor: '#ff3e7a',
   },
   highlight: {
     name: '트루포인트 편집점',
     valueY: 'score',
     dateX: 'start_time',
     tooltipText: '[bold]{score}[/]',
-    tooltipColor: '#ff3e7a'
-  }
+    tooltipColor: '#ff3e7a',
+  },
 };
 
 export default function Chart({
@@ -43,7 +43,7 @@ export default function Chart({
   highlight,
   handleClick,
   handlePage,
-  pageSize
+  pageSize,
 }: ChartProps): JSX.Element {
   const theme = useTheme();
 
@@ -88,7 +88,7 @@ export default function Chart({
       // 라벨 글자 색 변경
       valueAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
 
-      const series : any = getChart.series.push(new am4charts.LineSeries());
+      const series: any = getChart.series.push(new am4charts.LineSeries());
       series.yAxis = valueAxis;
       series.dataFields.valueY = setting.valueY;
       series.dataFields.dateX = setting.dateX;
@@ -115,7 +115,7 @@ export default function Chart({
         handleClick({
           start_index: point.start_index,
           end_index: point.end_index,
-          index: point.tableData.id
+          index: point.tableData.id,
         });
         handlePage(Math.floor(point.tableData.id / pageSize));
       });
@@ -124,7 +124,7 @@ export default function Chart({
       bullethover.properties.scale = 2;
 
       if (highlight.start_index) {
-        const series2 : any = getChart.series.push(new am4charts.LineSeries());
+        const series2: any = getChart.series.push(new am4charts.LineSeries());
         series2.dataFields.valueY = setting.valueY;
         series2.dataFields.dateX = setting.dateX;
         series2.data = [data[highlight.index]];

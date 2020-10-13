@@ -35,7 +35,7 @@ function getAvgGroupByDate(datalist: UserMetrics[]) {
       airTime: item.airTime / item.count,
       fan: item.fan / item.count,
       chatCount: item.chatCount / item.count,
-      viewer: item.viewer / item.count
+      viewer: item.viewer / item.count,
     };
   });
   return result;

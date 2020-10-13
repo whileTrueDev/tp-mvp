@@ -3,7 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import classnames from 'classnames';
 import {
-  Card, CardContent, Typography, Grid, IconButton
+  Card, CardContent, Typography, Grid, IconButton,
 } from '@material-ui/core';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderBottomLeftRadius: '12px',
     width: '100%',
     minHeight: '134px',
-    boxShadow: 'none'
+    boxShadow: 'none',
   },
   cardTitleWrapper: {
     width: '100%',
@@ -65,13 +65,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     lineHeight: '1.5',
     overflow: 'auto',
     width: '100%',
-    marginBottom: '10px'
+    marginBottom: '10px',
   },
 }));
 
 export default function StreamCard(props: StreamCardProps): JSX.Element {
   const {
-    stream, base, handleSeletedStreams, platformIcon
+    stream, base, handleSeletedStreams, platformIcon,
   } = props;
   const classes = useStyles();
 
@@ -100,7 +100,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
           container
           className={classnames({
             [classes.cardTitleWrapper]: base,
-            [classes.cardTitleCompWrapper]: !base
+            [classes.cardTitleCompWrapper]: !base,
           })}
           direction="row"
           justify="space-between"
@@ -123,10 +123,9 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
         <Grid
           container
           alignContent="center"
-
           className={classnames({
             [classes.cardBodyWrapper]: base,
-            [classes.cardBodyCompWrapper]: !base
+            [classes.cardBodyCompWrapper]: !base,
           })}
         >
 

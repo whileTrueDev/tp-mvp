@@ -3,10 +3,7 @@ import React from 'react';
 import styles from '../style/WithMedia.style';
 import source from '../source/textsource';
 
-
-
 export default function WithMedia(): JSX.Element {
-
   const classes = styles();
 
   return (
@@ -27,4 +24,4 @@ export default function WithMedia(): JSX.Element {
       </Container>
     </div>
   );
-};
+}

@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 // @material-ui/core components
 import {
   Grid, Drawer,
-  List, ListItem, ListItemText, ListItemIcon, Icon,
+  List, ListItem, ListItemText, ListItemIcon,
   Accordion, AccordionSummary, AccordionDetails, Divider,
   Typography,
 

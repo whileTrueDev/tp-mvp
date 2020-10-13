@@ -5,13 +5,13 @@ import { Button, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   footer: {
-    width: 1400, margin: '0 auto'
+    width: 1400, margin: '0 auto',
   },
   footerbox: {
     padding: `${theme.spacing(2)}px 0px`,
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 }));
 
