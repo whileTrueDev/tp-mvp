@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryColumn, OneToOne, CreateDateColumn
+  Entity, Column, PrimaryColumn, OneToOne, CreateDateColumn,
 } from 'typeorm';
 import { StreamsEntity } from './streams.entity';
 

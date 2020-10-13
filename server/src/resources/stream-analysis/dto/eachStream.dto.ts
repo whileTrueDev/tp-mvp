@@ -1,5 +1,5 @@
 import {
-  IsString, IsIn
+  IsString, IsIn,
 } from 'class-validator';
 
 export class EachStream {

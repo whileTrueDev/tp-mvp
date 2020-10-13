@@ -1,5 +1,5 @@
 import {
-  IsString, IsArray
+  IsString, IsArray,
 } from 'class-validator';
 
 export class NotificationPostRequest {

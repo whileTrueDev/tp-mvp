@@ -8,7 +8,7 @@ import { InquiryEntity } from './entities/inquiry.entity';
 export class InquiryService {
   constructor(
     @InjectRepository(InquiryEntity)
-    private readonly inquiryRepository: Repository<InquiryEntity>
+    private readonly inquiryRepository: Repository<InquiryEntity>,
   ) {}
 
   /**

@@ -1,11 +1,12 @@
 import express from 'express';
 import {
-  Controller, Get, Query, Res, Req, HttpException, HttpStatus
+  Controller, Get, Query, Res, Req, HttpException, HttpStatus,
 } from '@nestjs/common';
 import { HighlightService } from './highlight.service';
 @Controller('highlight')
 export class HighlightController {
   constructor(private readonly highlightService: HighlightService) { }
+
   @Get('/list')
   async getDateListForCalendar(
     @Query('name') name: string,
@@ -23,7 +24,7 @@ export class HighlightController {
     @Query('name') name: string,
     @Query('year') year: string,
     @Query('month') month: string,
-    @Query('day') day: string
+    @Query('day') day: string,
   ): Promise<string[]> {
     if (name && year && month && day) {
       return this.highlightService.getStreamListForCalendarBtn(name, year, month, day);
@@ -48,7 +49,7 @@ export class HighlightController {
     @Query('year') year: string,
     @Query('month') month: string,
     @Query('day') day: string,
-    @Query('fileId') fileId: string
+    @Query('fileId') fileId: string,
   ): Promise<any> {
     if (id) {
       return this.highlightService.getMetricsData(id, year, month, day, fileId);
@@ -66,13 +67,13 @@ export class HighlightController {
     @Query('srt') srt: number,
     @Query('csv') csv: number,
     @Query('txt') txt: number,
-    @Req() req: express.Request, @Res() res: express.Response
+    @Req() req: express.Request, @Res() res: express.Response,
   ): Promise<any> {
     if (id) {
       const timestamp = new Date().getTime();
       const fileName = `${timestamp}`;
       const zip = await this.highlightService.getZipFile(
-        id, year, month, day, streamId, srt, csv, txt
+        id, year, month, day, streamId, srt, csv, txt,
       );
       res.set({
         'Content-Type': 'text/html; charset=utf-8',

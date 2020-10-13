@@ -12,12 +12,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
-      useClass: JwtConfigService
+      useClass: JwtConfigService,
     }),
     forwardRef(() => UsersModule), // Resolve circular dependencies between Moduels
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -36,7 +36,7 @@ module.exports = {
      * Basic rules
      */
     'camelcase': 1,
-    'no-console': 2,
+    'no-console': [2, { allow: ['error'] }],
     'no-unused-vars': 'off',
     "no-use-before-define": 'off',
     'lines-between-class-members': 1,

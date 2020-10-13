@@ -5,6 +5,6 @@ import { HighlightService } from './highlight.service';
 @Module({
   providers: [HighlightService],
   controllers: [HighlightController],
-  exports: [HighlightService]
+  exports: [HighlightService],
 })
 export class HighlightModule { }

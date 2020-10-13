@@ -1,5 +1,5 @@
 import {
-  Controller, Get, ParseArrayPipe, Query, UseGuards, Inject
+  Controller, Get, ParseArrayPipe, Query, UseGuards, Inject,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
@@ -27,7 +27,7 @@ import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 export class StreamAnalysisController {
   constructor(
     private readonly streamAnalysisService: StreamAnalysisService,
-    @Inject(UsersService) private usersService: UsersService
+    @Inject(UsersService) private usersService: UsersService,
   ) {}
 
   /*
@@ -41,7 +41,7 @@ export class StreamAnalysisController {
     return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
       findDaysStreamRequest.startDate,
-      findDaysStreamRequest.endDate
+      findDaysStreamRequest.endDate,
     );
   }
 
@@ -56,7 +56,7 @@ export class StreamAnalysisController {
   @Get('streams')
   @UseGuards(JwtAuthGuard)
   getStreamsInfo(
-    @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId
+    @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId,
   ): Promise<(StreamAnalysis | null)[]> {
     return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
@@ -68,15 +68,14 @@ export class StreamAnalysisController {
   @Get('periods')
   @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
-    @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms
-  )
-  : Promise<PeriodsAnalysis> {
+    @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms,
+  ): Promise<PeriodsAnalysis> {
     return this.streamAnalysisService.findStreamInfoByPeriods(
       findTermRequest.userId,
       [
         { startAt: findTermRequest.baseStartAt, endAt: findTermRequest.baseEndAt },
         { startAt: findTermRequest.compareStartAt, endAt: findTermRequest.compareEndAt },
-      ]
+      ],
     );
   }
 
@@ -88,8 +87,8 @@ export class StreamAnalysisController {
   @UseGuards(JwtAuthGuard)
   getTest(
     @Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
-      s3Request: FindS3StreamInfo[]
-  ):Promise<PeriodAnalysis> {
+      s3Request: FindS3StreamInfo[],
+  ): Promise<PeriodAnalysis> {
     return this.streamAnalysisService.findStreamInfoByPeriod(s3Request);
   }
 
@@ -105,8 +104,8 @@ export class StreamAnalysisController {
   @Get('user-statistics')
   @UseGuards(JwtAuthGuard)
   getUserStatisticsInfo(
-    @Query() findUserStatisticRequest: FindUserStatisticInfo
-  ) : Promise<StreamsEntity[]> {
+    @Query() findUserStatisticRequest: FindUserStatisticInfo,
+  ): Promise<StreamsEntity[]> {
     return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
       findUserStatisticRequest.userId,
     );

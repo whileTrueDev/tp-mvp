@@ -24,30 +24,48 @@ export class FeatureSuggestionService {
     private readonly FeatureRepository: Repository<FeatureSuggestionEntity>,
   ) { }
 
-  async insertFeatureSuggestion(state) {
+  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
+  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async insertFeatureSuggestion(state: any): Promise<void> {
     await this.FeatureRepository
       .createQueryBuilder()
       .insert()
       .into('FeatureSuggestion')
       .values([
         {
-          category: state.category, author: state.userId, title: state.title, content: state.contents, reply: null, progress: 0,
-        }
+          category: state.category,
+          author: state.userId,
+          title: state.title,
+          content: state.contents,
+          reply: null,
+          progress: 0,
+        },
       ])
       .execute();
   }
-  async updateFeatureSuggestion(state) {
+
+  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
+  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async updateFeatureSuggestion(state: any): Promise<void> {
     const initialData = state[0];
     const postId = state[1];
     await this.FeatureRepository
       .createQueryBuilder()
       .update('FeatureSuggestion', {
-        category: initialData.category, author: state.userId, title: initialData.title, content: initialData.contents, reply: null, progress: 0,
+        category: initialData.category,
+        author: state.userId,
+        title: initialData.title,
+        content: initialData.contents,
+        reply: null,
+        progress: 0,
       })
       .where('FeatureSuggestion.id = :id', { id: postId })
       .execute();
   }
-  async deleteFeatureSuggestion(postId) {
+
+  async deleteFeatureSuggestion(postId: number): Promise<void> {
     await this.FeatureRepository
       .createQueryBuilder()
       .delete()
@@ -55,6 +73,7 @@ export class FeatureSuggestionService {
       .where('id = :id', { id: postId })
       .execute();
   }
+
   async getBoardData(): Promise<any> {
     return this.FeatureRepository.find();
   }
@@ -74,7 +93,7 @@ export class FeatureSuggestionService {
     return returnList;
   }
 
-  async uploadImage(file) {
+  async uploadImage(file: string): Promise<void> {
     // const encodedFile = await encodeBase64ImageFile(file);
     const param = {
       Bucket: process.env.BUCKET_NAME,
@@ -82,13 +101,13 @@ export class FeatureSuggestionService {
       ACL: 'public-read',
       ContentEncoding: 'base64',
       Body: fs.createReadStream(file),
-      ContentType: 'image/*'
+      ContentType: 'image/*',
     };
     s3.putObject(param, (err) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
-        console.log('upload');
+        // console.log('upload');
       }
     });
   }

@@ -175,7 +175,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         link.click();
         // setDownloadUrl(url);
       }).catch((err) => {
-        // console.log(err);
+        console.error(err);
         alert('지금은 다운로드 할 수 없습니다.');
       });
   };

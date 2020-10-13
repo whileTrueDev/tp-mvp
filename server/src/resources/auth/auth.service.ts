@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import {
-  Injectable, HttpException, HttpStatus
+  Injectable, HttpException, HttpStatus,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
@@ -15,7 +15,7 @@ import { LogoutDto } from './dto/logout.dto';
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   private createAccessToken(payload: LogedinUser): string {
@@ -40,7 +40,7 @@ export class AuthService {
    */
   // This is for local-strategy and for generating jwt token
   public async validateUser(
-    userId: string, plainPassword: string
+    userId: string, plainPassword: string,
   ): Promise<UserLoginPayload> {
     const user = await this.usersService.findOne(userId);
 
@@ -48,6 +48,7 @@ export class AuthService {
       const isCorrectPass = await bcrypt.compare(plainPassword, user.password);
       if (isCorrectPass) {
         // Extracting password
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...result } = user;
 
         return result;
@@ -65,13 +66,13 @@ export class AuthService {
   public async login(user: UserLoginPayload, stayLogedIn: boolean): Promise<LoginToken> {
     // access token 발급
     const accessToken = this.createAccessToken({
-      userId: user.userId, userName: user.name, roles: user.roles, userDI: user.userDI
+      userId: user.userId, userName: user.name, roles: user.roles, userDI: user.userDI,
     });
     // 로그인 상태 유지에 따라 다른 유지기간의 refresh token 발급
     const refreshToken = this.createRefreshToken(user.userId, stayLogedIn);
     // refresh token 적재
     this.usersService.saveRefreshToken({
-      userId: user.userId, refreshToken
+      userId: user.userId, refreshToken,
     });
     return { accessToken, refreshToken };
   }
@@ -93,12 +94,12 @@ export class AuthService {
     let verifiedPrevRefreshToken: RefreshTokenData;
     try {
       verifiedPrevRefreshToken = await this.jwtService.verifyAsync<RefreshTokenData>(
-        prevRefreshToken
+        prevRefreshToken,
       );
     } catch (err) {
       throw new HttpException(
         'Error occurred during verifying refresh token',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -107,7 +108,7 @@ export class AuthService {
     if (!token) {
       throw new HttpException(
         'Error occurred during find refresh token',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
     // 유저 정보 로드
@@ -117,7 +118,7 @@ export class AuthService {
       userId: userInfo.userId,
       userName: userInfo.name,
       roles: userInfo.roles,
-      userDI: userInfo.userDI
+      userDI: userInfo.userDI,
     });
 
     // ***************************************************************
@@ -139,16 +140,16 @@ export class AuthService {
     }
     // 새로운 refresh token 을 생성
     const newRefreshToken = this.createRefreshToken(
-      userInfo.userId, verifiedPrevRefreshToken.refreshSelf
+      userInfo.userId, verifiedPrevRefreshToken.refreshSelf,
     );
     // 새로운 refreshToken을 UserTokens에 적재
     this.usersService.saveRefreshToken({
-      userId: userInfo.userId, refreshToken: newRefreshToken
+      userId: userInfo.userId, refreshToken: newRefreshToken,
     });
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
-  async getCertificationInfo(impUid : string): Promise<CertificationInfo> {
+  async getCertificationInfo(impUid: string): Promise<CertificationInfo> {
     try {
       // 인증 토큰 발급 받기
       const getToken = await axios({
@@ -157,15 +158,15 @@ export class AuthService {
         headers: { 'Content-Type': 'application/json' }, // "Content-Type": "application/json"
         data: {
           imp_key: process.env.IMP_KEY, // REST API키
-          imp_secret: process.env.IMP_SECRET // REST API Secret
-        }
+          imp_secret: process.env.IMP_SECRET, // REST API Secret
+        },
       });
       const accessToken = getToken.data.response.access_token; // 인증 토큰
       // imp_uid로 인증 정보 조회
       const getCertifications = await axios({
         url: `https://api.iamport.kr/certifications/${impUid}`, // imp_uid 전달
         method: 'get', // GET method
-        headers: { Authorization: accessToken } // 인증 토큰 Authorization header에 추가
+        headers: { Authorization: accessToken }, // 인증 토큰 Authorization header에 추가
       });
       const certificationsInfo = getCertifications.data.response; // 조회한 인증 정보
       // 인증정보에 대한 데이터를 저장하거나 사용한다.
@@ -180,13 +181,13 @@ export class AuthService {
         name,
         gender,
         birth: birthday,
-        userDI
+        userDI,
       };
     } catch (e) {
       console.error(e);
       throw new HttpException(
         '서버오류입니다. 잠시후 다시 진행해주세요.',
-        HttpStatus.INTERNAL_SERVER_ERROR
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }

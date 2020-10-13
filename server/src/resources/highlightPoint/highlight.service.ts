@@ -8,31 +8,31 @@ const s3 = new AWS.S3();
 
 @Injectable()
 export class HighlightService {
-  async getHighlightData(id, year, month, day, fileId): Promise<any> {
+  async getHighlightData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`
+      Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
     };
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
   }
 
-  async getMetricsData(id, year, month, day, fileId): Promise<any> {
+  async getMetricsData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`
+      Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`,
     };
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
   }
 
-  async getDateListForCalendar(name, year, month): Promise<string[]> {
+  async getDateListForCalendar(name: string, year: string, month: string): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${name}/${year}/${month}`
+      Prefix: `highlight_json/${name}/${year}/${month}`,
     };
     const keyArray = [];
     s3.listObjects(params).promise()
@@ -48,13 +48,14 @@ export class HighlightService {
     const uniq = [...new Set(keyArray)];
     return uniq;
   }
+
   async getStreamListForCalendarBtn(
-    name: string, year: string, month: string, day: string
+    name: string, year: string, month: string, day: string,
   ): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${name}/${year}/${month}/${day}`
+      Prefix: `highlight_json/${name}/${year}/${month}/${day}`,
     };
     const keyArray = [];
     const returnArray = [];
@@ -71,13 +72,17 @@ export class HighlightService {
       const finishAt = value.split('_')[1];
       const fileId = value;
       const oneStream = {
-        getState: true, startAt, finishAt, fileId
+        getState: true, startAt, finishAt, fileId,
       };
       returnArray.push(oneStream);
     });
     return returnArray;
   }
-  async getZipFile(id, year, month, day, streamId, srt, csv, txt): Promise<any> {
+
+  async getZipFile(
+    id: string, year: string, month: string, day: string, streamId: string,
+    srt: number, csv: number, txt: number,
+  ): Promise<any> {
     const boolCsv = Boolean(Number(csv));
     const boolSrt = Boolean(Number(srt));
     const boolTxt = Boolean(Number(txt));
@@ -117,7 +122,8 @@ export class HighlightService {
     const doGetSelectedFiles = await this.getSelectedFile(getArray);
     return doGetSelectedFiles;
   }
-  async getSelectedFile(fileName): Promise<any> {
+
+  async getSelectedFile(fileName: string[]): Promise<any> {
     const zip = archiver.create('zip');
     Promise.all(fileName.map(async (key) => {
       const getParams = {
@@ -129,10 +135,10 @@ export class HighlightService {
           const fileData = value.Body.toString('utf-8');
           const toSaveName = key.split('/')[6];
           zip.append(fileData, {
-            name: toSaveName
+            name: toSaveName,
           });
         }).catch((err) => {
-          console.log(err);
+          console.error(err);
         });
     })).then(() => {
       zip.finalize();

@@ -1,6 +1,6 @@
 import {
   Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, UseGuards
+  ClassSerializerInterceptor, Query, Patch, UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
@@ -26,7 +26,7 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async findSubscriberInfo(
-    @Query('userId') userId: string
+    @Query('userId') userId: string,
   ): Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
     return this.usersService.findSubscriberInfo(userId);
   }
@@ -34,7 +34,7 @@ export class UsersController {
   // get request에 반응하는 router, 함수정의
   @Get('/id')
   async findId(
-    @Query() query : CertificationType,
+    @Query() query: CertificationType,
   ): Promise<Pick<UserEntity, 'userId'>> {
     if (query.impUid) {
       const { userDI }: CertificationInfo = await this.authService
@@ -48,7 +48,7 @@ export class UsersController {
   // 2. userDI 값을 통해서 ID의 존재여부 확인.
   @Get('/check-id')
   async checkId(
-    @Query() query : CheckIdType,
+    @Query() query: CheckIdType,
   ): Promise<boolean> {
     if (query.impUid) {
       const { userDI }: CertificationInfo = await this.authService
@@ -60,8 +60,8 @@ export class UsersController {
 
   @Patch('/password')
   async findPassword(
-    @Body(new ValidationPipe()) { userDI, password }: PasswordDto
-  ) : Promise<boolean> {
+    @Body(new ValidationPipe()) { userDI, password }: PasswordDto,
+  ): Promise<boolean> {
     return this.usersService.findPW(userDI, password);
   }
 
@@ -87,16 +87,15 @@ export class UsersController {
   @Get('/subscribe-users')
   // @UseGuards(JwtAuthGuard)
   getUserValidSubscribeInfo(
-    @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers
-  )
-  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
+    @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers,
+  ): Promise<{validUserList: SubscribeEntity[]; inValidUserList: SubscribeEntity[]}> {
     return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
   }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   async create(
-    @Body(new ValidationPipe()) createUserDto: CreateUserDto
+    @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<UserEntity> {
     return this.usersService.register(createUserDto);
   }

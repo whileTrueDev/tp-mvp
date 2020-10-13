@@ -24,7 +24,7 @@ import { NoticeModule } from './resources/notice/notice.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
     TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService
+      useClass: TypeOrmConfigService,
     }),
     AccessControlModule.forRoles(roles),
     AuthModule,
@@ -36,7 +36,7 @@ import { NoticeModule } from './resources/notice/notice.module';
     InquiryModule,
     SlackModule,
     NoticeModule,
-    AdminModule
+    AdminModule,
   ],
 })
 export class AppModule { }

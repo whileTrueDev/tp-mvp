@@ -1,5 +1,5 @@
 import {
-  IsNumber, IsString
+  IsNumber, IsString,
 } from 'class-validator';
 
 export class NoticePatchRequest {

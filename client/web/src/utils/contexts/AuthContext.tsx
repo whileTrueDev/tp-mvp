@@ -57,7 +57,7 @@ export function useLogin(): AuthContextValue {
       })
       .catch((err) => {
         // 올바르게 로그아웃되지 않음.
-        // console.log(err);
+        console.error(err);
         window.location.href = '/';
       });
   }
