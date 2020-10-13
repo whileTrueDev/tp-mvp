@@ -91,7 +91,7 @@ export default function FeatureDetail({
               </Typography>
               <Typography color="textSecondary">
                 {categoryTabSwitch(Number(currentSuggestion?.category))}
-                {new Date(currentSuggestion!.createdAt).toLocaleString()}
+                {currentSuggestion ? new Date(currentSuggestion.createdAt).toLocaleString() : ''}
               </Typography>
             </div>
 
@@ -100,6 +100,7 @@ export default function FeatureDetail({
                 className={classes.markdown}
                 source={currentSuggestion?.content}
                 escapeHtml={false}
+                // eslint-disable-next-line react/prop-types
                 renderers={{ code: ({ value }) => <Markdown source={value} /> }}
               />
             </div>
@@ -142,7 +143,9 @@ export default function FeatureDetail({
               style={{ width: '10%' }}
               size="large"
               variant="contained"
-              onClick={() => { onBackClick(); }}
+              onClick={() => {
+                onBackClick();
+              }}
             >
               목록으로
             </Button>

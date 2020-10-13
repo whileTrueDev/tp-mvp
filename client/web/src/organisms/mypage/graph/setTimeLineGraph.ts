@@ -6,7 +6,7 @@ import graphColor from './Color';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
 
 // @hwasurr - 2020.10.13 eslint error 정리 중
-// any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 바람.
+// any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function setComponent(data: any, theme: TruepointTheme): am4charts.XYChart {
   am4core.useTheme(am4themesKelly);

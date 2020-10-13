@@ -1,16 +1,16 @@
-import React from 'react'
+import React from 'react';
 import {
-  TableRow,TableCell,TableBody
+  TableRow, TableCell, TableBody,
 } from '@material-ui/core';
 
 interface costomTableProps {
   title: string;
   data?: string;
 }
-function CostomTableRow(props: costomTableProps){
-  const {title,data}=props;
+function CostomTableRow(props: costomTableProps): JSX.Element {
+  const { title, data } = props;
 
-  return(
+  return (
     <TableBody>
       <TableRow>
         <TableCell>
@@ -21,7 +21,7 @@ function CostomTableRow(props: costomTableProps){
         </TableCell>
       </TableRow>
     </TableBody>
-  )
-} 
+  );
+}
 
 export default CostomTableRow;

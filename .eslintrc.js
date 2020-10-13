@@ -35,6 +35,7 @@ module.exports = {
     /**
      * Basic rules
      */
+    "brace-style": "off",
     'camelcase': 1,
     'no-console': [2, { allow: ['error'] }],
     'no-unused-vars': 'off',
@@ -76,6 +77,8 @@ module.exports = {
     /**
      * Typescript rules
      */
+    "@typescript-eslint/brace-style": ["error"],
+    '@typescript-eslint/type-annotation-spacing': [2, { before: false, after: true, overrides: { arrow: { after: true, before: true } } }],
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     // disable this rule for js, jsx files
@@ -94,7 +97,7 @@ module.exports = {
     "jsx-a11y/aria-role": 2,
     'react/button-has-type': 0,
     "react/display-name": 0,
-    "react/jsx-props-no-spreading": "warn",
+    "react/jsx-props-no-spreading": 0,
     "react/jsx-filename-extension": [
         1,
         {
@@ -120,7 +123,7 @@ module.exports = {
         }
     ],
     "react/prop-types": [
-        1,
+        2,
         {
           "ignore": [
               "className",
@@ -139,7 +142,6 @@ module.exports = {
       "rules": {
         "@typescript-eslint/explicit-module-boundary-types": ["error"],
         '@typescript-eslint/no-unused-vars': [2, { args: "none" }],
-
       }
     },
     {

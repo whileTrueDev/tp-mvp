@@ -44,7 +44,7 @@ export interface Props {
 }
 // @hwasurr
 // 2020.10.13 eslint error 정리 중 주석처리. 사용하지 않는 interface
-// @chanuuuu 수정바람.
+// @chanuuuu 수정바랍니다.
 // interface ProfileData {
 //   marketerPlatformData: string;
 //   marketerMail: string;

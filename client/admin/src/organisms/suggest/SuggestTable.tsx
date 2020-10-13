@@ -1,13 +1,13 @@
 import React, { forwardRef } from 'react';
 import { Typography, useMediaQuery } from '@material-ui/core';
-import { FiberNew } from '@material-ui/icons';
-import MaterialTable from 'material-table';
 import {
+  FiberNew,
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
+import MaterialTable, { Icons } from 'material-table';
 
-const tableIcons = {
+const tableIcons: Icons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props: any, ref) => <Clear {...props} ref={ref} />),
@@ -24,18 +24,18 @@ const tableIcons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
-//최신일을 계산해주는 함수
+// 최신일을 계산해주는 함수
 function dateDiff(date1: any, date2: any) {
   return Math.ceil((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-interface props {
+interface SuggestTableProps {
   suggestData: any;
-  handleEditModeOff: () => void; 
+  handleEditModeOff: () => void;
      handleData: (Data: any) => void;
 }
 
-//table 레이아웃조정
+// table 레이아웃조정
 const localization = {
   body: {
     deleteTooltip: '캠페인 삭제',
@@ -60,38 +60,38 @@ const localization = {
   },
 };
 
-//기능제안 목록 테이블
-export default function SuggestTable(props: props) {
+// 기능제안 목록 테이블
+export default function SuggestTable(props: SuggestTableProps): JSX.Element {
   const { suggestData, handleData, handleEditModeOff } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
-  function handleState(Case: number){
-  
-    switch(Case){
+  function handleState(Case: number) {
+    switch (Case) {
       case 1:
-        return "검토중";
+        return '검토중';
       case 2:
-        return "기능구현중";
+        return '기능구현중';
       case 3:
-        return "구현완료";
+        return '구현완료';
+      default:
+        return '';
     }
-
   }
 
   return (
     <MaterialTable
       title="기능 제안"
       columns={[
-        { title: '카테고리', field: 'category', render: rowData => (<Typography>{rowData.category}</Typography>) },
+        { title: '카테고리', field: 'category', render: (rowData) => (<Typography>{rowData.category}</Typography>) },
         {
           title: '제목',
           field: 'title',
-          render: rowData => (
+          render: (rowData) => (
             <Typography className="title">
-              {true ? ("[신규 제안]") : ""}
+              [신규 제안]
               {rowData.title}
               { dateDiff(new Date(), new Date(rowData.createdAt)) < 8 && (
-              <FiberNew style={{ color: '#929ef8' }}/>
+              <FiberNew style={{ color: '#929ef8' }} />
               )}
             </Typography>
           ),
@@ -99,37 +99,37 @@ export default function SuggestTable(props: props) {
         {
           title: '작성일',
           field: 'createdAt',
-          render: rowData => (
+          render: (rowData) => (
             <Typography>{new Date(rowData.createdAt).toLocaleString()}</Typography>
           ),
         },
         {
           title: '작성자',
           field: 'author',
-          render: rowData => (
+          render: (rowData) => (
             <Typography>{rowData.author}</Typography>
           ),
         },
         {
           title: '진행상태',
           field: 'state',
-          render: rowData => (
-          <Typography className="상태">{handleState(rowData.state)}</Typography>
-          )
+          render: (rowData) => (
+            <Typography className="상태">{handleState(rowData.state)}</Typography>
+          ),
         },
         {
           title: '좋아요',
           field: 'like',
-          render: rowData => (
-          <Typography className="상태">{rowData.like}</Typography>
-          )
+          render: (rowData) => (
+            <Typography className="상태">{rowData.like}</Typography>
+          ),
         },
-        
+
       ]}
       data={suggestData}
       onRowClick={(e, rowData: any) => {
-          handleData(rowData);
-          handleEditModeOff();
+        handleData(rowData);
+        handleEditModeOff();
       }}
       options={{
         search: true,
@@ -139,7 +139,7 @@ export default function SuggestTable(props: props) {
           height: 65,
         },
         headerStyle: { backgroundColor: '#f5f5f5', color: '#555555' },
-        searchFieldAlignment: 'right',     
+        searchFieldAlignment: 'right',
       }}
       localization={localization}
       icons={tableIcons}

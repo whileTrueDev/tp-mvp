@@ -12,14 +12,14 @@ const initialState = {
 
 function reducer(state: any, action: any) {
   const {
-    type, title, category, content, isImportant, author
+    type, title, category, content, isImportant, author,
   } = action;
   switch (type) {
     case 'reset':
       return initialState;
     case 'handleTitle':
       return { ...state, title };
-    
+
     case 'handleCategory':
       if (state.title.indexOf(']') > 0) {
         return { ...state, category, title: `[${category}]${state.title.split(']')[1]}` };
@@ -29,9 +29,9 @@ function reducer(state: any, action: any) {
     case 'handleContent':
       return { ...state, content };
     case 'handleisImportant':
-      return {...state, isImportant};
+      return { ...state, isImportant };
     case 'handleAuthor':
-        return {...state, author};
+      return { ...state, author };
 
     default: throw Error(`unexpected action.type: ${action.type}`);
   }
@@ -40,7 +40,7 @@ function reducer(state: any, action: any) {
 interface SelectedData{
   noticeData?: NoticeData;
 }
-export default function NoticeWrite(props: SelectedData) {
+export default function NoticeWrite(props: SelectedData): JSX.Element {
   const { noticeData } = props;
   const [state, dispatch] = React.useReducer(reducer, noticeData || initialState);
 
@@ -52,7 +52,7 @@ export default function NoticeWrite(props: SelectedData) {
     <div>
       <div style={{ padding: 28 }}>
         <Typography variant="h5">
-        공지사항 글작성
+          공지사항 글작성
         </Typography>
       </div>
 

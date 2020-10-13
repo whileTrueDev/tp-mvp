@@ -57,7 +57,7 @@ export default function NoticeDetail({
           </Typography>
           <Typography color="textSecondary">
             {`${currentNotice?.category} • ${
-              new Date(currentNotice!.createdAt).toLocaleString()}`}
+              currentNotice ? new Date(currentNotice.createdAt).toLocaleString() : ''}`}
           </Typography>
         </div>
 
@@ -66,6 +66,7 @@ export default function NoticeDetail({
             className={classes.markdown}
             source={currentNotice?.content}
             escapeHtml={false}
+            // eslint-disable-next-line react/prop-types
             renderers={{ code: ({ value }) => <Markdown source={value} /> }}
           />
         </div>
@@ -95,7 +96,9 @@ export default function NoticeDetail({
           style={{ width: '10%' }}
           size="large"
           variant="contained"
-          onClick={() => { onBackClick(); }}
+          onClick={() => {
+            onBackClick();
+          }}
         >
           목록으로
         </Button>

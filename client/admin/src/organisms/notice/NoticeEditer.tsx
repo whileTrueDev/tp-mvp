@@ -9,7 +9,7 @@ import { NoticeData } from '../../pages/AdminNotice';
 interface NoticeEditData{
   state: NoticeData;
   dispatch: React.Dispatch<any>;
-  helpToggle: boolean;
+  // helpToggle: boolean;
   handleHelpToggle: () => void;
   noticeData?: NoticeData;
 }
@@ -25,18 +25,20 @@ const ImportantCheckbox = withStyles({
   checked: {},
 })((props: CheckboxProps) => <Checkbox color="default" {...props} />);
 
-export default function NoticeEditer(props: NoticeEditData) {
+export default function NoticeEditer(props: NoticeEditData): JSX.Element {
   const {
-    state, dispatch, handleHelpToggle, helpToggle, noticeData
+    state, dispatch, handleHelpToggle,
+    // helpToggle,
+    noticeData,
   } = props;
   // 초기화
   // state.isImportant = 0;
 
-  const [{ error: patchErr, loading: patchLoding, data: patchData }, executePatch] = useAxios(
-    { url: 'http://localhost:3000/admin/notice', method: 'PATCH' }, { manual: true }
+  const [, executePatch] = useAxios(
+    { url: 'http://localhost:3000/admin/notice', method: 'PATCH' }, { manual: true },
   );
-  const [{ error, loading, data }, executePost] = useAxios(
-    { url: 'http://localhost:3000/admin/notice', method: 'POST' }, { manual: true }
+  const [, executePost] = useAxios(
+    { url: 'http://localhost:3000/admin/notice', method: 'POST' }, { manual: true },
   );
   return (
 
@@ -48,7 +50,9 @@ export default function NoticeEditer(props: NoticeEditData) {
 
         <Button
           style={{ backgroundColor: 'rgb(255, 140, 150, 0.8)', color: '#fff' }}
-          onClick={() => { handleHelpToggle(); }}
+          onClick={() => {
+            handleHelpToggle();
+          }}
         >
           마크다운 작성 도움말 보기
         </Button>
@@ -133,11 +137,11 @@ export default function NoticeEditer(props: NoticeEditData) {
             disabled={!state.content || !state.title || !state.category}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n정말로 수정 하시겠습니까?`)) {
-                console.log(state);
+                // console.log(state);
 
                 executePatch({ data: state })
                   .then((res) => {
-                    console.log(state);
+                    // console.log(state);
                     // 기존의 notice data를 변경된 데이터로 최신화
                     // 어떻게 할까요? ->
                     // 사용자 입장에서는 새로고침보다 곧바로 데이터가 변경되는 것이 좋다.
@@ -147,7 +151,7 @@ export default function NoticeEditer(props: NoticeEditData) {
                   })
                   .catch((err) => {
                     // 데이터 요청 실패시
-                    console.log('err', err.response);
+                    console.error('err', err.response);
                   });
               }
             }}
@@ -161,7 +165,7 @@ export default function NoticeEditer(props: NoticeEditData) {
             color="primary"
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
-                console.log(state);
+                // console.log(state);
                 executePost({ data: state })
                   .then((res) => {
                   // 기존의 notice data를 변경된 데이터로 최신화
@@ -173,7 +177,7 @@ export default function NoticeEditer(props: NoticeEditData) {
                   })
                   .catch((err) => {
                   // 데이터 요청 실패시
-                    console.log('err', err.response);
+                    console.error('err', err.response);
                   });
               }
             }}

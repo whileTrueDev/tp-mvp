@@ -1,5 +1,5 @@
 import React from 'react';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import classnames from 'classnames';
 import AppBar from '@material-ui/core/AppBar';
@@ -11,16 +11,15 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Link, NavLink } from 'react-router-dom';
-import { ListProps, routes } from '../App';
-import {IconButton} from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
-import { RouterSharp } from '@material-ui/icons';
+import { ListProps } from '../App';
 
 const drawerWidth = 240;
 
-//style정의
-const useStyles = makeStyles(theme => ({
+// style정의
+const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
@@ -100,7 +99,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-//사이드바 드로어에서 선택된 페이지의 인덱스를 처리
+// 사이드바 드로어에서 선택된 페이지의 인덱스를 처리
 function useDrawerSelectedItem() {
   const [selectedIndex, setSelectedIndex] = React.useState(null);
   function handleListItemClick(evt: any, index: any) {
@@ -116,13 +115,10 @@ location: 현재 클릭된 페이지의위치
  */
 interface Props {
   routes: ListProps[];
-  location: any;
 }
 
-
-export default function Sidebar(props: Props):JSX.Element {
-  
-  const {routes, location} = props;
+export default function Sidebar(props: Props): JSX.Element {
+  const { routes } = props;
   const classes = useStyles();
   const { selectedIndex, handleListItemClick } = useDrawerSelectedItem();
   const [drawerOpen, setDrawerOpen] = React.useState(true);
@@ -130,23 +126,28 @@ export default function Sidebar(props: Props):JSX.Element {
   function makeTitle() {
     let routeName = '';
     routes.forEach((route) => {
-      if(route.index===selectedIndex){
+      if (route.index === selectedIndex) {
         routeName = route.name;
       }
     });
     return `${routeName}`;
   }
- 
+
   return (
-    <div >
-      <AppBar position="fixed"  className={classnames(classes.appBar, {
+    <div>
+      <AppBar
+        position="fixed"
+        className={classnames(classes.appBar, {
           [classes.appBarShift]: drawerOpen,
-        })}>
+        })}
+      >
         <Toolbar>
-        <IconButton
+          <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={() => { setDrawerOpen(true); }}
+            onClick={() => {
+              setDrawerOpen(true);
+            }}
             edge="start"
             className={classnames(classes.menuButton, {
               [classes.hide]: drawerOpen,
@@ -154,9 +155,9 @@ export default function Sidebar(props: Props):JSX.Element {
           >
             <MenuIcon />
           </IconButton>
-           <Typography variant="h6" noWrap>
+          <Typography variant="h6" noWrap>
             {makeTitle()}
-          </Typography> 
+          </Typography>
         </Toolbar>
       </AppBar>
 
@@ -175,48 +176,50 @@ export default function Sidebar(props: Props):JSX.Element {
         open={drawerOpen}
         anchor="left"
       >
-     <div className={classes.toolbar}>
+        <div className={classes.toolbar}>
           <Typography variant="h6" component={Link} to="/" className={classes.brand}>TruePoint 관리자</Typography>
-          <IconButton onClick={() => { setDrawerOpen(false); }}>
+          <IconButton onClick={() => {
+            setDrawerOpen(false);
+          }}
+          >
             <ChevronLeftIcon />
           </IconButton>
         </div>
         <Divider />
 
         <List component="div" disablePadding>
-        {routes.map( route => (
-                <NavLink
-                  to={route.path}
-                  key={route.name}
-                  className={classes.link}
-                >
-                  <ListItem
-                    className={classes.linkButton}
-                    button
-                    selected={selectedIndex === route.index}
-                    onClick={evt => handleListItemClick(evt, route.index)}
-                  >
-                    {route.icon && (
-                      <ListItemIcon>
-                        <route.icon/>
-                        </ListItemIcon>
-                         )}
-                    <ListItemText
-                      primary={route.name}
-                      secondary={route.description}
-                      secondaryTypographyProps={{
-                        noWrap: true,
-                      }}
-                    />
-                  </ListItem>
-                </NavLink>
-              ))}
-          </List>
+          {routes.map((route) => (
+            <NavLink
+              to={route.path}
+              key={route.name}
+              className={classes.link}
+            >
+              <ListItem
+                className={classes.linkButton}
+                button
+                selected={selectedIndex === route.index}
+                onClick={(evt) => handleListItemClick(evt, route.index)}
+              >
+                {route.icon && (
+                <ListItemIcon>
+                  <route.icon />
+                </ListItemIcon>
+                )}
+                <ListItemText
+                  primary={route.name}
+                  secondary={route.description}
+                  secondaryTypographyProps={{
+                    noWrap: true,
+                  }}
+                />
+              </ListItem>
+            </NavLink>
+          ))}
+        </List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Typography paragraph>
-        </Typography>
+        <Typography paragraph />
       </main>
     </div>
   );

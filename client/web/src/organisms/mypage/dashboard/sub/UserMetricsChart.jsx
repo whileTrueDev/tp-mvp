@@ -1,5 +1,6 @@
 /* Imports */
 import React, { useLayoutEffect } from 'react';
+import PropTypes from 'prop-types';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import am4langKoKr from '@amcharts/amcharts4/lang/ko_KR';
 import * as am4core from '@amcharts/amcharts4/core';
@@ -14,7 +15,9 @@ const capitalize = (s) => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-export default function UserMetricsChart({ data, selectedPlatform, valueField = 'viewer' }) {
+export default function UserMetricsChart({
+  data, selectedPlatform, valueField = 'viewer',
+}) {
   let unit = '명';
   switch (valueField) {
     case 'chatCount': unit = '개';
@@ -209,10 +212,18 @@ export default function UserMetricsChart({ data, selectedPlatform, valueField = 
     range.tick.location = 1;
     range.grid.location = 1;
 
-    return () => { chart.dispose(); };
+    return () => {
+      chart.dispose();
+    };
   }, [data, valueField, selectedPlatform, unit]);
 
   return (
     <div id="chartdiv" style={{ width: '100%', height: '300px' }} />
   );
 }
+
+UserMetricsChart.propTypes = {
+  data: PropTypes.any,
+  selectedPlatform: PropTypes.arrayOf(PropTypes.string),
+  valueField: PropTypes.string,
+};
