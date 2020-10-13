@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 
 export interface PeriodRequestArray {
-  streams : {
+  streams: {
     creatorId: string;
     streamId: string;
     startedAt: string;
@@ -9,8 +9,8 @@ export interface PeriodRequestArray {
 }
 export interface PeriodAnalysisProps {
   loading: boolean;
-  error : AxiosError<any> | undefined;
-  handleSubmit : ({ category, params }: {
+  error: AxiosError<any> | undefined;
+  handleSubmit: ({ category, params }: {
     category: string[];
     params: PeriodRequestArray;
   }) => void;
@@ -22,27 +22,27 @@ export interface RangeSelectCaledarProps {
   base?: true;
 }
 export interface DayStreamsInfo{
-  streamId : string;
+  streamId: string;
   startedAt: Date;
   creatorId: string;
-  title : string;
+  title: string;
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
 }
 export interface CombinedTimeLine {
-  smileCount : number;
+  smileCount: number;
   chatCount: number;
   date: string;
 }
 export interface OrganizedData {
   avgViewer: number;
   avgChatCount: number;
-  timeLine : CombinedTimeLine[];
+  timeLine: CombinedTimeLine[];
 }
 export interface AnaysisStreamsInfo {
   avgViewer: number;
   avgChatCount: number;
-  timeLine : CombinedTimeLine[];
+  timeLine: CombinedTimeLine[];
 }
 export interface AnaysisStreamsInfoRequest {
   creatorId: string;

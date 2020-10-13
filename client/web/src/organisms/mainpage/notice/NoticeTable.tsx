@@ -104,7 +104,9 @@ export default function NoticeTable<T extends NoticeData>({
                   </TableCell>
                   <TableCell>
                     <Typography
-                      onClick={() => { onRowClick(row.id); }}
+                      onClick={() => {
+                        onRowClick(row.id);
+                      }}
                       className={classes.linkText}
                     >
                       {row.title}

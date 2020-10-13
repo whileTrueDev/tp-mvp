@@ -118,7 +118,9 @@ export default function UserMetricsSection(): JSX.Element {
                 <Checkbox
                   key={`${platform}select-button`}
                   checked={selectedPlatform.includes(platform)}
-                  onChange={() => { handlePlatformSelect(platform); }}
+                  onChange={() => {
+                    handlePlatformSelect(platform);
+                  }}
                   inputProps={{ 'aria-label': `chart-select-${platform}` }}
                   style={{ color: getPlatformColor(platform) }}
                 />
@@ -160,7 +162,9 @@ export default function UserMetricsSection(): JSX.Element {
                       [classes.card]: selectedCard !== card.name,
                       [classes.selected]: selectedCard === card.name,
                     })}
-                    onClick={() => { handleCardSelect(card.name); }}
+                    onClick={() => {
+                      handleCardSelect(card.name);
+                    }}
                   >
                     <div className={classes.cardHeader}>
                       <Typography variant="h6">{card.nameKr}</Typography>

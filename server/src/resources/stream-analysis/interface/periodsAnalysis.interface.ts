@@ -1,5 +1,5 @@
 export interface PeriodsAnalysis{
-  timeline : {
+  timeline: {
     viewer: number;
     chatCount: number;
     smileCount: number;

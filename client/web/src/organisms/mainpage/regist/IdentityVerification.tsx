@@ -86,7 +86,9 @@ function IndentityVerification({
           });
       }
     })
-      .catch(() => { handleBack(); });
+      .catch(() => {
+        handleBack();
+      });
   });
 
   return (
@@ -110,7 +112,9 @@ function IndentityVerification({
           <Typography>다음</Typography>
         </Button>
         <Button
-          onClick={() => { history.push('/login'); }}
+          onClick={() => {
+            history.push('/login');
+          }}
           className={classes.fullButton}
         >
           <Typography>뒤로</Typography>

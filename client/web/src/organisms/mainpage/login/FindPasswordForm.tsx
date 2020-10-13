@@ -40,8 +40,12 @@ export default function FindAccountForm(): JSX.Element {
   }
   // 에러 알림창 렌더링을 위한 스테이트
   const [helperText, setHelperOpen] = React.useState<string>();
-  function handleHelperOpen(errorMessage: string): void { setHelperOpen(errorMessage); }
-  function handleHelperClose(): void { setHelperOpen(undefined); }
+  function handleHelperOpen(errorMessage: string): void {
+    setHelperOpen(errorMessage);
+  }
+  function handleHelperClose(): void {
+    setHelperOpen(undefined);
+  }
 
   // **************************************************
   // Request auth/certification
@@ -139,7 +143,9 @@ export default function FindAccountForm(): JSX.Element {
             color="secondary"
             className={classes.fullButton}
             style={{ color: 'white' }}
-            onClick={() => { iamport.startCert(); }}
+            onClick={() => {
+              iamport.startCert();
+            }}
             disabled={certificateRequest.loading}
           >
             <Typography>휴대폰 본인인증</Typography>

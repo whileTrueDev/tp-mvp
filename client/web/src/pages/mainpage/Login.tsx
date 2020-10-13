@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login():JSX.Element {
+export default function Login(): JSX.Element {
   const classes = useStyles();
   const isDesktop = useMediaQuery('(min-width:768px)');
 

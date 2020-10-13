@@ -164,7 +164,12 @@ export default function TruepointHighlight({
             </Grid>
             <Grid item md={5} className={classes.contentRight}>
               <div className={classes.buttonWraper}>
-                <Button onClick={() => { window.open('/'); }} style={{ color: 'white' }}>
+                <Button
+                  onClick={() => {
+                    window.open('/');
+                  }}
+                  style={{ color: 'white' }}
+                >
                   편집점 알아보기
                   {/* 여기 클릭 이벤트에 공지사항 - 편집점 이용 안내에 대한 페이지로 이동 시킬 예정 */}
                 </Button>

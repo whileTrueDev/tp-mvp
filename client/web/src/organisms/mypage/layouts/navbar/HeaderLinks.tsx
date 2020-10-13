@@ -80,7 +80,11 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
           aria-label="notifications"
           ref={notificationRef}
           onClick={(e): void => {
-            if (anchorEl) { handleAnchorClose(); } else { handleAnchorOpen(e); }
+            if (anchorEl) {
+              handleAnchorClose();
+            } else {
+              handleAnchorOpen(e);
+            }
           }}
         >
           <Badge

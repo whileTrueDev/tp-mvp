@@ -112,7 +112,9 @@ export default function FeatureTable<T extends FeatureData>({
                   </TableCell>
                   <TableCell>
                     <Typography
-                      onClick={() => { onRowClick(row.id); }}
+                      onClick={() => {
+                        onRowClick(row.id);
+                      }}
                       className={classes.linkText}
                     >
                       {row.title}

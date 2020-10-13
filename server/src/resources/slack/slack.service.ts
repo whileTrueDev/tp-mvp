@@ -45,7 +45,9 @@ export class SlackService {
           footerIcon: 'https://platform.slack-edge.com/img/default_application_icon.png',
         }],
       }), { withCredentials: true });
-      if (res) { return res.data; }
+      if (res) {
+        return res.data;
+      }
       return 'fail';
     } catch (err) {
       return 'Error occurred during posting slack messages';

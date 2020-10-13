@@ -1,6 +1,6 @@
 export interface DayStreamsInfo{
-  streamId : string;
-  title : string;
+  streamId: string;
+  title: string;
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
   startedAt: Date;
@@ -11,7 +11,7 @@ export interface StreamListProps {
   baseStream: DayStreamsInfo|null;
   compareStream: DayStreamsInfo|null;
   handleSeletedStreams: (newStreams: DayStreamsInfo|null, base?: true | undefined) => void;
-  handleFullMessage : (isSelectedListFull: boolean) => void;
+  handleFullMessage: (isSelectedListFull: boolean) => void;
   platformIcon: (stream: DayStreamsInfo) => JSX.Element;
 }
 
@@ -23,7 +23,7 @@ export interface StreamCardProps {
 }
 
 export interface StreamCalendarProps {
-  handleDayStreamList:(responseList: (DayStreamsInfo)[]) => void;
+  handleDayStreamList: (responseList: (DayStreamsInfo)[]) => void;
   clickedDate: Date;
   baseStream: DayStreamsInfo|null;
   compareStream: DayStreamsInfo|null;

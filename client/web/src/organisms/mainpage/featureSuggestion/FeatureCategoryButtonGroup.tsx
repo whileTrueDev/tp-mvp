@@ -36,7 +36,9 @@ export default function FeatureCategoryButtonGroup({
       {['전체'].concat(categories).map((category) => (
         <Button
           key={category}
-          onClick={() => { onChange(category); }}
+          onClick={() => {
+            onChange(category);
+          }}
           variant={selected === category ? 'contained' : 'outlined'}
           color={selected === category ? 'primary' : 'default'}
           className={classnames({

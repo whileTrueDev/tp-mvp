@@ -47,7 +47,9 @@ export default function SimpleNoticeTable({
                     className={classnames({
                       [classes.linkText]: true, [classes.important]: row.isImportant,
                     })}
-                    onClick={() => { history.push(`/notice/${row.id}`); }}
+                    onClick={() => {
+                      history.push(`/notice/${row.id}`);
+                    }}
                   >
                     {`${row.isImportant ? '[중요공지]' : ''} ${row.title}`}
                   </Typography>

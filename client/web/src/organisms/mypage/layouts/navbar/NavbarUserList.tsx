@@ -109,7 +109,9 @@ export default function NavbarUserList(): JSX.Element {
               key={user.targetUserId}
               button
               selected={subscribe.currUser.targetUserId === user.targetUserId}
-              onClick={() => { subscribe.handleCurrTargetUser(user); handleClose(); }}
+              onClick={() => {
+                subscribe.handleCurrTargetUser(user); handleClose();
+              }}
             >
               <Cached fontSize="small" style={{ marginRight: 16 }} />
               <ListItemText primary={user.targetUserId} />

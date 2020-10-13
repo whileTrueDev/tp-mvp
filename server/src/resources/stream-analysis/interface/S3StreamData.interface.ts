@@ -11,7 +11,7 @@ export interface S3StreamData {
 }
 
 export interface CombinedTimeLine {
-  smile_count : number;
+  smile_count: number;
   chat_count: number;
   date: string;
 }
@@ -21,5 +21,5 @@ export interface OrganizedData {
   end_date: string;
   view_count: number;
   chat_count: number;
-  value : CombinedTimeLine[];
+  value: CombinedTimeLine[];
 }

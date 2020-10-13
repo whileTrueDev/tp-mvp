@@ -114,7 +114,9 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
                     <FormControlLabel
                       control={(
                         <Checkbox
-                          onChange={(): void => { alert('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.'); }}
+                          onChange={(): void => {
+                            alert('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.');
+                          }}
                           checked={state[term.state]}
                           classes={{
                             root: classes.checkboxRoot,

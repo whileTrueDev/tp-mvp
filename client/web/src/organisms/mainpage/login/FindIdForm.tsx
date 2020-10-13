@@ -88,7 +88,9 @@ export default function FindAccountForm(): JSX.Element {
             helperTextDialog.handleOpen();
           }
         }
-      }).catch(() => { helperTextDialog.handleOpen(); });
+      }).catch(() => {
+        helperTextDialog.handleOpen();
+      });
     }
   }
 
@@ -110,7 +112,9 @@ export default function FindAccountForm(): JSX.Element {
           setHelperText('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
         }
       }
-    }).catch(() => { helperTextDialog.handleOpen(); });
+    }).catch(() => {
+      helperTextDialog.handleOpen();
+    });
   });
 
   return (
@@ -129,14 +133,18 @@ export default function FindAccountForm(): JSX.Element {
         <Typography variant="h6">방법을 선택해 주세요.</Typography>
         <div className={classes.content}>
           <Button
-            onClick={() => { handleNext(); handleSelectedMethod('이메일'); }}
+            onClick={() => {
+              handleNext(); handleSelectedMethod('이메일');
+            }}
             className={classes.selectButton}
           >
             <Typography variant="body1">이메일 및 이름으로 아이디 찾기</Typography>
           </Button>
 
           <Button
-            onClick={() => { handleNext(); handleSelectedMethod('본인인증'); }}
+            onClick={() => {
+              handleNext(); handleSelectedMethod('본인인증');
+            }}
             className={classes.selectButton}
           >
             <Typography variant="body1">휴대폰 본인인증으로 아이디 찾기</Typography>
@@ -207,7 +215,9 @@ export default function FindAccountForm(): JSX.Element {
             color="secondary"
             className={classes.fullButton}
             style={{ color: 'white' }}
-            onClick={() => { iamport.startCert(); }}
+            onClick={() => {
+              iamport.startCert();
+            }}
             disabled={activeStep === 1 && loading}
           >
             <Typography>휴대폰 본인인증으로 아이디 찾기</Typography>

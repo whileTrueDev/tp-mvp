@@ -217,7 +217,9 @@ export default function UserMetricsChart({
       x.cursor = new am4charts.XYCursor();
     }
 
-    return () => { x.dispose(); };
+    return () => {
+      x.dispose();
+    };
   }, [data, valueField, selectedPlatform]);
 
   return (

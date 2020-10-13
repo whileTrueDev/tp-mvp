@@ -45,7 +45,9 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
           setMetric(res.data.metrics);
           setType(res.data.type);
           setOpen(true);
-          setTimeout(() => { setMetricOpen(true); }, 1000);
+          setTimeout(() => {
+            setMetricOpen(true);
+          }, 1000);
         }
       });
   };
