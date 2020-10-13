@@ -1,17 +1,17 @@
 import {
-  Injectable, InternalServerErrorException
+  Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // notice (공지사항)
-import { NoticeEntity } from './entities/notice.entity';
+import { NoticeEntity } from '../notice/entities/notice.entity';
 import { Notice } from './dto/notice/notice.dto';
 import { NoticeGetRequest } from './dto/notice/noticeGetRequest.dto';
 import { NoticePatchRequest } from './dto/notice/noticePatchRequest.dto';
 
 // notification (개인알림)
-import { NotificationEntity } from './entities/notification.entity';
+import { NotificationEntity } from '../notification/entities/notification.entity';
 import { NotificationGetRequest } from './dto/notification/notificationGet.dto';
 import { NotificationPostRequest } from './dto/notification/notificationPost.dto';
 
@@ -39,9 +39,9 @@ export class AdminService {
   ) {}
 
   // get - 모든 notice 조회 
-  async getNotice(req : NoticeGetRequest) : Promise<NoticeEntity[]> {
+  async getNotice(req: NoticeGetRequest): Promise<NoticeEntity[]> {
     // 단일 공지사항 조회
-    if (req.hasOwnProperty('id')) {
+    if (Object.hasOwnProperty.call(req, 'id')) {
       return this.noticeRepository
         .find({ where: { id: req.id } })
         .catch((err) => {
@@ -53,8 +53,8 @@ export class AdminService {
       .find({
         order: {
           createdAt: 'DESC',
-          isImportant: 'DESC'
-        }
+          isImportant: 'DESC',
+        },
       })
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
@@ -72,11 +72,11 @@ export class AdminService {
   // patch - notice 수정
   async patchNotice(data: NoticePatchRequest): Promise<boolean> {
     const {
-      category, author, title, content, isImportant, id
+      category, author, title, content, isImportant, id,
     } = data;
     const result = await this.noticeRepository
       .update({ id }, {
-        category, author, title, content, isImportant
+        category, author, title, content, isImportant,
       })
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
@@ -85,7 +85,7 @@ export class AdminService {
   }
 
   //  delete - notice 삭제
-  async deleteNotice(req : Pick<NoticePatchRequest, 'id'>) : Promise<boolean> {
+  async deleteNotice(req: Pick<NoticePatchRequest, 'id'>): Promise<boolean> {
     const result = await this.noticeRepository.delete({ id: req.id })
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
@@ -94,15 +94,15 @@ export class AdminService {
   }
 
   // get - 특정 유저에 대한 알림 내역 조회
-  async getNotification(req : NotificationGetRequest) : Promise<NotificationEntity[]> {
+  async getNotification(req: NotificationGetRequest): Promise<NotificationEntity[]> {
     // 단일 공지사항 조회
-    if (req.hasOwnProperty('userId')) {
+    if (Object.hasOwnProperty.call(req, 'userId')) {
       return this.notificationRepository
         .find({
           where: { userId: req.userId },
           order: {
-            createdAt: 'DESC'
-          }
+            createdAt: 'DESC',
+          },
         })
         .catch((err) => {
           throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
@@ -117,13 +117,13 @@ export class AdminService {
   }
 
   // post - 알림 전송 및 다인 전송
-  async postNotification(req : NotificationPostRequest) : Promise<boolean> {
+  async postNotification(req: NotificationPostRequest): Promise<boolean> {
     const { title, content, userId } = req;
 
     const insertData: any[] = userId.map(((user) => ({
       userId: user,
       title,
-      content
+      content,
     })));
     const result = await this.notificationRepository
       .save(insertData)
@@ -134,12 +134,12 @@ export class AdminService {
   }
 
   // get - 모든 feature suggestion 조회 (단일 조회가 의미가 없다.)
-  async getFeatureSuggestion() : Promise<FeatureSuggestionEntity[]> {
+  async getFeatureSuggestion(): Promise<FeatureSuggestionEntity[]> {
     return this.featureSuggestionRepository
       .find({
         order: {
-          createdAt: 'DESC'
-        }
+          createdAt: 'DESC',
+        },
       })
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
@@ -149,7 +149,7 @@ export class AdminService {
   // patch - feature suggestion의 상태 수정
   async patchFeatureSuggestion(data: FeatureSuggestionPatchRequest): Promise<boolean> {
     const {
-      state, id
+      state, id,
     } = data;
     const result = await this.featureSuggestionRepository
       .update({ suggestionId: id }, { state })
@@ -161,7 +161,7 @@ export class AdminService {
   }
 
   //  delete - feature suggestion의 삭제
-  async deleteFeatureSuggestion(req :Pick<FeatureSuggestionPatchRequest, 'id'>) : Promise<boolean> {
+  async deleteFeatureSuggestion(req: Pick<FeatureSuggestionPatchRequest, 'id'>): Promise<boolean> {
     const result = await this.featureSuggestionRepository
       .delete({ suggestionId: req.id })
       .catch((err) => {
@@ -172,15 +172,15 @@ export class AdminService {
   }
 
   // get - 모든 feature suggestion reply 조회 (단일 조회가 의미가 없다.)
-  async getReply(req: ReplyGetRequest) : Promise<FeatureSuggestionReplyEntity[]> {
+  async getReply(req: ReplyGetRequest): Promise<FeatureSuggestionReplyEntity[]> {
     return this.featureSuggestionReplyRepository
       .find({
         where: {
-          suggestionId: req.id
+          suggestionId: req.id,
         },
         order: {
-          createdAt: 'ASC'
-        }
+          createdAt: 'ASC',
+        },
       })
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
@@ -200,7 +200,7 @@ export class AdminService {
   // patch - feature suggestion reply 수정
   async patchReply(data: ReplyPatchRequest): Promise<boolean> {
     const {
-      author, content, id
+      author, content, id,
     } = data;
     const result = await this.featureSuggestionReplyRepository
       .update({ replyId: id }, { author, content })
@@ -211,7 +211,7 @@ export class AdminService {
   }
 
   //  delete - feature suggestion의 삭제
-  async deleteReply(req :Pick<ReplyPatchRequest, 'id'>) : Promise<any> {
+  async deleteReply(req: Pick<ReplyPatchRequest, 'id'>): Promise<any> {
     const result = await this.featureSuggestionReplyRepository
       .delete({ replyId: req.id })
       .catch((err) => {

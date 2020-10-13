@@ -1,9 +1,10 @@
+import { UserToken } from '@truepoint/shared/dist/interfaces/UserToken.interface';
 import {
-  Entity, Column, CreateDateColumn, UpdateDateColumn
+  Entity, Column, CreateDateColumn, UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'UserTokens' })
-export class UserTokenEntity {
+export class UserTokenEntity implements UserToken {
   // For Exclude Decorator
   constructor(partial: Partial<UserTokenEntity>) {
     Object.assign(this, partial);
