@@ -69,7 +69,6 @@ export default function NoticeWrite(props: SelectedData): JSX.Element {
             <NoticeEditer
               state={state}
               dispatch={dispatch}
-              helpToggle={help}
               handleHelpToggle={handleHelpToggle}
               noticeData={noticeData}
             />
