@@ -21,7 +21,7 @@ async function bootstrap() {
   // cookie parser
   app.use(cookieParser('@#@$MYSIGN#@$#$')); // cookie parser 설정
 
-  const whiteList = ['http://localhost:3001'];
+  const whiteList = ['http://localhost:3001', 'http://localhost:3002'];
   app.enableCors({
     origin: whiteList,
     credentials: true,
