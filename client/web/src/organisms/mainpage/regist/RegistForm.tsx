@@ -13,7 +13,7 @@ import {
   Grid,
   Typography,
   FormControlLabel,
-  Radio
+  Radio,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import Done from '@material-ui/icons/Done';
@@ -22,7 +22,7 @@ import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import useStyles from './style/RegistForm.style';
 import StyledInput from '../../../atoms/StyledInput';
 import {
-  StepAction, StepState
+  StepAction, StepState,
 } from './Stepper.reducer';
 
 // domain select용.
@@ -42,24 +42,26 @@ export interface Props {
   state: StepState;
   dispatch: (state: StepAction) => void;
 }
-
-interface ProfileData {
-  marketerPlatformData: string;
-  marketerMail: string;
-}
+// @hwasurr
+// 2020.10.13 eslint error 정리 중 주석처리. 사용하지 않는 interface
+// @chanuuuu 수정바랍니다.
+// interface ProfileData {
+//   marketerPlatformData: string;
+//   marketerMail: string;
+// }
 
 function PlatformRegistForm({
   handleBack,
   handleUserSubmit,
   state,
-  dispatch
-} : Props): JSX.Element {
+  dispatch,
+}: Props): JSX.Element {
   const [loading, setLoading] = useState(0);
   const classes = useStyles();
   const [numberType, setNumberType] = useState(true);
   const [marketerCustomDomain, setCustomDomain] = useState('');
   const [, getRequest] = useAxios(
-    '/users/check-id', { manual: true }
+    '/users/check-id', { manual: true },
   );
 
   function handleCustom(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -84,7 +86,7 @@ function PlatformRegistForm({
       alert('ID을 올바르게 입력해주세요.');
     } else {
       getRequest({
-        params: { userId: idValue }
+        params: { userId: idValue },
       }).then((res) => {
         if (res.data) {
           alert('ID가 중복되었습니다. 다른 ID를 사용해주세요.');

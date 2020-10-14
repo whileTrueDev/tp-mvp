@@ -32,13 +32,13 @@ const useStyles = makeStyles((theme) => createStyles({
     padding: `${theme.spacing(2)}px 0px`,
   },
   toolbar: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%'
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%',
   },
   links: { display: 'flex', alignItems: 'center' },
   link: {
-    color: 'white', marginLeft: theme.spacing(2), marginRight: theme.spacing(4)
+    color: 'white', marginLeft: theme.spacing(2), marginRight: theme.spacing(4),
   },
-  linkText: { fontWeight: 'bold', },
+  linkText: { fontWeight: 'bold' },
   logo: { marginRight: theme.spacing(4) },
   appbarSpace: { paddingTop: APPBAR_HEIGHT },
 }));

@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FooterShort():JSX.Element {
+export default function FooterShort(): JSX.Element {
   const classes = useStyles();
   return (
     <div className={classnames(classes.centerflex, classes.footer)}>

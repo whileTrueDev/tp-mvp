@@ -14,10 +14,10 @@ const useStyles = makeStyles((theme) => ({
     width: '25%',
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: 0,
-    boxShadow: 'none'
+    boxShadow: 'none',
   },
   selected: { backgroundColor: theme.palette.primary.dark },
-  selectedText: { fontWeight: 'bold' }
+  selectedText: { fontWeight: 'bold' },
 }));
 
 export interface NoticeCategoryButtonGroupProps {
@@ -27,7 +27,7 @@ export interface NoticeCategoryButtonGroupProps {
   categoryTabSwitch: (value: number) => JSX.Element;
 }
 export default function FeatureCategoryButtonGroup({
-  onChange, selected, categories, categoryTabSwitch
+  onChange, selected, categories, categoryTabSwitch,
 }: NoticeCategoryButtonGroupProps): JSX.Element {
   const classes = useStyles();
 
@@ -36,7 +36,9 @@ export default function FeatureCategoryButtonGroup({
       {['전체'].concat(categories).map((category) => (
         <Button
           key={category}
-          onClick={() => { onChange(category); }}
+          onClick={() => {
+            onChange(category);
+          }}
           variant={selected === category ? 'contained' : 'outlined'}
           color={selected === category ? 'primary' : 'default'}
           className={classnames({

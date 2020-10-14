@@ -12,15 +12,15 @@ export default function StreamAnalysis(): JSX.Element {
   const [data, setData] = useState<metricInterface[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [{ loading, error }, getRequest] = useAxios(
-    '/stream-analysis/streams', { manual: true }
+    '/stream-analysis/streams', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
-  const handleSubmit = (streams: {streamId: string, platform: string}[]) => {
+  const handleSubmit = (streams: {streamId: string; platform: string}[]) => {
     setOpen(false);
     getRequest({
       params: {
-        streams
-      }
+        streams,
+      },
     })
       .then((res) => {
         setData(res.data);

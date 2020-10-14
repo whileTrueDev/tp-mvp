@@ -1,10 +1,11 @@
+import { Subscribe } from '@truepoint/shared/dist/interfaces/Subscribe.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn
+  Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity({ name: 'Subscribe' })
-export class SubscribeEntity {
+export class SubscribeEntity implements Subscribe {
   @PrimaryGeneratedColumn()
   index: number
 
@@ -16,8 +17,8 @@ export class SubscribeEntity {
   targetUserId: string;
 
   @Column()
-  startAt : Date;
+  startAt: Date;
 
   @Column()
-  endAt : Date;
+  endAt: Date;
 }

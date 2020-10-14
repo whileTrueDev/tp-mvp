@@ -2,7 +2,7 @@ import React from 'react';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Typography, Divider, Badge, Popper, List, ListSubheader
+  Typography, Divider, Badge, Popper, List, ListSubheader,
 } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 // types
@@ -27,17 +27,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[2],
     overflowX: 'hidden',
-    overflowY: 'auto'
+    overflowY: 'auto',
   },
   title: {
     padding: '8px 0px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottom: `1px solid ${theme.palette.divider}`
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   message: {
-    marginTop: 4, marginBottom: 4
+    marginTop: 4, marginBottom: 4,
   },
 }));
 
@@ -50,7 +50,7 @@ function NotificationPopper({
 }: {
   anchorEl: HTMLElement;
   notificationData: Notification[];
-  setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>
+  setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const classes = useStyles();
   const auth = React.useContext(AuthContext);
@@ -58,7 +58,7 @@ function NotificationPopper({
     url: '/notification',
     method: 'patch',
   }, {
-    manual: true
+    manual: true,
   });
 
   const handleNotificationListItemClick = (notification: Notification) => {
@@ -67,7 +67,7 @@ function NotificationPopper({
         data: {
           userId: auth.user.userId, // userId (client login user)
           index: notification.index,
-        }
+        },
       });
 
       if (!patchError && !patchLoading) setChangeReadState(true);
@@ -81,9 +81,9 @@ function NotificationPopper({
       open={Boolean(anchorEl)}
       disablePortal
       modifiers={{
-        flip: { enabled: true, },
-        preventOverflow: { enabled: false, boundariesElement: 'scrollParent', },
-        hide: { enabled: false }
+        flip: { enabled: true },
+        preventOverflow: { enabled: false, boundariesElement: 'scrollParent' },
+        hide: { enabled: false },
       }}
     >
       {/* 공지 메뉴 컴포넌트 */}

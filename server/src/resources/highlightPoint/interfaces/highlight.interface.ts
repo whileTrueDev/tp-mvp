@@ -1,3 +1,3 @@
 export interface Highlight {
-  json: any
+  json: any;
 }

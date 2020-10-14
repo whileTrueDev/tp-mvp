@@ -13,27 +13,27 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   card: {
     width: '100%',
     height: '94px',
     borderRadius: '4px',
     backgroundColor: '#959abb',
-    borderWidth: 0
+    borderWidth: 0,
   },
   main: {
     fontSize: '18px',
     fontWeight: 'normal',
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   bold: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 }));
 
 export default function PeriodAnalysis({ data, loading, selectedMetric }: {
-  data: timelineInterface, loading: boolean, selectedMetric: string[]
+  data: timelineInterface; loading: boolean; selectedMetric: string[];
 }): JSX.Element {
   const classes = useStyles();
 

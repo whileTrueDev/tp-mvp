@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Param, ParseIntPipe, Query
+  Controller, Get, Param, ParseIntPipe, Query,
 } from '@nestjs/common';
 import { NoticeEntity } from './entities/notice.entity';
 import { NoticeService } from './notice.service';
@@ -24,7 +24,7 @@ export class NoticeController {
 
   @Get(':id')
   async findOne(
-    @Param('id', ParseIntPipe) id: number
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<NoticeEntity> {
     return this.noticeService.findOne(id);
   }

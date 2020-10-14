@@ -4,7 +4,7 @@ import { useMediaQuery } from '@material-ui/core';
 import Stepper from '../../organisms/mainpage/regist/Stepper';
 
 const useStyles = makeStyles((theme) => ({
-  container: { display: 'flex', height: '100vh', },
+  container: { display: 'flex', height: '100vh' },
   leftside: {
     width: '50%',
     background: `url('images/main/loginpage.png'), linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login():JSX.Element {
+export default function Login(): JSX.Element {
   const classes = useStyles();
   const isDesktop = useMediaQuery('(min-width:768px)');
 

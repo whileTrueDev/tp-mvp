@@ -10,7 +10,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.main,
     width: '200px',
     marginBottom: '12px',
-    height: '3px'
+    height: '3px',
   },
   mainTitle: {
     color: theme.palette.text.primary,
@@ -27,7 +27,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     fontSize: '12px',
     lineHeight: '1.11',
-    textAlign: 'right'
+    textAlign: 'right',
   },
   mainBody: {
     color: theme.palette.text.secondary,
@@ -41,14 +41,14 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   },
   bodyContainer: {
     marginRight: '30px',
-    marginTop: '60px'
+    marginTop: '60px',
   },
   bodyPapper: {
     marginTop: '60px',
     border: `solid 1px ${theme.palette.divider}`,
     borderRadius: '10px',
     paddingTop: '27px',
-    paddingBottom: '20px'
+    paddingBottom: '20px',
   },
   bodyTitle: {
     fontSize: '19px',
@@ -57,16 +57,16 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
     display: 'flex',
     justifyContent: 'center',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   bodyTitleHighlite: {
     fontSize: '19px',
     fontWeight: 'bold',
-    marginRight: '5px'
+    marginRight: '5px',
   },
   bodyTitleIcon: {
     fontSize: '28px',
-    marginRight: '18px'
+    marginRight: '18px',
   },
   vsText: {
     color: theme.palette.text.secondary,
@@ -78,7 +78,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     marginBottom: '28px',
     marginRight: '30px',
-    marginTop: '80px'
+    marginTop: '80px',
   },
   anlaysisButton: {
     width: '136.2px',
@@ -91,14 +91,14 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     marginRight: '93.5px',
     color: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: theme.palette.primary.light
-    }
+      backgroundColor: theme.palette.primary.light,
+    },
   },
   alert: {
     borderRadius: '5px',
     marginBottom: '12px',
-    paddingTop: '4px'
-  }
+    paddingTop: '4px',
+  },
 }));
 
 export default usePeriodCompareStyles;

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Paper, Typography, makeStyles } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import {
-  Calendar, MuiPickersUtilsProvider
+  Calendar, MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import koLocale from 'date-fns/locale/ko';
@@ -10,43 +10,45 @@ import Grid from '@material-ui/core/Grid';
 import Button from '../../../atoms/Button/Button';
 
 interface StreamData {
-  getState: boolean,
-  startAt: string,
-  finishAt: string,
-  fileId: string
+  getState: boolean;
+  startAt: string;
+  finishAt: string;
+  fileId: string;
 }
 
 const useStyles = makeStyles((theme) => ({
   day: {
     backgroundColor: theme.palette.primary.light,
 
-  }
+  },
 }));
 
-function StreamCalendar(props: any) {
+export interface StreamCalenderProps {
+  handleDatePick: (selectedDate: Date, startAt: string, finishAt: string, fileId: string) => void;
+}
+function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
   const classes = useStyles();
   const getStreamData: StreamData[] = new Array<StreamData>();
-  const { handleDatePick } = props;
   const [streamDays, setStreamDays] = React.useState([0]);
   const [streamData, setStreamData] = React.useState<StreamData[]>(getStreamData);
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-    new Date(Date.now())
+    new Date(Date.now()),
   );
   const [isLoading, setIsLoading] = React.useState(true);
   const [isDataLoading, setDataIsLoading] = React.useState(true);
-  const [selectedDay, setSelectedDay] = React.useState(0);
+  const [, setSelectedDay] = React.useState(0);
   const [isDate, setIsDate] = React.useState(false);
   const [, getHighlightList] = useAxios(
-    { url: '/highlight/list' }, { manual: true }
+    { url: '/highlight/list' }, { manual: true },
   );
   const [, getStreamList] = useAxios(
-    { url: '/highlight/stream' }, { manual: true }
+    { url: '/highlight/stream' }, { manual: true },
   );
-  const fetchListData = async (name: string, year: string, month: string): Promise<void> => {
+  const fetchListData = useCallback(async (name: string, year: string, month: string): Promise<void> => {
     getHighlightList({
       params: {
-        name, year, month
-      }
+        name, year, month,
+      },
     }).then((res) => {
       if (res.data) {
         setStreamDays(res.data);
@@ -55,21 +57,21 @@ function StreamCalendar(props: any) {
     }).catch(() => {
       alert('오류가 발생했습니다. 잠시 후 다시 이용해주세요.');
     });
-  };
+  }, [getHighlightList]);
 
   const fetchStreamData = async (name: string, year: string, month: string, day: string): Promise<void> => {
     // 달력-> 날짜 선택시 해당 일의 방송을 로드
     getStreamList({
       params: {
-        name, year, month, day
-      }
+        name, year, month, day,
+      },
     })
       .then((res) => {
         if (res.data.length !== 0) {
           setStreamData(res.data);
         } else {
           setStreamData([{
-            getState: false, startAt: '', finishAt: '', fileId: ''
+            getState: false, startAt: '', finishAt: '', fileId: '',
           }]);
         }
       }).catch(() => {
@@ -120,7 +122,7 @@ function StreamCalendar(props: any) {
 
   React.useEffect(() => {
     fetchListData('234175534', '2020', '09');
-  }, []);
+  }, [fetchListData]);
   return (
     <div>
       {!isLoading ? (
@@ -141,7 +143,7 @@ function StreamCalendar(props: any) {
                   onChange={handleDateChange}
                   disableFuture
                   onMonthChange={handleMonthChange}
-                  renderDay={(day: any, selectedDate, dayInCurrentMonth, dayComponent) => {
+                  renderDay={(day: any, selected, dayInCurrentMonth, dayComponent) => {
                     const newDate = new Date(day);
                     const isStream = streamDays.includes(Number(newDate.getDate()));
                     return (
@@ -169,7 +171,7 @@ function StreamCalendar(props: any) {
                           <Grid item key={value.fileId}>
                             <Button
                               style={{
-                                width: '32vw', marginLeft: 32, justifyItems: 'flex-start', backgroundColor: '#theme.palette.primary.light'
+                                width: '32vw', marginLeft: 32, justifyItems: 'flex-start', backgroundColor: '#theme.palette.primary.light',
                               }}
                               id={value.fileId}
                               onClick={() => {

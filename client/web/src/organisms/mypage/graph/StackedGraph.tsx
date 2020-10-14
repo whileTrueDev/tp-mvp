@@ -1,16 +1,16 @@
 import React, {
-  useRef, useLayoutEffect
+  useRef, useLayoutEffect,
 } from 'react';
 import useTheme from '@material-ui/core/styles/useTheme';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import { metricGraphInterface } from './graphsInterface';
 import graphColor from './Color';
 
 export default function Index({ name, comeData }:
-  {name: string, comeData: metricGraphInterface[]}): JSX.Element {
-  am4core.useTheme(am4themes_animated);
+  {name: string; comeData: metricGraphInterface[]}): JSX.Element {
+  am4core.useTheme(am4themesAnimated);
   const chartRef = useRef<any>(null);
 
   const theme = useTheme();

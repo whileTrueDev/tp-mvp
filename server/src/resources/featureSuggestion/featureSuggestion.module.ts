@@ -11,6 +11,6 @@ import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
   ],
   providers: [FeatureSuggestionService],
   controllers: [FeatureSuggestionController],
-  exports: [FeatureSuggestionService]
+  exports: [FeatureSuggestionService],
 })
 export class FeatureModule { }

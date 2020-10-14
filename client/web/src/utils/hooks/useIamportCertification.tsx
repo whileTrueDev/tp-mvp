@@ -16,7 +16,7 @@ export interface IamportCertificate {
  * 
  */
 export default function useIamportCertification(
-  callback?: (impUid?: string) => void
+  callback?: (impUid?: string) => void,
 ): IamportCertificate {
   const [impUid, setImpUid] = React.useState<string>();
   const [error, setError] = React.useState<string>();
@@ -28,7 +28,7 @@ export default function useIamportCertification(
 
     IMP.certification({ // param
       merchant_uid: 'ORD20180131-0000011',
-      min_age: '19'
+      min_age: '19',
     }, (res: any) => { // callback
       if (res.success) {
         // 본인인증 성공

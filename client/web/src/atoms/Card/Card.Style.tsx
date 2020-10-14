@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   cardProfile: {
     marginTop: '20px',
     textAlign: 'center',
-  }
+  },
 }));
 
 export default useStyles;

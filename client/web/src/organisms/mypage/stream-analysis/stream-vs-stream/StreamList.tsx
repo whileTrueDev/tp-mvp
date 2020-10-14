@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 // material - ui core components
 import {
-  Typography, List, ListItem, ListItemIcon
+  Typography, List, ListItem, ListItemIcon,
 } from '@material-ui/core';
 // material - ui styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     padding: '0px',
     maxHeight: '292px',
-    overflow: 'auto'
+    overflow: 'auto',
   },
   listItem: {
     width: '100%',
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     '&.Mui-selected': {
       backgroundColor: theme.palette.primary.light,
-    }
+    },
   },
   selectedListItem: {
     backgroundColor: theme.palette.primary.light,
@@ -40,14 +40,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
     lineHeight: '2.06',
     fontSize: '16px',
-    fontWeight: 500
-  }
+    fontWeight: 500,
+  },
 }));
 
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
     dayStreamsList, handleSeletedStreams, baseStream, compareStream,
-    handleFullMessage, platformIcon
+    handleFullMessage, platformIcon,
   } = props;
   const classes = useStyles();
 
@@ -73,7 +73,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     }
   };
 
-  const isSelectedListItem = (listStream: DayStreamsInfo):boolean => {
+  const isSelectedListItem = (listStream: DayStreamsInfo): boolean => {
     if (baseStream || compareStream) {
       return (listStream.streamId === baseStream?.streamId
     || listStream.streamId === compareStream?.streamId);

@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, Typography
+  Button, Typography,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
@@ -24,18 +24,18 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   center: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   subcontent: { marginTop: theme.spacing(2) },
-  content: { width: '100%', marginTop: theme.spacing(4), },
+  content: { width: '100%', marginTop: theme.spacing(4) },
   fullButton: {
-    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%'
+    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%',
   },
   inputField: { width: '100%' },
 }));
@@ -50,30 +50,30 @@ const useStyles = makeStyles((theme) => ({
 function IndentityVerification({
   handleBack,
   handleNext,
-  setCertificationInfo
+  setCertificationInfo,
 }: Props): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
   const [, getRequest] = useAxios(
-    '/users/check-id', { manual: true }
+    '/users/check-id', { manual: true },
   );
 
   // Request auth/certification
   const [, getCertificationRequest] = useAxios(
-    '/auth/certification', { manual: true }
+    '/auth/certification', { manual: true },
   );
 
   const iamport = useIamportCertification((impUid) => {
     // iamport 본인인증 이후 실행될 Id 조회 함수
     getRequest({
-      params: { impUid }
+      params: { impUid },
     }).then((res) => {
       if (res.data) {
         alert('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.');
         history.replace('/find-id');
       } else {
         getCertificationRequest({
-          params: { impUid }
+          params: { impUid },
         })
           .then((inres) => {
             if (inres.data) {
@@ -86,7 +86,9 @@ function IndentityVerification({
           });
       }
     })
-      .catch(() => { handleBack(); });
+      .catch(() => {
+        handleBack();
+      });
   });
 
   return (
@@ -110,7 +112,9 @@ function IndentityVerification({
           <Typography>다음</Typography>
         </Button>
         <Button
-          onClick={() => { history.push('/login'); }}
+          onClick={() => {
+            history.push('/login');
+          }}
           className={classes.fullButton}
         >
           <Typography>뒤로</Typography>

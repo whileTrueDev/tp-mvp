@@ -15,13 +15,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   noticeContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
   contents: { marginTop: theme.spacing(4) },
 }));
 
-export default function Notice():JSX.Element {
+export default function Notice(): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
 
@@ -48,12 +48,12 @@ export default function Notice():JSX.Element {
 
   // Category 선택을 위한 스테이트 
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
-  function handleCategorySelect(str: string):void {
+  function handleCategorySelect(str: string): void {
     setSelectedCategory(str);
   }
 
   // 선택된 개별 공지사항 글을 보여주기 위한 스테이트
-  function handleNoticeClick(num: number):void {
+  function handleNoticeClick(num: number): void {
     history.push(`/notice/${num}`);
   }
   function handleResetNoticeSelect(): void {
@@ -83,7 +83,8 @@ export default function Notice():JSX.Element {
                     return new Date(row2.createdAt).getTime()
                       - new Date(row1.createdAt).getTime();
                   })
-                  .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))}
+                  .filter((row) => (selectedCategory !== '전체'
+                    ? row.category === selectedCategory : row))}
                 onOtherNoticeClick={handleNoticeClick}
                 onBackClick={handleResetNoticeSelect}
               />
@@ -113,7 +114,8 @@ export default function Notice():JSX.Element {
                         return new Date(row2.createdAt).getTime()
                             - new Date(row1.createdAt).getTime();
                       })
-                      .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))
+                      .filter((row) => (selectedCategory !== '전체'
+                        ? row.category === selectedCategory : row))
                     : []}
                   onRowClick={handleNoticeClick}
                 />

@@ -3,10 +3,10 @@ import { useMediaQuery, Button } from '@material-ui/core';
 import MaterialTable from 'material-table';
 import {
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
-  LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search
+  LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
 import AvatarWithName from './AvatarWithName';
-//massage Form
+// massage Form
 import DualMessageForm from './AllTransmisisonForm';
 
 const tableIcons = {
@@ -26,13 +26,12 @@ const tableIcons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
-
 interface Props {
   userData: any;
-  handleClick: (event: any, d: any) => void; 
+  handleClick: (event: any, d: any) => void;
 }
 
-//table 레이아웃조정
+// table 레이아웃조정
 const localization = {
   body: {
     deleteTooltip: '캠페인 삭제',
@@ -57,73 +56,75 @@ const localization = {
   },
 };
 
-//기능제안 목록 테이블
-export default function UserlistTable(props: Props) {
-  
+// 기능제안 목록 테이블
+export default function UserlistTable(props: Props): JSX.Element {
   const { userData, handleClick } = props;
   const [list, setList] = React.useState([]);
 
-  //DialogOpen
+  // DialogOpen
   const [open, setOpen] = React.useState(false);
 
-  //handleOpen(v: boolean) => void;
+  // handleOpen(v: boolean) => void;
   function handleOpen() {
-    var v=true
+    const v = true;
     setOpen(v);
   }
-  //handleClose()=>void;
+  // handleClose()=>void;
   function handleClose() {
     setOpen(false);
   }
 
-  
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
     <>
-    <Button
-      variant = "contained"
-      color="primary"
-      onClick={handleOpen}
-    >
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleOpen}
+      >
         체크한 인원에 대한 일괄전송 내용작성
       </Button>
 
-    <MaterialTable
-      title="회원 목록"
-      columns={[
-        { title: '사용자', field: 'userName', render: rowData => (
-          <AvatarWithName name={rowData.userName} logo={null} />
-        ) },
-      ]}
-      data={userData}
-      onRowClick={(e, rowData: any) => {
+      <MaterialTable
+        title="회원 목록"
+        columns={[
+          {
+            title: '사용자',
+            field: 'userName',
+            render: (rowData) => (
+              <AvatarWithName name={rowData.userName} logo={null} />
+            ),
+          },
+        ]}
+        data={userData}
+        onRowClick={(e, rowData: any) => {
           handleClick(e, rowData);
-      }}
-      onSelectionChange={(rowData: any) => {
-        setList(rowData);
-      }}
-      options={{
-        search: true,
-        pageSize: isMdWidth ? 15 : 5,
-        pageSizeOptions: [5, 10, 15],
-        rowStyle: {
-          height: 65,
-        },
-        selection: true,
-        headerStyle: { backgroundColor: '#f5f5f5', color: '#555555' },
-        searchFieldAlignment: 'right',     
-      }}
-      localization={localization}
-      icons={tableIcons}
-    />
-     <DualMessageForm
-        list={list} 
-        open={open} 
-        handleOpen={handleOpen} 
-        handleClose={handleClose}
-        setList={setList}  
+        }}
+        onSelectionChange={(rowData: any) => {
+          setList(rowData);
+        }}
+        options={{
+          search: true,
+          pageSize: isMdWidth ? 15 : 5,
+          pageSizeOptions: [5, 10, 15],
+          rowStyle: {
+            height: 65,
+          },
+          selection: true,
+          headerStyle: { backgroundColor: '#f5f5f5', color: '#555555' },
+          searchFieldAlignment: 'right',
+        }}
+        localization={localization}
+        icons={tableIcons}
       />
-  </>
+      <DualMessageForm
+        list={list}
+        open={open}
+        handleOpen={handleOpen}
+        handleClose={handleClose}
+        setList={setList}
+      />
+    </>
   );
 }

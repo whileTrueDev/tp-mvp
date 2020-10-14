@@ -4,14 +4,14 @@ const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 700,
-    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`
+    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   wraper: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'left',
-    height: 700
+    height: 700,
   },
   main: {
     margin: '20px 0px 20px 0px',
@@ -27,7 +27,7 @@ const styles = makeStyles((theme) => ({
     fontSize: 60,
     fontWeight: 900,
     color: 'white',
-    margin: 0
+    margin: 0,
   },
   mainContent: {
     fontFamily: 'AppleSDGothicNeo',
@@ -45,7 +45,7 @@ const styles = makeStyles((theme) => ({
   buttonLine: {
     animation: '$lineSpread 1.2s ease-in-out',
     borderBottom: '1px solid white',
-    width: 500
+    width: 500,
   },
   logoEffect: {
     animationDelay: '1.5s',
@@ -55,27 +55,27 @@ const styles = makeStyles((theme) => ({
     height: 200,
     visibility: 'hidden',
     position: 'relative',
-    background: 'url(\'./images/logo/truepointLogo.png\') no-repeat center center'
+    background: 'url(\'./images/logo/truepointLogo.png\') no-repeat center center',
   },
   '@keyframes lineSpread': {
     '0%': {
-      width: 0
+      width: 0,
     },
     '100%': {
-      width: 500
-    }
+      width: 500,
+    },
   },
   '@keyframes logoEffect': {
     '0%': {
       visibility: 'visible',
-      top: 0
+      top: 0,
     },
     '50%': {
-      top: -10
+      top: -10,
     },
     '100%': {
-      top: -0
-    }
+      top: -0,
+    },
   },
 }));
 

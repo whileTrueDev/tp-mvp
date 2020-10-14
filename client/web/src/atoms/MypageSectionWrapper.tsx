@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
   mypageWrapper: {
     padding: theme.spacing(2),
     paddingLeft: theme.spacing(8),
-  }
+  },
 }));
 
 export interface MypageWrapperProps extends React.HTMLAttributes<HTMLDivElement>{
@@ -19,7 +19,7 @@ export default function MypageSectionWrapper({
   style,
   className,
   ...props
-}: MypageWrapperProps):JSX.Element {
+}: MypageWrapperProps): JSX.Element {
   const classes = useStyles();
   return (
     <section

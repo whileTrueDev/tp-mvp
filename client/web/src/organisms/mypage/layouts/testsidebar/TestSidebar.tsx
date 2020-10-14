@@ -61,7 +61,7 @@ export default function TestSidebar({
                         <ListItemIcon>
                           <route.icon className={classnames({
                             [classes.icon]: true,
-                            [classes.selected]: isActiveRoute(route.path)
+                            [classes.selected]: isActiveRoute(route.path),
                           })}
                           />
                         </ListItemIcon>

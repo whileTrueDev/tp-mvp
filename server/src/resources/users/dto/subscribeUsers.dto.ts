@@ -1,5 +1,5 @@
 import {
-  IsNotEmpty, IsString, MaxLength, MinLength
+  IsNotEmpty, IsString, MaxLength, MinLength,
 } from 'class-validator';
 
 export class SubscribeUsers {

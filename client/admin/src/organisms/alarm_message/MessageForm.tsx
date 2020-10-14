@@ -1,21 +1,21 @@
 import React from 'react';
 import {
-  Typography,  TextField,  Button, Popover,
-    Divider,makeStyles, Chip,
+  Typography, TextField, Button, Popover,
+  Divider, makeStyles, Chip,
 } from '@material-ui/core';
-import AvatarWithName from './AvatarWithName';
 import Skeleton from '@material-ui/lab/Skeleton';
 import useAxios from 'axios-hooks';
 import shortid from 'shortid';
 import { QueryBuilder } from '@material-ui/icons';
 import Check from '@material-ui/icons/Check';
+import AvatarWithName from './AvatarWithName';
 
 interface Props{
   data: any;
   anchorEl: any;
-  handleClose:() => void;
+  handleClose: () => void;
 }
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     padding: 12, width: 420,
   },
@@ -39,24 +39,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MessageTable(props: Props) {
-  
+export default function MessageTable(props: Props): JSX.Element {
   const { anchorEl, data, handleClose } = props;
-  
+
   const [title, setTitle] = React.useState('');
 
-  const [{data: getData, loading: getLoading}] = useAxios({
-    url: 'http://localhost:3000/admin/notification', method: "GET"
-  })
-  const [{data: postData}, executePost] = useAxios({
-    url: 'http://localhost:3000/admin/notification', method: "POST"
-  })
+  const [{ data: getData, loading: getLoading }] = useAxios({
+    url: 'http://localhost:3000/admin/notification', method: 'GET',
+  });
+  const [, executePost] = useAxios({
+    url: 'http://localhost:3000/admin/notification', method: 'POST',
+  });
   function handleTitle(e: any) {
     setTitle(e.target.value);
   }
 
   const [content, setContent] = React.useState('');
-  
+
   function handleContent(e: any) {
     setContent(e.target.value);
   }
@@ -64,18 +63,17 @@ export default function MessageTable(props: Props) {
   const classes = useStyles();
 
   function handleSendClick() {
-
     if (title && content) {
       if (window.confirm(`정말로 ${data.userId}에게 메시지를 보내시겠습니까?`)) {
         setTitle('');
         setContent('');
         executePost({
-          data : {
-            userId : [data.userId],
-            title : title,
-            content: content,
-          }
-        })
+          data: {
+            userId: [data.userId],
+            title,
+            content,
+          },
+        });
       }
     } else {
       alert('제목 또는 내용이 없습니다.');
@@ -96,15 +94,15 @@ export default function MessageTable(props: Props) {
         vertical: 'top',
         horizontal: 'center',
       }}
-  >
-    <div className={classes.container}>
-      {data && (
+    >
+      <div className={classes.container}>
+        {data && (
         <AvatarWithName name={data.userId} logo={data.logo ? data.logo : null} />
-      )}
-      <Divider />
+        )}
+        <Divider />
 
-      <div className={classes.field}>
-        {getLoading && (
+        <div className={classes.field}>
+          {getLoading && (
           <div>
             <Skeleton width="50%" />
             <Skeleton height={50} />
@@ -115,64 +113,68 @@ export default function MessageTable(props: Props) {
             <Skeleton width="50%" />
             <Skeleton height={50} />
             <br />
+          </div>
+          )}
+          {!getLoading && (
+          <div>
+            {getData.map((message: any) => (
+              <div key={shortid.generate()} style={{ marginBottom: 5 }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Chip
+                    label={new Date(message.createdAt).toLocaleString()}
+                    variant="outlined"
+                  />
+                  {message.readState
+                    ? <Check style={{ color: 'rgb(50, 205, 50)', fontSize: 15 }} />
+                    : <QueryBuilder style={{ color: '#afafafaf', fontSize: 15 }} />}
+                </div>
+                <div style={{ padding: 6 }}>
+                  <Typography variant="h6">{`${message.title}`}</Typography>
+                  <Typography style={{ marginLeft: 20 }}>{`${message.content}`}</Typography>
+                </div>
+              </div>
+            ))}
+          </div>
+          )}
         </div>
-        )}
-        {!getLoading && (
-           <div>
-           {getData.map((message: any) => (
-             <div key={shortid.generate()} style={{ marginBottom: 5 }}>
-               <div style={{ display: 'flex', alignItems: 'center' }}>
-                 <Chip
-                   label={new Date(message.createdAt).toLocaleString()}
-                   variant="outlined"
-                 />
-                 {message.readState
-                   ? <Check style={{ color: 'rgb(50, 205, 50)', fontSize: 15 }} />
-                   : <QueryBuilder style={{ color: '#afafafaf', fontSize: 15 }} />}
-               </div>
-               <div style={{ padding: 6 }}>
-                 <Typography variant="h6">{`${message.title}`}</Typography>
-                 <Typography style={{ marginLeft: 20 }}>{`${message.content}`}</Typography>
-               </div>
-             </div>
-           ))}
-         </div>
-        )}
-      </div>
-      <Divider />
+        <Divider />
 
-      <div className={classes.textContainer}>
-        <div>
-          <TextField
-            id="send-message-title"
-            label="제목"
-            className={classes.textField}
-            margin="normal"
-            value={title}
-            onChange={(e) => { handleTitle(e); }}
-          />
-          <TextField
-            id="send-message-content"
-            label="내용"
-            className={classes.textField}
-            margin="normal"
-            multiline
-            rows="4"
-            value={content}
-            onChange={(e) => { handleContent(e); }}
-          />
+        <div className={classes.textContainer}>
+          <div>
+            <TextField
+              id="send-message-title"
+              label="제목"
+              className={classes.textField}
+              margin="normal"
+              value={title}
+              onChange={(e) => {
+                handleTitle(e);
+              }}
+            />
+            <TextField
+              id="send-message-content"
+              label="내용"
+              className={classes.textField}
+              margin="normal"
+              multiline
+              rows="4"
+              value={content}
+              onChange={(e) => {
+                handleContent(e);
+              }}
+            />
+          </div>
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.button}
+            onClick={handleSendClick}
+          >
+            전송
+          </Button>
         </div>
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.button}
-          onClick={handleSendClick}
-        >
-          전송
-        </Button>
-      </div>
 
-    </div>
-  </Popover>
+      </div>
+    </Popover>
   );
 }

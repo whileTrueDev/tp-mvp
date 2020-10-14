@@ -5,15 +5,14 @@ import {
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
-import MaterialTable from 'material-table';
-import useAxios from 'axios-hooks';
+import MaterialTable, { Icons } from 'material-table';
 
-const tableIcons = {
+const tableIcons: Icons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props: any, ref) => <Clear {...props} ref={ref} />),
   ResetSearch: forwardRef((props: any, ref) => <Clear {...props} ref={ref} />),
-  delete: forwardRef((props: any, ref) => <Delete {...props} ref={ref} />),
+  Delete: forwardRef((props: any, ref) => <Delete {...props} ref={ref} />),
   Filter: forwardRef((props: any, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props: any, ref) => <FirstPage {...props} ref={ref} />),
   LastPage: forwardRef((props: any, ref) => <LastPage {...props} ref={ref} />),
@@ -26,20 +25,20 @@ const tableIcons = {
 };
 
 // noticeTable 함수의 props
-interface props {
+interface Props {
   noticeData: any;
   handleEditModeOff: () => void;
   handleData: (Data: any) => void;
 }
-interface noticeData {
-  title?: string;
-  author: string;
-  category?: string;
-  code?: number;
-  createdAt: string;
-  content: string;
-  isImportant: number;
-}
+// interface NoticeData {
+//   title?: string;
+//   author: string;
+//   category?: string;
+//   code?: number;
+//   createdAt: string;
+//   content: string;
+//   isImportant: number;
+// }
 
 // 최신일을 계산해주는 함수
 function dateDiff(date1: any, date2: any) {
@@ -71,15 +70,14 @@ const localization = {
   },
 };
 
-export default function NoticeTable(props: props) {
+export default function NoticeTable(props: Props): JSX.Element {
   const { noticeData, handleData, handleEditModeOff } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
-  const [{ error, loading, data }, executeDelete] = useAxios(
-    { url: 'http://localhost:3000/admin/notice', method: 'DELETE' }, { manual: true }
-  );
+  // const [{ error, loading, data }, executeDelete] = useAxios(
+  //   { url: 'http://localhost:3000/admin/notice', method: 'DELETE' }, { manual: true },
+  // );
 
-  console.log(noticeData);
   return (
     <MaterialTable
       title="공지 사항"

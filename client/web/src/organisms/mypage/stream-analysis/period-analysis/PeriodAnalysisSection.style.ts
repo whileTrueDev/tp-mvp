@@ -9,7 +9,7 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.main,
     width: '200px',
     marginBottom: '12px',
-    height: '3px'
+    height: '3px',
   },
   mainTitle: {
     color: theme.palette.text.primary,
@@ -49,7 +49,7 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'SourceSansPro',
     marginLeft: '45.5px',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   bodyWrapper: {
     borderRadius: '12px',
@@ -83,14 +83,14 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     marginRight: '93.5px',
     color: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: theme.palette.primary.light
-    }
+      backgroundColor: theme.palette.primary.light,
+    },
   },
   alert: {
     borderRadius: '5px',
     marginBottom: '12px',
-    paddingTop: '4px'
-  }
+    paddingTop: '4px',
+  },
 }));
 
 export default usePeriodAnalysisSectionStyles;

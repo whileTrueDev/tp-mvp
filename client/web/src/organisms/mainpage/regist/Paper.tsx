@@ -28,7 +28,7 @@ type CheckAction = { key: 'checkedA'; value: boolean }
 
 const reducer = (
   state: CheckState<boolean>,
-  action: CheckAction
+  action: CheckAction,
 ): CheckState<boolean> => {
   switch (action.key) {
     case 'checkedA':
@@ -53,13 +53,13 @@ interface Props {
 function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Element {
   const classes = useStyles();
   const [state, dispatch] = useReducer(
-    reducer, { checkedA: false, checkedB: false, checkedC: false }
+    reducer, { checkedA: false, checkedB: false, checkedC: false },
   );
 
   const [selectTerm, setTerm] = useState({
     text: '',
     title: '',
-    state: ''
+    state: '',
   });
   const [open, setOpen] = useState(false);
 
@@ -114,7 +114,9 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
                     <FormControlLabel
                       control={(
                         <Checkbox
-                          onChange={(): void => { alert('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.'); }}
+                          onChange={(): void => {
+                            alert('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.');
+                          }}
                           checked={state[term.state]}
                           classes={{
                             root: classes.checkboxRoot,

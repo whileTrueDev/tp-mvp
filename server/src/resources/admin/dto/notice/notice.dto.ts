@@ -1,5 +1,5 @@
 import {
-  IsNumber, IsString, IsOptional
+  IsNumber, IsString, IsOptional,
 } from 'class-validator';
 
 export class Notice {

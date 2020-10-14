@@ -8,11 +8,11 @@ import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 
 interface PeriodRequestArray {
-  streams : {
+  streams: {
     creatorId: string;
     streamId: string;
     startedAt: string;
-  }[]
+  }[];
 }
 
 export default function PeriodAnalysis(): JSX.Element {
@@ -20,11 +20,10 @@ export default function PeriodAnalysis(): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
   const [{ error, loading }, getRequest] = useAxios(
-    '/stream-analysis/period', { manual: true }
+    '/stream-analysis/period', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
-  const handleSubmit = ({ category, params }
-    : {category: string[], params: PeriodRequestArray}) => {
+  const handleSubmit = ({ category, params }: {category: string[]; params: PeriodRequestArray}) => {
     selectMetric(category);
     getRequest({ params })
       .then((res) => {

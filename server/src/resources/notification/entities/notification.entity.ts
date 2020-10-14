@@ -1,13 +1,17 @@
+import { Notification } from '@truepoint/shared/dist/interfaces/Notification.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'Notification' })
-export class NotificationEntity {
+export class NotificationEntity implements Notification {
   @PrimaryGeneratedColumn()
   index: number;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 20,
+  })
   userId: string;
 
   @Column()
@@ -19,8 +23,11 @@ export class NotificationEntity {
   @Column('timestamp')
   dateform: Date;
 
-  @Column()
+  @Column({ type: 'boolean', default: 0 })
   readState: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   constructor(partial: Partial<NotificationEntity>) {
     Object.assign(this, partial);

@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   TableFooter, Typography, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow, TablePagination, Paper
+  TableContainer, TableHead, TableRow, TablePagination, Paper,
 } from '@material-ui/core';
 import { FiberNew } from '@material-ui/icons';
 import TablePaginationActions from '../../../atoms/Table/TablePaginationActions';
@@ -11,20 +11,20 @@ import { NoticeData } from '../../../interfaces/Notice';
 
 const useStyles = makeStyles((theme) => ({
   container: { boxShadow: 'none' },
-  table: { minWidth: 650, },
+  table: { minWidth: 650 },
   tableheader: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
   },
-  tableRow: { height: 80, },
+  tableRow: { height: 80 },
   tablefooterRow: { height: 40 },
   important: {
     backgroundColor: theme.palette.action.hover,
     '&:hover': {
-      backgroundColor: theme.palette.primary.light
-    }
+      backgroundColor: theme.palette.primary.light,
+    },
   },
-  tableheaderCell: { color: theme.palette.common.white, fontWeight: 'bold', },
+  tableheaderCell: { color: theme.palette.common.white, fontWeight: 'bold' },
   linkText: {
     display: 'flex',
     alignItems: 'center',
@@ -33,12 +33,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     cursor: 'pointer',
   },
-  newIcon: { marginLeft: theme.spacing(1) }
+  newIcon: { marginLeft: theme.spacing(1) },
 }));
 
 export interface NoticeTableProps<T> {
   data: T[];
-  onRowClick: (num:number) => void;
+  onRowClick: (num: number) => void;
 }
 export default function NoticeTable<T extends NoticeData>({
   data,
@@ -55,7 +55,7 @@ export default function NoticeTable<T extends NoticeData>({
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const emptyRows = rowsPerPage - Math.min(
-    rowsPerPage, data.length - page * rowsPerPage
+    rowsPerPage, data.length - page * rowsPerPage,
   );
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
@@ -93,7 +93,7 @@ export default function NoticeTable<T extends NoticeData>({
                   hover={!row.isImportant}
                   key={row.id}
                   className={classnames({
-                    [classes.tableRow]: true, [classes.important]: row.isImportant
+                    [classes.tableRow]: true, [classes.important]: row.isImportant,
                   })}
                 >
                   <TableCell align="center" component="th" scope="row">
@@ -104,7 +104,9 @@ export default function NoticeTable<T extends NoticeData>({
                   </TableCell>
                   <TableCell>
                     <Typography
-                      onClick={() => { onRowClick(row.id); }}
+                      onClick={() => {
+                        onRowClick(row.id);
+                      }}
                       className={classes.linkText}
                     >
                       {row.title}
@@ -129,7 +131,7 @@ export default function NoticeTable<T extends NoticeData>({
               backIconButtonText="이전 페이지"
               nextIconButtonText="다음 페이지"
               labelDisplayedRows={({
-                from, to, count
+                from, to, count,
               }) => `${count}개 중, ${from} ~ ${to}개`}
               rowsPerPageOptions={[]}
               colSpan={5}

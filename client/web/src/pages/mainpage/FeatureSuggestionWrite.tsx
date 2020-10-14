@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   featureContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
   contents: { margin: theme.spacing(4) },

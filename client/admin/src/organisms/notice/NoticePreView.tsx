@@ -3,8 +3,7 @@ import {
   Typography, Paper, Divider, Button,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
-
-const Markdown = require('react-markdown');
+import Markdown from 'react-markdown';
 
 interface NoticeData {
   title?: string;
@@ -20,12 +19,12 @@ interface Props {
   handleEditModeOn: () => void;
 }
 
-export default function NoticePreview(props: Props) {
+export default function NoticePreview(props: Props): JSX.Element {
   const { selectedData, handleEditModeOn } = props;
 
   // 데이터 가져오기
-  const [{ error, loading, data }, executeDelete] = useAxios(
-    { url: 'http://localhost:3000/admin/notice', method: 'DELETE' }, { manual: true }
+  const [, executeDelete] = useAxios(
+    { url: 'http://localhost:3000/admin/notice', method: 'DELETE' }, { manual: true },
   );
 
   return (
@@ -66,9 +65,9 @@ export default function NoticePreview(props: Props) {
               variant="contained"
               onClick={() => {
                 if (window.confirm(`정말로\n${selectedData.title}\n공지글을 삭제하시겠습니까?`)) {
-                  console.log(selectedData.id);
+                  // console.log(selectedData.id);
                   executeDelete({
-                    data: selectedData
+                    data: selectedData,
                   });
                 }
                 window.location.reload();

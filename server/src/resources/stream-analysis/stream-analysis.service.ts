@@ -1,5 +1,5 @@
 import {
-  Injectable, InternalServerErrorException, HttpException, HttpStatus, Inject
+  Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -31,29 +31,29 @@ import { StreamSummaryEntity } from './entities/streamSummary.entity';
 dotenv.config();
 const s3 = new AWS.S3();
 
-const calculateStreamData = (streamData : StreamsInfo[]) => {
+const calculateStreamData = (streamData: StreamsInfo[]) => {
   const template = [
     {
       title: '평균 시청자 수',
       tag: 'viewer',
       key: 'viewer',
       value: [],
-      unit: '명'
+      unit: '명',
     },
     {
       title: '웃음 발생 수',
       tag: 'smile',
       key: 'smileCount',
       value: [],
-      unit: '회'
+      unit: '회',
     },
     {
       title: '채팅 발생 수',
       tag: 'chat',
       key: 'chatCount',
       value: [],
-      unit: '회'
-    }
+      unit: '회',
+    },
   ];
 
   const result = template.map((element) => {
@@ -66,14 +66,14 @@ const calculateStreamData = (streamData : StreamsInfo[]) => {
       ...element,
       broad1Count,
       broad2Count,
-      diff: broad2 - broad1
+      diff: broad2 - broad1,
     };
     returnValue.value.push(
       {
         category: '',
         broad1: -1 * broad1,
-        broad2
-      }
+        broad2,
+      },
     );
     delete returnValue.key;
     return returnValue;
@@ -97,7 +97,7 @@ export class StreamAnalysisService {
   */
   async findDayStreamList(
     userId: string,
-    startDate: string, endDate?: string
+    startDate: string, endDate?: string,
   ): Promise<DayStreamsInfo[]> {
     if (!endDate) {
       // 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
@@ -109,7 +109,7 @@ export class StreamAnalysisService {
         .innerJoin(
           StreamSummaryEntity,
           'streamSummary',
-          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
         .select(['streams.*'])
         .where('streams.userId = :id', { id: userId })
@@ -126,7 +126,7 @@ export class StreamAnalysisService {
       .innerJoin(
         StreamSummaryEntity,
         'streamSummary',
-        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
       .select(['streams.*'])
       .where('streams.userId = :id', { id: userId })
@@ -149,7 +149,7 @@ export class StreamAnalysisService {
         .innerJoin(
           StreamsEntity,
           'streams',
-          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
         .select(['streamSummary.*', 'viewer', 'chatCount', 'title'])
         .where('streamSummary.streamId = :id', { id: streams[0].streamId })
@@ -165,7 +165,7 @@ export class StreamAnalysisService {
           .innerJoin(
             StreamsEntity,
             'streams',
-            'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform'
+            'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
           )
           .select(['streamSummary.*', 'viewer', 'chatCount', 'title'])
           .where('streamSummary.streamId = :id', { id: streams[1].streamId })
@@ -219,8 +219,7 @@ export class StreamAnalysisService {
       ]
     }
   */
-  async findStreamInfoByPeriods(userId: string, periods: {startAt: string, endAt: string}[])
-  : Promise<PeriodsAnalysis> {
+  async findStreamInfoByPeriods(userId: string, periods: {startAt: string; endAt: string}[]): Promise<PeriodsAnalysis> {
     // 전달되는 형태가 두개의 기간으로 전달되어야한다.
     return new Promise((resolve) => {
       Promise.all(
@@ -242,13 +241,13 @@ export class StreamAnalysisService {
             .catch((err) => {
               throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
             });
-        })
+        }),
       )
         .then((timeline) => {
           const metrics = timeline.map((period) => period.reduce((sum, element) => [
             sum[0] + Number(element.viewer),
             sum[1] + Number(element.chatCount),
-            sum[2] + Number(element.smileCount)
+            sum[2] + Number(element.smileCount),
           ], [0, 0, 0]))
             .map((sums, index) => ({
               viewer: Math.round(sums[0] / timeline[index].length),
@@ -259,7 +258,7 @@ export class StreamAnalysisService {
           resolve({
             timeline,
             type: 'periods',
-            metrics: calculateStreamData(metrics)
+            metrics: calculateStreamData(metrics),
           });
         });
     });
@@ -310,9 +309,9 @@ export class StreamAnalysisService {
     }
   */
   async findStreamInfoByPeriod(s3Request: FindS3StreamInfo[]): Promise<PeriodAnalysis> {
-    const keyArray : string[] = [];
-    const calculatedArray : S3StreamData[] = [];
-    const dataArray : S3StreamData[] = [];
+    const keyArray: string[] = [];
+    const calculatedArray: S3StreamData[] = [];
+    const dataArray: S3StreamData[] = [];
 
     /* input param 을 통해 S3 키 배열 생성 함수 정의 */
     const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
@@ -327,7 +326,7 @@ export class StreamAnalysisService {
       s3.listObjects(params).promise()
         .then((values) => {
           if (values.Contents) {
-            values.Contents.map((value) => {
+            values.Contents.forEach((value) => {
               if (value.Key) keyArray.push(value.Key);
             });
           }
@@ -344,7 +343,7 @@ export class StreamAnalysisService {
 
       const param = {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
-        Key: key
+        Key: key,
       };
 
       const streamData = s3.getObject(param).promise()
@@ -409,7 +408,7 @@ export class StreamAnalysisService {
           start_date: currStream.start_date,
           end_date: isContained ? currStream.end_date : nextStream.end_date,
           time_line: isContained ? combinedTimeLine.concat(
-            currStream.time_line.splice(gapStartIndex + gapSize - 1, currStream.time_line.length)
+            currStream.time_line.splice(gapStartIndex + gapSize - 1, currStream.time_line.length),
           ) : combinedTimeLine,
           total_index: isContained
             ? currStream.total_index : currStream.total_index + nextStream.total_index - gapSize,
@@ -418,7 +417,7 @@ export class StreamAnalysisService {
         return combiendS3StreamData;
       } catch (e) {
         return {
-          ...currStream
+          ...currStream,
         };
       }
     };
@@ -482,7 +481,7 @@ export class StreamAnalysisService {
               organizeArray.value.push({
                 smile_count: timeline.smile_count,
                 chat_count: timeline.chat_count,
-                date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss')
+                date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss'),
               });
             });
             if (index === calculatedArray.length - 1) {
@@ -495,15 +494,15 @@ export class StreamAnalysisService {
         } catch (err) {
           rejectOrganize(err);
         }
-      }
+      },
     );
 
     /* S3 데이터 조회 Promise.all 함수 선언 */
     const getAllKeys = (list: FindS3StreamInfo[]) => Promise.all(
-      list.map((stream) => keyFunc(stream))
+      list.map((stream) => keyFunc(stream)),
     );
     const getAllDatas = (list: string[]) => Promise.all(
-      list.map((stream) => dataFunc(stream))
+      list.map((stream) => dataFunc(stream)),
     );
 
     /* S3 데이터 조회 후 연산 함수 실행 */
@@ -513,10 +512,10 @@ export class StreamAnalysisService {
           .then((organizeArray) => organizeArray))
         .catch((err: Error) => {
         /* Promise Chain rejected 처리 */
-          console.log('[Error] : ', err.message);
+          // console.log('[Error] : ', err.message);
           throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
         })).catch((err: Error) => {
-        console.log('[Error] : ', err.message);
+        // console.log('[Error] : ', err.message);
         throw new InternalServerErrorException(err);
       }));
 

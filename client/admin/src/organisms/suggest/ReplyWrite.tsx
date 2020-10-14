@@ -3,11 +3,11 @@ import { Typography, Grid } from '@material-ui/core';
 import NoticeMarkdownHelper from '../markdown_helper/MarkdownHelper';
 import SuggestReplyEditViewer from './ReplyEditViewer';
 import SuggestReplyEditor from './ReplyEditor';
-import { replyData } from '../../pages/AdminSuggest';
+import { ReplyData } from '../../pages/AdminSuggest';
 import '../../assets/font.css';
 
 const initialState = {
-  userId: '', content: '',createdAt: '', author: '', replyId: '',suggestionId: ''
+  userId: '', content: '', createdAt: '', author: '', replyId: '', suggestionId: '',
 };
 
 interface ActionProps {
@@ -15,13 +15,13 @@ interface ActionProps {
   author: string;
   content: string;
   userId: string;
-  suggestionId : string;
+  suggestionId: string;
   createdAt: string;
   replyId: string;
 }
 
 function reducer(state: any, action: ActionProps) {
-  //action은 type을 정의.
+  // action은 type을 정의.
   const {
     type, author, userId, content, suggestionId, createdAt,
   } = action;
@@ -34,21 +34,21 @@ function reducer(state: any, action: ActionProps) {
     case 'handleuserId':
       return { ...state, userId };
     case 'handleSuggestionId':
-        return { ...state, suggestionId };
+      return { ...state, suggestionId };
     case 'handleContent':
       return { ...state, content };
     case 'handlecreatedAt':
-        return { ...state, createdAt };
+      return { ...state, createdAt };
     default: throw Error(`unexpected action.type: ${action.type}`);
   }
 }
 
-interface replyDataProps{
-  replyData: replyData;
+interface ReplyDataProps{
+  replyData: ReplyData;
 }
 
-export default function ReplyWrite(props: replyDataProps) {
-  const{ replyData } = props;
+export default function ReplyWrite(props: ReplyDataProps): JSX.Element {
+  const { replyData } = props;
 
   const [state, dispatch] = React.useReducer(reducer, replyData || initialState);
   const [help, setHelp] = React.useState(false);
@@ -61,7 +61,7 @@ export default function ReplyWrite(props: replyDataProps) {
     <div>
       <div style={{ padding: 28 }}>
         <Typography variant="h6">
-        기능제안 답변글 작성
+          기능제안 답변글 작성
         </Typography>
       </div>
 

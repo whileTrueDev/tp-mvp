@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   featureContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
   contents: { marginTop: theme.spacing(4) },
@@ -43,7 +43,7 @@ export default function FeatureSuggestion(): JSX.Element {
     history.push('/feature-suggestion');
   }
   const [{ loading, data }] = useAxios<FeatureData[]>({
-    url: '/feature', method: 'GET'
+    url: '/feature', method: 'GET',
   });
   const categoryTabSwitch = (value: number) => {
     switch (value) {
@@ -58,7 +58,8 @@ export default function FeatureSuggestion(): JSX.Element {
       <Appbar />
       <ProductHero
         title="기능제안"
-        content={'트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해주세요.\n궁금하신 사항은 고객센터로 연락 부탁드립니다.'}
+        content={`트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해주세요.
+        궁금하신 사항은 고객센터로 연락 부탁드립니다.`}
       />
       <section className={classes.featureSection}>
         <div className={classes.featureContainer}>
@@ -72,7 +73,8 @@ export default function FeatureSuggestion(): JSX.Element {
                 data={data
                   .sort((row1, row2) => new Date(row2.createdAt).getTime()
                     - new Date(row1.createdAt).getTime())
-                  .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))}
+                  .filter((row) => (selectedCategory !== '전체'
+                    ? row.category === selectedCategory : row))}
                 onOtherFeatureClick={handleFeatureClick}
                 onBackClick={handleResetFeatureSelect}
                 categoryTabSwitch={categoryTabSwitch}
@@ -101,7 +103,8 @@ export default function FeatureSuggestion(): JSX.Element {
                       ? data
                         .sort((row1, row2) => new Date(row2.createdAt).getTime()
                           - new Date(row1.createdAt).getTime())
-                        .filter((row) => (selectedCategory !== '전체' ? row.category === selectedCategory : row))
+                        .filter((row) => (selectedCategory !== '전체'
+                          ? row.category === selectedCategory : row))
                       : []}
                     onRowClick={handleFeatureClick}
                     categoryTabSwitch={categoryTabSwitch}

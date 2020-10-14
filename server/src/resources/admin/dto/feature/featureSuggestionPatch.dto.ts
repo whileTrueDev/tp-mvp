@@ -1,5 +1,5 @@
 import {
-  IsNumber
+  IsNumber,
 } from 'class-validator';
 
 export class FeatureSuggestionPatchRequest {

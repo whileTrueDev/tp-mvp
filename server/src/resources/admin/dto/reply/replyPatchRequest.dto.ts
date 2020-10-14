@@ -1,6 +1,6 @@
 import {
   IsNumber,
-  IsString
+  IsString,
 } from 'class-validator';
 
 export class ReplyPatchRequest {

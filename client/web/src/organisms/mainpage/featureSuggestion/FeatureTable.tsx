@@ -3,27 +3,27 @@ import classnames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   TableFooter, Typography, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow, TablePagination, Paper
+  TableContainer, TableHead, TableRow, TablePagination, Paper,
 } from '@material-ui/core';
 import TablePaginationActions from '../../../atoms/Table/TablePaginationActions';
 import { FeatureData } from '../../../interfaces/FeatureSuggestion';
 
 const useStyles = makeStyles((theme) => ({
   container: { boxShadow: 'none' },
-  table: { minWidth: 650, },
+  table: { minWidth: 650 },
   tableheader: {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
   },
-  tableRow: { height: 40, },
+  tableRow: { height: 40 },
   tablefooterRow: { height: 40 },
   important: {
     backgroundColor: theme.palette.action.hover,
     '&:hover': {
-      backgroundColor: theme.palette.primary.light
-    }
+      backgroundColor: theme.palette.primary.light,
+    },
   },
-  tableheaderCell: { color: theme.palette.common.white, fontWeight: 'bold', },
+  tableheaderCell: { color: theme.palette.common.white, fontWeight: 'bold' },
   linkText: {
     display: 'flex',
     alignItems: 'center',
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     cursor: 'pointer',
   },
-  newIcon: { marginLeft: theme.spacing(1) }
+  newIcon: { marginLeft: theme.spacing(1) },
 }));
 
 export interface FeatureTableProps<T> {
@@ -53,7 +53,7 @@ export default function FeatureTable<T extends FeatureData>({
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const emptyRows = rowsPerPage - Math.min(
-    rowsPerPage, data.length - page * rowsPerPage
+    rowsPerPage, data.length - page * rowsPerPage,
   );
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
@@ -98,7 +98,7 @@ export default function FeatureTable<T extends FeatureData>({
                 <TableRow
                   key={row.id}
                   className={classnames({
-                    [classes.tableRow]: true
+                    [classes.tableRow]: true,
                   })}
                 >
                   <TableCell align="center">
@@ -112,7 +112,9 @@ export default function FeatureTable<T extends FeatureData>({
                   </TableCell>
                   <TableCell>
                     <Typography
-                      onClick={() => { onRowClick(row.id); }}
+                      onClick={() => {
+                        onRowClick(row.id);
+                      }}
                       className={classes.linkText}
                     >
                       {row.title}
@@ -139,7 +141,7 @@ export default function FeatureTable<T extends FeatureData>({
               backIconButtonText="이전 페이지"
               nextIconButtonText="다음 페이지"
               labelDisplayedRows={({
-                from, to, count
+                from, to, count,
               }) => `${count}개 중, ${from} ~ ${to}개`}
               rowsPerPageOptions={[]}
               colSpan={6}

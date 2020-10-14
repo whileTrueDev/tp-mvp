@@ -7,13 +7,13 @@ import Markdown from 'react-markdown/with-html';
 import { NoticeData } from '../../pages/AdminNotice';
 
 const useStyles = makeStyles((theme) => ({
-  markdown: { fontSize: theme.typography.body1.fontSize }
-}))
+  markdown: { fontSize: theme.typography.body1.fontSize },
+}));
 
 interface NoticeEditData{
   state: NoticeData;
 }
-export default function NoticeEditViewer(props: NoticeEditData) {
+export default function NoticeEditViewer(props: NoticeEditData): JSX.Element {
   const { state } = props;
   const classes = useStyles();
   return (
@@ -22,7 +22,7 @@ export default function NoticeEditViewer(props: NoticeEditData) {
         <div style={{ padding: 14 }}>
 
           <Typography variant="h6">
-              공지사항 글작성 미리보기
+            공지사항 글작성 미리보기
           </Typography>
           <Divider />
         </div>
@@ -32,10 +32,10 @@ export default function NoticeEditViewer(props: NoticeEditData) {
         </div>
         {state.title && (<Divider />)}
         <div style={{ padding: 14 }}>
-        <Markdown
-          className={classes.markdown}
-          source={state.content}
-          escapeHtml={false}
+          <Markdown
+            className={classes.markdown}
+            source={state.content}
+            escapeHtml={false}
           />
         </div>
       </Paper>

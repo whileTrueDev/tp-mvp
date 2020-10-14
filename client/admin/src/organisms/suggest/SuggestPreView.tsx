@@ -1,73 +1,71 @@
 import React from 'react';
 import {
-  Typography, Paper, Divider, Button, Grid, Table
+  Typography, Paper, Divider, Button, Grid, Table,
 } from '@material-ui/core';
+import Markdown from 'react-markdown';
 import { SuggestData } from '../../pages/AdminSuggest';
 import StatusChangeButton from './StatusChangeButton';
 import CostomTableRow from './CostomTableRow';
-
-const Markdown = require('react-markdown');
 
 interface Props {
   selectedData: SuggestData;
   handleEditModeOn: () => void;
 }
 
-export default function SuggestPreview(props: Props) {
+export default function SuggestPreview(props: Props): JSX.Element {
   const { selectedData, handleEditModeOn } = props;
-  const [state, setState] = React.useState("");
 
-  function handleClick(data: string) {
-    setState(data);
-  }
-
-  function handleState(Case: number){
-    switch(Case){
+  function handleState(Case: number) {
+    switch (Case) {
       case 1:
-        return "검토중";
+        return '검토중';
       case 2:
-        return "기능구현중";
+        return '기능구현중';
       case 3:
-        return "구현완료";
+        return '구현완료';
+      default:
+        return '';
     }
-
   }
-  
+
   return (
     <Paper>
-       <div style={{ padding: 28 }}>
+      <div style={{ padding: 28 }}>
         <Typography variant="h4">
-        {selectedData.title}
+          {selectedData.title}
         </Typography>
-        <div style={{ display: 'flex', marginTop: 5,marginBottom: 5,justifyContent: 'space-bwtween' }}>
-          <Table size='small'>
-            <CostomTableRow title={'작성자'} data={selectedData.author}/>
-            <CostomTableRow title={'날짜'} data={new Date(selectedData.createdAt).toLocaleString()}/>
-            <CostomTableRow title={'카테고리'} data={selectedData.category}/>
-            <CostomTableRow title={'진행상태'} data={handleState(selectedData.state)}/>
+        <div style={{
+          display: 'flex', marginTop: 5, marginBottom: 5, justifyContent: 'space-bwtween',
+        }}
+        >
+          <Table size="small">
+            <CostomTableRow title="작성자" data={selectedData.author} />
+            <CostomTableRow title="날짜" data={new Date(selectedData.createdAt).toLocaleString()} />
+            <CostomTableRow title="카테고리" data={selectedData.category} />
+            <CostomTableRow title="진행상태" data={handleState(selectedData.state)} />
           </Table>
         </div>
         {selectedData.content && (
-          <div>
-            <Grid container spacing={1}>
-              <Grid item xs={12} lg={3}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick= {handleEditModeOn}
-                >
-                  답변목록보기
-                </Button>
-              </Grid>
-
-              <Grid item xs={12} lg={3}>
-                <StatusChangeButton 
-                selectedData={selectedData}
-                />
-              </Grid>
-
+        <div>
+          <Grid container spacing={1}>
+            <Grid item xs={12} lg={3}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleEditModeOn}
+              >
+                답변목록보기
+              </Button>
             </Grid>
-          </div>
+
+            <Grid item xs={12} lg={3}>
+              <StatusChangeButton
+                selectedData={selectedData}
+              />
+            </Grid>
+
+          </Grid>
+        </div>
         )}
       </div>
       <Divider />

@@ -32,11 +32,14 @@ interface HeaderLinksProps {
 }
 
 function HeaderLinks(props: HeaderLinksProps): JSX.Element {
-  const { routes, userId } = props;
+  const {
+    routes,
+    userId,
+  } = props;
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const classes = useNavbarStyles();
   const {
-    anchorEl, handleAnchorOpen, handleAnchorClose
+    anchorEl, handleAnchorOpen, handleAnchorClose,
   } = useAnchorEl();
 
   // 개인 알림 - GET Request
@@ -49,12 +52,12 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    executeGet({ params: { userId: 'testtest' } });
+    executeGet({ params: { userId } });
     if (changeReadState) {
-      executeGet({ params: { userId: 'testtest' } });
+      executeGet({ params: { userId } });
       setChangeReadState(false);
     }
-  }, [changeReadState, executeGet]);
+  }, [changeReadState, executeGet, userId]);
 
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
@@ -77,7 +80,11 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
           aria-label="notifications"
           ref={notificationRef}
           onClick={(e): void => {
-            if (anchorEl) { handleAnchorClose(); } else { handleAnchorOpen(e); }
+            if (anchorEl) {
+              handleAnchorClose();
+            } else {
+              handleAnchorOpen(e);
+            }
           }}
         >
           <Badge

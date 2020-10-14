@@ -3,13 +3,13 @@ import {
   Typography, Paper, CircularProgress,
 } from '@material-ui/core';
 
-export default function NoticeMarkdownHelper() {
+export default function NoticeMarkdownHelper(): JSX.Element {
   const [iframeLoading, setIframeLoading] = React.useState(true);
 
   return (
     <div>
       <Typography variant="h4">
-          마크다운 작성 도움말
+        마크다운 작성 도움말
       </Typography>
       {iframeLoading && (<CircularProgress />) }
       <Paper>
@@ -21,7 +21,9 @@ export default function NoticeMarkdownHelper() {
           width="100%"
           height="680"
           title="마크다운 작성 도움말"
-          onLoad={() => { setIframeLoading(false); }}
+          onLoad={() => {
+            setIframeLoading(false);
+          }}
           src="https://jmhmunhwan.github.io/devlog/2019/02/15/Markdown/"
           frameBorder="0"
         />

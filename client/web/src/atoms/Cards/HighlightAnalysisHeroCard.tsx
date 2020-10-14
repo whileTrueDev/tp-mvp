@@ -21,9 +21,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function HighlightAnalysisHeroCard(title: string, contents: string) {
+export default function HighlightAnalysisHeroCard(title: string, contents: string): JSX.Element {
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
+  // @hwasurr - 2020.10.13 eslint error 정리중 주석처리
+  // 사용하지 않는 변수
+  // const bull = <span className={classes.bullet}>•</span>;
 
   return (
     <Card className={classes.root} variant="outlined">

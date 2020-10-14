@@ -16,7 +16,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     paddingLeft: '0px',
     marginRight: 'auto',
     marginLeft: 'auto',
-    height: '100%'
+    height: '100%',
   },
   title: {
     textTransform: 'none',
@@ -35,13 +35,13 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     padding: 0,
     height: '100%',
     marginLeft: theme.spacing(8),
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   subscribePeriod: {
     display: 'flex',
     alignItems: 'center',
     textDecoration: 'underline',
-    color: theme.palette.common.white
+    color: theme.palette.common.white,
   },
   subscribeChip: {
     background: theme.palette.common.white,
@@ -56,7 +56,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(1),
     marginLeft: theme.spacing(1),
     fontWeight: 'bold',
-  }
+  },
 }));
 
 export default useNavbarStyles;

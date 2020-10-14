@@ -3,7 +3,7 @@ import Markdown from 'react-markdown/with-html';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, ButtonGroup, Paper, Typography
+  Button, ButtonGroup, Paper, Typography,
 } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import Divider from '@material-ui/core/Divider';
@@ -13,12 +13,12 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 import FeatureWriteForm from './FeatureWriteForm';
 
 const useStyles = makeStyles((theme) => ({
-  markdown: { fontSize: theme.typography.body1.fontSize, },
+  markdown: { fontSize: theme.typography.body1.fontSize },
   title: {
     padding: theme.spacing(4),
     display: 'flex',
     justifyContent: 'space-between',
-    borderBottom: '1px solid #ddd',
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 400 },
@@ -26,19 +26,19 @@ const useStyles = makeStyles((theme) => ({
     padding: `${theme.spacing(4)}px 0px`,
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   replyCard: {
     padding: theme.spacing(2),
     width: '50%',
     display: 'column',
     justifyContent: 'space-between',
-    borderBottom: '1px solid #ddd',
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   replyTextCard: {
     backgroundColor: theme.palette.grey[400],
     padding: theme.spacing(2),
-  }
+  },
 }));
 
 export interface FeatureDetailProps {
@@ -50,13 +50,13 @@ export interface FeatureDetailProps {
 }
 export default function FeatureDetail({
   data, onBackClick, selectedSuggestionId,
-  onOtherFeatureClick, categoryTabSwitch
+  onOtherFeatureClick, categoryTabSwitch,
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
   const [editState, setEditState] = React.useState(false);
   const [, deleteRequest] = useAxios(
-    { url: '/feature/upload-delete', method: 'delete' }, { manual: true }
+    { url: '/feature/upload-delete', method: 'delete' }, { manual: true },
   );
   // length of title to render on Next/Previous button
   const TITLE_LENGTH = 15;
@@ -91,7 +91,7 @@ export default function FeatureDetail({
               </Typography>
               <Typography color="textSecondary">
                 {categoryTabSwitch(Number(currentSuggestion?.category))}
-                {new Date(currentSuggestion!.createdAt).toLocaleString()}
+                {currentSuggestion ? new Date(currentSuggestion.createdAt).toLocaleString() : ''}
               </Typography>
             </div>
 
@@ -100,6 +100,7 @@ export default function FeatureDetail({
                 className={classes.markdown}
                 source={currentSuggestion?.content}
                 escapeHtml={false}
+                // eslint-disable-next-line react/prop-types
                 renderers={{ code: ({ value }) => <Markdown source={value} /> }}
               />
             </div>
@@ -142,7 +143,9 @@ export default function FeatureDetail({
               style={{ width: '10%' }}
               size="large"
               variant="contained"
-              onClick={() => { onBackClick(); }}
+              onClick={() => {
+                onBackClick();
+              }}
             >
               목록으로
             </Button>

@@ -15,7 +15,7 @@ const StyledInput = withStyles((theme: Theme) => ({
     },
   },
   underline: {
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
 }))((props: InputProps) => (
   <Input {...props} />

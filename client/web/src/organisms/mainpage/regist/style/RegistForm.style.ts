@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   adornment: {
     fontSize: '20px',
-    fontWeight: 900
+    fontWeight: 900,
   },
   switchbox: {
     marginLeft: theme.spacing(1),
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   switch: {
     label: {
       fontSize: '11px',
-      color: 'black'
+      color: 'black',
     },
     margin: 0,
     marginTop: theme.spacing(3),

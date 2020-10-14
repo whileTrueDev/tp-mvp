@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   Controller, Request, Post, UseGuards, Get, Query,
-  HttpException, HttpStatus, Res, BadRequestException, Body
+  HttpException, HttpStatus, Res, BadRequestException, Body,
 } from '@nestjs/common';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
@@ -19,7 +19,7 @@ export class AuthController {
 
   @Post('logout')
   async logout(
-    @Body() logoutDto: LogoutDto
+    @Body() logoutDto: LogoutDto,
   ): Promise<{ success: boolean }> {
     const isLogoutSucess = await this.authService.logout(logoutDto);
     if (isLogoutSucess) {
@@ -55,7 +55,7 @@ export class AuthController {
     const { refresh_token: prevRefreshToken } = req.cookies;
     if (prevRefreshToken) {
       const {
-        accessToken, refreshToken
+        accessToken, refreshToken,
       } = await this.authService.silentRefresh(prevRefreshToken);
 
       // 새로운 HTTP only refreshToken을 쿠키로 설정
@@ -69,7 +69,7 @@ export class AuthController {
 
   @Get('certification')
   async checkCertification(
-    @Query(new ValidationPipe()) checkCertificationDto: CheckCertificationDto
+    @Query(new ValidationPipe()) checkCertificationDto: CheckCertificationDto,
   ): Promise<CertificationInfo> {
     const certificationInfo = await this.authService
       .getCertificationInfo(checkCertificationDto.impUid);

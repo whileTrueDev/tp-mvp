@@ -17,18 +17,18 @@ export interface NoticeData {
 }
 
 // :noticeData[] --> noticeData의 타입을 가지는 배열을 만든다.
-export default function NoticeBoard() {
+export default function NoticeBoard(): JSX.Element {
   // 공지사항 선택을 위한 State
   // useState<NoticeData> 제네릭타입 //
   const [selectedData, setSelectedData] = React.useState<NoticeData>();
 
   // 데이터 가져오기
-  const [{ loading, error, data }] = useAxios(
-    { url: 'http://localhost:3000/admin/notice', method: 'GET' }
+  const [{ loading, data }] = useAxios(
+    { url: 'http://localhost:3000/admin/notice', method: 'GET' },
   );
 
-  function handleSelectedData(data: NoticeData) {
-    setSelectedData(data);
+  function handleSelectedData(d: NoticeData) {
+    setSelectedData(d);
   }
 
   // 수정 모드를 위한 State
@@ -54,7 +54,6 @@ export default function NoticeBoard() {
       <Grid container spacing={2}>
         <Grid item xs={12} lg={6}>
           <NoticeTable
-
             noticeData={data}
             handleData={handleSelectedData}
             handleEditModeOff={handleEditModeOff}

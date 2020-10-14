@@ -5,7 +5,7 @@ import LoginFooter from '../../organisms/shared/FooterShort';
 import FindPasswordForm from '../../organisms/mainpage/login/FindPasswordForm';
 
 const useStyles = makeStyles((theme) => ({
-  container: { display: 'flex', height: '100vh', },
+  container: { display: 'flex', height: '100vh' },
   leftside: {
     width: '50%',
     background: `url('images/main/loginpage.png'), linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FindAuth():JSX.Element {
+export default function FindAuth(): JSX.Element {
   const classes = useStyles();
   const isDesktop = useMediaQuery('(min-width:768px)');
 

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 // material-ui core components
 import {
-  Typography, Grid, Divider, Button
+  Typography, Grid, Divider, Button,
 } from '@material-ui/core';
 // subcomponents
 import RangeSelectCalendarWithTextfield from './RangeSelectCalendarWithTextfield';
@@ -33,7 +33,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
       ...checkStateGroup,
-      [event.target.name]: event.target.checked
+      [event.target.name]: event.target.checked,
     });
   };
 
@@ -71,7 +71,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         baseEndAt: basePeriod[1].toISOString(),
         compareStartAt: comparePeriod[0].toISOString(),
         compareEndAt: comparePeriod[1].toISOString(),
-      }
+      },
     });
   };
 

@@ -10,14 +10,14 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     minheight: '74px',
     textAlign: 'center',
   },
-  icon: { fontSize: 32, },
-  notSelectedTab: { color: theme.palette.text.disabled, },
-  selected: { color: theme.palette.text.primary, fontWeight: 'bold', },
+  icon: { fontSize: 32 },
+  notSelectedTab: { color: theme.palette.text.disabled },
+  selected: { color: theme.palette.text.primary, fontWeight: 'bold' },
   selectedIndicator: {
     transform: 'rotate(-90deg)',
     fontSize: 32,
     marginTop: '3px',
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
   },
   accordian: {
     boxShadow: 'none',
@@ -30,7 +30,7 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
     '&:hover': {
-      backgroundColor: theme.palette.primary.light // 마우스 가져갈때
+      backgroundColor: theme.palette.primary.light, // 마우스 가져갈때
     },
   },
   subRouteList: { display: 'block' },

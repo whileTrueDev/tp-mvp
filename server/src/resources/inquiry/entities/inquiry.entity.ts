@@ -1,9 +1,10 @@
+import { Inquiry } from '@truepoint/shared/dist/interfaces/Inquiry.interface';
 import {
-  Entity, Column, CreateDateColumn, PrimaryGeneratedColumn
+  Entity, Column, CreateDateColumn, PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity({ name: 'Inquiry' })
-export class InquiryEntity {
+export class InquiryEntity implements Inquiry {
   // For Exclude Decorator
   constructor(partial: Partial<InquiryEntity>) {
     Object.assign(this, partial);

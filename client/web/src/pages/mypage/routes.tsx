@@ -60,15 +60,15 @@ const dashboardRoutes: MypageRoute[] = [
         path: '/period',
         name: '기간 추세 분석',
         layout: '/mypage/stream-analysis',
-        component: PeriodAnalysis// 해당 페이지 컴포넌트를 여기에
+        component: PeriodAnalysis, // 해당 페이지 컴포넌트를 여기에
       },
       {
         path: '/term-to-term',
         name: '기간 대 기간 분석',
         layout: '/mypage/stream-analysis',
-        component: PeriodVsPeriodAnalysis// 해당 페이지 컴포넌트를 여기에
+        component: PeriodVsPeriodAnalysis, // 해당 페이지 컴포넌트를 여기에
       },
-    ]
+    ],
   },
   {
     path: '/channel-analysis',
@@ -81,15 +81,15 @@ const dashboardRoutes: MypageRoute[] = [
         path: '/video',
         name: '동영상별 비교',
         layout: '/mypage/channel-analysis',
-        component: VideoAnalysis // 해당 페이지 컴포넌트를 여기에
+        component: VideoAnalysis, // 해당 페이지 컴포넌트를 여기에
       },
       {
         path: '/each-period',
         name: '기간별 분석',
         layout: '/mypage/channel-analysis',
-        component: PeriodAnalysis// 해당 페이지 컴포넌트를 여기에
+        component: PeriodAnalysis, // 해당 페이지 컴포넌트를 여기에
       },
-    ]
+    ],
   },
   {
     path: '/my-office',
@@ -102,15 +102,15 @@ const dashboardRoutes: MypageRoute[] = [
         path: '/settings',
         name: '내 계정 정보 관리',
         layout: '/mypage/my-office',
-        component: Settings// 해당 페이지 컴포넌트를 여기에
+        component: Settings, // 해당 페이지 컴포넌트를 여기에
       },
       {
         path: '/subscribe',
         name: '구독 관리',
         layout: '/mypage/my-office',
-        component: Subscribe// 해당 페이지 컴포넌트를 여기에
+        component: Subscribe, // 해당 페이지 컴포넌트를 여기에
       },
-    ]
+    ],
   },
 ];
 

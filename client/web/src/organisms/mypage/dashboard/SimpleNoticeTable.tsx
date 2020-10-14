@@ -13,9 +13,9 @@ import { useHistory } from 'react-router-dom';
 import { NoticeData } from '../../../interfaces/Notice';
 
 const useStyles = makeStyles((theme) => ({
-  table: { minWidth: 650, },
+  table: { minWidth: 650 },
   title: { fontWeight: 'bold' },
-  linkText: { cursor: 'pointer', },
+  linkText: { cursor: 'pointer' },
   important: { fontWeight: 'bold' },
 }));
 
@@ -23,8 +23,8 @@ export interface SimpleNoticeTableProps {
   data: NoticeData[];
 }
 export default function SimpleNoticeTable({
-  data
-}: SimpleNoticeTableProps):JSX.Element {
+  data,
+}: SimpleNoticeTableProps): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
   return (
@@ -45,9 +45,11 @@ export default function SimpleNoticeTable({
                   <Typography
                     component="a"
                     className={classnames({
-                      [classes.linkText]: true, [classes.important]: row.isImportant
+                      [classes.linkText]: true, [classes.important]: row.isImportant,
                     })}
-                    onClick={() => { history.push(`/notice/${row.id}`); }}
+                    onClick={() => {
+                      history.push(`/notice/${row.id}`);
+                    }}
                   >
                     {`${row.isImportant ? '[중요공지]' : ''} ${row.title}`}
                   </Typography>

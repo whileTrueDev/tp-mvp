@@ -1,18 +1,21 @@
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
-import am4themes_kelly from '@amcharts/amcharts4/themes/kelly';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import am4themesKelly from '@amcharts/amcharts4/themes/kelly';
+import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import graphColor from './Color';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
 
+// @hwasurr - 2020.10.13 eslint error 정리 중
+// any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function setComponent(data: any, theme: TruepointTheme): am4charts.XYChart {
-  am4core.useTheme(am4themes_kelly);
-  am4core.useTheme(am4themes_animated);
+  am4core.useTheme(am4themesKelly);
+  am4core.useTheme(am4themesAnimated);
 
   const lightColor = am4core.color(theme.palette.primary.light);
   const darkColor = am4core.color(theme.palette.primary.dark);
 
-  const chart : am4charts.XYChart = am4core.create('chartdiv', am4charts.XYChart);
+  const chart: am4charts.XYChart = am4core.create('chartdiv', am4charts.XYChart);
   chart.data = data;
   chart.dateFormatter.inputDateFormat = 'i';
   chart.paddingRight = 15;
@@ -34,7 +37,7 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   if (chart.yAxes.indexOf(valueAxis) !== 0) {
     valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
   }
-  const series : any = chart.series.push(new am4charts.LineSeries());
+  const series: any = chart.series.push(new am4charts.LineSeries());
 
   series.yAxis = valueAxis;
   series.dataFields.valueY = 'smile_count';
@@ -57,41 +60,45 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   series.tooltip.label.textValign = 'middle';
 
   // ****************************** chat count series ***************************
-  const new_series : any = chart.series.push(new am4charts.LineSeries());
+  const newSeries = chart.series.push(new am4charts.LineSeries());
   const chatAxis = chart.yAxes.push(new am4charts.ValueAxis());
   chatAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   chatAxis.renderer.opposite = true;
-  new_series.yAxis = chatAxis;
-  new_series.dataFields.valueY = 'chat_count';
-  new_series.dataFields.dateX = 'date';
-  new_series.stroke = am4core.color(graphColor.line); // red
-  new_series.tooltip.getFillFromObject = false;
-  new_series.tooltip.background.fill = am4core.color(graphColor.line);
+  newSeries.yAxis = chatAxis;
+  newSeries.dataFields.valueY = 'chat_count';
+  newSeries.dataFields.dateX = 'date';
+  newSeries.stroke = am4core.color(graphColor.line); // red
+  if (newSeries.tooltip) {
+    newSeries.tooltip.getFillFromObject = false;
+    newSeries.tooltip.background.fill = am4core.color(graphColor.line);
+  }
   // pieSeries.tooltip.label.fill = am4core.color("#000");
-  new_series.name = '채팅 발생 수';
-  new_series.strokeWidth = 2.5;
-  new_series.tensionX = 0.8;
-  new_series.groupFields.valueY = 'average';
-  new_series.tooltipText = '채팅 발생 수: [bold]{chat_count}[/]';
-  new_series.connect = false;
-  new_series.hidden = true; // 기본 그래프 설정.
+  newSeries.name = '채팅 발생 수';
+  newSeries.strokeWidth = 2.5;
+  newSeries.tensionX = 0.8;
+  newSeries.groupFields.valueY = 'average';
+  newSeries.tooltipText = '채팅 발생 수: [bold]{chat_count}[/]';
+  newSeries.connect = false;
+  newSeries.hidden = true; // 기본 그래프 설정.
 
   // ****************************** chat count series ***************************
-  const viewer_series : any = chart.series.push(new am4charts.LineSeries());
+  const viewerSeries = chart.series.push(new am4charts.LineSeries());
   const viewerAxis = chart.yAxes.push(new am4charts.ValueAxis());
   viewerAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
-  viewer_series.yAxis = viewerAxis;
-  viewer_series.dataFields.valueY = 'viewer';
-  viewer_series.dataFields.dateX = 'date';
-  viewer_series.stroke = am4core.color(graphColor.viewer); // red
-  viewer_series.tooltip.getFillFromObject = false;
-  viewer_series.tooltip.background.fill = am4core.color(graphColor.viewer);
-  // viewer_series.tooltip.label.fill = am4core.color(graphColor.viewer);
-  viewer_series.name = '평균 시청자 수';
-  viewer_series.strokeWidth = 2.5;
-  viewer_series.tensionX = 0.8;
-  viewer_series.tooltipText = '평균 시청자 수: [bold]{viewer}[/]';
-  viewer_series.hidden = true; // 기본 그래프 설정.
+  viewerSeries.yAxis = viewerAxis;
+  viewerSeries.dataFields.valueY = 'viewer';
+  viewerSeries.dataFields.dateX = 'date';
+  viewerSeries.stroke = am4core.color(graphColor.viewer); // red
+  if (viewerSeries.tooltip) {
+    viewerSeries.tooltip.getFillFromObject = false;
+    viewerSeries.tooltip.background.fill = am4core.color(graphColor.viewer);
+  }
+  // viewerSeries.tooltip.label.fill = am4core.color(graphColor.viewer);
+  viewerSeries.name = '평균 시청자 수';
+  viewerSeries.strokeWidth = 2.5;
+  viewerSeries.tensionX = 0.8;
+  viewerSeries.tooltipText = '평균 시청자 수: [bold]{viewer}[/]';
+  viewerSeries.hidden = true; // 기본 그래프 설정.
 
   // ****************************** cursor ***************************
   // Make a panning cursor
@@ -100,7 +107,7 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
 
   // ****************************** scroll bar ***************************
   // Create a horizontal scrollbar with previe and place it underneath the date axis
-  const scrollbarX : any = new am4charts.XYChartScrollbar();
+  const scrollbarX: any = new am4charts.XYChartScrollbar();
   scrollbarX.minHeight = 20;
   scrollbarX.startGrip.background.states.getKey('hover').properties.fill = lightColor;
   scrollbarX.endGrip.background.states.getKey('hover').properties.fill = lightColor;

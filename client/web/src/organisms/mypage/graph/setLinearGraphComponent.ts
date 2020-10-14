@@ -1,6 +1,6 @@
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import graphColor from './Color';
 
 const metricSetting: any = {
@@ -8,25 +8,25 @@ const metricSetting: any = {
     name: '웃음 발생 수',
     valueY: 'smileCount',
     tooltipText: '웃음 발생 수: [bold]{smileCount}[/]',
-    color: am4core.color(graphColor.line)
+    color: am4core.color(graphColor.line),
   },
   chat: {
     name: '채팅 발생 수',
     valueY: 'chatCount',
     tooltipText: '채팅 발생 수: [bold]{chatCount}[/]',
-    color: am4core.color(graphColor.broad1)
+    color: am4core.color(graphColor.broad1),
   },
   viewer: {
     name: '평균 시청자 수',
     valueY: 'viewer',
     tooltipText: '평균 시청자 수: [bold]{viewer}[/]',
-    color: am4core.color(graphColor.broad2)
-  }
+    color: am4core.color(graphColor.broad2),
+  },
 };
 
 // 선택된 metric list
 const setSeries = (
-  metrics: string[], chart: am4charts.XYChart, opposite?: number, fontColor?: string
+  metrics: string[], chart: am4charts.XYChart, opposite?: number, fontColor?: string,
 ): void => {
   metrics.forEach((element, index) => {
     const setting = metricSetting[`${element}`];
@@ -37,7 +37,7 @@ const setSeries = (
     }
     valueAxis.renderer.labels.template.fill = am4core.color(fontColor || '#000');
 
-    const series : any = chart.series.push(new am4charts.LineSeries());
+    const series: any = chart.series.push(new am4charts.LineSeries());
     series.yAxis = valueAxis;
     series.dataFields.valueY = setting.valueY;
     series.dataFields.dateX = 'date';
@@ -59,11 +59,13 @@ const setSeries = (
   });
 };
 
-export default function setComponent(
-  data: any, selectedMetric: string[], name?: string, opposite?: number, fontColor?: string
-): am4charts.XYChart {
-  am4core.useTheme(am4themes_animated);
-  const chart : am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);
+// @hwasurr - 2020.10.13 eslint error 정리 중
+// any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default function setComponent(data: any,
+  selectedMetric: string[], name?: string, opposite?: number, fontColor?: string): am4charts.XYChart {
+  am4core.useTheme(am4themesAnimated);
+  const chart: am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);
   chart.data = data;
   chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd';
   chart.paddingRight = 15;

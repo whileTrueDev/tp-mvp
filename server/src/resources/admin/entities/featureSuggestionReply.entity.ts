@@ -1,9 +1,10 @@
+import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'FeatureSuggestionReplyTest' })
-export class FeatureSuggestionReplyEntity {
+export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @PrimaryGeneratedColumn()
   replyId: number;
 
@@ -15,13 +16,13 @@ export class FeatureSuggestionReplyEntity {
 
   @Column({
     type: 'varchar',
-    length: 50
+    length: 50,
   })
   author: string;
 
   @Column({
     type: 'varchar',
-    length: 20
+    length: 20,
   })
   userId: string;
 

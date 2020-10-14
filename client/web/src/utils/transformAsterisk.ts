@@ -1,4 +1,4 @@
-export default function transformIdToAsterisk(str: string):string {
+export default function transformIdToAsterisk(str: string): string {
   const howMany = Math.floor(str.length / 2.5);
 
   let asterisk = '';

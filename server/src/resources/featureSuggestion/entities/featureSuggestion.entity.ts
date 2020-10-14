@@ -1,5 +1,5 @@
 import {
-  Column, CreateDateColumn, Entity, PrimaryGeneratedColumn
+  Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity('FeatureSuggestion')

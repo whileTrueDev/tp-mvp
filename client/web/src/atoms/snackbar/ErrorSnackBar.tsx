@@ -20,7 +20,7 @@ interface ErrorSnackBarPorps {
   message: string;
 }
 
-export default function ErrorSnackBar(props: ErrorSnackBarPorps) {
+export default function ErrorSnackBar(props: ErrorSnackBarPorps): JSX.Element {
   const classes = useStyles();
   const { message } = props;
   const [snackBarOpen, setSnackBarOpen] = React.useState<boolean>(true);
@@ -40,7 +40,7 @@ export default function ErrorSnackBar(props: ErrorSnackBarPorps) {
         autoHideDuration={1500}
         style={{
           left: '70%',
-          bottom: '70%'
+          bottom: '70%',
         }}
         onClose={handleClose}
       >

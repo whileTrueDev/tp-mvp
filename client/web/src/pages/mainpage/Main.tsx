@@ -9,7 +9,7 @@ import Inquiry from '../../organisms/mainpage/main/inquiry/Inquiry';
 import Footer from '../../organisms/shared/footer/Footer';
 import Appbar from '../../organisms/shared/Appbar';
 
-export default function Main():JSX.Element {
+export default function Main(): JSX.Element {
   return (
     <div>
       {/* 최상단 바 들어가야 함 */}

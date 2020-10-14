@@ -44,12 +44,12 @@ const StyledMenuItem = withStyles((theme) => ({
       '&:hover': {
         backgroundColor: theme.palette.primary.dark,
         color: '#FFFF',
-      }
+      },
     },
     '&:hover': {
       backgroundColor: theme.palette.primary.dark,
       color: '#FFFF',
-    }
+    },
   },
 
 }))(MenuItem);
@@ -62,8 +62,8 @@ const StyledToolTip = withStyles((theme) => ({
   },
   arrow: {
     color: theme.palette.primary.light,
-    fontSize: '30px'
-  }
+    fontSize: '30px',
+  },
 }))(Tooltip);
 
 export interface SubscribeUserInfo {
@@ -109,7 +109,9 @@ export default function NavbarUserList(): JSX.Element {
               key={user.targetUserId}
               button
               selected={subscribe.currUser.targetUserId === user.targetUserId}
-              onClick={() => { subscribe.handleCurrTargetUser(user); handleClose(); }}
+              onClick={() => {
+                subscribe.handleCurrTargetUser(user); handleClose();
+              }}
             >
               <Cached fontSize="small" style={{ marginRight: 16 }} />
               <ListItemText primary={user.targetUserId} />
@@ -128,7 +130,7 @@ export default function NavbarUserList(): JSX.Element {
 
   const tooltipText = (): JSX.Element => (
     <Typography
-      style={{ fontSize: '17px', width: '500px', padding: '15px', }}
+      style={{ fontSize: '17px', width: '500px', padding: '15px' }}
     >
       <EmojiObjectsOutlinedIcon style={{ fontSize: '24px', marginRight: '8px', color: 'yellow' }} />
       클릭하시면 구독한 유저를 선택 할 수 있습니다.

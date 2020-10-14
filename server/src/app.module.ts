@@ -7,7 +7,7 @@ import { AdminModule } from './resources/admin/admin.module';
 
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
-import { HighlightModule } from './resources/mypage/highlightPoint/hightlight.module';
+import { HighlightModule } from './resources/highlightPoint/hightlight.module';
 import { FeatureModule } from './resources/featureSuggestion/featureSuggestion.module';
 import { InquiryModule } from './resources/inquiry/inquiry.module';
 import { TypeOrmConfigService } from './config/database.config';
@@ -24,7 +24,7 @@ import { NoticeModule } from './resources/notice/notice.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
     TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService
+      useClass: TypeOrmConfigService,
     }),
     AccessControlModule.forRoles(roles),
     AuthModule,
@@ -36,7 +36,7 @@ import { NoticeModule } from './resources/notice/notice.module';
     InquiryModule,
     SlackModule,
     NoticeModule,
-    AdminModule
+    AdminModule,
   ],
 })
 export class AppModule { }

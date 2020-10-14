@@ -1,17 +1,17 @@
+import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
-  Entity, Column, OneToOne, CreateDateColumn, UpdateDateColumn, OneToMany
+  Entity, Column, OneToOne, CreateDateColumn, UpdateDateColumn, OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 // Related Entities
-import { IsOptional } from 'class-validator';
 import { PlatformTwitchEntity } from './platformTwitch.entity';
 import { PlatformAfreecaEntity } from './platformAfreeca.entity';
 import { PlatformYoutubeEntity } from './platformYoutube.entity';
 import { SubscribeEntity } from './subscribe.entity';
 
 @Entity({ name: 'UserTest' })
-export class UserEntity {
+export class UserEntity implements User {
   // For Exclude Decorator
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);

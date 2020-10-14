@@ -25,24 +25,29 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [selectedMetric, selectMetric] = useState<string[]>([]);
   const subscribe = React.useContext(SubscribeContext);
   const [{ loading, error }, getRequest] = useAxios(
-    '/stream-analysis/periods', { manual: true }
+    '/stream-analysis/periods', { manual: true },
   );
 
-  const handleSubmit = ({ category, params }
-    : {category: string[], params: PeriodsRequestParams}) => {
+  const handleSubmit = ({
+    category, params,
+  }: {category: string[]; params: PeriodsRequestParams}) => {
     selectMetric(category); // 다중 선택으로 변경시 []을 제거한다.
     setOpen(false);
     setMetricOpen(false);
     getRequest({ params })
       .then((res) => {
-        if (res.data.hasOwnProperty('error')) {
+        // check https://yeon-js.tistory.com/8
+        // if (res.data.hasOwnProperty('error')) {
+        if (Object.prototype.hasOwnProperty.call(res.data, 'error')) {
           alert(res.data.error);
         } else {
           setTimeLine(res.data.timeline);
           setMetric(res.data.metrics);
           setType(res.data.type);
           setOpen(true);
-          setTimeout(() => { setMetricOpen(true); }, 1000);
+          setTimeout(() => {
+            setMetricOpen(true);
+          }, 1000);
         }
       });
   };
@@ -65,14 +70,34 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
         <Grid item container direction="column" spacing={8}>
           <Grid item container direction="row">
             <Grid item xs={6}>
-              {timeLineData && <LinearGraph data={timeLineData[0]} name="period1" opposite={0} selectedMetric={selectedMetric} />}
+              {timeLineData && (
+              <LinearGraph
+                data={timeLineData[0]}
+                name="period1"
+                opposite={0}
+                selectedMetric={selectedMetric}
+              />
+              )}
             </Grid>
             <Grid item xs={6}>
-              {timeLineData && <LinearGraph data={timeLineData[1]} name="period2" opposite={1} selectedMetric={selectedMetric} />}
+              {timeLineData && (
+              <LinearGraph
+                data={timeLineData[1]}
+                name="period2"
+                opposite={1}
+                selectedMetric={selectedMetric}
+              />
+              )}
             </Grid>
           </Grid>
           <Grid item>
-            {metricOpen && metricData && <StreamMetrics open={metricOpen} metricData={metricData} type={type} />}
+            {metricOpen && metricData && (
+            <StreamMetrics
+              open={metricOpen}
+              metricData={metricData}
+              type={type}
+            />
+            )}
           </Grid>
         </Grid>
         )}

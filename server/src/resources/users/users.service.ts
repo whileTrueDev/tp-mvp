@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
@@ -26,10 +26,9 @@ export class UsersService {
     return user;
   }
 
-  async findSubscriberInfo(userId: string)
-  : Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
+  async findSubscriberInfo(userId: string): Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
     return this.usersRepository.findOne(userId, {
-      select: ['nickName', 'afreecaId', 'youtubeId', 'twitchId']
+      select: ['nickName', 'afreecaId', 'youtubeId', 'twitchId'],
     });
   }
 
@@ -49,7 +48,7 @@ export class UsersService {
 
   // User의 ID를 찾는 동기 함수. 결과값으로는 UserEntity의 인스턴스를 반환받되, 전달하는 것은 ID이다.
   // ID가 존재하지 않으면, ID에 대한 값을 null으로 전달한다.
-  async findID(name: string, mail?: string, userDI?: string) : Promise<Pick<UserEntity, 'userId'>> {
+  async findID(name: string, mail?: string, userDI?: string): Promise<Pick<UserEntity, 'userId'>> {
     // userDI의 존재여부에 따라서 조회방식을 분기한다.
     try {
       if (userDI) {
@@ -71,7 +70,7 @@ export class UsersService {
     }
   }
 
-  async checkID({ userId, userDI } : { userId?: string, userDI?: string }): Promise<boolean> {
+  async checkID({ userId, userDI }: { userId?: string; userDI?: string }): Promise<boolean> {
     const user = await this.usersRepository
       .findOne({ where: (userDI ? { userDI } : { userId }) });
     if (user) {
@@ -81,7 +80,7 @@ export class UsersService {
   }
 
   // 본인인증의 결과가 인증이 되면,  해당 계정의 패스워드를 변경한다.
-  async findPW(userDI: string, password: string) : Promise<boolean> {
+  async findPW(userDI: string, password: string): Promise<boolean> {
     try {
       const user = await this.usersRepository
         .findOne({ where: { userDI } });
@@ -93,7 +92,7 @@ export class UsersService {
           .createQueryBuilder()
           .update(user)
           .set({
-            password: hashedPassword
+            password: hashedPassword,
           })
           .where('userDI = :userDI', { userDI })
           .execute();
@@ -108,10 +107,11 @@ export class UsersService {
   /*
     input   : userId (로그인한 유저 아이디) 
     output  : [{userId, subscribeperiod}, {userId, subscribeperiod} ... ]
-              해당 유저가 구독한 유저 정보 리스트 {userId, subscribeperiod}
+    해당 유저가 구독한 유저 정보 리스트 {userId, subscribeperiod}
   */
-  async findUserSubscribeInfo(userId: string)
-  : Promise<{validUserList: SubscribeEntity[], inValidUserList:SubscribeEntity[]}> {
+  async findUserSubscribeInfo(
+    userId: string,
+  ): Promise<{validUserList: SubscribeEntity[]; inValidUserList: SubscribeEntity[]}> {
     const validUserList = await this.subscribeRepository
       .createQueryBuilder('subscribe')
       .where('subscribe.userId = :id', { id: userId })
@@ -154,19 +154,21 @@ export class UsersService {
   // Find User Tokens
   async findOneToken(refreshToken: string): Promise<UserTokenEntity> {
     const userToken = await this.userTokensRepository.findOne({
-      refreshToken
+      refreshToken,
     });
 
     return userToken;
   }
+
   // Refresh Token 삭제 - 로그아웃을 위해
   async removeOneToken(userId: string): Promise<UserTokenEntity> {
     const userToken = await this.userTokensRepository.findOne(userId);
     return this.userTokensRepository.remove(userToken);
   }
+
   // Update User Tokens
   async saveRefreshToken(
-    newTokenEntity: UserTokenEntity
+    newTokenEntity: UserTokenEntity,
   ): Promise<UserTokenEntity> {
     return this.userTokensRepository.save(newTokenEntity);
   }

@@ -6,7 +6,7 @@ import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import { NoticeData } from '../../../interfaces/Notice';
 
 const useStyles = makeStyles((theme) => ({
-  markdown: { fontSize: theme.typography.body1.fontSize, },
+  markdown: { fontSize: theme.typography.body1.fontSize },
   title: {
     padding: theme.spacing(4),
     display: 'flex',
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     padding: `${theme.spacing(4)}px 0px`,
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 }));
 
@@ -27,12 +27,12 @@ export interface NoticeDetailProps {
   data: NoticeData[];
   selectedNoticeId: string;
   onBackClick: () => void;
-  onOtherNoticeClick: (num:number) => void;
+  onOtherNoticeClick: (num: number) => void;
 }
 export default function NoticeDetail({
   data, onBackClick, selectedNoticeId,
-  onOtherNoticeClick
-}:NoticeDetailProps): JSX.Element {
+  onOtherNoticeClick,
+}: NoticeDetailProps): JSX.Element {
   const classes = useStyles();
 
   // length of title to render on Next/Previous button
@@ -57,7 +57,7 @@ export default function NoticeDetail({
           </Typography>
           <Typography color="textSecondary">
             {`${currentNotice?.category} • ${
-              new Date(currentNotice!.createdAt).toLocaleString()}`}
+              currentNotice ? new Date(currentNotice.createdAt).toLocaleString() : ''}`}
           </Typography>
         </div>
 
@@ -66,6 +66,7 @@ export default function NoticeDetail({
             className={classes.markdown}
             source={currentNotice?.content}
             escapeHtml={false}
+            // eslint-disable-next-line react/prop-types
             renderers={{ code: ({ value }) => <Markdown source={value} /> }}
           />
         </div>
@@ -95,7 +96,9 @@ export default function NoticeDetail({
           style={{ width: '10%' }}
           size="large"
           variant="contained"
-          onClick={() => { onBackClick(); }}
+          onClick={() => {
+            onBackClick();
+          }}
         >
           목록으로
         </Button>

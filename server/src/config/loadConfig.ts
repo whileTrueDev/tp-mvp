@@ -10,7 +10,7 @@ import { TruepointSecret, TruepointDbSecret } from '../interfaces/Secrets.interf
 const region = 'ap-northeast-2';
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
 // Create a Secrets Manager client
@@ -27,8 +27,8 @@ async function getDbSecrets(): Promise<TruepointDbSecret> {
     const target = list.SecretList.find(
       (x) => x.Name.includes(
         process.env.NODE_ENV === 'production'
-          ? 'TruepointProductionDB' : 'TruepointDevDB'
-      )
+          ? 'TruepointProductionDB' : 'TruepointDevDB',
+      ),
     );
 
     const dbSecretData = await client
@@ -42,7 +42,7 @@ async function getDbSecrets(): Promise<TruepointDbSecret> {
       secret = JSON.parse(dbSecretData.SecretString);
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     if (err.code === 'DecryptionFailureException') {
       // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
       // Deal with the exception here, and/or rethrow at your discretion.

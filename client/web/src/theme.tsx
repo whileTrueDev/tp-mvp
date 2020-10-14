@@ -15,13 +15,13 @@ const rawTheme: ThemeOptions = {
       light: '#a8c4f9',
       main: '#929ef8',
       dark: '#4b5ac7',
-      contrastText: '#fff'
+      contrastText: '#fff',
     },
     secondary: {
       light: lighten('#79e2e0', 0.1),
       main: '#79e2e0',
       dark: darken('#79e2e0', 0.1),
-      contrastText: '#fff'
+      contrastText: '#fff',
     },
     info: {
       light: '#9AA2C5',
@@ -31,8 +31,8 @@ const rawTheme: ThemeOptions = {
     success: {
       light: '#f0a9b3',
       main: '#ff3e7a',
-      contrastText: '#fff'
-    }
+      contrastText: '#fff',
+    },
   },
   typography: {
     fontFamily: '"NotoSansKR-Regular", "Sunflower", sans-serif',

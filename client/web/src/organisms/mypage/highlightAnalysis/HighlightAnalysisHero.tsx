@@ -29,7 +29,8 @@ export default function HighlightAnalysisHero(): JSX.Element {
               분석차트
             </Typography>
             <Typography className={classes.fonts} variant="body2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis modi eveniet reprehenderit eius similique eum vitae sed velit,
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Veritatis modi eveniet reprehenderit eius similique eum vitae sed velit,
             </Typography>
           </Card>
         </Grid>
@@ -47,7 +48,8 @@ export default function HighlightAnalysisHero(): JSX.Element {
               분석차트
             </Typography>
             <Typography className={classes.fonts} variant="body2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis modi eveniet reprehenderit eius similique eum vitae sed velit,
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Veritatis modi eveniet reprehenderit eius similique eum vitae sed velit,
             </Typography>
           </Card>
         </Grid>
@@ -65,7 +67,8 @@ export default function HighlightAnalysisHero(): JSX.Element {
               분석차트
             </Typography>
             <Typography className={classes.fonts} variant="body2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis modi eveniet reprehenderit eius similique eum vitae sed velit,
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Veritatis modi eveniet reprehenderit eius similique eum vitae sed velit,
             </Typography>
           </Card>
         </Grid>

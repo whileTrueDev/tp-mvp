@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function Introduction():JSX.Element {
+export default function Introduction(): JSX.Element {
   return (<div>Introduction</div>);
 }

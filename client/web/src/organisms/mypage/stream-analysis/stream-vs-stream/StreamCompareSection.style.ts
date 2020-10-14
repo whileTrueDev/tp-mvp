@@ -4,13 +4,13 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
     marginTop: theme.spacing(4),
-    height: '700px'
+    height: '700px',
   },
   titleDivider: {
     backgroundColor: theme.palette.primary.main,
     width: '200px',
     marginBottom: '12px',
-    height: '3px'
+    height: '3px',
   },
   mainTitle: {
     color: theme.palette.text.primary,
@@ -39,7 +39,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     height: '75px',
     paddingTop: '22.5px',
     paddingBottom: '10.5px',
-    boxShadow: '0'
+    boxShadow: '0',
   },
   subTitle: {
     color: theme.palette.text.secondary,
@@ -50,7 +50,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'SourceSansPro',
     marginLeft: '45.5px',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   bodyWrapper: {
     borderRadius: '12px',
@@ -85,14 +85,14 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     marginRight: '93.5px',
     color: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: theme.palette.primary.light
-    }
+      backgroundColor: theme.palette.primary.light,
+    },
   },
   alert: {
     borderRadius: '5px',
     marginBottom: '12px',
-    paddingTop: '4px'
-  }
+    paddingTop: '4px',
+  },
 }));
 
 export default useStreamSectionStyles;

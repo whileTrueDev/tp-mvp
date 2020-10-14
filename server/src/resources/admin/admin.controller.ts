@@ -1,11 +1,11 @@
 import {
   Controller, Get, Body, Patch, Query, Delete,
-  Post, UseInterceptors, ClassSerializerInterceptor
+  Post, UseInterceptors, ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 // entity
-import { NoticeEntity } from './entities/notice.entity';
-import { NotificationEntity } from './entities/notification.entity';
+import { NoticeEntity } from '../notice/entities/notice.entity';
+import { NotificationEntity } from '../notification/entities/notification.entity';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
 
@@ -35,7 +35,7 @@ export class AdminController {
   // ********************************* notice *****************************
   @Get('notice')
   getNotice(
-      @Query(new ValidationPipe()) req: NoticeGetRequest
+      @Query(new ValidationPipe()) req: NoticeGetRequest,
   ): Promise<NoticeEntity[]> {
     return this.adminService.getNotice(req);
   }
@@ -43,21 +43,21 @@ export class AdminController {
   @Post('notice')
   @UseInterceptors(ClassSerializerInterceptor)
   async createNotice(
-    @Body(new ValidationPipe()) data: Notice
+    @Body(new ValidationPipe()) data: Notice,
   ): Promise<NoticeEntity> {
     return this.adminService.loadNotice(data);
   }
 
   @Patch('notice')
   async updateNotice(
-    @Body(new ValidationPipe()) data: NoticePatchRequest
+    @Body(new ValidationPipe()) data: NoticePatchRequest,
   ): Promise<boolean> {
     return this.adminService.patchNotice(data);
   }
 
   @Delete('notice')
   async deleteNotice(
-    @Body(new ValidationPipe()) data: Pick<NoticePatchRequest, 'id'>
+    @Body(new ValidationPipe()) data: Pick<NoticePatchRequest, 'id'>,
   ): Promise<boolean> {
     return this.adminService.deleteNotice(data);
   }
@@ -66,7 +66,7 @@ export class AdminController {
   // ********************************* notification *****************************
   @Get('notification')
   getNotification(
-      @Query(new ValidationPipe()) req: NotificationGetRequest
+      @Query(new ValidationPipe()) req: NotificationGetRequest,
   ): Promise<NotificationEntity[]> {
     return this.adminService.getNotification(req);
   }
@@ -76,7 +76,7 @@ export class AdminController {
   @Post('notification')
   @UseInterceptors(ClassSerializerInterceptor)
   async createNotification(
-    @Body(new ValidationPipe()) data: NotificationPostRequest
+    @Body(new ValidationPipe()) data: NotificationPostRequest,
   ): Promise<boolean> {
     return this.adminService.postNotification(data);
   }
@@ -90,14 +90,14 @@ export class AdminController {
 
   @Patch('feature-suggestion')
   async updateSuggestion(
-    @Body(new ValidationPipe()) data: FeatureSuggestionPatchRequest
+    @Body(new ValidationPipe()) data: FeatureSuggestionPatchRequest,
   ): Promise<boolean> {
     return this.adminService.patchFeatureSuggestion(data);
   }
 
   @Delete('feature-suggestion')
   async deleteSuggestion(
-    @Body(new ValidationPipe()) data: Pick<FeatureSuggestionPatchRequest, 'id'>
+    @Body(new ValidationPipe()) data: Pick<FeatureSuggestionPatchRequest, 'id'>,
   ): Promise<boolean> {
     return this.adminService.deleteFeatureSuggestion(data);
   }
@@ -106,7 +106,7 @@ export class AdminController {
   // ********************************* feature suggestion reply *****************************
   @Get('suggestion-reply')
   async getReply(
-      @Query(new ValidationPipe()) req: ReplyGetRequest
+      @Query(new ValidationPipe()) req: ReplyGetRequest,
   ): Promise<FeatureSuggestionReplyEntity[]> {
     return this.adminService.getReply(req);
   }
@@ -114,21 +114,21 @@ export class AdminController {
   @Post('suggestion-reply')
   @UseInterceptors(ClassSerializerInterceptor)
   async createReply(
-    @Body(new ValidationPipe()) data: ReplyPostRequest
+    @Body(new ValidationPipe()) data: ReplyPostRequest,
   ): Promise<boolean> {
     return this.adminService.loadReply(data);
   }
 
   @Patch('suggestion-reply')
   async updateReply(
-    @Body(new ValidationPipe()) data: ReplyPatchRequest
+    @Body(new ValidationPipe()) data: ReplyPatchRequest,
   ): Promise<boolean> {
     return this.adminService.patchReply(data);
   }
 
   @Delete('suggestion-reply')
   async deleteReply(
-    @Body(new ValidationPipe()) data: Pick<ReplyPatchRequest, 'id'>
+    @Body(new ValidationPipe()) data: Pick<ReplyPatchRequest, 'id'>,
   ): Promise<boolean> {
     return this.adminService.deleteReply(data);
   }

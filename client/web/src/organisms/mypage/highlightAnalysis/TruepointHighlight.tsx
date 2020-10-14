@@ -10,17 +10,17 @@ import Chart from './Chart';
 const styles = makeStyles((theme) => ({
   root: {
     margin: `${theme.spacing(2)}px 0px`,
-    padding: theme.spacing(4)
+    padding: theme.spacing(4),
   },
   wraper: {
-    padding: theme.spacing(4)
+    padding: theme.spacing(4),
   },
   graphWraper: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   contentRight: {
     display: 'flex',
@@ -33,7 +33,7 @@ const styles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20
+    marginBottom: 20,
   },
   contentLeft: {
     display: 'flex',
@@ -54,8 +54,8 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.success.main,
     '&>span': {
       color: 'black',
-      fontSize: 20
-    }
+      fontSize: 20,
+    },
   },
   detailWraper: {
     display: 'flex',
@@ -76,14 +76,14 @@ const styles = makeStyles((theme) => ({
     fontSize: 12,
     borderLeft: `3px solid ${theme.palette.success.main}`,
     backgroundColor: '#EBECEE',
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   beforeClcik: {
     textAlign: 'center',
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 15,
-    wordBreak: 'keep-all'
-  }
+    wordBreak: 'keep-all',
+  },
 }));
 
 export const initialPoint = {
@@ -93,15 +93,15 @@ export const initialPoint = {
   end_index: '',
   score: '',
   rank: '',
-  index: -1
+  index: -1,
 };
 
 interface TruepointHighlightProps {
-  highlightData: any
+  highlightData: any;
 }
 
 export default function TruepointHighlight({
-  highlightData
+  highlightData,
 }: TruepointHighlightProps): JSX.Element {
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
@@ -115,7 +115,7 @@ export default function TruepointHighlight({
       display: 'grid',
       gridTemplateColumns: `repeat(${highlightData.total_index}, 1fr)`,
       gridTemplateRows: '20px',
-      background: 'repeating-linear-gradient(90deg, #fff, #fff 1px, #E9EAF3 0, #E9EAF3 3px)'
+      background: 'repeating-linear-gradient(90deg, #fff, #fff 1px, #E9EAF3 0, #E9EAF3 3px)',
     },
     gridChecker: {
       marginLeft: 30,
@@ -127,8 +127,8 @@ export default function TruepointHighlight({
       '&>.timelineChecker': {
         height: 5,
         backgroundColor: '#ff3e7a',
-        borderRadius: 3
-      }
+        borderRadius: 3,
+      },
     },
   };
 
@@ -164,11 +164,24 @@ export default function TruepointHighlight({
             </Grid>
             <Grid item md={5} className={classes.contentRight}>
               <div className={classes.buttonWraper}>
-                <Button onClick={() => { window.open('/'); }} style={{ color: 'white' }}>
+                <Button
+                  onClick={() => {
+                    window.open('/');
+                  }}
+                  style={{ color: 'white' }}
+                >
                   편집점 알아보기
                   {/* 여기 클릭 이벤트에 공지사항 - 편집점 이용 안내에 대한 페이지로 이동 시킬 예정 */}
                 </Button>
-                <Button onClick={() => {}} style={{ color: 'white', marginLeft: 20 }}>
+                <Button
+                  onClick={() => {
+                    /**
+                    * @hwasurr 2020.10.13 eslint error 처리 도중 처리
+                    * 빈 화살표 함수 => 이후 처리 바람
+                    * */
+                  }}
+                  style={{ color: 'white', marginLeft: 20 }}
+                >
                   편집점 내보내기
                 </Button>
               </div>

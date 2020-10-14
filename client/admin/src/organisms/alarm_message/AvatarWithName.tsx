@@ -4,7 +4,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -15,7 +15,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AvatarWithName(props: any) {
+export interface AvatarWithNameProps {
+ logo: string, name: string
+}
+export default function AvatarWithName(props: AvatarWithNameProps): JSX.Element {
   const classes = useStyles();
   const { logo, name } = props;
   return (

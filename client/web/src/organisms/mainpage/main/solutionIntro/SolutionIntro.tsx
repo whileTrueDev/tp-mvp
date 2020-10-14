@@ -5,7 +5,6 @@ import styles from '../style/SolutionIntro.style';
 import source from '../source/textsource';
 
 export default function SolutionIntro(): JSX.Element {
-
   const classes = styles();
 
   return (

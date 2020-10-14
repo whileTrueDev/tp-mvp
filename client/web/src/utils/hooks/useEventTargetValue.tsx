@@ -85,6 +85,6 @@ export default function useEventTargetValue(defaultValue = ''): {
     handleReset,
     setValue,
     handleChangePhoneNumber,
-    handleChangeISODateNumber
+    handleChangeISODateNumber,
   };
 }

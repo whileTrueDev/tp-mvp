@@ -1,5 +1,5 @@
 import {
-  IsString, IsNumber, Length
+  IsString, IsNumber, Length,
 } from 'class-validator';
 
 const userIdMinLength = 6;

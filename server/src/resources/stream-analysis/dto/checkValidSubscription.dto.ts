@@ -1,5 +1,5 @@
 import {
-  IsString
+  IsString,
 } from 'class-validator';
 
 export class CheckValidSubscription {

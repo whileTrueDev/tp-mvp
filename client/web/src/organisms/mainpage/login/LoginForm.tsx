@@ -4,7 +4,7 @@ import { useHistory, Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
-  Button, TextField, Checkbox, FormControlLabel, Tooltip, Typography
+  Button, TextField, Checkbox, FormControlLabel, Tooltip, Typography,
 } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
 import CheckedCheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -45,7 +45,7 @@ export default function LoginForm(): JSX.Element {
   // API Requests
   const [{ loading }, executePost] = useAxios(
     { method: 'POST', url: '/auth/login' },
-    { manual: true }
+    { manual: true },
   );
 
   // Handle login form submit
@@ -57,7 +57,7 @@ export default function LoginForm(): JSX.Element {
           userId: userIdRef.current.value,
           password: passwordRef.current.value,
           stayLogedIn, // 자동 로그인 여부
-        }
+        },
       }).then((res) => {
         if (res && res.data) {
           authContext.handleLogin(res.data.access_token);
@@ -95,7 +95,7 @@ export default function LoginForm(): JSX.Element {
           type="text"
           label="아이디"
           placeholder="아이디를 입력해주세요"
-          inputProps={{ minLength: 3, required: true, }}
+          inputProps={{ minLength: 3, required: true }}
           inputRef={userIdRef}
           autoFocus
         />
@@ -104,7 +104,7 @@ export default function LoginForm(): JSX.Element {
           color="secondary"
           type="password"
           label="비밀번호"
-          inputProps={{ minLength: 3, required: true, }}
+          inputProps={{ minLength: 3, required: true }}
           placeholder="비밀번호를 입력해주세요"
           inputRef={passwordRef}
           autoComplete="off"
