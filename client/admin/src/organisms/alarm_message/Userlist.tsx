@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { useMediaQuery, Button } from '@material-ui/core';
-import MaterialTable from 'material-table';
+import MaterialTable, { Icons } from 'material-table';
 import {
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
@@ -9,7 +9,7 @@ import AvatarWithName from './AvatarWithName';
 // massage Form
 import DualMessageForm from './AllTransmisisonForm';
 
-const tableIcons = {
+const tableIcons: Icons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props: any, ref) => <Clear {...props} ref={ref} />),
@@ -59,7 +59,7 @@ const localization = {
 // 기능제안 목록 테이블
 export default function UserlistTable(props: Props): JSX.Element {
   const { userData, handleClick } = props;
-  const [list, setList] = React.useState([]);
+  const [list, setList] = React.useState<any[]>([]);
 
   // DialogOpen
   const [open, setOpen] = React.useState(false);
@@ -93,7 +93,7 @@ export default function UserlistTable(props: Props): JSX.Element {
             title: '사용자',
             field: 'userName',
             render: (rowData) => (
-              <AvatarWithName name={rowData.userName} logo={null} />
+              <AvatarWithName name={rowData.userName} />
             ),
           },
         ]}
@@ -121,7 +121,6 @@ export default function UserlistTable(props: Props): JSX.Element {
       <DualMessageForm
         list={list}
         open={open}
-        handleOpen={handleOpen}
         handleClose={handleClose}
         setList={setList}
       />

@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 interface Props{
-  list: never[];
+  list: any[];
   setList: React.Dispatch<React.SetStateAction<any[]>>;
   handleClose(): void;
   open: boolean;
