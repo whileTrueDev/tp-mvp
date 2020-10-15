@@ -1,0 +1,41 @@
+name: PR Checks - "server"
+
+on:
+  pull_request:
+    paths:
+      - "server/**"
+
+jobs:
+  pr-checks-server:
+    name: pr-checks-server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Nodejs
+        uses: actions/setup-node@v1
+
+      - name: Lint Nest application - server
+        id: lint
+        run: |
+          cd server
+          yarn
+          yarn lint
+        env:
+          CI: true
+
+      - name: Create failure comment
+        if: ${{ failure() }}
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ github.event.number }}
+          body: |
+            [**ESLint Failed**]
+            Check your code on your local environment.  
+            코드 편집 도구로 돌아가, `server` 폴더에서 `yarn lint`를 통해 eslint 검사를 실행하고  
+            규칙에 맞지 않는 부분을 확인하세요.
+
+            [Github Actions 탭에서 ESlint 로그 확인하기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          reactions: "+1"
