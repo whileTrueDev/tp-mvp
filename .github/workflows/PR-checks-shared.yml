@@ -6,8 +6,8 @@ on:
       - "shared/**"
 
 jobs:
-  pr-checks-shared:
-    name: pr-checks-shared
+  PRcheck:
+    name: check
     runs-on: ubuntu-latest
 
     steps:
@@ -16,6 +16,19 @@ jobs:
 
       - name: Use Nodejs
         uses: actions/setup-node@v1
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.os }}-PRcheck-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-PRcheck-${{ env.cache-name }}-
+            ${{ runner.os }}-PRcheck-
+            ${{ runner.os }}-
 
       - name: Install dependencies
         run: |
