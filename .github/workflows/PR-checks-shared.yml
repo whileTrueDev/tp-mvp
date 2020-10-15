@@ -24,12 +24,22 @@ jobs:
 
       - name: Lint Check shared module - shared
         id: lint
-        run: yarn lint
+        run: |
+          cd shared
+          yarn lint
+        env:
+          CI: true
+
+      - name: Build Check shared module - shared
+        id: build
+        run: |
+          cd shared
+          yarn build
         env:
           CI: true
 
       - name: Create lint check failure comment
-        if: ${{ failure() }}
+        if: ${{ steps.lint.outcome == 'failure' }}
         uses: peter-evans/create-or-update-comment@v1
         with:
           issue-number: ${{ github.event.number }}
@@ -42,14 +52,8 @@ jobs:
             [Github Actions 탭에서 ESlint 로그 확인하기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           reactions: "+1"
 
-      - name: Build Check shared module - shared
-        id: build
-        run: yarn build
-        env:
-          CI: true
-
       - name: Create build check failure comment
-        if: ${{ failure() }}
+        if: ${{ steps.build.outcome == 'failure' }}
         uses: peter-evans/create-or-update-comment@v1
         with:
           issue-number: ${{ github.event.number }}
@@ -59,5 +63,5 @@ jobs:
             모듈 빌드에 실패했습니다.
             코드 편집 도구로 돌아가, `shared` 폴더에서 `yarn build`를 통해 모듈 빌드를 실행하여 오류를 확인하세요.  
 
-            [Github Actions 탭에서 ESlint 로그 확인하기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            [Github Actions 탭에서 Build 로그 확인하기](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
           reactions: "+1"
