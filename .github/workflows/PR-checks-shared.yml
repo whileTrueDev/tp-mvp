@@ -19,8 +19,6 @@ jobs:
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-        with:
-          working-directory: shared
 
       - name: Lint Check shared module - shared
         id: lint
