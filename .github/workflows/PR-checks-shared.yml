@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v1
 
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+        uses: bahmutov/npm-install@v1 # install dependencies using cache
 
       - name: Lint Check shared module - shared
         id: lint
