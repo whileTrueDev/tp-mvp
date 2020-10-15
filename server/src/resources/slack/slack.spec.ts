@@ -1,3 +1,4 @@
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SlackService } from './slack.service';
 
@@ -7,6 +8,7 @@ describe('SlackService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [SlackService],
+      imports: [ConfigModule],
     }).compile();
 
     service = module.get<SlackService>(SlackService);
