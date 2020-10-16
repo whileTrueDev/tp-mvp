@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
+// axios
 import useAxios from 'axios-hooks';
+import { AxiosError } from 'axios';
 // material - ui core
 import { Grid } from '@material-ui/core';
 // shared
 import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
+import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 // attoms
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // Graph components
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
-import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
+// import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
 // contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // AnalysisSection components
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 
 export default function PeriodAnalysis(): JSX.Element {
-  const [data, setData] = useState<timelineInterface | null>(null);
+  const [data, setData] = useState<PeriodAnalysisResType>();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
-  const [{ error, loading }, getRequest] = useAxios(
+  const [{ error, loading }, getRequest] = useAxios<PeriodAnalysisResType>(
     '/stream-analysis/period', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
@@ -32,7 +35,8 @@ export default function PeriodAnalysis(): JSX.Element {
       .then((res) => {
         setData(res.data);
         setOpen(true);
-      });
+      })
+      .catch((err): AxiosError<any> | undefined => err);
   };
 
   React.useEffect(() => {

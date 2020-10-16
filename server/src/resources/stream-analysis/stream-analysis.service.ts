@@ -10,16 +10,16 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
-// shared dto
+// shared dto , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
 import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
+import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
+import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
+import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
 // interfaces
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
-import { PeriodAnalysis } from './interface/periodAnalysis.interface';
-import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
-import { StreamAnalysis } from './interface/streamAnalysis.interface';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
@@ -138,7 +138,7 @@ export class StreamAnalysisService {
     input   :  streamId , platform
     output  :  chat_count , smile_count , viewer
   */
-  async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId): Promise<(StreamAnalysis| null)[]> {
+  async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
       const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
@@ -215,7 +215,8 @@ export class StreamAnalysisService {
       ]
     }
   */
-  async findStreamInfoByPeriods(userId: string, periods: {startAt: string; endAt: string}[]): Promise<PeriodsAnalysis> {
+  async findStreamInfoByPeriods(userId: string, periods: {startAt: string; endAt: string}[]):
+  Promise<PeriodsAnalysisResType> {
     // 전달되는 형태가 두개의 기간으로 전달되어야한다.
     return new Promise((resolve) => {
       Promise.all(
@@ -304,7 +305,7 @@ export class StreamAnalysisService {
       ],
     }
   */
-  async findStreamInfoByPeriod(s3Request: EachS3StreamData[]): Promise<PeriodAnalysis | null> {
+  async findStreamInfoByPeriod(s3Request: EachS3StreamData[]): Promise<PeriodAnalysisResType> {
     const keyArray: string[] = [];
     const calculatedArray: S3StreamData[] = [];
     const dataArray: S3StreamData[] = [];

@@ -1,13 +1,17 @@
 import {
   Controller, Get, ParseArrayPipe, Query, UseGuards, Inject,
 } from '@nestjs/common';
-// shared dto
+// shared dto , interfaces
 import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
 import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
 import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
 import { EachStreamData } from '@truepoint/shared/dist/dto/EachStreamData.dto';
 import { FindStreamInfoByPeriods } from '@truepoint/shared/dist/dto/FindStreamInfoByPeriods.dto';
 import { FindUserStatisticData } from '@truepoint/shared/dist/dto/FindUserStatisticData.dto';
+import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
+import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
+import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // services
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
@@ -15,11 +19,6 @@ import { StreamAnalysisService } from './stream-analysis.service';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 // guard
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-// interface
-import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
-import { PeriodAnalysis } from './interface/periodAnalysis.interface';
-import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
-import { StreamAnalysis } from './interface/streamAnalysis.interface';
 // Entity
 import { StreamsEntity } from './entities/streams.entity';
 
@@ -57,7 +56,7 @@ export class StreamAnalysisController {
   @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: EachStreamData })) findInfoRequest: FindStreamInfoByStreamId,
-  ): Promise<(StreamAnalysis | null)[]> {
+  ): Promise<StreamAnalysisResType[]> {
     return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
 
@@ -69,7 +68,7 @@ export class StreamAnalysisController {
   @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
     @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByPeriods,
-  ): Promise<PeriodsAnalysis> {
+  ): Promise<PeriodsAnalysisResType> {
     return this.streamAnalysisService.findStreamInfoByPeriods(
       findTermRequest.userId,
       [
@@ -88,7 +87,7 @@ export class StreamAnalysisController {
   getTest(
     @Query('streams', new ParseArrayPipe({ items: EachS3StreamData }))
       s3Request: EachS3StreamData[],
-  ): Promise<PeriodAnalysis|null> {
+  ): Promise<PeriodAnalysisResType> {
     return this.streamAnalysisService.findStreamInfoByPeriod(s3Request);
   }
 
