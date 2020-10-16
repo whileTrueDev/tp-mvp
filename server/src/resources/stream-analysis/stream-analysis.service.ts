@@ -5,28 +5,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   Repository,
 } from 'typeorm';
-
 // aws
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
-// import { dataArray } from './s3TestData.test';
-// interface
+// shared dto
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
+import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
+// interfaces
 import { StreamsInfo } from './interface/streamsInfo.interface';
-import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
 import { PeriodAnalysis } from './interface/periodAnalysis.interface';
 import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
 import { StreamAnalysis } from './interface/streamAnalysis.interface';
-
-// dto
-import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
-import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
-
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
@@ -104,7 +100,7 @@ export class StreamAnalysisService {
       const originDate = new Date(startDate);
       const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
       const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
-      const DayStreamData = await this.streamsRepository
+      const DayStreamData: DayStreamsInfo[] = await this.streamsRepository
         .createQueryBuilder('streams')
         .innerJoin(
           StreamSummaryEntity,
@@ -121,7 +117,7 @@ export class StreamAnalysisService {
     }
     const startAt = new Date(startDate);
     const endAt = new Date(endDate);
-    const TermStreamsData = await this.streamsRepository
+    const TermStreamsData: DayStreamsInfo[] = await this.streamsRepository
       .createQueryBuilder('streams')
       .innerJoin(
         StreamSummaryEntity,
@@ -308,7 +304,7 @@ export class StreamAnalysisService {
       ],
     }
   */
-  async findStreamInfoByPeriod(s3Request: FindS3StreamInfo[]): Promise<PeriodAnalysis> {
+  async findStreamInfoByPeriod(s3Request: EachS3StreamData[]): Promise<PeriodAnalysis | null> {
     const keyArray: string[] = [];
     const calculatedArray: S3StreamData[] = [];
     const dataArray: S3StreamData[] = [];
@@ -498,8 +494,8 @@ export class StreamAnalysisService {
     );
 
     /* S3 데이터 조회 Promise.all 함수 선언 */
-    const getAllKeys = (list: FindS3StreamInfo[]) => Promise.all(
-      list.map((stream) => keyFunc(stream)),
+    const getAllKeys = (data: EachS3StreamData[]) => Promise.all(
+      data.map((stream) => keyFunc(stream)),
     );
     const getAllDatas = (list: string[]) => Promise.all(
       list.map((stream) => dataFunc(stream)),
@@ -511,7 +507,7 @@ export class StreamAnalysisService {
         .then(() => organizeData() // 데이터 포맷 변경
           .then((organizeArray) => organizeArray))
         .catch((err: Error) => {
-        /* Promise Chain rejected 처리 */
+          /* Promise Chain rejected 처리 */
           // console.log('[Error] : ', err.message);
           throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
         })).catch((err: Error) => {

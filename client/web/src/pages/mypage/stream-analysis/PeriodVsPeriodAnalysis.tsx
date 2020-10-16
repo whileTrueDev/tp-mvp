@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
 import { Grid } from '@material-ui/core';
+// shared dtos
+import { FindStreamInfoByPeriods } from '@truepoint/shared/dist/dto/FindStreamInfoByPeriods.dto';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
-import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
-import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
+// contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // organisms
+import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
+import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
 
 export interface PeriodsRequestParams {
@@ -30,7 +33,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
 
   const handleSubmit = ({
     category, params,
-  }: {category: string[]; params: PeriodsRequestParams}) => {
+  }: {category: string[]; params: FindStreamInfoByPeriods}) => {
     selectMetric(category); // 다중 선택으로 변경시 []을 제거한다.
     setOpen(false);
     setMetricOpen(false);
@@ -62,7 +65,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
         <Grid item>
           <PeriodCompareSection
             loading={loading}
-            error={error}
+            error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
             handleSubmit={handleSubmit}
           />
         </Grid>

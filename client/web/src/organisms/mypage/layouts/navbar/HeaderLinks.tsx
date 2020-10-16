@@ -18,17 +18,25 @@ import NotificationPopper from './NotificationPopper';
 import useNavbarStyles from './Navbar.style';
 // type
 import { MypageRoute as MypageRouteType } from '../../../../pages/mypage/routes';
+// context
+import AuthContext from '../../../../utils/contexts/AuthContext';
+// attoms
+import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 
 export interface Notification {
   index: number;
   title: string;
   content: string;
   dateform: string;
-  readState: number;
+  readState: boolean;
 }
 interface HeaderLinksProps {
   routes: MypageRouteType[];
   userId: string;
+}
+export interface FatalError {
+  helperText: string;
+  isError: boolean;
 }
 
 function HeaderLinks(props: HeaderLinksProps): JSX.Element {
@@ -38,29 +46,71 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   } = props;
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const classes = useNavbarStyles();
+  const auth = React.useContext(AuthContext);
   const {
     anchorEl, handleAnchorOpen, handleAnchorClose,
   } = useAnchorEl();
+  const [innerError, setInnerError] = React.useState<FatalError>({
+    isError: false,
+    helperText: '',
+  });
 
   // 개인 알림 - GET Request
   // userId 쿠키 or 헤더 토큰에서 추출
-  const [{ data: getData, loading: getLoading, error: getError }, executeGet] = useAxios({
+  const [{ data: getData, loading: getLoading, error: getError }, executeGet] = useAxios<Notification[]>({
     url: '/notification',
   }, { manual: true });
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
 
+  const handleError = (newError: FatalError): void => {
+    setInnerError({
+      isError: newError.isError,
+      helperText: newError.helperText,
+    });
+  };
+
   React.useEffect(() => {
-    executeGet({ params: { userId } });
+    executeGet({
+      params: { userId: auth.user.userId },
+    })
+      .catch((err) => {
+        if (err.response) {
+          handleError({
+            isError: true,
+            helperText: '알림을 가져오는 동안 문제가 발생했습니다.',
+          });
+        }
+      });
     if (changeReadState) {
-      executeGet({ params: { userId } });
+      executeGet({ params: { userId: auth.user.userId } })
+        .catch((err) => {
+          if (err.response) {
+            handleError({
+              isError: true,
+              helperText: '알림을 가져오는 동안 문제가 발생했습니다.',
+            });
+          }
+        });
+
       setChangeReadState(false);
     }
-  }, [changeReadState, executeGet, userId]);
+  }, [changeReadState, executeGet, userId, auth]);
 
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
+      {innerError.isError
+          && (
+          <ErrorSnackBar
+            message={(() => {
+              if (innerError) return innerError.helperText;
+              return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
+            })()}
+            closeCallback={() => handleError({ isError: false, helperText: '' })}
+          />
+          )}
+
       <Hidden smDown>
         <Tooltip title="홈으로 이동">
           <IconButton
@@ -89,7 +139,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         >
           <Badge
             badgeContent={!getLoading && getData && !getError
-              ? (getData.filter((noti: Notification) => noti.readState === 0).length)
+              ? (getData.filter((noti: Notification) => noti.readState === false).length)
               : (null)}
             color="secondary"
             anchorOrigin={{
@@ -107,6 +157,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         anchorEl={anchorEl}
         notificationData={getData}
         setChangeReadState={setChangeReadState}
+        handleError={handleError}
       />
       )}
     </Grid>

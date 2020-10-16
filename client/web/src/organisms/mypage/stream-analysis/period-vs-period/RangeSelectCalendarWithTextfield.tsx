@@ -54,7 +54,7 @@ export default function RangeSelectCalendarWithTextfield(
   const textClasses = useStyles();
   const classes = usePeriodCompareStyles();
   const {
-    base, handlePeriod,
+    base, handlePeriod, handleError,
   } = props;
   const start = useEventTargetValue();
   const end = useEventTargetValue();
@@ -235,6 +235,7 @@ export default function RangeSelectCalendarWithTextfield(
         <RangeSelectCaledar
           handlePeriod={handleTextFieldPeriod}
           period={period}
+          handleError={handleError}
           base={base ? true : undefined}
         />
       </Paper>

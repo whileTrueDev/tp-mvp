@@ -7,6 +7,11 @@ import {
 import { Alert } from '@material-ui/lab';
 // axios
 import useAxios from 'axios-hooks';
+// shared dtos , interfaces
+// import { FindAllStreams } from '@truepoint/shared/dist/dto/findAllStreams.dto';
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
+import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
 // styles
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 // custom svg icon
@@ -18,13 +23,13 @@ import CheckBoxGroup from './CheckBoxGroup';
 import StreamList from './StreamList';
 // interface
 import {
-  DayStreamsInfo,
   PeriodAnalysisProps,
-  AnaysisStreamsInfoRequest,
+  FatalError,
 } from './PeriodAnalysisSection.interface';
 // attoms
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import Loading from '../../../shared/sub/Loading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
+import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
@@ -40,6 +45,10 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     chat: false,
     smile: false,
     // searchKeyWord: string,
+  });
+  const [innerError, setInnerError] = React.useState<FatalError>({
+    isError: false,
+    helperText: '',
   });
   const subscribe = React.useContext(SubscribeContext);
 
@@ -62,6 +71,12 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   };
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
+  // 추후 최적화시 useAxios 전체 수정 필요
+  // const findAllStreams: FindAllStreams = {
+  //   userId: subscribe.currUser.targetUserId,
+  //   startDate: period[0] ? period[0].toISOString() : (new Date(0)).toISOString(),
+  //   endDate: period[1] ? period[1].toISOString() : (new Date(0)).toISOString(),
+  // };
   const [
     {
       loading: getStreamsLoading,
@@ -72,14 +87,23 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
+      const params: FindCalendarStreams = {
+        userId: subscribe.currUser.targetUserId,
+        startDate: period[0].toISOString(),
+        endDate: period[1].toISOString(),
+      };
+
       excuteGetStreams({
-        params: {
-          userId: subscribe.currUser.targetUserId,
-          startDate: period[0].toISOString(),
-          endDate: period[1].toISOString(),
-        },
+        params,
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         setTermStreamsList(res.data);
+      }).catch((err) => {
+        if (err.response) {
+          setInnerError({
+            isError: true,
+            helperText: '방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요',
+          });
+        }
       });
     }
   }, [period, subscribe.currUser.targetUserId, excuteGetStreams]);
@@ -100,7 +124,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   };
 
   const handleAnalysisButton = () => {
-    const requestParams: AnaysisStreamsInfoRequest[] = termStreamsList.map((dayStreamInfo) => ({
+    const params: EachS3StreamData[] = termStreamsList.map((dayStreamInfo) => ({
       creatorId: dayStreamInfo.creatorId,
       startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
       streamId: dayStreamInfo.streamId,
@@ -112,29 +136,48 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
     // 현재 백엔드로 요청시에 오류남 => 파라미터가 너무 많아서 그런듯, get이 아닌 body를 사용하는 방식?
     if (termStreamsList.length < 1) {
-      alert('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요');
+      // alert('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요');
+      setInnerError({
+        isError: true,
+        helperText: '기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요',
+      });
     } else {
       handleSubmit({
         category: selectedCategory,
         /* request params */
-        params: {
-          streams: requestParams,
-        },
+        params,
       });
     }
+  };
+
+  const handleError = (newError: FatalError): void => {
+    setInnerError({
+      isError: newError.isError,
+      helperText: newError.helperText,
+    });
   };
 
   return (
     <Grid className={classes.root}>
       <Grid item>
-        {error
+        {(error || innerError.isError)
           && (
           <ErrorSnackBar
-            message="오류가 발생 했습니다. 다시 시도해주세요."
+            message={(() => {
+              if (error) return error.helperText;
+              if (innerError) return innerError.helperText;
+              return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
+            })()}
+            closeCallback={() => handleError({ isError: false, helperText: '' })}
           />
           )}
-        {loading
-          && <CenterLoading />}
+        {!(error || innerError.isError)
+          && (
+          <Loading
+            clickOpen={loading}
+            lodingTime={7500}
+          />
+          )}
 
         <Divider className={classes.titleDivider} />
         <Grid container direction="column">
@@ -189,6 +232,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
                 <RangeSelectCalendar
                   handlePeriod={handlePeriod}
                   period={period}
+                  handleError={handleError}
                   base
                 />
               </Grid>

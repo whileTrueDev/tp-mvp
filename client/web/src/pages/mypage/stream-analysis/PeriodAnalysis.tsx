@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
+// material - ui core
 import { Grid } from '@material-ui/core';
+// shared
+import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
+// attoms
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
+// Graph components
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
+// contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
+// AnalysisSection components
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
-
-interface PeriodRequestArray {
-  streams: {
-    creatorId: string;
-    streamId: string;
-    startedAt: string;
-  }[];
-}
 
 export default function PeriodAnalysis(): JSX.Element {
   const [data, setData] = useState<timelineInterface | null>(null);
@@ -23,9 +22,13 @@ export default function PeriodAnalysis(): JSX.Element {
     '/stream-analysis/period', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
-  const handleSubmit = ({ category, params }: {category: string[]; params: PeriodRequestArray}) => {
+  const handleSubmit = ({ category, params }: {category: string[]; params: EachS3StreamData[]}) => {
     selectMetric(category);
-    getRequest({ params })
+    getRequest({
+      params: {
+        streams: params,
+      },
+    })
       .then((res) => {
         setData(res.data);
         setOpen(true);
@@ -42,7 +45,7 @@ export default function PeriodAnalysis(): JSX.Element {
         <Grid item>
           {/* 상단 섹션 */}
           <PeriodAnalysisSection
-            error={error}
+            error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
             loading={loading}
             handleSubmit={handleSubmit}
             // handleGraphOpen={handleGraphOpen}

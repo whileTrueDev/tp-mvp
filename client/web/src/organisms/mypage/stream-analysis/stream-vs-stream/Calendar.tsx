@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 // material-ui core components
 import { Grid } from '@material-ui/core';
 // material-ui picker components
@@ -9,7 +9,10 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
 import koLocale from 'date-fns/locale/ko';
-
+// shared dtos , interfaces
+import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+// axios
 import useAxios from 'axios-hooks';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -17,7 +20,7 @@ import classnames from 'classnames';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
-import { StreamCalendarProps, DayStreamsInfo } from './StreamCompareSectioninterface';
+import { StreamCalendarProps } from './StreamCompareSectioninterface';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
@@ -41,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
     clickedDate, handleDayStreamList, setClickedDate,
-    compareStream, baseStream,
+    compareStream, baseStream, handleError,
   } = props;
   const classes = useStyles();
   const subscribe = React.useContext(SubscribeContext);
@@ -57,18 +60,27 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       url: '/stream-analysis/stream-list',
     }, { manual: true });
 
-  useEffect(() => {
+  React.useEffect(() => {
+    const params: FindCalendarStreams = {
+      userId: subscribe.currUser.targetUserId,
+      startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
+    };
+
     excuteGetStreams({
-      params: {
-        userId: subscribe.currUser.targetUserId,
-        startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
-      },
+      params,
     }).then((result) => {
       setHasStreamDays(
         result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
       );
+    }).catch((err) => {
+      if (err.message) {
+        handleError({
+          isError: true,
+          helperText: '달력 정보 구성에 문제가 발생했습니다.',
+        });
+      }
     });
-  }, [subscribe.currUser, currMonth, excuteGetStreams]);
+  }, [subscribe.currUser, currMonth, excuteGetStreams, handleError]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);
@@ -88,15 +100,24 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
     if (newMonth) {
       setCurrMonth(newMonth);
+      const params: FindCalendarStreams = {
+        userId: subscribe.currUser.targetUserId,
+        startDate: newMonth.toISOString(),
+      };
+
       excuteGetStreams({
-        params: {
-          userId: subscribe.currUser.targetUserId,
-          startDate: newMonth.toISOString(),
-        },
+        params,
       }).then((result) => {
         setHasStreamDays(
           result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
         );
+      }).catch((err) => {
+        if (err.message) {
+          handleError({
+            isError: true,
+            helperText: '달력 정보 구성에 문제가 발생했습니다.',
+          });
+        }
       });
     }
   };
@@ -137,7 +158,6 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         </div>
       );
     }
-    // getStreamsLoading || getStreamsError || (getStreamsData && getStreamsData.length === 0)
     return dayComponent;
   };
 

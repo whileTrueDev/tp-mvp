@@ -15,7 +15,12 @@ export interface Notification {
   title: string;
   content: string;
   dateform: string;
-  readState: number;
+  readState: boolean;
+}
+
+export interface FatalError {
+  helperText: string;
+  isError: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -41,20 +46,22 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const UNREAD_STATE = 0; // 읽지않음 상태값
+const UNREAD_STATE = false; // 읽지않음 상태값
 
 function NotificationPopper({
   anchorEl,
   notificationData,
   setChangeReadState,
+  handleError,
 }: {
   anchorEl: HTMLElement;
   notificationData: Notification[];
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>;
+  handleError: (newError: FatalError) => void;
 }): JSX.Element {
   const classes = useStyles();
   const auth = React.useContext(AuthContext);
-  const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
+  const [, excutePatch] = useAxios({
     url: '/notification',
     method: 'patch',
   }, {
@@ -68,9 +75,16 @@ function NotificationPopper({
           userId: auth.user.userId, // userId (client login user)
           index: notification.index,
         },
+      }).then(() => {
+        setChangeReadState(true);
+      }).catch((err) => {
+        if (err.response) {
+          handleError({
+            isError: true,
+            helperText: '알림을 수정하는 동안 문제가 발생했습니다.',
+          });
+        }
       });
-
-      if (!patchError && !patchLoading) setChangeReadState(true);
     }
   };
 

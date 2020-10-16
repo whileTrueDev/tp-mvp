@@ -1,15 +1,13 @@
-import { AxiosError } from 'axios';
+import { FindStreamInfoByPeriods } from '@truepoint/shared/dist/dto/FindStreamInfoByPeriods.dto';
 
-export interface DayStreamsInfo{
-  streamId: string;
-  title: string;
-  platform: 'afreeca'|'youtube'|'twitch';
-  airTime: number;
-  startedAt: Date;
+export interface FatalError {
+  helperText: string;
+  isError: boolean;
 }
 export interface RangeSelectCaledarProps {
   period: Date[];
   handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?: true) => void;
+  handleError: (newError: FatalError) => void;
   base?: true;
 }
 export interface periodCompareTextBoxProps {
@@ -21,6 +19,7 @@ export interface PeriodCompareCalendarAndTextfieldProps{
   base?: true;
   period: Date[];
   handlePeriod: (startAt: Date, endAt: Date, base?: true, calendar?: true) => void;
+  handleError: (newError: FatalError) => void;
 }
 export interface CheckBoxGroupProps {
   handleCheckStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -32,18 +31,15 @@ export interface ISODateTextFieldError {
   helperText: string;
   isError: boolean;
 }
-export interface PeriodsRequestParams {
-  userId: string;
-  baseStartAt: string;
-  baseEndAt: string;
-  compareStartAt: string;
-  compareEndAt: string;
+
+export interface SubmitInterface {
+  category: string[];
+  params: FindStreamInfoByPeriods;
 }
+
 export interface PeriodCompareProps {
   loading: boolean;
-  error: AxiosError<any> | undefined;
-  handleSubmit: ({ category, params }: {
-    category: string[];
-    params: PeriodsRequestParams;
-  }) => void
+  error: FatalError | undefined;
+  handleSubmit: ({ category, params }: SubmitInterface
+  ) => void
 }

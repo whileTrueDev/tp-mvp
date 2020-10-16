@@ -1,28 +1,28 @@
 import {
   Controller, Get, ParseArrayPipe, Query, UseGuards, Inject,
 } from '@nestjs/common';
+// shared dto
+import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
+import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
+import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
+import { EachStreamData } from '@truepoint/shared/dist/dto/EachStreamData.dto';
+import { FindStreamInfoByPeriods } from '@truepoint/shared/dist/dto/FindStreamInfoByPeriods.dto';
+import { FindUserStatisticData } from '@truepoint/shared/dist/dto/FindUserStatisticData.dto';
+// services
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
 // pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
 // guard
-// import { SubscribeGuard } from '../../guards/subscribe.guard';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // interface
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 import { PeriodAnalysis } from './interface/periodAnalysis.interface';
 import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
 import { StreamAnalysis } from './interface/streamAnalysis.interface';
-
-// dto
-import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
-import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
-import { EachStream } from './dto/eachStream.dto';
-import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
+// Entity
 import { StreamsEntity } from './entities/streams.entity';
 
-import { FindAllStreams } from './dto/findAllStreams.dto';
-import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(
@@ -37,7 +37,7 @@ export class StreamAnalysisController {
   */
   @Get('stream-list')
   @UseGuards(JwtAuthGuard)
-  getDaysStreamList(@Query() findDaysStreamRequest: FindAllStreams): Promise<DayStreamsInfo[]> {
+  getDaysStreamList(@Query() findDaysStreamRequest: FindCalendarStreams): Promise<DayStreamsInfo[]> {
     return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
       findDaysStreamRequest.startDate,
@@ -56,7 +56,7 @@ export class StreamAnalysisController {
   @Get('streams')
   @UseGuards(JwtAuthGuard)
   getStreamsInfo(
-    @Query('streams', new ParseArrayPipe({ items: EachStream })) findInfoRequest: FindStreamInfoByStreamId,
+    @Query('streams', new ParseArrayPipe({ items: EachStreamData })) findInfoRequest: FindStreamInfoByStreamId,
   ): Promise<(StreamAnalysis | null)[]> {
     return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
   }
@@ -68,7 +68,7 @@ export class StreamAnalysisController {
   @Get('periods')
   @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
-    @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByTerms,
+    @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByPeriods,
   ): Promise<PeriodsAnalysis> {
     return this.streamAnalysisService.findStreamInfoByPeriods(
       findTermRequest.userId,
@@ -86,9 +86,9 @@ export class StreamAnalysisController {
   @Get('period')
   @UseGuards(JwtAuthGuard)
   getTest(
-    @Query('streams', new ParseArrayPipe({ items: FindS3StreamInfo }))
-      s3Request: FindS3StreamInfo[],
-  ): Promise<PeriodAnalysis> {
+    @Query('streams', new ParseArrayPipe({ items: EachS3StreamData }))
+      s3Request: EachS3StreamData[],
+  ): Promise<PeriodAnalysis|null> {
     return this.streamAnalysisService.findStreamInfoByPeriod(s3Request);
   }
 
@@ -104,7 +104,7 @@ export class StreamAnalysisController {
   @Get('user-statistics')
   @UseGuards(JwtAuthGuard)
   getUserStatisticsInfo(
-    @Query() findUserStatisticRequest: FindUserStatisticInfo,
+    @Query() findUserStatisticRequest: FindUserStatisticData,
   ): Promise<StreamsEntity[]> {
     return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
       findUserStatisticRequest.userId,

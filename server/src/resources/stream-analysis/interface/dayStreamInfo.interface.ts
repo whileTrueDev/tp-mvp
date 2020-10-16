@@ -4,4 +4,5 @@ export interface DayStreamsInfo{
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
   startedAt: Date;
+  creatorId: string;
 }

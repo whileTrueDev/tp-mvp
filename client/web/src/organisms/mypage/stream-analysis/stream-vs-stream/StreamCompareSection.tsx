@@ -4,7 +4,10 @@ import {
   Paper, Typography, Grid, Divider, Button, Collapse,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-// axios
+// shared dtos , interfaces
+// import { FindAllStreams } from '@truepoint/shared/dist/dto/findAllStreams.dto';
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
@@ -18,38 +21,15 @@ import StreamList from './StreamList';
 // style
 import useStreamHeroStyles from './StreamCompareSection.style';
 // interface
-import { DayStreamsInfo } from './StreamCompareSectioninterface';
+import {
+  StreamCompareSectionPropInterface,
+  FatalError,
+} from './StreamCompareSectioninterface';
 // attoms
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import Loading from '../../../shared/sub/Loading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
-
-/**
- * @hwasurr - 2020.10.13 eslint error 정리 중 주석 처리
- * 사용하지 않는 interface.. 처리 부탁드립니다.
- */
-// interface StreamsCompareCategoryResult {
-//     broad1Count: any;
-//     broad2Count: any;
-//     diff: number;
-//     title: string;
-//     tag: string;
-//     key: string;
-//     value: any[];
-//     unit: string;
-// }
-
-// interface StreamComapreResult {
-//   compareResult: StreamsCompareCategoryResult[];
-//   selectedCategory: 'viewer'|'smile'|'chat';
-// }
-
-interface StreamCompareSectionPropInterface {
-  handleSubmit: (streams: {streamId: string; platform: string}[]) => void;
-  loading: boolean;
-  error: any;
-}
 
 export default function StreamCompareSection(
   props: StreamCompareSectionPropInterface,
@@ -62,6 +42,10 @@ export default function StreamCompareSection(
   const [baseStream, setBaseStream] = React.useState<DayStreamsInfo|null>(null);
   const [compareStream, setCompareStream] = React.useState<DayStreamsInfo|null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
+  const [innerError, setInnerError] = React.useState<FatalError>({
+    isError: false,
+    helperText: '',
+  });
 
   const handleDayStreamList = (responseList: (DayStreamsInfo)[]) => {
     setDayStreamsList(responseList);
@@ -82,12 +66,19 @@ export default function StreamCompareSection(
   const handleAnalysisButton = () => {
     // base, compare 존재시 활성화 , 서버 조회 및 연산 요청
     if (baseStream && compareStream) {
-      handleSubmit(
-        [
+      const params: FindStreamInfoByStreamId = {
+        streams: [
           { streamId: baseStream.streamId, platform: baseStream.platform },
           { streamId: compareStream.streamId, platform: compareStream.platform },
         ],
-      );
+      };
+
+      handleSubmit(params);
+    } else {
+      setInnerError({
+        helperText: '두 방송을 선택하셔야 분석이 가능합니다.',
+        isError: true,
+      });
     }
   };
 
@@ -123,16 +114,35 @@ export default function StreamCompareSection(
     }
   };
 
+  const handleError = (newError: FatalError): void => {
+    setInnerError({
+      isError: newError.isError,
+      helperText: newError.helperText,
+    });
+  };
+
   return (
     <div className={classes.root}>
-      {error
-      && (
-      <ErrorSnackBar
-        message="오류가 발생 했습니다. 다시 시도해주세요."
-      />
-      )}
-      {loading
-      && <CenterLoading />}
+      {(error?.isError || innerError.isError)
+          && (
+          // 여러 복합 에러 배열 형태로 적용 가능하게 변경 필요
+          <ErrorSnackBar
+            message={(() => {
+              if (error) return error.helperText;
+              if (innerError) return innerError.helperText;
+              return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
+            })()}
+            closeCallback={() => handleError({ isError: false, helperText: '' })}
+          />
+          )}
+
+      {!(error?.isError || innerError.isError)
+          && (
+          <Loading
+            clickOpen={loading}
+            lodingTime={7500}
+          />
+          )}
       <Divider className={classes.titleDivider} />
       <Grid container direction="column">
         <Grid item>
@@ -185,6 +195,7 @@ export default function StreamCompareSection(
                 setClickedDate={setClickedDate}
                 baseStream={baseStream}
                 compareStream={compareStream}
+                handleError={handleError}
               />
 
             </Grid>
