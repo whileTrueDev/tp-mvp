@@ -20,6 +20,12 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1 # install dependencies using cache
 
+      - name: Build shared module
+        id: shared-build
+        run: |
+          cd shared
+          yarn build
+
       - name: Lint Check Nestjs API - server
         id: lint
         run: |
