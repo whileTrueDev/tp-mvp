@@ -17,6 +17,7 @@
         "**/dist": true,
         "**/yarn.lock": true,
         "**/*.log": true,
+        "**/public": true
     },
     // typescript semantic highlighting
     "editor.semanticHighlighting.enabled": true,

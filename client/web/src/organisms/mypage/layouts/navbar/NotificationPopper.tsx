@@ -90,7 +90,7 @@ function NotificationPopper({
 
   return (
     <Popper
-      placement="top-end"
+      placement="bottom-end"
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
       disablePortal
@@ -115,6 +115,16 @@ function NotificationPopper({
         )}
       >
         <div>
+          {notificationData.length < 1 && (
+            <div style={{
+              height: 150, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 16,
+            }}
+            >
+              <Typography gutterBottom variant="caption">
+                비었어요..
+              </Typography>
+            </div>
+          )}
           {notificationData.map((noti) => (
             <div key={noti.index}>
               <MenuItem onClick={() => handleNotificationListItemClick(noti)}>
