@@ -1,82 +1,82 @@
 {
-    // staging 없이 커밋시, 자동 staging 이후 커밋 기능 비활성화
-    "git.enableSmartCommit": false,
-    "git.suggestSmartCommit": false,
-    "eslint.workingDirectories": [
-        {
-            "mode": "auto"
-        }
-    ],
-    // 검색시 검색되지 않을 파일 및 디렉토리 설정
-    "search.exclude": {
-        "**/.git": true,
-        "**/node_modules": true,
-        "**/bower_components": true,
-        "**/tmp": true,
-        "**/build": true,
-        "**/dist": true,
-        "**/yarn.lock": true,
-        "**/*.log": true,
-        "**/public": true
-    },
-    // typescript semantic highlighting
-    "editor.semanticHighlighting.enabled": true,
-    // These are all my auto-save configs
-    "editor.formatOnSave": true,
-    // turn it off for JS and JSX, we will do this via eslint
-    "[javascript]": {
-        "editor.formatOnSave": false,
-        "editor.tabSize": 2
-    },
-    "[javascriptreact]": {
-        "editor.formatOnSave": false,
-        "editor.tabSize": 2
-    },
-    "[typescript]": {
-        "editor.formatOnSave": false,
-        "editor.tabSize": 2
-    },
-    "[typescriptreact]": {
-        "editor.formatOnSave": false,
-        "editor.tabSize": 2
-    },
-    "window.zoomLevel": 0,
-    "eslint.alwaysShowStatus": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
-    },
-    "workbench.iconTheme": "material-icon-theme",
-    // eslint config
-    "eslint.packageManager": "yarn",
-    "eslint.codeAction.showDocumentation": {
-        "enable": true
-    },
-    // material-icon-theme config
-    "material-icon-theme.files.associations": {
-        // nest backend
-        "*.pipe.ts": "nest-pipe",
-        "*.guard.ts": "nest-guard",
-        "*.controller.ts": "nest-controller",
-        "*.module.ts": "nest-module",
-        "*.service.ts": "nest-service",
-        "*.middleware.ts": "nest-middleware",
-        "*.filter.ts": "nest-filter",
-        "*.interface.ts": "typescript-def",
-        "*.dto.ts": "nest-resolver",
-        "*.strategy.ts": "key",
-        "*.entity.ts": "sequelize",
-        "*.config.ts": "settings",
-        "*.roles.ts": "nest-decorator",
-        "*.decorator.ts": "nest-decorator",
-        // react frontend
-        "*.style.ts": "css",
-    },
-    "material-icon-theme.folders.associations": {
-        "interfaces": "typescript",
-        "atoms": "react-components",
-        "organisms": "core",
-        "dto": "delta",
-        "strategies": "keys",
-        "entities": "database"
+  // staging 없이 커밋시, 자동 staging 이후 커밋 기능 비활성화
+  "git.enableSmartCommit": false,
+  "git.suggestSmartCommit": false,
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
     }
+  ],
+  // 검색시 검색되지 않을 파일 및 디렉토리 설정
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/tmp": true,
+    "**/build": true,
+    "**/dist": true,
+    "**/yarn.lock": true,
+    "**/*.log": true,
+    "**/public": true
+  },
+  // typescript semantic highlighting
+  "editor.semanticHighlighting.enabled": true,
+  // These are all my auto-save configs
+  "editor.formatOnSave": true,
+  // turn it off for JS and JSX, we will do this via eslint
+  "[javascript]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "window.zoomLevel": 0,
+  "eslint.alwaysShowStatus": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "workbench.iconTheme": "material-icon-theme",
+  // eslint config
+  "eslint.packageManager": "yarn",
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  // material-icon-theme config
+  "material-icon-theme.files.associations": {
+    // nest backend
+    "*.pipe.ts": "nest-pipe",
+    "*.guard.ts": "nest-guard",
+    "*.controller.ts": "nest-controller",
+    "*.module.ts": "nest-module",
+    "*.service.ts": "nest-service",
+    "*.middleware.ts": "nest-middleware",
+    "*.filter.ts": "nest-filter",
+    "*.interface.ts": "typescript-def",
+    "*.dto.ts": "nest-resolver",
+    "*.strategy.ts": "key",
+    "*.entity.ts": "sequelize",
+    "*.config.ts": "settings",
+    "*.roles.ts": "nest-decorator",
+    "*.decorator.ts": "nest-decorator",
+    // react frontend
+    "*.style.ts": "css"
+  },
+  "material-icon-theme.folders.associations": {
+    "interfaces": "typescript",
+    "atoms": "react-components",
+    "organisms": "core",
+    "dto": "delta",
+    "strategies": "keys",
+    "entities": "database"
+  }
 }
