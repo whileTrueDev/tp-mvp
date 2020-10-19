@@ -44,7 +44,9 @@ export default function StreamAnalysis(): JSX.Element {
           <StreamCompareSection
             handleSubmit={handleSubmit}
             loading={loading}
-            error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
+            error={error
+              ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }
+              : undefined}
           />
         </Grid>
         <Grid item>
