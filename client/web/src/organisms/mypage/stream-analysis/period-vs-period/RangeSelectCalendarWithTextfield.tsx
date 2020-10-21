@@ -148,15 +148,14 @@ export default function RangeSelectCalendarWithTextfield(
     const periodObj = {
       startAt, endAt,
     };
-
     /* 하루 선택시 이틀로 자동 변경 */
-    if (periodObj.endAt.getDate() === periodObj.startAt.getDate()) {
+    if (startAt.getDate() === endAt.getDate()) {
       periodObj.endAt.setDate(periodObj.endAt.getDate() + 1);
     }
 
     handlePeriod(periodObj.startAt, periodObj.endAt, base);
-    start.setValue(periodObj.startAt.toISOString().slice(0, 10));
-    end.setValue(periodObj.endAt.toISOString().slice(0, 10));
+    start.setValue(moment(periodObj.startAt).format('YYYY-MM-DD'));
+    end.setValue(moment(periodObj.endAt).format('YYYY-MM-DD'));
   };
 
   return (

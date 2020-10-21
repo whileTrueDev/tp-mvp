@@ -127,6 +127,23 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     setPoint2(null);
   }, [subscribe.currUser]);
 
+  const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined) => {
+    if (start && prevDate) {
+      const formattedStartDate = new Date(prevDate);
+      formattedStartDate.setHours(0, 0, 0, 0);
+
+      return formattedStartDate;
+    }
+
+    if (prevDate) {
+      const formattedEndDate = new Date(prevDate);
+      formattedEndDate.setHours(23, 59, 59, 59);
+      return formattedEndDate;
+    }
+
+    return new Date(0);
+  };
+
   /*
     1. point1 == null point2 == null -> insert point1
     2. point1 != null point2 == null -> insert point2
@@ -140,9 +157,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
       if (point1.getTime() <= newDate.getTime()) {
-        handlePeriod(point1, newDate, base);
+        handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
       } else {
-        handlePeriod(newDate, point1, base);
+        handlePeriod(timeFormatter(newDate), timeFormatter(point1, true), base);
       }
     } else if (point1 !== null && point2 !== null) {
       setPoint1(null); setPoint2(null);

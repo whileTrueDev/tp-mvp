@@ -96,10 +96,11 @@ export class StreamAnalysisService {
     startDate: string, endDate?: string,
   ): Promise<DayStreamsInfo[]> {
     if (!endDate) {
-      // 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
-      const originDate = new Date(startDate);
-      const startAt = new Date(originDate.getFullYear(), originDate.getMonth(), 1, 24);
-      const endAt = new Date(originDate.getFullYear(), originDate.getMonth() + 1, 1, 24);
+      // ex) 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
+
+      const momentStart = moment(startDate).format('YYYY-MM-01 00:00:00');
+      const momentEnd = moment(startDate).endOf('month').format('YYYY-MM-DD HH:mm:ss');
+
       const DayStreamData: DayStreamsInfo[] = await this.streamsRepository
         .createQueryBuilder('streams')
         .innerJoin(
@@ -109,14 +110,16 @@ export class StreamAnalysisService {
         )
         .select(['streams.*'])
         .where('streams.userId = :id', { id: userId })
-        .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
-        .andWhere('streams.startedAt < :endDate', { endDate: endAt })
+        .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
+        .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
         .execute();
 
       return DayStreamData;
     }
-    const startAt = new Date(startDate);
-    const endAt = new Date(endDate);
+
+    const momentStart = moment(startDate).format('YYYY-MM-DD HH:mm:ss');
+    const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
+
     const TermStreamsData: DayStreamsInfo[] = await this.streamsRepository
       .createQueryBuilder('streams')
       .innerJoin(
@@ -126,8 +129,8 @@ export class StreamAnalysisService {
       )
       .select(['streams.*'])
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt >= :startDate', { startDate: startAt })
-      .andWhere('streams.startedAt < :endDate', { endDate: endAt })
+      .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
+      .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
       .orderBy('streams.startedAt', 'ASC')
       .execute();
 
