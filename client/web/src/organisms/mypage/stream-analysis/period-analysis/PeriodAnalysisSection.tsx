@@ -29,7 +29,6 @@ import {
 // attoms
 import Loading from '../../../shared/sub/Loading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
@@ -77,13 +76,9 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   //   startDate: period[0] ? period[0].toISOString() : (new Date(0)).toISOString(),
   //   endDate: period[1] ? period[1].toISOString() : (new Date(0)).toISOString(),
   // };
-  const [
-    {
-      loading: getStreamsLoading,
-      error: getStreamsError,
-    }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-      url: '/stream-analysis/stream-list',
-    }, { manual: true });
+  const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
+    url: '/stream-analysis/stream-list',
+  }, { manual: true });
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
@@ -248,9 +243,6 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
                   termStreamsList={termStreamsList}
                   handleRemoveIconButton={handleRemoveIconButton}
                 />
-                {(getStreamsError || getStreamsLoading)
-                && <CenterLoading />}
-
               </Grid>
             </Grid>
           </Grid>

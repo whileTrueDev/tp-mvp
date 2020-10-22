@@ -127,7 +127,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     setPoint2(null);
   }, [subscribe.currUser]);
 
-  const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined) => {
+  const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined): Date => {
     if (start && prevDate) {
       const formattedStartDate = new Date(prevDate);
       formattedStartDate.setHours(0, 0, 0, 0);

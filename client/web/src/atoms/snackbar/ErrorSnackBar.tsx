@@ -53,7 +53,6 @@ export default function ErrorSnackBar(props: ErrorSnackBarPorps<any>): JSX.Eleme
           <Typograpy style={{ fontSize: '20px', whiteSpace: 'nowrap' }}>
             {message}
           </Typograpy>
-
         </Alert>
       </Snackbar>
     </div>

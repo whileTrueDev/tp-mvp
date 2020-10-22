@@ -16,7 +16,6 @@ import CheckBoxGroup from './CheckBoxGroup';
 import usePeriodCompareStyles from './PeriodCompareSection.style';
 // attoms
 import Loading from '../../../shared/sub/Loading';
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // contexterLoa
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
@@ -42,10 +41,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   });
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [
-    { loading: getStreamsLoading }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-      url: '/stream-analysis/stream-list',
-    }, { manual: true });
+  const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
+    url: '/stream-analysis/stream-list',
+  }, { manual: true });
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -204,8 +202,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           분석하기
         </Button>
       </Grid>
-
-      {getStreamsLoading && <CenterLoading />}
 
     </div>
   );
