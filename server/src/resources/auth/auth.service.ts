@@ -4,12 +4,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
+import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import { RefreshTokenData } from '../../interfaces/RefreshTokenData.interface';
 import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
-import { LogoutDto } from './dto/logout.dto';
 
 @Injectable()
 export class AuthService {

@@ -12,7 +12,11 @@ import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
 // import { dataArray } from './s3TestData.test';
-// interface
+
+// DTOs
+import { FindS3StreamInfo } from '@truepoint/shared/dist/dto/stream-analysis/findS3StreamInfo.dto';
+import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/findStreamInfoByStreamId.dto';
+// interfaces
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
@@ -20,9 +24,6 @@ import { PeriodAnalysis } from './interface/periodAnalysis.interface';
 import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
 import { StreamAnalysis } from './interface/streamAnalysis.interface';
 
-// dto
-import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
-import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';

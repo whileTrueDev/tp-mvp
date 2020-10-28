@@ -1,6 +1,14 @@
 import {
   Controller, Get, ParseArrayPipe, Query, UseGuards, Inject,
 } from '@nestjs/common';
+// DTOs
+import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/findStreamInfoByStreamId.dto';
+import { FindUserStatisticInfo } from '@truepoint/shared/dist/dto/stream-analysis/findUserStatisticInfo.dto';
+import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
+import { FindStreamInfoByTerms } from '@truepoint/shared/dist/dto/stream-analysis/findStreamInfoByTerms.dto';
+import { FindAllStreams } from '@truepoint/shared/dist/dto/stream-analysis/findAllStreams.dto';
+import { FindS3StreamInfo } from '@truepoint/shared/dist/dto/stream-analysis/findS3StreamInfo.dto';
+// Services
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
 // pipe
@@ -13,16 +21,8 @@ import { DayStreamsInfo } from './interface/dayStreamInfo.interface';
 import { PeriodAnalysis } from './interface/periodAnalysis.interface';
 import { PeriodsAnalysis } from './interface/periodsAnalysis.interface';
 import { StreamAnalysis } from './interface/streamAnalysis.interface';
-
-// dto
-import { FindStreamInfoByStreamId } from './dto/findStreamInfoByStreamId.dto';
-import { FindUserStatisticInfo } from './dto/findUserStatisticInfo.dto';
-import { EachStream } from './dto/eachStream.dto';
-import { FindStreamInfoByTerms } from './dto/findStreamInfoByTerms.dto';
+// entity
 import { StreamsEntity } from './entities/streams.entity';
-
-import { FindAllStreams } from './dto/findAllStreams.dto';
-import { FindS3StreamInfo } from './dto/findS3StreamInfo.dto';
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(
