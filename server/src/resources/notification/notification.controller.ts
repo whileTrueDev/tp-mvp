@@ -1,12 +1,13 @@
 import {
   Controller, Get, Body, Patch, Query, UseGuards,
 } from '@nestjs/common';
-import { FindAllNotifications } from '@truepoint/shared/dist/dto/FindNotification.dto';
+// DTOs
+import { FindAllNotifications } from '@truepoint/shared/dist/dto/notification/findAllNotifications.dto';
+import { ChangeReadState } from '@truepoint/shared/dist/dto/notification/changeReadState.dto';
 
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { NotificationService } from './notification.service';
 import { NotificationEntity } from './entities/notification.entity';
-import { ChangeReadState } from './dto/changeReadState.dto';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 
 @Controller('notification')
