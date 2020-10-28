@@ -1,7 +1,6 @@
 import { IsString, IsEmail, IsBoolean } from 'class-validator';
-import { InquiryEntity } from '../entities/inquiry.entity';
 
-export class CreateInquiryDto implements Omit<InquiryEntity, 'id'> {
+export class CreateInquiryDto {
   @IsString()
   author: string;
 
