@@ -333,6 +333,7 @@ export class StreamAnalysisService {
           resolveKeys();
         })
         .catch((err) => {
+          // console.log('err in get key list', err);
           reject(err);
         });
     });
@@ -341,6 +342,7 @@ export class StreamAnalysisService {
     const dataFunc = (key: any) => new Promise<void>((resolveData, reject) => {
       if (keyArray.length < 1) reject(new Error('Empty S3 Key Array ...'));
 
+      // console.log('[KEY ] : ', key);
       const param = {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
         Key: key,
@@ -359,6 +361,7 @@ export class StreamAnalysisService {
           resolveData();
         })
         .catch((err) => {
+          // console.log('err in get key data', err);
           reject(err);
         });
 
@@ -512,10 +515,10 @@ export class StreamAnalysisService {
           .then((organizeArray) => organizeArray))
         .catch((err: Error) => {
           /* Promise Chain rejected 처리 */
-          // console.log('[Error] : ', err.message);
+          // console.log('[Error in get s3 Keys] : ', err.message);
           throw new InternalServerErrorException(err, 'Calculate Data Error ... ');
         })).catch((err: Error) => {
-        // console.log('[Error] : ', err.message);
+        // console.log('[Error in get s3 Data] : ', err.message);
         throw new InternalServerErrorException(err);
       }));
 
