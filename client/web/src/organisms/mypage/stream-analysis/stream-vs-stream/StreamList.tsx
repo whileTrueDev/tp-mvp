@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.light,
   },
   listItemText: {
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.primary,
     textAlign: 'left',
     lineHeight: '2.06',

@@ -35,7 +35,7 @@ const rawTheme: ThemeOptions = {
     },
   },
   typography: {
-    fontFamily: '"NotoSansKR-Regular", "Sunflower", sans-serif',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "AppleSDGothicNeo", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
   },
 };
 
