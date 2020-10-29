@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 // types
 import useAxios from 'axios-hooks';
 // context
-import AuthContext from '../../../../utils/contexts/AuthContext';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 export interface Notification {
   index: number;
@@ -53,13 +53,11 @@ function NotificationPopper({
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const classes = useStyles();
-  const auth = React.useContext(AuthContext);
+  const auth = useAuthContext();
   const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
     url: '/notification',
     method: 'patch',
-  }, {
-    manual: true,
-  });
+  }, { manual: true });
 
   const handleNotificationListItemClick = (notification: Notification) => {
     if (notification.readState === UNREAD_STATE) {

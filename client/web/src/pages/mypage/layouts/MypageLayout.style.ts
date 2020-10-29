@@ -16,13 +16,13 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
   },
   sidebarWrapper: {
     width: 230,
-    paddingTop: 96,
+    paddingTop: 89,
     backgroundColor: theme.palette.background.paper,
     borderRight: `1px solid ${theme.palette.divider}`,
     top: 0,
   },
   appbarWrapper: {
-    height: 96,
+    height: 90,
     top: 0,
     position: 'sticky',
     zIndex: 9999,

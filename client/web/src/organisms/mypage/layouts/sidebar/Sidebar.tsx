@@ -14,16 +14,16 @@ import MaximizeIcon from '@material-ui/icons/Maximize';
 
 import { MypageRoute } from '../../../../pages/mypage/routes';
 // styles
-import useTestStyle from './TestSidebar.style';
+import useSidebarStyle from './Sidebar.style';
 
 interface SidebarProps {
   routes: MypageRoute[];
 }
 
-export default function TestSidebar({
+export default function Sidebar({
   routes,
 }: SidebarProps): JSX.Element {
-  const classes = useTestStyle();
+  const classes = useSidebarStyle();
   // verifies if routeName is the one active (in browser input)
   function isActiveRoute(pagePath: string): boolean {
     return window.location.pathname.indexOf(pagePath) > -1;

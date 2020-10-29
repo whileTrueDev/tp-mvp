@@ -1,6 +1,6 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 
-const useTestStyle = makeStyles((theme: Theme) => ({
+const useSidebarStyle = makeStyles((theme: Theme) => ({
   conatiner: {
     borderTop: `1px solid ${theme.palette.divider}`,
     padding: 0,
@@ -49,4 +49,4 @@ const useTestStyle = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default useTestStyle;
+export default useSidebarStyle;

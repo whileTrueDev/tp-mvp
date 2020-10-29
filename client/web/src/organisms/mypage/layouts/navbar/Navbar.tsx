@@ -1,16 +1,15 @@
 import React from 'react';
-import moment from 'moment';
+// import moment from 'moment';
 // @material-ui/core components
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import Chip from '@material-ui/core/Chip';
+// import Chip from '@material-ui/core/Chip';
 // @material-ui/icons
-import EventNoteIcon from '@material-ui/icons/EventNote';
+// import EventNoteIcon from '@material-ui/icons/EventNote';
 // core components 
 import useNavbarStyles from './Navbar.style';
-import HeaderLinks from './HeaderLinks';
 import NavbarUserList from './NavbarUserList';
 // type
 import { MypageRoute as MypageRouteType } from '../../../../pages/mypage/routes';
@@ -31,8 +30,8 @@ export interface NavbarProps {
 function Navbar(props: NavbarProps): JSX.Element {
   const classes = useNavbarStyles();
   const subscribe = React.useContext(SubscribeContext);
-  const { routes } = props;
-  const currDate = new Date();
+
+  // const currDate = new Date();
 
   return (
     <AppBar className={classes.appBar}>
@@ -41,18 +40,17 @@ function Navbar(props: NavbarProps): JSX.Element {
         {!subscribe.loading && !subscribe.error ? (
 
           <Grid container justify="space-between" direction="row">
-            <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
-              { subscribe.validSubscribeUserList
+
+            { subscribe.validSubscribeUserList
               && subscribe.validSubscribeUserList.length > 0
               && (
                 <>
-                  <Grid item>
-                    {/* 사용중인 유저 이름 , 클릭시 구독 유저 드롭다운 리스트 */}
-                    <NavbarUserList />
-                  </Grid>
 
-                  {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 */}
-                  <Grid item className={classes.subscribePeriod}>
+                    {/* 사용중인 유저 이름 , 클릭시 구독 유저 드롭다운 리스트 -> CBT 임시 주석 처리 */}
+                  <NavbarUserList />
+
+                  {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 -> CBT 임시 주석 처리 */}
+                  {/* <Grid item className={classes.subscribePeriod}>
                     <EventNoteIcon
                       className={classes.leftGridIcon}
                       style={{ padding: 0, margin: 0 }}
@@ -61,9 +59,10 @@ function Navbar(props: NavbarProps): JSX.Element {
                       {`${moment(subscribe.currUser.startAt).format('YYYY-MM-DD')} ~
                     ${moment(subscribe.currUser.endAt).format('YYYY-MM-DD')}`}
                     </Typography>
-                  </Grid>
+                  </Grid> */}
 
-                  <Grid item>
+                  {/* 구독 중 뱃지 -> CBT 임시 주석 처리 */}
+                  {/* <Grid item>
                     {moment(subscribe.currUser.endAt)
                   >= moment(currDate.toISOString())
                       ? (
@@ -71,17 +70,10 @@ function Navbar(props: NavbarProps): JSX.Element {
                       ) : (
                         <Chip label="구독 만료" className={classes.notSubscribeChip} />
                       )}
-                  </Grid>
+                  </Grid> */}
                 </>
               )}
-            </Grid>
-            <Grid item container md={2} alignContent="center">
-              {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
-              <HeaderLinks
-                routes={routes}
-                userId="qjqdn1568"
-              />
-            </Grid>
+
           </Grid>
 
         ) : (
