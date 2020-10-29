@@ -6,7 +6,7 @@ import {
   Grid,
   List, ListItem, ListItemText, ListItemIcon,
   Accordion, AccordionSummary, AccordionDetails, Divider,
-  Typography,
+  Typography, Button,
 } from '@material-ui/core';
 // @material-ui/icons icon
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -37,7 +37,7 @@ export default function TestSidebar({
             key={route.name}
             className={classes.listItem}
             disableGutters
-            button
+            // button
           >
             <Grid container item direction="column">
               <Accordion square className={classes.accordian}>
@@ -93,16 +93,27 @@ export default function TestSidebar({
                       className={classes.subRouteLink}
                       to={subroute.layout + subroute.path}
                     >
-                      <ArrowForwardIosIcon color="primary" fontSize="small" />
-                      <Typography
-                        variant="body1"
-                        className={classnames({
-                          [classes.selected]: isActiveRoute(subroute.path),
-                          [classes.notSelectedTab]: !isActiveRoute(subroute.path),
-                        })}
+                      <Button
+                        style={{ padding: 0 }}
                       >
-                        {subroute.name}
-                      </Typography>
+                        <ArrowForwardIosIcon
+                          fontSize="small"
+                          className={classnames({
+                            [classes.selectedSubRouteIcon]: isActiveRoute(subroute.path),
+                            [classes.notSelectedSubRouteIcon]: !isActiveRoute(subroute.path),
+                          })}
+                        />
+                        <Typography
+                          variant="body1"
+                          className={classnames({
+                            [classes.selected]: isActiveRoute(subroute.path),
+                            [classes.notSelectedTab]: !isActiveRoute(subroute.path),
+                          })}
+                        >
+                          {subroute.name}
+                        </Typography>
+                      </Button>
+
                     </Link>
 
                   ))}

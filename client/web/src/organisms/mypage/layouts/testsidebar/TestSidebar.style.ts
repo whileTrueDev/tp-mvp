@@ -41,6 +41,12 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     width: '100%',
     textDecoration: 'none',
   },
+  notSelectedSubRouteIcon: {
+    color: theme.palette.text.disabled,
+  },
+  selectedSubRouteIcon: {
+    color: theme.palette.text.primary,
+  },
 }));
 
 export default useTestStyle;
