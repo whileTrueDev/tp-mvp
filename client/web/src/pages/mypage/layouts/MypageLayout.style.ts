@@ -9,7 +9,7 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
   conatiner: {
     width: 1400,
     margin: '0 auto',
-    height: 1094,
+    minHeight: 1094,
     display: 'flex',
     boxShadow: theme.shadows[4],
     backgroundColor: theme.palette.background.default,
