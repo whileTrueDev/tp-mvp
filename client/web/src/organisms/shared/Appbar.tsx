@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => createStyles({
     height: APPBAR_HEIGHT,
     margin: '0 auto',
     boxShadow: 'none',
-    padding: `${theme.spacing(2)}px 0px`,
+    padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
   },
   toolbar: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%',
