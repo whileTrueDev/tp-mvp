@@ -1,6 +1,12 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useNavbarStyles = makeStyles((theme: Theme) => ({
+  appBarWrapper: {
+    margin: '0 auto',
+    maxWidth: 1816,
+    minWidth: 1400,
+    height: '100%',
+  },
   appBar: {
     height: '100%',
     padding: 0,
@@ -10,6 +16,12 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     display: 'block',
     zIndex: 1200,
     backgroundColor: theme.palette.primary.dark,
+  },
+  sidebarPlaceholder: {
+    minWidth: 230,
+    height: '100%',
+    backgroundColor: theme.palette.background.paper,
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   container: {
     paddingRight: '0px',

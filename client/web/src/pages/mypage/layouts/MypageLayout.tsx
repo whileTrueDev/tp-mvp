@@ -23,40 +23,48 @@ const UserDashboard = (): JSX.Element => {
 
   return (
     <>
+      {/* 최상단 네비바 */}
       <AppBar />
       <div className={classes.wrapper}>
+
+        {/* 마이페이지 상단 네비바 */}
+        <nav className={classes.appbarWrapper}>
+          <Navbar routes={routes} />
+        </nav>
+
+        {/* 메인패널과 사이드바를 포함한 영역 */}
         <div className={classes.conatiner}>
+
+          {/* 마이페이지 좌측 사이드바 */}
+          <aside className={classes.sidebarPlaceholder} />
           <aside className={classes.sidebarWrapper}>
             <TestSidebar routes={routes.filter((r) => !r.noTab)} />
           </aside>
-          <div ref={mainPanel} className={classes.mainPanel}>
-            <nav className={classes.appbarWrapper}>
-              <Navbar routes={routes} />
-            </nav>
-            <main>
-              <Switch>
-                {routes.map((route) => (
-                  route.nested
-                    ? (
-                      route.subRoutes && route.subRoutes.map((subRoute) => (
-                        <Route
-                          path={subRoute.layout + subRoute.path}
-                          component={subRoute.component}
-                          key={subRoute.name}
-                        />
-                      ))
-                    ) : (
-                      <Route
-                        path={route.layout + route.path}
-                        component={route.component}
-                        key={route.name}
-                      />
-                    )
-                ))}
 
-              </Switch>
-            </main>
-          </div>
+          {/* 마이페이지 메인 패널 */}
+          <main ref={mainPanel} className={classes.mainPanel}>
+            <Switch>
+              {routes.map((route) => (
+                route.nested
+                  ? (
+                    route.subRoutes && route.subRoutes.map((subRoute) => (
+                      <Route
+                        path={subRoute.layout + subRoute.path}
+                        component={subRoute.component}
+                        key={subRoute.name}
+                      />
+                    ))
+                  ) : (
+                    <Route
+                      path={route.layout + route.path}
+                      component={route.component}
+                      key={route.name}
+                    />
+                  )
+              ))}
+
+            </Switch>
+          </main>
         </div>
         <MypageFooter />
       </div>

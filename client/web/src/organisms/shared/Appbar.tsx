@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => createStyles({
   container: {
     display: 'block',
     position: 'sticky',
-    width: 1400,
+    maxWidth: 1816,
+    minWidth: 1400,
     height: APPBAR_HEIGHT,
     margin: '0 auto',
     boxShadow: 'none',

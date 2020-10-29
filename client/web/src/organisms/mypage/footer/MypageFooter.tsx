@@ -5,7 +5,7 @@ import { Button, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   footer: {
-    width: 1400, margin: '0 auto',
+    maxWidth: 1816, minWidth: 1400, margin: '0 auto',
   },
   footerbox: {
     padding: `${theme.spacing(2)}px 0px`,

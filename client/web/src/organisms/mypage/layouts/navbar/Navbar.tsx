@@ -35,14 +35,16 @@ function Navbar(props: NavbarProps): JSX.Element {
   const currDate = new Date();
 
   return (
-    <AppBar className={classes.appBar}>
+    <div className={classes.appBarWrapper}>
+      <AppBar className={classes.appBar} color="primary" position="fixed">
 
-      <Toolbar className={classes.container}>
-        {!subscribe.loading && !subscribe.error ? (
+        <Toolbar className={classes.container}>
+          <div className={classes.sidebarPlaceholder} />
+          {!subscribe.loading && !subscribe.error ? (
 
-          <Grid container justify="space-between" direction="row">
-            <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
-              { subscribe.validSubscribeUserList
+            <Grid container justify="space-between" direction="row">
+              <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
+                { subscribe.validSubscribeUserList
               && subscribe.validSubscribeUserList.length > 0
               && (
                 <>
@@ -74,21 +76,22 @@ function Navbar(props: NavbarProps): JSX.Element {
                   </Grid>
                 </>
               )}
+              </Grid>
+              <Grid item container md={2} alignContent="center">
+                {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
+                <HeaderLinks
+                  routes={routes}
+                  userId="qjqdn1568"
+                />
+              </Grid>
             </Grid>
-            <Grid item container md={2} alignContent="center">
-              {/* 홈 아이콘 버튼 , 알림 아이콘 버튼 */}
-              <HeaderLinks
-                routes={routes}
-                userId="qjqdn1568"
-              />
-            </Grid>
-          </Grid>
 
-        ) : (
-          <CenterLoading />
-        )}
-      </Toolbar>
-    </AppBar>
+          ) : (
+            <CenterLoading />
+          )}
+        </Toolbar>
+      </AppBar>
+    </div>
   );
 }
 
