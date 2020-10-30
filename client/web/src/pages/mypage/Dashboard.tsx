@@ -1,13 +1,11 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
-import useTheme from '@material-ui/core/styles/useTheme';
 import MypageSectionWrapper from '../../atoms/MypageSectionWrapper';
 import SimpleNoticeTable from '../../organisms/mypage/dashboard/SimpleNoticeTable';
-import UserMetricsSection from '../../organisms/mypage/dashboard/UserMetricsSection';
+import UserProfile from '../../organisms/mypage/dashboard/UserProfile';
+// import UserMetricsSection from '../../organisms/mypage/dashboard/UserMetricsSection';
 
 export default function Dashboard(): JSX.Element {
-  const theme = useTheme();
-
   // Notice data
   const [{ loading, data }] = useAxios({
     url: '/notice/outline',
@@ -17,8 +15,8 @@ export default function Dashboard(): JSX.Element {
 
   return (
     <>
-      <MypageSectionWrapper color={theme.palette.info.light} style={{ minHeight: 300 }}>
-        <UserMetricsSection />
+      <MypageSectionWrapper style={{ minHeight: 300 }}>
+        <UserProfile />
       </MypageSectionWrapper>
 
       <MypageSectionWrapper>
