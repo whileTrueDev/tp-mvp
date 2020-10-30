@@ -1,10 +1,11 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
+import { MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_WIDTH, SIDE_BAR_WIDTH } from '../../../../assets/constants';
 
 const useNavbarStyles = makeStyles((theme: Theme) => ({
   appBarWrapper: {
     margin: '0 auto',
-    maxWidth: 1816,
-    minWidth: 1400,
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
     height: '100%',
   },
   appBar: {
@@ -18,7 +19,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.dark,
   },
   sidebarPlaceholder: {
-    minWidth: 230,
+    minWidth: SIDE_BAR_WIDTH,
     height: '100%',
     backgroundColor: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.divider}`,

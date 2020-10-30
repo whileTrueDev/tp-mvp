@@ -11,6 +11,7 @@ import TruepointLogo from '../../atoms/TruepointLogo';
 import UserMenuPopover from './sub/UserMenuPopover';
 
 import useAuthContext from '../../utils/hooks/useAuthContext';
+import { MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_WIDTH } from '../../assets/constants';
 
 const APPBAR_HEIGHT = 100;
 
@@ -25,12 +26,13 @@ const useStyles = makeStyles((theme) => createStyles({
   container: {
     display: 'block',
     position: 'sticky',
-    maxWidth: 1816,
-    minWidth: 1400,
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
     height: APPBAR_HEIGHT,
     margin: '0 auto',
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
+    borderBottom: 'none',
   },
   toolbar: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%',

@@ -1,19 +1,21 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
-
-const SIDE_BAR_WIDTH = 230; // 사이드바 너비
-const APP_BAR_HEIGHT = 96; // 상단 네비바 높이
+import {
+  COMMON_APP_BAR_HEIGHT, MYPAGE_APP_BAR_HEIGHT,
+  MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_HEIGHT,
+  MYPAGE_MAIN_MIN_WIDTH, SIDE_BAR_WIDTH,
+} from '../../../assets/constants';
 
 const useLayoutStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     position: 'sticky',
-    minHeight: `calc(100vh - ${APP_BAR_HEIGHT}px)`,
+    minHeight: `calc(100vh - ${COMMON_APP_BAR_HEIGHT}px)`,
     background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   conatiner: {
-    maxWidth: 1816,
-    minWidth: 1400,
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
+    minHeight: MYPAGE_MAIN_MIN_HEIGHT,
     margin: '0 auto',
-    minHeight: 1094,
     display: 'flex',
     boxShadow: theme.shadows[4],
     backgroundColor: theme.palette.background.default,
@@ -26,21 +28,21 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
   },
   sidebarWrapper: {
     position: 'fixed',
-    overflowY: 'scroll',
+    overflowY: 'auto',
     width: SIDE_BAR_WIDTH,
-    marginTop: APP_BAR_HEIGHT * 2,
+    marginTop: COMMON_APP_BAR_HEIGHT + MYPAGE_APP_BAR_HEIGHT,
     backgroundColor: theme.palette.background.paper,
     borderRight: `1px solid ${theme.palette.divider}`,
     top: 0,
   },
   appbarWrapper: {
-    height: APP_BAR_HEIGHT,
+    height: MYPAGE_APP_BAR_HEIGHT,
     width: '100%',
     position: 'fixed',
     zIndex: 9999,
   },
   mainPanel: {
-    marginTop: APP_BAR_HEIGHT,
+    marginTop: MYPAGE_APP_BAR_HEIGHT,
     width: '100%',
     overflow: 'auto',
     backgroundColor: theme.palette.background.default,

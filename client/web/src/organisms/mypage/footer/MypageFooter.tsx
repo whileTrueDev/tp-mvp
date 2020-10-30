@@ -2,10 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
+import { MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_WIDTH } from '../../../assets/constants';
 
 const useStyles = makeStyles((theme) => ({
   footer: {
-    maxWidth: 1816, minWidth: 1400, margin: '0 auto',
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
+    margin: '0 auto',
   },
   footerbox: {
     padding: `${theme.spacing(2)}px 0px`,
