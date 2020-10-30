@@ -129,11 +129,6 @@ export default function FeatureTable<T extends FeatureData>({
                 </TableRow>
               );
             })}
-          {/* {emptyRows > 0 && (
-            <TableRow hover style={{ height: 80 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )} */}
         </TableBody>
         <TableFooter>
           <TableRow className={classes.tablefooterRow}>

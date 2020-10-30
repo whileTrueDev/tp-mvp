@@ -11,6 +11,7 @@ import { FeatureData } from '../../interfaces/FeatureSuggestion';
 import Button from '../../atoms/Button/Button';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import Appbar from '../../organisms/shared/Appbar';
+import Footer from '../../organisms/shared/footer/Footer';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -124,6 +125,7 @@ export default function FeatureSuggestion(): JSX.Element {
             )}
         </div>
       </section>
+      <Footer />
     </div>
   );
 }
