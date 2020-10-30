@@ -92,9 +92,10 @@ export default function Sidebar({
                       key={subroute.layout + subroute.path}
                       className={classes.subRouteLink}
                       to={subroute.layout + subroute.path}
+
                     >
                       <Button
-                        style={{ padding: 0 }}
+                        style={{ padding: 0, width: '100%', justifyContent: 'flex-start' }}
                       >
                         <ArrowForwardIosIcon
                           fontSize="small"
