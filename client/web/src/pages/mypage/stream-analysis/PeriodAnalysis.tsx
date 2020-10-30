@@ -5,7 +5,8 @@ import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
-import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
+// import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
+import PeriodAnalysisSectionTest from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSectionTest';
 
 interface PeriodRequestArray {
   streams: {
@@ -38,10 +39,10 @@ export default function PeriodAnalysis(): JSX.Element {
 
   return (
     <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2}>
+      <Grid container direction="column" spacing={2} style={{ minHeight: '3000px' }}>
         <Grid item>
           {/* 상단 섹션 */}
-          <PeriodAnalysisSection
+          <PeriodAnalysisSectionTest
             error={error}
             loading={loading}
             handleSubmit={handleSubmit}

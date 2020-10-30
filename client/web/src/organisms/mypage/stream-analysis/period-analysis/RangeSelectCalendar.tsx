@@ -1,6 +1,8 @@
 import React from 'react';
 // material-ui core components
-import { Grid } from '@material-ui/core';
+import {
+  Box, Grid, Chip,
+} from '@material-ui/core';
 // material-ui picker components
 import {
   MuiPickersUtilsProvider, DatePicker,
@@ -15,11 +17,21 @@ import useAxios from 'axios-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // interfaces
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import { DayStreamsInfo, RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
 // context 
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  container: {
+    display: 'flex',
+    flex: 0,
+    padding: theme.spacing(2),
+    justifyContent: 'center',
+    alignItem: 'center',
+    width: '340px',
+    backgroundColor: theme.palette.background.paper,
+  },
   leftCircleBase: {
     width: '50%',
     backgroundColor: '#d7e7ff',
@@ -75,7 +87,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base,
+    period, handlePeriod, base, targetRef, anchorEl, handleAnchorOpenWithRef, handleAnchorClose,
   } = props;
   const classes = useStyles();
   const subscribe = React.useContext(SubscribeContext);
@@ -286,27 +298,50 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
-      <Grid
-        container
-        direction="row"
-        justify="center"
-        alignItems="center"
+
+      <Box
+        borderRadius={16}
+        borderColor="#707070"
+        border={1}
+        className={classes.container}
       >
-        <Grid item>
-          <DatePicker
-            value={currDate}
-            onChange={handleDate}
-            onMonthChange={handleMonthChange}
-            disableFuture
-            renderDay={renderDayInPicker}
-            variant="static"
-            openTo="date"
-            disableToolbar
+        <Grid container direction="column">
+          <Grid item>
+            <DatePicker
+              value={currDate}
+              onChange={handleDate}
+              onMonthChange={handleMonthChange}
+              disableFuture
+              renderDay={renderDayInPicker}
+              variant="static"
+              openTo="date"
+              disableToolbar
+            />
+          </Grid>
+
+          <Chip
+            icon={<FormatListBulletedIcon />}
+            label="제외할 방송 선택"
+            clickable
+            style={{
+              width: '175px',
+              alignSelf: 'flex-end',
+            }}
+            onClick={(e): void => {
+              if (anchorEl) {
+                handleAnchorClose();
+              } else {
+                handleAnchorOpenWithRef(targetRef);
+              }
+            }}
           />
+
         </Grid>
-      </Grid>
+
+      </Box>
     </MuiPickersUtilsProvider>
+
   );
 }
 
-export default RangeSelectCaledar;
+export default React.forwardRef(RangeSelectCaledar);

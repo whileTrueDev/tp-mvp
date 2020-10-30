@@ -25,7 +25,7 @@ export default function useAnchorEl(): {
   open: boolean;
   anchorEl: HTMLElement | null;
   handleAnchorOpen: (event: React.MouseEvent<HTMLElement>) => void;
-  handleAnchorOpenWithRef: (ref: React.MutableRefObject<HTMLButtonElement | null>) => void;
+  handleAnchorOpenWithRef: (ref: React.MutableRefObject<HTMLDivElement | HTMLButtonElement | null>) => void;
   handleAnchorClose: () => void;
   } {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -35,7 +35,7 @@ export default function useAnchorEl(): {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleAnchorOpenWithRef = (ref: React.MutableRefObject<HTMLButtonElement | null>): void => {
+  const handleAnchorOpenWithRef = (ref: React.MutableRefObject<HTMLDivElement | HTMLButtonElement | null>): void => {
     setAnchorEl(ref.current);
   };
 

@@ -20,6 +20,10 @@ export interface RangeSelectCaledarProps {
   period: Date[];
   handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
+  targetRef: React.MutableRefObject<HTMLDivElement | null>;
+  anchorEl: HTMLElement | null;
+  handleAnchorOpenWithRef: (ref: React.MutableRefObject<HTMLDivElement | null>) => void;
+  handleAnchorClose: () => void;
 }
 export interface DayStreamsInfo{
   streamId: string;
