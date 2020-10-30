@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 // material-ui components layout
 import routes from '../routes';
@@ -9,6 +9,7 @@ import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
 import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
 import AppBar from '../../../organisms/shared/Appbar';
+import PageSizeAlert from '../../../organisms/mypage/alertbar/PageSizeAlert';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
@@ -21,10 +22,27 @@ const UserDashboard = (): JSX.Element => {
     }
   });
 
+  // 화면 크기 관련 경고 알림창을 위한 스테이트
+  const [alertOpen, setAlertOpen] = useState<boolean>();
+  function handleAlertOpen() {
+    setAlertOpen(true);
+  }
+  function handleAlertClose() {
+    setAlertOpen(false);
+  }
+
   return (
     <>
       {/* 최상단 네비바 */}
       <AppBar />
+
+      {/* mypage 최소화면크기 이하 기기로 접속한 경우 알림 창 */}
+      <PageSizeAlert
+        open={alertOpen}
+        handleOpen={handleAlertOpen}
+        handleClose={handleAlertClose}
+      />
+
       <div className={classes.wrapper}>
 
         {/* 마이페이지 상단 네비바 */}
