@@ -1,12 +1,18 @@
 import React from 'react';
+import classnames from 'classnames';
 import { Avatar, Paper, Typography } from '@material-ui/core';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+// 클로즈베타 - 구독관련 기능 X 주석처리
+// import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(4), display: 'flex', alignItems: 'center' },
   avatar: { width: 150, height: 150, margin: theme.spacing(4) },
+  platformLogo: { width: 30, height: 30, margin: '0px 4px' },
+  flexBox: { display: 'flex', alignItems: 'center' },
+  userTier: { marginLeft: 16, color: theme.palette.text.secondary },
+  text: { paddingTop: theme.spacing(1) },
 }));
 
 export default function UserProfile(): JSX.Element {
@@ -19,29 +25,30 @@ export default function UserProfile(): JSX.Element {
 
       <div>
         {/* 이름 */}
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Typography style={{ fontWeight: 'bold' }} variant="h4">
+        <div className={classes.flexBox}>
+          <Typography variant="h4" style={{ fontWeight: 'bold' }}>
             {`${authValue.user.userId} 님`}
             {/* "님" 볼드처리 제거의 경우 */}
             {/* <Typography component="span">님</Typography> */}
           </Typography>
 
-          <img style={{ margin: '0px 4px' }} width={30} height={30} src="/images/logo/twitchLogo.png" alt="" />
-          <img style={{ margin: '0px 4px' }} width={30} height={30} src="/images/logo/youtubeLogo.png" alt="" />
-          <img style={{ margin: '0px 4px' }} width={30} height={30} src="/images/logo/afreecatvLogo.png" alt="" />
+          <img className={classes.platformLogo} src="/images/logo/twitchLogo.png" alt="" />
+          <img className={classes.platformLogo} src="/images/logo/youtubeLogo.png" alt="" />
+          <img className={classes.platformLogo} src="/images/logo/afreecatvLogo.png" alt="" />
         </div>
 
         {/* 요금제 */}
-        <div style={{ verticalAlign: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography style={{ paddingTop: 8 }} variant="body1">요금제</Typography>
-            <Typography variant="body1" style={{ marginLeft: 16, paddingTop: 8, color: 'grey' }}>클로즈베타 테스터</Typography>
+        <div>
+          <div className={classes.flexBox}>
+            <Typography className={classes.text} variant="body1">요금제</Typography>
+            <Typography className={classnames(classes.text, classes.userTier)} variant="body1">클로즈베타 테스터</Typography>
           </div>
 
-          <Typography style={{ paddingTop: 8 }} variant="body1" color="primary" paragraph>
+          {/* 클로즈베타 처리 - 잠시 제거 */}
+          {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
             업그레이드
             <ArrowForwardIosIcon fontSize="inherit" />
-          </Typography>
+          </Typography> */}
 
         </div>
       </div>
