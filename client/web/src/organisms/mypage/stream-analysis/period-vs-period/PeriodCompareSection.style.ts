@@ -52,7 +52,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   },
   bodyTitle: {
     fontSize: '19px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     lineHeight: 1.53,
     color: theme.palette.text.secondary,
     display: 'flex',
@@ -85,7 +85,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     height: '51.1px',
     borderRadius: '6px',
     backgroundColor: theme.palette.primary.dark,
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     fontSize: '24px',
     marginTop: '20px',
     marginRight: '93.5px',

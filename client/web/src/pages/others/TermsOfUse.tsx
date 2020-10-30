@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     marginTop: 20,
-    fontFamily: 'Noto Sans KR',
   },
   text: {
     marginTop: 30,
