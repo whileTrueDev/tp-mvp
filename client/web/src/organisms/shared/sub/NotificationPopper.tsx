@@ -15,7 +15,7 @@ export interface Notification {
   title: string;
   content: string;
   dateform: string;
-  readState: number;
+  readState: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const UNREAD_STATE = 0; // 읽지않음 상태값
+const UNREAD_STATE = false; // 읽지않음 상태값
 
 function NotificationPopper({
   anchorEl,
@@ -67,6 +67,7 @@ function NotificationPopper({
           index: notification.index,
         },
       });
+      // snack bar 일감 이후 snack bar 삽입
 
       if (!patchError && !patchLoading) setChangeReadState(true);
     }

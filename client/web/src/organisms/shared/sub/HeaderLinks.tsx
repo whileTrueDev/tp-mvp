@@ -78,6 +78,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         userId: auth.user.userId,
       },
     });
+    // snack bar 일감 이후 snack bar 삽입
     if (changeReadState) {
       executeGet({
         params: {
@@ -85,6 +86,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         },
       });
       setChangeReadState(false);
+      // snack bar 일감 이후 snack bar 삽입
     }
   }, [changeReadState, executeGet, auth.user.userId]);
 

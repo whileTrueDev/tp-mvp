@@ -32,7 +32,7 @@ export class NotificationController {
   @Patch()
   @UseGuards(JwtAuthGuard)
   updateNotificationReadState(
-    @Body() changeReadState: ChangeReadState,
+    @Body(new ValidationPipe()) changeReadState: ChangeReadState,
   ): Promise<boolean> {
     return this.notificationService.changeReadState(changeReadState);
   }
