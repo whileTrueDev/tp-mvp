@@ -128,7 +128,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element,
   ) => {
-    if (date && hasStreamDays.includes(date.getDate())) {
+    if (date && hasStreamDays.includes(date.getDate()) && dayInCurrentMonth) {
       if ((compareStream && (new Date(compareStream.startedAt)).getDate() === date.getDate())
       || (baseStream && (new Date(baseStream.startedAt)).getDate() === date.getDate())) {
         return (

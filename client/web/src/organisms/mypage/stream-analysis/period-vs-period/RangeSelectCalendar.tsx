@@ -302,7 +302,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       }
     }
 
-    if (date) {
+    if (date && dayInCurrentMonth) {
       return (
         <div className={classnames({
           [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
