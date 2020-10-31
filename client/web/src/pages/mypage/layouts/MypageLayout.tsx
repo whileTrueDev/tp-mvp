@@ -7,7 +7,6 @@ import useLayoutStyles from './MypageLayout.style';
 // organisms
 import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
-import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
 import AppBar from '../../../organisms/shared/Appbar';
 import PageSizeAlert from '../../../organisms/mypage/alertbar/PageSizeAlert';
 
@@ -54,7 +53,6 @@ const UserDashboard = (): JSX.Element => {
         <div className={classes.conatiner}>
 
           {/* 마이페이지 좌측 사이드바 */}
-          <aside className={classes.sidebarPlaceholder} />
           <aside className={classes.sidebarWrapper}>
             <TestSidebar routes={routes.filter((r) => !r.noTab)} />
           </aside>
@@ -83,8 +81,8 @@ const UserDashboard = (): JSX.Element => {
 
             </Switch>
           </main>
+
         </div>
-        <MypageFooter />
       </div>
     </>
   );

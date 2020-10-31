@@ -20,20 +20,17 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     boxShadow: theme.shadows[4],
     backgroundColor: theme.palette.background.default,
   },
-  sidebarPlaceholder: {
-    minWidth: SIDE_BAR_WIDTH,
-    backgroundColor: theme.palette.background.paper,
-    borderRight: `1px solid ${theme.palette.divider}`,
-    top: 0,
-  },
   sidebarWrapper: {
     position: 'fixed',
-    overflowY: 'auto',
+    height: '100%',
     width: SIDE_BAR_WIDTH,
-    marginTop: COMMON_APP_BAR_HEIGHT + MYPAGE_APP_BAR_HEIGHT,
+    marginTop: MYPAGE_APP_BAR_HEIGHT,
     backgroundColor: theme.palette.background.paper,
     borderRight: `1px solid ${theme.palette.divider}`,
-    top: 0,
+    overflow: 'hidden',
+    '&:hover': {
+      overflowY: 'auto',
+    },
   },
   appbarWrapper: {
     height: MYPAGE_APP_BAR_HEIGHT,
@@ -42,6 +39,7 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     zIndex: 9999,
   },
   mainPanel: {
+    marginLeft: 230,
     marginTop: MYPAGE_APP_BAR_HEIGHT,
     width: '100%',
     overflow: 'auto',

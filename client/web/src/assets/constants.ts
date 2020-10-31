@@ -19,5 +19,5 @@ export const MYPAGE_MAIN_MAX_WIDTH = 1816;
 // 마이페이지 - 메인영역 최소 너비
 export const MYPAGE_MAIN_MIN_WIDTH = 1400;
 // 마이페이지 - 메인영역 최소 높이
-export const MYPAGE_MAIN_MIN_HEIGHT = 1094;
+export const MYPAGE_MAIN_MIN_HEIGHT = `calc(100vh - ${COMMON_APP_BAR_HEIGHT}px)`;
 // *****************************************
