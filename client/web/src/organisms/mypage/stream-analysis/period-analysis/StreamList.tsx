@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   selectedListItem: {
-
+    fontFamily: 'SourceSansPro',
   },
   listItemText: {
     fontFamily: 'SourceSansPro',
