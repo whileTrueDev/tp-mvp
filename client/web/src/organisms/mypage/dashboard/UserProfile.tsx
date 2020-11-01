@@ -32,9 +32,9 @@ export default function UserProfile(): JSX.Element {
             {/* <Typography component="span">님</Typography> */}
           </Typography>
 
-          <img className={classes.platformLogo} src="/images/logo/twitchLogo.png" alt="" />
-          <img className={classes.platformLogo} src="/images/logo/youtubeLogo.png" alt="" />
-          <img className={classes.platformLogo} src="/images/logo/afreecatvLogo.png" alt="" />
+          <img className={classes.platformLogo} src="/images/logo/afreecaLogo.png" alt="" draggable={false} />
+          <img className={classes.platformLogo} src="/images/logo/twitchLogo.png" alt="" draggable={false} />
+          <img className={classes.platformLogo} src="/images/logo/youtubeLogo.png" alt="" draggable={false} />
         </div>
 
         {/* 요금제 */}

@@ -3,7 +3,7 @@ import useAxios from 'axios-hooks';
 import MypageSectionWrapper from '../../atoms/MypageSectionWrapper';
 import SimpleNoticeTable from '../../organisms/mypage/dashboard/SimpleNoticeTable';
 import UserProfile from '../../organisms/mypage/dashboard/UserProfile';
-// import UserMetricsSection from '../../organisms/mypage/dashboard/UserMetricsSection';
+import UserMetricsSection from '../../organisms/mypage/dashboard/UserMetricsSection';
 
 export default function Dashboard(): JSX.Element {
   // Notice data
@@ -19,7 +19,11 @@ export default function Dashboard(): JSX.Element {
         <UserProfile />
       </MypageSectionWrapper>
 
-      <MypageSectionWrapper>
+      <MypageSectionWrapper style={{ paddingTop: 0 }}>
+        <UserMetricsSection />
+      </MypageSectionWrapper>
+
+      <MypageSectionWrapper style={{ paddingTop: 0 }}>
         <SimpleNoticeTable data={!loading && data ? data : []} />
       </MypageSectionWrapper>
     </>
