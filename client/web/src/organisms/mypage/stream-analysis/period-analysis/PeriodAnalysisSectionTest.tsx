@@ -13,7 +13,7 @@ import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 // import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 // import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
 // subcomponent
-import RangeSelectCalendar from './RangeSelectCalendar';
+import RangeSelectCaledarTest from './RangeSelectCalendarTest';
 import CheckBoxGroup from './CheckBoxGroup';
 // import StreamList from './StreamList';
 // interface
@@ -21,6 +21,7 @@ import {
   DayStreamsInfo,
   PeriodAnalysisProps,
   AnaysisStreamsInfoRequest,
+  StreamsListItem,
 } from './PeriodAnalysisSection.interface';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
@@ -37,7 +38,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   } = props;
   const classes = usePeriodAnalysisHeroStyle();
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
-  const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);
+  const [termStreamsList, setTermStreamsList] = React.useState<StreamsListItem[]>([]);
   const [checkStateGroup, setCheckStateGroup] = React.useState({
     viewer: false,
     chat: false,
@@ -49,6 +50,20 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     anchorEl, handleAnchorClose, handleAnchorOpenWithRef,
   } = useAnchorEl();
   const targetRef = React.useRef<HTMLDivElement | null>(null);
+
+  const handleRemoveIconButton = (targetItem: StreamsListItem, isRemoved?: boolean) => {
+    setTermStreamsList(termStreamsList.map((item) => {
+      if (item.streamId === targetItem.streamId) {
+        const newItem = { ...item };
+
+        if (isRemoved === false) newItem.isRemoved = false;
+        else newItem.isRemoved = true;
+
+        return newItem;
+      }
+      return item;
+    }));
+  };
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -83,7 +98,10 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           endDate: period[1].toISOString(),
         },
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-        setTermStreamsList(res.data);
+        setTermStreamsList(res.data.map((data) => ({
+          ...data,
+          isRemoved: false,
+        })));
       });
     }
   }, [period, subscribe.currUser.targetUserId, excuteGetStreams]);
@@ -152,10 +170,12 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
           <PeriodSelectBox
             targetRef={targetRef}
+            period={period}
           />
 
+          {/*  기간 선택 부 - 기간 선택 달력 + popper open 로직 */}
           <div style={{ marginTop: '16px' }}>
-            <RangeSelectCalendar
+            <RangeSelectCaledarTest
               handlePeriod={handlePeriod}
               period={period}
               base
@@ -172,10 +192,14 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       {anchorEl && (
       <PeriodSelectPopper
         anchorEl={anchorEl}
+        period={period}
+        handleAnchorClose={handleAnchorClose}
+        selectedStreams={termStreamsList}
+        base
+        handleRemoveIconButton={handleRemoveIconButton}
       />
       )}
       <Grid item>
-        {/*  날짜 선택시 margin이 달라지는 오류가 발생 */}
         <Typography className={classes.mainBody} style={{ marginTop: '70px' }}>
           확인할 데이터 선택
         </Typography>

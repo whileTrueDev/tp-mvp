@@ -57,11 +57,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export interface PeriodSelectBoxProps {
   targetRef: React.MutableRefObject<HTMLDivElement | null>;
+  period: Date[];
 }
 
 export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Element {
   const {
-    targetRef,
+    targetRef, period,
   } = props;
   const classes = useStyles();
   const now = new Date();
@@ -83,14 +84,20 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
 
           <TextField
             className={classes.textField}
-            defaultValue={moment(now).subtract(1, 'day').format('YYYY년MM월DD일')}
+            placeholder={moment(now).subtract(1, 'day').format('YYYY년MM월DD일')}
             inputProps={{ style: { textAlign: 'center' } }}
+            value={period[0]
+              ? moment(period[0]).format('YYYY년MM월DD일')
+              : moment(now).subtract(1, 'day').format('YYYY년MM월DD일')}
           />
           <Typography>~</Typography>
           <TextField
             className={classes.textField}
-            defaultValue={moment(now).format('YYYY년MM월DD일')}
+            placeholder={moment(now).format('YYYY년MM월DD일')}
             inputProps={{ style: { textAlign: 'center' } }}
+            value={period[1]
+              ? moment(period[1]).format('YYYY년MM월DD일')
+              : moment(now).format('YYYY년MM월DD일')}
           />
 
         </div>

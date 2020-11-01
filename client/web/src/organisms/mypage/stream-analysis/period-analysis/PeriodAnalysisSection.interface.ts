@@ -33,6 +33,24 @@ export interface DayStreamsInfo{
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
 }
+
+export interface StreamsListItem {
+  streamId: string;
+  startedAt: Date;
+  creatorId: string;
+  title: string;
+  platform: 'afreeca'|'youtube'|'twitch';
+  airTime: number;
+  isRemoved: boolean;
+}
+export interface CalendarProps {
+  period: Date[];
+  // handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
+  base?: true;
+  handleSelectedDate: (newDate: Date) => void;
+  currDate: Date;
+  selectedStreams: StreamsListItem[];
+}
 export interface CombinedTimeLine {
   smileCount: number;
   chatCount: number;
