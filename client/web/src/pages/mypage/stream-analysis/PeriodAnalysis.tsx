@@ -5,7 +5,7 @@ import { AxiosError } from 'axios';
 // material - ui core
 import { Grid } from '@material-ui/core';
 // shared
-import { EachS3StreamInfo as EachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/eachS3StreamInfo.dto';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 // attoms
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
@@ -25,7 +25,7 @@ export default function PeriodAnalysis(): JSX.Element {
     '/stream-analysis/period', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
-  const handleSubmit = ({ category, params }: {category: string[]; params: EachS3StreamData[]}) => {
+  const handleSubmit = ({ category, params }: {category: string[]; params: SearchEachS3StreamData[]}) => {
     selectMetric(category);
     getRequest({
       params: {

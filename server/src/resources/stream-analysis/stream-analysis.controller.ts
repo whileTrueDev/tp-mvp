@@ -2,7 +2,7 @@ import {
   Controller, Get, ParseArrayPipe, Query, UseGuards, Inject,
 } from '@nestjs/common';
 // shared dto , interfaces
-import { EachS3StreamInfo as EachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/eachS3StreamInfo.dto';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchEachStream } from '@truepoint/shared/dist/dto/stream-analysis/searchEachStreamData.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
@@ -87,8 +87,8 @@ export class StreamAnalysisController {
   @Get('period')
   @UseGuards(JwtAuthGuard)
   getTest(
-    @Query('streams', new ParseArrayPipe({ items: EachS3StreamData }))
-      s3Request: EachS3StreamData[],
+    @Query('streams', new ParseArrayPipe({ items: SearchEachS3StreamData }))
+      s3Request: SearchEachS3StreamData[],
   ): Promise<PeriodAnalysisResType> {
     return this.streamAnalysisService.findStreamInfoByPeriod(s3Request);
   }
