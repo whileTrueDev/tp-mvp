@@ -25,12 +25,9 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
   container: {
-    paddingRight: '0px',
-    paddingLeft: '0px',
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    height: '100%',
+    margin: 0,
     padding: 0,
+    height: '100%',
   },
   title: {
     textTransform: 'none',
@@ -46,7 +43,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
   rightGridIcon: {
     fontSize: '32px',
   },
-  useNameButton: {
+  userNameButton: {
     padding: 0,
     height: '100%',
     marginLeft: theme.spacing(8),
@@ -75,7 +72,7 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
   userListWrapper: {
     display: 'flex',
     flex: 1,
-    marginLeft: theme.spacing(6),
+    marginLeft: theme.spacing(8),
   },
   headerLinkWrapper: {
     paddingRight: theme.spacing(4),

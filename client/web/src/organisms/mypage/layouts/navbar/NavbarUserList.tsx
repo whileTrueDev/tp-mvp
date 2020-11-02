@@ -157,7 +157,7 @@ export default function NavbarUserList(): JSX.Element {
         open={tooltipOpen}
         arrow
       >
-        <Button onClick={handleClick} className={classes.useNameButton}>
+        <Button onClick={handleClick} className={classes.userNameButton}>
           <Typography variant="h4" className={classes.title}>
             {subscribe.currUser.targetUserId}
           </Typography>
