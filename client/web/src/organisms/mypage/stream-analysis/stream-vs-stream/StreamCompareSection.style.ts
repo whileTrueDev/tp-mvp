@@ -4,12 +4,6 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   root: {
     marginTop: theme.spacing(4),
   },
-  titleDivider: {
-    backgroundColor: theme.palette.primary.main,
-    width: '200px',
-    marginBottom: '12px',
-    height: '3px',
-  },
   mainTitle: {
     color: theme.palette.text.primary,
     letterSpacing: '-1.2px',

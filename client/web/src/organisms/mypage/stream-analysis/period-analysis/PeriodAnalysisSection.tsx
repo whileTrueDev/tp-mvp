@@ -4,7 +4,6 @@ import {
   Paper,
   Typography,
   Grid,
-  Divider,
   Button,
   Collapse,
 } from '@material-ui/core';
@@ -36,6 +35,7 @@ import Loading from '../../../shared/sub/Loading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+import SectionTitle from '../../../shared/sub/SectionTitles';
 
 export default function PeriodAnalysisSection(
   props: PeriodAnalysisProps,
@@ -181,10 +181,9 @@ export default function PeriodAnalysisSection(
           <Loading clickOpen={loading} lodingTime={10000} />
         )}
 
-        <Divider className={classes.titleDivider} />
         <Grid container direction="column">
           <Grid item>
-            <Typography className={classes.mainTitle}>기간 추세분석</Typography>
+            <SectionTitle mainTitle="기간 추세 분석" />
             <Typography className={classes.mainBody}>
               추세 분석을 위한 기간 설정
             </Typography>
