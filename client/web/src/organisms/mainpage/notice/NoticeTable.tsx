@@ -39,10 +39,12 @@ const useStyles = makeStyles((theme) => ({
 export interface NoticeTableProps<T> {
   data: T[];
   onRowClick: (num: number) => void;
+  noticeTabSwitch: (value: string | undefined) => JSX.Element;
 }
 export default function NoticeTable<T extends NoticeData>({
   data,
   onRowClick,
+  noticeTabSwitch,
 }: NoticeTableProps<T>): JSX.Element {
   const classes = useStyles();
 
@@ -100,7 +102,7 @@ export default function NoticeTable<T extends NoticeData>({
                     <Typography>{row.isImportant ? '중요공지' : row.id}</Typography>
                   </TableCell>
                   <TableCell align="center">
-                    <Typography>{row.category}</Typography>
+                    <Typography>{noticeTabSwitch(row.category)}</Typography>
                   </TableCell>
                   <TableCell>
                     <Typography
