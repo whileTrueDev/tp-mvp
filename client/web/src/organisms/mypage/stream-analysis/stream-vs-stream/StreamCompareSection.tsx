@@ -1,11 +1,7 @@
 import React, { useEffect } from 'react';
 // material-ui core components
 import {
-  Paper,
-  Typography,
-  Grid,
-  Button,
-  Collapse,
+  Typography, Grid, Button, Collapse,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 // shared dtos , interfaces
@@ -151,37 +147,51 @@ export default function StreamCompareSection(
         <Loading clickOpen={loading} lodingTime={10000} />
       )}
 
-      <Grid container direction="column">
+      <Grid container direction="column" spacing={2}>
         <Grid item>
           <SectionTitle mainTitle="방송별 비교" />
           <Typography className={classes.mainBody}>
             두 방송을 선택하시면 방송 비교 분석을 시작합니다.
           </Typography>
         </Grid>
-        <Grid
-          item
-          container
-          style={{ marginBottom: '5px' }}
-          direction="row"
-          alignItems="flex-end"
-        >
-          <Paper elevation={0} className={classes.bodyPapper}>
-            <Typography className={classes.subTitle}>
-              <SelectDateIcon
-                style={{ fontSize: '32.5px', marginRight: '26px' }}
-              />
-              날짜 선택
-            </Typography>
-          </Paper>
-          <Collapse
-            in={fullMessageOpen}
-            style={{ height: 'auto', marginLeft: '20px' }}
-          >
+
+        {/* 선택된 방송 목록 */}
+        <Grid item xs container alignItems="center">
+          {/* 리스트 클릭시 base , compare 방송 정보 카드 렌더링 */}
+          <Grid item>
+            <StreamCard
+              stream={baseStream}
+              handleSeletedStreams={handleSeletedStreams}
+              platformIcon={platformIcon}
+              base
+            />
+          </Grid>
+
+          <Grid item>
+            <Typography variant="h6">VS</Typography>
+          </Grid>
+
+          <Grid item>
+            <StreamCard
+              stream={compareStream}
+              handleSeletedStreams={handleSeletedStreams}
+              platformIcon={platformIcon}
+            />
+          </Grid>
+        </Grid>
+
+        {/* 오류 alert  */}
+        {fullMessageOpen && (
+        <Grid item xs={6}>
+          <Collapse in={fullMessageOpen}>
             <Alert severity="error" className={classes.alert}>
               x 표시를 눌러 삭제후 추가해주세요
             </Alert>
           </Collapse>
         </Grid>
+        )}
+
+        {/* 달력 선택 */}
         <Grid item container direction="row" xs={12}>
           <Grid className={classes.bodyWrapper} container xs={8} item>
             <Grid item xs style={{ width: '310px' }}>
@@ -218,30 +228,6 @@ export default function StreamCompareSection(
                 handleFullMessage={handleFullMessage}
                 platformIcon={platformIcon}
               />
-            </Grid>
-          </Grid>
-
-          <Grid item xs container direction="column">
-            {/* 리스트 클릭시 base , compare 방송 정보 카드 렌더링 */}
-            <Grid item style={{ marginBottom: '27px' }}>
-              {baseStream && (
-                <StreamCard
-                  stream={baseStream}
-                  handleSeletedStreams={handleSeletedStreams}
-                  platformIcon={platformIcon}
-                  base
-                />
-              )}
-            </Grid>
-
-            <Grid item style={{ marginBottom: '0px' }}>
-              {compareStream && (
-                <StreamCard
-                  stream={compareStream}
-                  handleSeletedStreams={handleSeletedStreams}
-                  platformIcon={platformIcon}
-                />
-              )}
             </Grid>
           </Grid>
         </Grid>

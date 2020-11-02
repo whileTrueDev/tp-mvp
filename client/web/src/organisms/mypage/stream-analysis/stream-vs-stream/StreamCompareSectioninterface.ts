@@ -21,7 +21,7 @@ export interface StreamListProps {
 }
 
 export interface StreamCardProps {
-  stream: DayStreamsInfo;
+  stream: DayStreamsInfo | null;
   base? : true|null;
   platformIcon: (stream: DayStreamsInfo) => JSX.Element;
   handleSeletedStreams: (newStreams: DayStreamsInfo|null, base?: true | undefined) => void
