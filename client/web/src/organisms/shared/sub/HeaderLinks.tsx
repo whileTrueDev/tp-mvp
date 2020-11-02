@@ -1,25 +1,20 @@
 import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 // @material-ui/core components
 import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
 import Badge from '@material-ui/core/Badge';
-import Hidden from '@material-ui/core/Hidden';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 // @material-ui/icons
 import Notifications from '@material-ui/icons/Notifications';
-import Home from '@material-ui/icons/Home';
 // axios-hooks
 import useAxios from 'axios-hooks';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 // notificaiton list component
 import NotificationPopper from './NotificationPopper';
-// style
 // attoms
 import ErrorSnackBar from '../../../atoms/snackbar/ErrorSnackBar';
-import { MypageRoute as MypageRouteType } from '../../../pages/mypage/routes';
 // context
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import UserMenuPopover from './UserMenuPopover';
@@ -41,16 +36,12 @@ export interface Notification {
   dateform: string;
   readState: boolean;
 }
-interface HeaderLinksProps {
-  routes: MypageRouteType[];
-}
 export interface FatalError {
   helperText: string;
   isError: boolean;
 }
 
-function HeaderLinks(props: HeaderLinksProps): JSX.Element {
-  const { routes } = props;
+function HeaderLinks(): JSX.Element {
   const notificationRef = useRef<HTMLButtonElement | null>(null);
   const [innerError, setInnerError] = React.useState<FatalError>({
     isError: false,
@@ -64,15 +55,6 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   const {
     anchorEl, handleAnchorOpen, handleAnchorClose,
   } = useAnchorEl();
-  const [UserMenuAnchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(UserMenuAnchorEl ? null : event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const UserMenuOpen = Boolean(UserMenuAnchorEl);
 
   // 개인 알림 - GET Request
   const [{ data: getData, loading: getLoading, error: getError }, executeGet] = useAxios<Notification[]>({
@@ -81,7 +63,6 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
-
   const handleError = (newError: FatalError): void => {
     setInnerError({
       isError: newError.isError,
@@ -117,6 +98,18 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
     }
   }, [changeReadState, executeGet, auth.user.userId]);
 
+  // ******************************************************************
+  // 유저 로고 버튼 및 메뉴
+  const [UserMenuAnchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(UserMenuAnchorEl ? null : event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const UserMenuOpen = Boolean(UserMenuAnchorEl);
+  // ******************************************************************
+
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
       {innerError.isError
@@ -130,21 +123,13 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         />
         )}
 
-      <IconButton onClick={handleClick}>
-        <Avatar style={{ height: '32px', width: '32px' }} />
-      </IconButton>
-
       <Tooltip title="알림">
         <IconButton
           style={{ color: 'white' }}
           aria-label="notifications"
           ref={notificationRef}
           onClick={(e): void => {
-            if (anchorEl) {
-              handleAnchorClose();
-            } else {
-              handleAnchorOpen(e);
-            }
+            handleAnchorOpen(e);
           }}
         >
           <Badge
@@ -162,18 +147,9 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         </IconButton>
       </Tooltip>
 
-      <Hidden smDown>
-        <Tooltip title="홈으로 이동">
-          <IconButton
-            style={{ color: 'white' }}
-            aria-label="to-home"
-            to={routes[0].layout + routes[0].path}
-            component={Link}
-          >
-            <Home className={classes.rightGridIcon} />
-          </IconButton>
-        </Tooltip>
-      </Hidden>
+      <IconButton onClick={handleClick}>
+        <Avatar style={{ height: '32px', width: '32px' }} />
+      </IconButton>
 
       {anchorEl && !getLoading && getData && !getError && (
       <NotificationPopper
@@ -181,10 +157,10 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         notificationData={getData}
         setChangeReadState={setChangeReadState}
         handleError={handleError}
+        onClose={handleAnchorClose}
       />
       )}
       <UserMenuPopover
-        disableScrollLock
         open={UserMenuOpen}
         anchorEl={UserMenuAnchorEl}
         onClose={handleClose}

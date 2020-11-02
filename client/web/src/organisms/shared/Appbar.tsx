@@ -12,7 +12,6 @@ import { MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_WIDTH } from '../../assets/const
 import THEME_TYPE from '../../interfaces/ThemeType';
 
 // type
-import routes from '../../pages/mypage/routes';
 import HeaderLinks from './sub/HeaderLinks';
 
 const APPBAR_HEIGHT = 100;
@@ -89,7 +88,7 @@ export default function AppBar(): JSX.Element {
 
             {authContext.user.userId ? (
               <div className={classes.userInterfaceWrapper}>
-                <HeaderLinks routes={routes} />
+                <HeaderLinks />
               </div>
             ) : (
               <Button
