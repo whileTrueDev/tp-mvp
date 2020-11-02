@@ -2,9 +2,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   root: {
-    flexGrow: 1,
     marginTop: theme.spacing(4),
-    height: '700px',
   },
   titleDivider: {
     backgroundColor: theme.palette.primary.main,
