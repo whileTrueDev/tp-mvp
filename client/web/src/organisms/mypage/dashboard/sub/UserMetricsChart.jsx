@@ -1,5 +1,6 @@
 /* Imports */
 import React, { useLayoutEffect } from 'react';
+import useTheme from '@material-ui/core/styles/useTheme';
 import PropTypes from 'prop-types';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import am4langKoKr from '@amcharts/amcharts4/lang/ko_KR';
@@ -16,8 +17,11 @@ const capitalize = (s) => {
 };
 
 export default function UserMetricsChart({
-  data, selectedPlatform, valueField = 'viewer',
+  data, selectedPlatform, valueField = 'viewer', height = 400,
 }) {
+  // use material theme
+  const theme = useTheme();
+
   let unit = '명';
   switch (valueField) {
     case 'chatCount': unit = '개';
@@ -32,7 +36,10 @@ export default function UserMetricsChart({
   }
 
   useLayoutEffect(() => {
+    // 차트
     const chart = am4core.create('chartdiv', am4charts.XYChart);
+    chart.height = am4core.percent(100);
+    chart.responsive.enabled = true;
 
     // some extra padding for range labels
     chart.paddingBottom = 50;
@@ -50,9 +57,8 @@ export default function UserMetricsChart({
     categoryAxis.adapter.add('tooltipText', () => `${new Date(categoryAxis.tooltipDataItem.dataContext.startedAt).toLocaleDateString()}
     ${new Date(categoryAxis.tooltipDataItem.dataContext.startedAt).toLocaleTimeString()}`);
     if (categoryAxis.tooltip) {
-      categoryAxis.tooltip.background.opacity = 0.2;
+      categoryAxis.tooltip.background.opacity = 1;
     }
-
     const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
     if (valueAxis.tooltip) {
       valueAxis.tooltip.disabled = true;
@@ -61,7 +67,7 @@ export default function UserMetricsChart({
 
     function createLineSeries(field, color) {
       const lineSeries = chart.series.push(new am4charts.LineSeries());
-      // lineSeries.name = field;
+      lineSeries.name = field;
       lineSeries.tooltipText = `${capitalize(field)}: {valueY}${unit}[/]\n{realName}\n{title}`;
       lineSeries.tooltip.background.zIndex = 1;
       lineSeries.dataFields.categoryX = 'category';
@@ -71,7 +77,8 @@ export default function UserMetricsChart({
       lineSeries.stroke = am4core.color(color);
       lineSeries.strokeWidth = 2;
       lineSeries.snapTooltip = true;
-      lineSeries.tensionX = 0.8;
+      lineSeries.tensionX = 0.9;
+      lineSeries.tensionY = 0.9;
 
       // when data validated, adjust location of data item based on count
       // lineSeries.events.on('datavalidated', () => {
@@ -98,9 +105,6 @@ export default function UserMetricsChart({
     rangeTemplate.tick.strokeOpacity = 0.6;
     rangeTemplate.tick.length = 40;
     rangeTemplate.grid.strokeOpacity = 0.5;
-    rangeTemplate.label.tooltip = new am4core.Tooltip();
-    rangeTemplate.label.tooltip.dy = -10;
-    rangeTemplate.label.cloneTooltip = false;
 
     /// // DATA
     const chartData = [];
@@ -125,17 +129,20 @@ export default function UserMetricsChart({
               const alreadyPushedIndex = tempArray.findIndex((d) => date === d.date);
               if (alreadyPushedIndex > -1) {
               // 배열에 이미 동일한 날의 한개이상의 데이터가 있는 경우
-                if (!tempArray[alreadyPushedIndex].youtube) {
+                if (!tempArray[alreadyPushedIndex][itemName]) {
                   tempArray[alreadyPushedIndex] = {
                     ...tempArray[alreadyPushedIndex],
+                    realName: new Date(item.startedAt).toLocaleTimeString(),
                     [itemName]: item.value,
+                    title: item.title,
                   };
                 } else {
-                  // 그 안에 해당 플랫폼 데이터가 있는 경우
+                  // 그 안에 해당 플랫폼 데이터가 있는 경우
                   tempArray.push({
                     category: `${date}_${index}`,
                     realName: new Date(item.startedAt).toLocaleTimeString(),
                     [itemName]: item.value,
+                    title: item.title,
                     date,
                     startedAt: item.startedAt,
                   });
@@ -145,6 +152,7 @@ export default function UserMetricsChart({
                   category: `${date}_${index}`,
                   realName: new Date(item.startedAt).toLocaleTimeString(),
                   [itemName]: item.value,
+                  title: item.title,
                   date,
                   startedAt: item.startedAt,
                 });
@@ -157,6 +165,7 @@ export default function UserMetricsChart({
             tempArray[alreadyPushedIndex] = {
               ...tempArray[alreadyPushedIndex],
               [itemName]: providerData[itemName].value,
+              title: providerData[itemName].title,
             };
           } else {
             count += 1;
@@ -164,6 +173,7 @@ export default function UserMetricsChart({
               category: `${date}_${0}`,
               realName: new Date(providerData[itemName].startedAt).toLocaleTimeString(),
               [itemName]: providerData[itemName].value,
+              title: providerData[itemName].title,
               date,
               startedAt: providerData[itemName].startedAt,
             });
@@ -212,18 +222,32 @@ export default function UserMetricsChart({
     range.tick.location = 1;
     range.grid.location = 1;
 
+    categoryAxis.renderer.grid.template.stroke = am4core.color(theme.palette.text.secondary);
+    valueAxis.renderer.grid.template.stroke = am4core.color(theme.palette.text.secondary);
+    rangeTemplate.tick.stroke = am4core.color(theme.palette.text.secondary);
+    range.tick.stroke = am4core.color(theme.palette.text.secondary);
+    // 테마에 따라 글자색 변경 - x축
+    categoryAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.primary);
+    // 테마에 따라 글자색 변경 - y축
+    valueAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.primary);
+
     return () => {
       chart.dispose();
     };
-  }, [data, valueField, selectedPlatform, unit]);
+  }, [data, valueField, selectedPlatform, unit, theme]);
 
   return (
-    <div id="chartdiv" style={{ width: '100%', height: '300px' }} />
+    <div id="chartdiv" style={{ width: '100%', height }} />
   );
 }
+
+UserMetricsChart.defaultProps = {
+  height: 400,
+};
 
 UserMetricsChart.propTypes = {
   data: PropTypes.any,
   selectedPlatform: PropTypes.arrayOf(PropTypes.string),
   valueField: PropTypes.string,
+  height: PropTypes.number,
 };

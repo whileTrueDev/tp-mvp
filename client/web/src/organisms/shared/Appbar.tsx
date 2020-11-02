@@ -8,10 +8,10 @@ import Button from '@material-ui/core/Button';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';
 import useAuthContext from '../../utils/hooks/useAuthContext';
+import { MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_WIDTH } from '../../assets/constants';
 import THEME_TYPE from '../../interfaces/ThemeType';
 
 // type
-import routes from '../../pages/mypage/routes';
 import HeaderLinks from './sub/HeaderLinks';
 
 const APPBAR_HEIGHT = 100;
@@ -27,11 +27,13 @@ const useStyles = makeStyles((theme) => createStyles({
   container: {
     display: 'block',
     position: 'sticky',
-    width: 1400,
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
     height: APPBAR_HEIGHT,
     margin: '0 auto',
     boxShadow: 'none',
-    padding: `${theme.spacing(2)}px 0px`,
+    padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
+    borderBottom: 'none',
   },
   toolbar: {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%',
@@ -86,7 +88,7 @@ export default function AppBar(): JSX.Element {
 
             {authContext.user.userId ? (
               <div className={classes.userInterfaceWrapper}>
-                <HeaderLinks routes={routes} />
+                <HeaderLinks />
               </div>
             ) : (
               <Button
