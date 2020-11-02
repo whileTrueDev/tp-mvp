@@ -8,14 +8,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 // types
 import useAxios from 'axios-hooks';
 // context
-import AuthContext from '../../../../utils/contexts/AuthContext';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 export interface Notification {
   index: number;
   title: string;
   content: string;
   dateform: string;
-  readState: number;
+  readState: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const UNREAD_STATE = 0; // 읽지않음 상태값
+const UNREAD_STATE = false; // 읽지않음 상태값
 
 function NotificationPopper({
   anchorEl,
@@ -53,13 +53,11 @@ function NotificationPopper({
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const classes = useStyles();
-  const auth = React.useContext(AuthContext);
+  const auth = useAuthContext();
   const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
     url: '/notification',
     method: 'patch',
-  }, {
-    manual: true,
-  });
+  }, { manual: true });
 
   const handleNotificationListItemClick = (notification: Notification) => {
     if (notification.readState === UNREAD_STATE) {
@@ -69,6 +67,7 @@ function NotificationPopper({
           index: notification.index,
         },
       });
+      // snack bar 일감 이후 snack bar 삽입
 
       if (!patchError && !patchLoading) setChangeReadState(true);
     }
