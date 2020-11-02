@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   base: { marginRight: theme.spacing(2) },
   compare: { marginLeft: theme.spacing(2) },
+  baseIcon: { color: theme.palette.primary.dark },
+  compareIcon: { color: theme.palette.secondary.main },
+  baseBeforeIcon: { color: theme.palette.primary.light },
+  compareBeforeIcon: { color: theme.palette.secondary.light },
   dotted: {
     borderColor: theme.palette.action.selected,
     borderStyle: 'dashed',
@@ -69,7 +73,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
         >
           <div className={classes.titleContainer}>
             <div className={classes.title}>
-              <VideocamIcon color={base ? 'primary' : 'secondary'} fontSize="large" />
+              <VideocamIcon className={base ? classes.baseBeforeIcon : classes.compareBeforeIcon} fontSize="large" />
               <Typography variant="h6" color="textSecondary" className={classes.titleText}>
                 {base ? '기준 방송' : '비교 방송'}
               </Typography>
@@ -91,7 +95,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
           {/* 타이틀 */}
           <div className={classes.titleContainer}>
             <div className={classes.title}>
-              <VideocamIcon color={base ? 'primary' : 'secondary'} fontSize="large" />
+              <VideocamIcon className={base ? classes.baseIcon : classes.compareIcon} fontSize="large" />
               <Typography variant="h6" className={classes.titleText}>
                 {base ? '기준 방송' : '비교 방송'}
               </Typography>

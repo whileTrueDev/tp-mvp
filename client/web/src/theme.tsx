@@ -18,21 +18,28 @@ const rawTheme: ThemeOptions = {
       contrastText: '#fff',
     },
     secondary: {
-      light: lighten('#79e2e0', 0.1),
+      light: lighten('#79e2e0', 0.5),
       main: '#79e2e0',
-      dark: darken('#79e2e0', 0.1),
+      dark: darken('#79e2e0', 0.2),
       contrastText: '#fff',
     },
+    // 파랑 계열 색상
     info: {
       light: '#9AA2C5',
       main: blueGrey[400],
       dark: blueGrey[600],
     },
+    // 초록 계열 색상
     success: {
       light: '#f0a9b3',
       main: '#ff3e7a',
       contrastText: '#fff',
     },
+    // // 레드 계열 색상
+    // error : { },
+    // // 주황 계열 색상
+    // warn : { },
+    // }
   },
   typography: {
     fontFamily: '-apple-system, BlinkMacSystemFont, "AppleSDGothicNeo", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
