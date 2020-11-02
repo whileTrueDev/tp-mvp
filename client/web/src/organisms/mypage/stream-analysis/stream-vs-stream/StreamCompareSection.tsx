@@ -147,7 +147,7 @@ export default function StreamCompareSection(
         <Loading clickOpen={loading} lodingTime={10000} />
       )}
 
-      <Grid container direction="column">
+      <Grid container direction="column" spacing={2}>
         <Grid item>
           <SectionTitle mainTitle="방송별 비교" />
           <Typography className={classes.mainBody}>
