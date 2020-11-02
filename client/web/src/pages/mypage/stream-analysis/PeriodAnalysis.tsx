@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
 import { AxiosError } from 'axios';
 // material - ui core
-import { Grid } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 // shared
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
@@ -15,7 +15,7 @@ import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 // contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
-import PeriodAnalysisSectionTest from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSectionTest';
+import PeriodAnalysisSectionTest from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 // AnalysisSection components
 // import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 
@@ -48,7 +48,7 @@ export default function PeriodAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ minHeight: '3000px' }}>
-        <Grid item>
+        <Paper elevation={1} style={{ padding: '40px', marginRight: '48px' }}>
           {/* 상단 섹션 */}
           <PeriodAnalysisSectionTest
             error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
@@ -56,7 +56,7 @@ export default function PeriodAnalysis(): JSX.Element {
             handleSubmit={handleSubmit}
             // handleGraphOpen={handleGraphOpen}
           />
-        </Grid>
+        </Paper>
         <Grid item>
           {open && data
           && (

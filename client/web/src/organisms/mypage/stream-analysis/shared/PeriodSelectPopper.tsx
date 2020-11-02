@@ -2,14 +2,16 @@ import React from 'react';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Typography, Popper, Box, Grid, IconButton, Divider,
+  Typography, Popper, Box, Grid, IconButton, Divider, Button,
 } from '@material-ui/core';
-
+// material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
+// shared sub components
 import Calendar from './Calendar';
 import PeriodStreamsList from './PeriodStreamsList';
-import { StreamsListItem } from './PeriodAnalysisSection.interface';
-// material-ui icons
+// interfaces
+import { PeriodSelectPopperProps } from './StreamAnalysisShared.interface';
+
 const useStyles = makeStyles((theme: Theme) => ({
   popper: {
     marginTop: theme.spacing(2),
@@ -43,6 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginTop: theme.spacing(2),
+    width: '100%',
   },
   divider: {
     marginTop: theme.spacing(2),
@@ -50,23 +53,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface PeriodSelectPopperProps {
-  anchorEl: HTMLElement;
-  period: Date[];
-  base?: true;
-  selectedStreams: StreamsListItem[];
-  handleAnchorClose: () => void;
-  // handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
-  handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
-}
-
 export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.Element {
   const {
     anchorEl, period, base, handleAnchorClose, selectedStreams, handleStreamList,
   } = props;
   const classes = useStyles();
 
-  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date(
+    (period[0].getTime() + period[1].getTime()) / 2,
+  ));
 
   const handleSelectedDate = (newDate: Date) => {
     setSelectedDate(newDate);
@@ -119,7 +114,7 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
             selectedStreams={selectedStreams}
           />
           {/* 클릭된 날짜의 방송 리스트 */}
-          <div style={{ marginLeft: '16px' }}>
+          <div style={{ marginLeft: '16px', marginRight: '16px', width: '100%' }}>
             <PeriodStreamsList
               selectedStreams={selectedStreams}
               selectedDate={selectedDate}
@@ -153,6 +148,15 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
             selectedStreams={selectedStreams.filter((streamItem) => streamItem.isRemoved === true)}
           />
         </Grid>
+
+        <Button
+          variant="contained"
+          color="secondary"
+          style={{ alignSelf: 'flex-end', marginTop: '16px', color: 'white' }}
+          onClick={handleAnchorClose}
+        >
+          완료
+        </Button>
 
       </Box>
     </Popper>

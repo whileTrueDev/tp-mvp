@@ -21,6 +21,14 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     marginBottom: '28px',
   },
+  infoText: {
+    color: theme.palette.text.secondary,
+    fontFamily: 'AppleSDGothicNeo',
+    fontSize: '12px',
+    lineHeight: '1.11',
+    textAlign: 'right',
+    marginRight: '110px',
+  },
   mainBody: {
     color: theme.palette.text.secondary,
     letterSpacing: 'normal',
@@ -75,10 +83,10 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     width: '136.2px',
     height: '51.1px',
     borderRadius: '6px',
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: '#4b5ac7',
     fontFamily: 'AppleSDGothicNeo',
     fontSize: '24px',
-    marginTop: '20px',
+    marginTop: theme.spacing(3),
     marginRight: '93.5px',
     color: theme.palette.common.white,
     '&:hover': {

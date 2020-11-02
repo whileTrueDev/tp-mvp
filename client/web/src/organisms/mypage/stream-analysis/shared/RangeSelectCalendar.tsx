@@ -7,6 +7,7 @@ import {
 import {
   MuiPickersUtilsProvider, DatePicker,
 } from '@material-ui/pickers';
+import moment from 'moment';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
@@ -19,12 +20,12 @@ import classnames from 'classnames';
 // shared dtos , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
-// interfaces
+// icon
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
-// import { DayStreamsInfo, RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
-import { RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
-// context 
-import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+// context
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
+// interfaces
+import { RangeSelectCaledarProps } from './StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -42,25 +43,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   leftCircleCompare: {
     width: '50%',
-    backgroundColor: '#909090',
+    backgroundColor: '#d3d19d',
   },
   rigthCircleBase: {
     background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
   },
   rigthCircleCompare: {
-    background: `linear-gradient(to left,#909090 50%, ${theme.palette.background.paper} 50%)`,
+    background: `linear-gradient(to left,#d3d19d 50%, ${theme.palette.background.paper} 50%)`,
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',
   },
   rangeDayCompare: {
-    backgroundColor: '#909090',
+    backgroundColor: '#d3d19d',
   },
   selectedDayBase: {
     backgroundColor: '#3a86ff',
   },
   selectedDayCompare: {
-    backgroundColor: '#6e6e6e',
+    backgroundColor: '#d3d19d',
   },
   hasStreamDayDotContainer: {
     position: 'relative',
@@ -70,22 +71,24 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
+    borderRadius: 5,
     borderColor: '#3a86ff',
-    right: '50%',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
+    backGroundColor: '#3a86ff',
   },
   hasStreamDayDotCompare: {
     position: 'absolute',
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
-    borderColor: '#6e6e6e',
-    right: '50%',
+    borderRadius: 5,
+    borderColor: '#b1ae71',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
+    backGroundColor: '#b1ae71',
   },
 }));
 
@@ -94,7 +97,8 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     period, handlePeriod, base, targetRef, anchorEl, handleAnchorOpenWithRef, handleAnchorClose, handleError,
   } = props;
   const classes = useStyles();
-  const subscribe = React.useContext(SubscribeContext);
+  // const subscribe = React.useContext(SubscribeContext);
+  const auth = useAuthContext();
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
@@ -108,7 +112,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: subscribe.currUser.targetUserId,
+      userId: auth.user.userId,
       startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
     };
 
@@ -126,7 +130,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         });
       }
     });
-  }, [subscribe.currUser, excuteGetStreams, currMonth, handleError]);
+  }, [auth.user, excuteGetStreams, currMonth, handleError]);
 
   React.useEffect(() => {
     if (period.length > 1) {
@@ -138,7 +142,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   React.useEffect(() => {
     setPoint1(null);
     setPoint2(null);
-  }, [subscribe.currUser]);
+  }, [auth.user]);
 
   const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined): Date => {
     if (start && prevDate) {
@@ -170,7 +174,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
       if (point1.getTime() <= newDate.getTime()) {
-        handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
+        if (point1.getTime() === newDate.getTime()) {
+          handlePeriod(timeFormatter(point1, true), timeFormatter(moment(newDate).add(1, 'days').toDate()), base);
+        } else {
+          handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
+        }
       } else {
         handlePeriod(timeFormatter(newDate), timeFormatter(point1, true), base);
       }
@@ -184,7 +192,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     if (newMonth) setCurrMonth(newMonth);
     if (newMonth) {
       const params: SearchCalendarStreams = {
-        userId: subscribe.currUser.targetUserId,
+        userId: auth.user.userId,
         startDate: newMonth.toISOString(),
       };
 
@@ -212,7 +220,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#3a86ff' : '#6e6e6e', color: 'white' } })}
+        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: 'white' } })}
     </div>
   );
 
@@ -223,7 +231,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#3a86ff' : '#6e6e6e', color: 'white' } })}
+        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: 'white' } })}
     </div>
   );
 
@@ -359,18 +367,24 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
           </Grid>
 
           <Chip
-            icon={<FormatListBulletedIcon />}
+            icon={<FormatListBulletedIcon style={{ color: 'white' }} />}
             label="제외할 방송 선택"
             clickable
             style={{
               width: '175px',
               alignSelf: 'flex-end',
+              color: 'white',
+              backgroundColor: '#aaaaaa',
             }}
             onClick={(e): void => {
               if (anchorEl) {
                 handleAnchorClose();
-              } else {
-                handleAnchorOpenWithRef(targetRef);
+              } else if (period[0] && period[1]) handleAnchorOpenWithRef(targetRef);
+              else {
+                handleError({
+                  isError: true,
+                  helperText: '기간을 선택해주세요.',
+                });
               }
             }}
           />

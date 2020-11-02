@@ -8,14 +8,14 @@ import {
 import { makeStyles, Theme } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
-// date library
-// atom svg icons
+// shared dto and interface
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+// atom svg icons
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
-// interface
-import { StreamsListItem } from './PeriodAnalysisSection.interface';
+// interfaces
+import { PeriodStreamsListProps, StreamsListItem } from './StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -84,12 +84,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 }));
-
-export interface PeriodStreamsListProps {
-  selectedStreams: (StreamsListItem)[];
-  handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
-  selectedDate?: Date;
-}
 
 export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.Element {
   const {

@@ -6,9 +6,11 @@ import {
 import {
   makeStyles, Theme, createStyles,
 } from '@material-ui/core/styles';
-
+import classnames from 'classnames';
+// date library
 import moment from 'moment';
-import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
+// interfaces
+import { PeriodSelectBoxProps } from './StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
@@ -21,9 +23,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '18px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     display: 'flex',
     alignItems: 'center',
+    fontWeight: 'bold',
     paddingTop: theme.spacing(2),
     paddingLeft: theme.spacing(2),
   },
@@ -52,16 +55,22 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     height: '110px',
     backgroundColor: theme.palette.background.paper,
   },
+  boxBorderSelected: {
+    borderRadius: 16,
+    borderColor: '#707070',
+    border: '1px solid',
+  },
+  boxBorderNotSelected: {
+    borderRadius: 16,
+    borderColor: '#707070',
+    borderStyle: 'dashed',
+    border: '2px',
+  },
 }));
-
-export interface PeriodSelectBoxProps {
-  targetRef: React.MutableRefObject<HTMLDivElement | null>;
-  period: Date[];
-}
 
 export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Element {
   const {
-    targetRef, period,
+    targetRef, period, TitleIcon, iconProps, titleMessage,
   } = props;
   const classes = useStyles();
   const now = new Date();
@@ -69,14 +78,16 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
   return (
     <div ref={targetRef}>
       <Box
-        borderRadius={16}
-        borderColor="#707070"
-        border={1}
-        className={classes.box}
+        className={classnames({
+          [classes.box]: true,
+          [classes.boxBorderSelected]: period[0] && period[1],
+          [classes.boxBorderNotSelected]: !(period[0] && period[1]),
+        })}
       >
+
         <Typography className={classes.title}>
-          <SelectDateIcon className={classes.icon} />
-          기간 선택
+          <TitleIcon className={classes.icon} style={{ ...iconProps }} />
+          {titleMessage}
         </Typography>
 
         <div className={classes.periodTextFieldWrapper}>
@@ -87,7 +98,7 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
             inputProps={{ style: { textAlign: 'center' } }}
             value={period[0]
               ? moment(period[0]).format('YYYY년MM월DD일')
-              : moment(now).subtract(1, 'day').format('YYYY년MM월DD일')}
+              : ''}
           />
           <Typography>~</Typography>
           <TextField
@@ -96,7 +107,7 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
             inputProps={{ style: { textAlign: 'center' } }}
             value={period[1]
               ? moment(period[1]).format('YYYY년MM월DD일')
-              : moment(now).format('YYYY년MM월DD일')}
+              : ''}
           />
 
         </div>

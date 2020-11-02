@@ -7,16 +7,12 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import koLocale from 'date-fns/locale/ko';
 import DateFnsUtils from '@date-io/date-fns';
-// axios
-// import useAxios from 'axios-hooks';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-// interfaces
 import moment from 'moment';
-import { CalendarProps } from './PeriodAnalysisSection.interface';
-// context 
-// import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+// interfaces
+import { CalendarProps } from './StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   leftCircleBase: {
@@ -25,25 +21,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   leftCircleCompare: {
     width: '50%',
-    backgroundColor: '#909090',
+    backgroundColor: '#d3d19d',
   },
   rigthCircleBase: {
     background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
   },
   rigthCircleCompare: {
-    background: `linear-gradient(to left,#909090 50%, ${theme.palette.background.paper} 50%)`,
+    background: `linear-gradient(to left,#d3d19d 50%, ${theme.palette.background.paper} 50%)`,
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',
   },
   rangeDayCompare: {
-    backgroundColor: '#909090',
+    backgroundColor: '#d3d19d',
   },
   selectedDayBase: {
     backgroundColor: '#d7e7ff',
   },
   selectedDayCompare: {
-    backgroundColor: '#909090',
+    backgroundColor: '#d3d19d',
   },
   hasStreamDayDotContainer: {
     position: 'relative',
@@ -53,22 +49,24 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
+    borderRadius: 5,
     borderColor: '#3a86ff',
-    right: '50%',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
+    backGroundColor: '#3a86ff',
   },
   hasStreamDayDotCompare: {
     position: 'absolute',
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
-    borderColor: '#6e6e6e',
-    right: '50%',
+    borderRadius: 5,
+    borderColor: '#b1ae71',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
+    backGroundColor: '#b1ae71',
   },
 }));
 
@@ -77,8 +75,6 @@ function Calendar(props: CalendarProps): JSX.Element {
     period, base, handleSelectedDate, currDate, selectedStreams,
   } = props;
   const classes = useStyles();
-  // const subscribe = React.useContext(SubscribeContext);
-  // const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(period[0]);
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(period[1]);
 
@@ -99,10 +95,6 @@ function Calendar(props: CalendarProps): JSX.Element {
     }
   }, [period]);
 
-  // const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-  //   url: '/stream-analysis/stream-list',
-  // }, { manual: true });
-
   /* CBT 주석 사항 - 구독한 유저 전환시 재요청 기능 */
   // React.useEffect(() => {
   //   excuteGetStreams({
@@ -121,30 +113,15 @@ function Calendar(props: CalendarProps): JSX.Element {
     if (newDate) handleSelectedDate(newDate);
   };
 
-  // const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
-  //   if (newMonth) setCurrMonth(newMonth);
-  //   // if (newMonth) {
-  //   //   excuteGetStreams({
-  //   //     params: {
-  //   //       userId: subscribe.currUser.targetUserId,
-  //   //       startDate: newMonth.toISOString(),
-  //   //     },
-  //   //   }).then((result) => {
-  //   //     setHasStreamDays(
-  //   //       result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
-  //   //     );
-  //   //   });
-  //   // }
-  // };
-
   const leftHalfCircleDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.leftCircleBase]: base,
       [classes.leftCircleCompare]: !base,
+
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#d7e7ff' : '#6e6e6e' } })}
+        { style: { backgroundColor: base ? '#d7e7ff' : '#d3d19d' } })}
     </div>
   );
 
@@ -152,10 +129,11 @@ function Calendar(props: CalendarProps): JSX.Element {
     <div className={classnames({
       [classes.rigthCircleBase]: base,
       [classes.rigthCircleCompare]: !base,
+
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#d7e7ff' : '#6e6e6e' } })}
+        { style: { backgroundColor: base ? '#d7e7ff' : '#d3d19d' } })}
     </div>
   );
 
