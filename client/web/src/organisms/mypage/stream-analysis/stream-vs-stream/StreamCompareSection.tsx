@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 // material-ui core components
 import {
-  Typography, Grid, Divider, Button, Collapse,
+  Typography, Grid, Button, Collapse,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 // shared dtos , interfaces
