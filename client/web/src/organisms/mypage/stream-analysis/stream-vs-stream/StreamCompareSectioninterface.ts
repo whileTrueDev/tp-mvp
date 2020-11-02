@@ -1,9 +1,14 @@
-export interface DayStreamsInfo{
-  streamId: string;
-  title: string;
-  platform: 'afreeca'|'youtube'|'twitch';
-  airTime: number;
-  startedAt: Date;
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
+
+export interface FatalError {
+  helperText: string;
+  isError: boolean;
+}
+export interface StreamCompareSectionPropInterface {
+  handleSubmit: (params: SearchStreamInfoByStreamId) => void;
+  loading: boolean;
+  error: FatalError | undefined;
 }
 
 export interface StreamListProps {
@@ -28,6 +33,7 @@ export interface StreamCalendarProps {
   baseStream: DayStreamsInfo|null;
   compareStream: DayStreamsInfo|null;
   setClickedDate: React.Dispatch<React.SetStateAction<Date>>;
+  handleError: (newError: FatalError) => void;
 }
 
 export interface RangeSelectCaledarProps {

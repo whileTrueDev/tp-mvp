@@ -3,18 +3,24 @@ import React, { useContext, useState } from 'react';
 import {
   Typography, Grid, Divider, Button,
 } from '@material-ui/core';
+// axios
+import useAxios from 'axios-hooks';
+// shared dtos , interfaces
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // subcomponents
 import RangeSelectCalendarWithTextfield from './RangeSelectCalendarWithTextfield';
 import CheckBoxGroup from './CheckBoxGroup';
 // styles
 import usePeriodCompareStyles from './PeriodCompareSection.style';
 // attoms
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import Loading from '../../../shared/sub/Loading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // contexterLoa
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
-// interface
-import { PeriodCompareProps } from './PeriodCompareSection.interface';
+// interfaces
+import { PeriodCompareProps, FatalError } from './PeriodCompareSection.interface';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {
@@ -29,6 +35,15 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     chat: false,
     smile: false,
   });
+  const [innerError, setInnerError] = React.useState<FatalError>({
+    isError: false,
+    helperText: '',
+  });
+
+  /* 기간 내 존재 모든 방송 리스트 요청 */
+  const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
+    url: '/stream-analysis/stream-list',
+  }, { manual: true });
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -63,28 +78,77 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
     /* 타겟 유저 아이디 + 기간 2개 요청 */
-    handleSubmit({
-      category: selectedCategory,
-      params: {
+
+    if (selectedCategory.length < 1) {
+      setInnerError({
+        isError: true,
+        helperText: '카테고리를 선택하셔야 분석을 할 수 있습니다.',
+      });
+    } else {
+      const getStreamsParams: SearchCalendarStreams = {
         userId: subscribe.currUser.targetUserId,
-        baseStartAt: basePeriod[0].toISOString(),
-        baseEndAt: basePeriod[1].toISOString(),
-        compareStartAt: comparePeriod[0].toISOString(),
-        compareEndAt: comparePeriod[1].toISOString(),
-      },
+        startDate: basePeriod[0].toISOString(),
+        endDate: basePeriod[1].toISOString(),
+      };
+      excuteGetStreams({
+        params: getStreamsParams,
+      }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
+        if (res.data.length > 0) {
+          const analysisParam: SearchStreamInfoByPeriods = {
+            userId: subscribe.currUser.targetUserId,
+            baseStartAt: basePeriod[0].toISOString(),
+            baseEndAt: basePeriod[1].toISOString(),
+            compareStartAt: comparePeriod[0].toISOString(),
+            compareEndAt: comparePeriod[1].toISOString(),
+          };
+          handleSubmit({
+            category: selectedCategory,
+            params: analysisParam,
+          });
+        } else {
+          setInnerError({
+            isError: true,
+            helperText: '기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.',
+          });
+        }
+      }).catch(() => {
+        setInnerError({
+          isError: true,
+          helperText: '분석과정에서 오류가 발생했습니다.',
+        });
+      });
+    }
+  };
+
+  const handleError = (newError: FatalError): void => {
+    setInnerError({
+      isError: newError.isError,
+      helperText: newError.helperText,
     });
   };
 
   return (
     <div className={classes.root}>
-      {loading
-        && <CenterLoading />}
-      {error
-      && (
-      <ErrorSnackBar
-        message="오류가 발생했습니다. 다시 시도해주세요."
-      />
-      )}
+      {(error?.isError || innerError.isError)
+          && (
+          <ErrorSnackBar
+            message={(() => {
+              if (error) return error.helperText;
+              if (innerError) return innerError.helperText;
+              return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
+            })()}
+            closeCallback={() => handleError({ isError: false, helperText: '' })}
+          />
+          )}
+
+      {!(error?.isError || innerError.isError)
+          && (
+          <Loading
+            clickOpen={loading}
+            lodingTime={10000}
+          />
+          )}
+
       <Divider className={classes.titleDivider} />
       <Typography className={classes.mainTitle}>
         기간 대 기간 분석
@@ -99,6 +163,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         <RangeSelectCalendarWithTextfield
           period={basePeriod}
           handlePeriod={handlePeriod}
+          handleError={handleError}
           base
         />
 
@@ -109,6 +174,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         <RangeSelectCalendarWithTextfield
           period={comparePeriod}
           handlePeriod={handlePeriod}
+          handleError={handleError}
         />
       </Grid>
       <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>

@@ -1,33 +1,27 @@
-import { AxiosError } from 'axios';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 
-export interface PeriodRequestArray {
-  streams: {
-    creatorId: string;
-    streamId: string;
-    startedAt: string;
-  }[]
+export interface FatalError {
+  helperText: string;
+  isError: boolean;
+}
+
+export interface SubmitInterface {
+  category: string[];
+  params: SearchEachS3StreamData[];
 }
 export interface PeriodAnalysisProps {
   loading: boolean;
-  error: AxiosError<any> | undefined;
-  handleSubmit: ({ category, params }: {
-    category: string[];
-    params: PeriodRequestArray;
-  }) => void;
+  error: undefined | FatalError;
+  handleSubmit: ({ category, params }: SubmitInterface
+  ) => void;
 }
 
 export interface RangeSelectCaledarProps {
   period: Date[];
   handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
-}
-export interface DayStreamsInfo{
-  streamId: string;
-  startedAt: Date;
-  creatorId: string;
-  title: string;
-  platform: 'afreeca'|'youtube'|'twitch';
-  airTime: number;
+  handleError: (newError: FatalError) => void;
 }
 export interface CombinedTimeLine {
   smileCount: number;

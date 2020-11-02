@@ -18,6 +18,11 @@ export interface Notification {
   readState: boolean;
 }
 
+export interface FatalError {
+  helperText: string;
+  isError: boolean;
+}
+
 const useStyles = makeStyles((theme: Theme) => ({
   contents: {
     color: theme.palette.text.primary,
@@ -47,10 +52,12 @@ function NotificationPopper({
   anchorEl,
   notificationData,
   setChangeReadState,
+  handleError,
 }: {
   anchorEl: HTMLElement;
   notificationData: Notification[];
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>;
+  handleError: (newError: FatalError) => void;
 }): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
@@ -66,6 +73,15 @@ function NotificationPopper({
           userId: auth.user.userId, // userId (client login user)
           index: notification.index,
         },
+      }).then(() => {
+        setChangeReadState(true);
+      }).catch((err) => {
+        if (err.response) {
+          handleError({
+            isError: true,
+            helperText: '알림을 수정하는 동안 문제가 발생했습니다.',
+          });
+        }
       });
       // snack bar 일감 이후 snack bar 삽입
 

@@ -3,13 +3,13 @@ import {
   ArrayMaxSize, IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { EachStream } from './eachStream.dto';
+import { SearchEachStream } from './searchEachStreamData.dto';
 
-export class FindStreamInfoByStreamId {
+export class SearchStreamInfoByStreamId {
   @IsArray()
   @ValidateNested({ each: true })
   @ArrayMinSize(2)
   @ArrayMaxSize(2)
-  @Type(() => EachStream)
-  streams: EachStream[];
+  @Type(() => SearchEachStream)
+  streams: SearchEachStream[];
 }
