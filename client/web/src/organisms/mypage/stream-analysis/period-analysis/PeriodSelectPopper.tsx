@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 'bold',
     fontSize: '23px',
     color: theme.palette.text.secondary,
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(4),
   },
   listWrapper: {
     display: 'flex',
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   divider: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(4),
   },
 }));
 
@@ -57,12 +57,12 @@ export interface PeriodSelectPopperProps {
   selectedStreams: StreamsListItem[];
   handleAnchorClose: () => void;
   // handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
-  handleRemoveIconButton: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
+  handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
 }
 
 export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.Element {
   const {
-    anchorEl, period, base, handleAnchorClose, selectedStreams, handleRemoveIconButton,
+    anchorEl, period, base, handleAnchorClose, selectedStreams, handleStreamList,
   } = props;
   const classes = useStyles();
 
@@ -119,11 +119,14 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
             selectedStreams={selectedStreams}
           />
           {/* 클릭된 날짜의 방송 리스트 */}
-          <PeriodStreamsList
-            selectedStreams={selectedStreams}
-            selectedDate={selectedDate}
-            handleRemoveIconButton={handleRemoveIconButton}
-          />
+          <div style={{ marginLeft: '16px' }}>
+            <PeriodStreamsList
+              selectedStreams={selectedStreams}
+              selectedDate={selectedDate}
+              handleStreamList={handleStreamList}
+            />
+          </div>
+
         </Grid>
 
         <Grid className={classes.listWrapper}>
@@ -135,7 +138,7 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
           {/* 모든 방송 리스트 */}
           <PeriodStreamsList
             selectedStreams={selectedStreams}
-            handleRemoveIconButton={handleRemoveIconButton}
+            handleStreamList={handleStreamList}
           />
         </Grid>
 
@@ -146,7 +149,7 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
           </Typography>
           {/* 제외된 방송 리스트 */}
           <PeriodStreamsList
-            handleRemoveIconButton={handleRemoveIconButton}
+            handleStreamList={handleStreamList}
             selectedStreams={selectedStreams.filter((streamItem) => streamItem.isRemoved === true)}
           />
         </Grid>

@@ -10,11 +10,12 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // date library
 // atom svg icons
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // interface
-import { DayStreamsInfo, StreamsListItem } from './PeriodAnalysisSection.interface';
+import { StreamsListItem } from './PeriodAnalysisSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -31,10 +32,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     height: 'auto',
     backgroundColor: theme.palette.primary.light,
-    // paddingLeft: '29.1px',
-    // paddingTop: '13.1px',
-    // paddingBottom: '13.9x',
-    // padding: 0,
     padding: '0px',
     borderRadius: '4px',
     '&:hover,select': {
@@ -46,9 +43,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     height: '48px',
     backgroundColor: theme.palette.background.paper,
-    // paddingLeft: '29.1px',
-    // paddingTop: '13.1px',
-    // paddingBottom: '13.9x',
     padding: '0px',
     borderRadius: '4px',
     '&:hover,select': {
@@ -77,7 +71,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(4),
   },
   closeIcon: {
-    // marginLeft: '30px',
     '&:hover,select': {
       color: 'red',
     },
@@ -92,15 +85,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface PeriodStreamsListProps {
+export interface PeriodStreamsListProps {
   selectedStreams: (StreamsListItem)[];
-  handleRemoveIconButton: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
+  handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
   selectedDate?: Date;
 }
 
 export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.Element {
   const {
-    selectedStreams, handleRemoveIconButton, selectedDate,
+    selectedStreams, handleStreamList, selectedDate,
   } = props;
   const classes = useStyles();
 
@@ -142,7 +135,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     >
       <IconButton
         className={classes.closeIcon}
-        onClick={() => handleRemoveIconButton(stream)}
+        onClick={() => handleStreamList(stream)}
       >
         <ClearOutlinedIcon />
       </IconButton>
@@ -171,7 +164,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       <Button
         variant="contained"
         className={classes.addButton}
-        onClick={() => handleRemoveIconButton(stream, false)}
+        onClick={() => handleStreamList(stream, false)}
       >
         재등록
       </Button>

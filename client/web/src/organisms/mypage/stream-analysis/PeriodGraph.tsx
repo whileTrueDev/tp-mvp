@@ -4,8 +4,9 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
+import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import TimeLineGraph from '../graph/TimeLineGraph';
-import { timelineInterface } from '../graph/graphsInterface';
+// import { timelineInterface } from '../graph/graphsInterface';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 
 const useStyles = makeStyles((theme) => ({
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PeriodAnalysis({ data, loading, selectedMetric }: {
-  data: timelineInterface; loading: boolean; selectedMetric: string[];
+  data: PeriodAnalysisResType; loading: boolean; selectedMetric: string[];
 }): JSX.Element {
   const classes = useStyles();
 

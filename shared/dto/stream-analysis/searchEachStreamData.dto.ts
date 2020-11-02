@@ -2,7 +2,7 @@ import {
   IsString, IsIn,
 } from 'class-validator';
 
-export class EachStream {
+export class SearchEachStream {
   @IsString()
   streamId: string;
 

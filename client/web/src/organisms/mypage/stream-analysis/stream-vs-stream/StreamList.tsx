@@ -6,8 +6,10 @@ import {
 } from '@material-ui/core';
 // material - ui styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
+// shared interface
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // interface
-import { StreamListProps, DayStreamsInfo } from './StreamCompareSectioninterface';
+import { StreamListProps } from './StreamCompareSectioninterface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {

@@ -8,7 +8,6 @@ import Badge from '@material-ui/core/Badge';
 import Hidden from '@material-ui/core/Hidden';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 // @material-ui/icons
 import Notifications from '@material-ui/icons/Notifications';
 import Home from '@material-ui/icons/Home';
@@ -18,8 +17,8 @@ import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 // notificaiton list component
 import NotificationPopper from './NotificationPopper';
 // style
-// import useNavbarStyles from './Navbar.style';
-// type
+// attoms
+import ErrorSnackBar from '../../../atoms/snackbar/ErrorSnackBar';
 import { MypageRoute as MypageRouteType } from '../../../pages/mypage/routes';
 // context
 import useAuthContext from '../../../utils/hooks/useAuthContext';
@@ -40,15 +39,26 @@ export interface Notification {
   title: string;
   content: string;
   dateform: string;
-  readState: number;
+  readState: boolean;
 }
 interface HeaderLinksProps {
   routes: MypageRouteType[];
+}
+export interface FatalError {
+  helperText: string;
+  isError: boolean;
 }
 
 function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   const { routes } = props;
   const notificationRef = useRef<HTMLButtonElement | null>(null);
+  const [innerError, setInnerError] = React.useState<FatalError>({
+    isError: false,
+    helperText: '',
+  });
+
+  // 개인 알림 - GET Request
+  // userId 쿠키 or 헤더 토큰에서 추출
   const classes = useStyles();
   const auth = useAuthContext();
   const {
@@ -65,26 +75,43 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
   const UserMenuOpen = Boolean(UserMenuAnchorEl);
 
   // 개인 알림 - GET Request
-  const [{ data: getData, loading: getLoading, error: getError }, executeGet] = useAxios({
+  const [{ data: getData, loading: getLoading, error: getError }, executeGet] = useAxios<Notification[]>({
     url: '/notification',
   }, { manual: true });
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
 
+  const handleError = (newError: FatalError): void => {
+    setInnerError({
+      isError: newError.isError,
+      helperText: newError.helperText,
+    });
+  };
+
   React.useEffect(() => {
     executeGet({
-      params: {
-        userId: auth.user.userId,
-      },
-    });
-    // snack bar 일감 이후 snack bar 삽입
-    if (changeReadState) {
-      executeGet({
-        params: {
-          userId: auth.user.userId,
-        },
+      params: { userId: auth.user.userId },
+    })
+      .catch((err) => {
+        if (err.response) {
+          handleError({
+            isError: true,
+            helperText: '알림을 가져오는 동안 문제가 발생했습니다.',
+          });
+        }
       });
+    if (changeReadState) {
+      executeGet({ params: { userId: auth.user.userId } })
+        .catch((err) => {
+          if (err.response) {
+            handleError({
+              isError: true,
+              helperText: '알림을 가져오는 동안 문제가 발생했습니다.',
+            });
+          }
+        });
+
       setChangeReadState(false);
       // snack bar 일감 이후 snack bar 삽입
     }
@@ -92,11 +119,18 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
 
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
-      <Typography variant="h6" style={{ alignSelf: 'center' }}>
-        {`${auth.user.userName} 님`}
-      </Typography>
-      <IconButton onClick={handleClick}>
+      {innerError.isError
+        && (
+        <ErrorSnackBar
+          message={(() => {
+            if (innerError) return innerError.helperText;
+            return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
+          })()}
+          closeCallback={() => handleError({ isError: false, helperText: '' })}
+        />
+        )}
 
+      <IconButton onClick={handleClick}>
         <Avatar style={{ height: '32px', width: '32px' }} />
       </IconButton>
 
@@ -115,7 +149,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         >
           <Badge
             badgeContent={!getLoading && getData && !getError
-              ? (getData.filter((noti: Notification) => noti.readState === 0).length)
+              ? (getData.filter((noti: Notification) => noti.readState === false).length)
               : (null)}
             color="secondary"
             anchorOrigin={{
@@ -146,6 +180,7 @@ function HeaderLinks(props: HeaderLinksProps): JSX.Element {
         anchorEl={anchorEl}
         notificationData={getData}
         setChangeReadState={setChangeReadState}
+        handleError={handleError}
       />
       )}
       <UserMenuPopover

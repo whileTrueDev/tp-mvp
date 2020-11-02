@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
     width: '474px',
     height: '110px',
-
   },
   title: {
     color: theme.palette.text.secondary,

@@ -8,6 +8,9 @@ import {
 // axios
 import useAxios from 'axios-hooks';
 // styles
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 // custom svg icon
 // import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
@@ -18,13 +21,12 @@ import CheckBoxGroup from './CheckBoxGroup';
 // import StreamList from './StreamList';
 // interface
 import {
-  DayStreamsInfo,
   PeriodAnalysisProps,
-  AnaysisStreamsInfoRequest,
   StreamsListItem,
+  FatalError,
 } from './PeriodAnalysisSection.interface';
 // attoms
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import Loading from '../../../shared/sub/Loading';
 import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
@@ -45,13 +47,17 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     smile: false,
     // searchKeyWord: string,
   });
+  const [innerError, setInnerError] = React.useState<FatalError>({
+    isError: false,
+    helperText: '',
+  });
   const subscribe = React.useContext(SubscribeContext);
   const {
     anchorEl, handleAnchorClose, handleAnchorOpenWithRef,
   } = useAnchorEl();
   const targetRef = React.useRef<HTMLDivElement | null>(null);
 
-  const handleRemoveIconButton = (targetItem: StreamsListItem, isRemoved?: boolean) => {
+  const handleStreamList = (targetItem: StreamsListItem, isRemoved?: boolean) => {
     setTermStreamsList(termStreamsList.map((item) => {
       if (item.streamId === targetItem.streamId) {
         const newItem = { ...item };
@@ -91,6 +97,36 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
+      const params: SearchCalendarStreams = {
+        userId: subscribe.currUser.targetUserId,
+        startDate: period[0].toISOString(),
+        endDate: period[1].toISOString(),
+      };
+
+      excuteGetStreams({
+        params,
+      })
+        .then((res) => {
+          // LOGIN ERROR -> 리다이렉트 필요
+          setTermStreamsList(res.data.map((data) => ({
+            ...data,
+            isRemoved: false,
+          })));
+        })
+        .catch((err) => {
+          if (err.response) {
+            setInnerError({
+              isError: true,
+              helperText:
+                  '방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요',
+            });
+          }
+        });
+    }
+  }, [period, subscribe.currUser.targetUserId, excuteGetStreams]);
+
+  React.useEffect(() => {
+    if (period[0] && period[1]) {
       excuteGetStreams({
         params: {
           userId: subscribe.currUser.targetUserId,
@@ -122,41 +158,57 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   // };
 
   const handleAnalysisButton = () => {
-    const requestParams: AnaysisStreamsInfoRequest[] = termStreamsList.map((dayStreamInfo) => ({
-      creatorId: dayStreamInfo.creatorId,
-      startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
-      streamId: dayStreamInfo.streamId,
-    }));
+    const requestParams: SearchEachS3StreamData[] = termStreamsList
+      .filter((stream) => !stream.isRemoved)
+      .map((dayStreamInfo) => ({
+        creatorId: dayStreamInfo.creatorId,
+        startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
+        streamId: dayStreamInfo.streamId,
+      }));
 
     const selectedCategory: string[] = Object
       .entries(checkStateGroup)
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
-    // 현재 백엔드로 요청시에 오류남 => 파라미터가 너무 많아서 그런듯, get이 아닌 body를 사용하는 방식?
     if (termStreamsList.length < 1) {
-      // alert('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요');
+      /* 일감 - Alert 수정 하기 에서 수정 */
+      setInnerError({
+        isError: true,
+        helperText:
+          '기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요',
+      });
     } else {
       handleSubmit({
         category: selectedCategory,
         /* request params */
-        params: {
-          streams: requestParams,
-        },
+        params: requestParams,
       });
     }
+  };
+
+  const handleError = (newError: FatalError): void => {
+    setInnerError({
+      isError: newError.isError,
+      helperText: newError.helperText,
+    });
   };
 
   return (
     <Grid className={classes.root}>
       <Grid item>
-        {error
-          && (
-          <ErrorSnackBar
-            message="오류가 발생 했습니다. 다시 시도해주세요."
-          />
-          )}
-        {loading
-          && <CenterLoading />}
+        {(error || innerError.isError) && (
+        <ErrorSnackBar
+          message={(() => {
+            if (error) return error.helperText;
+            if (innerError) return innerError.helperText;
+            return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
+          })()}
+          closeCallback={() => handleError({ isError: false, helperText: '' })}
+        />
+        )}
+        {!(error || innerError.isError) && (
+          <Loading clickOpen={loading} lodingTime={10000} />
+        )}
 
         <Divider className={classes.titleDivider} />
         <Grid container direction="column">
@@ -183,6 +235,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
               targetRef={targetRef}
               handleAnchorOpenWithRef={handleAnchorOpenWithRef}
               handleAnchorClose={handleAnchorClose}
+              handleError={handleError}
             />
           </div>
 
@@ -196,7 +249,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         handleAnchorClose={handleAnchorClose}
         selectedStreams={termStreamsList}
         base
-        handleRemoveIconButton={handleRemoveIconButton}
+        handleStreamList={handleStreamList}
       />
       )}
       <Grid item>
