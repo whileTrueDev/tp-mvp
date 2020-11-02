@@ -7,8 +7,8 @@ import {
 import useAxios from 'axios-hooks';
 // shared dtos , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { FindStreamInfoByPeriods } from '@truepoint/shared/dist/dto/FindStreamInfoByPeriods.dto';
-import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
+import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // subcomponents
 import RangeSelectCalendarWithTextfield from './RangeSelectCalendarWithTextfield';
 import CheckBoxGroup from './CheckBoxGroup';
@@ -85,7 +85,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         helperText: '카테고리를 선택하셔야 분석을 할 수 있습니다.',
       });
     } else {
-      const getStreamsParams: FindCalendarStreams = {
+      const getStreamsParams: SearchCalendarStreams = {
         userId: subscribe.currUser.targetUserId,
         startDate: basePeriod[0].toISOString(),
         endDate: basePeriod[1].toISOString(),
@@ -94,7 +94,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         params: getStreamsParams,
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         if (res.data.length > 0) {
-          const analysisParam: FindStreamInfoByPeriods = {
+          const analysisParam: SearchStreamInfoByPeriods = {
             userId: subscribe.currUser.targetUserId,
             baseStartAt: basePeriod[0].toISOString(),
             baseEndAt: basePeriod[1].toISOString(),

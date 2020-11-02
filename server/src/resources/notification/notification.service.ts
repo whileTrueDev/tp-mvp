@@ -3,9 +3,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ChangeReadState } from '@truepoint/shared/dist/dto/notification/changeReadState.dto';
+import { FindAllNotifications } from '@truepoint/shared/dist/dto/notification/findAllNotifications.dto';
 import { NotificationEntity } from './entities/notification.entity';
-import { ChangeReadState } from './dto/changeReadState.dto';
-import { FindAllNotifications } from './dto/findAllNotifications.dto';
 
 @Injectable()
 export class NotificationService {

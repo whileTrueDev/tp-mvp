@@ -10,7 +10,7 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import DateFnsUtils from '@date-io/date-fns';
 import koLocale from 'date-fns/locale/ko';
 // shared dtos , interfaces
-import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // axios
 import useAxios from 'axios-hooks';
@@ -61,7 +61,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     }, { manual: true });
 
   React.useEffect(() => {
-    const params: FindCalendarStreams = {
+    const params: SearchCalendarStreams = {
       userId: subscribe.currUser.targetUserId,
       startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
     };
@@ -100,7 +100,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
     if (newMonth) {
       setCurrMonth(newMonth);
-      const params: FindCalendarStreams = {
+      const params: SearchCalendarStreams = {
         userId: subscribe.currUser.targetUserId,
         startDate: newMonth.toISOString(),
       };

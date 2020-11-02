@@ -1,12 +1,12 @@
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
+import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 
 export interface FatalError {
   helperText: string;
   isError: boolean;
 }
 export interface StreamCompareSectionPropInterface {
-  handleSubmit: (params: FindStreamInfoByStreamId) => void;
+  handleSubmit: (params: SearchStreamInfoByStreamId) => void;
   loading: boolean;
   error: FatalError | undefined;
 }

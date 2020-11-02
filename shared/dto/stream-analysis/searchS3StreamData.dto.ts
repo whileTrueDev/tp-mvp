@@ -2,7 +2,7 @@ import {
   IsString, IsDateString,
 } from 'class-validator';
 
-export class EachS3StreamData {
+export class SearchEachS3StreamData {
   @IsString()
   creatorId: string;
 

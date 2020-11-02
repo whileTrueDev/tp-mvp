@@ -2,7 +2,7 @@ import {
   IsString, IsDateString,
 } from 'class-validator';
 
-export class FindStreamInfoByPeriods {
+export class SearchStreamInfoByPeriods {
   @IsString()
   userId: string;
 

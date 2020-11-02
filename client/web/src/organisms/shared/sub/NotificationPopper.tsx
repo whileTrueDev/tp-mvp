@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 // types
 import useAxios from 'axios-hooks';
 // context
-import AuthContext from '../../../../utils/contexts/AuthContext';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 export interface Notification {
   index: number;
@@ -60,13 +60,11 @@ function NotificationPopper({
   handleError: (newError: FatalError) => void;
 }): JSX.Element {
   const classes = useStyles();
-  const auth = React.useContext(AuthContext);
-  const [, excutePatch] = useAxios({
+  const auth = useAuthContext();
+  const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
     url: '/notification',
     method: 'patch',
-  }, {
-    manual: true,
-  });
+  }, { manual: true });
 
   const handleNotificationListItemClick = (notification: Notification) => {
     if (notification.readState === UNREAD_STATE) {
@@ -85,6 +83,9 @@ function NotificationPopper({
           });
         }
       });
+      // snack bar 일감 이후 snack bar 삽입
+
+      if (!patchError && !patchLoading) setChangeReadState(true);
     }
   };
 

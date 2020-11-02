@@ -2,17 +2,20 @@ import {
   Controller, Get, ParseArrayPipe, Query, UseGuards, Inject,
 } from '@nestjs/common';
 // shared dto , interfaces
-import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
-import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
-import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
-import { EachStreamData } from '@truepoint/shared/dist/dto/EachStreamData.dto';
-import { FindStreamInfoByPeriods } from '@truepoint/shared/dist/dto/FindStreamInfoByPeriods.dto';
-import { FindUserStatisticData } from '@truepoint/shared/dist/dto/FindUserStatisticData.dto';
+import { EachS3StreamInfo as EachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/eachS3StreamInfo.dto';
+import { SearchEachStream } from '@truepoint/shared/dist/dto/stream-analysis/searchEachStreamData.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
+import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
+
+import { SearchUserStatisticData } from '@truepoint/shared/dist/dto/stream-analysis/searchUserStatisticData.dto';
+
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // services
+// Services
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
 // pipe
@@ -21,7 +24,6 @@ import { ValidationPipe } from '../../pipes/validation.pipe';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // Entity
 import { StreamsEntity } from './entities/streams.entity';
-
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(
@@ -36,7 +38,7 @@ export class StreamAnalysisController {
   */
   @Get('stream-list')
   @UseGuards(JwtAuthGuard)
-  getDaysStreamList(@Query() findDaysStreamRequest: FindCalendarStreams): Promise<DayStreamsInfo[]> {
+  getDaysStreamList(@Query() findDaysStreamRequest: SearchCalendarStreams): Promise<DayStreamsInfo[]> {
     return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
       findDaysStreamRequest.startDate,
@@ -55,9 +57,9 @@ export class StreamAnalysisController {
   @Get('streams')
   @UseGuards(JwtAuthGuard)
   getStreamsInfo(
-    @Query('streams', new ParseArrayPipe({ items: EachStreamData })) findInfoRequest: FindStreamInfoByStreamId,
+    @Query('streams', new ParseArrayPipe({ items: SearchEachStream })) findInfoRequest: SearchStreamInfoByStreamId,
   ): Promise<StreamAnalysisResType[]> {
-    return this.streamAnalysisService.findStreamInfoByStreamId(findInfoRequest);
+    return this.streamAnalysisService.SearchStreamInfoByStreamId(findInfoRequest);
   }
 
   /*
@@ -67,7 +69,7 @@ export class StreamAnalysisController {
   @Get('periods')
   @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
-    @Query(new ValidationPipe()) findTermRequest: FindStreamInfoByPeriods,
+    @Query(new ValidationPipe()) findTermRequest: SearchStreamInfoByPeriods,
   ): Promise<PeriodsAnalysisResType> {
     return this.streamAnalysisService.findStreamInfoByPeriods(
       findTermRequest.userId,
@@ -103,7 +105,7 @@ export class StreamAnalysisController {
   @Get('user-statistics')
   @UseGuards(JwtAuthGuard)
   getUserStatisticsInfo(
-    @Query() findUserStatisticRequest: FindUserStatisticData,
+    @Query() findUserStatisticRequest: SearchUserStatisticData,
   ): Promise<StreamsEntity[]> {
     return this.streamAnalysisService.findUserWeekStreamInfoByUserId(
       findUserStatisticRequest.userId,

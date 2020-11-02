@@ -10,9 +10,9 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 // shared dtos , interfaces
-// import { FindAllStreams } from '@truepoint/shared/dist/dto/findAllStreams.dto';
+// import { FindAllStreams } from '@truepoint/shared/dist/dto/stream-analysis/findAllStreams.dto';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
+import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 // custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
@@ -81,7 +81,7 @@ export default function StreamCompareSection(
   const handleAnalysisButton = () => {
     // base, compare 존재시 활성화 , 서버 조회 및 연산 요청
     if (baseStream && compareStream) {
-      const params: FindStreamInfoByStreamId = {
+      const params: SearchStreamInfoByStreamId = {
         streams: [
           { streamId: baseStream.streamId, platform: baseStream.platform },
           {

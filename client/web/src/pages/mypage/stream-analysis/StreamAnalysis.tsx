@@ -4,7 +4,7 @@ import useAxios from 'axios-hooks';
 import { AxiosError } from 'axios';
 import { Grid } from '@material-ui/core';
 // shared dto
-import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
+import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 import { StreamAnalysisResType } from '@truepoint/shared/res/StreamAnalysisResType.interface';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // contexts
@@ -21,7 +21,7 @@ export default function StreamAnalysis(): JSX.Element {
     '/stream-analysis/streams', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
-  const handleSubmit = (params: FindStreamInfoByStreamId) => {
+  const handleSubmit = (params: SearchStreamInfoByStreamId) => {
     setOpen(false);
     getRequest({
       params,

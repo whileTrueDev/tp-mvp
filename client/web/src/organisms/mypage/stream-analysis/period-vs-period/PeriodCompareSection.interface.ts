@@ -1,4 +1,4 @@
-import { FindStreamInfoByPeriods } from '@truepoint/shared/dist/dto/FindStreamInfoByPeriods.dto';
+import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 
 export interface FatalError {
   helperText: string;
@@ -34,7 +34,7 @@ export interface ISODateTextFieldError {
 
 export interface SubmitInterface {
   category: string[];
-  params: FindStreamInfoByPeriods;
+  params: SearchStreamInfoByPeriods;
 }
 
 export interface PeriodCompareProps {

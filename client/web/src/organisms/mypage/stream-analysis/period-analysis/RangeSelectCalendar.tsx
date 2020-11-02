@@ -16,7 +16,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // shared dtos , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // interfaces
 import { RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
 // context 
@@ -94,7 +94,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   }, { manual: true });
 
   React.useEffect(() => {
-    const params: FindCalendarStreams = {
+    const params: SearchCalendarStreams = {
       userId: subscribe.currUser.targetUserId,
       startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
     };
@@ -170,7 +170,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
     if (newMonth) setCurrMonth(newMonth);
     if (newMonth) {
-      const params: FindCalendarStreams = {
+      const params: SearchCalendarStreams = {
         userId: subscribe.currUser.targetUserId,
         startDate: newMonth.toISOString(),
       };

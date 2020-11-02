@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '22px',
     marginLeft: '13px',
     fontWeight: 'bold',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.primary,
     lineHeight: '1.5',
     overflow: 'auto',
@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   cardBody: {
     fontSize: '22px',
     marginLeft: '20px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.secondary,
     lineHeight: '1.5',
     overflow: 'auto',

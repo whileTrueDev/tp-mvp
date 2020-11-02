@@ -313,7 +313,7 @@ shared/res 폴더에 해당응답의 interface를 정의한 후 client의 useAxi
 실행
 
 - 실행은 기존과 같이 server -> `yarn start:dev`, client/web -> `yarn start`, client/admin -> `yarn start` 로진행합니다.
-- shared 는 실행할 일은 없습니다. 대신, server, client/web, client/admin에서 shared 에 정의된 DTO 또는 interface 등을 참조 하는 경우, shared/dist 의 컴파일된 js 파일을 필요로 하기 때문에, 변경사항이 있는 경우 `yarn build` 를 통해 ts -> js 컴파일을 진행해야 합니다. 편하게 개발 하기 위해서는 변경사항이 있을 때마다 빌드가 진행되도록 하여야 합니다. **yarn start:dev 스크립트로 변경 사항이 있을 때마다 컴파일 하는 환경을 구축해 두었습니다.**
+- shared 는 독립적으로 실행할 일은 없습니다. 대신, server, client/web, client/admin에서 shared 에 정의된 DTO 또는 interface 등을 참조 하는 경우, shared/dist 의 컴파일된 js 파일을 필요로 하기 때문에, 변경사항이 있는 경우 `yarn build` 를 통해 ts -> js 컴파일을 진행해야 합니다. 편하게 개발 하기 위해서는 변경사항이 있을 때마다 빌드가 진행되도록 하여야 합니다. **yarn start:dev 스크립트로 변경 사항이 있을 때마다 컴파일 하는 환경을 구축해 두었습니다.**
 - 간단히 말해 shared 역시 `yarn start:dev`로 실행해 둔 채 작업을 진행하는 것이 편합니다.
 
 ### eslint 및 관리 관련 변경사항

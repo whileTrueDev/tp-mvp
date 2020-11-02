@@ -6,7 +6,7 @@ import {
 const userIdMinLength = 4;
 const userIdMaxLength = 15;
 
-export class FindCalendarStreams {
+export class SearchCalendarStreams {
   @IsString()
   @Length(userIdMinLength, userIdMaxLength)
   userId: string;

@@ -1,4 +1,4 @@
-import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 
 export interface FatalError {
@@ -8,7 +8,7 @@ export interface FatalError {
 
 export interface SubmitInterface {
   category: string[];
-  params: EachS3StreamData[];
+  params: SearchEachS3StreamData[];
 }
 export interface PeriodAnalysisProps {
   loading: boolean;

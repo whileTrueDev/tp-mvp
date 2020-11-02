@@ -6,13 +6,12 @@ import routes from '../routes';
 import useLayoutStyles from './MypageLayout.style';
 // organisms
 import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
-import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
+import Sidebar from '../../../organisms/mypage/layouts/sidebar/Sidebar';
 import MypageFooter from '../../../organisms/mypage/footer/MypageFooter';
 import AppBar from '../../../organisms/shared/Appbar';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
-
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -27,7 +26,7 @@ const UserDashboard = (): JSX.Element => {
       <div className={classes.wrapper}>
         <div className={classes.conatiner}>
           <aside className={classes.sidebarWrapper}>
-            <TestSidebar routes={routes.filter((r) => !r.noTab)} />
+            <Sidebar routes={routes.filter((r) => !r.noTab)} />
           </aside>
           <div ref={mainPanel} className={classes.mainPanel}>
             <nav className={classes.appbarWrapper}>

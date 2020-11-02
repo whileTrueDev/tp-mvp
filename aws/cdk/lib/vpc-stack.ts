@@ -1,11 +1,9 @@
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
-import * as rds from '@aws-cdk/aws-rds';
 
 // CONSTANTS
-const ID_PREFIX               = 'WhileTrue';
-const DATABASE_PORT           = 3306;
+const ID_PREFIX = 'WhileTrue';
+// const DATABASE_PORT = 3306;
 
 export class WhileTrueTruepointVpcStack extends cdk.Stack {
   public readonly vpc: ec2.Vpc;
@@ -17,7 +15,7 @@ export class WhileTrueTruepointVpcStack extends cdk.Stack {
     // ************** VPC and Subnets **************
     // *********************************************
     const vpc = new ec2.Vpc(this, `${ID_PREFIX}Vpc`, {
-      cidr: "10.0.0.0/16",
+      cidr: '10.0.0.0/16',
       maxAzs: 10, // To use all Avaliability Zone
       subnetConfiguration: [
         {

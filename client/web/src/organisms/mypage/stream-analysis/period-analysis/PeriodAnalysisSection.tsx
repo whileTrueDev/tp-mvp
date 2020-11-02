@@ -13,10 +13,10 @@ import { Alert } from '@material-ui/lab';
 // axios
 import useAxios from 'axios-hooks';
 // shared dtos , interfaces
-// import { FindAllStreams } from '@truepoint/shared/dist/dto/findAllStreams.dto';
+// import { FindAllStreams } from '@truepoint/shared/dist/dto/stream-analysis/findAllStreams.dto';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
-import { FindCalendarStreams } from '@truepoint/shared/dist/dto/FindCalendarStreams.dto';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // styles
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 // custom svg icon
@@ -89,7 +89,7 @@ export default function PeriodAnalysisSection(
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
-      const params: FindCalendarStreams = {
+      const params: SearchCalendarStreams = {
         userId: subscribe.currUser.targetUserId,
         startDate: period[0].toISOString(),
         endDate: period[1].toISOString(),
@@ -132,7 +132,7 @@ export default function PeriodAnalysisSection(
   };
 
   const handleAnalysisButton = () => {
-    const params: EachS3StreamData[] = termStreamsList.map((dayStreamInfo) => ({
+    const params: SearchEachS3StreamData[] = termStreamsList.map((dayStreamInfo) => ({
       creatorId: dayStreamInfo.creatorId,
       startedAt: new Date(dayStreamInfo.startedAt).toISOString(),
       streamId: dayStreamInfo.streamId,

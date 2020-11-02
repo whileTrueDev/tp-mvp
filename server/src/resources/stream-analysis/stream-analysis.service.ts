@@ -12,14 +12,17 @@ import * as dotenv from 'dotenv';
 import moment from 'moment';
 // shared dto , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { EachS3StreamData } from '@truepoint/shared/dist/dto/EachS3StreamData.dto';
-import { FindStreamInfoByStreamId } from '@truepoint/shared/dist/dto/FindStreamInfoByStreamId.dto';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
+import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
+// import { dataArray } from './s3TestData.test';
+
 // interfaces
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
+
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
@@ -141,7 +144,7 @@ export class StreamAnalysisService {
     input   :  streamId , platform
     output  :  chat_count , smile_count , viewer
   */
-  async findStreamInfoByStreamId(streams: FindStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
+  async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
       const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
@@ -308,7 +311,7 @@ export class StreamAnalysisService {
       ],
     }
   */
-  async findStreamInfoByPeriod(s3Request: EachS3StreamData[]): Promise<PeriodAnalysisResType> {
+  async findStreamInfoByPeriod(s3Request: SearchEachS3StreamData[]): Promise<PeriodAnalysisResType> {
     const keyArray: string[] = [];
     const calculatedArray: S3StreamData[] = [];
     const dataArray: S3StreamData[] = [];
@@ -501,7 +504,7 @@ export class StreamAnalysisService {
     );
 
     /* S3 데이터 조회 Promise.all 함수 선언 */
-    const getAllKeys = (data: EachS3StreamData[]) => Promise.all(
+    const getAllKeys = (data: SearchEachS3StreamData[]) => Promise.all(
       data.map((stream) => keyFunc(stream)),
     );
     const getAllDatas = (list: string[]) => Promise.all(

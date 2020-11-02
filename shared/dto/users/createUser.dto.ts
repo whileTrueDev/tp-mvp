@@ -1,8 +1,7 @@
 import { IsBoolean, IsString } from 'class-validator';
-import { UserEntity } from '../entities/user.entity';
 
 // 필수로 필요한 것은 반드시 존재해야한다.
-export class CreateUserDto implements UserEntity {
+export class CreateUserDto {
   @IsString()
   userId: string;
 
