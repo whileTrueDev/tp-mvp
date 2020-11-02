@@ -10,22 +10,22 @@
 }
 
 @font-face {
-  font-fmaily: "AppleSDGothicNeoB";
+  font-family: "AppleSDGothicNeoB";
   src: url(./fonts/AppleSDGothicNeoB.ttf) format("truetype");
 }
 
 @font-face {
-  font-fmaily: "AppleSDGothicNeoH";
+  font-family: "AppleSDGothicNeoH";
   src: url(./fonts/AppleSDGothicNeoH.ttf) format("truetype");
 }
 
 @font-face {
-  font-fmaily: "AppleSDGothicNeoM";
+  font-family: "AppleSDGothicNeoM";
   src: url(./fonts/AppleSDGothicNeoM.ttf) format("truetype");
 }
 
 @font-face {
-  font-fmaily: "AppleSDGothicNeoUL";
+  font-family: "AppleSDGothicNeoUL";
   src: url(./fonts/AppleSDGothicNeoUL.ttf) format("truetype");
 }
 
@@ -37,9 +37,6 @@ html * {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -3,13 +3,13 @@ import {
   Controller, Request, Post, UseGuards, Get, Query,
   HttpException, HttpStatus, Res, BadRequestException, Body,
 } from '@nestjs/common';
+import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
+import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from './auth.service';
 import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
-import { CheckCertificationDto } from './dto/checkCertification.dto';
-import { LogoutDto } from './dto/logout.dto';
 
 @Controller('auth')
 export class AuthController {
