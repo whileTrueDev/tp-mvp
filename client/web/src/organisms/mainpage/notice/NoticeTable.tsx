@@ -19,9 +19,9 @@ const useStyles = makeStyles((theme) => ({
   tableRow: { height: 80 },
   tablefooterRow: { height: 40 },
   important: {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.success.light,
     '&:hover': {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: theme.palette.common.white,
     },
   },
   tableheaderCell: { color: theme.palette.common.white, fontWeight: 'bold' },
