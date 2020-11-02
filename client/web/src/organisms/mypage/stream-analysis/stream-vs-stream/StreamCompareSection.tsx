@@ -4,7 +4,6 @@ import {
   Paper,
   Typography,
   Grid,
-  Divider,
   Button,
   Collapse,
 } from '@material-ui/core';
@@ -23,6 +22,7 @@ import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 import StreamCalendar from './Calendar';
 import StreamCard from './StreamCard';
 import StreamList from './StreamList';
+import SectionTitle from '../../../shared/sub/SectionTitles';
 // style
 import useStreamHeroStyles from './StreamCompareSection.style';
 // interface
@@ -150,10 +150,10 @@ export default function StreamCompareSection(
       {!(error?.isError || innerError.isError) && (
         <Loading clickOpen={loading} lodingTime={10000} />
       )}
-      <Divider className={classes.titleDivider} />
+
       <Grid container direction="column">
         <Grid item>
-          <Typography className={classes.mainTitle}>방송별 리스트</Typography>
+          <SectionTitle mainTitle="방송별 비교" />
           <Typography className={classes.mainBody}>
             두 방송을 선택하시면 방송 비교 분석을 시작합니다.
           </Typography>
