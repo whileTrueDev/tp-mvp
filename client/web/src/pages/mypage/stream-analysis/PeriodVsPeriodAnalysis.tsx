@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
+// axios
 import useAxios from 'axios-hooks';
+import { AxiosError } from 'axios';
+// material - ui core
 import { Grid } from '@material-ui/core';
+// shared dtos
+import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
+// Layout
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
-import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
-import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
+// contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // organisms
+import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
+import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
 
 export interface PeriodsRequestParams {
@@ -24,32 +32,27 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [metricOpen, setMetricOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
   const subscribe = React.useContext(SubscribeContext);
-  const [{ loading, error }, getRequest] = useAxios(
+  const [{ loading, error }, getRequest] = useAxios<PeriodsAnalysisResType>(
     '/stream-analysis/periods', { manual: true },
   );
 
   const handleSubmit = ({
     category, params,
-  }: {category: string[]; params: PeriodsRequestParams}) => {
+  }: {category: string[]; params: SearchStreamInfoByPeriods}) => {
     selectMetric(category); // 다중 선택으로 변경시 []을 제거한다.
     setOpen(false);
     setMetricOpen(false);
     getRequest({ params })
       .then((res) => {
-        // check https://yeon-js.tistory.com/8
-        // if (res.data.hasOwnProperty('error')) {
-        if (Object.prototype.hasOwnProperty.call(res.data, 'error')) {
-          alert(res.data.error);
-        } else {
-          setTimeLine(res.data.timeline);
-          setMetric(res.data.metrics);
-          setType(res.data.type);
-          setOpen(true);
-          setTimeout(() => {
-            setMetricOpen(true);
-          }, 1000);
-        }
-      });
+        setTimeLine(res.data.timeline);
+        setMetric(res.data.metrics);
+        if (res.data.type) setType(res.data.type);
+        setOpen(true);
+        setTimeout(() => {
+          setMetricOpen(true);
+        }, 1000);
+      })
+      .catch((err): AxiosError<any> | undefined => err);
   };
 
   React.useEffect(() => {
@@ -62,7 +65,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
         <Grid item>
           <PeriodCompareSection
             loading={loading}
-            error={error}
+            error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
             handleSubmit={handleSubmit}
           />
         </Grid>

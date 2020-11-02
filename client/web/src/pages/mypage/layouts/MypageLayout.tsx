@@ -6,13 +6,12 @@ import routes from '../routes';
 import useLayoutStyles from './MypageLayout.style';
 // organisms
 import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
-import TestSidebar from '../../../organisms/mypage/layouts/testsidebar/TestSidebar';
+import Sidebar from '../../../organisms/mypage/layouts/sidebar/Sidebar';
 import AppBar from '../../../organisms/shared/Appbar';
 import PageSizeAlert from '../../../organisms/mypage/alertbar/PageSizeAlert';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
-
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -54,7 +53,7 @@ const UserDashboard = (): JSX.Element => {
 
           {/* 마이페이지 좌측 사이드바 */}
           <aside className={classes.sidebarWrapper}>
-            <TestSidebar routes={routes.filter((r) => !r.noTab)} />
+            <Sidebar routes={routes.filter((r) => !r.noTab)} />
           </aside>
 
           {/* 마이페이지 메인 패널 */}

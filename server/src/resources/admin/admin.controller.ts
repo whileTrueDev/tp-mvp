@@ -2,30 +2,31 @@ import {
   Controller, Get, Body, Patch, Query, Delete,
   Post, UseInterceptors, ClassSerializerInterceptor,
 } from '@nestjs/common';
-import { AdminService } from './admin.service';
-// entity
-import { NoticeEntity } from '../notice/entities/notice.entity';
-import { NotificationEntity } from '../notification/entities/notification.entity';
-import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
-import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
 
 // notification dto
-import { NotificationGetRequest } from './dto/notification/notificationGet.dto';
-import { NotificationPostRequest } from './dto/notification/notificationPost.dto';
+import { NotificationGetRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationGet.dto';
+import { NotificationPostRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationPost.dto';
 
 // notice dto
-import { Notice } from './dto/notice/notice.dto';
-import { NoticeGetRequest } from './dto/notice/noticeGetRequest.dto';
-import { NoticePatchRequest } from './dto/notice/noticePatchRequest.dto';
+import { Notice } from '@truepoint/shared/dist/dto/admin/notice/notice.dto';
+import { NoticeGetRequest } from '@truepoint/shared/dist/dto/admin/notice/noticeGetRequest.dto';
+import { NoticePatchRequest } from '@truepoint/shared/dist/dto/admin/notice/noticePatchRequest.dto';
 
 // feature suggestion dto
-import { FeatureSuggestionPatchRequest } from './dto/feature/featureSuggestionPatch.dto';
+import { FeatureSuggestionPatchRequest } from '@truepoint/shared/dist/dto/admin/feature/featureSuggestionPatch.dto';
 
 // feature suggestion reply dto
-import { ReplyGetRequest } from './dto/reply/replyGetRequest.dto';
-import { ReplyPostRequest } from './dto/reply/replyPost.dto';
-import { ReplyPatchRequest } from './dto/reply/replyPatchRequest.dto';
-
+import { ReplyGetRequest } from '@truepoint/shared/dist/dto/admin/reply/replyGetRequest.dto';
+import { ReplyPostRequest } from '@truepoint/shared/dist/dto/admin/reply/replyPost.dto';
+import { ReplyPatchRequest } from '@truepoint/shared/dist/dto/admin/reply/replyPatchRequest.dto';
+// entity
+import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
+import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
+import { NotificationEntity } from '../notification/entities/notification.entity';
+import { NoticeEntity } from '../notice/entities/notice.entity';
+// service
+import { AdminService } from './admin.service';
+// pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
 
 @Controller('admin')

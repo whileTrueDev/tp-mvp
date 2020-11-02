@@ -6,7 +6,7 @@ import {
   Grid,
   List, ListItem, ListItemText, ListItemIcon,
   Accordion, AccordionSummary, AccordionDetails, Divider,
-  Typography,
+  Typography, Button,
 } from '@material-ui/core';
 // @material-ui/icons icon
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -14,16 +14,16 @@ import MaximizeIcon from '@material-ui/icons/Maximize';
 
 import { MypageRoute } from '../../../../pages/mypage/routes';
 // styles
-import useTestStyle from './TestSidebar.style';
+import useSidebarStyle from './Sidebar.style';
 
 interface SidebarProps {
   routes: MypageRoute[];
 }
 
-export default function TestSidebar({
+export default function Sidebar({
   routes,
 }: SidebarProps): JSX.Element {
-  const classes = useTestStyle();
+  const classes = useSidebarStyle();
   // verifies if routeName is the one active (in browser input)
   function isActiveRoute(pagePath: string): boolean {
     return window.location.pathname.indexOf(pagePath) > -1;
@@ -37,7 +37,7 @@ export default function TestSidebar({
             key={route.name}
             className={classes.listItem}
             disableGutters
-            button
+            // button
           >
             <Grid container item direction="column">
               <Accordion square className={classes.accordian}>
@@ -92,17 +92,29 @@ export default function TestSidebar({
                       key={subroute.layout + subroute.path}
                       className={classes.subRouteLink}
                       to={subroute.layout + subroute.path}
+
                     >
-                      <ArrowForwardIosIcon color="primary" fontSize="small" />
-                      <Typography
-                        variant="body1"
-                        className={classnames({
-                          [classes.selected]: isActiveRoute(subroute.path),
-                          [classes.notSelectedTab]: !isActiveRoute(subroute.path),
-                        })}
+                      <Button
+                        style={{ padding: 0, width: '100%', justifyContent: 'flex-start' }}
                       >
-                        {subroute.name}
-                      </Typography>
+                        <ArrowForwardIosIcon
+                          fontSize="small"
+                          className={classnames({
+                            [classes.selectedSubRouteIcon]: isActiveRoute(subroute.path),
+                            [classes.notSelectedSubRouteIcon]: !isActiveRoute(subroute.path),
+                          })}
+                        />
+                        <Typography
+                          variant="body1"
+                          className={classnames({
+                            [classes.selected]: isActiveRoute(subroute.path),
+                            [classes.notSelectedTab]: !isActiveRoute(subroute.path),
+                          })}
+                        >
+                          {subroute.name}
+                        </Typography>
+                      </Button>
+
                     </Link>
 
                   ))}

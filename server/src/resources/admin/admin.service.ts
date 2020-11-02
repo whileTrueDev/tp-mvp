@@ -4,26 +4,30 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+// DTOs
+// notice (공지사항)
+import { Notice } from '@truepoint/shared/dist/dto/admin/notice/notice.dto';
+import { NoticeGetRequest } from '@truepoint/shared/dist/dto/admin/notice/noticeGetRequest.dto';
+import { NoticePatchRequest } from '@truepoint/shared/dist/dto/admin/notice/noticePatchRequest.dto';
+// notification (개인알림)
+import { NotificationGetRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationGet.dto';
+import { NotificationPostRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationPost.dto';
+// feature suggestion (기능제안)
+import { FeatureSuggestionPatchRequest } from '@truepoint/shared/dist/dto/admin/feature/featureSuggestionPatch.dto';
+// feature suggestion reply (기능제안에 대한 답변)
+import { ReplyPostRequest } from '@truepoint/shared/dist/dto/admin/reply/replyPost.dto';
+import { ReplyGetRequest } from '@truepoint/shared/dist/dto/admin/reply/replyGetRequest.dto';
+import { ReplyPatchRequest } from '@truepoint/shared/dist/dto/admin/reply/replyPatchRequest.dto';
+
+// Entities
 // notice (공지사항)
 import { NoticeEntity } from '../notice/entities/notice.entity';
-import { Notice } from './dto/notice/notice.dto';
-import { NoticeGetRequest } from './dto/notice/noticeGetRequest.dto';
-import { NoticePatchRequest } from './dto/notice/noticePatchRequest.dto';
-
 // notification (개인알림)
 import { NotificationEntity } from '../notification/entities/notification.entity';
-import { NotificationGetRequest } from './dto/notification/notificationGet.dto';
-import { NotificationPostRequest } from './dto/notification/notificationPost.dto';
-
 // feature suggestion (기능제안)
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
-import { FeatureSuggestionPatchRequest } from './dto/feature/featureSuggestionPatch.dto';
-
 // feature suggestion reply (기능제안에 대한 답변)
 import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
-import { ReplyPostRequest } from './dto/reply/replyPost.dto';
-import { ReplyGetRequest } from './dto/reply/replyGetRequest.dto';
-import { ReplyPatchRequest } from './dto/reply/replyPatchRequest.dto';
 
 @Injectable()
 export class AdminService {

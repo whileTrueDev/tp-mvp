@@ -1,7 +1,7 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 import { SIDE_BAR_WIDTH } from '../../../../assets/constants';
 
-const useTestStyle = makeStyles((theme: Theme) => ({
+const useSidebarStyle = makeStyles((theme: Theme) => ({
   conatiner: {
     padding: 0,
     width: SIDE_BAR_WIDTH - 10, // scrollbar 자리 10px
@@ -43,6 +43,12 @@ const useTestStyle = makeStyles((theme: Theme) => ({
     width: '100%',
     textDecoration: 'none',
   },
+  notSelectedSubRouteIcon: {
+    color: theme.palette.text.disabled,
+  },
+  selectedSubRouteIcon: {
+    color: theme.palette.text.primary,
+  },
 }));
 
-export default useTestStyle;
+export default useSidebarStyle;

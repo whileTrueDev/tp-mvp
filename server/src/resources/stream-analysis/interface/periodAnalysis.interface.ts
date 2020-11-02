@@ -9,7 +9,7 @@ export interface PeriodAnalysis{
       view_count?: number;
       smile_count: number;
       date: string;
-    }[]
+    }[];
 }
 
 // output  : {

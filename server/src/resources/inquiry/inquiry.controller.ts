@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { CreateInquiryDto } from '@truepoint/shared/dist/dto/inquiry/createInquiry.dto';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { SlackService } from '../slack/slack.service';
-import { CreateInquiryDto } from './dto/createInquiry.dto';
 import { InquiryEntity } from './entities/inquiry.entity';
 import { InquiryService } from './inquiry.service';
 

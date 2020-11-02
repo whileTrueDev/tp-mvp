@@ -14,8 +14,11 @@ import useAxios from 'axios-hooks';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
+// shared dtos , interfaces
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // interfaces
-import { DayStreamsInfo, RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
+import { RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
 // context 
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 
@@ -75,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base,
+    period, handlePeriod, base, handleError,
   } = props;
   const classes = useStyles();
   const subscribe = React.useContext(SubscribeContext);
@@ -91,17 +94,26 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   }, { manual: true });
 
   React.useEffect(() => {
+    const params: SearchCalendarStreams = {
+      userId: subscribe.currUser.targetUserId,
+      startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
+    };
+
     excuteGetStreams({
-      params: {
-        userId: subscribe.currUser.targetUserId,
-        startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
-      },
+      params,
     }).then((result) => {
       setHasStreamDays(
         result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
       );
+    }).catch((err) => {
+      if (err.response) {
+        handleError({
+          isError: true,
+          helperText: '달력 정보 구성에 문제가 발생했습니다.',
+        });
+      }
     });
-  }, [subscribe.currUser, excuteGetStreams, currMonth]);
+  }, [subscribe.currUser, excuteGetStreams, currMonth, handleError]);
 
   React.useEffect(() => {
     if (period.length > 1) {
@@ -114,6 +126,23 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     setPoint1(null);
     setPoint2(null);
   }, [subscribe.currUser]);
+
+  const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined): Date => {
+    if (start && prevDate) {
+      const formattedStartDate = new Date(prevDate);
+      formattedStartDate.setHours(0, 0, 0, 0);
+
+      return formattedStartDate;
+    }
+
+    if (prevDate) {
+      const formattedEndDate = new Date(prevDate);
+      formattedEndDate.setHours(23, 59, 59, 59);
+      return formattedEndDate;
+    }
+
+    return new Date(0);
+  };
 
   /*
     1. point1 == null point2 == null -> insert point1
@@ -128,9 +157,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
       if (point1.getTime() <= newDate.getTime()) {
-        handlePeriod(point1, newDate, base);
+        handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
       } else {
-        handlePeriod(newDate, point1, base);
+        handlePeriod(timeFormatter(newDate), timeFormatter(point1, true), base);
       }
     } else if (point1 !== null && point2 !== null) {
       setPoint1(null); setPoint2(null);
@@ -141,15 +170,24 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
     if (newMonth) setCurrMonth(newMonth);
     if (newMonth) {
+      const params: SearchCalendarStreams = {
+        userId: subscribe.currUser.targetUserId,
+        startDate: newMonth.toISOString(),
+      };
+
       excuteGetStreams({
-        params: {
-          userId: subscribe.currUser.targetUserId,
-          startDate: newMonth.toISOString(),
-        },
+        params,
       }).then((result) => {
         setHasStreamDays(
           result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
         );
+      }).catch((err) => {
+        if (err.response) {
+          handleError({
+            isError: true,
+            helperText: '달력 정보 구성에 문제가 발생했습니다.',
+          });
+        }
       });
     }
   };
@@ -266,7 +304,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       }
     }
 
-    if (date) {
+    if (date && dayInCurrentMonth) {
       return (
         <div className={classnames({
           [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),

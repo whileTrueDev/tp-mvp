@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class FindUserStatisticInfo {
+export class SearchUserStatisticData {
   @IsString()
   userId: string;
 }

@@ -1,9 +1,11 @@
+// import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface'; // Reply등, DB구조 확실히 정해진 뒤 올바르게 interface 정의 
 import {
   Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity('FeatureSuggestion')
 export class FeatureSuggestionEntity {
+// export class FeatureSuggestionEntity implements FeatureSuggestion { // Reply등, DB구조 확실히 정해진 뒤 올바른 interface를 implements 하는 방식으로 변경
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -54,7 +54,7 @@ export default function RangeSelectCalendarWithTextfield(
   const textClasses = useStyles();
   const classes = usePeriodCompareStyles();
   const {
-    base, handlePeriod,
+    base, handlePeriod, handleError,
   } = props;
   const start = useEventTargetValue();
   const end = useEventTargetValue();
@@ -67,6 +67,22 @@ export default function RangeSelectCalendarWithTextfield(
     isError: false,
   });
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
+
+  const timeFormatter = (prevDate: Date, isStart?: true | undefined): Date => {
+    if (isStart && prevDate) {
+      const formattedStartDate = new Date(prevDate);
+      formattedStartDate.setHours(0, 0, 0, 0);
+      return formattedStartDate;
+    }
+
+    if (prevDate) {
+      const formattedEndDate = new Date(prevDate);
+      formattedEndDate.setHours(23, 59, 59, 59);
+      return formattedEndDate;
+    }
+
+    return new Date(0);
+  };
 
   React.useEffect(() => {
     if (start.value.length > 9) {
@@ -106,17 +122,32 @@ export default function RangeSelectCalendarWithTextfield(
       && e.target.value.length > 9
     ) {
       if (moment(e.target.value, 'YYYY-MM-DD').isBefore(moment(end.value, 'YYYY-MM-DD'))) {
-        handlePeriod(new Date(e.target.value), new Date(end.value), base);
+        /* input date before than end */
+        handlePeriod(
+          timeFormatter(new Date(e.target.value), true),
+          timeFormatter(new Date(end.value)),
+          base,
+        );
       } else if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(end.value, 'YYYY-MM-DD'))) {
+        /* input date same as end */
         const endDate = new Date(e.target.value);
         endDate.setDate(endDate.getDate() + 1);
-        handlePeriod(new Date(e.target.value), endDate, base);
-        end.setValue(endDate.toISOString().slice(0, 10));
+        handlePeriod(
+          timeFormatter(new Date(e.target.value), true),
+          timeFormatter(endDate),
+          base,
+        );
+        end.setValue(moment(endDate).format('YYYY-MM-DD'));
       } else {
-        handlePeriod(new Date(end.value), new Date(e.target.value), base);
+        /* input date after than end */
+        handlePeriod(
+          timeFormatter(new Date(end.value), true),
+          timeFormatter(new Date(e.target.value)),
+          base,
+        );
         const tempDate = end.value;
         start.setValue(tempDate);
-        end.setValue(e.target.value);
+        end.setValue(moment(e.target.value).format('YYYY-MM-DD'));
       }
     }
   };
@@ -129,14 +160,29 @@ export default function RangeSelectCalendarWithTextfield(
       && e.target.value.length > 9
     ) {
       if (moment(e.target.value, 'YYYY-MM-DD').isAfter(moment(start.value, 'YYYY-MM-DD'))) {
-        handlePeriod(new Date(e.target.value), new Date(end.value), base);
+        /* input date after than start */
+        handlePeriod(
+          timeFormatter(new Date(start.value)),
+          timeFormatter(new Date(e.target.value), true),
+          base,
+        );
       } else if (moment(e.target.value, 'YYYY-MM-DD').isSame(moment(start.value, 'YYYY-MM-DD'))) {
+        /* input date same as start */
         const endDate = new Date(e.target.value);
         endDate.setDate(endDate.getDate() + 1);
-        handlePeriod(new Date(e.target.value), endDate, base);
-        end.setValue(endDate.toISOString().slice(0, 10));
+        handlePeriod(
+          timeFormatter(new Date(e.target.value), true),
+          timeFormatter(endDate),
+          base,
+        );
+        end.setValue(moment(endDate).format('YYYY-MM-DD'));
       } else {
-        handlePeriod(new Date(e.target.value), new Date(start.value), base);
+        /* input date before than start */
+        handlePeriod(
+          timeFormatter(new Date(e.target.value), true),
+          timeFormatter(new Date(start.value)),
+          base,
+        );
         const tempDate = start.value;
         end.setValue(tempDate);
         start.setValue(e.target.value);
@@ -146,17 +192,17 @@ export default function RangeSelectCalendarWithTextfield(
 
   const handleTextFieldPeriod = (startAt: Date, endAt: Date) => {
     const periodObj = {
-      startAt, endAt,
+      startAt: timeFormatter(startAt, true),
+      endAt: timeFormatter(endAt),
     };
-
     /* 하루 선택시 이틀로 자동 변경 */
-    if (periodObj.endAt.getDate() === periodObj.startAt.getDate()) {
+    if (startAt.getDate() === endAt.getDate()) {
       periodObj.endAt.setDate(periodObj.endAt.getDate() + 1);
     }
 
     handlePeriod(periodObj.startAt, periodObj.endAt, base);
-    start.setValue(periodObj.startAt.toISOString().slice(0, 10));
-    end.setValue(periodObj.endAt.toISOString().slice(0, 10));
+    start.setValue(moment(periodObj.startAt).format('YYYY-MM-DD'));
+    end.setValue(moment(periodObj.endAt).format('YYYY-MM-DD'));
   };
 
   return (
@@ -235,6 +281,7 @@ export default function RangeSelectCalendarWithTextfield(
         <RangeSelectCaledar
           handlePeriod={handleTextFieldPeriod}
           period={period}
+          handleError={handleError}
           base={base ? true : undefined}
         />
       </Paper>

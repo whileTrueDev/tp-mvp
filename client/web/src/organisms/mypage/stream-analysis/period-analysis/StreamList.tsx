@@ -9,12 +9,13 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // date library
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // atom svg icons
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // interface
-import { StreamListProps, DayStreamsInfo } from './PeriodAnalysisSection.interface';
+import { StreamListProps } from './PeriodAnalysisSection.interface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
   },
   listItemText: {
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.secondary,
     textAlign: 'left',
     lineHeight: '2.06',

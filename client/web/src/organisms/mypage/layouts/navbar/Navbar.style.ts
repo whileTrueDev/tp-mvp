@@ -30,12 +30,14 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     marginRight: 'auto',
     marginLeft: 'auto',
     height: '100%',
+    padding: 0,
   },
   title: {
     textTransform: 'none',
     fontWeight: 'bold',
     lineHeight: '100%',
     textDecoration: 'underline',
+    marginRight: theme.spacing(1),
   },
   leftGridIcon: {
     fontSize: '32px',
@@ -69,6 +71,15 @@ const useNavbarStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(1),
     marginLeft: theme.spacing(1),
     fontWeight: 'bold',
+  },
+  userListWrapper: {
+    display: 'flex',
+    flex: 1,
+    marginLeft: theme.spacing(6),
+  },
+  headerLinkWrapper: {
+    paddingRight: theme.spacing(4),
+    margin: 0,
   },
 }));
 

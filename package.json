@@ -45,7 +45,7 @@
     "lint": "yarn workspaces run lint"
   },
   "lint-staged": {
-    "**/*.+(js|jsx|ts|tsx|css)": [
+    "**/*.+(js|jsx|ts|tsx)": [
       "yarn lint:commit:fix",
       "git add"
     ]
