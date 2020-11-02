@@ -153,10 +153,6 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     setTermStreamsList([]);
   }, [subscribe.currUser]);
 
-  // const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
-  //   setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));
-  // };
-
   const handleAnalysisButton = () => {
     const requestParams: SearchEachS3StreamData[] = termStreamsList
       .filter((stream) => !stream.isRemoved)

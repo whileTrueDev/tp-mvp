@@ -45,9 +45,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: '0px',
     borderRadius: '4px',
-    '&:hover,select': {
-      backgroundColor: theme.palette.secondary.light,
-    },
+    // '&:hover,select': {
+    //   backgroundColor: theme.palette.secondary.light,
+    // },
   },
   selectedListItem: {
     fontFamily: 'AppleSDGothicNeo',
