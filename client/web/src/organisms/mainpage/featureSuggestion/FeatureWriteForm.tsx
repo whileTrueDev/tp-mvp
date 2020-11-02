@@ -7,8 +7,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
 import Button from '../../../atoms/Button/Button';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import ShowSnack from '../../../atoms/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,6 +53,7 @@ interface FeatureSuggestion {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function FeatureWriteForm(props: any): JSX.Element {
   const { editData } = props;
+  const { enqueueSnackbar } = useSnackbar();
   const authContext = useAuthContext();
   const [state, setState] = React.useState<FeatureSuggestion>({
     title: '',
@@ -92,12 +95,12 @@ export default function FeatureWriteForm(props: any): JSX.Element {
   const handleSubmit = () => {
     if (editData) {
       editPostRequest({ data: [state, editData.id] }).then(() => {
-        alert('수정 되었습니다');
+        ShowSnack('수정 되었습니다', 'info', enqueueSnackbar);
         window.location.replace('/feature-suggestion');
       });
     } else {
       postRequest({ data: state }).then(() => {
-        alert('등록 되었습니다');
+        ShowSnack('등록 되었습니다.', 'success', enqueueSnackbar);
         window.location.replace('/feature-suggestion');
       });
     }

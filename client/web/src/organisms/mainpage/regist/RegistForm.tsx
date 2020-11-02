@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import NumberFormat from 'react-number-format';
+import { useSnackbar } from 'notistack';
+
 import {
   FormControl,
   Input,
@@ -18,6 +20,7 @@ import {
 import useAxios from 'axios-hooks';
 import Done from '@material-ui/icons/Done';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
+import ShowSnack from '../../../atoms/ShowSnack';
 
 import useStyles from './style/RegistForm.style';
 import StyledInput from '../../../atoms/StyledInput';
@@ -58,6 +61,7 @@ function PlatformRegistForm({
 }: Props): JSX.Element {
   const [loading, setLoading] = useState(0);
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [numberType, setNumberType] = useState(true);
   const [marketerCustomDomain, setCustomDomain] = useState('');
   const [, getRequest] = useAxios(
@@ -83,19 +87,19 @@ function PlatformRegistForm({
   function checkDuplicateID(): void {
     const { idValue } = state;
     if (state.id || idValue === '') {
-      alert('ID을 올바르게 입력해주세요.');
+      ShowSnack('ID을 올바르게 입력해주세요.', 'warning', enqueueSnackbar);
     } else {
       getRequest({
         params: { userId: idValue },
       }).then((res) => {
         if (res.data) {
-          alert('ID가 중복되었습니다. 다른 ID를 사용해주세요.');
+          ShowSnack('ID가 중복되었습니다. 다른 ID를 사용해주세요.', 'warning', enqueueSnackbar);
           dispatch({ type: 'checkDuplication', value: true });
         } else {
           dispatch({ type: 'checkDuplication', value: false });
         }
       }).catch(() => {
-        alert('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.');
+        ShowSnack('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
       });
     }
   }
@@ -104,7 +108,7 @@ function PlatformRegistForm({
     event.preventDefault();
 
     if (state.checkDuplication) {
-      alert('ID 중복 조회를 해야합니다.');
+      ShowSnack('ID 중복 조회를 해야합니다.', 'warning', enqueueSnackbar);
       return;
     }
     const {
@@ -114,7 +118,7 @@ function PlatformRegistForm({
     const mailId = state.email;
 
     if (mailId === '') {
-      alert('입력이 올바르지 않습니다.');
+      ShowSnack('E-mail 입력이 올바르지 않습니다.', 'warning', enqueueSnackbar);
       return;
     }
     // 모든 state가 false가 되어야한다.
@@ -134,7 +138,7 @@ function PlatformRegistForm({
       setLoading(1);
       handleUserSubmit(user);
     } else {
-      alert('입력이 올바르지 않습니다.');
+      ShowSnack('입력이 올바르지 않습니다.', 'error', enqueueSnackbar);
     }
   }
 
