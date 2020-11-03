@@ -6,6 +6,7 @@ import {
   Button, ButtonGroup, Paper, Typography,
 } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
 import Card from '../../../atoms/Card/Card';
 import { FeatureData } from '../../../interfaces/FeatureSuggestion';
@@ -70,9 +71,11 @@ export default function FeatureDetail({
 
   // Next Feature
   const nextFeature = data[currentSuggestionIndex + 1];
-  const handleEditButton = () => {
-    setEditState(true);
-  };
+  // const handleEditButton = (id: number) => {
+  //   <Link to={`/feature-suggestion/${id}/edit`} />;
+  //   // window.location.replace(`/feature-suggestion/${id}/edit`);
+  //   // setEditState(true);
+  // };
   const doDelete = () => {
     const doConfirm = window.confirm('삭제 하시겠습니까?');
     if (doConfirm) {
@@ -172,14 +175,25 @@ export default function FeatureDetail({
           {currentSuggestion?.author === authContext.user.userId
             ? (
               <ButtonGroup disableElevation variant="contained" color="primary">
-                <Button
+                <Link 
+                  to={{
+                    pathname: `/feature-suggestion/write/${currentSuggestion?.id}`,
+                    state: [currentSuggestion],
+                  }}
+                >
+                  수정
+                </Link>
+
+                {/* <Button
                   size="large"
                   variant="contained"
                   color="primary"
-                  onClick={handleEditButton}
-                >
-                  수정
-                </Button>
+                  onClick={() => {
+                    handleEditButton(currentSuggestion?.id);
+                  }}
+                > */}
+                {/* 수정 */}
+                {/* </Button> */}
                 <Button
                   size="large"
                   variant="contained"

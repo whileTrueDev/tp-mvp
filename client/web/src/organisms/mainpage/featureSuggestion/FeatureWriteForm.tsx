@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -38,6 +38,17 @@ interface FeatureSuggestion {
   userId: string;
   image: any;
 }
+
+interface locationData {
+  id: number;
+  title: string;
+  category: string | number;
+  content: string;
+  author: string;
+  createdAt: Date;
+  reply: boolean | string;
+  progress: number;
+}
 // @hwasurr
 // eslint error 정리 중 주석 처리 - 사용하지 않는 interface
 // @leejineun 처리 부탁드립니다.
@@ -50,7 +61,6 @@ interface FeatureSuggestion {
 // @leejineun 처리 부탁드립니다.
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function FeatureWriteForm(props: any): JSX.Element {
-  const { editData } = props;
   const authContext = useAuthContext();
   const [state, setState] = React.useState<FeatureSuggestion>({
     title: '',
@@ -60,6 +70,8 @@ export default function FeatureWriteForm(props: any): JSX.Element {
     image: null,
   });
   const history = useHistory();
+  const location: any = useLocation();
+  const preData: locationData = location.state ? location.state[0] : null;
   const classes = useStyles();
   // const [selectedFile, setSelectedFile] = React.useState(null);
   const imageObject = React.useRef<HTMLInputElement | null>(null);
@@ -86,13 +98,14 @@ export default function FeatureWriteForm(props: any): JSX.Element {
   const [, postRequest] = useAxios(
     { url: '/feature/upload', method: 'post' }, { manual: true },
   );
-  const [, editPostRequest] = useAxios(
+  const [, editPatchRequest] = useAxios(
     { url: '/feature/upload-edit', method: 'patch' }, { manual: true },
   );
+
   const handleSubmit = () => {
-    if (editData) {
-      editPostRequest({ data: [state, editData.id] }).then(() => {
-        alert('수정 되었습니다');
+    if (preData) {
+      editPatchRequest({ data: [state, preData.id] }).then(() => {
+        alert('수정 되어었습니다');
         window.location.replace('/feature-suggestion');
       });
     } else {
@@ -111,15 +124,15 @@ export default function FeatureWriteForm(props: any): JSX.Element {
   };
 
   React.useEffect(() => {
-    if (editData) {
+    if (location.state) {
       setState({
         ...state,
-        title: editData.title,
-        category: editData.category,
-        contents: editData.content,
+        title: preData.title,
+        category: preData.category,
+        contents: preData.content,
       });
     }
-  }, [editData, setState, state]);
+  }, []);
   return (
     <div className={classes.root}>
       <Typography className={classes.contents} variant="h4">글쓰기</Typography>

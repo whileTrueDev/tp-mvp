@@ -66,7 +66,7 @@ export default function FeatureSuggestion(): JSX.Element {
         <div className={classes.featureContainer}>
           <Typography variant="h4">기능제안</Typography>
 
-          {/* 공지사항 개별 보기 */}
+          {/* 기능제안 개별 보기 */}
           {selectedSuggestionId && !loading && data ? (
             <div className={classes.contents}>
               <FeatureDetail
@@ -84,7 +84,7 @@ export default function FeatureSuggestion(): JSX.Element {
           )
             : (
               <>
-                {/* 공지사항 목록 보기 */}
+                {/* 기능제안 목록 보기 */}
                 <div className={classes.contents}>
                   <FeatureCategoryButtonGroup
                     categories={!loading && data

@@ -6,6 +6,7 @@ import {
   TableContainer, TableHead, TableRow, TablePagination, Paper,
 } from '@material-ui/core';
 import TablePaginationActions from '../../../atoms/Table/TablePaginationActions';
+import MaterialTable from '../../../atoms/Table/MaterialTable';
 import { FeatureData } from '../../../interfaces/FeatureSuggestion';
 
 const useStyles = makeStyles((theme) => ({
