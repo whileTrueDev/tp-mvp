@@ -33,7 +33,6 @@ export interface StreamCalendarProps {
   baseStream: DayStreamsInfo|null;
   compareStream: DayStreamsInfo|null;
   setClickedDate: React.Dispatch<React.SetStateAction<Date>>;
-  handleError: (newError: FatalError) => void;
 }
 
 export interface RangeSelectCaledarProps {

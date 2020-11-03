@@ -42,7 +42,6 @@ export interface RangeSelectCaledarProps {
   anchorEl: HTMLElement | null;
   handleAnchorOpenWithRef: (ref: React.MutableRefObject<HTMLDivElement | null>) => void;
   handleAnchorClose: () => void;
-  handleError: (newError: FatalError) => void;
 }
 
 export interface PeriodStreamsListProps {

@@ -9,6 +9,7 @@ import { Alert } from '@material-ui/lab';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 // custom svg icon
+import { useSnackbar } from 'notistack';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
@@ -24,13 +25,13 @@ import useStreamHeroStyles from './StreamCompareSection.style';
 // interface
 import {
   StreamCompareSectionPropInterface,
-  FatalError,
 } from './StreamCompareSectioninterface';
 // attoms
 import Loading from '../../../shared/sub/Loading';
-import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+// attoms snackbar
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 export default function StreamCompareSection(
   props: StreamCompareSectionPropInterface,
@@ -41,6 +42,7 @@ export default function StreamCompareSection(
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>(
     [],
   );
+  const { enqueueSnackbar } = useSnackbar();
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
   const [baseStream, setBaseStream] = React.useState<DayStreamsInfo | null>(
     null,
@@ -50,10 +52,6 @@ export default function StreamCompareSection(
     setCompareStream,
   ] = React.useState<DayStreamsInfo | null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
-  const [innerError, setInnerError] = React.useState<FatalError>({
-    isError: false,
-    helperText: '',
-  });
 
   const handleDayStreamList = (responseList: DayStreamsInfo[]) => {
     setDayStreamsList(responseList);
@@ -89,10 +87,7 @@ export default function StreamCompareSection(
 
       handleSubmit(params);
     } else {
-      setInnerError({
-        helperText: '두 방송을 선택하셔야 분석이 가능합니다.',
-        isError: true,
-      });
+      ShowSnack('두 방송을 선택하셔야 분석이 가능합니다.', 'info', enqueueSnackbar);
     }
   };
 
@@ -122,28 +117,10 @@ export default function StreamCompareSection(
     }
   };
 
-  const handleError = (newError: FatalError): void => {
-    setInnerError({
-      isError: newError.isError,
-      helperText: newError.helperText,
-    });
-  };
-
   return (
     <div className={classes.root}>
-      {(error?.isError || innerError.isError) && (
-        // 여러 복합 에러 배열 형태로 적용 가능하게 변경 필요
-        <ErrorSnackBar
-          message={(() => {
-            if (error) return error.helperText;
-            if (innerError) return innerError.helperText;
-            return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
-          })()}
-          closeCallback={() => handleError({ isError: false, helperText: '' })}
-        />
-      )}
 
-      {!(error?.isError || innerError.isError) && (
+      {!(error?.isError) && (
         <Loading clickOpen={loading} lodingTime={10000} />
       )}
 
@@ -209,7 +186,6 @@ export default function StreamCompareSection(
                 setClickedDate={setClickedDate}
                 baseStream={baseStream}
                 compareStream={compareStream}
-                handleError={handleError}
               />
             </Grid>
             <Grid item xs>

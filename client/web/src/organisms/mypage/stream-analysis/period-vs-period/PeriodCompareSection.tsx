@@ -9,14 +9,15 @@ import useAxios from 'axios-hooks';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
+// notistack snackbar
+import { useSnackbar } from 'notistack';
 // styles
 import usePeriodCompareStyles from './PeriodCompareSection.style';
 // attoms
 import Loading from '../../../shared/sub/Loading';
-import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
 // interfaces
-import { PeriodCompareProps, FatalError, StreamsListItem } from '../shared/StreamAnalysisShared.interface';
+import { PeriodCompareProps, StreamsListItem } from '../shared/StreamAnalysisShared.interface';
 import useAnchorEl from '../../../../utils/hooks/useAnchorEl';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // sub shared components
@@ -26,6 +27,8 @@ import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
 // componentShared
 import SectionTitle from '../../../shared/sub/SectionTitles';
+// attoms snackbar
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {
@@ -40,10 +43,8 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     chat: true,
     smile: true,
   });
-  const [innerError, setInnerError] = React.useState<FatalError>({
-    isError: false,
-    helperText: '',
-  });
+
+  const { enqueueSnackbar } = useSnackbar();
   const auth = useAuthContext();
   const baseAnchorEl = useAnchorEl();
   const compareAnchorEl = useAnchorEl();
@@ -119,12 +120,8 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
     /* 타겟 유저 아이디 + 기간 2개 요청 */
-
     if (selectedCategory.length < 1) {
-      setInnerError({
-        isError: true,
-        helperText: '카테고리를 선택하셔야 분석을 할 수 있습니다.',
-      });
+      ShowSnack('카테고리를 선택해 주세요.', 'info', enqueueSnackbar);
     } else {
       const getStreamsParams: SearchCalendarStreams = {
         userId: auth.user.userId,
@@ -147,16 +144,10 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
             params: analysisParam,
           });
         } else {
-          setInnerError({
-            isError: true,
-            helperText: '기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.',
-          });
+          ShowSnack('기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
         }
       }).catch(() => {
-        setInnerError({
-          isError: true,
-          helperText: '분석과정에서 오류가 발생했습니다.',
-        });
+        ShowSnack('분석과정에서 문제가 발생했습니다.', 'error', enqueueSnackbar);
       });
     }
   };
@@ -174,9 +165,13 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           ...data,
           isRemoved: false,
         })));
+      }).catch((err) => {
+        if (err.response) {
+          ShowSnack('방송 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+        }
       });
     }
-  }, [basePeriod, auth.user, excuteGetStreams]);
+  }, [basePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
 
   React.useEffect(() => {
     if (comparePeriod[0] && comparePeriod[1]) {
@@ -191,32 +186,18 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           ...data,
           isRemoved: false,
         })));
+      }).catch((err) => {
+        if (err.response) {
+          ShowSnack('방송 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+        }
       });
     }
-  }, [comparePeriod, auth.user, excuteGetStreams]);
-
-  const handleError = (newError: FatalError): void => {
-    setInnerError({
-      isError: newError.isError,
-      helperText: newError.helperText,
-    });
-  };
+  }, [comparePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
 
   return (
     <div className={classes.root}>
-      {(error?.isError || innerError.isError)
-          && (
-          <ErrorSnackBar
-            message={(() => {
-              if (error) return error.helperText;
-              if (innerError) return innerError.helperText;
-              return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
-            })()}
-            closeCallback={() => handleError({ isError: false, helperText: '' })}
-          />
-          )}
 
-      {!(error?.isError || innerError.isError)
+      {!(error?.isError)
           && (
           <Loading
             clickOpen={loading}
@@ -267,7 +248,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
               targetRef={baseTargetRef}
               handleAnchorOpenWithRef={baseAnchorEl.handleAnchorOpenWithRef}
               handleAnchorClose={baseAnchorEl.handleAnchorClose}
-              handleError={handleError}
             />
           </div>
         </Grid>
@@ -306,7 +286,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
               targetRef={compareTargetRef}
               handleAnchorOpenWithRef={compareAnchorEl.handleAnchorOpenWithRef}
               handleAnchorClose={compareAnchorEl.handleAnchorClose}
-              handleError={handleError}
             />
           </div>
         </Grid>
