@@ -68,6 +68,10 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
     setOpen(false);
   }
 
+  function handleCancel(name: any): void {
+    dispatch({ key: name });
+  }
+
   function handleClose(): void {
     setOpen(false);
   }
@@ -115,7 +119,12 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
                       control={(
                         <Checkbox
                           onChange={(): void => {
-                            alert('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.');
+                            // 현재의 check를 확인하여 취소가 가능하게끔 만든다.
+                            if (state[term.state]) {
+                              handleCancel(term.state);
+                            } else {
+                              alert('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.');
+                            }
                           }}
                           checked={state[term.state]}
                           classes={{
@@ -136,7 +145,7 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
         <div className={classnames(classes.center, classes.content)}>
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             style={{ color: 'white' }}
             className={classes.fullButton}
             onClick={finishReg}
@@ -172,7 +181,7 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
             <Grid item>
               <Button
                 variant="contained"
-                color="secondary"
+                color="primary"
                 size="small"
                 onClick={(): void => handleChange(selectTerm.state)}
                 className={classes.end}

@@ -73,6 +73,9 @@ function PlatformRegistForm({
   }
 
   const handleChange = (name: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value) {
+
+    }
     dispatch({ type: name, value: event.target.value });
   };
 
@@ -154,8 +157,12 @@ function PlatformRegistForm({
         )
         : (
           <form autoComplete="off" onSubmit={handleSubmit} id="form">
-            <Grid container direction="column" spacing={1}>
-              <Typography variant="h4">REGIST</Typography>
+            <Grid
+              container
+              direction="column"
+              spacing={1}
+              className={classes.form}
+            >
               <Grid item xs={12}>
                 <FormControl
                   error={Boolean(state.id)}
@@ -170,7 +177,7 @@ function PlatformRegistForm({
                       <InputAdornment position="end">
                         <Divider className={classes.divider} />
                         <Button onClick={() => checkDuplicateID()}>
-                          조회
+                          중복확인
                         </Button>
                         {!state.checkDuplication && <div className={classes.successText}><Done /></div>}
                       </InputAdornment>
@@ -214,23 +221,23 @@ function PlatformRegistForm({
                 </Grid>
               </Grid>
               <Grid item container direction="row">
-                <Grid item>
+                {/* <Grid item>
                   <TextField
                     required
-                    label="회사명(브랜드명)"
+                    label="별명"
                     id="name"
                     onChange={handleChange('name')}
                     className={classes.textField}
-                    placeholder="회사명(브랜드명)을 입력하세요"
+                    placeholder="별명을 입력하세요."
                     margin="normal"
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    helperText="크리에이터와 시청자들에게 보여질 이름입니다!"
+                    helperText="크리에이터인 경우, 활동명을 입력하세요."
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item>
-                  <Grid container direction="row">
+                  <Grid container direction="row" spacing={1}>
                     <Grid item>
                       <FormControl
                         className={classes.phoneField}
@@ -247,10 +254,11 @@ function PlatformRegistForm({
                           className={classes.phoneField}
                           allowNegative={false}
                         />
-                        <FormHelperText>온애드와 연락할 전화번호를 입력하세요.</FormHelperText>
+                        {/* <FormHelperText>트루포인트와 연락할 전화번호를 입력하세요.</FormHelperText> */}
                       </FormControl>
                     </Grid>
                     <Grid item className={classes.switchbox}>
+                      <Divider className={classes.divider} />
                       <Grid container direction="row">
                         <Grid item>
                           <FormControlLabel

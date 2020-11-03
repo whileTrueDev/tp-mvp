@@ -4,16 +4,20 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
+import { useTheme } from '@material-ui/core/styles';
+
 import useStyles from './style/Stepper.style';
 import RegistForm from './RegistForm';
 import PaperSheet from './Paper';
 import IdentityVerification from './IdentityVerification';
 import { myReducer, initialState } from './Stepper.reducer';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
 
 function RegistStepper(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
+  const theme = useTheme();
   const [activeStep, setStep] = useState(0);
   const [marketingAgreement, setAgreement] = useState(false);
   const [state, dispatch] = useReducer(myReducer, initialState);
@@ -67,11 +71,9 @@ function RegistStepper(): JSX.Element {
   return (
     <div>
       <Grid container direction="column">
-        {(activeStep === 0 || activeStep === 1) && (
         <Grid item className={classes.center}>
-          <TruepointLogo />
+          { theme.palette.type === 'light' ? <TruepointLogo width={350} /> : <TruepointLogoLight width={350} /> }
         </Grid>
-        )}
         <Grid item>
           {activeStep === 0 && (
           <IdentityVerification
@@ -89,7 +91,6 @@ function RegistStepper(): JSX.Element {
           )}
         </Grid>
       </Grid>
-
       {activeStep === 2 && (
       <RegistForm
         handleBack={handleBack}

@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
   Button, Typography,
 } from '@material-ui/core';
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   box: {
     padding: `${theme.spacing(8)}px ${theme.spacing(4)}px`,
     minWidth: 300,
-    maxWidth: 700,
+    maxWidth: 600,
     border: `1px solid ${theme.palette.divider}`,
     display: 'flex',
     justifyContent: 'center',
@@ -53,6 +53,7 @@ function IndentityVerification({
   setCertificationInfo,
 }: Props): JSX.Element {
   const classes = useStyles();
+  const theme = useTheme();
   const history = useHistory();
   const [, getRequest] = useAxios(
     '/users/check-id', { manual: true },
@@ -102,7 +103,7 @@ function IndentityVerification({
       <div className={classnames(classes.center, classes.content)}>
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           style={{ color: 'white' }}
           className={classes.fullButton}
           onClick={() => {
@@ -115,6 +116,8 @@ function IndentityVerification({
           onClick={() => {
             history.push('/login');
           }}
+          color="default"
+          style={{ color: theme.palette.text.primary }}
           className={classes.fullButton}
         >
           <Typography>뒤로</Typography>
