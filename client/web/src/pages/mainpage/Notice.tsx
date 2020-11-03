@@ -26,7 +26,7 @@ export default function Notice(): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
   const [page, setPage] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(5);
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
   // 개별 글 보기 스크롤 아래로 내리기

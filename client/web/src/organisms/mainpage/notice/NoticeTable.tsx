@@ -1,7 +1,9 @@
 import React from 'react';
+import classnames from 'classnames';
 import {
   TablePagination, TableCell, TableRow, TableBody,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 
@@ -14,7 +16,18 @@ interface TableProps {
   handleClick: (a: any) => void;
   categoryTabSwitch: (value: string | undefined) => JSX.Element;
 }
-
+const useStyles = makeStyles((theme) => ({
+  tableCell: { padding: 10 },
+  tableRow: {
+    height: 80,
+    '&:hover': {
+      backgroundColor: theme.palette.grey[200],
+    },
+  },
+  important: {
+    backgroundColor: theme.palette.success.light,
+  },
+}));
 export default function MaterialTable({
   metrics,
   handleClick,
@@ -24,6 +37,7 @@ export default function MaterialTable({
   handlePageSize,
   categoryTabSwitch,
 }: TableProps): JSX.Element {
+  const classes = useStyles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
 
   return (
@@ -68,24 +82,27 @@ export default function MaterialTable({
                 <TableRow
                   key={shortid.generate()}
                   onClick={() => handleClick(eachRow.id)}
+                  className={classnames({
+                    [classes.tableRow]: true, [classes.important]: eachRow.isImportant,
+                  })}
                 >
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
-                    {eachRow.id}
+                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
+                    {eachRow.isImportant ? '중요' : eachRow.id}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
                     {categoryTabSwitch(eachRow.category)}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
                     {eachRow.title}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
                     {eachRow.createdAt}
                   </TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 41 * emptyRows }}>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={4} />
                 </TableRow>
               )}
             </TableBody>
@@ -97,7 +114,7 @@ export default function MaterialTable({
           toolbar: false,
           sorting: false,
           search: false,
-          pageSize: 10,
+          pageSize: 5,
           pageSizeOptions: [5, 10],
           headerStyle: { backgroundColor: '#929ef8', color: 'white' },
           draggable: false,
