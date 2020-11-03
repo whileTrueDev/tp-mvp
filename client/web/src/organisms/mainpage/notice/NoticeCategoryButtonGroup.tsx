@@ -24,7 +24,7 @@ export interface NoticeCategoryButtonGroupProps {
   onChange: (str: string) => void;
   selected: string;
   categories: string[];
-  noticeTabSwitch: (value: string) => JSX.Element;
+  noticeTabSwitch: (value: string | undefined) => JSX.Element;
 }
 export default function NoticeCategoryButtonGroup({
   onChange, selected, categories, noticeTabSwitch,

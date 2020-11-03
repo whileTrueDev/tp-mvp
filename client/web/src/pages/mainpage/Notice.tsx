@@ -24,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Notice(): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
-
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(10);
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
   // 개별 글 보기 스크롤 아래로 내리기
@@ -53,6 +54,7 @@ export default function Notice(): JSX.Element {
       default: return (<Typography> 전체 </Typography>);
     }
   };
+
   // Category 선택을 위한 스테이트 
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
   function handleCategorySelect(str: string): void {
@@ -114,20 +116,20 @@ export default function Notice(): JSX.Element {
               </div>
 
               <div className={classes.contents}>
-                <NoticeTable<NoticeData>
-                  data={!loading && data
+                <NoticeTable
+                  metrics={!loading && data
                     ? data
-                      .sort((row1, row2) => {
-                        if (row2.isImportant) return 1;
-                        if (row1.isImportant) return -1;
-                        return new Date(row2.createdAt).getTime()
-                            - new Date(row1.createdAt).getTime();
-                      })
+                      .sort((row1, row2) => new Date(row2.createdAt).getTime()
+                          - new Date(row1.createdAt).getTime())
                       .filter((row) => (selectedCategory !== '전체'
                         ? row.category === selectedCategory : row))
                     : []}
-                  onRowClick={handleNoticeClick}
-                  noticeTabSwitch={noticeTabSwitch}
+                  handleClick={handleNoticeClick}
+                  page={page}
+                  pageSize={pageSize}
+                  handlePage={setPage}
+                  handlePageSize={setPageSize}
+                  categoryTabSwitch={noticeTabSwitch}
                 />
               </div>
             </>
