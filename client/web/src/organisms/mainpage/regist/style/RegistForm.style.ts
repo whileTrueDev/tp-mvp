@@ -1,6 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
+  form: {
+    marginTop: theme.spacing(6),
+  },
   textField: {
     color: theme.palette.text.secondary,
     [theme.breakpoints.down('xs')]: {
@@ -18,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 0,
     },
     [theme.breakpoints.up('sm')]: {
-      width: 220,
+      width: 180,
     },
   },
   divider: {
