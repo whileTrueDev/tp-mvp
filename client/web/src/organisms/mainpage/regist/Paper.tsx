@@ -1,5 +1,7 @@
 import React, { useState, useReducer } from 'react';
 import classnames from 'classnames';
+import { useSnackbar } from 'notistack';
+
 import {
   Paper,
   Typography,
@@ -13,6 +15,7 @@ import shortid from 'shortid';
 import useStyles from './style/Paper.style';
 import Dialog from '../../../atoms/Dialog/Dialog';
 import terms from './source/registConfig';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 interface CheckState<T> {
   checkedA: T;
@@ -52,6 +55,8 @@ interface Props {
 
 function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Element {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [state, dispatch] = useReducer(
     reducer, { checkedA: false, checkedB: false, checkedC: false },
   );
@@ -85,7 +90,7 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
     if (state.checkedA && state.checkedB) {
       handleNext();
     } else {
-      alert('모든 약관에 동의하지 않으면 회원가입이 완료되지 않습니다.');
+      ShowSnack('모든 약관에 동의하지 않으면 회원가입이 완료되지 않습니다.', 'warning', enqueueSnackbar);
     }
     setAgreement(state.checkedC);
   }
@@ -123,7 +128,7 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
                             if (state[term.state]) {
                               handleCancel(term.state);
                             } else {
-                              alert('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.');
+                              ShowSnack('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.', 'warning', enqueueSnackbar);
                             }
                           }}
                           checked={state[term.state]}

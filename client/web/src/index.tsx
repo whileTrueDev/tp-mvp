@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 
 import { configure } from 'axios-hooks';
+import { SnackbarProvider } from 'notistack';
 import axios from './utils/axios';
 import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
@@ -66,52 +67,57 @@ function Index(): JSX.Element {
   useAutoLogin(user.userId, handleLogin);
 
   return (
-    <ThemeProvider<TruepointTheme> theme={truepointTheme}>
-      <CssBaseline />
+    <SnackbarProvider
+      maxSnack={1}
+      preventDuplicate
+    >
+      <ThemeProvider<TruepointTheme> theme={truepointTheme}>
+        <CssBaseline />
 
-      {/* 로그인 여부 Context */}
-      <AuthContext.Provider value={{
-        user, accessToken, handleLogin, handleLogout,
-      }}
-      >
-        <KakaoTalk />
-        {/* 페이지 컴포넌트 */}
-        <SubscribeContext.Provider value={{
-          currUser,
-          invalidSubscribeUserList,
-          validSubscribeUserList,
-          handleCurrTargetUser,
-          handleLoginUserId,
-          loading,
-          error,
+        {/* 로그인 여부 Context */}
+        <AuthContext.Provider value={{
+          user, accessToken, handleLogin, handleLogout,
         }}
         >
-          <BrowserRouter>
-            <Switch>
-              <Route exact path="/" component={Main} />
-              <Route exact path="/signup" component={Regist} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/find-id" component={FindId} />
-              <Route exact path="/find-pw" component={FindPassword} />
-              <Route exact path="/notice" component={Notice} />
-              <Route exact path="/notice/:id" component={Notice} />
-              <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
-              <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
-              <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
-              <Route
-                exact
-                path="/feature-suggestion/read/:id/edit"
-                component={FeatureSuggestionWrite}
-              />
-              <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-              <Route exact path="/termsofuse" component={TermsOfUse} />
-              <Route path="/mypage" component={Mypage} />
-            </Switch>
-            {/* 페이지 컴포넌트 */}
-          </BrowserRouter>
-        </SubscribeContext.Provider>
-      </AuthContext.Provider>
-    </ThemeProvider>
+          <KakaoTalk />
+          {/* 페이지 컴포넌트 */}
+          <SubscribeContext.Provider value={{
+            currUser,
+            invalidSubscribeUserList,
+            validSubscribeUserList,
+            handleCurrTargetUser,
+            handleLoginUserId,
+            loading,
+            error,
+          }}
+          >
+            <BrowserRouter>
+              <Switch>
+                <Route exact path="/" component={Main} />
+                <Route exact path="/signup" component={Regist} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/find-id" component={FindId} />
+                <Route exact path="/find-pw" component={FindPassword} />
+                <Route exact path="/notice" component={Notice} />
+                <Route exact path="/notice/:id" component={Notice} />
+                <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
+                <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
+                <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
+                <Route
+                  exact
+                  path="/feature-suggestion/read/:id/edit"
+                  component={FeatureSuggestionWrite}
+                />
+                <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+                <Route exact path="/termsofuse" component={TermsOfUse} />
+                <Route path="/mypage" component={Mypage} />
+              </Switch>
+              {/* 페이지 컴포넌트 */}
+            </BrowserRouter>
+          </SubscribeContext.Provider>
+        </AuthContext.Provider>
+      </ThemeProvider>
+    </SnackbarProvider>
   );
 }
 
