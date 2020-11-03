@@ -36,9 +36,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   const [basePeriod, setBasePeriod] = useState<Date[]>(new Array<Date>(2));
   const [comparePeriod, setComparePeriod] = useState<Date[]>(new Array<Date>(2));
   const [checkStateGroup, setCheckStateGroup] = useState({
-    viewer: false,
-    chat: false,
-    smile: false,
+    viewer: true,
+    chat: true,
+    smile: true,
   });
   const [innerError, setInnerError] = React.useState<FatalError>({
     isError: false,

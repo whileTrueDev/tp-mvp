@@ -271,7 +271,6 @@ function Calendar(props: CalendarProps): JSX.Element {
         <DatePicker
           value={currDate}
           onChange={handleDate}
-        // onMonthChange={handleMonthChange}
           disableFuture
           renderDay={renderDayInPicker}
           variant="static"

@@ -394,8 +394,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
             onClick={(e): void => {
               if (anchorEl) {
                 handleAnchorClose();
-              } else if (period[0] && period[1]) handleAnchorOpenWithRef(targetRef);
-              else {
+              } else if (period[0] && period[1]) {
+                handleAnchorOpenWithRef(targetRef);
+              } else {
                 handleError({
                   isError: true,
                   helperText: '기간을 선택해주세요.',

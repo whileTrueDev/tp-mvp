@@ -43,9 +43,9 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
   const [termStreamsList, setTermStreamsList] = React.useState<StreamsListItem[]>([]);
   const [checkStateGroup, setCheckStateGroup] = React.useState({
-    viewer: false,
-    chat: false,
-    smile: false,
+    viewer: true,
+    chat: true,
+    smile: true,
     // searchKeyWord: string,
   });
   const [innerError, setInnerError] = React.useState<FatalError>({
@@ -145,16 +145,16 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     }
   }, [period, auth.user, excuteGetStreams]);
 
-  /* 네비바 유저 전환시 이전 값 초기화 */
-  React.useEffect(() => {
-    setPeriod(new Array<Date>(2));
-    setCheckStateGroup({
-      viewer: false,
-      chat: false,
-      smile: false,
-    });
-    setTermStreamsList([]);
-  }, [auth.user]);
+  /* 네비바 유저 전환시 이전 값 초기화 -> CBT 주석 사항 */
+  // React.useEffect(() => {
+  //   setPeriod(new Array<Date>(2));
+  //   setCheckStateGroup({
+  //     viewer: false,
+  //     chat: false,
+  //     smile: false,
+  //   });
+  //   setTermStreamsList([]);
+  // }, [auth.user]);
 
   const handleAnalysisButton = () => {
     const requestParams: SearchEachS3StreamData[] = termStreamsList

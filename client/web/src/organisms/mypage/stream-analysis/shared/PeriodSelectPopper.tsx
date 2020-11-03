@@ -2,7 +2,7 @@ import React from 'react';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Typography, Popper, Box, Grid, IconButton, Divider, Button,
+  Typography, Popper, Box, Grid, IconButton, Divider, Button, ClickAwayListener,
 } from '@material-ui/core';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
@@ -15,7 +15,7 @@ import { PeriodSelectPopperProps } from './StreamAnalysisShared.interface';
 const useStyles = makeStyles((theme: Theme) => ({
   popper: {
     marginTop: theme.spacing(2),
-    zIndex: 800, // 마이페이지 내부 컴포넌트 < popper < 마이페이지 상단 네비바 && 최상단 네비바
+    zIndex: 900, // 마이페이지 내부 컴포넌트 < popper < 마이페이지 상단 네비바 && 최상단 네비바
   },
   box: {
     width: '914px',
@@ -36,9 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    // marginTop: theme.spacing(4),
     minHeight: '200px',
-    // padding: theme.spacing(4),
   },
   calendarWrapper: {
     display: 'flex',
@@ -68,97 +66,100 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
   };
 
   return (
-    <Popper
-      className={classes.popper}
-      placement="bottom-start"
-      anchorEl={anchorEl}
-      open={Boolean(anchorEl)}
-      disablePortal
-      modifiers={{
-        flip: { enabled: false },
-        preventOverflow: { enabled: false, boundariesElement: 'scrollParent' },
-        hide: { enabled: false },
-      }}
-    >
-      <Box
-        boxShadow={1}
-        borderRadius={16}
-        borderColor="#707070"
-        border={1}
-        className={classes.box}
-      >
-        <Grid style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+    <ClickAwayListener onClickAway={handleAnchorClose}>
+      <Popper
+        className={classes.popper}
+        placement="bottom-start"
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        disablePortal
+        modifiers={{
+          flip: { enabled: false },
+          preventOverflow: { enabled: false, boundariesElement: 'scrollParent' },
+          hide: { enabled: false },
         }}
+      >
+        <Box
+          boxShadow={1}
+          borderRadius={16}
+          borderColor="#707070"
+          border={1}
+          className={classes.box}
         >
-          <Typography className={classes.boxTitle}>
-            제외할 방송 선택
-          </Typography>
-
-          <IconButton
-            onClick={() => handleAnchorClose()}
+          <Grid style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
           >
-            <ClearOutlinedIcon />
-          </IconButton>
-        </Grid>
+            <Typography className={classes.boxTitle}>
+              제외할 방송 선택
+            </Typography>
 
-        <Grid className={classes.calendarWrapper}>
-          <Calendar
-            period={period}
+            <IconButton
+              onClick={() => handleAnchorClose()}
+            >
+              <ClearOutlinedIcon />
+            </IconButton>
+          </Grid>
+
+          <Grid className={classes.calendarWrapper}>
+            <Calendar
+              period={period}
             // handlePeriod={handlePeriod}
-            base={base}
-            handleSelectedDate={handleSelectedDate}
-            currDate={selectedDate}
-            selectedStreams={selectedStreams}
-          />
-          {/* 클릭된 날짜의 방송 리스트 */}
-          <div style={{ marginLeft: '16px', marginRight: '16px', width: '100%' }}>
+              base={base}
+              handleSelectedDate={handleSelectedDate}
+              currDate={selectedDate}
+              selectedStreams={selectedStreams}
+            />
+            {/* 클릭된 날짜의 방송 리스트 */}
+            <div style={{ marginLeft: '16px', marginRight: '16px', width: '100%' }}>
+              <PeriodStreamsList
+                selectedStreams={selectedStreams}
+                selectedDate={selectedDate}
+                handleStreamList={handleStreamList}
+              />
+            </div>
+
+          </Grid>
+
+          <Grid className={classes.listWrapper}>
+            <Divider className={classes.divider} />
+            <Typography className={classes.boxTitle}>
+              기간 내 모든 방송
+            </Typography>
+
+            {/* 모든 방송 리스트 */}
             <PeriodStreamsList
               selectedStreams={selectedStreams}
-              selectedDate={selectedDate}
               handleStreamList={handleStreamList}
             />
-          </div>
+          </Grid>
 
-        </Grid>
+          <Grid className={classes.listWrapper}>
+            <Divider className={classes.divider} />
+            <Typography className={classes.boxTitle}>
+              제외 된 방송
+            </Typography>
+            {/* 제외된 방송 리스트 */}
+            <PeriodStreamsList
+              handleStreamList={handleStreamList}
+              selectedStreams={selectedStreams.filter((streamItem) => streamItem.isRemoved === true)}
+            />
+          </Grid>
 
-        <Grid className={classes.listWrapper}>
-          <Divider className={classes.divider} />
-          <Typography className={classes.boxTitle}>
-            기간 내 모든 방송
-          </Typography>
+          <Button
+            variant="contained"
+            color="secondary"
+            style={{ alignSelf: 'flex-end', marginTop: '16px', color: 'white' }}
+            onClick={handleAnchorClose}
+          >
+            완료
+          </Button>
 
-          {/* 모든 방송 리스트 */}
-          <PeriodStreamsList
-            selectedStreams={selectedStreams}
-            handleStreamList={handleStreamList}
-          />
-        </Grid>
+        </Box>
+      </Popper>
+    </ClickAwayListener>
 
-        <Grid className={classes.listWrapper}>
-          <Divider className={classes.divider} />
-          <Typography className={classes.boxTitle}>
-            제외 된 방송
-          </Typography>
-          {/* 제외된 방송 리스트 */}
-          <PeriodStreamsList
-            handleStreamList={handleStreamList}
-            selectedStreams={selectedStreams.filter((streamItem) => streamItem.isRemoved === true)}
-          />
-        </Grid>
-
-        <Button
-          variant="contained"
-          color="secondary"
-          style={{ alignSelf: 'flex-end', marginTop: '16px', color: 'white' }}
-          onClick={handleAnchorClose}
-        >
-          완료
-        </Button>
-
-      </Box>
-    </Popper>
   );
 }

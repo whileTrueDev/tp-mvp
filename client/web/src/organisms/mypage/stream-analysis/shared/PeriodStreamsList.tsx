@@ -45,9 +45,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: '0px',
     borderRadius: '4px',
-    // '&:hover,select': {
-    //   backgroundColor: theme.palette.secondary.light,
-    // },
   },
   selectedListItem: {
     fontFamily: 'AppleSDGothicNeo',
@@ -143,7 +140,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       </Typography>
 
       <Typography className={classes.listItemText}>
-        {stream.title}
+        {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
       </Typography>
 
     </ListItem>

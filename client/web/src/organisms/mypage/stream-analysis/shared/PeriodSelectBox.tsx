@@ -15,7 +15,7 @@ import { PeriodSelectBoxProps } from './StreamAnalysisShared.interface';
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
     width: '474px',
-    height: '110px',
+    height: 'auto',
   },
   title: {
     color: theme.palette.text.secondary,
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(2),
     width: '100%',
     justifyContent: 'center',
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
   textField: {
     width: '153px',
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   box: {
     width: '474px',
-    height: '110px',
+    height: 'auto',
     backgroundColor: theme.palette.background.paper,
   },
   boxBorderSelected: {
