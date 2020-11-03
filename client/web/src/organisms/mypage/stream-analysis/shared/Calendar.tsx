@@ -89,7 +89,7 @@ function Calendar(props: CalendarProps): JSX.Element {
     selectedStreams.map((stream) => moment(stream.startedAt).format('YYYY-MM-DD')),
   );
 
-  const DATE_THEME = (others: Theme) => ({
+  const DATE_THEME = (others: Theme): Theme => ({
     ...others,
     overrides: {
       MuiPickersDay: {

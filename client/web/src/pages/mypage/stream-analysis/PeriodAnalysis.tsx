@@ -11,13 +11,9 @@ import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysis
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // Graph components
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
-// import { timelineInterface } from '../../../organisms/mypage/graph/graphsInterface';
 // contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
-// import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
-import PeriodAnalysisSectionTest from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
-// AnalysisSection components
-// import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
+import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 
 export default function PeriodAnalysis(): JSX.Element {
   const [data, setData] = useState<PeriodAnalysisResType>();
@@ -50,7 +46,7 @@ export default function PeriodAnalysis(): JSX.Element {
       <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
         <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
           {/* 상단 섹션 */}
-          <PeriodAnalysisSectionTest
+          <PeriodAnalysisSection
             error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
             loading={loading}
             handleSubmit={handleSubmit}

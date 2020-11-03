@@ -90,6 +90,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: '80%',
     backGroundColor: '#b1ae71',
   },
+  rangeHover: {
+    '&:hover,select': {
+      backgroundColor: 'red',
+    },
+  },
 }));
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
@@ -106,7 +111,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
-  const DATE_THEME = (others: Theme) => ({
+  const DATE_THEME = (others: Theme): Theme => ({
     ...others,
     overrides: {
       MuiPickersDay: {

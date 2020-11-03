@@ -96,6 +96,7 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
         <div className={classes.periodTextFieldWrapper}>
 
           <TextField
+            disabled
             className={classes.textField}
             placeholder={moment(now).subtract(1, 'day').format('YYYY년MM월DD일')}
             inputProps={{ style: { textAlign: 'center' }, className: classes.textFieldIntput }}
@@ -105,6 +106,7 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
           />
           <Typography>~</Typography>
           <TextField
+            disabled
             className={classes.textField}
             placeholder={moment(now).format('YYYY년MM월DD일')}
             inputProps={{ style: { textAlign: 'center' }, className: classes.textFieldIntput }}
