@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { Repository } from 'typeorm';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
-import { FeatureSuggestion } from '../../../../shared/interfaces/FeatureSuggestion.interface';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -51,22 +50,19 @@ export class FeatureSuggestionService {
   async updateFeatureSuggestion(state: any): Promise<void> {
     const initialData = state[0];
     const postId = state[1];
-    console.log(state);
     await this.FeatureRepository
       .createQueryBuilder()
       .update('FeatureSuggestion', {
         category: initialData.category,
-        author: state.userId,
+        author: initialData.userId,
         title: initialData.title,
         content: initialData.contents,
-        reply: null,
-        progress: 0,
       })
-      .where('FeatureSuggestion.id = :id', { id: postId })
-      .andWhere('FeatureSuggestion.author = :id', { id: state.userId })
+      .where('author= :userId', { userId: initialData.userId })
+      .andWhere('FeatureSuggestion.id= :postId', { postId })
       .execute()
       .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+        throw new InternalServerErrorException(err, 'mySQL Query Error in featureSuggstion ... ');
       });
   }
 
@@ -78,26 +74,12 @@ export class FeatureSuggestionService {
       .where('id = :id', { id: postId })
       .execute()
       .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+        throw new InternalServerErrorException(err, 'mySQL Query Error in featureSuggstion-Analysis ... ');
       });
   }
 
   async getBoardData(): Promise<any> {
     return this.FeatureRepository.find();
-  }
-
-  async getEditData(authorId: string, postId: number): Promise<any> {
-    const suggestionData = await this.FeatureRepository
-      .createQueryBuilder('FeatureSuggestion')
-      .select(['FeatureSuggestion.*'])
-      .where('FeatureSuggestion.author = :id', { id: authorId })
-      .andWhere('FeatureSuggestion.id = :id', { id: postId })
-      .execute()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
-      });
-
-    return suggestionData;
   }
 
   async getData(): Promise<any> {

@@ -21,11 +21,6 @@ export class FeatureSuggestionController {
     return this.featureSuggestionService.insertFeatureSuggestion(data);
   }
 
-  @Get('/get-edit')
-  getEditData(@Query('authorId') authorId: string, @Query('postId') postId: number): Promise<any> {
-    return this.featureSuggestionService.getEditData(authorId, postId);
-  }
-
   @Patch('/upload-edit')
   // @hwasurr 2020.10.13 eslint error 정리중 disalbe
   // @leejineun 올바른 타입 정의 후 처리바람니다~~!! 처리 이후 eslint-disable 주석 제거해주세요
