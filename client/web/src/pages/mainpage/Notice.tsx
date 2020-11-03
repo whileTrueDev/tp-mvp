@@ -9,6 +9,7 @@ import NoticeTable from '../../organisms/mainpage/notice/NoticeTable';
 import NoticeCategoryButtonGroup from '../../organisms/mainpage/notice/NoticeCategoryButtonGroup';
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import { NoticeData } from '../../interfaces/Notice';
+import Footer from '../../organisms/shared/footer/Footer';
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
@@ -136,6 +137,7 @@ export default function Notice(): JSX.Element {
           )}
         </div>
       </section>
+      <Footer />
     </main>
   );
 }
