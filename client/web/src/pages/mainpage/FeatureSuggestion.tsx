@@ -30,6 +30,8 @@ export default function FeatureSuggestion(): JSX.Element {
   const history = useHistory();
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(10);
   function handleCategorySelect(str: string): void {
     setSelectedCategory(str);
   }
@@ -99,18 +101,21 @@ export default function FeatureSuggestion(): JSX.Element {
                 </div>
 
                 <div className={classes.contents}>
-                  <FeatureTable<FeatureData>
-                    data={!loading && data
+                  <FeatureTable
+                    metrics={!loading && data
                       ? data
                         .sort((row1, row2) => new Date(row2.createdAt).getTime()
                           - new Date(row1.createdAt).getTime())
                         .filter((row) => (selectedCategory !== '전체'
                           ? row.category === selectedCategory : row))
                       : []}
-                    onRowClick={handleFeatureClick}
+                    handleClick={handleFeatureClick}
+                    page={page}
+                    pageSize={pageSize}
+                    handlePage={setPage}
+                    handlePageSize={setPageSize}
                     categoryTabSwitch={categoryTabSwitch}
                   />
-
                 </div>
                 <div>
                   {authContext.user.userId ? (

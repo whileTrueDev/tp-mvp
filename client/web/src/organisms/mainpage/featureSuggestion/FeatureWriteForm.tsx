@@ -105,7 +105,7 @@ export default function FeatureWriteForm(props: any): JSX.Element {
   const handleSubmit = () => {
     if (preData) {
       editPatchRequest({ data: [state, preData.id] }).then(() => {
-        alert('수정 되어었습니다');
+        alert('수정 되었습니다');
         window.location.replace('/feature-suggestion');
       });
     } else {

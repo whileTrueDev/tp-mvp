@@ -1,72 +1,30 @@
 import React from 'react';
-import classnames from 'classnames';
-import { makeStyles } from '@material-ui/core/styles';
 import {
-  TableFooter, Typography, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow, TablePagination, Paper,
+  TablePagination, TableCell, TableRow, TableBody, Typography,
 } from '@material-ui/core';
-import TablePaginationActions from '../../../atoms/Table/TablePaginationActions';
-import MaterialTable from '../../../atoms/Table/MaterialTable';
-import { FeatureData } from '../../../interfaces/FeatureSuggestion';
+import shortid from 'shortid';
+import Table from '../../../atoms/Table/MaterialTable';
 
-const useStyles = makeStyles((theme) => ({
-  container: { boxShadow: 'none' },
-  table: { minWidth: 650 },
-  tableheader: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-  },
-  tableRow: { height: 40 },
-  tablefooterRow: { height: 40 },
-  important: {
-    backgroundColor: theme.palette.action.hover,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.light,
-    },
-  },
-  tableheaderCell: { color: theme.palette.common.white, fontWeight: 'bold' },
-  linkText: {
-    display: 'flex',
-    alignItems: 'center',
-    textTransform: 'none',
-    textDecoration: 'none',
-    color: theme.palette.text.primary,
-    cursor: 'pointer',
-  },
-  newIcon: { marginLeft: theme.spacing(1) },
-}));
-
-export interface FeatureTableProps<T> {
-  data: T[];
-  onRowClick: (num: number) => void;
+interface TableProps {
+  metrics: any;
+  page: number;
+  pageSize: number;
+  handlePage: any;
+  handlePageSize: any;
+  handleClick: (a: any) => void;
   categoryTabSwitch: (value: number) => JSX.Element;
-
 }
-export default function FeatureTable<T extends FeatureData>({
-  data,
-  onRowClick,
+
+export default function MaterialTable({
+  metrics,
+  handleClick,
+  page,
+  pageSize,
+  handlePage,
+  handlePageSize,
   categoryTabSwitch,
-}: FeatureTableProps<T>): JSX.Element {
-  const classes = useStyles();
-
-  // For Pagination
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const emptyRows = rowsPerPage - Math.min(
-    rowsPerPage, data.length - page * rowsPerPage,
-  );
-
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+}: TableProps): JSX.Element {
+  const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
   const progressTab = (value: number) => {
     switch (value) {
       case 1: return (<Typography> 개발확정 </Typography>);
@@ -76,82 +34,100 @@ export default function FeatureTable<T extends FeatureData>({
   };
 
   return (
-    <TableContainer component={Paper} className={classes.container}>
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead className={classes.tableheader}>
-          <TableRow className={classes.tableRow}>
-            <TableCell className={classes.tableheaderCell} align="center" width={125}>글번호</TableCell>
-            <TableCell className={classes.tableheaderCell} align="center" width={200}>카테고리</TableCell>
-            <TableCell className={classes.tableheaderCell} align="center">작성자</TableCell>
-            <TableCell className={classes.tableheaderCell} align="center">제목</TableCell>
-            <TableCell className={classes.tableheaderCell} align="center" width={250}>작성일</TableCell>
-            <TableCell className={classes.tableheaderCell} align="center" width={150}>진행상태</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(rowsPerPage > 0
-            ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : data
-          )
-            .map((row) => {
-              const createdAt = new Date(row.createdAt);
-              return (
+    <>
+      <Table
+        columns={[
+          {
+            width: '50px',
+            align: 'center',
+            title: ' ',
+          },
+          {
+            width: '200px',
+            align: 'center',
+            title: '카테고리',
+          },
+          {
+            width: '200px',
+            align: 'center',
+            title: '작성자',
+          },
+          {
+            width: '300px',
+            align: 'center',
+            title: '제목',
+          },
+          {
+            width: '250px',
+            align: 'center',
+            title: '작성일',
+          },
+          {
+            width: '150px',
+            align: 'center',
+            title: '진행상태',
+          },
+        ]}
+        data={metrics || []}
+        components={{
+          Pagination: (props) => (
+            <TablePagination
+              {...props}
+              page={page}
+            />
+          ),
+          Body: () => (
+            <TableBody>
+              {(pageSize > 0
+                ? metrics.slice(page * pageSize, page * pageSize + pageSize)
+                : metrics
+              ).map((eachRow: any) => (
                 <TableRow
-                  key={row.id}
-                  className={classnames({
-                    [classes.tableRow]: true,
-                  })}
+                  key={shortid.generate()}
+                  onClick={() => handleClick(eachRow.id)}
                 >
-                  <TableCell align="center">
-                    <Typography>{row.id}</Typography>
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                    {eachRow.id}
                   </TableCell>
-                  <TableCell align="center">
-                    {categoryTabSwitch(Number(row.category))}
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                    {categoryTabSwitch(eachRow.category)}
                   </TableCell>
-                  <TableCell align="center">
-                    <Typography>{row.author}</Typography>
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                    {eachRow.author}
                   </TableCell>
-                  <TableCell>
-                    <Typography
-                      onClick={() => {
-                        onRowClick(row.id);
-                      }}
-                      className={classes.linkText}
-                    >
-                      {row.title}
-                    </Typography>
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                    {eachRow.title}
                   </TableCell>
-                  <TableCell align="center">
-                    <Typography>{createdAt.toLocaleString()}</Typography>
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                    {eachRow.createdAt}
                   </TableCell>
-                  <TableCell align="center">
-                    {progressTab(Number(row.progress))}
+                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                    {progressTab(eachRow.progress)}
                   </TableCell>
                 </TableRow>
-              );
-            })}
-        </TableBody>
-        <TableFooter>
-          <TableRow className={classes.tablefooterRow}>
-            <TablePagination
-              backIconButtonText="이전 페이지"
-              nextIconButtonText="다음 페이지"
-              labelDisplayedRows={({
-                from, to, count,
-              }) => `${count}개 중, ${from} ~ ${to}개`}
-              rowsPerPageOptions={[]}
-              colSpan={6}
-              count={data.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
-
-    </TableContainer>
+              ))}
+              {emptyRows > 0 && (
+                <TableRow style={{ height: 41 * emptyRows }}>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
+            </TableBody>
+          ),
+        }}
+        onChangePage={handlePage}
+        onChangeRowsPerPage={handlePageSize}
+        options={{
+          toolbar: false,
+          sorting: false,
+          search: false,
+          pageSize: 10,
+          pageSizeOptions: [5, 10],
+          headerStyle: { backgroundColor: '#929ef8', color: 'white' },
+          draggable: false,
+          paginationType: 'stepped',
+        }}
+        style={{ boxShadow: 'none' }}
+      />
+    </>
   );
 }
