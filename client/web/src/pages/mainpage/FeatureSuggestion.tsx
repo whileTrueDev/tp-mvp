@@ -37,7 +37,7 @@ export default function FeatureSuggestion(): JSX.Element {
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
   const [page, setPage] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageSize, setPageSize] = React.useState(8);
   function handleCategorySelect(str: string): void {
     setSelectedCategory(str);
   }

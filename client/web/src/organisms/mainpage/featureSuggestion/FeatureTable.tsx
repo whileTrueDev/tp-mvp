@@ -2,6 +2,7 @@ import React from 'react';
 import {
   TablePagination, TableCell, TableRow, TableBody, Chip,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 
@@ -14,6 +15,9 @@ interface TableProps {
   handleClick: (a: any) => void;
   categoryTabSwitch: (value: number) => JSX.Element;
 }
+const useStyles = makeStyles((theme) => ({
+  tableCell: { padding: 10 },
+}));
 
 export default function MaterialTable({
   metrics,
@@ -25,11 +29,12 @@ export default function MaterialTable({
   categoryTabSwitch,
 }: TableProps): JSX.Element {
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
+  const classes = useStyles();
   const progressTab = (value: number) => {
     switch (value) {
-      case 1: return (<Chip variant="outlined" label="개발 확정" />);
+      case 1: return (<Chip color="secondary" label="개발 확정" />);
       case 2: return (<Chip color="primary" label="개발보류" />);
-      default: return (<Chip color="secondary" label="미확인" />);
+      default: return (<Chip variant="outlined" label="미확인" />);
     }
   };
 
@@ -86,28 +91,28 @@ export default function MaterialTable({
                   key={shortid.generate()}
                   onClick={() => handleClick(eachRow.id)}
                 >
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.id}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {categoryTabSwitch(eachRow.category)}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.author}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.title}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.createdAt}
                   </TableCell>
-                  <TableCell style={{ padding: 10 }} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {progressTab(eachRow.progress)}
                   </TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 41 * emptyRows }}>
+                <TableRow style={{ height: 30 * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
@@ -120,8 +125,8 @@ export default function MaterialTable({
           toolbar: false,
           sorting: false,
           search: false,
-          pageSize: 10,
-          pageSizeOptions: [5, 10],
+          pageSize,
+          pageSizeOptions: [8, 12],
           headerStyle: { backgroundColor: '#929ef8', color: 'white' },
           draggable: false,
           paginationType: 'stepped',
