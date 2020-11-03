@@ -21,8 +21,7 @@ import classnames from 'classnames';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
 import { StreamCalendarProps } from './StreamCompareSectioninterface';
-// context
-import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme: Theme) => ({
   hasStreamDayDot: {
@@ -47,7 +46,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     compareStream, baseStream, handleError,
   } = props;
   const classes = useStyles();
-  const subscribe = React.useContext(SubscribeContext);
+  const auth = useAuthContext();
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
 
@@ -62,7 +61,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: subscribe.currUser.targetUserId,
+      userId: auth.user.userId,
       startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
     };
 
@@ -80,7 +79,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         });
       }
     });
-  }, [subscribe.currUser, currMonth, excuteGetStreams, handleError]);
+  }, [auth.user.userId, currMonth, excuteGetStreams, handleError]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);
@@ -101,7 +100,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     if (newMonth) {
       setCurrMonth(newMonth);
       const params: SearchCalendarStreams = {
-        userId: subscribe.currUser.targetUserId,
+        userId: auth.user.userId,
         startDate: newMonth.toISOString(),
       };
 

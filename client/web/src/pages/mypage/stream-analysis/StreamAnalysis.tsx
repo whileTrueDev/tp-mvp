@@ -17,15 +17,14 @@ import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetri
 export default function StreamAnalysis(): JSX.Element {
   const [data, setData] = useState<StreamAnalysisResType[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+
   const [{ loading, error }, getRequest] = useAxios<StreamAnalysisResType[]>(
     '/stream-analysis/streams', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
   const handleSubmit = (params: SearchStreamInfoByStreamId) => {
     setOpen(false);
-    getRequest({
-      params,
-    })
+    getRequest({ params })
       .then((res) => {
         setData(res.data);
         setOpen(true);

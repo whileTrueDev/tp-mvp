@@ -1,9 +1,11 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
+import { SIDE_BAR_WIDTH } from '../../../../assets/constants';
 
 const useSidebarStyle = makeStyles((theme: Theme) => ({
   conatiner: {
-    borderTop: `1px solid ${theme.palette.divider}`,
     padding: 0,
+    width: SIDE_BAR_WIDTH - 10, // scrollbar 자리 10px
+    height: '100vh',
   },
   listItem: {
     padding: 0,

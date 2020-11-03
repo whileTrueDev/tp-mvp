@@ -8,6 +8,7 @@ import classnames from 'classnames';
 import StackedGraph from '../graph/StackedGraph';
 import { metricInterface } from '../graph/graphsInterface';
 import MetricIcons from '../../../atoms/Graph-icons/MetricIcons';
+import SectionTitle from '../../shared/sub/SectionTitles';
 
 const useStyles = makeStyles((theme) => ({
   center: {
@@ -62,9 +63,10 @@ export default function StreamAnalysis(
           <CircularProgress />
         </Grid>
       )}  => 로딩도 멈추는 현상 */}
+      <SectionTitle mainTitle="채팅 발생수 평균 비교" />
       {open
        && (metricData.map((element, index) => (
-         <Grid item xs={12} container direction="row" key={shortid.generate()}>
+         <Grid item xs={12} container direction="row" key={shortid.generate()} style={{ marginTop: '32px' }}>
            <Grid item xs={2} className={classes.center}>
              {iconArray[index]}
              <Typography className={classes.head}>{element.title}</Typography>
