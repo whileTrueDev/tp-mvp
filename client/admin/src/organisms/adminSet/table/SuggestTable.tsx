@@ -24,25 +24,18 @@ const tableIcons: Icons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
-// noticeTable 함수의 props
-interface Props {
-  noticeData: any;
-  handleEditModeOff: () => void;
-  handleData: (Data: any) => void;
-}
-// interface NoticeData {
-//   title?: string;
-//   author: string;
-//   category?: string;
-//   code?: number;
-//   createdAt: string;
-//   content: string;
-//   isImportant: number;
-// }
-
 // 최신일을 계산해주는 함수
 function dateDiff(date1: any, date2: any) {
   return Math.ceil((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+interface SuggestTableProps {
+  tableData: any;
+  handleData: (Data: any) => void;
+  ReplyPostModeOff: () => void;
+  handleReplyModeOff: () => void;
+  setSuggestionId: (id: any) => void;
+  handleSuggestionId: (v: any) => void;
 }
 
 // table 레이아웃조정
@@ -70,27 +63,37 @@ const localization = {
   },
 };
 
-export default function NoticeTable(props: Props): JSX.Element {
-  const { noticeData, handleData, handleEditModeOff } = props;
+// 기능제안 목록 테이블
+export default function SuggestTable(props: SuggestTableProps): JSX.Element {
+  const {
+    tableData, handleData, ReplyPostModeOff, handleReplyModeOff, setSuggestionId, handleSuggestionId,
+  } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
-  // const [{ error, loading, data }, executeDelete] = useAxios(
-  //   { url: 'http://localhost:3000/admin/notice', method: 'DELETE' }, { manual: true },
-  // );
+  function handleState(Case: number) {
+    switch (Case) {
+      case 1:
+        return '검토중';
+      case 2:
+        return '기능구현중';
+      case 3:
+        return '구현완료';
+      default:
+        return '';
+    }
+  }
 
   return (
     <MaterialTable
-      title="공지 사항"
-      icons={tableIcons}
+      title="기능 제안"
       columns={[
-        { title: '글번호', field: 'id', render: (rowData) => (<Typography>{rowData.id}</Typography>) },
         { title: '카테고리', field: 'category', render: (rowData) => (<Typography>{rowData.category}</Typography>) },
-        { title: '중요공지', field: 'isImportant', render: (rowData) => (<Typography>{rowData.isImportant ? ('[중요]') : '[일반]'}</Typography>) },
         {
-          title: '글제목',
+          title: '제목',
           field: 'title',
           render: (rowData) => (
             <Typography className="title">
+              [신규 제안]
               {rowData.title}
               { dateDiff(new Date(), new Date(rowData.createdAt)) < 8 && (
               <FiberNew style={{ color: '#929ef8' }} />
@@ -112,11 +115,29 @@ export default function NoticeTable(props: Props): JSX.Element {
             <Typography>{rowData.author}</Typography>
           ),
         },
+        {
+          title: '진행상태',
+          field: 'state',
+          render: (rowData) => (
+            <Typography className="상태">{handleState(rowData.state)}</Typography>
+          ),
+        },
+        {
+          title: '좋아요',
+          field: 'like',
+          render: (rowData) => (
+            <Typography className="상태">{rowData.like}</Typography>
+          ),
+        },
+
       ]}
-      data={noticeData}
-      onRowClick={(e, rowData) => {
+      data={tableData}
+      onRowClick={(e, rowData: any) => {
         handleData(rowData);
-        handleEditModeOff();
+        ReplyPostModeOff();
+        handleReplyModeOff();
+        handleSuggestionId(rowData.suggestionId);
+        setSuggestionId(rowData.suggestionId);
       }}
       options={{
         search: true,
@@ -129,6 +150,7 @@ export default function NoticeTable(props: Props): JSX.Element {
         searchFieldAlignment: 'right',
       }}
       localization={localization}
+      icons={tableIcons}
     />
   );
 }

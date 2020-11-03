@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const theme = createMuiTheme({
+
   palette: {
     primary: {
       // Purple and green play nicely together.

@@ -3,18 +3,22 @@ import {
   Typography, Paper, Divider, Button, Grid, Table,
 } from '@material-ui/core';
 import Markdown from 'react-markdown';
-import { SuggestData } from '../../pages/AdminSuggest';
-import StatusChangeButton from './StatusChangeButton';
+import StatusChangeButton from '../../suggest/StatusChangeButton';
 import CostomTableRow from './CostomTableRow';
 
 interface Props {
-  selectedData: SuggestData;
-  handleEditModeOn: () => void;
+  selectedData: any;
+  ReplyModeOn: () => void;
+  ReplyModeOff: () => void;
+  ReplyPostModeOff: () => void;
+  ReplyPostModeOn: () => void;
+  handleReload: () => void;
 }
 
 export default function SuggestPreview(props: Props): JSX.Element {
-  const { selectedData, handleEditModeOn } = props;
-
+  const {
+    selectedData, ReplyModeOn, ReplyModeOff, ReplyPostModeOff, handleReload, ReplyPostModeOn,
+  } = props;
   function handleState(Case: number) {
     switch (Case) {
       case 1:
@@ -29,6 +33,7 @@ export default function SuggestPreview(props: Props): JSX.Element {
   }
 
   return (
+
     <Paper>
       <div style={{ padding: 28 }}>
         <Typography variant="h4">
@@ -40,6 +45,7 @@ export default function SuggestPreview(props: Props): JSX.Element {
         >
           <Table size="small">
             <CostomTableRow title="작성자" data={selectedData.author} />
+            <CostomTableRow title="SuggestionId" data={selectedData.suggestionId} />
             <CostomTableRow title="날짜" data={new Date(selectedData.createdAt).toLocaleString()} />
             <CostomTableRow title="카테고리" data={selectedData.category} />
             <CostomTableRow title="진행상태" data={handleState(selectedData.state)} />
@@ -52,16 +58,33 @@ export default function SuggestPreview(props: Props): JSX.Element {
               <Button
                 color="primary"
                 variant="contained"
-                onClick={handleEditModeOn}
+                onClick={() => {
+                  ReplyModeOn();
+                  ReplyPostModeOff();
+                }}
               >
-                답변목록보기
+                답변목록
               </Button>
             </Grid>
 
             <Grid item xs={12} lg={3}>
               <StatusChangeButton
+                handleReload={handleReload}
                 selectedData={selectedData}
               />
+            </Grid>
+
+            <Grid item xs={12} lg={3}>
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={() => {
+                  ReplyPostModeOn();
+                  ReplyModeOff();
+                }}
+              >
+                답변생성
+              </Button>
             </Grid>
 
           </Grid>

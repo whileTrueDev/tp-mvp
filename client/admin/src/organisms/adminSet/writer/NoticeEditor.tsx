@@ -4,14 +4,14 @@ import {
   InputLabel, MenuItem, Select, Divider, FormGroup, FormControlLabel, Checkbox, CheckboxProps, withStyles,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
-import { NoticeData } from '../../pages/AdminNotice';
 
 interface NoticeEditData{
-  state: NoticeData;
+  state: any;
   dispatch: React.Dispatch<any>;
   // helpToggle: boolean;
   handleHelpToggle: () => void;
-  noticeData?: NoticeData;
+  handleReload: () => void;
+  noticeData?: any;
 }
 
 const ImportantCheckbox = withStyles({
@@ -25,14 +25,11 @@ const ImportantCheckbox = withStyles({
   checked: {},
 })((props: CheckboxProps) => <Checkbox color="default" {...props} />);
 
-export default function NoticeEditer(props: NoticeEditData): JSX.Element {
+export default function NoticeEditor(props: NoticeEditData): JSX.Element {
   const {
-    state, dispatch, handleHelpToggle,
-    // helpToggle,
+    state, dispatch, handleHelpToggle, handleReload,
     noticeData,
   } = props;
-  // 초기화
-  // state.isImportant = 0;
 
   const [, executePatch] = useAxios(
     { url: 'http://localhost:3000/admin/notice', method: 'PATCH' }, { manual: true },
@@ -40,6 +37,7 @@ export default function NoticeEditer(props: NoticeEditData): JSX.Element {
   const [, executePost] = useAxios(
     { url: 'http://localhost:3000/admin/notice', method: 'POST' }, { manual: true },
   );
+
   return (
 
     <Paper>
@@ -72,8 +70,8 @@ export default function NoticeEditer(props: NoticeEditData): JSX.Element {
           <FormControlLabel
             control={(
               <ImportantCheckbox
-                checked={Boolean(state.isImportant)}
-                onChange={(e) => dispatch({ type: 'handleisImportant', isImportant: ((e.target.checked) ? 1 : 0) })}
+                checked={!!(state.isImportant)}
+                onChange={(e) => dispatch({ type: 'handleisImportant', isImportant: (!!(e.target.checked)) })}
                 name="checkedA"
                 color="secondary"
               />
@@ -137,17 +135,18 @@ export default function NoticeEditer(props: NoticeEditData): JSX.Element {
             disabled={!state.content || !state.title || !state.category}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n정말로 수정 하시겠습니까?`)) {
-                // console.log(state);
-
-                executePatch({ data: state })
+                executePatch({
+                  data: {
+                    id: state.id,
+                    title: state.title,
+                    content: state.content,
+                    author: state.author,
+                    isImportant: state.isImportant,
+                    category: state.category,
+                  },
+                })
                   .then((res) => {
-                    // console.log(state);
-                    // 기존의 notice data를 변경된 데이터로 최신화
-                    // 어떻게 할까요? ->
-                    // 사용자 입장에서는 새로고침보다 곧바로 데이터가 변경되는 것이 좋다.
-                    // 하지만 현재 백엔드에서 변경된 데이터를 반환하지 않기 때문에
-                    // 리로드해서 새로운 데이터를 불러온다.
-                    window.location.reload();
+                    handleReload();
                   })
                   .catch((err) => {
                     // 데이터 요청 실패시
@@ -165,14 +164,17 @@ export default function NoticeEditer(props: NoticeEditData): JSX.Element {
             color="primary"
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
-                // console.log(state);
-                executePost({ data: state })
+                executePost({
+                  data: {
+                    id: state.id,
+                    title: state.title,
+                    content: state.content,
+                    author: state.author,
+                    isImportant: state.isImportant,
+                    category: state.category,
+                  },
+                })
                   .then((res) => {
-                  // 기존의 notice data를 변경된 데이터로 최신화
-                  // 어떻게 할까요? ->
-                  // 사용자 입장에서는 새로고침보다 곧바로 데이터가 변경되는 것이 좋다.
-                  // 하지만 현재 백엔드에서 변경된 데이터를 반환하지 않기 때문에
-                  // 리로드해서 새로운 데이터를 불러온다.
                     window.location.reload();
                   })
                   .catch((err) => {

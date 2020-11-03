@@ -1,5 +1,5 @@
 import {
-  IsNumber, IsString,
+  IsNumber, IsString, IsBoolean,
 } from 'class-validator';
 
 export class NoticePatchRequest {
@@ -18,6 +18,6 @@ export class NoticePatchRequest {
   @IsString()
   content: string;
 
-  @IsNumber()
+  @IsBoolean()
   isImportant: boolean;
 }
