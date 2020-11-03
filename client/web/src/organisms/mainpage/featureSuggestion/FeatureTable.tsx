@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TablePagination, TableCell, TableRow, TableBody, Typography,
+  TablePagination, TableCell, TableRow, TableBody, Chip,
 } from '@material-ui/core';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
@@ -27,9 +27,9 @@ export default function MaterialTable({
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
   const progressTab = (value: number) => {
     switch (value) {
-      case 1: return (<Typography> 개발확정 </Typography>);
-      case 2: return (<Typography> 개발보류 </Typography>);
-      default: return (<Typography> 미확인 </Typography>);
+      case 1: return (<Chip variant="outlined" label="개발 확정" />);
+      case 2: return (<Chip color="primary" label="개발보류" />);
+      default: return (<Chip color="secondary" label="미확인" />);
     }
   };
 

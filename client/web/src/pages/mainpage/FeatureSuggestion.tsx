@@ -1,7 +1,7 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Chip } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
@@ -22,6 +22,12 @@ const useStyles = makeStyles((theme) => ({
   },
   featureContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
   contents: { marginTop: theme.spacing(4) },
+  chipArea: {
+    marginBottom: theme.spacing(1),
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignContent: 'flex-end',
+  },
 }));
 
 export default function FeatureSuggestion(): JSX.Element {
@@ -101,6 +107,11 @@ export default function FeatureSuggestion(): JSX.Element {
                 </div>
 
                 <div className={classes.contents}>
+                  <div className={classes.chipArea}>
+                    <Chip variant="outlined" label="미확인" />
+                    <Chip color="secondary" label="개발 확정" />
+                    <Chip color="primary" label="개발보류" />
+                  </div>
                   <FeatureTable
                     metrics={!loading && data
                       ? data
