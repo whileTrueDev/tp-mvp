@@ -63,89 +63,94 @@ export default function StreamAnalysis(
           <CircularProgress />
         </Grid>
       )}  => 로딩도 멈추는 현상 */}
-      <SectionTitle mainTitle="채팅 발생수 평균 비교" />
-      {open
-       && (metricData.map((element, index) => (
-         <Grid item xs={12} container direction="row" key={shortid.generate()} style={{ marginTop: '32px' }}>
-           <Grid item xs={2} className={classes.center}>
-             {iconArray[index]}
-             <Typography className={classes.head}>{element.title}</Typography>
-           </Grid>
-           <Grid item xs={9}>
-             <Grid container direction="column" spacing={1}>
-               <Grid item>
-                 <StackedGraph name={element.title} comeData={element.value} />
-               </Grid>
-               <Grid item>
-                 <Card className={classes.card} variant="outlined">
-                   <CardContent className={classes.center}>
-                     <Grid container direction="row" justify="center" spacing={1}>
-                       <Grid item>
-                         <Typography className={classes.main}>
-                           1번
-                           {' '}
-                           {type ? '기간' : '방송' }
-                           이 2번
-                           {' '}
-                           {type ? '기간' : '방송' }
-                           보다
-                           {' '}
-                           {element.title}
-                           가
-                           {' '}
-                         </Typography>
-                       </Grid>
-                       <Grid item>
-                         <Typography className={classnames(classes.main, classes.bold)}>
-                           {`${Math.abs(element.diff)}%`}
-                         </Typography>
-                       </Grid>
-                       <Grid item>
-                         <Typography className={classes.main}>
-                           {element.diff > 0 ? '더 낮습니다.' : '더 높습니다.'}
-                         </Typography>
-                       </Grid>
-                     </Grid>
-                     <Grid container direction="row" justify="center" spacing={2}>
-                       <Grid item>
-                         <Typography className={classes.main}>
-                           1번
-                           {' '}
-                           {type ? '기간' : '방송' }
-                         </Typography>
-                       </Grid>
-                       <Grid item>
-                         <Typography className={classnames(classes.main, classes.bold)}>
-                           {element.broad1Count}
-                           {element.unit}
-                         </Typography>
-                       </Grid>
-                       <Grid item>
-                         <Typography className={classes.main}>
-                           VS
-                         </Typography>
-                       </Grid>
-                       <Grid item>
-                         <Typography className={classes.main}>
-                           2번
-                           {' '}
-                           {type ? '기간' : '방송' }
-                         </Typography>
-                       </Grid>
-                       <Grid item>
-                         <Typography className={classnames(classes.main, classes.bold)}>
-                           {element.broad2Count}
-                           {element.unit}
-                         </Typography>
-                       </Grid>
-                     </Grid>
-                   </CardContent>
-                 </Card>
-               </Grid>
-             </Grid>
-           </Grid>
-         </Grid>
-       )))}
+      {open && (
+        <>
+          <SectionTitle mainTitle="채팅 발생수 평균 비교" />
+          <>
+            {metricData.map((element, index) => (
+              <Grid item xs={12} container direction="row" key={shortid.generate()} style={{ marginTop: '32px' }}>
+                <Grid item xs={2} className={classes.center}>
+                  {iconArray[index]}
+                  <Typography className={classes.head}>{element.title}</Typography>
+                </Grid>
+                <Grid item xs={9}>
+                  <Grid container direction="column" spacing={1}>
+                    <Grid item>
+                      <StackedGraph name={element.title} comeData={element.value} />
+                    </Grid>
+                    <Grid item>
+                      <Card className={classes.card} variant="outlined">
+                        <CardContent className={classes.center}>
+                          <Grid container direction="row" justify="center" spacing={1}>
+                            <Grid item>
+                              <Typography className={classes.main}>
+                                1번
+                                {' '}
+                                {type ? '기간' : '방송' }
+                                이 2번
+                                {' '}
+                                {type ? '기간' : '방송' }
+                                보다
+                                {' '}
+                                {element.title}
+                                가
+                                {' '}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classnames(classes.main, classes.bold)}>
+                                {`${Math.abs(element.diff)}%`}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classes.main}>
+                                {element.diff > 0 ? '더 낮습니다.' : '더 높습니다.'}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                          <Grid container direction="row" justify="center" spacing={2}>
+                            <Grid item>
+                              <Typography className={classes.main}>
+                                1번
+                                {' '}
+                                {type ? '기간' : '방송' }
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classnames(classes.main, classes.bold)}>
+                                {element.broad1Count}
+                                {element.unit}
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classes.main}>
+                                VS
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classes.main}>
+                                2번
+                                {' '}
+                                {type ? '기간' : '방송' }
+                              </Typography>
+                            </Grid>
+                            <Grid item>
+                              <Typography className={classnames(classes.main, classes.bold)}>
+                                {element.broad2Count}
+                                {element.unit}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            ))}
+          </>
+        </>
+      )}
     </Grid>
   );
 }
