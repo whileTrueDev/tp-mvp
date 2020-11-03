@@ -86,16 +86,16 @@ export default function MaterialTable({
                     [classes.tableRow]: true, [classes.important]: eachRow.isImportant,
                   })}
                 >
-                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.isImportant ? '중요' : eachRow.id}
                   </TableCell>
-                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {categoryTabSwitch(eachRow.category)}
                   </TableCell>
-                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.title}
                   </TableCell>
-                  <TableCell className={classes.tableCell} component="th" scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.createdAt}
                   </TableCell>
                 </TableRow>
