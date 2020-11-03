@@ -15,7 +15,7 @@ import shortid from 'shortid';
 import useStyles from './style/Paper.style';
 import Dialog from '../../../atoms/Dialog/Dialog';
 import terms from './source/registConfig';
-import ShowSnack from '../../../atoms/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 interface CheckState<T> {
   checkedA: T;

@@ -12,7 +12,7 @@ import PaperSheet from './Paper';
 import IdentityVerification from './IdentityVerification';
 import { myReducer, initialState } from './Stepper.reducer';
 import TruepointLogo from '../../../atoms/TruepointLogo';
-import ShowSnack from '../../../atoms/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 function RegistStepper(): JSX.Element {
   const history = useHistory();

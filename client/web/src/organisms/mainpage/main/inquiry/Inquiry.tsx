@@ -8,7 +8,7 @@ import styles from '../style/Inquiry.style';
 import axios from '../../../../utils/axios';
 import useDialog from '../../../../utils/hooks/useDialog';
 import Dialog from '../../../../atoms/Dialog/Dialog';
-import ShowSnack from '../../../../atoms/ShowSnack';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const initialContent = {
   name: '',

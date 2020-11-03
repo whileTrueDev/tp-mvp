@@ -7,7 +7,7 @@ import {
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-import ShowSnack from '../../../atoms/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 
 interface Props {

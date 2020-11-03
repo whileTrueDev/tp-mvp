@@ -10,7 +10,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import koLocale from 'date-fns/locale/ko';
 import Grid from '@material-ui/core/Grid';
 import Button from '../../../atoms/Button/Button';
-import ShowSnack from '../../../atoms/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 interface StreamData {
   getState: boolean;
@@ -61,7 +61,7 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
     }).catch(() => {
       ShowSnack('오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
     });
-  }, [getHighlightList]);
+  }, [getHighlightList, enqueueSnackbar]);
 
   const fetchStreamData = async (name: string, year: string, month: string, day: string): Promise<void> => {
     // 달력-> 날짜 선택시 해당 일의 방송을 로드

@@ -20,7 +20,7 @@ import {
 import useAxios from 'axios-hooks';
 import Done from '@material-ui/icons/Done';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
-import ShowSnack from '../../../atoms/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 import useStyles from './style/RegistForm.style';
 import StyledInput from '../../../atoms/StyledInput';

@@ -10,7 +10,7 @@ import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import Button from '../../../atoms/Button/Button';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
-import ShowSnack from '../../../atoms/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -14,7 +14,7 @@ import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
 import Loading from '../../shared/sub/Loading';
-import ShowSnack from '../../../atoms/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 
 interface StreamDate {
