@@ -81,7 +81,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
           </div>
           <div className={classes.contents}>
             <Typography variant="h6" color="textSecondary" style={{ textDecoration: 'underline' }}>
-              아래 목록에서 방송을 선택해주세요.
+              목록에서 방송을 선택하세요.
             </Typography>
           </div>
         </Paper>

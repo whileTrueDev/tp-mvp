@@ -8,13 +8,11 @@ import Button from '@material-ui/core/Button';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';
 import useAuthContext from '../../utils/hooks/useAuthContext';
-import { MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_WIDTH } from '../../assets/constants';
+import { COMMON_APP_BAR_HEIGHT, MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_WIDTH } from '../../assets/constants';
 import THEME_TYPE from '../../interfaces/ThemeType';
 
 // type
 import HeaderLinks from './sub/HeaderLinks';
-
-const APPBAR_HEIGHT = 100;
 
 const useStyles = makeStyles((theme) => createStyles({
   root: {
@@ -29,7 +27,7 @@ const useStyles = makeStyles((theme) => createStyles({
     position: 'sticky',
     maxWidth: MYPAGE_MAIN_MAX_WIDTH,
     minWidth: MYPAGE_MAIN_MIN_WIDTH,
-    height: APPBAR_HEIGHT,
+    height: COMMON_APP_BAR_HEIGHT,
     margin: '0 auto',
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
@@ -44,7 +42,7 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   linkText: { fontWeight: 'bold' },
   logo: { marginRight: theme.spacing(4) },
-  appbarSpace: { paddingTop: APPBAR_HEIGHT },
+  appbarSpace: { paddingTop: COMMON_APP_BAR_HEIGHT },
   userInterfaceWrapper: {
     display: 'flex',
     flex: 1,
