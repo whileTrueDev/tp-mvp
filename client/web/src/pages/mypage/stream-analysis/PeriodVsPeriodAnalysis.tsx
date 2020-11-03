@@ -62,7 +62,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
-        <Paper elevation={1} style={{ padding: '40px' }}>
+        <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
           <PeriodCompareSection
             loading={loading}
             error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
@@ -70,39 +70,41 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
           />
         </Paper>
         {open && (
-        <Grid item container direction="column" spacing={8}>
-          <Grid item container direction="row">
-            <Grid item xs={6}>
-              {timeLineData && (
-              <LinearGraph
-                data={timeLineData[0]}
-                name="period1"
-                opposite={0}
-                selectedMetric={selectedMetric}
-              />
-              )}
+          <Paper elevation={1} style={{ padding: '40px' }}>
+            <Grid item container direction="column" spacing={8}>
+              <Grid item container direction="row">
+                <Grid item xs={6}>
+                  {timeLineData && (
+                  <LinearGraph
+                    data={timeLineData[0]}
+                    name="period1"
+                    opposite={0}
+                    selectedMetric={selectedMetric}
+                  />
+                  )}
+                </Grid>
+                <Grid item xs={6}>
+                  {timeLineData && (
+                  <LinearGraph
+                    data={timeLineData[1]}
+                    name="period2"
+                    opposite={1}
+                    selectedMetric={selectedMetric}
+                  />
+                  )}
+                </Grid>
+              </Grid>
+              <Grid item>
+                {metricOpen && metricData && (
+                <StreamMetrics
+                  open={metricOpen}
+                  metricData={metricData}
+                  type={type}
+                />
+                )}
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              {timeLineData && (
-              <LinearGraph
-                data={timeLineData[1]}
-                name="period2"
-                opposite={1}
-                selectedMetric={selectedMetric}
-              />
-              )}
-            </Grid>
-          </Grid>
-          <Grid item>
-            {metricOpen && metricData && (
-            <StreamMetrics
-              open={metricOpen}
-              metricData={metricData}
-              type={type}
-            />
-            )}
-          </Grid>
-        </Grid>
+          </Paper>
         )}
       </Grid>
     </MypageSectionWrapper>
