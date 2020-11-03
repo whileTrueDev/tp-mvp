@@ -19,13 +19,16 @@ interface TableProps {
 const useStyles = makeStyles((theme) => ({
   tableCell: { padding: 10 },
   tableRow: {
-    height: 80,
+    height: 60,
     '&:hover': {
-      backgroundColor: theme.palette.grey[200],
+      backgroundColor: theme.palette.action.hover,
     },
   },
   important: {
     backgroundColor: theme.palette.success.light,
+    '&:hover': {
+      backgroundColor: theme.palette.success.light,
+    },
   },
 }));
 export default function MaterialTable({
@@ -101,7 +104,7 @@ export default function MaterialTable({
                 </TableRow>
               ))}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 41 * emptyRows }}>
+                <TableRow style={{ height: 60 * emptyRows }}>
                   <TableCell colSpan={4} />
                 </TableRow>
               )}
@@ -114,8 +117,8 @@ export default function MaterialTable({
           toolbar: false,
           sorting: false,
           search: false,
-          pageSize: 5,
-          pageSizeOptions: [5, 10],
+          pageSize,
+          pageSizeOptions: [8, 12],
           headerStyle: { backgroundColor: '#929ef8', color: 'white' },
           draggable: false,
           paginationType: 'stepped',
