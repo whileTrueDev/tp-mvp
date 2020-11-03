@@ -8,7 +8,9 @@ import useAxios from 'axios-hooks';
 import shortid from 'shortid';
 import { QueryBuilder } from '@material-ui/icons';
 import Check from '@material-ui/icons/Check';
+import { useSnackbar } from 'notistack';
 import AvatarWithName from './AvatarWithName';
+import ShowSnack from '../snackbar/ShowSnack';
 
 interface Props{
   data: any;
@@ -42,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
 export default function MessageTable(props: Props): JSX.Element {
   const { anchorEl, data, handleClose } = props;
 
+  const { enqueueSnackbar } = useSnackbar();
   const [title, setTitle] = React.useState('');
 
   const [{ data: getData, loading: getLoading }] = useAxios({
@@ -76,7 +79,7 @@ export default function MessageTable(props: Props): JSX.Element {
         });
       }
     } else {
-      alert('제목 또는 내용이 없습니다.');
+      ShowSnack('제목 또는 내용이 없습니다.', 'warning', enqueueSnackbar);
     }
   }
 

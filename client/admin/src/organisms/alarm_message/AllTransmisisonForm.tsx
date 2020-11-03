@@ -8,6 +8,8 @@ import Divider from '@material-ui/core/Divider';
 import shortid from 'shortid';
 import DialogActions from '@material-ui/core/DialogActions';
 import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+import ShowSnack from '../snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -39,6 +41,7 @@ interface Props{
 
 export default function DualMessageForm(props: Props): JSX.Element {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const {
     list, open, handleClose, setList,
   } = props;
@@ -76,7 +79,7 @@ export default function DualMessageForm(props: Props): JSX.Element {
         handleClose();
       }
     } else {
-      alert('제목 또는 내용이 없습니다.');
+      ShowSnack('제목 또는 내용이 없습니다.', 'warning', enqueueSnackbar);
     }
   }
 
