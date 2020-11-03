@@ -2,7 +2,7 @@ import React from 'react';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Typography, Divider, Badge, Popper, List, ListSubheader,
+  Typography, Divider, Badge, List, ListSubheader, Popover,
 } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 // types
@@ -53,19 +53,24 @@ function NotificationPopper({
   notificationData,
   setChangeReadState,
   handleError,
+  onClose,
 }: {
   anchorEl: HTMLElement;
   notificationData: Notification[];
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>;
   handleError: (newError: FatalError) => void;
+  onClose: () => void;
 }): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
+
+  // 알림 목록 불러오기
   const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
     url: '/notification',
     method: 'patch',
   }, { manual: true });
 
+  // 알림 클릭 핸들러
   const handleNotificationListItemClick = (notification: Notification) => {
     if (notification.readState === UNREAD_STATE) {
       excutePatch({
@@ -90,16 +95,20 @@ function NotificationPopper({
   };
 
   return (
-    <Popper
-      placement="bottom-end"
-      anchorEl={anchorEl}
+    <Popover
+      disableScrollLock
       open={Boolean(anchorEl)}
-      disablePortal
-      modifiers={{
-        flip: { enabled: true },
-        preventOverflow: { enabled: false, boundariesElement: 'scrollParent' },
-        hide: { enabled: false },
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
       }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+      style={{ zIndex: 9999 }}
     >
       {/* 공지 메뉴 컴포넌트 */}
       <List
@@ -154,7 +163,7 @@ function NotificationPopper({
         </div>
 
       </List>
-    </Popper>
+    </Popover>
   );
 }
 

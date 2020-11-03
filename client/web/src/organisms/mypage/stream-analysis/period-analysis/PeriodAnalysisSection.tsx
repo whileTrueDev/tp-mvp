@@ -1,7 +1,9 @@
 import React from 'react';
 // material-ui core components
 import {
-  Typography, Grid, Divider, Button,
+  Typography,
+  Grid,
+  Button,
 } from '@material-ui/core';
 // axios
 import useAxios from 'axios-hooks';
@@ -31,6 +33,7 @@ import PeriodSelectBox from '../shared/PeriodSelectBox';
 import PeriodSelectPopper from '../shared/PeriodSelectPopper';
 import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
+import SectionTitle from '../../../shared/sub/SectionTitles';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
@@ -206,12 +209,9 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           <Loading clickOpen={loading} lodingTime={10000} />
         )}
 
-        <Divider className={classes.titleDivider} />
         <Grid container direction="column">
 
-          <Typography className={classes.mainTitle}>
-            기간 추세분석
-          </Typography>
+          <SectionTitle mainTitle="기간 추세 분석" />
           <Typography className={classes.infoText}>
             * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
           </Typography>
@@ -255,7 +255,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       />
       )}
       <Grid item>
-        <Typography className={classes.mainBody} style={{ marginTop: '70px' }}>
+        <Typography className={classes.mainBody} style={{ marginTop: '70px', fontWeight: 'bold' }}>
           확인할 데이터 선택
         </Typography>
         {/* 분석 항목 선택 체크박스 그룹 */}

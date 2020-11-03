@@ -2,7 +2,6 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Divider from '@material-ui/core/Divider';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -14,6 +13,7 @@ import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
 import Loading from '../../shared/sub/Loading';
+import SectionTitle from '../../shared/sub/SectionTitles';
 
 interface StreamDate {
   fullDate: Date;
@@ -238,16 +238,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         direction="column"
       >
         <Grid item xs={12} className={classes.root}>
-          <Grid item xs={3}>
-            <Divider variant="middle" component="hr" />
-          </Grid>
-          <Typography variant="h4" className={classes.title}>
-            편집점 분석
-          </Typography>
+          <SectionTitle mainTitle="편집점 분석" />
           <Typography variant="body1" className={classes.sub}>
             방송을 선택하시면 편집점 분석을 시작합니다.
           </Typography>
-          <Divider variant="middle" />
         </Grid>
         <Grid
           item
@@ -257,7 +251,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           alignItems="center"
         >
           <Grid item xs={12} className={classes.root}>
-            <Typography variant="h4" className={classes.checkedStreamFont}>
+            <Typography variant="h4" className={classes.sub}>
               선택된 방송 &gt;
             </Typography>
           </Grid>

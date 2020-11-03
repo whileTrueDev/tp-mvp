@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     zIndex: 800, // 마이페이지 내부 컴포넌트 < popper < 마이페이지 상단 네비바 && 최상단 네비바
   },
   box: {
-    width: '911px',
+    width: '914px',
     minHeight: '855px',
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(4),

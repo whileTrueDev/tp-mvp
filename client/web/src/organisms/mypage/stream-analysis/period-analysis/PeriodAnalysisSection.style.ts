@@ -3,13 +3,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
-    marginTop: theme.spacing(4),
-  },
-  titleDivider: {
-    backgroundColor: theme.palette.primary.main,
-    width: '200px',
-    marginBottom: '12px',
-    height: '3px',
+    padding: theme.spacing(6),
   },
   mainTitle: {
     color: theme.palette.text.primary,
@@ -24,7 +18,7 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
   infoText: {
     color: theme.palette.text.secondary,
     fontFamily: 'AppleSDGothicNeo',
-    fontSize: '12px',
+    fontSize: '18px',
     lineHeight: '1.11',
     textAlign: 'right',
     marginRight: '110px',

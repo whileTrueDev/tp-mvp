@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // material-ui core components
 import {
-  Typography, Grid, Divider, Button,
+  Typography, Grid, Button,
 } from '@material-ui/core';
 // axios
 import useAxios from 'axios-hooks';
@@ -24,6 +24,8 @@ import PeriodSelectBox from '../shared/PeriodSelectBox';
 import PeriodSelectPopper from '../shared/PeriodSelectPopper';
 import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
+// componentShared
+import SectionTitle from '../../../shared/sub/SectionTitles';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {
@@ -222,10 +224,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           />
           )}
 
-      <Divider className={classes.titleDivider} />
-      <Typography className={classes.mainTitle}>
-        기간 대 기간 분석
-      </Typography>
+      <SectionTitle mainTitle="기간대 기간 분석" />
       <Typography className={classes.infoText}>
         * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
       </Typography>

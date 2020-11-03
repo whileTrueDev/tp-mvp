@@ -48,7 +48,7 @@ export default function PeriodAnalysis(): JSX.Element {
   return (
     <MypageSectionWrapper>
       <Grid container direction="column" spacing={2} style={{ minHeight: '3000px' }}>
-        <Paper elevation={1} style={{ padding: '40px', marginRight: '48px' }}>
+        <Paper elevation={1} style={{ padding: '40px' }}>
           {/* 상단 섹션 */}
           <PeriodAnalysisSectionTest
             error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}

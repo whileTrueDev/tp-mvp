@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     letterSpacing: 'normal',
     textAlign: 'left',
     lineHeight: 1.5,
-    fontSize: '18px',
+    fontSize: '22px',
     fontFamily: 'AppleSDGothicNeo',
     display: 'flex',
     alignItems: 'center',
@@ -41,6 +41,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   textField: {
     width: '153px',
     textAlign: 'center',
+  },
+  textFieldIntput: {
+    color: theme.palette.text.secondary,
+    fontSize: '18px',
   },
   iconButton: {
     padding: theme.spacing(1),
@@ -95,7 +99,7 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
           <TextField
             className={classes.textField}
             placeholder={moment(now).subtract(1, 'day').format('YYYY년MM월DD일')}
-            inputProps={{ style: { textAlign: 'center' } }}
+            inputProps={{ style: { textAlign: 'center' }, className: classes.textFieldIntput }}
             value={period[0]
               ? moment(period[0]).format('YYYY년MM월DD일')
               : ''}
@@ -104,7 +108,7 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
           <TextField
             className={classes.textField}
             placeholder={moment(now).format('YYYY년MM월DD일')}
-            inputProps={{ style: { textAlign: 'center' } }}
+            inputProps={{ style: { textAlign: 'center' }, className: classes.textFieldIntput }}
             value={period[1]
               ? moment(period[1]).format('YYYY년MM월DD일')
               : ''}

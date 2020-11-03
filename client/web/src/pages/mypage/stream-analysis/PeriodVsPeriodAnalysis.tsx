@@ -61,8 +61,8 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
 
   return (
     <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
-        <Paper elevation={1} style={{ padding: '40px', marginRight: '48px' }}>
+      <Grid container direction="column" spacing={2}>
+        <Paper elevation={1} style={{ padding: '40px' }}>
           <PeriodCompareSection
             loading={loading}
             error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}

@@ -2,10 +2,6 @@ import { makeStyles } from '@material-ui/core';
 
 const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
   root: { padding: theme.spacing(4) },
-  title: {
-    fontWeight: 'bold',
-    fontSize: '30px',
-  },
   sub: {
     fontSize: 22,
     color: theme.palette.text.secondary,
