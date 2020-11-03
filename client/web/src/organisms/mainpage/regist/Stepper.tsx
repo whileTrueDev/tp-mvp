@@ -6,8 +6,6 @@ import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { useTheme } from '@material-ui/core/styles';
 import { useSnackbar } from 'notistack';
-
-
 import useStyles from './style/Stepper.style';
 import RegistForm from './RegistForm';
 import PaperSheet from './Paper';
@@ -16,7 +14,6 @@ import { myReducer, initialState } from './Stepper.reducer';
 import TruepointLogo from '../../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-
 
 function RegistStepper(): JSX.Element {
   const history = useHistory();
