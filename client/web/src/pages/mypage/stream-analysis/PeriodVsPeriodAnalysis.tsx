@@ -61,7 +61,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
 
   return (
     <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2}>
+      <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
         <Paper elevation={1} style={{ padding: '40px' }}>
           <PeriodCompareSection
             loading={loading}

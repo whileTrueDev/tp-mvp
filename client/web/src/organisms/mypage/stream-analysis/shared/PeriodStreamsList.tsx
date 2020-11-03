@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   addButton: {
     backgroundColor: '#3a86ff',
     color: theme.palette.primary.contrastText,
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(4),
     '&:hover,select': {
       color: theme.palette.primary.dark,
     },

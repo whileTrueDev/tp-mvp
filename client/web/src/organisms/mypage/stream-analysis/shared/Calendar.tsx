@@ -1,15 +1,16 @@
 import React from 'react';
+import { ThemeProvider } from '@material-ui/core';
 // material-ui picker components
 import {
   MuiPickersUtilsProvider, DatePicker,
 } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { ThemeProvider } from '@material-ui/core';
+// import { MuiThemeProvider } from '@material-ui/core';
 // date libary
 import koLocale from 'date-fns/locale/ko';
 import DateFnsUtils from '@date-io/date-fns';
 // styles
-import { makeStyles, Theme, createMuiTheme } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import moment from 'moment';
 // interfaces
@@ -69,22 +70,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: '80%',
     backGroundColor: '#b1ae71',
   },
+  test: {
+    color: 'red',
+    backgroundColor: 'blue',
+  },
 }));
 
 function Calendar(props: CalendarProps): JSX.Element {
   const {
     period, base, handleSelectedDate, currDate, selectedStreams,
   } = props;
-
-  const dateTheme = createMuiTheme({
-    overrides: {
-      MuiPickersDay: {
-        daySelected: {
-          backgroundColor: base ? '#3a86ff' : '#b1ae71',
-        },
-      },
-    },
-  });
 
   const classes = useStyles();
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(period[0]);
@@ -93,6 +88,17 @@ function Calendar(props: CalendarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>(
     selectedStreams.map((stream) => moment(stream.startedAt).format('YYYY-MM-DD')),
   );
+
+  const DATE_THEME = (others: Theme) => ({
+    ...others,
+    overrides: {
+      MuiPickersDay: {
+        daySelected: {
+          backgroundColor: base ? '#3a86ff' : '#b1ae71',
+        },
+      },
+    },
+  });
 
   React.useEffect(() => {
     setHasStreamDays(
@@ -259,22 +265,21 @@ function Calendar(props: CalendarProps): JSX.Element {
   };
 
   return (
-    <ThemeProvider theme={dateTheme}>
-      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
 
+    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
+      <ThemeProvider theme={DATE_THEME}>
         <DatePicker
           value={currDate}
           onChange={handleDate}
-  // onMonthChange={handleMonthChange}
+        // onMonthChange={handleMonthChange}
           disableFuture
           renderDay={renderDayInPicker}
           variant="static"
           openTo="date"
           disableToolbar
         />
-
-      </MuiPickersUtilsProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </MuiPickersUtilsProvider>
 
   );
 }

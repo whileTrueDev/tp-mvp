@@ -1,7 +1,7 @@
 import React from 'react';
 // material-ui core components
 import {
-  Box, Grid, Chip,
+  Box, Grid, Chip, ThemeProvider,
 } from '@material-ui/core';
 // material-ui picker components
 import {
@@ -106,6 +106,17 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
+  const DATE_THEME = (others: Theme) => ({
+    ...others,
+    overrides: {
+      MuiPickersDay: {
+        daySelected: {
+          backgroundColor: base ? '#3a86ff' : '#b1ae71',
+        },
+      },
+    },
+  });
+
   const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
     url: '/stream-analysis/stream-list',
   }, { manual: true });
@@ -139,10 +150,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     }
   }, [period]);
 
-  React.useEffect(() => {
-    setPoint1(null);
-    setPoint2(null);
-  }, [auth.user]);
+  // 구독 관련 기능 , CBT 주석 처리
+  // React.useEffect(() => {
+  //   setPoint1(null);
+  //   setPoint2(null);
+  // }, [auth.user]);
 
   const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined): Date => {
     if (start && prevDate) {
@@ -354,16 +366,19 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       >
         <Grid container direction="column">
           <Grid item>
-            <DatePicker
-              value={currDate}
-              onChange={handleDate}
-              onMonthChange={handleMonthChange}
-              disableFuture
-              renderDay={renderDayInPicker}
-              variant="static"
-              openTo="date"
-              disableToolbar
-            />
+            <ThemeProvider theme={DATE_THEME}>
+              <DatePicker
+                value={currDate}
+                onChange={handleDate}
+                onMonthChange={handleMonthChange}
+                disableFuture
+                renderDay={renderDayInPicker}
+                variant="static"
+                openTo="date"
+                disableToolbar
+              />
+            </ThemeProvider>
+
           </Grid>
 
           <Chip

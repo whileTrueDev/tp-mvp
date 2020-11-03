@@ -47,7 +47,7 @@ export default function PeriodAnalysis(): JSX.Element {
 
   return (
     <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2} style={{ minHeight: '3000px' }}>
+      <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
         <Paper elevation={1} style={{ padding: '40px' }}>
           {/* 상단 섹션 */}
           <PeriodAnalysisSectionTest

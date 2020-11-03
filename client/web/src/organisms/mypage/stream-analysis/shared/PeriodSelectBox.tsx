@@ -65,10 +65,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     border: '1px solid',
   },
   boxBorderNotSelected: {
-    borderRadius: 16,
-    borderColor: '#707070',
+    borderColor: theme.palette.action.selected,
     borderStyle: 'dashed',
-    border: '2px',
+    borderRadius: 16,
   },
 }));
 
