@@ -24,9 +24,10 @@ export interface NoticeCategoryButtonGroupProps {
   onChange: (str: string) => void;
   selected: string;
   categories: string[];
+  noticeTabSwitch: (value: string | undefined) => JSX.Element;
 }
 export default function NoticeCategoryButtonGroup({
-  onChange, selected, categories,
+  onChange, selected, categories, noticeTabSwitch,
 }: NoticeCategoryButtonGroupProps): JSX.Element {
   const classes = useStyles();
 
@@ -45,7 +46,7 @@ export default function NoticeCategoryButtonGroup({
           })}
         >
           <Typography className={classnames({ [classes.selectedText]: selected === category })}>
-            {category}
+            {noticeTabSwitch(category)}
           </Typography>
         </Button>
       ))}
