@@ -140,7 +140,7 @@ export default function FindAccountForm(): JSX.Element {
             }}
             className={classes.selectButton}
           >
-            <Typography variant="body1">이메일 및 본명으로 아이디 찾기</Typography>
+            <Typography variant="body1">이메일 및 이름으로 아이디 찾기</Typography>
           </Button>
 
           <Button
