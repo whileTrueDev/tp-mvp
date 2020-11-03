@@ -11,7 +11,6 @@ import Divider from '@material-ui/core/Divider';
 import Card from '../../../atoms/Card/Card';
 import { FeatureData } from '../../../interfaces/FeatureSuggestion';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
-import FeatureWriteForm from './FeatureWriteForm';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -20,6 +19,15 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  titleSection: {
+    padding: theme.spacing(4),
+    display: 'flex',
+    justifyContent: 'column',
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  idText: {
+    color: theme.palette.grey[400],
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 400 },
@@ -55,7 +63,6 @@ export default function FeatureDetail({
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
-  const [editState, setEditState] = React.useState(false);
   const [, deleteRequest] = useAxios(
     { url: '/feature/upload-delete', method: 'delete' }, { manual: true },
   );
@@ -79,20 +86,44 @@ export default function FeatureDetail({
       window.location.replace('/feature-suggestion');
     }
   };
+  function checkNull(str: string | undefined) {
+    if (typeof str === 'undefined' || str == null || str === '') {
+      return true;
+    } return false;
+  }
+
+  function masking(str: string) {
+    const originStr = str;
+    let maskingStr;
+    let strLength;
+    if (checkNull(originStr) === true) {
+      return originStr;
+    }
+    strLength = originStr.length;
+    if (strLength < 3) {
+      maskingStr = originStr.replace(/(?<=.{1})./gi, '*');
+    } else {
+      maskingStr = originStr.replace(/(?<=.{2})./gi, '*');
+    } return maskingStr;
+  }
   return (
     <div>
       <div>
         <Paper component="article">
           <div className={classes.title}>
-            <Typography variant="h6" className={classes.titleText}>
-              {currentSuggestion?.title}
-            </Typography>
+            <div>
+              <Typography variant="h6" className={classes.titleText}>
+                {currentSuggestion?.title}
+              </Typography>
+              <Typography variant="body1" className={classes.idText}>
+                {currentSuggestion?.author ? masking(currentSuggestion.author) : null}
+              </Typography>
+            </div>
             <Typography color="textSecondary">
               {categoryTabSwitch(Number(currentSuggestion?.category))}
               {currentSuggestion ? new Date(currentSuggestion.createdAt).toLocaleString() : ''}
             </Typography>
           </div>
-
           <div className={classes.contentsText}>
             <Markdown
               className={classes.markdown}
