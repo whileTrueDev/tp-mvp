@@ -6,7 +6,8 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
-
+import { useSnackbar } from 'notistack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 
 interface Props {
@@ -54,6 +55,8 @@ function IndentityVerification({
 }: Props): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [, getRequest] = useAxios(
     '/users/check-id', { manual: true },
   );
@@ -69,7 +72,7 @@ function IndentityVerification({
       params: { impUid },
     }).then((res) => {
       if (res.data) {
-        alert('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.');
+        ShowSnack('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.', 'info', enqueueSnackbar);
         history.replace('/find-id');
       } else {
         getCertificationRequest({
@@ -80,7 +83,7 @@ function IndentityVerification({
               setCertificationInfo(inres.data);
               handleNext();
             } else {
-              alert('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.');
+              ShowSnack('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
               history.push('/signup');
             }
           });

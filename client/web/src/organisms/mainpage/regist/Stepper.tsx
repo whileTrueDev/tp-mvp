@@ -4,16 +4,21 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+
 import useStyles from './style/Stepper.style';
 import RegistForm from './RegistForm';
 import PaperSheet from './Paper';
 import IdentityVerification from './IdentityVerification';
 import { myReducer, initialState } from './Stepper.reducer';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 function RegistStepper(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [activeStep, setStep] = useState(0);
   const [marketingAgreement, setAgreement] = useState(false);
   const [state, dispatch] = useReducer(myReducer, initialState);
@@ -53,13 +58,13 @@ function RegistStepper(): JSX.Element {
     })
       .then((res) => {
         if (res.data) {
-          alert('회원가입이 완료되었습니다. 로그인해주세요.');
+          ShowSnack('회원가입이 완료되었습니다. 로그인해주세요.', 'success', enqueueSnackbar);
           history.replace('/login');
         } else {
           history.replace('/');
         }
       }).catch(() => {
-        alert('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.');
+        ShowSnack('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
         history.replace('/');
       });
   }
