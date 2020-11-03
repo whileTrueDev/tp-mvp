@@ -73,9 +73,6 @@ function PlatformRegistForm({
   }
 
   const handleChange = (name: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-
-    }
     dispatch({ type: name, value: event.target.value });
   };
 
