@@ -9,7 +9,6 @@ import useDialog from '../../../../utils/hooks/useDialog';
 export default function ProductHero(): JSX.Element {
   const classes = styles();
   const { open, handleClose, handleOpen } = useDialog();
-
   return (
     <div className={classes.root}>
       <Container>
@@ -41,15 +40,7 @@ export default function ProductHero(): JSX.Element {
       <Dialog
         open={open}
         onClose={handleClose}
-        title="자세히 보기 다이얼로그"
         maxWidth="md"
-        buttons={(
-          <div>
-            <Button onClick={handleClose}>
-              취소
-            </Button>
-          </div>
-        )}
       >
         <div>
           자세히보기 다이얼로그 내용, 자세히보기 다이얼로그 내용,자세히보기 다이얼로그 내용,자세히보기 다이얼로그 내용
