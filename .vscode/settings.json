@@ -40,7 +40,6 @@
         "editor.formatOnSave": false,
         "editor.tabSize": 2
     },
-    "window.zoomLevel": 0,
     "eslint.alwaysShowStatus": true,
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true

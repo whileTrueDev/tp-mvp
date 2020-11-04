@@ -28,10 +28,11 @@ export interface NoticeDetailProps {
   selectedNoticeId: string;
   onBackClick: () => void;
   onOtherNoticeClick: (num: number) => void;
+  noticeTabSwitch: (value: string | undefined) => JSX.Element;
 }
 export default function NoticeDetail({
   data, onBackClick, selectedNoticeId,
-  onOtherNoticeClick,
+  onOtherNoticeClick, noticeTabSwitch,
 }: NoticeDetailProps): JSX.Element {
   const classes = useStyles();
 
@@ -56,8 +57,8 @@ export default function NoticeDetail({
             {currentNotice?.title}
           </Typography>
           <Typography color="textSecondary">
-            {`${currentNotice?.category} • ${
-              currentNotice ? new Date(currentNotice.createdAt).toLocaleString() : ''}`}
+            {noticeTabSwitch(currentNotice?.category)}
+            {`${currentNotice ? new Date(currentNotice.createdAt).toLocaleString() : ''}`}
           </Typography>
         </div>
 
@@ -74,7 +75,7 @@ export default function NoticeDetail({
 
       <div id="button-set" className={classes.buttonSet}>
         <Button
-          style={{ width: '25%' }}
+          style={{ width: '30%' }}
           size="large"
           disabled={currentNoticeIndex === 0}
           variant="contained"
@@ -100,10 +101,10 @@ export default function NoticeDetail({
             onBackClick();
           }}
         >
-          목록으로
+          목록
         </Button>
         <Button
-          style={{ width: '25%' }}
+          style={{ width: '30%' }}
           size="large"
           disabled={currentNoticeIndex === data.length - 1}
           variant="contained"

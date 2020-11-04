@@ -11,7 +11,7 @@ const styles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'left',
-    height: 600,
+    height: 'inherit',
   },
   main: {
     margin: '20px 0px 20px 0px',

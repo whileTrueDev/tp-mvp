@@ -3,10 +3,12 @@ import {
   Checkbox, FormControlLabel, Button,
   Typography, Input, Container, Grid, CircularProgress,
 } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 import styles from '../style/Inquiry.style';
 import axios from '../../../../utils/axios';
 import useDialog from '../../../../utils/hooks/useDialog';
 import Dialog from '../../../../atoms/Dialog/Dialog';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const initialContent = {
   name: '',
@@ -20,6 +22,7 @@ const InquiryResult: any = {};
 export default function Inquiry(): JSX.Element {
   const classes = styles();
   const confirmDialog = useDialog();
+  const { enqueueSnackbar } = useSnackbar();
 
   // 개인정보 제공 동의 체크를 위한 상태
   const [checked, setChecked] = useState(false);
@@ -47,7 +50,7 @@ export default function Inquiry(): JSX.Element {
 
     if (!checked) {
       setLoading(false);
-      alert('개인정보수집 및 이용안내에 동의해주세요');
+      ShowSnack('개인정보수집 및 이용안내에 동의해주세요', 'info', enqueueSnackbar);
     } else {
       AnonymousUser.privacyAgreement = true;
       // 아래 요청 보내는 곳 수정해야함 Done! - from hwasurr
@@ -65,7 +68,7 @@ export default function Inquiry(): JSX.Element {
         .catch((err) => {
           // console.log(err.response);
           setLoading(false);
-          alert('불편을 드려 대단히 죄송합니다.\n문의 요청중 오류가 발생했습니다.\ntruepointceo@gmail.com 메일로 보내주시면 감사하겠습니다.');
+          ShowSnack('불편을 드려 대단히 죄송합니다.\n문의 요청중 오류가 발생했습니다.\ntruepointceo@gmail.com 메일로 보내주시면 감사하겠습니다.', 'error', enqueueSnackbar);
         });
     }
   }
@@ -183,16 +186,9 @@ export default function Inquiry(): JSX.Element {
           fullWidth
           title="문의하기"
           maxWidth="xs"
-          buttons={(
-            <div>
-              <Button onClick={(): void => {
-                confirmDialog.handleClose();
-              }}
-              >
-                확인
-              </Button>
-            </div>
-          )}
+          callback={() => {
+            confirmDialog.handleClose();
+          }}
         >
           <p style={{ textAlign: 'center', fontSize: '20px', marginTop: 30 }}>문의 요청 완료되었습니다.</p>
           <p style={{ textAlign: 'center', fontSize: '20px' }}>빠른 답변 드리겠습니다.</p>

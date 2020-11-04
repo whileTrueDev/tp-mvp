@@ -18,7 +18,7 @@ export default function WithMedia(): JSX.Element {
         </div>
         <div className={classes.logoWraper}>
           <img src="./images/logo/youtubeLogo.png" alt="youtube-logo" className={classes.logo} />
-          <img src="./images/logo/afreecatvLogo.png" alt="afreecatv-logo" className={classes.logo} />
+          <img src="./images/logo/afreecaLogo.png" alt="afreecatv-logo" className={classes.logo} />
           <img src="./images/logo/twitchLogo.png" alt="twitch-logo" className={classes.logo} />
         </div>
       </Container>

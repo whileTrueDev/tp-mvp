@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateInquiryDto } from './dto/createInquiry.dto';
+import { CreateInquiryDto } from '@truepoint/shared/dist/dto/inquiry/createInquiry.dto';
 import { InquiryEntity } from './entities/inquiry.entity';
 
 @Injectable()

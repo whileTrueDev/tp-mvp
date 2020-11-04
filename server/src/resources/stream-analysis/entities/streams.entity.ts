@@ -1,10 +1,11 @@
 import {
   Entity, Column, PrimaryColumn, OneToOne,
 } from 'typeorm';
+import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
 import { StreamSummaryEntity } from './streamSummary.entity';
 
 @Entity({ name: 'Streams' })
-export class StreamsEntity {
+export class StreamsEntity implements Stream {
   @OneToOne((type) => StreamSummaryEntity, (StreamSummary) => StreamSummary.streamId)
   @PrimaryColumn()
   streamId: string;

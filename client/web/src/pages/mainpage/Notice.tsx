@@ -9,6 +9,8 @@ import NoticeTable from '../../organisms/mainpage/notice/NoticeTable';
 import NoticeCategoryButtonGroup from '../../organisms/mainpage/notice/NoticeCategoryButtonGroup';
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import { NoticeData } from '../../interfaces/Notice';
+import Footer from '../../organisms/shared/footer/Footer';
+import { MYPAGE_MAIN_MIN_WIDTH } from '../../assets/constants';
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
@@ -17,14 +19,17 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  noticeContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
+  noticeContainer: {
+    maxWidth: MYPAGE_MAIN_MIN_WIDTH, minWidth: 968, margin: '64px auto', padding: '0px 32px',
+  },
   contents: { marginTop: theme.spacing(4) },
 }));
 
 export default function Notice(): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
-
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(8);
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
   // 개별 글 보기 스크롤 아래로 내리기
@@ -45,6 +50,14 @@ export default function Notice(): JSX.Element {
   const [{ loading, data }] = useAxios<NoticeData[]>({
     url: '/notice', method: 'GET',
   });
+  const noticeTabSwitch = (value: string | undefined) => {
+    switch (value) {
+      case '0': return (<Typography> 업데이트 </Typography>);
+      case '1': return (<Typography> 서버점검 </Typography>);
+      case '2': return (<Typography> 기타 </Typography>);
+      default: return (<Typography> 전체 </Typography>);
+    }
+  };
 
   // Category 선택을 위한 스테이트 
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
@@ -87,6 +100,7 @@ export default function Notice(): JSX.Element {
                     ? row.category === selectedCategory : row))}
                 onOtherNoticeClick={handleNoticeClick}
                 onBackClick={handleResetNoticeSelect}
+                noticeTabSwitch={noticeTabSwitch}
               />
             </div>
           ) : (
@@ -101,29 +115,32 @@ export default function Notice(): JSX.Element {
                     : []}
                   onChange={handleCategorySelect}
                   selected={selectedCategory}
+                  noticeTabSwitch={noticeTabSwitch}
                 />
               </div>
 
               <div className={classes.contents}>
-                <NoticeTable<NoticeData>
-                  data={!loading && data
+                <NoticeTable
+                  metrics={!loading && data
                     ? data
-                      .sort((row1, row2) => {
-                        if (row2.isImportant) return 1;
-                        if (row1.isImportant) return -1;
-                        return new Date(row2.createdAt).getTime()
-                            - new Date(row1.createdAt).getTime();
-                      })
+                      .sort((row1, row2) => new Date(row2.createdAt).getTime()
+                          - new Date(row1.createdAt).getTime())
                       .filter((row) => (selectedCategory !== '전체'
                         ? row.category === selectedCategory : row))
                     : []}
-                  onRowClick={handleNoticeClick}
+                  handleClick={handleNoticeClick}
+                  page={page}
+                  pageSize={pageSize}
+                  handlePage={setPage}
+                  handlePageSize={setPageSize}
+                  categoryTabSwitch={noticeTabSwitch}
                 />
               </div>
             </>
           )}
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

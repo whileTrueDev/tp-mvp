@@ -1,72 +1,40 @@
 import React from 'react';
-// material-ui core components
 import moment from 'moment';
 import classnames from 'classnames';
+// material-ui core components
 import {
-  Card, CardContent, Typography, Grid, IconButton,
+  Typography, IconButton, Paper,
 } from '@material-ui/core';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
+// icons
+import VideocamIcon from '@material-ui/icons/Videocam';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // interface
 import { StreamCardProps } from './StreamCompareSectioninterface';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardWrapper: {
-    borderTopRightRadius: '0px',
-    borderTopLeftRadius: '0px',
-    borderBottomRightRadius: '12px',
-    borderBottomLeftRadius: '12px',
-    width: '100%',
-    minHeight: '134px',
-    boxShadow: 'none',
+    padding: theme.spacing(2),
+    width: 400,
+    height: 200,
+    overflow: 'hidden',
   },
-  cardTitleWrapper: {
-    width: '100%',
-    backgroundColor: '#b5b5b5',
-    height: '46px',
+  base: { marginRight: theme.spacing(2) },
+  compare: { marginLeft: theme.spacing(2) },
+  baseIcon: { color: theme.palette.primary.dark },
+  compareIcon: { color: theme.palette.secondary.main },
+  baseBeforeIcon: { color: theme.palette.primary.light },
+  compareBeforeIcon: { color: theme.palette.secondary.light },
+  dotted: {
+    borderColor: theme.palette.action.selected,
+    borderStyle: 'dashed',
+    borderRadius: 5,
   },
-  cardTitleCompWrapper: {
-    width: '100%',
-    backgroundColor: '#8699c1',
-    height: '46px',
-  },
-  cardBodyWrapper: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-    minHeight: '130px',
-    paddingTop: '11px',
-    paddingBottom: '11px',
-  },
-  cardBodyCompWrapper: {
-    width: '100%',
-    backgroundColor: '#a6c1f9',
-    minHeight: '130px',
-    paddingTop: '11px',
-    paddingBottom: '11px',
-  },
-  cardTitle: {
-    fontSize: '22px',
-    marginLeft: '13px',
-    fontWeight: 'bold',
-    fontFamily: 'SourceSansPro',
-    color: theme.palette.text.primary,
-    lineHeight: '1.5',
-    overflow: 'auto',
-    display: 'flex',
-    marginTop: '4px',
-    alignItems: 'center',
-  },
-  cardBody: {
-    fontSize: '22px',
-    marginLeft: '20px',
-    fontFamily: 'SourceSansPro',
-    color: theme.palette.text.secondary,
-    lineHeight: '1.5',
-    overflow: 'auto',
-    width: '100%',
-    marginBottom: '10px',
-  },
+  titleContainer: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+  title: { display: 'flex', alignItems: 'center' },
+  titleText: { marginLeft: theme.spacing(2), fontWeight: 'bold' },
+  contents: { padding: theme.spacing(2), marginLeft: theme.spacing(4) },
 }));
 
 export default function StreamCard(props: StreamCardProps): JSX.Element {
@@ -75,70 +43,88 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
   } = props;
   const classes = useStyles();
 
+  // 방송시간 날짜 Formmater
   const airTimeFormmater = (startDate: Date, streamLength: number) => {
     const endAt = new Date(startDate);
     endAt.setHours(startDate.getHours() + streamLength);
     const airTimeText = `${startDate.getDate()}일
-                        ${moment(startDate).format('HH:mm')}~ 
+                        ${moment(startDate).format('HH:mm')} ~ 
                         ${endAt.getDate()}일
                         ${moment(endAt).format('HH:mm')}`;
     return airTimeText;
   };
 
   const handleCloseButton = () => {
-    if (base) {
-      handleSeletedStreams(null, true);
-    } else {
-      handleSeletedStreams(null);
-    }
+    if (base)handleSeletedStreams(null, true);
+    else handleSeletedStreams(null);
   };
 
+  // 제목 글자수 제한
+  const TITLE_STR_LIMIT = 40;
+
   return (
-    <Card className={classes.cardWrapper}>
-      <CardContent style={{ padding: '0px' }}>
-        <Grid
-          container
+    <>
+      {!stream ? ( // 방송이 아직 선택되지 않은 경우
+        <Paper
+          elevation={0}
           className={classnames({
-            [classes.cardTitleWrapper]: base,
-            [classes.cardTitleCompWrapper]: !base,
+            [classes.cardWrapper]: true, [classes.dotted]: true, [classes.base]: base, [classes.compare]: !base,
           })}
-          direction="row"
-          justify="space-between"
         >
-
-          <Grid item>
-            <Typography variant="body1" className={classes.cardTitle}>
-              {platformIcon(stream)}
-              {base ? '기준 방송' : '비교 방송'}
+          <div className={classes.titleContainer}>
+            <div className={classes.title}>
+              <VideocamIcon className={base ? classes.baseBeforeIcon : classes.compareBeforeIcon} fontSize="large" />
+              <Typography variant="h6" color="textSecondary" className={classes.titleText}>
+                {base ? '기준 방송' : '비교 방송'}
+              </Typography>
+            </div>
+          </div>
+          <div className={classes.contents}>
+            <Typography variant="h6" color="textSecondary" style={{ textDecoration: 'underline' }}>
+              목록에서 방송을 선택하세요.
             </Typography>
-          </Grid>
-
-          <IconButton
-            onClick={handleCloseButton}
-          >
-            <ClearOutlinedIcon />
-          </IconButton>
-
-        </Grid>
-        <Grid
-          container
-          alignContent="center"
+          </div>
+        </Paper>
+      ) : (
+        // 방송이 선택된 경우
+        <Paper
           className={classnames({
-            [classes.cardBodyWrapper]: base,
-            [classes.cardBodyCompWrapper]: !base,
+            [classes.cardWrapper]: true, [classes.base]: base, [classes.compare]: !base,
           })}
         >
+          {/* 타이틀 */}
+          <div className={classes.titleContainer}>
+            <div className={classes.title}>
+              <VideocamIcon className={base ? classes.baseIcon : classes.compareIcon} fontSize="large" />
+              <Typography variant="h6" className={classes.titleText}>
+                {base ? '기준 방송' : '비교 방송'}
+              </Typography>
+            </div>
+            <IconButton onClick={handleCloseButton}>
+              <ClearOutlinedIcon />
+            </IconButton>
+          </div>
 
-          <Typography className={classes.cardBody} display="block">
-            {stream.title}
-          </Typography>
-
-          <Typography className={classes.cardBody}>
-            {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
-          </Typography>
-
-        </Grid>
-      </CardContent>
-    </Card>
+          {/* 카드 몸체 */}
+          <div className={classes.contents}>
+            {stream.title.length > TITLE_STR_LIMIT
+              ? (
+                <Typography variant="h6" color="textSecondary">
+                  {`${stream.title.slice(0, TITLE_STR_LIMIT - 3)}...`}
+                </Typography>
+              ) : (
+                <Typography variant="h6" color="textSecondary">
+                  {stream.title}
+                </Typography>
+              )}
+            <Typography variant="body1" color="textSecondary">
+              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+              {' '}
+              {platformIcon(stream)}
+            </Typography>
+          </div>
+        </Paper>
+      )}
+    </>
   );
 }

@@ -2,13 +2,15 @@ import {
   Controller, Post, Body, Get, UseInterceptors,
   ClassSerializerInterceptor, Query, Patch, UseGuards,
 } from '@nestjs/common';
+// DTOs
+import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
+import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
+import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
+
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
-import { CreateUserDto } from './dto/createUser.dto';
-import { PasswordDto } from './dto/password.dto';
-import { SubscribeUsers } from './dto/subscribeUsers.dto';
 
 import { UserEntity } from './entities/user.entity';
 import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';

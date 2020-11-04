@@ -1,32 +1,39 @@
 import React from 'react';
 // material-ui core components
 import {
-  Paper, Typography, Grid, Divider, Button, Collapse,
+  Typography,
+  Grid,
+  Button,
 } from '@material-ui/core';
-// material-ui leb components
-import { Alert } from '@material-ui/lab';
 // axios
 import useAxios from 'axios-hooks';
+// shared dto and interface
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // styles
+import { useSnackbar } from 'notistack';
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
-// custom svg icon
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
-import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
-// subcomponent
-import RangeSelectCalendar from './RangeSelectCalendar';
-import CheckBoxGroup from './CheckBoxGroup';
-import StreamList from './StreamList';
+
 // interface
 import {
-  DayStreamsInfo,
   PeriodAnalysisProps,
-  AnaysisStreamsInfoRequest,
-} from './PeriodAnalysisSection.interface';
+  StreamsListItem,
+} from '../shared/StreamAnalysisShared.interface';
 // attoms
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
-import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
+import Loading from '../../../shared/sub/Loading';
 // context
-import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
+// hooks
+import useAnchorEl from '../../../../utils/hooks/useAnchorEl';
+// sub shared components
+import PeriodSelectBox from '../shared/PeriodSelectBox';
+import PeriodSelectPopper from '../shared/PeriodSelectPopper';
+import RangeSelectCalendar from '../shared/RangeSelectCalendar';
+import CheckBoxGroup from '../shared/CheckBoxGroup';
+import SectionTitle from '../../../shared/sub/SectionTitles';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
@@ -34,14 +41,35 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   } = props;
   const classes = usePeriodAnalysisHeroStyle();
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
-  const [termStreamsList, setTermStreamsList] = React.useState<DayStreamsInfo[]>([]);
+  const [termStreamsList, setTermStreamsList] = React.useState<StreamsListItem[]>([]);
   const [checkStateGroup, setCheckStateGroup] = React.useState({
-    viewer: false,
-    chat: false,
-    smile: false,
+    viewer: true,
+    chat: true,
+    smile: true,
     // searchKeyWord: string,
   });
-  const subscribe = React.useContext(SubscribeContext);
+
+  // const subscribe = React.useContext(SubscribeContext);
+  const auth = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+  const {
+    anchorEl, handleAnchorClose, handleAnchorOpenWithRef,
+  } = useAnchorEl();
+  const targetRef = React.useRef<HTMLDivElement | null>(null);
+
+  const handleStreamList = (targetItem: StreamsListItem, isRemoved?: boolean) => {
+    setTermStreamsList(termStreamsList.map((item) => {
+      if (item.streamId === targetItem.streamId) {
+        const newItem = { ...item };
+
+        if (isRemoved === false) newItem.isRemoved = false;
+        else newItem.isRemoved = true;
+
+        return newItem;
+      }
+      return item;
+    }));
+  };
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
@@ -62,64 +90,90 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   };
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [
-    {
-      loading: getStreamsLoading,
-      error: getStreamsError,
-    }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
+  const [,
+    excuteGetStreams] = useAxios<DayStreamsInfo[]>({
       url: '/stream-analysis/stream-list',
     }, { manual: true });
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
+      const params: SearchCalendarStreams = {
+        userId: auth.user.userId,
+        startDate: period[0].toISOString(),
+        endDate: period[1].toISOString(),
+      };
+
+      excuteGetStreams({
+        params,
+      })
+        .then((res) => {
+          // LOGIN ERROR -> 리다이렉트 필요
+          setTermStreamsList(res.data.map((data) => ({
+            ...data,
+            isRemoved: false,
+          })));
+        })
+        .catch((err) => {
+          if (err.response) {
+            ShowSnack('방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요.', 'error', enqueueSnackbar);
+          }
+        });
+    }
+  }, [period, auth.user, excuteGetStreams, enqueueSnackbar]);
+
+  React.useEffect(() => {
+    if (period[0] && period[1]) {
       excuteGetStreams({
         params: {
-          userId: subscribe.currUser.targetUserId,
+          userId: auth.user.userId,
           startDate: period[0].toISOString(),
           endDate: period[1].toISOString(),
         },
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-        setTermStreamsList(res.data);
+        setTermStreamsList(res.data.map((data) => ({
+          ...data,
+          isRemoved: false,
+        })));
+      }).catch((err) => {
+        if (err.response) {
+          ShowSnack('방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요.', 'error', enqueueSnackbar);
+        }
       });
     }
-  }, [period, subscribe.currUser.targetUserId, excuteGetStreams]);
+  }, [period, auth.user, excuteGetStreams, enqueueSnackbar]);
 
-  /* 네비바 유저 전환시 이전 값 초기화 */
-  React.useEffect(() => {
-    setPeriod(new Array<Date>(2));
-    setCheckStateGroup({
-      viewer: false,
-      chat: false,
-      smile: false,
-    });
-    setTermStreamsList([]);
-  }, [subscribe.currUser]);
-
-  const handleRemoveIconButton = (removeStream: DayStreamsInfo) => {
-    setTermStreamsList(termStreamsList.filter((str) => str.streamId !== removeStream.streamId));
-  };
+  /* 네비바 유저 전환시 이전 값 초기화 -> CBT 주석 사항 */
+  // React.useEffect(() => {
+  //   setPeriod(new Array<Date>(2));
+  //   setCheckStateGroup({
+  //     viewer: false,
+  //     chat: false,
+  //     smile: false,
+  //   });
+  //   setTermStreamsList([]);
+  // }, [auth.user]);
 
   const handleAnalysisButton = () => {
-    const requestParams: AnaysisStreamsInfoRequest[] = termStreamsList.map((dayStreamInfo) => ({
-      creatorId: dayStreamInfo.creatorId,
-      startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
-      streamId: dayStreamInfo.streamId,
-    }));
+    const requestParams: SearchEachS3StreamData[] = termStreamsList
+      .filter((stream) => !stream.isRemoved)
+      .map((dayStreamInfo) => ({
+        creatorId: dayStreamInfo.creatorId,
+        startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
+        streamId: dayStreamInfo.streamId,
+      }));
 
     const selectedCategory: string[] = Object
       .entries(checkStateGroup)
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
-    // 현재 백엔드로 요청시에 오류남 => 파라미터가 너무 많아서 그런듯, get이 아닌 body를 사용하는 방식?
     if (termStreamsList.length < 1) {
-      alert('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요');
+      /* 일감 - Alert 수정 하기 에서 수정 */
+      ShowSnack('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요.', 'error', enqueueSnackbar);
     } else {
       handleSubmit({
         category: selectedCategory,
         /* request params */
-        params: {
-          streams: requestParams,
-        },
+        params: requestParams,
       });
     }
   };
@@ -127,94 +181,56 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   return (
     <Grid className={classes.root}>
       <Grid item>
-        {error
-          && (
-          <ErrorSnackBar
-            message="오류가 발생 했습니다. 다시 시도해주세요."
-          />
-          )}
-        {loading
-          && <CenterLoading />}
+        {!(error?.isError) && (
+          <Loading clickOpen={loading} lodingTime={10000} />
+        )}
 
-        <Divider className={classes.titleDivider} />
         <Grid container direction="column">
-          <Grid item>
-            <Typography
-              className={classes.mainTitle}
-            >
-              기간 추세분석
-            </Typography>
-            <Typography
-              className={classes.mainBody}
-            >
-              추세 분석을 위한 기간 설정
-            </Typography>
-          </Grid>
-          <Grid item container style={{ marginBottom: '5px' }} direction="row" alignItems="flex-end">
-            <Paper
-              elevation={0}
-              className={classes.bodyPapper}
-            >
-              <Typography
-                className={classes.subTitle}
-              >
-                <SelectDateIcon style={{ fontSize: '32.5px', marginRight: '26px' }} />
-                날짜 선택
-              </Typography>
 
-            </Paper>
-            <Collapse
-              timeout="auto"
-              in={!(period[0] && period[1])}
-              style={{ height: 'auto', marginLeft: '20px' }}
-            >
-              <Alert
-                severity="info"
-                className={classes.alert}
-              >
-                기간을 선택하시면 방송 리스트를 확인 할 수 있습니다.
-              </Alert>
-            </Collapse>
-          </Grid>
-          <Grid item container direction="row" xs={12}>
-            <Grid className={classes.bodyWrapper} container xs={8} item>
-              <Grid item xs style={{ width: '310px' }}>
-                <Typography
-                  className={classes.bodyTitle}
-                >
-                  <SelectDateIcon style={{ fontSize: '28.5px', marginRight: '26px' }} />
-                  날짜 선택
-                </Typography>
-                {/* Custom Date Range Picker 달력 컴포넌트 */}
-                <RangeSelectCalendar
-                  handlePeriod={handlePeriod}
-                  period={period}
-                  base
-                />
-              </Grid>
-              <Grid item xs>
-                <Typography
-                  className={classes.bodyTitle}
-                >
-                  <SelectVideoIcon style={{ fontSize: '28.5px', marginRight: '26px' }} />
-                  방송 선택
-                </Typography>
-                {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
-                <StreamList
-                  termStreamsList={termStreamsList}
-                  handleRemoveIconButton={handleRemoveIconButton}
-                />
-                {(getStreamsError || getStreamsLoading)
-                && <CenterLoading />}
+          <SectionTitle mainTitle="기간 추세 분석" />
+          <Typography className={classes.infoText}>
+            * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
+          </Typography>
+          <Typography className={classes.mainBody}>
+            추세 분석을 위한 기간 설정
+          </Typography>
 
-              </Grid>
-            </Grid>
-          </Grid>
+          <PeriodSelectBox
+            targetRef={targetRef}
+            period={period}
+            TitleIcon={SelectDateIcon}
+            iconProps={{ fontSize: '28px' }}
+            titleMessage="기간 선택"
+          />
+
+          {/*  기간 선택 부 - 기간 선택 달력 + popper open 로직 */}
+          <div style={{ marginTop: '16px' }}>
+            <RangeSelectCalendar
+              handlePeriod={handlePeriod}
+              period={period}
+              base
+              anchorEl={anchorEl}
+              targetRef={targetRef}
+              handleAnchorOpenWithRef={handleAnchorOpenWithRef}
+              handleAnchorClose={handleAnchorClose}
+            />
+          </div>
+
         </Grid>
       </Grid>
+
+      {anchorEl && (
+      <PeriodSelectPopper
+        anchorEl={anchorEl}
+        period={period}
+        handleAnchorClose={handleAnchorClose}
+        selectedStreams={termStreamsList}
+        base
+        handleStreamList={handleStreamList}
+      />
+      )}
       <Grid item>
-        {/*  날짜 선택시 margin이 달라지는 오류가 발생 */}
-        <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
+        <Typography className={classes.mainBody} style={{ marginTop: '70px', fontWeight: 'bold' }}>
           확인할 데이터 선택
         </Typography>
         {/* 분석 항목 선택 체크박스 그룹 */}
@@ -224,7 +240,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           smile={checkStateGroup.smile}
           handleCheckStateChange={handleCheckStateChange}
         />
-        <Grid container direction="row" justify="flex-end">
+        <Grid container direction="row" justify="center">
           <Button
             className={classes.anlaysisButton}
             variant="contained"
