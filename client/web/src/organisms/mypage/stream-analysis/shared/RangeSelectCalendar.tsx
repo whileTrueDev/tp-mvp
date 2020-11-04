@@ -111,7 +111,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
-  const DATE_THEME = (others: Theme): Theme => ({
+  const DATE_THEME = (others: Theme) => ({
     ...others,
     overrides: {
       MuiPickersDay: {
@@ -371,7 +371,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       >
         <Grid container direction="column">
           <Grid item>
-            <ThemeProvider theme={DATE_THEME}>
+            <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
               <DatePicker
                 value={currDate}
                 onChange={handleDate}
