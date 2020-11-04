@@ -2,13 +2,12 @@ import React from 'react';
 // material ui style helper, Theme type
 import { withStyles, Theme } from '@material-ui/core/styles';
 // material ui core components
-import Dialog from '@material-ui/core/Dialog';
+import {
+  Slide, Dialog, Button, IconButton, Typography, Grid,
+} from '@material-ui/core';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 // icons
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -53,7 +52,8 @@ const DialogTitle = withStyles((theme: Theme) => ({
 
 const DialogContent = withStyles((theme) => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(4),
+    marginTop: theme.spacing(2),
   },
 }))(MuiDialogContent);
 
@@ -70,15 +70,19 @@ interface CustomDialogProps {
   children: React.ReactNode;
   buttons?: React.ReactNode;
   onClose: () => void;
+  callback?: () => void;
   [rest: string]: any;
 }
 
+const Transition: any = React.forwardRef((props: any, ref: any) => <Slide direction="up" ref={ref} {...props} />);
+
 function CustomDialog({
-  title, open, onClose, buttons, children, ...rest
+  title, open, onClose, children, buttons, callback, ...rest
 }: CustomDialogProps): JSX.Element {
   return (
     <Dialog
       onClose={onClose}
+      TransitionComponent={Transition}
       open={open}
       {...rest}
     >
@@ -87,16 +91,25 @@ function CustomDialog({
           {title}
         </DialogTitle>
       ) : null}
-      <DialogContent dividers>
+      <DialogContent>
         {children}
       </DialogContent>
-      {buttons
-        ? (
+      {buttons && (
+        <DialogActions>
+          {buttons}
+        </DialogActions>
+      )}
+      {callback
+        && (
           <DialogActions>
-            {buttons}
+            <Button onClick={onClose} color="primary">
+              취소
+            </Button>
+            <Button onClick={callback} color="primary" autoFocus>
+              확인
+            </Button>
           </DialogActions>
-        )
-        : null}
+        )}
     </Dialog>
   );
 }

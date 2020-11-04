@@ -186,16 +186,9 @@ export default function Inquiry(): JSX.Element {
           fullWidth
           title="문의하기"
           maxWidth="xs"
-          buttons={(
-            <div>
-              <Button onClick={(): void => {
-                confirmDialog.handleClose();
-              }}
-              >
-                확인
-              </Button>
-            </div>
-          )}
+          callback={() => {
+            confirmDialog.handleClose();
+          }}
         >
           <p style={{ textAlign: 'center', fontSize: '20px', marginTop: 30 }}>문의 요청 완료되었습니다.</p>
           <p style={{ textAlign: 'center', fontSize: '20px' }}>빠른 답변 드리겠습니다.</p>
