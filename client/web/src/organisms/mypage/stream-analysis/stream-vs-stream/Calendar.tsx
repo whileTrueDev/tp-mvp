@@ -9,6 +9,7 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
 import koLocale from 'date-fns/locale/ko';
+import { useSnackbar } from 'notistack';
 // shared dtos , interfaces
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
@@ -24,6 +25,8 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
 import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+// attoms snackbar
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => ({
   hasStreamDayDot: {
@@ -45,13 +48,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
     clickedDate, handleDayStreamList, setClickedDate,
-    compareStream, baseStream, handleError,
+    compareStream, baseStream,
   } = props;
   const classes = useStyles();
   const auth = useAuthContext();
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
-
+  const { enqueueSnackbar } = useSnackbar();
   const [
     {
       data: getStreamsData,
@@ -75,13 +78,10 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       );
     }).catch((err) => {
       if (err.message) {
-        handleError({
-          isError: true,
-          helperText: '달력 정보 구성에 문제가 발생했습니다.',
-        });
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [auth.user.userId, currMonth, excuteGetStreams, handleError]);
+  }, [auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);
@@ -114,10 +114,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         );
       }).catch((err) => {
         if (err.message) {
-          handleError({
-            isError: true,
-            helperText: '달력 정보 구성에 문제가 발생했습니다.',
-          });
+          ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
         }
       });
     }

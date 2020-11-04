@@ -12,6 +12,7 @@ import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // styles
+import { useSnackbar } from 'notistack';
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
 
@@ -19,11 +20,9 @@ import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIc
 import {
   PeriodAnalysisProps,
   StreamsListItem,
-  FatalError,
 } from '../shared/StreamAnalysisShared.interface';
 // attoms
 import Loading from '../../../shared/sub/Loading';
-import ErrorSnackBar from '../../../../atoms/snackbar/ErrorSnackBar';
 // context
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // hooks
@@ -34,6 +33,7 @@ import PeriodSelectPopper from '../shared/PeriodSelectPopper';
 import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
 import SectionTitle from '../../../shared/sub/SectionTitles';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
@@ -48,13 +48,10 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     smile: true,
     // searchKeyWord: string,
   });
-  const [innerError, setInnerError] = React.useState<FatalError>({
-    isError: false,
-    helperText: '',
-  });
+
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
-
+  const { enqueueSnackbar } = useSnackbar();
   const {
     anchorEl, handleAnchorClose, handleAnchorOpenWithRef,
   } = useAnchorEl();
@@ -118,15 +115,11 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         })
         .catch((err) => {
           if (err.response) {
-            setInnerError({
-              isError: true,
-              helperText:
-                  '방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요',
-            });
+            ShowSnack('방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요.', 'error', enqueueSnackbar);
           }
         });
     }
-  }, [period, auth.user, excuteGetStreams]);
+  }, [period, auth.user, excuteGetStreams, enqueueSnackbar]);
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
@@ -141,9 +134,13 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           ...data,
           isRemoved: false,
         })));
+      }).catch((err) => {
+        if (err.response) {
+          ShowSnack('방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요.', 'error', enqueueSnackbar);
+        }
       });
     }
-  }, [period, auth.user, excuteGetStreams]);
+  }, [period, auth.user, excuteGetStreams, enqueueSnackbar]);
 
   /* 네비바 유저 전환시 이전 값 초기화 -> CBT 주석 사항 */
   // React.useEffect(() => {
@@ -171,11 +168,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
     if (termStreamsList.length < 1) {
       /* 일감 - Alert 수정 하기 에서 수정 */
-      setInnerError({
-        isError: true,
-        helperText:
-          '기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요',
-      });
+      ShowSnack('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요.', 'error', enqueueSnackbar);
     } else {
       handleSubmit({
         category: selectedCategory,
@@ -185,27 +178,10 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     }
   };
 
-  const handleError = (newError: FatalError): void => {
-    setInnerError({
-      isError: newError.isError,
-      helperText: newError.helperText,
-    });
-  };
-
   return (
     <Grid className={classes.root}>
       <Grid item>
-        {(error || innerError.isError) && (
-        <ErrorSnackBar
-          message={(() => {
-            if (error) return error.helperText;
-            if (innerError) return innerError.helperText;
-            return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
-          })()}
-          closeCallback={() => handleError({ isError: false, helperText: '' })}
-        />
-        )}
-        {!(error || innerError.isError) && (
+        {!(error?.isError) && (
           <Loading clickOpen={loading} lodingTime={10000} />
         )}
 
@@ -237,7 +213,6 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
               targetRef={targetRef}
               handleAnchorOpenWithRef={handleAnchorOpenWithRef}
               handleAnchorClose={handleAnchorClose}
-              handleError={handleError}
             />
           </div>
 

@@ -23,9 +23,11 @@ import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysi
 // icon
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 // context
+import { useSnackbar } from 'notistack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // interfaces
 import { RangeSelectCaledarProps } from './StreamAnalysisShared.interface';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -104,6 +106,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const classes = useStyles();
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
@@ -140,13 +143,10 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       );
     }).catch((err) => {
       if (err.response) {
-        handleError({
-          isError: true,
-          helperText: '달력 정보 구성에 문제가 발생했습니다.',
-        });
+        ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [auth.user, excuteGetStreams, currMonth, handleError]);
+  }, [auth.user, excuteGetStreams, currMonth, handleError, enqueueSnackbar]);
 
   React.useEffect(() => {
     if (period.length > 1) {
@@ -221,10 +221,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         );
       }).catch((err) => {
         if (err.response) {
-          handleError({
-            isError: true,
-            helperText: '달력 정보 구성에 문제가 발생했습니다.',
-          });
+          ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
         }
       });
     }
@@ -402,10 +399,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
               } else if (period[0] && period[1]) {
                 handleAnchorOpenWithRef(targetRef);
               } else {
-                handleError({
-                  isError: true,
-                  helperText: '기간을 선택해주세요.',
-                });
+                ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
               }
             }}
           />
