@@ -1,10 +1,13 @@
 import React from 'react';
+import moment from 'moment';
 import {
   TablePagination, TableCell, TableRow, TableBody, Chip,
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
+import transformIdToAsterisk from '../../../utils/transformAsterisk';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 interface TableProps {
   metrics: any;
@@ -36,8 +39,10 @@ export default function MaterialTable({
 }: TableProps): JSX.Element {
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
   const classes = useStyles();
-
   const theme = useTheme();
+
+  // 현재 사용자와 기능제안 글쓴이가 같은 사람인지 체크하기 위해
+  const auth = useAuthContext();
 
   const progressTab = (value: number) => {
     switch (value) {
@@ -108,13 +113,15 @@ export default function MaterialTable({
                     {categoryTabSwitch(eachRow.category)}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.author}
+                    {auth.user.userId === eachRow.author
+                      ? eachRow.author
+                      : transformIdToAsterisk(eachRow.author)}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="left">
                     {eachRow.title}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.createdAt}
+                    {moment(eachRow.createdAt).format('YYYY년 MM월 DD일')}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {progressTab(eachRow.progress)}
