@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  featureContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
+  featureContainer: { width: 968, margin: '64px auto' },
   contents: { marginTop: theme.spacing(4) },
   chipArea: {
     marginBottom: theme.spacing(1),
@@ -108,9 +108,9 @@ export default function FeatureSuggestion(): JSX.Element {
 
                 <div className={classes.contents}>
                   <div className={classes.chipArea}>
-                    <Chip variant="outlined" label="미확인" />
-                    <Chip color="secondary" label="개발 확정" />
-                    <Chip color="primary" label="개발보류" />
+                    <Chip style={{ margin: 4 }} variant="outlined" label="미확인" />
+                    <Chip style={{ margin: 4 }} color="secondary" label="개발 확정" />
+                    <Chip style={{ margin: 4 }} color="primary" label="개발보류" />
                   </div>
                   <FeatureTable
                     metrics={!loading && data

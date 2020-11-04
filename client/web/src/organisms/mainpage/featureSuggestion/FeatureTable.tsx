@@ -2,7 +2,7 @@ import React from 'react';
 import {
   TablePagination, TableCell, TableRow, TableBody, Chip,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 
@@ -16,7 +16,13 @@ interface TableProps {
   categoryTabSwitch: (value: number) => JSX.Element;
 }
 const useStyles = makeStyles((theme) => ({
-  tableCell: { padding: 10 },
+  tableRow: {
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  },
+  tableCell: { padding: theme.spacing(1) },
 }));
 
 export default function MaterialTable({
@@ -30,6 +36,9 @@ export default function MaterialTable({
 }: TableProps): JSX.Element {
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
   const classes = useStyles();
+
+  const theme = useTheme();
+
   const progressTab = (value: number) => {
     switch (value) {
       case 1: return (<Chip color="secondary" label="개발 확정" />);
@@ -88,6 +97,7 @@ export default function MaterialTable({
                 : metrics
               ).map((eachRow: any) => (
                 <TableRow
+                  className={classes.tableRow}
                   key={shortid.generate()}
                   onClick={() => handleClick(eachRow.id)}
                 >
@@ -100,7 +110,7 @@ export default function MaterialTable({
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.author}
                   </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
+                  <TableCell className={classes.tableCell} scope="row" align="left">
                     {eachRow.title}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
@@ -127,7 +137,7 @@ export default function MaterialTable({
           search: false,
           pageSize,
           pageSizeOptions: [8, 12],
-          headerStyle: { backgroundColor: '#929ef8', color: 'white' },
+          headerStyle: { backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText },
           draggable: false,
           paginationType: 'stepped',
         }}

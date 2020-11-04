@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     width: '100%',
-    height: 80,
+    height: 60,
     backgroundColor: theme.palette.action.disabledBackground,
   },
   button: {

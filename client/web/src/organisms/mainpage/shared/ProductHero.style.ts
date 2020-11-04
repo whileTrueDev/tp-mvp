@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 700,
+    height: 600,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   wraper: {
@@ -11,7 +11,7 @@ const styles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'left',
-    height: 700,
+    height: 600,
   },
   main: {
     margin: '20px 0px 20px 0px',
