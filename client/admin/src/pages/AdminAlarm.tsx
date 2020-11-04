@@ -13,7 +13,7 @@ export default function AdminAlarm(): JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedData, setData] = React.useState();
   const [{ data }] = useAxios({
-    url: 'http://localhost:3000/admin/notification', method: 'GET',
+    url: 'http://localhost:3000/notification/admin', method: 'GET',
   });
 
   const handleClick = (event: any, d: any) => {

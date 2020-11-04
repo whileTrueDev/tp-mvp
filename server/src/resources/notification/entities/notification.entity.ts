@@ -20,9 +20,6 @@ export class NotificationEntity implements Notification {
   @Column()
   content: string;
 
-  @Column('timestamp')
-  dateform: Date;
-
   @Column({ type: 'boolean', default: 0 })
   readState: number;
 

@@ -10,8 +10,8 @@ import { Notice } from '@truepoint/shared/dist/dto/admin/notice/notice.dto';
 import { NoticeGetRequest } from '@truepoint/shared/dist/dto/admin/notice/noticeGetRequest.dto';
 import { NoticePatchRequest } from '@truepoint/shared/dist/dto/admin/notice/noticePatchRequest.dto';
 // notification (개인알림)
-import { NotificationGetRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationGet.dto';
-import { NotificationPostRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationPost.dto';
+// import { NotificationGetRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationGet.dto';
+// import { NotificationPostRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationPost.dto';
 // feature suggestion (기능제안)
 import { FeatureSuggestionPatchRequest } from '@truepoint/shared/dist/dto/admin/feature/featureSuggestionPatch.dto';
 // feature suggestion reply (기능제안에 대한 답변)
@@ -97,45 +97,45 @@ export class AdminService {
     return !!result;
   }
 
-  // get - 특정 유저에 대한 알림 내역 조회
-  async getNotification(req: NotificationGetRequest): Promise<NotificationEntity[]> {
-    // 단일 공지사항 조회
-    if (Object.hasOwnProperty.call(req, 'userId')) {
-      return this.notificationRepository
-        .find({
-          where: { userId: req.userId },
-          order: {
-            createdAt: 'DESC',
-          },
-        })
-        .catch((err) => {
-          throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
-        });
-    }
+  // // get - 특정 유저에 대한 알림 내역 조회
+  // async getNotification(req: NotificationGetRequest): Promise<NotificationEntity[]> {
+  //   // 단일 공지사항 조회
+  //   if (Object.hasOwnProperty.call(req, 'userId')) {
+  //     return this.notificationRepository
+  //       .find({
+  //         where: { userId: req.userId },
+  //         order: {
+  //           createdAt: 'DESC',
+  //         },
+  //       })
+  //       .catch((err) => {
+  //         throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+  //       });
+  //   }
 
-    return this.notificationRepository
-      .find()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
-      });
-  }
+  //   return this.notificationRepository
+  //     .find()
+  //     .catch((err) => {
+  //       throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+  //     });
+  // }
 
-  // post - 알림 전송 및 다인 전송
-  async postNotification(req: NotificationPostRequest): Promise<boolean> {
-    const { title, content, userId } = req;
+  // // post - 알림 전송 및 다인 전송
+  // async postNotification(req: NotificationPostRequest): Promise<boolean> {
+  //   const { title, content, userId } = req;
 
-    const insertData: any[] = userId.map(((user) => ({
-      userId: user,
-      title,
-      content,
-    })));
-    const result = await this.notificationRepository
-      .save(insertData)
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
-      });
-    return !!result;
-  }
+  //   const insertData: any[] = userId.map(((user) => ({
+  //     userId: user,
+  //     title,
+  //     content,
+  //   })));
+  //   const result = await this.notificationRepository
+  //     .save(insertData)
+  //     .catch((err) => {
+  //       throw new InternalServerErrorException(err, 'mySQL Query Error in Notice ... ');
+  //     });
+  //   return !!result;
+  // }
 
   // get - 모든 feature suggestion 조회 (단일 조회가 의미가 없다.)
   async getFeatureSuggestion(): Promise<FeatureSuggestionEntity[]> {
