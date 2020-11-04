@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -50,11 +51,7 @@ const styles = makeStyles((theme) => ({
   },
   timelineTitle: {
     paddingLeft: 30,
-    fontSize: 20,
     fontWeight: 700,
-  },
-  timelineTitleSub: {
-    fontSize: 15,
   },
 }));
 
@@ -93,10 +90,12 @@ export default function HighlightGraph({
 
   return (
     <div className={styling.root}>
-      <div>
+      <Typography display="inline" variant="h5" className={styling.timelineTitle}>타임라인</Typography>
+      <Typography display="inline" variant="body1"> 방송 플레이타임 기준의 편집점 위치입니다</Typography>
+      {/* <div>
         <span className={styling.timelineTitle}>타임라인</span>
         <span className={styling.timelineTitleSub}> 방송 플레이타임 기준의 편집점 위치입니다</span>
-      </div>
+      </div> */}
       <div className={styling.wraper}>
         <svg className={styling.arrowSVG}>
           <polyline points="0,0 15,10 0,20" />
