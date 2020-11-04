@@ -3,7 +3,7 @@ import Markdown from 'react-markdown/with-html';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, Paper, Typography,
+  Button, Paper, Typography, Chip,
 } from '@material-ui/core';
 import {
   Create, Delete, KeyboardArrowLeft, KeyboardArrowRight,
@@ -65,6 +65,7 @@ export default function FeatureDetail({
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
+
   const [, deleteRequest] = useAxios(
     { url: '/feature/upload-delete', method: 'delete' }, { manual: true },
   );
@@ -96,13 +97,24 @@ export default function FeatureDetail({
       window.scrollTo(0, paperRef.current.scrollHeight + 70);
     }
   });
+
+  // 기능제안 상태 Chip 렌더링을 위해
+  const progressTab = (value: number) => {
+    switch (value) {
+      case 1: return (<Chip color="secondary" label="개발 확정" />);
+      case 2: return (<Chip color="primary" label="개발보류" />);
+      default: return (<Chip variant="outlined" label="미확인" />);
+    }
+  };
   return (
     <div>
       <Paper component="article" ref={paperRef}>
         <div className={classes.title}>
           <div>
-            <Typography variant="h6" className={classes.titleText}>
+            <Typography component="div" variant="h6" className={classes.titleText}>
               {currentSuggestion?.title}
+              {' '}
+              {currentSuggestion && progressTab(currentSuggestion?.progress)}
             </Typography>
             <Typography variant="body1" className={classes.idText}>
               {currentSuggestion?.author ? transformIdToAsterisk(currentSuggestion.author) : null}
