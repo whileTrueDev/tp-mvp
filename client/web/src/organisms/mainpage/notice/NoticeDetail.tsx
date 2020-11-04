@@ -75,7 +75,7 @@ export default function NoticeDetail({
 
       <div id="button-set" className={classes.buttonSet}>
         <Button
-          style={{ width: '25%' }}
+          style={{ width: '30%' }}
           size="large"
           disabled={currentNoticeIndex === 0}
           variant="contained"
@@ -101,10 +101,10 @@ export default function NoticeDetail({
             onBackClick();
           }}
         >
-          목록으로
+          목록
         </Button>
         <Button
-          style={{ width: '25%' }}
+          style={{ width: '30%' }}
           size="large"
           disabled={currentNoticeIndex === data.length - 1}
           variant="contained"

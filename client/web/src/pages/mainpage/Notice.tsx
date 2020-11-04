@@ -10,6 +10,7 @@ import NoticeCategoryButtonGroup from '../../organisms/mainpage/notice/NoticeCat
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import { NoticeData } from '../../interfaces/Notice';
 import Footer from '../../organisms/shared/footer/Footer';
+import { MYPAGE_MAIN_MIN_WIDTH } from '../../assets/constants';
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
@@ -18,7 +19,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  noticeContainer: { width: 1400, margin: '100px auto' },
+  noticeContainer: {
+    maxWidth: MYPAGE_MAIN_MIN_WIDTH, minWidth: 968, margin: '64px auto', padding: '0px 32px',
+  },
   contents: { marginTop: theme.spacing(4) },
 }));
 
