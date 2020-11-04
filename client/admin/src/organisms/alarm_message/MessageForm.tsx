@@ -40,7 +40,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MessageTable(props: Props): JSX.Element {
-  const { anchorEl, data, handleClose } = props;
+  const {
+    anchorEl, data, handleClose,
+  } = props;
 
   const [title, setTitle] = React.useState('');
 

@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Typography, useMediaQuery } from '@material-ui/core';
 import {
-  FiberNew,
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
@@ -24,15 +23,10 @@ const tableIcons: Icons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
-// 최신일을 계산해주는 함수
-function dateDiff(date1: any, date2: any) {
-  return Math.ceil((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24));
-}
-
-interface SuggestTableProps {
-  suggestData: any;
-  handleEditModeOff: () => void;
-     handleData: (Data: any) => void;
+interface ReplyTableProps {
+  replyData: any;
+  handleReplyData: (Data: any) => void;
+  handleReplyEditModeOff: () => void;
 }
 
 // table 레이아웃조정
@@ -61,48 +55,33 @@ const localization = {
 };
 
 // 기능제안 목록 테이블
-export default function SuggestTable(props: SuggestTableProps): JSX.Element {
-  const { suggestData, handleData, handleEditModeOff } = props;
+export default function ReplyTable(props: ReplyTableProps): JSX.Element {
+  const { replyData, handleReplyData, handleReplyEditModeOff } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
-
-  function handleState(Case: number) {
-    switch (Case) {
-      case 1:
-        return '검토중';
-      case 2:
-        return '기능구현중';
-      case 3:
-        return '구현완료';
-      default:
-        return '';
-    }
-  }
 
   return (
     <MaterialTable
-      title="기능 제안"
+      title="기능 제안 답변"
       columns={[
-        { title: '카테고리', field: 'category', render: (rowData) => (<Typography>{rowData.category}</Typography>) },
         {
-          title: '제목',
-          field: 'title',
+          title: '기능제안 글번호',
+          field: 'suggestionId',
           render: (rowData) => (
-            <Typography className="title">
-              [신규 제안]
-              {rowData.title}
-              { dateDiff(new Date(), new Date(rowData.createdAt)) < 8 && (
-              <FiberNew style={{ color: '#929ef8' }} />
-              )}
+            <Typography className="suggestionId">
+              { rowData.suggestionId }
             </Typography>
           ),
         },
         {
-          title: '작성일',
-          field: 'createdAt',
+          title: '답변글 번호',
+          field: 'replyId',
           render: (rowData) => (
-            <Typography>{new Date(rowData.createdAt).toLocaleString()}</Typography>
+            <Typography className="replyId">
+              { rowData.replyId }
+            </Typography>
           ),
         },
+
         {
           title: '작성자',
           field: 'author',
@@ -111,25 +90,18 @@ export default function SuggestTable(props: SuggestTableProps): JSX.Element {
           ),
         },
         {
-          title: '진행상태',
-          field: 'state',
+          title: '작성일',
+          field: 'createdAt',
           render: (rowData) => (
-            <Typography className="상태">{handleState(rowData.state)}</Typography>
-          ),
-        },
-        {
-          title: '좋아요',
-          field: 'like',
-          render: (rowData) => (
-            <Typography className="상태">{rowData.like}</Typography>
+            <Typography className="createdAt">{ rowData.createdAt}</Typography>
           ),
         },
 
       ]}
-      data={suggestData}
+      data={replyData}
       onRowClick={(e, rowData: any) => {
-        handleData(rowData);
-        handleEditModeOff();
+        handleReplyData(rowData);
+        handleReplyEditModeOff();
       }}
       options={{
         search: true,
