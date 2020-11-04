@@ -9,6 +9,8 @@ import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
 import Sidebar from '../../../organisms/mypage/layouts/sidebar/Sidebar';
 import AppBar from '../../../organisms/shared/Appbar';
 import PageSizeAlert from '../../../organisms/mypage/alertbar/PageSizeAlert';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
+import TruepointLogo from '../../../atoms/TruepointLogo';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
@@ -27,6 +29,21 @@ const UserDashboard = (): JSX.Element => {
   }
   function handleAlertClose() {
     setAlertOpen(false);
+  }
+
+  // token이 아직 없거나, refresh-token을 통해 새로운 access_token을 받아오고 있는 경우에 보여질 로딩 페이지
+  // 짧아서, 기존의 LoadingComponent는 사용이 불가한 듯 보인다. 그냥 로고만 띡 나오는 지금도 나쁘지는 않은 듯.
+  // @by dan, @when 2020. 11. 04.
+  const auth = useAuthContext();
+  if (!(!auth.loginLoading && auth.user.userId)) {
+    return (
+      <div style={{
+        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',
+      }}
+      >
+        <TruepointLogo />
+      </div>
+    );
   }
 
   return (
