@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Markdown from 'react-markdown/with-html';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,26 +13,21 @@ import Divider from '@material-ui/core/Divider';
 import Card from '../../../atoms/Card/Card';
 import { FeatureData } from '../../../interfaces/FeatureSuggestion';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
   title: {
-    padding: theme.spacing(4),
+    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
     display: 'flex',
     justifyContent: 'space-between',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  titleSection: {
-    padding: theme.spacing(4),
-    display: 'flex',
-    justifyContent: 'column',
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
   idText: {
     color: theme.palette.grey[400],
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
-  contentsText: { padding: theme.spacing(4), minHeight: 400 },
+  contentsText: { padding: theme.spacing(4), minHeight: 300 },
   buttonSet: {
     padding: `${theme.spacing(4)}px 0px`,
     display: 'flex',
@@ -93,38 +88,27 @@ export default function FeatureDetail({
       window.location.replace('/feature-suggestion');
     }
   };
-  function checkNull(str: string | undefined) {
-    if (typeof str === 'undefined' || str == null || str === '') {
-      return true;
-    } return false;
-  }
 
-  function masking(str: string) {
-    const originStr = str;
-    let maskingStr;
-    if (checkNull(originStr) === true) {
-      return originStr;
+  // 스크롤 상단으로
+  const paperRef = useRef<HTMLDivElement>();
+  useEffect(() => {
+    if (paperRef.current) {
+      window.scrollTo(0, paperRef.current.scrollHeight + 70);
     }
-    const strLength = originStr.length;
-    if (strLength < 3) {
-      maskingStr = originStr.replace(/(?<=.{1})./gi, '*');
-    } else {
-      maskingStr = originStr.replace(/(?<=.{2})./gi, '*');
-    } return maskingStr;
-  }
+  });
   return (
     <div>
-      <Paper component="article">
+      <Paper component="article" ref={paperRef}>
         <div className={classes.title}>
           <div>
             <Typography variant="h6" className={classes.titleText}>
               {currentSuggestion?.title}
             </Typography>
             <Typography variant="body1" className={classes.idText}>
-              {currentSuggestion?.author ? masking(currentSuggestion.author) : null}
+              {currentSuggestion?.author ? transformIdToAsterisk(currentSuggestion.author) : null}
             </Typography>
           </div>
-          <Typography color="textSecondary">
+          <Typography color="textSecondary" component="div">
             {categoryTabSwitch(Number(currentSuggestion?.category))}
             {currentSuggestion ? new Date(currentSuggestion.createdAt).toLocaleString() : ''}
           </Typography>

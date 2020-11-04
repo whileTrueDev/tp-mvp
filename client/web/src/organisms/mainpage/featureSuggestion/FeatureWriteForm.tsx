@@ -33,7 +33,7 @@ interface FeatureSuggestion {
   image: any;
 }
 
-interface locationData {
+interface FeatureSuggestionData {
   id: number;
   title: string;
   category: string | number;
@@ -43,18 +43,8 @@ interface locationData {
   reply: boolean | string;
   progress: number;
 }
-// @hwasurr
-// eslint error 정리 중 주석 처리 - 사용하지 않는 interface
-// @leejineun 처리 부탁드립니다.
-// interface ImageObject<T> {
-//   readonly current: T | null;
-// }
 
-// @hwasurr
-// eslint error 정리 중 disalbe 처리 - any 타입 정의
-// @leejineun 처리 부탁드립니다.
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function FeatureWriteForm(props: any): JSX.Element {
+export default function FeatureWriteForm(): JSX.Element {
   const authContext = useAuthContext();
   const [state, setState] = React.useState<FeatureSuggestion>({
     title: '',
@@ -64,8 +54,8 @@ export default function FeatureWriteForm(props: any): JSX.Element {
     image: null,
   });
   const history = useHistory();
-  const location: any = useLocation();
-  const preData: locationData = location.state ? location.state[0] : null;
+  const location = useLocation<FeatureSuggestionData[]>();
+
   const classes = useStyles();
   // const [selectedFile, setSelectedFile] = React.useState(null);
   const imageObject = React.useRef<HTMLInputElement | null>(null);
@@ -97,8 +87,8 @@ export default function FeatureWriteForm(props: any): JSX.Element {
   );
 
   const handleSubmit = () => {
-    if (preData) {
-      editPatchRequest({ data: [state, preData.id] }).then(() => {
+    if (location.state) {
+      editPatchRequest({ data: [state, location.state[0].id] }).then(() => {
         alert('수정 되었습니다');
         window.location.replace('/feature-suggestion');
       });
@@ -121,11 +111,13 @@ export default function FeatureWriteForm(props: any): JSX.Element {
     if (location.state) {
       setState({
         ...state,
-        title: preData.title,
-        category: preData.category,
-        contents: preData.content,
+        title: location.state[0].title,
+        category: location.state[0].category,
+        contents: location.state[0].content,
       });
     }
+  // 한번만 실행되어야 함.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className={classes.root}>

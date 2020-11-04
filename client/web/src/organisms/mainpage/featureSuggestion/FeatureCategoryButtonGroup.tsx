@@ -45,7 +45,7 @@ export default function FeatureCategoryButtonGroup({
             [classes.button]: true,
           })}
         >
-          <Typography className={classnames({ [classes.selectedText]: selected === category })}>
+          <Typography component="div" className={classnames({ [classes.selectedText]: selected === category })}>
             {categoryTabSwitch(Number(category))}
           </Typography>
         </Button>
