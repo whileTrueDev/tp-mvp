@@ -1,9 +1,11 @@
 import React from 'react';
+import moment from 'moment';
 import classnames from 'classnames';
 import {
-  TablePagination, TableCell, TableRow, TableBody,
+  TablePagination, TableCell, TableRow, TableBody, Typography, useTheme,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import NotificationImportantIcon from '@material-ui/icons/NotificationImportant';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 
@@ -17,18 +19,22 @@ interface TableProps {
   categoryTabSwitch: (value: string | undefined) => JSX.Element;
 }
 const useStyles = makeStyles((theme) => ({
-  tableCell: { padding: 10 },
+  tableCell: { padding: theme.spacing(1) },
   tableRow: {
     height: 60,
+    cursor: 'pointer',
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
     },
   },
-  important: {
-    backgroundColor: theme.palette.success.light,
+  importantRow: {
+    backgroundColor: theme.palette.action.hover,
     '&:hover': {
-      backgroundColor: theme.palette.success.light,
+      backgroundColor: theme.palette.action.selected,
     },
+  },
+  importantText: {
+    fontWeight: 'bold',
   },
 }));
 export default function MaterialTable({
@@ -43,27 +49,28 @@ export default function MaterialTable({
   const classes = useStyles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
 
+  const theme = useTheme();
+
   return (
     <>
       <Table
         columns={[
           {
-            width: '50px',
+            width: '70px',
             align: 'center',
             title: ' ',
           },
           {
-            width: '200px',
+            width: '130px',
             align: 'center',
             title: '카테고리',
           },
           {
-            width: '200px',
             align: 'center',
             title: '제목',
           },
           {
-            width: '300px',
+            width: '170px',
             align: 'center',
             title: '작성일',
           },
@@ -86,20 +93,27 @@ export default function MaterialTable({
                   key={shortid.generate()}
                   onClick={() => handleClick(eachRow.id)}
                   className={classnames({
-                    [classes.tableRow]: true, [classes.important]: eachRow.isImportant,
+                    [classes.tableRow]: true, [classes.importantRow]: eachRow.isImportant,
                   })}
                 >
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.isImportant ? '중요' : eachRow.id}
+                    {eachRow.isImportant ? (
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <NotificationImportantIcon color="primary" />
+                        <Typography className={classes.importantText}>
+                          중요
+                        </Typography>
+                      </div>
+                    ) : eachRow.id}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {categoryTabSwitch(eachRow.category)}
                   </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
+                  <TableCell className={classnames({ [classes.tableCell]: true, [classes.importantText]: eachRow.isImportant })} scope="row" align="left">
                     {eachRow.title}
                   </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.createdAt}
+                  <TableCell className={classes.tableCell} scope="row" align="right">
+                    {moment(eachRow.createdAt).format('YYYY년 MM월 DD일')}
                   </TableCell>
                 </TableRow>
               ))}
@@ -119,7 +133,7 @@ export default function MaterialTable({
           search: false,
           pageSize,
           pageSizeOptions: [8, 12],
-          headerStyle: { backgroundColor: '#929ef8', color: 'white' },
+          headerStyle: { backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText },
           draggable: false,
           paginationType: 'stepped',
         }}

@@ -30,11 +30,7 @@ const rawTheme: ThemeOptions = {
       dark: blueGrey[600],
     },
     // 초록 계열 색상
-    success: {
-      light: '#f0a9b3',
-      main: '#ff3e7a',
-      contrastText: '#fff',
-    },
+    // success: { },
     // // 레드 계열 색상
     // error : { },
     // // 주황 계열 색상
