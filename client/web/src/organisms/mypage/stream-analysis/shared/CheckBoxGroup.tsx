@@ -8,8 +8,9 @@ import {
 // material-ui icons
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-// interface
-import { CheckBoxGroupProps } from './PeriodAnalysisSection.interface';
+
+// interfaces
+import { CheckBoxGroupProps } from './StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {

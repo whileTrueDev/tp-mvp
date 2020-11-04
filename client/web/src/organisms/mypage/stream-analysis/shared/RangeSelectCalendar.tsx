@@ -1,10 +1,13 @@
 import React from 'react';
 // material-ui core components
-import { Grid } from '@material-ui/core';
+import {
+  Box, Grid, Chip, ThemeProvider,
+} from '@material-ui/core';
 // material-ui picker components
 import {
   MuiPickersUtilsProvider, DatePicker,
 } from '@material-ui/pickers';
+import moment from 'moment';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
@@ -17,37 +20,50 @@ import classnames from 'classnames';
 // shared dtos , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
+// icon
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
+// context
+import { useSnackbar } from 'notistack';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // interfaces
-import { RangeSelectCaledarProps } from './PeriodAnalysisSection.interface';
-// context 
-import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
+import { RangeSelectCaledarProps } from './StreamAnalysisShared.interface';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  container: {
+    display: 'flex',
+    flex: 0,
+    padding: theme.spacing(2),
+    justifyContent: 'center',
+    alignItem: 'center',
+    width: '340px',
+    backgroundColor: theme.palette.background.paper,
+  },
   leftCircleBase: {
     width: '50%',
     backgroundColor: '#d7e7ff',
   },
   leftCircleCompare: {
     width: '50%',
-    backgroundColor: '#909090',
+    backgroundColor: '#d3d19d',
   },
   rigthCircleBase: {
     background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
   },
   rigthCircleCompare: {
-    background: `linear-gradient(to left,#909090 50%, ${theme.palette.background.paper} 50%)`,
+    background: `linear-gradient(to left,#d3d19d 50%, ${theme.palette.background.paper} 50%)`,
   },
   rangeDayBase: {
     backgroundColor: '#d7e7ff',
   },
   rangeDayCompare: {
-    backgroundColor: '#909090',
+    backgroundColor: '#d3d19d',
   },
   selectedDayBase: {
     backgroundColor: '#3a86ff',
   },
   selectedDayCompare: {
-    backgroundColor: '#6e6e6e',
+    backgroundColor: '#d3d19d',
   },
   hasStreamDayDotContainer: {
     position: 'relative',
@@ -57,31 +73,40 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
+    borderRadius: 5,
     borderColor: '#3a86ff',
-    right: '50%',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
+    backGroundColor: '#3a86ff',
   },
   hasStreamDayDotCompare: {
     position: 'absolute',
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
-    borderColor: '#6e6e6e',
-    right: '50%',
+    borderRadius: 5,
+    borderColor: '#b1ae71',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
+    backGroundColor: '#b1ae71',
+  },
+  rangeHover: {
+    '&:hover,select': {
+      backgroundColor: 'red',
+    },
   },
 }));
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base, handleError,
+    period, handlePeriod, base, targetRef, anchorEl, handleAnchorOpenWithRef, handleAnchorClose,
   } = props;
   const classes = useStyles();
-  const subscribe = React.useContext(SubscribeContext);
+  // const subscribe = React.useContext(SubscribeContext);
+  const auth = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
@@ -89,13 +114,24 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
 
+  const DATE_THEME = (others: Theme) => ({
+    ...others,
+    overrides: {
+      MuiPickersDay: {
+        daySelected: {
+          backgroundColor: base ? '#3a86ff' : '#b1ae71',
+        },
+      },
+    },
+  });
+
   const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
     url: '/stream-analysis/stream-list',
   }, { manual: true });
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: subscribe.currUser.targetUserId,
+      userId: auth.user.userId,
       startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
     };
 
@@ -107,13 +143,10 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       );
     }).catch((err) => {
       if (err.response) {
-        handleError({
-          isError: true,
-          helperText: '달력 정보 구성에 문제가 발생했습니다.',
-        });
+        ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [subscribe.currUser, excuteGetStreams, currMonth, handleError]);
+  }, [auth.user, excuteGetStreams, currMonth, enqueueSnackbar]);
 
   React.useEffect(() => {
     if (period.length > 1) {
@@ -122,10 +155,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     }
   }, [period]);
 
-  React.useEffect(() => {
-    setPoint1(null);
-    setPoint2(null);
-  }, [subscribe.currUser]);
+  // 구독 관련 기능 , CBT 주석 처리
+  // React.useEffect(() => {
+  //   setPoint1(null);
+  //   setPoint2(null);
+  // }, [auth.user]);
 
   const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined): Date => {
     if (start && prevDate) {
@@ -157,7 +191,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     } else if (newDate && point1 !== null && point2 === null) {
       setPoint2(newDate);
       if (point1.getTime() <= newDate.getTime()) {
-        handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
+        if (point1.getTime() === newDate.getTime()) {
+          handlePeriod(timeFormatter(point1, true), timeFormatter(moment(newDate).add(1, 'days').toDate()), base);
+        } else {
+          handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
+        }
       } else {
         handlePeriod(timeFormatter(newDate), timeFormatter(point1, true), base);
       }
@@ -171,7 +209,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     if (newMonth) setCurrMonth(newMonth);
     if (newMonth) {
       const params: SearchCalendarStreams = {
-        userId: subscribe.currUser.targetUserId,
+        userId: auth.user.userId,
         startDate: newMonth.toISOString(),
       };
 
@@ -183,10 +221,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         );
       }).catch((err) => {
         if (err.response) {
-          handleError({
-            isError: true,
-            helperText: '달력 정보 구성에 문제가 발생했습니다.',
-          });
+          ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
         }
       });
     }
@@ -199,7 +234,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#3a86ff' : '#6e6e6e', color: 'white' } })}
+        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: 'white' } })}
     </div>
   );
 
@@ -210,7 +245,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#3a86ff' : '#6e6e6e', color: 'white' } })}
+        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: 'white' } })}
     </div>
   );
 
@@ -324,27 +359,57 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
-      <Grid
-        container
-        direction="row"
-        justify="center"
-        alignItems="center"
+
+      <Box
+        borderRadius={16}
+        borderColor="#707070"
+        border={1}
+        className={classes.container}
       >
-        <Grid item>
-          <DatePicker
-            value={currDate}
-            onChange={handleDate}
-            onMonthChange={handleMonthChange}
-            disableFuture
-            renderDay={renderDayInPicker}
-            variant="static"
-            openTo="date"
-            disableToolbar
+        <Grid container direction="column">
+          <Grid item>
+            <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
+              <DatePicker
+                value={currDate}
+                onChange={handleDate}
+                onMonthChange={handleMonthChange}
+                disableFuture
+                renderDay={renderDayInPicker}
+                variant="static"
+                openTo="date"
+                disableToolbar
+              />
+            </ThemeProvider>
+
+          </Grid>
+
+          <Chip
+            icon={<FormatListBulletedIcon style={{ color: 'white' }} />}
+            label="제외할 방송 선택"
+            clickable
+            style={{
+              width: '175px',
+              alignSelf: 'flex-end',
+              color: 'white',
+              backgroundColor: '#aaaaaa',
+            }}
+            onClick={(e): void => {
+              if (anchorEl) {
+                handleAnchorClose();
+              } else if (period[0] && period[1]) {
+                handleAnchorOpenWithRef(targetRef);
+              } else {
+                ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
+              }
+            }}
           />
+
         </Grid>
-      </Grid>
+
+      </Box>
     </MuiPickersUtilsProvider>
+
   );
 }
 
-export default RangeSelectCaledar;
+export default React.forwardRef(RangeSelectCaledar);

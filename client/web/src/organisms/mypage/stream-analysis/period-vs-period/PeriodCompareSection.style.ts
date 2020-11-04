@@ -3,8 +3,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
-    marginTop: theme.spacing(4),
-    // height: '700px'
+    padding: theme.spacing(6),
   },
   titleDivider: {
     backgroundColor: theme.palette.primary.main,
@@ -25,16 +24,17 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   infoText: {
     color: theme.palette.text.secondary,
     fontFamily: 'AppleSDGothicNeo',
-    fontSize: '12px',
+    fontSize: '18px',
     lineHeight: '1.11',
     textAlign: 'right',
+    marginRight: '110px',
   },
   mainBody: {
     color: theme.palette.text.secondary,
     letterSpacing: '-1.2px',
     textAlign: 'left',
     lineHeight: 0.87,
-    fontWeight: 500,
+    fontWeight: 'bold',
     fontSize: '23px',
     fontFamily: 'AppleSDGothicNeo',
     marginBottom: '28px',
@@ -84,10 +84,10 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     width: '136.2px',
     height: '51.1px',
     borderRadius: '6px',
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: '#4b5ac7',
     fontFamily: 'AppleSDGothicNeo',
     fontSize: '24px',
-    marginTop: '20px',
+    marginTop: theme.spacing(3),
     marginRight: '93.5px',
     color: theme.palette.common.white,
     '&:hover': {
