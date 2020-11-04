@@ -101,13 +101,9 @@ function Index(): JSX.Element {
                 <Route exact path="/notice" component={Notice} />
                 <Route exact path="/notice/:id" component={Notice} />
                 <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
-                <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
                 <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
-                <Route
-                  exact
-                  path="/feature-suggestion/read/:id/edit"
-                  component={FeatureSuggestionWrite}
-                />
+                <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
+                <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
                 <Route exact path="/privacypolicy" component={PrivacyPolicy} />
                 <Route exact path="/termsofuse" component={TermsOfUse} />
                 <Route path="/mypage" component={Mypage} />
