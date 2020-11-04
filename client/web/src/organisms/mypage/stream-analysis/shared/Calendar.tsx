@@ -89,7 +89,7 @@ function Calendar(props: CalendarProps): JSX.Element {
     selectedStreams.map((stream) => moment(stream.startedAt).format('YYYY-MM-DD')),
   );
 
-  const DATE_THEME = (others: Theme): Theme => ({
+  const DATE_THEME = (others: Theme) => ({
     ...others,
     overrides: {
       MuiPickersDay: {
@@ -267,7 +267,7 @@ function Calendar(props: CalendarProps): JSX.Element {
   return (
 
     <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
-      <ThemeProvider theme={DATE_THEME}>
+      <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
         <DatePicker
           value={currDate}
           onChange={handleDate}
