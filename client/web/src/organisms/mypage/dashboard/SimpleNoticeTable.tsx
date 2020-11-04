@@ -10,9 +10,11 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
+
 import { NoticeData } from '../../../interfaces/Notice';
 
 const useStyles = makeStyles((theme) => ({
+  container: { padding: theme.spacing(6) },
   table: { minWidth: 650 },
   title: { fontWeight: 'bold' },
   linkText: { cursor: 'pointer' },
@@ -28,12 +30,12 @@ export default function SimpleNoticeTable({
   const history = useHistory();
   const classes = useStyles();
   return (
-    <>
+    <Paper className={classes.container}>
       <div style={{ marginBottom: 32 }}>
         <Typography variant="h6" className={classes.title}>공지사항</Typography>
       </div>
 
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table className={classes.table} aria-label="notice table" size="medium">
           <TableBody>
             {data.map((row) => (
@@ -69,6 +71,6 @@ export default function SimpleNoticeTable({
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </Paper>
   );
 }

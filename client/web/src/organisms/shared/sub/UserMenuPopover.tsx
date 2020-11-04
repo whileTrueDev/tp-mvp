@@ -50,6 +50,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
 
   return (
     <Popover
+      disableScrollLock
       open={open}
       anchorEl={anchorEl}
       onClose={onClose}

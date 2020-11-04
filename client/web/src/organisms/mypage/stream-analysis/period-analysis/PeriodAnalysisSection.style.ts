@@ -3,13 +3,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
-    marginTop: theme.spacing(4),
-  },
-  titleDivider: {
-    backgroundColor: theme.palette.primary.main,
-    width: '200px',
-    marginBottom: '12px',
-    height: '3px',
+    padding: theme.spacing(6),
   },
   mainTitle: {
     color: theme.palette.text.primary,
@@ -21,13 +15,20 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     marginBottom: '28px',
   },
+  infoText: {
+    color: theme.palette.text.secondary,
+    fontFamily: 'AppleSDGothicNeo',
+    fontSize: '18px',
+    lineHeight: '1.11',
+    textAlign: 'right',
+    marginRight: '110px',
+  },
   mainBody: {
     color: theme.palette.text.secondary,
     letterSpacing: 'normal',
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '22px',
-    fontFamily: 'SourceSansPro',
     marginBottom: '28px',
   },
   bodyPapper: {
@@ -46,7 +47,7 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '22px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     marginLeft: '45.5px',
     display: 'flex',
     alignItems: 'center',
@@ -67,7 +68,7 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '17px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     marginLeft: '45.5px',
     display: 'flex',
     marginBottom: '5px',
@@ -76,10 +77,10 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     width: '136.2px',
     height: '51.1px',
     borderRadius: '6px',
-    backgroundColor: theme.palette.primary.dark,
-    fontFamily: 'SourceSansPro',
+    backgroundColor: '#4b5ac7',
+    fontFamily: 'AppleSDGothicNeo',
     fontSize: '24px',
-    marginTop: '20px',
+    marginTop: theme.spacing(3),
     marginRight: '93.5px',
     color: theme.palette.common.white,
     '&:hover': {

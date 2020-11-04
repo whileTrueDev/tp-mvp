@@ -52,10 +52,6 @@ export default function FeatureTable<T extends FeatureData>({
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const emptyRows = rowsPerPage - Math.min(
-    rowsPerPage, data.length - page * rowsPerPage,
-  );
-
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
@@ -129,11 +125,6 @@ export default function FeatureTable<T extends FeatureData>({
                 </TableRow>
               );
             })}
-          {emptyRows > 0 && (
-            <TableRow hover style={{ height: 80 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )}
         </TableBody>
         <TableFooter>
           <TableRow className={classes.tablefooterRow}>

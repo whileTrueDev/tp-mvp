@@ -18,7 +18,7 @@ export interface timelineGraphInterface {
   smile_count: number,
   chat_count: number,
   viewer?: number,
-  date: number
+  date: string,
 }
 
 export interface timelineInterface {

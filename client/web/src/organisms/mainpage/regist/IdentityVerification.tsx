@@ -1,12 +1,13 @@
 import React from 'react';
 import classnames from 'classnames';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
   Button, Typography,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
-
+import { useSnackbar } from 'notistack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 
 interface Props {
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   box: {
     padding: `${theme.spacing(8)}px ${theme.spacing(4)}px`,
     minWidth: 300,
-    maxWidth: 700,
+    maxWidth: 600,
     border: `1px solid ${theme.palette.divider}`,
     display: 'flex',
     justifyContent: 'center',
@@ -53,7 +54,10 @@ function IndentityVerification({
   setCertificationInfo,
 }: Props): JSX.Element {
   const classes = useStyles();
+  const theme = useTheme();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [, getRequest] = useAxios(
     '/users/check-id', { manual: true },
   );
@@ -69,7 +73,7 @@ function IndentityVerification({
       params: { impUid },
     }).then((res) => {
       if (res.data) {
-        alert('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.');
+        ShowSnack('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.', 'info', enqueueSnackbar);
         history.replace('/find-id');
       } else {
         getCertificationRequest({
@@ -80,7 +84,7 @@ function IndentityVerification({
               setCertificationInfo(inres.data);
               handleNext();
             } else {
-              alert('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.');
+              ShowSnack('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
               history.push('/signup');
             }
           });
@@ -102,7 +106,7 @@ function IndentityVerification({
       <div className={classnames(classes.center, classes.content)}>
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           style={{ color: 'white' }}
           className={classes.fullButton}
           onClick={() => {
@@ -115,6 +119,8 @@ function IndentityVerification({
           onClick={() => {
             history.push('/login');
           }}
+          color="default"
+          style={{ color: theme.palette.text.primary }}
           className={classes.fullButton}
         >
           <Typography>뒤로</Typography>

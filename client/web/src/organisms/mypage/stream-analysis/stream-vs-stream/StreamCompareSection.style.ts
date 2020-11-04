@@ -2,15 +2,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   root: {
-    flexGrow: 1,
     marginTop: theme.spacing(4),
-    height: '700px',
-  },
-  titleDivider: {
-    backgroundColor: theme.palette.primary.main,
-    width: '200px',
-    marginBottom: '12px',
-    height: '3px',
   },
   mainTitle: {
     color: theme.palette.text.primary,
@@ -28,7 +20,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '22px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     marginBottom: '28px',
   },
   bodyPapper: {
@@ -47,7 +39,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '22px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     marginLeft: '45.5px',
     display: 'flex',
     alignItems: 'center',
@@ -68,7 +60,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
     lineHeight: 1.5,
     fontSize: '17px',
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     marginLeft: '45.5px',
     marginRight: '35.5px',
     display: 'flex',
@@ -79,7 +71,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     height: '51.1px',
     borderRadius: '6px',
     backgroundColor: theme.palette.primary.dark,
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'AppleSDGothicNeo',
     fontSize: '24px',
     marginTop: '20px',
     marginRight: '93.5px',

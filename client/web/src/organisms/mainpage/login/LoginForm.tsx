@@ -11,14 +11,16 @@ import CheckedCheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
+
 import useDialog from '../../../utils/hooks/useDialog';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
-  formWidth: { width: 300 },
+  formWidth: { width: 400 },
   alignCenter: { textAlign: 'center' },
-  button: { width: 130, boxShadow: 'none', padding: 8 },
+  button: { width: 170, boxShadow: 'none', padding: 8 },
   buttonset: { display: 'flex', justifyContent: 'space-between', width: '100%' },
 }));
 
@@ -86,12 +88,12 @@ export default function LoginForm(): JSX.Element {
         className={classes.formWidth}
       >
         <div className={classes.alignCenter}>
-          <TruepointLogo />
+          { theme.palette.type === 'light' ? <TruepointLogo width={350} /> : <TruepointLogoLight width={350} /> }
         </div>
 
         <TextField
           className={classnames(classes.upperSpace, classes.formWidth)}
-          color="secondary"
+          color="primary"
           type="text"
           label="아이디"
           placeholder="아이디를 입력해주세요"
@@ -101,7 +103,7 @@ export default function LoginForm(): JSX.Element {
         />
         <TextField
           className={classes.formWidth}
-          color="secondary"
+          color="primary"
           type="password"
           label="비밀번호"
           inputProps={{ minLength: 3, required: true }}
@@ -121,7 +123,7 @@ export default function LoginForm(): JSX.Element {
                 checked={stayLogedIn}
                 onChange={handleStayLogedInToggle}
                 name="checkedA"
-                color="secondary"
+                color="primary"
               />
             )}
             label="로그인 상태 유지"
@@ -139,7 +141,7 @@ export default function LoginForm(): JSX.Element {
         <div className={classnames(classes.buttonset, classes.upperSpace)}>
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             className={classes.button}
             style={{ color: theme.palette.common.white }}
             type="submit"
@@ -148,7 +150,7 @@ export default function LoginForm(): JSX.Element {
           </Button>
           <Button
             variant="outlined"
-            color="secondary"
+            color="primary"
             className={classes.button}
             style={{ color: theme.palette.text.primary }}
             component={Link}

@@ -66,7 +66,10 @@ export function myReducer(
       return { ...state, repasswd: true };
     }
     case 'email': {
-      return { ...state, email: action.value };
+      if (action.value.length <= 15) {
+        return { ...state, email: action.value };
+      }
+      return { ...state };
     }
     case 'phoneNum': {
       return { ...state, phoneNum: action.value };
