@@ -1,5 +1,6 @@
 import React from 'react';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
+import { SnackbarProvider } from 'notistack';
 import {
   CssBaseline, ThemeProvider, createMuiTheme, Grid, makeStyles,
 } from '@material-ui/core';
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const theme = createMuiTheme({
+
   palette: {
     primary: {
       // Purple and green play nicely together.
@@ -100,25 +102,27 @@ export default function App(): JSX.Element {
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Grid container className={classes.root}>
+    <SnackbarProvider maxSnack={1} preventDuplicate>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Grid container className={classes.root}>
 
-        <BrowserRouter>
-          <Sidebar routes={routes} />
+          <BrowserRouter>
+            <Sidebar routes={routes} />
 
-          <main className={classes.content}>
-            <div className={classes.selectBar} />
-            <Switch>
-              <Route exact path="/admin/notice" component={AdminNotice} />
-              <Route exact path="/admin/alarm" component={AdminAlarm} />
-              <Route exact path="/admin/suggest" component={AdminSuggest} />
-              <Route exact path="/admin/notice-write" component={NoticeWrite} />
-            </Switch>
-          </main>
-        </BrowserRouter>
+            <main className={classes.content}>
+              <div className={classes.selectBar} />
+              <Switch>
+                <Route exact path="/admin/notice" component={AdminNotice} />
+                <Route exact path="/admin/alarm" component={AdminAlarm} />
+                <Route exact path="/admin/suggest" component={AdminSuggest} />
+                <Route exact path="/admin/notice-write" component={NoticeWrite} />
+              </Switch>
+            </main>
+          </BrowserRouter>
 
-      </Grid>
-    </ThemeProvider>
+        </Grid>
+      </ThemeProvider>
+    </SnackbarProvider>
   );
 }

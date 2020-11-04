@@ -14,6 +14,7 @@ import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
 import Loading from '../../shared/sub/Loading';
+import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 
@@ -289,13 +290,16 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         justify="flex-end"
       >
         <Grid item direction="column">
-          <div style={{ textAlign: 'right' }}>
+          <div style={{ textAlign: 'right', paddingBottom: 20 }}>
             <Button
               onClick={handleAnalyze}
               disabled={isClicked || Boolean(!selectedStream.fileId)}
             >
               분석하기
             </Button>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <HelperPopOver />
           </div>
           <div>
             <FormControlLabel
@@ -320,6 +324,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               )}
               label="txt"
             />
+
             <FormControlLabel
               control={(
                 <Checkbox
@@ -338,6 +343,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               편집점 내보내기
             </Button>
           </div>
+
         </Grid>
       </Grid>
       <Loading clickOpen={isClicked} lodingTime={10000} />
