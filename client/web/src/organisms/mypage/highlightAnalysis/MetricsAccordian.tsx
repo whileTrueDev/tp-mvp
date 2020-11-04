@@ -32,10 +32,10 @@ const styles = makeStyles((theme) => ({
   buttonWraper: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20,
+    marginTop: 20,
   },
   contentLeft: {
     display: 'flex',
@@ -89,17 +89,8 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
               iconSrc="/images/analyticsPage/logo_chat.svg"
               pointNumber={metricsData.chat_points.length}
             />
-            <Grid container direction="row" alignItems="center" justify="space-around">
-              <Grid item md={7}>
-                {point.rank && (
-                  <div className={classes.contentLeft}>
-                    <div className={classes.rank}>
-                      {point.rank}
-                      위
-                      <span>편집점</span>
-                    </div>
-                  </div>
-                )}
+            <Grid container direction="column" justify="center">
+              <Grid item md={12}>
                 <Chart
                   data={metricsData.chat_points}
                   chartType="chat"
@@ -109,7 +100,17 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
                   pageSize={pageSize}
                 />
               </Grid>
-              <Grid item md={4} className={classes.contentRight}>
+              <Grid item md={12} className={classes.contentRight}>
+                <MetricsTable
+                  metrics={metricsData.chat_points}
+                  handleClick={setPoint}
+                  row={point}
+                  page={page}
+                  pageSize={pageSize}
+                  handlePage={setPage}
+                  handlePageSize={setPageSize}
+                  type="채팅 기반 편집점"
+                />
                 <div className={classes.buttonWraper}>
                   <Button
                     onClick={() => {
@@ -123,17 +124,6 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
                     편집점 내보내기
                   </Button>
                 </div>
-                <MetricsTable
-                  metrics={metricsData.chat_points}
-                  title="채팅 발생 정보"
-                  handleClick={setPoint}
-                  row={point}
-                  page={page}
-                  pageSize={pageSize}
-                  handlePage={setPage}
-                  handlePageSize={setPageSize}
-                  type="채팅 기반 편집점"
-                />
               </Grid>
             </Grid>
           </Grid>
@@ -152,17 +142,8 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
               iconSrc="/images/analyticsPage/logo_smile.svg"
               pointNumber={metricsData.smile_points.length}
             />
-            <Grid container direction="row" alignItems="center" justify="space-around">
-              <Grid item md={7}>
-                {point2.rank && (
-                  <div className={classes.contentLeft}>
-                    <div className={classes.rank}>
-                      {point2.rank}
-                      위
-                      <span>편집점</span>
-                    </div>
-                  </div>
-                )}
+            <Grid container direction="column" justify="center">
+              <Grid item md={12}>
                 <Chart
                   data={metricsData.smile_points}
                   chartType="smile"
@@ -172,7 +153,17 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
                   pageSize={pageSize2}
                 />
               </Grid>
-              <Grid item md={4} className={classes.contentRight}>
+              <Grid item md={12} className={classes.contentRight}>
+                <MetricsTable
+                  metrics={metricsData.smile_points}
+                  handleClick={setPoint2}
+                  row={point2}
+                  page={page2}
+                  pageSize={pageSize2}
+                  handlePage={setPage2}
+                  handlePageSize={setPageSize2}
+                  type="웃음 발생 수 기반 편집점"
+                />
                 <div className={classes.buttonWraper}>
                   <Button
                     onClick={() => {
@@ -186,17 +177,6 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
                     편집점 내보내기
                   </Button>
                 </div>
-                <MetricsTable
-                  metrics={metricsData.smile_points}
-                  title="웃음 발생 정보"
-                  handleClick={setPoint2}
-                  row={point2}
-                  page={page2}
-                  pageSize={pageSize2}
-                  handlePage={setPage2}
-                  handlePageSize={setPageSize2}
-                  type="웃음 발생 수 기반 편집점"
-                />
               </Grid>
             </Grid>
           </Grid>

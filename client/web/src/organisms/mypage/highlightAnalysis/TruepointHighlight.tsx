@@ -16,11 +16,12 @@ const styles = makeStyles((theme) => ({
     padding: theme.spacing(4),
   },
   graphWraper: {
+    paddingLeft: '30px',
+    paddingRight: '15px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing(2),
+    paddingBottom: theme.spacing(3),
   },
   contentRight: {
     display: 'flex',
@@ -30,10 +31,10 @@ const styles = makeStyles((theme) => ({
   buttonWraper: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20,
+    marginTop: 20,
   },
   contentLeft: {
     display: 'flex',
@@ -110,25 +111,12 @@ export default function TruepointHighlight({
 
   const graphCSS = {
     grid: {
-      width: 922,
+      width: '100%',
       height: 'auto',
       display: 'grid',
       gridTemplateColumns: `repeat(${highlightData.total_index}, 1fr)`,
       gridTemplateRows: '20px',
       background: 'repeating-linear-gradient(90deg, #fff, #fff 1px, #E9EAF3 0, #E9EAF3 3px)',
-    },
-    gridChecker: {
-      marginLeft: 30,
-      width: 922,
-      height: 5,
-      display: 'grid',
-      gridTemplateColumns: `repeat(${highlightData.total_index}, 1fr)`,
-      gridGap: 0,
-      '&>.timelineChecker': {
-        height: 5,
-        backgroundColor: '#ff3e7a',
-        borderRadius: 3,
-      },
     },
   };
 
@@ -141,74 +129,60 @@ export default function TruepointHighlight({
           iconSrc="/images/logo/truepointLogo.png"
           pointNumber={highlightData.highlight_points.length}
         />
-        <Grid container direction="column" alignItems="center" justify="center">
-          <Grid container direction="row" alignItems="center" justify="space-around">
-            <Grid item md={7}>
-              {point.rank && (
-                <div className={classes.contentLeft}>
-                  <div className={classes.rank}>
-                    {point.rank}
-                    위
-                    <span>편집점</span>
-                  </div>
-                </div>
-              )}
-              <Chart
-                data={highlightData.highlight_points}
-                chartType="highlight"
-                highlight={point}
-                handleClick={setPoint}
-                handlePage={setPage}
-                pageSize={pageSize}
-              />
-            </Grid>
-            <Grid item md={5} className={classes.contentRight}>
-              <div className={classes.buttonWraper}>
-                <Button
-                  onClick={() => {
-                    window.open('/');
-                  }}
-                  style={{ color: 'white' }}
-                >
-                  편집점 알아보기
-                  {/* 여기 클릭 이벤트에 공지사항 - 편집점 이용 안내에 대한 페이지로 이동 시킬 예정 */}
-                </Button>
-                <Button
-                  onClick={() => {
-                    /**
-                    * @hwasurr 2020.10.13 eslint error 처리 도중 처리
-                    * 빈 화살표 함수 => 이후 처리 바람
-                    * */
-                  }}
-                  style={{ color: 'white', marginLeft: 20 }}
-                >
-                  편집점 내보내기
-                </Button>
-              </div>
-              <MetricsTable
-                metrics={highlightData.highlight_points}
-                title="하이라이트 정보"
-                handleClick={setPoint}
-                row={point}
-                page={page}
-                pageSize={pageSize}
-                handlePage={setPage}
-                handlePageSize={setPageSize}
-                type="트루포인트 편집점"
-              />
-            </Grid>
+        <Grid container direction="column" justify="center">
+          <Grid item md={12}>
+            <Chart
+              data={highlightData.highlight_points}
+              chartType="highlight"
+              highlight={point}
+              handleClick={setPoint}
+              handlePage={setPage}
+              pageSize={pageSize}
+            />
           </Grid>
-          <Grid container direction="row" alignItems="center" justify="center">
-            <Grid item md={12} className={classes.graphWraper}>
-              <HighlightGraph
-                data={highlightData}
-                classes={graphCSS}
-                highlight={point}
-                handleClick={setPoint}
-                handlePage={setPage}
-                pageSize={pageSize}
-              />
-            </Grid>
+          <Grid item md={12} className={classes.graphWraper}>
+            <HighlightGraph
+              data={highlightData}
+              classes={graphCSS}
+              highlight={point}
+              handleClick={setPoint}
+              handlePage={setPage}
+              pageSize={pageSize}
+            />
+          </Grid>
+          <Grid item md={12} className={classes.contentRight}>
+            <MetricsTable
+              metrics={highlightData.highlight_points}
+              handleClick={setPoint}
+              row={point}
+              page={page}
+              pageSize={pageSize}
+              handlePage={setPage}
+              handlePageSize={setPageSize}
+              type="트루포인트 편집점"
+            />
+            <div className={classes.buttonWraper}>
+              <Button
+                onClick={() => {
+                  window.open('/');
+                }}
+                style={{ color: 'white' }}
+              >
+                편집점 알아보기
+                {/* 여기 클릭 이벤트에 공지사항 - 편집점 이용 안내에 대한 페이지로 이동 시킬 예정 */}
+              </Button>
+              <Button
+                onClick={() => {
+                  /**
+                  * @hwasurr 2020.10.13 eslint error 처리 도중 처리
+                  * 빈 화살표 함수 => 이후 처리 바람
+                  * */
+                }}
+                style={{ color: 'white', marginLeft: 20 }}
+              >
+                편집점 내보내기
+              </Button>
+            </div>
           </Grid>
         </Grid>
       </Grid>
