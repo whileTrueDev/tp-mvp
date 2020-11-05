@@ -56,6 +56,8 @@ const setSeries = (
     series.tooltip.label.minHeight = 40;
     series.tooltip.label.textAlign = 'middle';
     series.tooltip.label.textValign = 'middle';
+    // Bullet 설정
+    series.bullets.push(new am4charts.CircleBullet());
   });
 };
 
