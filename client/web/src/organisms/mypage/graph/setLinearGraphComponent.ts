@@ -9,18 +9,21 @@ const metricSetting: any = {
     valueY: 'smileCount',
     tooltipText: '웃음 발생 수: [bold]{smileCount}[/]',
     color: am4core.color(graphColor.line),
+    unit: '회',
   },
   chat: {
     name: '채팅 발생 수',
     valueY: 'chatCount',
     tooltipText: '채팅 발생 수: [bold]{chatCount}[/]',
     color: am4core.color(graphColor.broad1),
+    unit: '회',
   },
   viewer: {
     name: '평균 시청자 수',
     valueY: 'viewer',
     tooltipText: '평균 시청자 수: [bold]{viewer}[/]',
     color: am4core.color(graphColor.broad2),
+    unit: '명',
   },
 };
 
@@ -42,7 +45,7 @@ const setSeries = (
     series.dataFields.valueY = setting.valueY;
     series.dataFields.dateX = 'date';
     series.name = setting.name;
-    series.tooltipText = setting.tooltipText;
+    series.tooltipText = `${setting.tooltipText}${setting.unit}`;
     series.strokeWidth = 2.5;
     series.tensionX = 0.8;
     series.tooltip.getFillFromObject = false;
