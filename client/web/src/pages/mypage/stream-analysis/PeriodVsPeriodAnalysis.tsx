@@ -5,12 +5,13 @@ import { AxiosError } from 'axios';
 // material - ui core
 import { Grid, Paper } from '@material-ui/core';
 // shared dtos
-import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+// import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 // Layout
+// import { AnyMxRecord } from 'dns';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // contexts
-import SubscribeContext from '../../../utils/contexts/SubscribeContext';
+// import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // organisms
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
@@ -25,24 +26,28 @@ export interface PeriodsRequestParams {
 }
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
-  const [timeLineData, setTimeLine] = useState<any>(null);
+  const [timeLineData, setTimeLine] = useState<any[]>();
   const [metricData, setMetric] = useState<any>(null);
   const [type, setType] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [metricOpen, setMetricOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
-  const subscribe = React.useContext(SubscribeContext);
+  // const subscribe = React.useContext(SubscribeContext);
   const [{ loading, error }, getRequest] = useAxios<PeriodsAnalysisResType>(
     '/stream-analysis/periods', { manual: true },
   );
 
   const handleSubmit = ({
     category, params,
-  }: {category: string[]; params: SearchStreamInfoByPeriods}) => {
+  }: {category: string[]; params: any}) => {
     selectMetric(category); // 다중 선택으로 변경시 []을 제거한다.
     setOpen(false);
     setMetricOpen(false);
-    getRequest({ params })
+
+    getRequest({
+      data: params,
+      method: 'POST',
+    })
       .then((res) => {
         setTimeLine(res.data.timeline);
         setMetric(res.data.metrics);
@@ -55,9 +60,9 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
       .catch((err): AxiosError<any> | undefined => err);
   };
 
-  React.useEffect(() => {
-    setOpen(false);
-  }, [subscribe.currUser]);
+  // React.useEffect(() => {
+  //   setOpen(false);
+  // }, [subscribe.currUser]);
 
   return (
     <MypageSectionWrapper>

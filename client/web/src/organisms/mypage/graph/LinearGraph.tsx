@@ -15,6 +15,8 @@ export default function TimeLineGraph({
 
   const theme = useTheme();
 
+  // console.log('DATA', data);
+
   useLayoutEffect(() => {
     // Create chart instance
     const chart = setLinearGraphComponent(

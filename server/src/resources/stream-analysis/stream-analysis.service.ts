@@ -10,6 +10,7 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
+
 // shared dto , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
@@ -17,7 +18,7 @@ import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-an
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
-// import { dataArray } from './s3TestData.test';
+import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
 
 // interfaces
 import { StreamsInfo } from './interface/streamsInfo.interface';
@@ -26,6 +27,7 @@ import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface'
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
@@ -111,7 +113,7 @@ export class StreamAnalysisService {
           'streamSummary',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
-        .select(['streams.*'])
+        .select(['streams.*, streamSummary.smileCount as smileCount'])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
         .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
@@ -130,7 +132,7 @@ export class StreamAnalysisService {
         'streamSummary',
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
-      .select(['streams.*'])
+      .select(['streams.*, streamSummary.smileCount as smileCount'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
       .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
@@ -221,49 +223,171 @@ export class StreamAnalysisService {
       ]
     }
   */
-  async findStreamInfoByPeriods(userId: string, periods: {startAt: string; endAt: string}[]):
-  Promise<PeriodsAnalysisResType> {
-    // 전달되는 형태가 두개의 기간으로 전달되어야한다.
-    return new Promise((resolve) => {
-      Promise.all(
-        periods.map(({ startAt, endAt }) => {
-          // 1. 곡선 그래프를 위한 데이터 구현
-          const query = `
-          SELECT ROUND(AVG(viewer)) as viewer, 
-            ROUND(AVG(chatCount)) as chatCount,  
-            ROUND(AVG(smileCount)) AS smileCount, 
-            DATE_FORMAT(startedAt, "%Y-%m-%d") AS date
-          FROM Streams JOIN StreamSummary
-          USING (streamId, platform)
-          WHERE userId = ?
-          AND startedAt BETWEEN ? AND ?
-          GROUP BY date
-          ORDER BY date`;
-          return this.streamSummaryRepository
-            .query(query, [userId, startAt, endAt])
-            .catch((err) => {
-              throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
-            });
-        }),
-      )
-        .then((timeline) => {
-          const metrics = timeline.map((period) => period.reduce((sum, element) => [
-            sum[0] + Number(element.viewer),
-            sum[1] + Number(element.chatCount),
-            sum[2] + Number(element.smileCount),
-          ], [0, 0, 0]))
-            .map((sums, index) => ({
-              viewer: Math.round(sums[0] / timeline[index].length),
-              chatCount: Math.round(sums[1] / timeline[index].length),
-              smileCount: Math.round(sums[2] / timeline[index].length),
-            }));
+  // async findStreamInfoByPeriods(userId: string, periods: {startAt: string; endAt: string}[]):
+  // Promise<PeriodsAnalysisResType> {
+  //   // 전달되는 형태가 두개의 기간으로 전달되어야한다.
+  //   return new Promise((resolve) => {
+  //     Promise.all(
+  //       periods.map(({ startAt, endAt }) => {
+  //         // 1. 곡선 그래프를 위한 데이터 구현
+  //         const query = `
+  //         SELECT ROUND(AVG(viewer)) as viewer, 
+  //           ROUND(AVG(chatCount)) as chatCount,  
+  //           ROUND(AVG(smileCount)) AS smileCount, 
+  //           DATE_FORMAT(startedAt, "%Y-%m-%d") AS date
+  //         FROM Streams JOIN StreamSummary
+  //         USING (streamId, platform)
+  //         WHERE userId = ?
+  //         AND startedAt BETWEEN ? AND ?
+  //         GROUP BY date
+  //         ORDER BY date`;
+  //         return this.streamSummaryRepository
+  //           .query(query, [userId, startAt, endAt])
+  //           .catch((err) => {
+  //             throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
+  //           });
+  //       }),
+  //     )
+  //       .then((timeline) => {
+  //         /*
+  //           timeline : [
+  //             [
+  //               { viewer, chatCount, smileCount, date },
+  //               { viewer, chatCount, smileCount, date },
+  //               ...
+  //             ],
 
-          resolve({
-            timeline,
-            type: 'periods',
-            metrics: calculateStreamData(metrics),
+  //             [
+  //               { viewer, chatCount, smileCount, date },
+  //               { viewer, chatCount, smileCount, date },
+  //               ...
+  //             ],
+  //           ]
+  //         */
+
+  //         console.log(timeline[0]);
+  //         const metrics = timeline.map((period) => period.reduce((sum, element) => [
+  //           sum[0] + Number(element.viewer),
+  //           sum[1] + Number(element.chatCount),
+  //           sum[2] + Number(element.smileCount),
+  //         ], [0, 0, 0]))
+  //           .map((sums, index) => ({
+  //             viewer: Math.round(sums[0] / timeline[index].length),
+  //             chatCount: Math.round(sums[1] / timeline[index].length),
+  //             smileCount: Math.round(sums[2] / timeline[index].length),
+  //           }));
+
+  //         resolve({
+  //           timeline,
+  //           type: 'periods',
+  //           metrics: calculateStreamData(metrics),
+  //         });
+  //       });
+  //   });
+  // }
+
+  async findStreamInfoByPeriods(timeline: EachStream[][]): Promise<PeriodsAnalysisResType> {
+    /* timeline 같은 날 일 경우 하나로 병합 및 평균 처리 */
+    interface Temp {
+      count: number;
+      arr: EachStream[];
+    }
+    /* 1. 기준 기간 타임라인, 비교 기간 타임라인 startedAt 기준 오름차순 정렬 */
+    timeline[0].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
+    timeline[1].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
+
+    /* 2. 각 타임라인 같은 날짜에 대한 데이터는 평균으로 병합 */
+
+    const result = [[], []];
+
+    timeline.map(async (eachTimeline, periodIndex) => {
+      const temp: Temp = {
+        count: 0,
+        arr: [],
+      };
+      // console.log('period :', periodIndex, ' -------------------------', temp.arr, result[periodIndex].length);
+
+      eachTimeline.map((curr, index) => {
+        if (index === 0) {
+          temp.count += 1;
+          temp.arr.push(curr);
+        } else if (temp.count > 0 && index === eachTimeline.length - 1) {
+          // console.log('last', temp);
+          const tempResult = temp.arr.reduce((prev2, curr2) => [
+            prev2[0] + curr2.chatCount,
+            prev2[1] + curr2.smileCount,
+            prev2[2] + curr2.viewer,
+            prev2[3],
+          ], [0, 0, 0, temp.arr[0].startedAt]);
+
+          // console.log(tempResult);
+
+          result[periodIndex].push({
+            viewer: Math.round(tempResult[0] / temp.arr.length),
+            chatCount: Math.round(tempResult[1] / temp.arr.length),
+            smileCount: Math.round(tempResult[2] / temp.arr.length),
+            startedAt: moment(tempResult[3]).format('YYYY-MM-DD'),
           });
-        });
+
+          // temp.arr = []; temp.count = 0;
+          // temp.arr.push(curr); temp.count += 1;
+
+          // console.log(periodIndex, result[periodIndex]);
+        } else {
+          const prev = timeline[periodIndex][index - 1];
+          if (moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+            temp.arr.push(curr);
+            temp.count += 1;
+          } else if (!moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+            const tempResult = temp.arr.reduce((prev2, curr2) => [
+              prev2[0] + curr2.chatCount,
+              prev2[1] + curr2.smileCount,
+              prev2[2] + curr2.viewer,
+              prev2[3],
+            ], [0, 0, 0, temp.arr[0].startedAt]);
+
+            // console.log(tempResult);
+
+            result[periodIndex].push({
+              chatCount: Math.round(tempResult[0] / temp.arr.length),
+              smileCount: Math.round(tempResult[1] / temp.arr.length),
+              viewer: Math.round(tempResult[2] / temp.arr.length),
+              startedAt: moment(tempResult[3]).format('YYYY-MM-DD'),
+            });
+
+            temp.arr = []; temp.count = 0;
+            temp.arr.push(curr); temp.count += 1;
+          }
+        }
+
+        return false;
+      });
+
+      // if (temp.count > 0) {
+
+      // }
+    });
+
+    // console.log('after');
+    // console.log(result);
+
+    return new Promise<PeriodsAnalysisResType>((periodsResolve) => {
+      const metrics = timeline.map((each) => each.reduce((sum, element) => [
+        sum[0] + Number(element.viewer),
+        sum[1] + Number(element.chatCount),
+        sum[2] + Number(element.smileCount),
+      ], [0, 0, 0]))
+        .map((sums, index) => ({
+          viewer: Math.round(sums[0] / timeline[index].length),
+          chatCount: Math.round(sums[1] / timeline[index].length),
+          smileCount: Math.round(sums[2] / timeline[index].length),
+        }));
+
+      periodsResolve({
+        timeline: [...result],
+        type: 'periods',
+        metrics: calculateStreamData(metrics),
+      });
     });
   }
 

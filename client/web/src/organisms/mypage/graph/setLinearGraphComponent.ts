@@ -2,6 +2,7 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import graphColor from './Color';
+// import { timelineGraphInterface } from './graphsInterface';
 
 const metricSetting: any = {
   smile: {
@@ -40,7 +41,7 @@ const setSeries = (
     const series: any = chart.series.push(new am4charts.LineSeries());
     series.yAxis = valueAxis;
     series.dataFields.valueY = setting.valueY;
-    series.dataFields.dateX = 'date';
+    series.dataFields.dateX = 'startedAt';
     series.name = setting.name;
     series.tooltipText = setting.tooltipText;
     series.strokeWidth = 2.5;
@@ -58,12 +59,12 @@ const setSeries = (
     series.tooltip.label.textValign = 'middle';
   });
 };
-
 // @hwasurr - 2020.10.13 eslint error 정리 중
 // any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function setComponent(data: any,
+export default function setComponent(data: any[],
   selectedMetric: string[], name?: string, opposite?: number, fontColor?: string): am4charts.XYChart {
+  // console.log(data);
   am4core.useTheme(am4themesAnimated);
   const chart: am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);
   chart.data = data;

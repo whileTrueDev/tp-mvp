@@ -1,10 +1,7 @@
+import { EachStream } from '../dto/stream-analysis/eachStream.dto';
+
 export interface PeriodsAnalysisResType{
-  timeline: {
-    viewer: number;
-    chatCount: number;
-    smileCount: number;
-    date: string;
-  }[],
+  timeline: EachStream[][],
   type: string| null,
   metrics: {
     title: string;

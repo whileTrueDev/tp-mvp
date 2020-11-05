@@ -1,15 +1,17 @@
 import {
-  Controller, Get, ParseArrayPipe, Query, UseGuards, Inject,
+  Controller, Get, ParseArrayPipe,
+  Query, UseGuards, Inject,
+  Post, Body,
 } from '@nestjs/common';
 // shared dto , interfaces
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchEachStream } from '@truepoint/shared/dist/dto/stream-analysis/searchEachStreamData.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
-import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+// import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
-
+import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
+// import { PeriodData } from '@truepoint/shared/dist/dto/stream-analysis/periodData.dto';
 import { SearchUserStatisticData } from '@truepoint/shared/dist/dto/stream-analysis/searchUserStatisticData.dto';
-
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
@@ -18,12 +20,14 @@ import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo
 // Services
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
-// pipe
-import { ValidationPipe } from '../../pipes/validation.pipe';
+// // pipe
+// import { ValidationPipe } from '../../pipes/validation.pipe';
+// import { ArrayValidationPipe } from '../../pipes/arrayValidation.pipe';
 // guard
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // Entity
 import { StreamsEntity } from './entities/streams.entity';
+
 @Controller('stream-analysis')
 export class StreamAnalysisController {
   constructor(
@@ -66,18 +70,30 @@ export class StreamAnalysisController {
     기간 대 기간 분석
     input   :  { userId, baseStartAt, baseEndAt, compareStartAt, compareEndAt }
   */
-  @Get('periods')
+  // @Get('periods')
+  // @UseGuards(JwtAuthGuard)
+  // getPeriodsStreamsInfo(
+  //   @Query(new ValidationPipe()) findTermRequest: SearchStreamInfoByPeriods,
+  // ): Promise<PeriodsAnalysisResType> {
+  //   return this.streamAnalysisService.findStreamInfoByPeriods(
+  //     findTermRequest.userId,
+  //     [
+  //       { startAt: findTermRequest.baseStartAt, endAt: findTermRequest.baseEndAt },
+  //       { startAt: findTermRequest.compareStartAt, endAt: findTermRequest.compareEndAt },
+  //     ],
+  //   );
+  // }
+
+  @Post('periods')
   @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
-    @Query(new ValidationPipe()) findTermRequest: SearchStreamInfoByPeriods,
+  // @Body(new ValidationPipe()) body: PeriodData,
+  @Body('base', new ParseArrayPipe({ items: EachStream })) base: EachStream[],
+  @Body('compare', new ParseArrayPipe({ items: EachStream })) compare: EachStream[],
+  // @Body('base', new ParseArrayPipe({ items: EachStream })) base: PeriodData,
+  // @Body('compare', new ParseArrayPipe({ items: EachStream })) compare: PeriodData,
   ): Promise<PeriodsAnalysisResType> {
-    return this.streamAnalysisService.findStreamInfoByPeriods(
-      findTermRequest.userId,
-      [
-        { startAt: findTermRequest.baseStartAt, endAt: findTermRequest.baseEndAt },
-        { startAt: findTermRequest.compareStartAt, endAt: findTermRequest.compareEndAt },
-      ],
-    );
+    return this.streamAnalysisService.findStreamInfoByPeriods([base, compare]);
   }
 
   /*

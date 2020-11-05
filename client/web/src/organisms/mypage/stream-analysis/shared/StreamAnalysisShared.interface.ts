@@ -1,4 +1,4 @@
-import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+// import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { SvgIconProps } from '@material-ui/core';
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 
@@ -15,6 +15,9 @@ export interface StreamsListItem {
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
   isRemoved: boolean;
+  chatCount: number;
+  smileCount: number;
+  viewer: number;
 }
 
 export interface CalendarProps {
@@ -67,7 +70,7 @@ export interface PeriodSelectPopperProps {
 
 export interface PeriodCompareSubmitInterface {
   category: string[];
-  params: SearchStreamInfoByPeriods;
+  params: any;
 }
 
 export interface PeriodAnalysisSubmitInterface {

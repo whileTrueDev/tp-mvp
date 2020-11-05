@@ -5,10 +5,12 @@ import {
 } from '@material-ui/core';
 // axios
 import useAxios from 'axios-hooks';
+// import moment from 'moment';
 // shared dtos , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
-import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
+// import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+// import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
+import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
 // notistack snackbar
 import { useSnackbar } from 'notistack';
 // styles
@@ -113,6 +115,45 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   //   });
   // }, [subscribe.currUser]);
 
+  // const handleAnalysisButton = () => {
+  //   /* 카테고리 복수 선택 */
+  //   const selectedCategory: string[] = Object
+  //     .entries(checkStateGroup)
+  //     .filter((pair) => pair[1]).map((pair) => pair[0]);
+
+  //   /* 타겟 유저 아이디 + 기간 2개 요청 */
+  //   if (selectedCategory.length < 1) {
+  //     ShowSnack('카테고리를 선택해 주세요.', 'info', enqueueSnackbar);
+  //   } else {
+  //     const getStreamsParams: SearchCalendarStreams = {
+  //       userId: auth.user.userId,
+  //       startDate: basePeriod[0].toISOString(),
+  //       endDate: basePeriod[1].toISOString(),
+  //     };
+  //     excuteGetStreams({
+  //       params: getStreamsParams,
+  //     }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
+  //       if (res.data.length > 0) {
+  //         const analysisParam: SearchStreamInfoByPeriods = {
+  //           userId: auth.user.userId,
+  //           baseStartAt: basePeriod[0].toISOString(),
+  //           baseEndAt: basePeriod[1].toISOString(),
+  //           compareStartAt: comparePeriod[0].toISOString(),
+  //           compareEndAt: comparePeriod[1].toISOString(),
+  //         };
+  //         handleSubmit({
+  //           category: selectedCategory,
+  //           params: analysisParam,
+  //         });
+  //       } else {
+  //         ShowSnack('기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
+  //       }
+  //     }).catch(() => {
+  //       ShowSnack('분석과정에서 문제가 발생했습니다.', 'error', enqueueSnackbar);
+  //     });
+  //   }
+  // };
+
   const handleAnalysisButton = () => {
     /* 카테고리 복수 선택 */
     const selectedCategory: string[] = Object
@@ -123,22 +164,30 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     if (selectedCategory.length < 1) {
       ShowSnack('카테고리를 선택해 주세요.', 'info', enqueueSnackbar);
     } else {
-      const getStreamsParams: SearchCalendarStreams = {
+      const getStreamsParams: any = {
         userId: auth.user.userId,
         startDate: basePeriod[0].toISOString(),
         endDate: basePeriod[1].toISOString(),
       };
       excuteGetStreams({
         params: getStreamsParams,
-      }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
+      }).then((res) => {
         if (res.data.length > 0) {
-          const analysisParam: SearchStreamInfoByPeriods = {
-            userId: auth.user.userId,
-            baseStartAt: basePeriod[0].toISOString(),
-            baseEndAt: basePeriod[1].toISOString(),
-            compareStartAt: comparePeriod[0].toISOString(),
-            compareEndAt: comparePeriod[1].toISOString(),
+          const analysisParam: { base: EachStream[]; compare: EachStream[] } = {
+            base: baseStreamsList
+              .filter((stream) => !stream.isRemoved)
+              .map((activeStream) => ({
+                ...activeStream,
+                startedAt: (new Date(activeStream.startedAt)).toISOString(),
+              })),
+            compare: compareStreamsList
+              .filter((stream) => !stream.isRemoved)
+              .map((activeStream) => ({
+                ...activeStream,
+                startedAt: (new Date(activeStream.startedAt)).toISOString(),
+              })),
           };
+
           handleSubmit({
             category: selectedCategory,
             params: analysisParam,
@@ -146,7 +195,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         } else {
           ShowSnack('기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
         }
-      }).catch(() => {
+      }).catch((err) => {
         ShowSnack('분석과정에서 문제가 발생했습니다.', 'error', enqueueSnackbar);
       });
     }
@@ -201,7 +250,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           && (
           <Loading
             clickOpen={loading}
-            lodingTime={10000}
+            lodingTime={1000}
           />
           )}
 
