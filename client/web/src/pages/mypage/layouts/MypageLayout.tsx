@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect, useLayoutEffect, useRef, useState,
+} from 'react';
 import { Switch, Route } from 'react-router-dom';
 // material-ui components layout
 import routes from '../routes';
@@ -10,7 +12,7 @@ import Sidebar from '../../../organisms/mypage/layouts/sidebar/Sidebar';
 import AppBar from '../../../organisms/shared/Appbar';
 import PageSizeAlert from '../../../organisms/mypage/alertbar/PageSizeAlert';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
-import TruepointLogo from '../../../atoms/TruepointLogo';
+import MypageLoading from './MypageLoading';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
@@ -31,20 +33,27 @@ const UserDashboard = (): JSX.Element => {
     setAlertOpen(false);
   }
 
-  // token이 아직 없거나, refresh-token을 통해 새로운 access_token을 받아오고 있는 경우에 보여질 로딩 페이지
-  // 짧아서, 기존의 LoadingComponent는 사용이 불가한 듯 보인다. 그냥 로고만 띡 나오는 지금도 나쁘지는 않은 듯.
-  // @by dan, @when 2020. 11. 04.
+  /**
+   * ************************************************
+   * 토큰리프레시 로딩 컴포넌트 Open을 위한 작업
+   */
   const auth = useAuthContext();
-  if (!(!auth.loginLoading && auth.user.userId)) {
-    return (
-      <div style={{
-        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh',
-      }}
-      >
-        <TruepointLogo />
-      </div>
-    );
-  }
+  const [loadingOpen, setLoadingOpen] = useState(!(!auth.loginLoading && auth.user.userId));
+  const maxTimeout = 2 * 1000; // 2초
+  useLayoutEffect(() => {
+    if (!(!auth.loginLoading && auth.user.userId)) {
+      setLoadingOpen(true);
+    }
+
+    const timer = setTimeout(() => {
+      // 로딩이 끝났고, 유저 ID가 있는 경우(토큰이 있는 경우)
+      if (!auth.loginLoading && auth.user.userId && auth.accessToken) setLoadingOpen(false);
+      // 최대 타임아웃 이후에도 로딩이 끝나지 않았거나 토큰이 없는 경우 
+      else window.location.href = '/login';
+    }, maxTimeout);
+    return () => clearTimeout(timer);
+  }, [maxTimeout, auth.accessToken, auth.loginLoading, auth.user.userId]);
+  // *************************************************
 
   return (
     <>
@@ -59,7 +68,6 @@ const UserDashboard = (): JSX.Element => {
       />
 
       <div className={classes.wrapper}>
-
         {/* 마이페이지 상단 네비바 */}
         <nav className={classes.appbarWrapper}>
           <Navbar routes={routes} />
@@ -75,29 +83,29 @@ const UserDashboard = (): JSX.Element => {
 
           {/* 마이페이지 메인 패널 */}
           <main ref={mainPanel} className={classes.mainPanel}>
-            <Switch>
-              {routes.map((route) => (
-                route.nested
-                  ? (
-                    route.subRoutes && route.subRoutes.map((subRoute) => (
+            {(loadingOpen) ? (<MypageLoading />) : (
+              <Switch>
+                {routes.map((route) => (
+                  route.nested
+                    ? (
+                      route.subRoutes && route.subRoutes.map((subRoute) => (
+                        <Route
+                          path={subRoute.layout + subRoute.path}
+                          component={subRoute.component}
+                          key={subRoute.name}
+                        />
+                      ))
+                    ) : (
                       <Route
-                        path={subRoute.layout + subRoute.path}
-                        component={subRoute.component}
-                        key={subRoute.name}
+                        path={route.layout + route.path}
+                        component={route.component}
+                        key={route.name}
                       />
-                    ))
-                  ) : (
-                    <Route
-                      path={route.layout + route.path}
-                      component={route.component}
-                      key={route.name}
-                    />
-                  )
-              ))}
-
-            </Switch>
+                    )
+                ))}
+              </Switch>
+            )}
           </main>
-
         </div>
       </div>
     </>
