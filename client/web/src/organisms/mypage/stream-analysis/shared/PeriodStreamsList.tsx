@@ -3,6 +3,7 @@ import moment from 'moment';
 // material-ui core components
 import {
   Typography, List, ListItem, IconButton, ListItemIcon, Button,
+  Tooltip,
 } from '@material-ui/core';
 //  styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -80,6 +81,11 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: theme.palette.primary.dark,
     },
   },
+  noMaxWidth: {
+    maxWidth: 'none',
+    padding: theme.spacing(2),
+
+  },
 }));
 
 export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.Element {
@@ -146,28 +152,52 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     </ListItem>
   );
 
+  const test = (stream: StreamsListItem): JSX.Element => (
+    <div style={{
+      height: 'auto', padding: 16,
+    }}
+    >
+      <Typography variant="h6" style={{ whiteSpace: 'nowrap' }}>
+        {stream.title}
+      </Typography>
+    </div>
+  );
+
   const removedListItems = (stream: StreamsListItem): JSX.Element => (
+
     <ListItem
       key={stream.streamId}
       button
       className={classes.removedListItem}
     >
-      <Button
-        variant="contained"
-        className={classes.addButton}
-        onClick={() => handleStreamList(stream, false)}
+      <Tooltip
+        arrow
+        placement="top"
+        title={test(stream)}
+        classes={{ tooltip: classes.noMaxWidth }}
       >
-        재등록
-      </Button>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
 
-      <Typography className={classes.removedListItemText}>
-        {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
-      </Typography>
+          <Button
+            variant="contained"
+            className={classes.addButton}
+            onClick={() => handleStreamList(stream, false)}
+          >
+            재등록
+          </Button>
 
-      <Typography className={classes.removedListItemText}>
-        {stream.title}
-      </Typography>
+          <Typography className={classes.removedListItemText}>
+            {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+          </Typography>
+
+          <Typography className={classes.removedListItemText}>
+            {stream.title}
+          </Typography>
+
+        </div>
+      </Tooltip>
     </ListItem>
+
   );
 
   return (
