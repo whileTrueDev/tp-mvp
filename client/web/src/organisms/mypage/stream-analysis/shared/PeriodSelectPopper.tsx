@@ -2,10 +2,8 @@ import React from 'react';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Typography, Popper, Box, Grid, IconButton, Divider, Button, ClickAwayListener,
+  Typography, Popper, Box, Grid, Divider, Button, ClickAwayListener,
 } from '@material-ui/core';
-// material-ui icons
-import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared sub components
 import Calendar from './Calendar';
 import PeriodStreamsList from './PeriodStreamsList';
@@ -95,18 +93,11 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
             <Typography className={classes.boxTitle}>
               제외할 방송 선택
             </Typography>
-
-            <IconButton
-              onClick={() => handleAnchorClose()}
-            >
-              <ClearOutlinedIcon />
-            </IconButton>
           </Grid>
 
           <Grid className={classes.calendarWrapper}>
             <Calendar
               period={period}
-            // handlePeriod={handlePeriod}
               base={base}
               handleSelectedDate={handleSelectedDate}
               currDate={selectedDate}

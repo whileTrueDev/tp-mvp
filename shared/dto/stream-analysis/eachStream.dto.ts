@@ -15,23 +15,23 @@ export class EachStream {
   @IsString()
   startedAt;
 
-  @IsString()
-  platform;
+  // @IsString()
+  // platform;
 
   // @IsString()
   // userId
 
-  @IsString()
-  creatorId
+  // @IsString()
+  // creatorId
 
-  @IsString()
-  title
+  // @IsString()
+  // title
 
   // @IsNumber()
   // fan
 
-  @IsNumber()
-  airTime
+  // @IsNumber()
+  // airTime
 
   @IsBoolean()
   isRemoved

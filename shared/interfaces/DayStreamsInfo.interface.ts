@@ -6,4 +6,6 @@ export interface DayStreamsInfo{
   startedAt: Date;
   creatorId: string;
   smileCount: number;
+  viewer: number;
+  chatCount: number;
 }

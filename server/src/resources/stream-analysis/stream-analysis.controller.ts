@@ -21,7 +21,7 @@ import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
 // // pipe
-// import { ValidationPipe } from '../../pipes/validation.pipe';
+import { ValidationPipe } from '../../pipes/validation.pipe';
 // import { ArrayValidationPipe } from '../../pipes/arrayValidation.pipe';
 // guard
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -42,7 +42,8 @@ export class StreamAnalysisController {
   */
   @Get('stream-list')
   @UseGuards(JwtAuthGuard)
-  getDaysStreamList(@Query() findDaysStreamRequest: SearchCalendarStreams): Promise<DayStreamsInfo[]> {
+  getDaysStreamList(@Query(new ValidationPipe())
+    findDaysStreamRequest: SearchCalendarStreams): Promise<DayStreamsInfo[]> {
     return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
       findDaysStreamRequest.startDate,
@@ -70,28 +71,12 @@ export class StreamAnalysisController {
     기간 대 기간 분석
     input   :  { userId, baseStartAt, baseEndAt, compareStartAt, compareEndAt }
   */
-  // @Get('periods')
-  // @UseGuards(JwtAuthGuard)
-  // getPeriodsStreamsInfo(
-  //   @Query(new ValidationPipe()) findTermRequest: SearchStreamInfoByPeriods,
-  // ): Promise<PeriodsAnalysisResType> {
-  //   return this.streamAnalysisService.findStreamInfoByPeriods(
-  //     findTermRequest.userId,
-  //     [
-  //       { startAt: findTermRequest.baseStartAt, endAt: findTermRequest.baseEndAt },
-  //       { startAt: findTermRequest.compareStartAt, endAt: findTermRequest.compareEndAt },
-  //     ],
-  //   );
-  // }
 
   @Post('periods')
   @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
-  // @Body(new ValidationPipe()) body: PeriodData,
   @Body('base', new ParseArrayPipe({ items: EachStream })) base: EachStream[],
   @Body('compare', new ParseArrayPipe({ items: EachStream })) compare: EachStream[],
-  // @Body('base', new ParseArrayPipe({ items: EachStream })) base: PeriodData,
-  // @Body('compare', new ParseArrayPipe({ items: EachStream })) compare: PeriodData,
   ): Promise<PeriodsAnalysisResType> {
     return this.streamAnalysisService.findStreamInfoByPeriods([base, compare]);
   }

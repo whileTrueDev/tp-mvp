@@ -2,7 +2,7 @@ export interface TimeLineData {
   viewer: number;
   chatCount: number;
   smileCount: number;
-  date: Date;
+  startedAt: string;
 }
 
 export interface Period {

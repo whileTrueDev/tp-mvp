@@ -7,6 +7,7 @@ import { Grid, Paper } from '@material-ui/core';
 // shared dtos
 // import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
+import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
 // Layout
 // import { AnyMxRecord } from 'dns';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
@@ -26,7 +27,7 @@ export interface PeriodsRequestParams {
 }
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
-  const [timeLineData, setTimeLine] = useState<any[]>();
+  const [timeLineData, setTimeLine] = useState<EachStream[][]>();
   const [metricData, setMetric] = useState<any>(null);
   const [type, setType] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);

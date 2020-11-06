@@ -165,7 +165,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       </Typography>
 
       <Typography className={classes.removedListItemText}>
-        {stream.title}
+        {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
       </Typography>
     </ListItem>
   );

@@ -115,45 +115,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   //   });
   // }, [subscribe.currUser]);
 
-  // const handleAnalysisButton = () => {
-  //   /* 카테고리 복수 선택 */
-  //   const selectedCategory: string[] = Object
-  //     .entries(checkStateGroup)
-  //     .filter((pair) => pair[1]).map((pair) => pair[0]);
-
-  //   /* 타겟 유저 아이디 + 기간 2개 요청 */
-  //   if (selectedCategory.length < 1) {
-  //     ShowSnack('카테고리를 선택해 주세요.', 'info', enqueueSnackbar);
-  //   } else {
-  //     const getStreamsParams: SearchCalendarStreams = {
-  //       userId: auth.user.userId,
-  //       startDate: basePeriod[0].toISOString(),
-  //       endDate: basePeriod[1].toISOString(),
-  //     };
-  //     excuteGetStreams({
-  //       params: getStreamsParams,
-  //     }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-  //       if (res.data.length > 0) {
-  //         const analysisParam: SearchStreamInfoByPeriods = {
-  //           userId: auth.user.userId,
-  //           baseStartAt: basePeriod[0].toISOString(),
-  //           baseEndAt: basePeriod[1].toISOString(),
-  //           compareStartAt: comparePeriod[0].toISOString(),
-  //           compareEndAt: comparePeriod[1].toISOString(),
-  //         };
-  //         handleSubmit({
-  //           category: selectedCategory,
-  //           params: analysisParam,
-  //         });
-  //       } else {
-  //         ShowSnack('기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
-  //       }
-  //     }).catch(() => {
-  //       ShowSnack('분석과정에서 문제가 발생했습니다.', 'error', enqueueSnackbar);
-  //     });
-  //   }
-  // };
-
   const handleAnalysisButton = () => {
     /* 카테고리 복수 선택 */
     const selectedCategory: string[] = Object
@@ -250,7 +211,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           && (
           <Loading
             clickOpen={loading}
-            lodingTime={1000}
+            lodingTime={10000}
           />
           )}
 
