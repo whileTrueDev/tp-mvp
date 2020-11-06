@@ -148,6 +148,19 @@ export class UsersService {
     return false;
   }
 
+  /*
+    input   : empty
+    output  : [ userId1, userId2, ... ]
+  */
+  async findAllUserList(): Promise<string[]> {
+    const allUserId = await this.usersRepository
+      .createQueryBuilder('users')
+      .select(['userId'])
+      .execute();
+
+    return allUserId.map((data) => data.userId);
+  }
+
   // **********************************************
   // User Tokens 관련
 
