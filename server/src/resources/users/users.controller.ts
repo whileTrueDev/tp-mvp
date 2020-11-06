@@ -100,7 +100,7 @@ export class UsersController {
     output  : [userId1, userId2, ... ]
   */
   @Get('/id-list')
-  getAllUserIdList(): Promise<string[]> {
+  getAllUserIdList(): Promise<{userId: string}[]> {
     return this.usersService.findAllUserList();
   }
 
