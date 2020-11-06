@@ -158,7 +158,7 @@ export class UsersService {
       .select(['userId'])
       .execute();
 
-    return allUserId.map((data) => data.userId);
+    return allUserId;
   }
 
   // **********************************************
