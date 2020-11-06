@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import classnames from 'classnames';
 import {
   TablePagination, TableCell, TableRow, TableBody, Typography, useTheme,
@@ -8,6 +7,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import NotificationImportantIcon from '@material-ui/icons/NotificationImportant';
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
+// 날짜표현 컴포넌트 추가
+import MakedateForm from '../../../utils/MakedateForm';
 
 interface TableProps {
   metrics: any;
@@ -113,7 +114,7 @@ export default function MaterialTable({
                     {eachRow.title}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="right">
-                    {moment(eachRow.createdAt).format('YYYY년 MM월 DD일')}
+                    <MakedateForm pagename="table-view" createdAt={eachRow.createdAt} />
                   </TableCell>
                 </TableRow>
               ))}

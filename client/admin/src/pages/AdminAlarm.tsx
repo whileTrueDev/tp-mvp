@@ -30,10 +30,10 @@ export default function AdminAlarm(): JSX.Element {
       const unique = data.filter((user: any, i: any) => data.findIndex(
         (user2: any, j: any) => user.userId === user2.userId,
       ) === i);
+      // executeGet({ data : { userId: data.userId}})
       setList(unique);
     }
   }, [data]);
-
   const handleClick = (event: any, d: any) => {
     setAnchorEl(event.currentTarget);
     setData(d);
