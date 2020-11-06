@@ -1,7 +1,10 @@
 import { Notification } from '@truepoint/shared/dist/interfaces/Notification.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn,
+  Entity, Column, PrimaryGeneratedColumn,
+  CreateDateColumn, ManyToOne, JoinColumn,
 } from 'typeorm';
+
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity({ name: 'Notification' })
 export class NotificationEntity implements Notification {
@@ -25,6 +28,10 @@ export class NotificationEntity implements Notification {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @ManyToOne((type) => UserEntity, (user) => user.notification)
+  @JoinColumn({ name: 'userId' })
+  user: UserEntity
 
   constructor(partial: Partial<NotificationEntity>) {
     Object.assign(this, partial);
