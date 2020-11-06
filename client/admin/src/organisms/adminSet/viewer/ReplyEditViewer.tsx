@@ -4,16 +4,16 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Markdown from 'react-markdown/with-html';
-import { NoticeData } from '../../pages/AdminNotice';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
+  deleteButton: { marginBottom: 5, marginRight: -5 },
 }));
 
-interface NoticeEditData{
-  state: NoticeData;
+interface ReplyEditData{
+  state: any;
 }
-export default function NoticeEditViewer(props: NoticeEditData): JSX.Element {
+export default function SuggestReplyEditViewer(props: ReplyEditData): JSX.Element {
   const { state } = props;
   const classes = useStyles();
   return (
@@ -22,15 +22,15 @@ export default function NoticeEditViewer(props: NoticeEditData): JSX.Element {
         <div style={{ padding: 14 }}>
 
           <Typography variant="h6">
-            공지사항 글작성 미리보기
+            답변 미리보기
           </Typography>
           <Divider />
         </div>
 
         <div style={{ padding: 14 }}>
-          <Typography variant="h4">{state.title}</Typography>
+          <Typography variant="h4">{state.author}</Typography>
         </div>
-        {state.title && (<Divider />)}
+        {state.suggestionId && (<Divider />)}
         <div style={{ padding: 14 }}>
           <Markdown
             className={classes.markdown}

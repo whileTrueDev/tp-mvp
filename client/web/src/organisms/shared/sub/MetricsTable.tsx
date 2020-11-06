@@ -53,7 +53,6 @@ export function rank(row: any, arr: any): number | null {
 
 interface TableProps {
   metrics: any;
-  title: string;
   row: any;
   page: number;
   pageSize: number;
@@ -65,7 +64,6 @@ interface TableProps {
 
 export default function MaterialTable({
   metrics,
-  title,
   handleClick,
   row,
   page,
@@ -80,15 +78,12 @@ export default function MaterialTable({
   return (
     <>
       <Table
-        title={title}
         columns={[
           {
-            width: '200px',
             align: 'center',
             title: '시간',
           },
           {
-            width: '180px',
             align: 'center',
             title: type === '트루포인트 편집점' ? '트루포인트 점수' : '횟수',
           },
@@ -153,9 +148,11 @@ export default function MaterialTable({
           search: false,
           pageSize: 5,
           pageSizeOptions: [5, 10],
-          headerStyle: { backgroundColor: '#929ef8', color: 'white' },
+          headerStyle: { backgroundColor: '#929ef8', color: 'white', padding: 10 },
           draggable: false,
           paginationType: 'stepped',
+          showTitle: false,
+          toolbar: false,
         }}
         style={{ boxShadow: 'none' }}
       />

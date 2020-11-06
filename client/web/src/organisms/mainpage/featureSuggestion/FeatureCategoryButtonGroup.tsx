@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     width: '100%',
-    height: 80,
+    height: 60,
     backgroundColor: theme.palette.action.disabledBackground,
   },
   button: {
@@ -45,7 +45,7 @@ export default function FeatureCategoryButtonGroup({
             [classes.button]: true,
           })}
         >
-          <Typography className={classnames({ [classes.selectedText]: selected === category })}>
+          <Typography component="div" className={classnames({ [classes.selectedText]: selected === category })}>
             {categoryTabSwitch(Number(category))}
           </Typography>
         </Button>

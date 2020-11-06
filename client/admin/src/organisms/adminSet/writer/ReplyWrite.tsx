@@ -1,62 +1,45 @@
 import React from 'react';
 import { Typography, Grid } from '@material-ui/core';
-import NoticeMarkdownHelper from '../markdown_helper/MarkdownHelper';
-import SuggestReplyEditViewer from './ReplyEditViewer';
+import NoticeMarkdownHelper from '../../markdown_helper/MarkdownHelper';
+import SuggestReplyEditViewer from '../viewer/ReplyEditViewer';
 import SuggestReplyEditor from './ReplyEditor';
-import { ReplyData } from '../../pages/AdminSuggest';
-import '../../assets/font.css';
-
-const initialState = {
-  userId: '', content: '', createdAt: '', author: '', replyId: '', suggestionId: '',
-};
-
-interface ActionProps {
-  type: string;
-  author: string;
-  content: string;
-  userId: string;
-  suggestionId: string;
-  createdAt: string;
-  replyId: string;
-}
-
-function reducer(state: any, action: ActionProps) {
-  // action은 type을 정의.
-  const {
-    type, author, userId, content, suggestionId, createdAt,
-  } = action;
-
-  switch (type) {
-    case 'reset':
-      return initialState;
-    case 'handleAuthor':
-      return { ...state, author };
-    case 'handleuserId':
-      return { ...state, userId };
-    case 'handleSuggestionId':
-      return { ...state, suggestionId };
-    case 'handleContent':
-      return { ...state, content };
-    case 'handlecreatedAt':
-      return { ...state, createdAt };
-    default: throw Error(`unexpected action.type: ${action.type}`);
-  }
-}
+import '../../../assets/font.css';
 
 interface ReplyDataProps{
-  replyData: ReplyData;
+  replyData?: any;
+  id?: any;
+  handleReplyReload: () => void;
 }
 
 export default function ReplyWrite(props: ReplyDataProps): JSX.Element {
-  const { replyData } = props;
+  const { replyData, id, handleReplyReload } = props;
+  const initialState = {
+    content: '', author: '', suggestionId: id,
+  };
+  function reducer(state: any, action: any) {
+  // action은 type을 정의.
+    const {
+      type, author, content, suggestionId,
+    } = action;
 
+    switch (type) {
+      case 'reset':
+        return initialState;
+      case 'handleTitle':
+        return { ...state, author };
+      case 'handleSuggestionId':
+        return { ...state, suggestionId };
+      case 'handleContent':
+        return { ...state, content };
+      default: throw Error(`unexpected action.type: ${action.type}`);
+    }
+  }
   const [state, dispatch] = React.useReducer(reducer, replyData || initialState);
   const [help, setHelp] = React.useState(false);
 
   function handleHelpToggle() {
     setHelp(!help);
   }
-
   return (
     <div>
       <div style={{ padding: 28 }}>
@@ -76,9 +59,12 @@ export default function ReplyWrite(props: ReplyDataProps): JSX.Element {
           {/* 글작성 */}
           <Grid item xs={12} md={6} lg={4}>
             <SuggestReplyEditor
+              suggestid={id}
+              replyData={replyData}
               state={state}
               dispatch={dispatch}
               handleHelpToggle={handleHelpToggle}
+              handleReplyReload={handleReplyReload}
             />
 
           </Grid>

@@ -7,6 +7,12 @@ import MessageTable from '../organisms/alarm_message/MessageForm';
 
 export interface userData {
   userId: string;
+  content: string;
+  title: string;
+  dateform: string;
+  createdAt: string;
+  readState: boolean;
+
 }
 
 export default function AdminAlarm(): JSX.Element {
@@ -15,6 +21,18 @@ export default function AdminAlarm(): JSX.Element {
   const [{ data }] = useAxios({
     url: 'http://localhost:3000/notification/admin', method: 'GET',
   });
+  const [list, setList] = React.useState<any[]>([{
+    userId: '', title: '', content: '', createdAt: '', index: null, readState: false,
+  }]);
+
+  React.useEffect((): any => {
+    if (data) {
+      const unique = data.filter((user: any, i: any) => data.findIndex(
+        (user2: any, j: any) => user.userId === user2.userId,
+      ) === i);
+      setList(unique);
+    }
+  }, [data]);
 
   const handleClick = (event: any, d: any) => {
     setAnchorEl(event.currentTarget);
@@ -36,7 +54,7 @@ export default function AdminAlarm(): JSX.Element {
 
         <Grid item xs={12} lg={6}>
           <UserlistTable
-            userData={data}
+            userData={list}
             handleClick={handleClick}
           />
         </Grid>

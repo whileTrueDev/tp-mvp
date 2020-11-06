@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: 'nowrap',
   },
   drawerOpen: {
+
     width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   drawerClose: {
+
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -177,7 +179,10 @@ export default function Sidebar(props: Props): JSX.Element {
         anchor="left"
       >
         <div className={classes.toolbar}>
-          <Typography variant="h6" component={Link} to="/" className={classes.brand}>TruePoint 관리자</Typography>
+          <Typography variant="h6" component={Link} to="/" className={classes.brand}>
+            <img src="/logo_l.png" width="20px" height="20px" alt="로고" />
+            TruePoint 관리자
+          </Typography>
           <IconButton onClick={() => {
             setDrawerOpen(false);
           }}

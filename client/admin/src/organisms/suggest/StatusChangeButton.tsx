@@ -4,7 +4,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
 import useAxios from 'axios-hooks';
-import { SuggestData } from '../../pages/AdminSuggest';
 
 const useStyles = makeStyles({
   button: {
@@ -13,12 +12,12 @@ const useStyles = makeStyles({
 });
 
 interface statusProps {
-  selectedData: SuggestData;
-
+  selectedData: any;
+  handleReload: () => void;
 }
 
 export default function StatusChangebutton(props: statusProps): JSX.Element {
-  const { selectedData } = props;
+  const { selectedData, handleReload } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
 
@@ -62,8 +61,9 @@ export default function StatusChangebutton(props: statusProps): JSX.Element {
                 id: selectedData.suggestionId,
                 state: selectedData.state,
               },
-            });
-            window.location.reload();
+            }).then((res) => {
+              handleReload();
+            }).catch((err) => false);
           }
         }}
         >
@@ -78,8 +78,9 @@ export default function StatusChangebutton(props: statusProps): JSX.Element {
                 id: selectedData.suggestionId,
                 state: selectedData.state,
               },
-            });
-            window.location.reload();
+            }).then((res) => {
+              handleReload();
+            }).catch((err) => false);
           }
         }}
         >
@@ -94,8 +95,9 @@ export default function StatusChangebutton(props: statusProps): JSX.Element {
                 id: selectedData.suggestionId,
                 state: selectedData.state,
               },
-            });
-            window.location.reload();
+            }).then((res) => {
+              handleReload();
+            }).catch((err) => false);
           }
         }}
         >

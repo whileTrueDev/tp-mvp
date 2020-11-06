@@ -1,7 +1,7 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Chip } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
@@ -20,8 +20,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  featureContainer: { width: 1400, margin: '100px auto', minHeight: 900 },
+  featureContainer: { width: 968, margin: '64px auto' },
   contents: { marginTop: theme.spacing(4) },
+  chipArea: {
+    marginBottom: theme.spacing(1),
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignContent: 'flex-end',
+  },
 }));
 
 export default function FeatureSuggestion(): JSX.Element {
@@ -30,6 +36,8 @@ export default function FeatureSuggestion(): JSX.Element {
   const history = useHistory();
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(8);
   function handleCategorySelect(str: string): void {
     setSelectedCategory(str);
   }
@@ -66,7 +74,7 @@ export default function FeatureSuggestion(): JSX.Element {
         <div className={classes.featureContainer}>
           <Typography variant="h4">기능제안</Typography>
 
-          {/* 공지사항 개별 보기 */}
+          {/* 기능제안 개별 보기 */}
           {selectedSuggestionId && !loading && data ? (
             <div className={classes.contents}>
               <FeatureDetail
@@ -84,7 +92,7 @@ export default function FeatureSuggestion(): JSX.Element {
           )
             : (
               <>
-                {/* 공지사항 목록 보기 */}
+                {/* 기능제안 목록 보기 */}
                 <div className={classes.contents}>
                   <FeatureCategoryButtonGroup
                     categories={!loading && data
@@ -99,18 +107,26 @@ export default function FeatureSuggestion(): JSX.Element {
                 </div>
 
                 <div className={classes.contents}>
-                  <FeatureTable<FeatureData>
-                    data={!loading && data
+                  <div className={classes.chipArea}>
+                    <Chip style={{ margin: 4 }} variant="outlined" label="미확인" />
+                    <Chip style={{ margin: 4 }} color="secondary" label="개발 확정" />
+                    <Chip style={{ margin: 4 }} color="primary" label="개발보류" />
+                  </div>
+                  <FeatureTable
+                    metrics={!loading && data
                       ? data
                         .sort((row1, row2) => new Date(row2.createdAt).getTime()
                           - new Date(row1.createdAt).getTime())
                         .filter((row) => (selectedCategory !== '전체'
                           ? row.category === selectedCategory : row))
                       : []}
-                    onRowClick={handleFeatureClick}
+                    handleClick={handleFeatureClick}
+                    page={page}
+                    pageSize={pageSize}
+                    handlePage={setPage}
+                    handlePageSize={setPageSize}
                     categoryTabSwitch={categoryTabSwitch}
                   />
-
                 </div>
                 <div>
                   {authContext.user.userId ? (
