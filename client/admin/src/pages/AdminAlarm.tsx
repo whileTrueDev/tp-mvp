@@ -18,21 +18,27 @@ export interface userData {
 export default function AdminAlarm(): JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedData, setData] = React.useState();
-  const [{ data }] = useAxios({
-    url: 'http://localhost:3000/notification/admin', method: 'GET',
+  const [{ data: idList }] = useAxios({
+    url: 'http://localhost:3000/users/id-list', method: 'GET',
   });
+
   const [list, setList] = React.useState<any[]>([{
     userId: '', title: '', content: '', createdAt: '', index: null, readState: false,
   }]);
 
   React.useEffect((): any => {
-    if (data) {
-      const unique = data.filter((user: any, i: any) => data.findIndex(
-        (user2: any, j: any) => user.userId === user2.userId,
-      ) === i);
-      setList(unique);
+    if (idList) {
+      const result = idList.map((v: any) => ({
+        ...v,
+        title: '',
+        content: '',
+        createdAt: '',
+        index: null,
+        readState: false,
+      }));
+      setList(result);
     }
-  }, [data]);
+  }, [idList]);
 
   const handleClick = (event: any, d: any) => {
     setAnchorEl(event.currentTarget);
