@@ -1,20 +1,15 @@
 import {
-  IsString, IsDateString,
+  IsArray,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { EachStream } from './eachStream.dto';
 
 export class SearchStreamInfoByPeriods {
-  @IsString()
-  userId: string;
+  @IsArray()
+  @Type(() => EachStream)
+  base: EachStream[];
 
-  @IsDateString()
-  baseStartAt: string;
-
-  @IsDateString()
-  baseEndAt: string;
-
-  @IsDateString()
-  compareStartAt: string;
-
-  @IsDateString()
-  compareEndAt: string;
+  @IsArray()
+  @Type(() => EachStream)
+  compare: EachStream[];
 }

@@ -8,9 +8,8 @@ import useAxios from 'axios-hooks';
 // import moment from 'moment';
 // shared dtos , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-// import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
-// import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
-import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
+import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // notistack snackbar
 import { useSnackbar } from 'notistack';
 // styles
@@ -125,7 +124,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     if (selectedCategory.length < 1) {
       ShowSnack('카테고리를 선택해 주세요.', 'info', enqueueSnackbar);
     } else {
-      const getStreamsParams: any = {
+      const getStreamsParams: SearchCalendarStreams = {
         userId: auth.user.userId,
         startDate: basePeriod[0].toISOString(),
         endDate: basePeriod[1].toISOString(),
@@ -134,7 +133,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         params: getStreamsParams,
       }).then((res) => {
         if (res.data.length > 0) {
-          const analysisParam: { base: EachStream[]; compare: EachStream[] } = {
+          const analysisParam: SearchStreamInfoByPeriods = {
             base: baseStreamsList
               .filter((stream) => !stream.isRemoved)
               .map((activeStream) => ({

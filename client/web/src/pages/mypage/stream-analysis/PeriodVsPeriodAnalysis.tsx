@@ -5,7 +5,7 @@ import { AxiosError } from 'axios';
 // material - ui core
 import { Grid, Paper } from '@material-ui/core';
 // shared dtos
-// import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
+import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
 // Layout
@@ -40,7 +40,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
 
   const handleSubmit = ({
     category, params,
-  }: {category: string[]; params: any}) => {
+  }: {category: string[]; params: SearchStreamInfoByPeriods}) => {
     selectMetric(category); // 다중 선택으로 변경시 []을 제거한다.
     setOpen(false);
     setMetricOpen(false);
