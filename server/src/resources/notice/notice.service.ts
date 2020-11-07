@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { NoticeDto } from '@truepoint/shared/dist/dto/admin/notice/notice.dto';
-import { NoticePatchRequest } from '@truepoint/shared/dist/dto/admin/notice/noticePatchRequest.dto';
+import { NoticeDto } from '@truepoint/shared/dist/dto/notice/notice.dto';
+import { NoticePatchRequest } from '@truepoint/shared/dist/dto/notice/noticePatchRequest.dto';
 import { Repository } from 'typeorm';
 import { NoticeEntity } from './entities/notice.entity';
 

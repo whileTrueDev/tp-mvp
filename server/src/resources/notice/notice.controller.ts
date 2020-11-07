@@ -3,8 +3,8 @@ import {
   ClassSerializerInterceptor,
   Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseInterceptors, ValidationPipe,
 } from '@nestjs/common';
-import { NoticeDto } from '@truepoint/shared/dist/dto/admin/notice/notice.dto';
-import { NoticePatchRequest } from '@truepoint/shared/dist/dto/admin/notice/noticePatchRequest.dto';
+import { NoticeDto } from '@truepoint/shared/dist/dto/notice/notice.dto';
+import { NoticePatchRequest } from '@truepoint/shared/dist/dto/notice/noticePatchRequest.dto';
 import { NoticeEntity } from './entities/notice.entity';
 import { NoticeService } from './notice.service';
 
