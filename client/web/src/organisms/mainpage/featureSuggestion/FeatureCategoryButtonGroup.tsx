@@ -8,15 +8,21 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     width: '100%',
     height: 60,
-    backgroundColor: theme.palette.action.disabledBackground,
   },
   button: {
     width: '25%',
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: 0,
-    boxShadow: 'none',
+    boxShadow: theme.shadows[0],
   },
-  selected: { backgroundColor: theme.palette.primary.dark },
+  selected: {
+    backgroundColor: theme.palette.background.paper,
+    '&:hover': {
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[0],
+    },
+    cursor: 'default',
+  },
   selectedText: { fontWeight: 'bold' },
 }));
 
@@ -36,12 +42,14 @@ export default function FeatureCategoryButtonGroup({
         <Button
           key={category}
           onClick={() => {
-            onChange(category);
+            if (!(category === selected)) {
+              onChange(category);
+            }
           }}
-          variant={selected === category ? 'contained' : 'outlined'}
-          color={selected === category ? 'primary' : 'default'}
+          variant="outlined"
           className={classnames({
             [classes.button]: true,
+            [classes.selected]: selected === category,
           })}
         >
           <Typography component="div" className={classnames({ [classes.selectedText]: selected === category })}>

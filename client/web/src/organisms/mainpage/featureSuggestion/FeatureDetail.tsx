@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import Markdown from 'react-markdown/with-html';
 import useAxios from 'axios-hooks';
-import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, Paper, Typography, Chip, Avatar,
+  Button, Paper, Typography, Chip,
 } from '@material-ui/core';
 import {
   Create, Delete, KeyboardArrowLeft, KeyboardArrowRight,
@@ -15,6 +14,7 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 // import Card from '../../../atoms/Card/Card';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
+import FeatureReply from './sub/FeatureReply';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -30,21 +30,10 @@ const useStyles = makeStyles((theme) => ({
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 300 },
   buttonSet: {
-    padding: `${theme.spacing(4)}px 0px`,
+    padding: `${theme.spacing(4)}px 0px ${theme.spacing(2)}px`,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  replyCard: {
-    padding: theme.spacing(2),
-    width: '50%',
-    display: 'column',
-    justifyContent: 'space-between',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  replyTextCard: {
-    backgroundColor: theme.palette.grey[400],
-    padding: theme.spacing(2),
   },
   editDeleteButtonSet: {
     padding: theme.spacing(1),
@@ -165,35 +154,29 @@ export default function FeatureDetail({
         </div>
       </Paper>
 
-      {currentSuggestion?.replies && currentSuggestion?.replies.length > 0 && (
+      {/* 댓글 섹션 */}
+      {currentSuggestion?.replies
+      && currentSuggestion?.replies.length > 0
+      && (
         <div style={{ marginTop: 16 }}>
             {currentSuggestion?.replies?.map((reply) => (
-              <div style={{ width: '100%', marginTop: 16 }}>
-                <div style={{ display: 'flex', marginTop: 8 }}>
-                  <Avatar src="/images/logo/logo_truepoint.png" variant="square" style={{ marginRight: 16 }} />
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography variant="body2" style={{ fontWeight: 'bold' }}>{reply.author}</Typography>
-                      &emsp;
-                      <Typography variant="caption">{moment(reply.createdAt).fromNow()}</Typography>
-                    </div>
-                    {reply.content.split('\n').map((text) => (
-                      <Typography>{text}</Typography>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <FeatureReply
+                key={reply.author + reply.createdAt}
+                author={reply.author}
+                content={reply.content}
+                createdAt={reply.createdAt}
+              />
             ))}
         </div>
       )}
 
+      {/* 이전글, 목록, 다음글 버튼셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button
           style={{ width: '30%' }}
           size="large"
           disabled={currentSuggestionIndex === 0}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           onClick={() => {
             onOtherFeatureClick(previousFeature.suggestionId);
           }}
@@ -210,7 +193,7 @@ export default function FeatureDetail({
         <Button
           style={{ width: '10%' }}
           size="large"
-          variant="contained"
+          variant="outlined"
           onClick={() => {
             onBackClick();
           }}
@@ -221,8 +204,7 @@ export default function FeatureDetail({
           style={{ width: '30%' }}
           size="large"
           disabled={currentSuggestionIndex === data.length - 1}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           onClick={() => {
             onOtherFeatureClick(nextFeature.suggestionId);
           }}
