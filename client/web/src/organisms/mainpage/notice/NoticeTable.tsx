@@ -16,7 +16,6 @@ interface TableProps {
   handlePage: any;
   handlePageSize: any;
   handleClick: (a: any) => void;
-  categoryTabSwitch: (value: string | undefined) => JSX.Element;
 }
 const useStyles = makeStyles((theme) => ({
   tableCell: { padding: theme.spacing(1) },
@@ -44,7 +43,6 @@ export default function MaterialTable({
   pageSize,
   handlePage,
   handlePageSize,
-  categoryTabSwitch,
 }: TableProps): JSX.Element {
   const classes = useStyles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
@@ -107,9 +105,16 @@ export default function MaterialTable({
                     ) : eachRow.id}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {categoryTabSwitch(eachRow.category)}
+                    {eachRow.category}
                   </TableCell>
-                  <TableCell className={classnames({ [classes.tableCell]: true, [classes.importantText]: eachRow.isImportant })} scope="row" align="left">
+                  <TableCell
+                    className={classnames({
+                      [classes.tableCell]: true,
+                      [classes.importantText]: eachRow.isImportant,
+                    })}
+                    scope="row"
+                    align="left"
+                  >
                     {eachRow.title}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="right">

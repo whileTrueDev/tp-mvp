@@ -50,14 +50,6 @@ export default function Notice(): JSX.Element {
   const [{ loading, data }] = useAxios<NoticeData[]>({
     url: '/notice', method: 'GET',
   });
-  const noticeTabSwitch = (value: string | undefined) => {
-    switch (value) {
-      case '0': return (<Typography> 업데이트 </Typography>);
-      case '1': return (<Typography> 서버점검 </Typography>);
-      case '2': return (<Typography> 기타 </Typography>);
-      default: return (<Typography> 전체 </Typography>);
-    }
-  };
 
   // Category 선택을 위한 스테이트 
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
@@ -100,7 +92,6 @@ export default function Notice(): JSX.Element {
                     ? row.category === selectedCategory : row))}
                 onOtherNoticeClick={handleNoticeClick}
                 onBackClick={handleResetNoticeSelect}
-                noticeTabSwitch={noticeTabSwitch}
               />
             </div>
           ) : (
@@ -115,7 +106,6 @@ export default function Notice(): JSX.Element {
                     : []}
                   onChange={handleCategorySelect}
                   selected={selectedCategory}
-                  noticeTabSwitch={noticeTabSwitch}
                 />
               </div>
 
@@ -133,7 +123,6 @@ export default function Notice(): JSX.Element {
                   pageSize={pageSize}
                   handlePage={setPage}
                   handlePageSize={setPageSize}
-                  categoryTabSwitch={noticeTabSwitch}
                 />
               </div>
             </>
