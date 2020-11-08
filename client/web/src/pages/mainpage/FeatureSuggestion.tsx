@@ -1,13 +1,14 @@
 import React from 'react';
+import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Chip } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
 import FeatureCategoryButtonGroup from '../../organisms/mainpage/featureSuggestion/FeatureCategoryButtonGroup';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
-import { FeatureData } from '../../interfaces/FeatureSuggestion';
 import Button from '../../atoms/Button/Button';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import Appbar from '../../organisms/shared/Appbar';
@@ -22,15 +23,21 @@ const useStyles = makeStyles((theme) => ({
   },
   featureContainer: { width: 968, margin: '64px auto' },
   contents: { marginTop: theme.spacing(4) },
+  buttonSection: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   chipArea: {
     marginBottom: theme.spacing(1),
     display: 'flex',
     justifyContent: 'flex-end',
     alignContent: 'flex-end',
   },
+  tableContainer: { marginTop: theme.spacing(1) },
 }));
 
-export default function FeatureSuggestion(): JSX.Element {
+export default function FeatureSuggestionPage(): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
   const history = useHistory();
@@ -51,17 +58,10 @@ export default function FeatureSuggestion(): JSX.Element {
   function handleResetFeatureSelect(): void {
     history.push('/feature-suggestion');
   }
-  const [{ loading, data }] = useAxios<FeatureData[]>({
-    url: '/feature', method: 'GET',
+  const [{ loading, data }] = useAxios<FeatureSuggestion[]>({
+    url: '/feature-suggestion', method: 'GET',
   });
-  const categoryTabSwitch = (value: number) => {
-    switch (value) {
-      case 0: return (<Typography> 홈페이지관련 </Typography>);
-      case 1: return (<Typography> 편집점관련 </Typography>);
-      case 2: return (<Typography> 기타 </Typography>);
-      default: return (<Typography> 전체 </Typography>);
-    }
-  };
+
   return (
     <div>
       <Appbar />
@@ -86,7 +86,6 @@ export default function FeatureSuggestion(): JSX.Element {
                     ? row.category === selectedCategory : row))}
                 onOtherFeatureClick={handleFeatureClick}
                 onBackClick={handleResetFeatureSelect}
-                categoryTabSwitch={categoryTabSwitch}
               />
             </div>
           )
@@ -102,16 +101,24 @@ export default function FeatureSuggestion(): JSX.Element {
                       : []}
                     onChange={handleCategorySelect}
                     selected={selectedCategory}
-                    categoryTabSwitch={categoryTabSwitch}
                   />
                 </div>
 
-                <div className={classes.contents}>
+                <div className={classnames(classes.contents, classes.buttonSection)}>
+                  <div>
+                    {authContext.user.userId && (
+                    <Button onClick={handleWriteClick}>
+                      글쓰기
+                    </Button>
+                    )}
+                  </div>
                   <div className={classes.chipArea}>
                     <Chip style={{ margin: 4 }} variant="outlined" label="미확인" />
                     <Chip style={{ margin: 4 }} color="secondary" label="개발 확정" />
                     <Chip style={{ margin: 4 }} color="primary" label="개발보류" />
                   </div>
+                </div>
+                <div className={classes.tableContainer}>
                   <FeatureTable
                     metrics={!loading && data
                       ? data
@@ -125,17 +132,7 @@ export default function FeatureSuggestion(): JSX.Element {
                     pageSize={pageSize}
                     handlePage={setPage}
                     handlePageSize={setPageSize}
-                    categoryTabSwitch={categoryTabSwitch}
                   />
-                </div>
-                <div>
-                  {authContext.user.userId ? (
-                    <Button
-                      onClick={handleWriteClick}
-                    >
-                      글쓰기
-                    </Button>
-                  ) : null}
                 </div>
               </>
             )}

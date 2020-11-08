@@ -1,17 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import Markdown from 'react-markdown/with-html';
 import useAxios from 'axios-hooks';
+import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, Paper, Typography, Chip,
+  Button, Paper, Typography, Chip, Avatar,
 } from '@material-ui/core';
 import {
   Create, Delete, KeyboardArrowLeft, KeyboardArrowRight,
 } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
-import Divider from '@material-ui/core/Divider';
-import Card from '../../../atoms/Card/Card';
-import { FeatureData } from '../../../interfaces/FeatureSuggestion';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
+// import Divider from '@material-ui/core/Divider';
+// import Card from '../../../atoms/Card/Card';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
@@ -53,29 +54,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface FeatureDetailProps {
-  data: FeatureData[];
+  data: FeatureSuggestion[];
   selectedSuggestionId: string;
   onBackClick: () => void;
   onOtherFeatureClick: (num: number) => void;
-  categoryTabSwitch: (value: number) => JSX.Element;
 }
 export default function FeatureDetail({
   data, onBackClick, selectedSuggestionId,
-  onOtherFeatureClick, categoryTabSwitch,
+  onOtherFeatureClick,
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
 
   const [, deleteRequest] = useAxios(
-    { url: '/feature/upload-delete', method: 'delete' }, { manual: true },
+    { url: '/feature-suggestion', method: 'delete' }, { manual: true },
   );
   // length of title to render on Next/Previous button
   const TITLE_LENGTH = 15;
 
   // Current Feature
-  const currentSuggestion = data.find((d) => d.id === Number(selectedSuggestionId));
-  const currentSuggestionIndex = data.findIndex((d) => d.id === Number(selectedSuggestionId));
-
+  const currentSuggestion = data.find((d) => d.suggestionId === Number(selectedSuggestionId));
+  const currentSuggestionIndex = data.findIndex((d) => d.suggestionId === Number(selectedSuggestionId));
   // Previous Feature
   const previousFeature = data[currentSuggestionIndex - 1];
 
@@ -85,7 +84,7 @@ export default function FeatureDetail({
   const doDelete = () => {
     const doConfirm = window.confirm('삭제 하시겠습니까?');
     if (doConfirm) {
-      deleteRequest({ params: { data: currentSuggestion?.id } });
+      deleteRequest({ params: { data: currentSuggestion?.suggestionId } });
       window.location.replace('/feature-suggestion');
     }
   };
@@ -106,6 +105,7 @@ export default function FeatureDetail({
       default: return (<Chip variant="outlined" label="미확인" />);
     }
   };
+
   return (
     <div>
       <Paper component="article" ref={paperRef}>
@@ -114,15 +114,19 @@ export default function FeatureDetail({
             <Typography component="div" variant="h6" className={classes.titleText}>
               {currentSuggestion?.title}
               {' '}
-              {currentSuggestion && progressTab(currentSuggestion?.progress)}
+              {currentSuggestion && progressTab(currentSuggestion?.state)}
             </Typography>
             <Typography variant="body1" className={classes.idText}>
               {currentSuggestion?.author ? transformIdToAsterisk(currentSuggestion.author) : null}
             </Typography>
           </div>
           <Typography color="textSecondary" component="div">
-            {categoryTabSwitch(Number(currentSuggestion?.category))}
-            {currentSuggestion ? new Date(currentSuggestion.createdAt).toLocaleString() : ''}
+            <Typography>
+              {currentSuggestion?.category}
+            </Typography>
+            <Typography>
+              {currentSuggestion ? new Date(currentSuggestion.createdAt).toLocaleString() : ''}
+            </Typography>
           </Typography>
         </div>
         {currentSuggestion?.author === authContext.user.userId
@@ -132,7 +136,7 @@ export default function FeatureDetail({
               className={classes.editDeleteButton}
               component={Link}
               to={{
-                pathname: `/feature-suggestion/write/${currentSuggestion?.id}`,
+                pathname: `/feature-suggestion/write/${currentSuggestion?.suggestionId}`,
                 state: [currentSuggestion],
               }}
               variant="outlined"
@@ -159,20 +163,29 @@ export default function FeatureDetail({
             renderers={{ code: ({ value }) => <Markdown source={value} /> }}
           />
         </div>
-        {currentSuggestion?.reply && (
-          <div className={classes.replyCard}>
-            <Divider />
-            <Typography variant="h6">
-              관리자 답글
-            </Typography>
-            <Card className={classes.replyTextCard}>
-              <Typography variant="body1">
-                {currentSuggestion.reply}
-              </Typography>
-            </Card>
-          </div>
-        )}
       </Paper>
+
+      {currentSuggestion?.replies && currentSuggestion?.replies.length > 0 && (
+        <div style={{ marginTop: 16 }}>
+            {currentSuggestion?.replies?.map((reply) => (
+              <div style={{ width: '100%', marginTop: 16 }}>
+                <div style={{ display: 'flex', marginTop: 8 }}>
+                  <Avatar src="/images/logo/logo_truepoint.png" variant="square" style={{ marginRight: 16 }} />
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Typography variant="body2" style={{ fontWeight: 'bold' }}>{reply.author}</Typography>
+                      &emsp;
+                      <Typography variant="caption">{moment(reply.createdAt).fromNow()}</Typography>
+                    </div>
+                    {reply.content.split('\n').map((text) => (
+                      <Typography>{text}</Typography>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
 
       <div id="button-set" className={classes.buttonSet}>
         <Button
@@ -182,7 +195,7 @@ export default function FeatureDetail({
           variant="contained"
           color="primary"
           onClick={() => {
-            onOtherFeatureClick(previousFeature.id);
+            onOtherFeatureClick(previousFeature.suggestionId);
           }}
         >
           <KeyboardArrowLeft />
@@ -211,7 +224,7 @@ export default function FeatureDetail({
           variant="contained"
           color="primary"
           onClick={() => {
-            onOtherFeatureClick(nextFeature.id);
+            onOtherFeatureClick(nextFeature.suggestionId);
           }}
         >
           {currentSuggestionIndex !== data.length - 1 && (

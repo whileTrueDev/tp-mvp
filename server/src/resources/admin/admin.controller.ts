@@ -1,22 +1,11 @@
 import {
-  Controller, Get, Body, Patch, Query, Delete,
+  Controller, Get, Body, Query,
   Post, UseInterceptors, ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 // notification dto
 import { NotificationGetRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationGet.dto';
 import { NotificationPostRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationPost.dto';
-
-// feature suggestion dto
-import { FeatureSuggestionPatchRequest } from '@truepoint/shared/dist/dto/admin/feature/featureSuggestionPatch.dto';
-
-// feature suggestion reply dto
-import { ReplyGetRequest } from '@truepoint/shared/dist/dto/admin/reply/replyGetRequest.dto';
-import { ReplyPostRequest } from '@truepoint/shared/dist/dto/admin/reply/replyPost.dto';
-import { ReplyPatchRequest } from '@truepoint/shared/dist/dto/admin/reply/replyPatchRequest.dto';
-// entity
-import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
-import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 import { NotificationEntity } from '../notification/entities/notification.entity';
 // service
 import { AdminService } from './admin.service';
@@ -26,8 +15,6 @@ import { ValidationPipe } from '../../pipes/validation.pipe';
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
-
-  // ********************************* notice end *****************************
 
   // ********************************* notification *****************************
   @Get('notification')
@@ -47,56 +34,4 @@ export class AdminController {
     return this.adminService.postNotification(data);
   }
   // ********************************* notification end *****************************
-
-  // ********************************* feature suggestion *****************************
-  @Get('feature-suggestion')
-  getSuggestion(): Promise<FeatureSuggestionEntity[]> {
-    return this.adminService.getFeatureSuggestion();
-  }
-
-  @Patch('feature-suggestion')
-  async updateSuggestion(
-    @Body(new ValidationPipe()) data: FeatureSuggestionPatchRequest,
-  ): Promise<boolean> {
-    return this.adminService.patchFeatureSuggestion(data);
-  }
-
-  @Delete('feature-suggestion')
-  async deleteSuggestion(
-    @Body(new ValidationPipe()) data: Pick<FeatureSuggestionPatchRequest, 'id'>,
-  ): Promise<boolean> {
-    return this.adminService.deleteFeatureSuggestion(data);
-  }
-  // ********************************* feature suggestion end *****************************
-
-  // ********************************* feature suggestion reply *****************************
-  @Get('suggestion-reply')
-  async getReply(
-      @Query(new ValidationPipe()) req: ReplyGetRequest,
-  ): Promise<FeatureSuggestionReplyEntity[]> {
-    return this.adminService.getReply(req);
-  }
-
-  @Post('suggestion-reply')
-  @UseInterceptors(ClassSerializerInterceptor)
-  async createReply(
-    @Body(new ValidationPipe()) data: ReplyPostRequest,
-  ): Promise<boolean> {
-    return this.adminService.loadReply(data);
-  }
-
-  @Patch('suggestion-reply')
-  async updateReply(
-    @Body(new ValidationPipe()) data: ReplyPatchRequest,
-  ): Promise<boolean> {
-    return this.adminService.patchReply(data);
-  }
-
-  @Delete('suggestion-reply')
-  async deleteReply(
-    @Body(new ValidationPipe()) data: Pick<ReplyPatchRequest, 'id'>,
-  ): Promise<boolean> {
-    return this.adminService.deleteReply(data);
-  }
-  // ********************************* feature suggestion reply end *****************************
 }
