@@ -9,8 +9,10 @@ import Table from '../../../atoms/Table/MaterialTable';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 
+const TABLE_ROW_HEIGHT = 45;
 const useStyles = makeStyles((theme) => ({
   tableRow: {
+    height: TABLE_ROW_HEIGHT,
     cursor: 'pointer',
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
@@ -127,7 +129,7 @@ export default function MaterialTable({
                 </TableRow>
               ))}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 30 * emptyRows }}>
+                <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}

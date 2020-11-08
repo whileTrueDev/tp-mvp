@@ -6,11 +6,10 @@ import { Typography } from '@material-ui/core';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
 import NoticeTable from '../../organisms/mainpage/notice/NoticeTable';
-import NoticeCategoryButtonGroup from '../../organisms/mainpage/notice/NoticeCategoryButtonGroup';
+import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import { NoticeData } from '../../interfaces/Notice';
 import Footer from '../../organisms/shared/footer/Footer';
-import { MYPAGE_MAIN_MIN_WIDTH } from '../../assets/constants';
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
@@ -20,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   noticeContainer: {
-    maxWidth: MYPAGE_MAIN_MIN_WIDTH, minWidth: 968, margin: '64px auto', padding: '0px 32px',
+    width: 968, margin: '64px auto',
   },
   contents: { marginTop: theme.spacing(4) },
 }));
@@ -34,17 +33,17 @@ export default function Notice(): JSX.Element {
   const { id: selectedNoticeId } = useParams<{ id: string}>();
   // 개별 글 보기 스크롤 아래로 내리기
   const noticeContainerRef = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    if (selectedNoticeId) {
-      if (noticeContainerRef
-        && noticeContainerRef.current
-        && noticeContainerRef.current.scrollHeight) {
-        window.scrollTo(0, noticeContainerRef.current.scrollHeight - 100);
-      } else {
-        window.scrollTo(0, 600);
-      }
-    }
-  }, [selectedNoticeId]);
+  // React.useEffect(() => {
+  //   if (selectedNoticeId) {
+  //     if (noticeContainerRef
+  //       && noticeContainerRef.current
+  //       && noticeContainerRef.current.scrollHeight) {
+  //       window.scrollTo(0, noticeContainerRef.current.scrollHeight - 100);
+  //     } else {
+  //       window.scrollTo(0, 600);
+  //     }
+  //   }
+  // }, [selectedNoticeId]);
 
   // Data loading
   const [{ loading, data }] = useAxios<NoticeData[]>({
@@ -77,7 +76,7 @@ export default function Notice(): JSX.Element {
           <Typography variant="h4">공지사항</Typography>
 
           {/* 공지사항 개별 보기 */}
-          {selectedNoticeId && !loading && data ? (
+          {selectedNoticeId && !loading && data && (
             <div className={classes.contents}>
               <NoticeDetail
                 selectedNoticeId={selectedNoticeId}
@@ -94,39 +93,38 @@ export default function Notice(): JSX.Element {
                 onBackClick={handleResetNoticeSelect}
               />
             </div>
-          ) : (
-            <>
-              {/* 공지사항 목록 보기 */}
-              <div className={classes.contents}>
-                <NoticeCategoryButtonGroup
-                  categories={!loading && data
-                    ? Array
-                      .from(new Set(data.map((d) => d.category)))
-                      .sort((x, y) => x.localeCompare(y))
-                    : []}
-                  onChange={handleCategorySelect}
-                  selected={selectedCategory}
-                />
-              </div>
-
-              <div className={classes.contents}>
-                <NoticeTable
-                  metrics={!loading && data
-                    ? data
-                      .sort((row1, row2) => new Date(row2.createdAt).getTime()
-                          - new Date(row1.createdAt).getTime())
-                      .filter((row) => (selectedCategory !== '전체'
-                        ? row.category === selectedCategory : row))
-                    : []}
-                  handleClick={handleNoticeClick}
-                  page={page}
-                  pageSize={pageSize}
-                  handlePage={setPage}
-                  handlePageSize={setPageSize}
-                />
-              </div>
-            </>
           )}
+          {/* 공지사항 카테고리 필터링 목록 보기 */}
+          {!selectedNoticeId && (
+          <div className={classes.contents}>
+            <FilterCategoryButtonGroup
+              categories={!loading && data
+                ? Array
+                  .from(new Set(data.map((d) => d.category)))
+                  .sort((x, y) => x.localeCompare(y))
+                : []}
+              onChange={handleCategorySelect}
+              selected={selectedCategory}
+            />
+          </div>
+          )}
+
+          <div className={classes.contents}>
+            <NoticeTable
+              metrics={!loading && data
+                ? data
+                  .sort((row1, row2) => new Date(row2.createdAt).getTime()
+                      - new Date(row1.createdAt).getTime())
+                  .filter((row) => (selectedCategory !== '전체'
+                    ? row.category === selectedCategory : row))
+                : []}
+              handleClick={handleNoticeClick}
+              page={page}
+              pageSize={pageSize}
+              handlePage={setPage}
+              handlePageSize={setPageSize}
+            />
+          </div>
         </div>
       </section>
       <Footer />

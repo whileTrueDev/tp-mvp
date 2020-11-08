@@ -7,7 +7,7 @@ import { useHistory, useParams } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
-import FeatureCategoryButtonGroup from '../../organisms/mainpage/featureSuggestion/FeatureCategoryButtonGroup';
+import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
 import Button from '../../atoms/Button/Button';
 import useAuthContext from '../../utils/hooks/useAuthContext';
@@ -101,7 +101,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
           {/* 기능제안 카테고리 목록 필터링 */}
           {!selectedSuggestionId && (
           <div className={classes.contents}>
-            <FeatureCategoryButtonGroup
+            <FilterCategoryButtonGroup
               categories={!loading && data
                 ? Array
                   .from(new Set(data.map((d) => d.category)))

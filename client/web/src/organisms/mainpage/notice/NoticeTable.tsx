@@ -9,6 +9,7 @@ import NotificationImportantIcon from '@material-ui/icons/NotificationImportant'
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 
+const TABLE_ROW_HEIGHT = 45;
 interface TableProps {
   metrics: any;
   page: number;
@@ -20,7 +21,7 @@ interface TableProps {
 const useStyles = makeStyles((theme) => ({
   tableCell: { padding: theme.spacing(1) },
   tableRow: {
-    height: 60,
+    height: TABLE_ROW_HEIGHT,
     cursor: 'pointer',
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
@@ -54,7 +55,7 @@ export default function MaterialTable({
       <Table
         columns={[
           {
-            width: '70px',
+            width: '80px',
             align: 'center',
             title: ' ',
           },
@@ -123,7 +124,7 @@ export default function MaterialTable({
                 </TableRow>
               ))}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 60 * emptyRows }}>
+                <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
                   <TableCell colSpan={4} />
                 </TableRow>
               )}

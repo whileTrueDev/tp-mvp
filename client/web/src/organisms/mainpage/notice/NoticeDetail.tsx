@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Markdown from 'react-markdown/with-html';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper, Typography } from '@material-ui/core';
@@ -48,19 +48,33 @@ export default function NoticeDetail({
   // Next Notice
   const nextNotice = data[currentNoticeIndex + 1];
 
+  // 스크롤 상단으로
+  const paperRef = useRef<HTMLDivElement>();
+  useEffect(() => {
+    if (paperRef.current) {
+      window.scrollTo(0, paperRef.current.scrollHeight + 70);
+    }
+  });
+
   return (
     <div>
-      <Paper component="article">
+      <Paper component="article" ref={paperRef}>
+        {/* 공지사항 제목 및 메타데이터 */}
         <div className={classes.title}>
           <Typography variant="h6" className={classes.titleText}>
             {currentNotice?.title}
           </Typography>
-          <Typography color="textSecondary">
-            {currentNotice?.category}
-            {`${currentNotice ? new Date(currentNotice.createdAt).toLocaleString() : ''}`}
+          <Typography color="textSecondary" component="div">
+            <Typography>
+              {currentNotice?.category}
+            </Typography>
+            <Typography>
+              {`${currentNotice ? new Date(currentNotice.createdAt).toLocaleString() : ''}`}
+            </Typography>
           </Typography>
         </div>
 
+        {/* 공지사항 내용 */}
         <div className={classes.contentsText}>
           <Markdown
             className={classes.markdown}
@@ -72,13 +86,13 @@ export default function NoticeDetail({
         </div>
       </Paper>
 
+      {/* 이전글, 다음글, 목록 버튼 셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button
           style={{ width: '30%' }}
           size="large"
           disabled={currentNoticeIndex === 0}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           onClick={() => {
             onOtherNoticeClick(previousNotice.id);
           }}
@@ -95,7 +109,7 @@ export default function NoticeDetail({
         <Button
           style={{ width: '10%' }}
           size="large"
-          variant="contained"
+          variant="outlined"
           onClick={() => {
             onBackClick();
           }}
@@ -106,8 +120,7 @@ export default function NoticeDetail({
           style={{ width: '30%' }}
           size="large"
           disabled={currentNoticeIndex === data.length - 1}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           onClick={() => {
             onOtherNoticeClick(nextNotice.id);
           }}
