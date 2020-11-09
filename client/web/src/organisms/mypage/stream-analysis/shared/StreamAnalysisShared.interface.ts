@@ -15,6 +15,9 @@ export interface StreamsListItem {
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
   isRemoved: boolean;
+  smileCount: number;
+  chatCount: number;
+  viewer: number;
 }
 
 export interface CalendarProps {

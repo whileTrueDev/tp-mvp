@@ -3,7 +3,7 @@ import moment from 'moment';
 // material-ui core components
 import {
   Typography, List, ListItem, IconButton, ListItemIcon, Button,
-  Tooltip,
+  Tooltip, Chip,
 } from '@material-ui/core';
 //  styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -93,7 +93,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     selectedStreams, handleStreamList, selectedDate,
   } = props;
   const classes = useStyles();
-
+  // console.log(selectedStreams);
   const airTimeFormmater = (startDate: Date, streamLength: number) => {
     const endAt = new Date(startDate);
     endAt.setHours(startDate.getHours() + streamLength);
@@ -160,6 +160,16 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       <Typography variant="h6" style={{ whiteSpace: 'nowrap' }}>
         {stream.title}
       </Typography>
+      <div style={{
+        display: 'inline',
+        flexDirection: 'row',
+      }}
+      >
+        <Chip
+          icon={platformIcon(stream)}
+          label={stream.smileCount}
+        />
+      </div>
     </div>
   );
 
