@@ -10,14 +10,16 @@ import IconButton from '@material-ui/core/IconButton';
 import Notifications from '@material-ui/icons/Notifications';
 // axios-hooks
 import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+// shared dtos and interfaces
+import { FindAllNotifications } from '@truepoint/shared/dist/dto/notification/findAllNotifications.dto';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 // notificaiton list component
 import NotificationPopper from './NotificationPopper';
-// attoms
-import ErrorSnackBar from '../../../atoms/snackbar/ErrorSnackBar';
 // context
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import UserMenuPopover from './UserMenuPopover';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => ({
   leftGridIcon: {
@@ -43,13 +45,7 @@ export interface FatalError {
 
 function HeaderLinks(): JSX.Element {
   const notificationRef = useRef<HTMLButtonElement | null>(null);
-  const [innerError, setInnerError] = React.useState<FatalError>({
-    isError: false,
-    helperText: '',
-  });
-
-  // 개인 알림 - GET Request
-  // userId 쿠키 or 헤더 토큰에서 추출
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const auth = useAuthContext();
   const {
@@ -63,40 +59,31 @@ function HeaderLinks(): JSX.Element {
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
-  const handleError = (newError: FatalError): void => {
-    setInnerError({
-      isError: newError.isError,
-      helperText: newError.helperText,
-    });
-  };
 
   React.useEffect(() => {
+    const findReqParam: FindAllNotifications = {
+      userId: auth.user.userId,
+    };
     executeGet({
-      params: { userId: auth.user.userId },
+      params: findReqParam,
     })
       .catch((err) => {
         if (err.response) {
-          handleError({
-            isError: true,
-            helperText: '알림을 가져오는 동안 문제가 발생했습니다.',
-          });
+          ShowSnack('새로운 알림을 가져오는 동안 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
         }
       });
     if (changeReadState) {
-      executeGet({ params: { userId: auth.user.userId } })
+      executeGet({ params: findReqParam })
         .catch((err) => {
           if (err.response) {
-            handleError({
-              isError: true,
-              helperText: '알림을 가져오는 동안 문제가 발생했습니다.',
-            });
+            ShowSnack('새로운 알림을 가져오는 동안 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
           }
         });
 
       setChangeReadState(false);
       // snack bar 일감 이후 snack bar 삽입
     }
-  }, [changeReadState, executeGet, auth.user.userId]);
+  }, [changeReadState, executeGet, auth.user.userId, enqueueSnackbar]);
 
   // ******************************************************************
   // 유저 로고 버튼 및 메뉴
@@ -112,16 +99,6 @@ function HeaderLinks(): JSX.Element {
 
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
-      {innerError.isError
-        && (
-        <ErrorSnackBar
-          message={(() => {
-            if (innerError) return innerError.helperText;
-            return '알 수 없는 문제가 발생했습니다 다시 시도해주세요.';
-          })()}
-          closeCallback={() => handleError({ isError: false, helperText: '' })}
-        />
-        )}
 
       <Tooltip title="알림">
         <IconButton
@@ -156,7 +133,6 @@ function HeaderLinks(): JSX.Element {
         anchorEl={anchorEl}
         notificationData={getData}
         setChangeReadState={setChangeReadState}
-        handleError={handleError}
         onClose={handleAnchorClose}
       />
       )}
