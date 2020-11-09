@@ -1,10 +1,9 @@
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { Repository } from 'typeorm';
-// import { ReadNoticeOutlineDto } from './dto/readNoticeOutline.dto';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 
 dotenv.config();
@@ -55,14 +54,16 @@ export class FeatureSuggestionService {
       .createQueryBuilder()
       .update('FeatureSuggestion', {
         category: initialData.category,
-        author: state.userId,
+        author: initialData.userId,
         title: initialData.title,
         content: initialData.contents,
-        reply: null,
-        progress: 0,
       })
-      .where('FeatureSuggestion.id = :id', { id: postId })
-      .execute();
+      .where('author= :userId', { userId: initialData.userId })
+      .andWhere('FeatureSuggestion.id= :postId', { postId })
+      .execute()
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in featureSuggstion ... ');
+      });
   }
 
   async deleteFeatureSuggestion(postId: number): Promise<void> {
@@ -71,7 +72,10 @@ export class FeatureSuggestionService {
       .delete()
       .from('FeatureSuggestion')
       .where('id = :id', { id: postId })
-      .execute();
+      .execute()
+      .catch((err) => {
+        throw new InternalServerErrorException(err, 'mySQL Query Error in featureSuggstion-Analysis ... ');
+      });
   }
 
   async getBoardData(): Promise<any> {

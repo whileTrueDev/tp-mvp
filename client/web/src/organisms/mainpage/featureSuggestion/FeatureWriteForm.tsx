@@ -1,5 +1,6 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import classnames from 'classnames';
+import { useHistory, useLocation } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -15,23 +16,16 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    margin: theme.spacing(8),
     justifyContent: 'center',
     alighItems: 'center',
   },
-
-  form: {
-    width: '70%',
-  },
-  title: {
-    margin: theme.spacing(3),
-  },
-  titleInput: {
-    width: '400px',
-  },
-  contents: {
-    margin: theme.spacing(2),
-  },
+  flex: { display: 'flex', alignItems: 'center' },
+  title: { marginTop: theme.spacing(3) },
+  titleInput: { width: '400px' },
+  button: { marginRight: theme.spacing(1) },
+  contents: { marginTop: theme.spacing(2) },
+  writeForm: { marginTop: theme.spacing(8) },
+  buttonSet: { textAlign: 'right' },
 }));
 interface FeatureSuggestion {
   title: string;
@@ -40,19 +34,19 @@ interface FeatureSuggestion {
   userId: string;
   image: any;
 }
-// @hwasurr
-// eslint error 정리 중 주석 처리 - 사용하지 않는 interface
-// @leejineun 처리 부탁드립니다.
-// interface ImageObject<T> {
-//   readonly current: T | null;
-// }
 
-// @hwasurr
-// eslint error 정리 중 disalbe 처리 - any 타입 정의
-// @leejineun 처리 부탁드립니다.
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function FeatureWriteForm(props: any): JSX.Element {
-  const { editData } = props;
+interface FeatureSuggestionData {
+  id: number;
+  title: string;
+  category: string | number;
+  content: string;
+  author: string;
+  createdAt: Date;
+  reply: boolean | string;
+  progress: number;
+}
+
+export default function FeatureWriteForm(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const authContext = useAuthContext();
   const [state, setState] = React.useState<FeatureSuggestion>({
@@ -63,6 +57,8 @@ export default function FeatureWriteForm(props: any): JSX.Element {
     image: null,
   });
   const history = useHistory();
+  const location = useLocation<FeatureSuggestionData[]>();
+
   const classes = useStyles();
   // const [selectedFile, setSelectedFile] = React.useState(null);
   const imageObject = React.useRef<HTMLInputElement | null>(null);
@@ -89,12 +85,13 @@ export default function FeatureWriteForm(props: any): JSX.Element {
   const [, postRequest] = useAxios(
     { url: '/feature/upload', method: 'post' }, { manual: true },
   );
-  const [, editPostRequest] = useAxios(
+  const [, editPatchRequest] = useAxios(
     { url: '/feature/upload-edit', method: 'patch' }, { manual: true },
   );
+
   const handleSubmit = () => {
-    if (editData) {
-      editPostRequest({ data: [state, editData.id] }).then(() => {
+    if (location.state[0].id) {
+      editPatchRequest({ data: [state, location.state[0].id] }).then(() => {
         ShowSnack('수정 되었습니다', 'info', enqueueSnackbar);
         window.location.replace('/feature-suggestion');
       });
@@ -114,31 +111,23 @@ export default function FeatureWriteForm(props: any): JSX.Element {
   };
 
   React.useEffect(() => {
-    if (editData) {
+    if (location.state) {
       setState({
         ...state,
-        title: editData.title,
-        category: editData.category,
-        contents: editData.content,
+        title: location.state[0].title,
+        category: location.state[0].category,
+        contents: location.state[0].content,
       });
     }
-  }, [editData, setState, state]);
+  // 한번만 실행되어야 함.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className={classes.root}>
-      <Typography className={classes.contents} variant="h4">글쓰기</Typography>
-      <div className={classes.contents}>
-        <TextField
-          className={classes.titleInput}
-          id="feature-title"
-          // defaultValue={state.title}
-          value={state.title}
-          rowsMax={1}
-          variant="outlined"
-          placeholder="제목을 입력해주세요."
-          onChange={handleTitle}
-        />
-      </div>
-      <div className={classes.contents}>
+      <Typography className={classnames(classes.contents, classes.writeForm)} variant="h4">글쓰기</Typography>
+      {/* 분류 선택 */}
+      <div className={classnames(classes.contents, classes.flex)}>
+        <Typography style={{ marginRight: 16 }} variant="h6">분류</Typography>
         <FormControl variant="outlined">
           <InputLabel htmlFor="outlined-age-native-simple">카테고리</InputLabel>
           <Select
@@ -154,38 +143,53 @@ export default function FeatureWriteForm(props: any): JSX.Element {
             }}
           >
             <option value="0">홈페이지 개선</option>
-            <option value="1">편집점 관련</option>
+            <option value="1">하이라이트 관련</option>
             <option value="2">기타</option>
           </Select>
         </FormControl>
       </div>
+      {/* 제목 작성 */}
+      <div className={classnames(classes.contents, classes.flex)}>
+        <Typography style={{ marginRight: 16 }} variant="h6">제목</Typography>
+        <TextField
+          className={classes.titleInput}
+          id="feature-title"
+          // defaultValue={state.title}
+          value={state.title}
+          rowsMax={1}
+          variant="outlined"
+          placeholder="제목을 입력해주세요."
+          onChange={handleTitle}
+        />
+      </div>
+      {/* 기능 제안 내용 입력 */}
       <div className={classes.contents}>
         <TextField
-          className={classes.form}
+          fullWidth
           id="feature-contents"
           multiline
-          // defaultValue={state.contents}
           value={state.contents}
           onChange={handleContents}
-          rows={20}
+          rows={12}
           placeholder="내용을 입력해주세요."
           variant="outlined"
         />
       </div>
-      <div>
-        {/* <Button className={classes.contents}> */}
-        <input type="file" name="file" ref={imageObject} onChange={handleImageUpload} />
-        {/* </Button> */}
+      <div className={classes.contents}>
+        <Button>
+          <input type="file" name="file" ref={imageObject} onChange={handleImageUpload} />
+        </Button>
       </div>
-      <div>
+      <div className={classes.buttonSet}>
         <Button
-          className={classes.contents}
+          color="default"
+          className={classnames(classes.contents, classes.button)}
           onClick={handleCancelButton}
         >
           취소
         </Button>
         <Button
-          className={classes.contents}
+          className={classnames(classes.contents, classes.button)}
           onClick={handleSubmit}
         >
           등록하기

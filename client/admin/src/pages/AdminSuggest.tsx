@@ -1,105 +1,44 @@
 import React from 'react';
-import { Grid, Typography } from '@material-ui/core';
-// organisms
 import useAxios from 'axios-hooks';
-import SuggestTable from '../organisms/suggest/SuggestTable';
-import SuggestPreview from '../organisms/suggest/SuggestPreView';
-import ReplyWrite from '../organisms/suggest/ReplyWrite';
+import Suggest from '../organisms/suggest/Suggest';
+import ReplySet from '../organisms/adminSet/ReplySet';
 
-// 기능제안 데이터를 관리하는 props
-export interface SuggestData {
-  suggestionId?: string;
-  title?: string;
-  category?: string;
-  createdAt: string;
-  content?: string;
-  author?: string; // 검토중, 진행중 상태
-  state: number;
-  like?: number; // 답변여부
-}
+export default function AdminSuggest(): JSX.Element {
+  /*
+    기능제안 답변글 가져오기 요청
+   */
+  const [replyMode, setReplyViewMode] = React.useState(false);
+  function ReplyModeOn() {
+    setReplyViewMode(true);
+  }
+  function ReplyModeOff() {
+    setReplyViewMode(false);
+  }
+  const [suggestionId, setSuggestionId] = React.useState();
 
-// 답변 데이터를 관리하는 props
-export interface ReplyData {
-  suggestionId?: string;
-  replyId?: string;
-  userId?: string;
-  createdAt: string;
-  content?: string;
-  author?: string; // 검토중, 진행중 상태
-}
-
-// :noticeData[] --> noticeData의 타입을 가지는 배열을 만든다.
-export default function SuggestBoard(): JSX.Element {
-  // 기능제안 선택을 위한 State
-  const [selectedData, setSelectedData] = React.useState<SuggestData>({
-    title: '',
-    category: '',
-    content: '',
-    createdAt: '',
-    author: '',
-    state: 0,
-  });
-
-  const [{ data: suggestData }] = useAxios({
-    url: 'http://localhost:3000/admin/feature-suggestion', method: 'GET',
-  });
-
-  const [{ data: replyData }, executeGet] = useAxios({
-    url: 'http://localhost:3000/admin/suggestion-reply', method: 'GET',
-  }, { manual: true });
-
-  React.useEffect(() => {
-    executeGet({
-      params: {
-        id: 1,
-      },
-    }).then((res) => {
-      // console.log(res.data);
-    });
-  }, [executeGet]);
-  function handleSelectedData(data: SuggestData) {
-    setSelectedData(data);
+  function handleSuggestionId(id: any) {
+    setSuggestionId(id);
   }
 
-  // 수정 모드를 위한 State
-  const [editMode, setEditMode] = React.useState(false);
-
-  function handleEditModeOn() {
-    setEditMode(true);
-  }
-  function handleEditModeOff() {
-    setEditMode(false);
-  }
+  /*
+    기능제안글 가져오기 요청
+ */
+  const [{ loading: suggestionLoading, data: getData }, suggestreload] = useAxios(
+    { url: 'http://localhost:3000/admin/feature-suggestion', method: 'GET' },
+  );
 
   return (
     <div>
-      <div style={{ padding: 28 }}>
-        <Typography variant="h5">
-          기능제안
-        </Typography>
-      </div>
-
-      <Grid container spacing={2}>
-        <Grid item xs={12} lg={6}>
-          <SuggestTable
-            suggestData={suggestData}
-            handleData={handleSelectedData}
-            handleEditModeOff={handleEditModeOff}
-          />
-        </Grid>
-        <Grid item xs={12} lg={6}>
-          {selectedData && (
-          <SuggestPreview
-            selectedData={selectedData}
-            handleEditModeOn={handleEditModeOn}
-          />
-          )}
-        </Grid>
-
-      </Grid>
-
-      {editMode && (<ReplyWrite replyData={replyData} />)}
-
+      <Suggest
+        setSuggestionId={handleSuggestionId}
+        ReplyModeOff={ReplyModeOff}
+        ReplyModeOn={ReplyModeOn}
+        suggestData={getData}
+        handleReplyModeOff={ReplyModeOff}
+        reload={suggestreload}
+        suggestionLoading={suggestionLoading}
+      />
+      {replyMode && <ReplySet suggestionId={suggestionId} />}
     </div>
   );
 }

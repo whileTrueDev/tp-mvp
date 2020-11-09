@@ -5,22 +5,14 @@ import {
 import useAxios from 'axios-hooks';
 import Markdown from 'react-markdown';
 
-interface NoticeData {
-  title?: string;
-  id?: number;
-  category?: string;
-  createdAt: string;
-  content?: string;
-
-}
-
 interface Props {
-  selectedData: NoticeData;
+  selectedData: any;
   handleEditModeOn: () => void;
+  handleReload: () => void;
 }
 
-export default function NoticePreview(props: Props): JSX.Element {
-  const { selectedData, handleEditModeOn } = props;
+export default function DataPreView(props: Props): JSX.Element {
+  const { selectedData, handleEditModeOn, handleReload } = props;
 
   // 데이터 가져오기
   const [, executeDelete] = useAxios(
@@ -44,7 +36,7 @@ export default function NoticePreview(props: Props): JSX.Element {
             &emsp;
           </Typography>
           <Typography variant="subtitle1">
-            {new Date(selectedData.createdAt).toLocaleString()}
+            {`중요공지여부 : ${selectedData.isImportant}`}
           </Typography>
         </div>
 
@@ -65,9 +57,12 @@ export default function NoticePreview(props: Props): JSX.Element {
               variant="contained"
               onClick={() => {
                 if (window.confirm(`정말로\n${selectedData.title}\n공지글을 삭제하시겠습니까?`)) {
-                  // console.log(selectedData.id);
                   executeDelete({
                     data: selectedData,
+                  }).then((res) => {
+                    handleReload();
+                  }).catch((err) => {
+                    console.error('err', err.response);
                   });
                 }
                 window.location.reload();

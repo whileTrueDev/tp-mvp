@@ -44,9 +44,13 @@ function Index(): JSX.Element {
   });
   const truepointTheme: TruepointTheme = { ...THEME, handleThemeChange };
 
+  // *******************************************
+  // 로그인 관련 변수 및 함수 세트 가져오기
   const {
     user, accessToken, handleLogout, handleLogin,
+    loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
   } = useLogin();
+
   /* subscribe 목록의 유저 전환 컨택스트 */
   const {
     currUser,
@@ -58,13 +62,13 @@ function Index(): JSX.Element {
   // axios-hooks configuration
   axios.interceptors.response.use(
     onResponseFulfilled,
-    makeResponseRejectedHandler(handleLogin),
+    makeResponseRejectedHandler(handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd),
   );
   configure({ axios });
 
   // *******************************************
   // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
-  useAutoLogin(user.userId, handleLogin);
+  useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
 
   return (
     <SnackbarProvider
@@ -76,7 +80,7 @@ function Index(): JSX.Element {
 
         {/* 로그인 여부 Context */}
         <AuthContext.Provider value={{
-          user, accessToken, handleLogin, handleLogout,
+          user, accessToken, handleLogin, handleLogout, loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
         }}
         >
           <KakaoTalk />
@@ -101,13 +105,9 @@ function Index(): JSX.Element {
                 <Route exact path="/notice" component={Notice} />
                 <Route exact path="/notice/:id" component={Notice} />
                 <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
-                <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
                 <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
-                <Route
-                  exact
-                  path="/feature-suggestion/read/:id/edit"
-                  component={FeatureSuggestionWrite}
-                />
+                <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
+                <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
                 <Route exact path="/privacypolicy" component={PrivacyPolicy} />
                 <Route exact path="/termsofuse" component={TermsOfUse} />
                 <Route path="/mypage" component={Mypage} />
