@@ -8,15 +8,16 @@ import { NoticeData } from '../../../interfaces/Notice';
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
   title: {
-    padding: theme.spacing(4),
+    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
     display: 'flex',
     justifyContent: 'space-between',
-    borderBottom: '1px solid #ddd',
+    alignItems: 'center',
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 400 },
   buttonSet: {
-    padding: `${theme.spacing(4)}px 0px`,
+    padding: `${theme.spacing(4)}px 0px ${theme.spacing(2)}px`,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',

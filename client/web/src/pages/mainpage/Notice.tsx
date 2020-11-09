@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   noticeContainer: {
     width: 968, margin: '64px auto',
   },
-  contents: { marginTop: theme.spacing(4) },
+  contents: { marginTop: theme.spacing(2) },
 }));
 
 export default function Notice(): JSX.Element {
@@ -31,19 +31,6 @@ export default function Notice(): JSX.Element {
   const [pageSize, setPageSize] = React.useState(8);
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
-  // 개별 글 보기 스크롤 아래로 내리기
-  const noticeContainerRef = React.useRef<HTMLDivElement>(null);
-  // React.useEffect(() => {
-  //   if (selectedNoticeId) {
-  //     if (noticeContainerRef
-  //       && noticeContainerRef.current
-  //       && noticeContainerRef.current.scrollHeight) {
-  //       window.scrollTo(0, noticeContainerRef.current.scrollHeight - 100);
-  //     } else {
-  //       window.scrollTo(0, 600);
-  //     }
-  //   }
-  // }, [selectedNoticeId]);
 
   // Data loading
   const [{ loading, data }] = useAxios<NoticeData[]>({
@@ -62,6 +49,7 @@ export default function Notice(): JSX.Element {
   }
   function handleResetNoticeSelect(): void {
     history.push('/notice');
+    setSelectedCategory('전체'); // 목록으로 돌아온 경우 카테고리 선택 "전체"로 변경
   }
 
   return (
@@ -72,7 +60,7 @@ export default function Notice(): JSX.Element {
         content="기능 개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
       />
       <section className={classes.noticeSection}>
-        <div className={classes.noticeContainer} ref={noticeContainerRef}>
+        <div className={classes.noticeContainer}>
           <Typography variant="h4">공지사항</Typography>
 
           {/* 공지사항 개별 보기 */}
@@ -113,8 +101,12 @@ export default function Notice(): JSX.Element {
             <NoticeTable
               metrics={!loading && data
                 ? data
-                  .sort((row1, row2) => new Date(row2.createdAt).getTime()
-                      - new Date(row1.createdAt).getTime())
+                  .sort((row1, row2) => {
+                    if (row2.isImportant) return 1;
+                    if (row1.isImportant) return -1;
+                    return new Date(row2.createdAt).getTime()
+                    - new Date(row1.createdAt).getTime();
+                  })
                   .filter((row) => (selectedCategory !== '전체'
                     ? row.category === selectedCategory : row))
                 : []}

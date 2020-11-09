@@ -22,10 +22,8 @@ const useStyles = makeStyles((theme) => ({
     padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  idText: {
-    color: theme.palette.grey[400],
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 300 },
@@ -82,7 +80,7 @@ export default function FeatureDetail({
   const paperRef = useRef<HTMLDivElement>();
   useEffect(() => {
     if (paperRef.current) {
-      window.scrollTo(0, paperRef.current.scrollHeight + 70);
+      window.scrollTo(0, paperRef.current.scrollHeight + 100);
     }
   });
 
@@ -105,7 +103,7 @@ export default function FeatureDetail({
               {' '}
               {currentSuggestion && progressTab(currentSuggestion?.state)}
             </Typography>
-            <Typography variant="body1" className={classes.idText}>
+            <Typography variant="body1" color="textSecondary">
               {currentSuggestion?.author ? transformIdToAsterisk(currentSuggestion.author) : null}
             </Typography>
           </div>
