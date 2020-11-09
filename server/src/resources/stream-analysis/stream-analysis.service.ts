@@ -111,7 +111,7 @@ export class StreamAnalysisService {
           'streamSummary',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
-        .select(['streams.*'])
+        .select(['streams.*, streamSummary.smileCount as smileCount'])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
         .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
@@ -130,7 +130,7 @@ export class StreamAnalysisService {
         'streamSummary',
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
-      .select(['streams.*'])
+      .select(['streams.*, streamSummary.smileCount as smileCount'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
       .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })

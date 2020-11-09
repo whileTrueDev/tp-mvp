@@ -6,12 +6,15 @@ import {
   Tooltip, Chip,
 } from '@material-ui/core';
 //  styles
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared dto and interface
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // atom svg icons
+import TextsmsIcon from '@material-ui/icons/Textsms';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
@@ -29,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
+
     marginTop: '3px',
     width: '100%',
     height: 'auto',
@@ -84,9 +88,36 @@ const useStyles = makeStyles((theme: Theme) => ({
   noMaxWidth: {
     maxWidth: 'none',
     padding: theme.spacing(2),
-
+  },
+  chip: {
+    marginRight: theme.spacing(2),
+  },
+  tooltip: {
+    height: 'auto',
+    padding: theme.spacing(1),
+  },
+  tooltipIconWrapper: {
+    display: 'inline', marginRight: '8px', paddingTop: '4px',
+  },
+  tooltipChipWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(1),
+    width: '100%',
+    justifyContent: 'flex-start',
   },
 }));
+
+const StyledToolTip = withStyles((theme) => ({
+  arrow: {
+    fontSize: '22px',
+  },
+  tooltip: {
+    maxWidth: 'none',
+    padding: theme.spacing(2),
+  },
+}))(Tooltip);
 
 export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.Element {
   const {
@@ -124,53 +155,81 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     }
   };
 
+  const tooltipContents = (stream: StreamsListItem): JSX.Element => (
+    <div className={classes.tooltip}>
+      <Typography variant="h6" style={{ whiteSpace: 'nowrap' }}>
+        <div className={classes.tooltipIconWrapper}>
+          {platformIcon(stream)}
+        </div>
+        {stream.title}
+      </Typography>
+      <div className={classes.tooltipChipWrapper}>
+        <Chip
+          icon={(
+            <PersonAddIcon />
+          )}
+          label={stream.viewer}
+          size="medium"
+          color="primary"
+          className={classes.chip}
+        />
+        <Chip
+          icon={<TextsmsIcon />}
+          label={stream.chatCount}
+          size="medium"
+          color="secondary"
+          className={classes.chip}
+        />
+        <Chip
+          icon={<EmojiEmotionsIcon />}
+          label={stream.smileCount}
+          size="medium"
+          color="primary"
+          className={classes.chip}
+          style={{
+            background: '#d3d19d',
+          }}
+        />
+      </div>
+    </div>
+  );
+
   const listItems = (stream: StreamsListItem): JSX.Element => (
     <ListItem
       key={stream.streamId}
       button
       className={classes.listItem}
     >
-      <IconButton
-        className={classes.closeIcon}
-        onClick={() => handleStreamList(stream)}
+      <StyledToolTip
+        arrow
+        placement="top"
+        title={tooltipContents(stream)}
+        // classes={{ tooltip: classes.noMaxWidth }}
       >
-        <ClearOutlinedIcon />
-      </IconButton>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <IconButton
+            className={classes.closeIcon}
+            onClick={() => handleStreamList(stream)}
+          >
+            <ClearOutlinedIcon />
+          </IconButton>
 
-      <ListItemIcon>
-        {platformIcon(stream)}
-      </ListItemIcon>
+          <ListItemIcon>
+            {platformIcon(stream)}
+          </ListItemIcon>
 
-      <Typography className={classes.listItemText}>
-        {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
-      </Typography>
+          <Typography className={classes.listItemText}>
+            {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+          </Typography>
 
-      <Typography className={classes.listItemText}>
-        {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
-      </Typography>
+          <Typography className={classes.listItemText}>
+            {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
+          </Typography>
+        </div>
+
+      </StyledToolTip>
 
     </ListItem>
-  );
-
-  const test = (stream: StreamsListItem): JSX.Element => (
-    <div style={{
-      height: 'auto', padding: 16,
-    }}
-    >
-      <Typography variant="h6" style={{ whiteSpace: 'nowrap' }}>
-        {stream.title}
-      </Typography>
-      <div style={{
-        display: 'inline',
-        flexDirection: 'row',
-      }}
-      >
-        <Chip
-          icon={platformIcon(stream)}
-          label={stream.smileCount}
-        />
-      </div>
-    </div>
   );
 
   const removedListItems = (stream: StreamsListItem): JSX.Element => (
@@ -180,10 +239,10 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       button
       className={classes.removedListItem}
     >
-      <Tooltip
+      <StyledToolTip
         arrow
         placement="top"
-        title={test(stream)}
+        title={tooltipContents(stream)}
         classes={{ tooltip: classes.noMaxWidth }}
       >
         <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -205,7 +264,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           </Typography>
 
         </div>
-      </Tooltip>
+      </StyledToolTip>
     </ListItem>
 
   );
