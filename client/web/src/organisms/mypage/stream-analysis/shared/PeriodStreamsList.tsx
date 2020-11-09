@@ -3,7 +3,7 @@ import moment from 'moment';
 // material-ui core components
 import {
   Typography, List, ListItem, IconButton, ListItemIcon, Button,
-  Tooltip, Chip,
+  Tooltip, Chip, Avatar,
 } from '@material-ui/core';
 //  styles
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
@@ -12,7 +12,7 @@ import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared dto and interface
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // atom svg icons
-import TextsmsIcon from '@material-ui/icons/Textsms';
+import ChatIcon from '@material-ui/icons/Chat';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
@@ -32,8 +32,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-
-    marginTop: '3px',
+    marginTop: theme.spacing(1),
     width: '100%',
     height: 'auto',
     backgroundColor: theme.palette.primary.light,
@@ -103,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     marginTop: theme.spacing(2),
-    padding: theme.spacing(1),
+    padding: theme.spacing(0),
     width: '100%',
     justifyContent: 'flex-start',
   },
@@ -124,7 +123,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     selectedStreams, handleStreamList, selectedDate,
   } = props;
   const classes = useStyles();
-  // console.log(selectedStreams);
+
   const airTimeFormmater = (startDate: Date, streamLength: number) => {
     const endAt = new Date(startDate);
     endAt.setHours(startDate.getHours() + streamLength);
@@ -159,22 +158,23 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     <div className={classes.tooltip}>
       <Typography variant="h6" style={{ whiteSpace: 'nowrap' }}>
         <div className={classes.tooltipIconWrapper}>
-          {platformIcon(stream)}
+          <Avatar style={{ marginBottom: '8px' }}>
+            {platformIcon(stream)}
+          </Avatar>
+          {stream.title}
         </div>
-        {stream.title}
       </Typography>
+
       <div className={classes.tooltipChipWrapper}>
         <Chip
-          icon={(
-            <PersonAddIcon />
-          )}
+          icon={<PersonAddIcon />}
           label={stream.viewer}
           size="medium"
           color="primary"
           className={classes.chip}
         />
         <Chip
-          icon={<TextsmsIcon />}
+          icon={<ChatIcon />}
           label={stream.chatCount}
           size="medium"
           color="secondary"
@@ -204,7 +204,6 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         arrow
         placement="top"
         title={tooltipContents(stream)}
-        // classes={{ tooltip: classes.noMaxWidth }}
       >
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <IconButton
