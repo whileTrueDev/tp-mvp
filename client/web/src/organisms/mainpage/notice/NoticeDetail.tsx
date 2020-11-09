@@ -3,7 +3,7 @@ import Markdown from 'react-markdown/with-html';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
-import { NoticeData } from '../../../interfaces/Notice';
+import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },

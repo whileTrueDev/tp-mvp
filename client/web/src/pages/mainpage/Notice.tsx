@@ -3,12 +3,12 @@ import useAxios from 'axios-hooks';
 import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
 import NoticeTable from '../../organisms/mainpage/notice/NoticeTable';
 import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
-import { NoticeData } from '../../interfaces/Notice';
 import Footer from '../../organisms/shared/footer/Footer';
 
 const useStyles = makeStyles((theme) => ({
