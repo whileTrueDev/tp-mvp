@@ -69,7 +69,6 @@ const setSeries = (
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function setComponent(data: any[],
   selectedMetric: string[], name?: string, opposite?: number, fontColor?: string): am4charts.XYChart {
-  // console.log(data);
   am4core.useTheme(am4themesAnimated);
   const chart: am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);
   chart.data = data;
