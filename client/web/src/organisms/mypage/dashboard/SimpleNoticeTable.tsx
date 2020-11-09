@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
+import MakedateForm from '../../../utils/MakedateForm';
 
 import { NoticeData } from '../../../interfaces/Notice';
 
@@ -58,7 +59,8 @@ export default function SimpleNoticeTable({
                 </TableCell>
                 <TableCell width={250} align="right">
                   <Typography>
-                    {new Date(row.createdAt).toLocaleString()}
+                    {/* {new Date(row.createdAt).toLocaleString()} */}
+                    <MakedateForm createdAt={new Date(row.createdAt)} pagename="table-view" />
                   </Typography>
                 </TableCell>
               </TableRow>

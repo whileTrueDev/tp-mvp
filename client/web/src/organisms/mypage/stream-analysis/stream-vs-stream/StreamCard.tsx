@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import classnames from 'classnames';
 // material-ui core components
 import {
@@ -12,6 +11,8 @@ import VideocamIcon from '@material-ui/icons/Videocam';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // interface
 import { StreamCardProps } from './StreamCompareSectioninterface';
+// dateform change function
+import MakedateForm from '../../../../utils/MakedateForm';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardWrapper: {
@@ -44,15 +45,15 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
   const classes = useStyles();
 
   // 방송시간 날짜 Formmater
-  const airTimeFormmater = (startDate: Date, streamLength: number) => {
-    const endAt = new Date(startDate);
-    endAt.setHours(startDate.getHours() + streamLength);
-    const airTimeText = `${startDate.getDate()}일
-                        ${moment(startDate).format('HH:mm')} ~ 
-                        ${endAt.getDate()}일
-                        ${moment(endAt).format('HH:mm')}`;
-    return airTimeText;
-  };
+  // const airTimeFormmater = (startDate: Date, streamLength: number) => {
+  //   const endAt = new Date(startDate);
+  //   endAt.setHours(startDate.getHours() + streamLength);
+  //   const airTimeText = `${startDate.getDate()}일
+  //                       ${moment(startDate).format('HH:mm')} ~ 
+  //                       ${endAt.getDate()}일
+  //                       ${moment(endAt).format('HH:mm')}`;
+  //   return airTimeText;
+  // };
 
   const handleCloseButton = () => {
     if (base)handleSeletedStreams(null, true);
@@ -118,7 +119,8 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
                 </Typography>
               )}
             <Typography variant="body1" color="textSecondary">
-              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+              {/* {airTimeFormmater(new Date(stream.startedAt), stream.airTime)} */}
+              <MakedateForm createdAt={new Date(stream.startedAt)} pagename="calendar" streamAirtime={new Date(stream.airTime)} />
               {' '}
               {platformIcon(stream)}
             </Typography>

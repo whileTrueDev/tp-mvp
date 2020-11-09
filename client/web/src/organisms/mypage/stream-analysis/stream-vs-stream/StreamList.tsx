@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 // material - ui core components
 import {
   Typography, List, ListItem, ListItemIcon,
@@ -10,6 +9,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // interface
 import { StreamListProps } from './StreamCompareSectioninterface';
+import MakedateForm from '../../../../utils/MakedateForm';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -52,16 +52,18 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     handleFullMessage, platformIcon,
   } = props;
   const classes = useStyles();
-
-  const airTimeFormmater = (startDate: Date, streamLength: number) => {
-    const endAt = new Date(startDate);
-    endAt.setHours(startDate.getHours() + streamLength);
-    const airTimeText = `${startDate.getDate()}일
-                         ${moment(startDate).format('HH:mm')}~ 
-                         ${endAt.getDate()}일
-                         ${moment(endAt).format('HH:mm')}`;
-    return airTimeText;
-  };
+  /*
+    위치를 MakedateForm.tsx로 옮겼습니다. 
+ */
+  // const airTimeFormmater = (startDate: Date, streamLength: number) => {
+  //   const endAt = new Date(startDate);
+  //   endAt.setHours(startDate.getHours() + streamLength);
+  //   const airTimeText = `${startDate.getDate()}일
+  //                        ${moment(startDate).format('HH:mm')}~ 
+  //                        ${endAt.getDate()}일
+  //                        ${moment(endAt).format('HH:mm')}`;
+  //   return airTimeText;
+  // };
 
   const handleListStreamClick = (stream: DayStreamsInfo) => {
     if (baseStream && compareStream) {
@@ -99,7 +101,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
             {platformIcon(stream)}
           </ListItemIcon>
           <Typography className={classes.listItemText}>
-            {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+            <MakedateForm pagename="calendar" createdAt={new Date(stream.startedAt)} streamAirtime={stream.airTime} />
           </Typography>
 
         </ListItem>

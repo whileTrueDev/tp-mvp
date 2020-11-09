@@ -16,6 +16,7 @@ import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // interfaces
 import { PeriodStreamsListProps, StreamsListItem } from './StreamAnalysisShared.interface';
+import MakedateForm from '../../../../utils/MakedateForm';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -87,17 +88,19 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     selectedStreams, handleStreamList, selectedDate,
   } = props;
   const classes = useStyles();
+  /*
+    MakedateForm으로 이동하였습니다. 
+ */
+  // const airTimeFormmater = (startDate: Date, streamLength: number) => {
+  //   const endAt = new Date(startDate);
+  //   endAt.setHours(startDate.getHours() + streamLength);
+  //   const airTimeText = `${startDate.getDate()}일
+  //                        ${moment(startDate).format('HH:mm')} ~
+  //                        ${endAt.getDate()}일
+  //                        ${moment(endAt).format('HH:mm')}`;
 
-  const airTimeFormmater = (startDate: Date, streamLength: number) => {
-    const endAt = new Date(startDate);
-    endAt.setHours(startDate.getHours() + streamLength);
-    const airTimeText = `${startDate.getDate()}일
-                         ${moment(startDate).format('HH:mm')} ~
-                         ${endAt.getDate()}일
-                         ${moment(endAt).format('HH:mm')}`;
-
-    return airTimeText;
-  };
+  //   return airTimeText;
+  // };
 
   const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
     switch (stream.platform) {
@@ -136,7 +139,8 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       </ListItemIcon>
 
       <Typography className={classes.listItemText}>
-        {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+        {/* 날짜 표현 컴포넌트로 변경 */}
+        <MakedateForm createdAt={new Date(stream.startedAt)} pagename="calendar" streamAirtime={stream.airTime} />
       </Typography>
 
       <Typography className={classes.listItemText}>
@@ -161,7 +165,8 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       </Button>
 
       <Typography className={classes.removedListItemText}>
-        {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+        {/* 날짜 표현 컴포넌트로 변경 */}
+        <MakedateForm createdAt={new Date(stream.startedAt)} pagename="calendar" streamAirtime={stream.airTime} />
       </Typography>
 
       <Typography className={classes.removedListItemText}>
