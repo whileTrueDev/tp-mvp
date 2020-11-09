@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // axios
 import useAxios from 'axios-hooks';
-import { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 // material - ui core
 import { Grid, Paper } from '@material-ui/core';
 // shared dtos
@@ -17,6 +17,7 @@ import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 export interface PeriodsRequestParams {
   userId: string;
@@ -37,7 +38,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [{ loading, error }, getRequest] = useAxios<PeriodsAnalysisResType>(
     '/stream-analysis/periods', { manual: true },
   );
-
+  const { enqueueSnackbar } = useSnackbar();
   const handleSubmit = ({
     category, params,
   }: {category: string[]; params: SearchStreamInfoByPeriods}) => {
@@ -58,7 +59,9 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
           setMetricOpen(true);
         }, 1000);
       })
-      .catch((err): AxiosError<any> | undefined => err);
+      .catch(() => {
+        ShowSnack('분석 과정에서 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
+      });
   };
 
   // React.useEffect(() => {

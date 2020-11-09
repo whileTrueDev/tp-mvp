@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 // axios
 import useAxios from 'axios-hooks';
-import { AxiosError } from 'axios';
 // material - ui core
 import { Grid, Paper } from '@material-ui/core';
 // shared
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 // attoms
+import { useSnackbar } from 'notistack';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // Graph components
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 // contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 export default function PeriodAnalysis(): JSX.Element {
   const [data, setData] = useState<PeriodAnalysisResType>();
@@ -23,6 +24,7 @@ export default function PeriodAnalysis(): JSX.Element {
     '/stream-analysis/period', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
+  const { enqueueSnackbar } = useSnackbar();
   const handleSubmit = ({ category, params }: {category: string[]; params: SearchEachS3StreamData[]}) => {
     selectMetric(category);
     getRequest({
@@ -34,7 +36,9 @@ export default function PeriodAnalysis(): JSX.Element {
         setData(res.data);
         setOpen(true);
       })
-      .catch((err): AxiosError<any> | undefined => err);
+      .catch(() => {
+        ShowSnack('분석 과정에서 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
+      });
   };
 
   React.useEffect(() => {

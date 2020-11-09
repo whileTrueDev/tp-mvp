@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // axios
 import useAxios from 'axios-hooks';
-import { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 import { Grid } from '@material-ui/core';
 // shared dto
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
@@ -13,11 +13,12 @@ import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 import StreamCompareSection from '../../../organisms/mypage/stream-analysis/stream-vs-stream/StreamCompareSection';
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 // import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 export default function StreamAnalysis(): JSX.Element {
   const [data, setData] = useState<StreamAnalysisResType[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-
+  const { enqueueSnackbar } = useSnackbar();
   const [{ loading, error }, getRequest] = useAxios<StreamAnalysisResType[]>(
     '/stream-analysis/streams', { manual: true },
   );
@@ -29,7 +30,9 @@ export default function StreamAnalysis(): JSX.Element {
         setData(res.data);
         setOpen(true);
       })
-      .catch((err): AxiosError<any> | undefined => err);
+      .catch(() => {
+        ShowSnack('분석 과정에서 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
+      });
   };
 
   React.useEffect(() => {
