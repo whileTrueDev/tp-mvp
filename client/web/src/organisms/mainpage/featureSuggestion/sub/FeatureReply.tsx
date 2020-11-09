@@ -8,6 +8,7 @@ import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useDialog from '../../../../utils/hooks/useDialog';
 import CustomDialog from '../../../../atoms/Dialog/Dialog';
+import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 
 const useStyles = makeStyles((theme) => ({
   container: { width: '100%', marginTop: theme.spacing(3) },
@@ -53,7 +54,11 @@ export default function FeatureReply({
         <Avatar src={avatarLogo} variant="square" className={classes.avatar} />
         <div>
           <div className={classes.titleSection}>
-            <Typography variant="body2" className={classes.title}>{author}</Typography>
+            <Typography variant="body2" className={classes.title}>
+              {((auth.user.userId === author) || author === '트루포인트 관리자')
+                ? author
+                : transformIdToAsterisk(author, 1.8)}
+            </Typography>
             <Typography variant="caption">{moment(createdAt).fromNow()}</Typography>
             {author === auth.user.userId && (
               <Typography

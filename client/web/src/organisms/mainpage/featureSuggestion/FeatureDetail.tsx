@@ -62,7 +62,7 @@ export default function FeatureDetail({
   const TITLE_LENGTH = 15;
 
   // Current Feature
-  const currentSuggestion = data.find((d) => d.suggestionId === Number(selectedSuggestionId));
+  const currentSuggestion = data.find((d) => d.suggestionId === Number(selectedSuggestionId))!; // 선택된 기능제안 글은 언제나 있으므로, type assertion.
   const currentSuggestionIndex = data.findIndex((d) => d.suggestionId === Number(selectedSuggestionId));
   // Previous Feature
   const previousFeature = data[currentSuggestionIndex - 1];
@@ -73,7 +73,7 @@ export default function FeatureDetail({
   const doDelete = () => {
     const doConfirm = window.confirm('삭제 하시겠습니까?');
     if (doConfirm) {
-      deleteRequest({ params: { data: currentSuggestion?.suggestionId } });
+      deleteRequest({ params: { data: currentSuggestion.suggestionId } });
       window.location.replace('/feature-suggestion');
     }
   };
@@ -101,31 +101,37 @@ export default function FeatureDetail({
         <div className={classes.title}>
           <div>
             <Typography component="div" variant="h6" className={classes.titleText}>
-              {currentSuggestion?.title}
+              {currentSuggestion.title}
               {' '}
-              {currentSuggestion && progressTab(currentSuggestion?.state)}
+              {progressTab(currentSuggestion.state)}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              {currentSuggestion?.author ? transformIdToAsterisk(currentSuggestion.author) : null}
+              {currentSuggestion.author && (
+                <span>
+                  {authContext.user.userId === currentSuggestion.author
+                    ? currentSuggestion.author
+                    : transformIdToAsterisk(currentSuggestion.author, 1.8)}
+                </span>
+              )}
             </Typography>
           </div>
           <Typography color="textSecondary" component="div">
             <Typography>
-              {currentSuggestion?.category}
+              {currentSuggestion.category}
             </Typography>
             <Typography>
-              {currentSuggestion ? new Date(currentSuggestion.createdAt).toLocaleString() : ''}
+              {new Date(currentSuggestion.createdAt).toLocaleString()}
             </Typography>
           </Typography>
         </div>
-        {currentSuggestion?.author === authContext.user.userId
+        {currentSuggestion.author === authContext.user.userId
         && (
           <div className={classes.editDeleteButtonSet}>
             <Button
               className={classes.editDeleteButton}
               component={Link}
               to={{
-                pathname: `/feature-suggestion/write/${currentSuggestion?.suggestionId}`,
+                pathname: `/feature-suggestion/write/${currentSuggestion.suggestionId}`,
                 state: [currentSuggestion],
               }}
               variant="outlined"
@@ -142,11 +148,11 @@ export default function FeatureDetail({
               삭제
             </Button>
           </div>
-          )}
+        )}
         <div className={classes.contentsText}>
           <Markdown
             className={classes.markdown}
-            source={currentSuggestion?.content}
+            source={currentSuggestion.content}
             escapeHtml={false}
                 // eslint-disable-next-line react/prop-types
             renderers={{ code: ({ value }) => <Markdown source={value} /> }}
@@ -155,15 +161,15 @@ export default function FeatureDetail({
       </Paper>
 
       {/* 댓글 작성하기 */}
-      {currentSuggestion?.author === authContext.user.userId && (
+      {currentSuggestion.author === authContext.user.userId && (
         <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
       )}
       {/* 댓글 리스트 섹션 */}
-      {currentSuggestion?.replies
-      && currentSuggestion?.replies.length > 0
+      {currentSuggestion.replies
+      && currentSuggestion.replies.length > 0
       && (
         <div style={{ marginTop: 16 }}>
-            {currentSuggestion?.replies
+            {currentSuggestion.replies
               ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map((reply) => (
                 <FeatureReply
