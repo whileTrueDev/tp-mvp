@@ -62,7 +62,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
   }
 
   // 데이터 요청
-  const [{ loading, data }] = useAxios<FeatureSuggestion[]>({
+  const [{ loading, data }, featureRefetch] = useAxios<FeatureSuggestion[]>({
     url: '/feature-suggestion', method: 'GET',
   });
 
@@ -94,6 +94,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
                     ? row.category === selectedCategory : row))}
                 onOtherFeatureClick={handleFeatureClick}
                 onBackClick={handleResetFeatureSelect}
+                refetch={featureRefetch}
               />
             </div>
           )}

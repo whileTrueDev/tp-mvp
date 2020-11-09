@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import {
-  TablePagination, TableCell, TableRow, TableBody, Chip,
+  TablePagination, TableCell, TableRow, TableBody, Chip, Typography,
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import shortid from 'shortid';
@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   tableCell: { padding: theme.spacing(1) },
+  commentCount: { marginLeft: theme.spacing(1), fontWeight: 'bold' },
 }));
 
 export interface TableProps {
@@ -62,12 +63,12 @@ export default function MaterialTable({
             title: ' ',
           },
           {
-            width: '200px',
+            width: '150px',
             align: 'center',
             title: '카테고리',
           },
           {
-            width: '200px',
+            width: '150px',
             align: 'center',
             title: '작성자',
           },
@@ -77,7 +78,7 @@ export default function MaterialTable({
             title: '제목',
           },
           {
-            width: '250px',
+            width: '200px',
             align: 'center',
             title: '작성일',
           },
@@ -118,7 +119,14 @@ export default function MaterialTable({
                       : transformIdToAsterisk(eachRow.author)}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="left">
-                    {eachRow.title}
+                    <div>
+                      {eachRow.title}
+                      {eachRow.replies.length > 0 && (
+                      <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
+                        {`(${eachRow.replies.length})`}
+                      </Typography>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {moment(eachRow.createdAt).format('YYYY년 MM월 DD일')}

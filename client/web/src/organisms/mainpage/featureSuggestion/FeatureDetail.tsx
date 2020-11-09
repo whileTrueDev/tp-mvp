@@ -15,6 +15,7 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import FeatureReply from './sub/FeatureReply';
+import FeatureReplyInput from './sub/FeatureReplyInput';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -45,10 +46,11 @@ export interface FeatureDetailProps {
   selectedSuggestionId: string;
   onBackClick: () => void;
   onOtherFeatureClick: (num: number) => void;
+  refetch: () => void;
 }
 export default function FeatureDetail({
   data, onBackClick, selectedSuggestionId,
-  onOtherFeatureClick,
+  onOtherFeatureClick, refetch,
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
@@ -152,19 +154,28 @@ export default function FeatureDetail({
         </div>
       </Paper>
 
-      {/* 댓글 섹션 */}
+      {/* 댓글 작성하기 */}
+      {currentSuggestion?.author === authContext.user.userId && (
+        <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
+      )}
+      {/* 댓글 리스트 섹션 */}
       {currentSuggestion?.replies
       && currentSuggestion?.replies.length > 0
       && (
         <div style={{ marginTop: 16 }}>
-            {currentSuggestion?.replies?.map((reply) => (
-              <FeatureReply
-                key={reply.author + reply.createdAt}
-                author={reply.author}
-                content={reply.content}
-                createdAt={reply.createdAt}
-              />
-            ))}
+            {currentSuggestion?.replies
+              ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .map((reply) => (
+                <FeatureReply
+                  avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
+                  key={reply.author + reply.createdAt}
+                  author={reply.author}
+                  content={reply.content}
+                  createdAt={reply.createdAt}
+                  replyId={reply.replyId}
+                  refetch={refetch}
+                />
+              ))}
         </div>
       )}
 
