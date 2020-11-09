@@ -14,6 +14,8 @@ import StreamCompareSection from '../../../organisms/mypage/stream-analysis/stre
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 // import { metricInterface } from '../../../organisms/mypage/graph/graphsInterface';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import MypageHero from '../../../organisms/shared/sub/MypageHero';
+import textSource from '../../../organisms/shared/source/MypageHeroText';
 
 export default function StreamAnalysis(): JSX.Element {
   const [data, setData] = useState<StreamAnalysisResType[]>([]);
@@ -40,21 +42,27 @@ export default function StreamAnalysis(): JSX.Element {
   }, [subscribe.currUser]);
 
   return (
-    <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
-        <Grid item>
-          <StreamCompareSection
-            handleSubmit={handleSubmit}
-            loading={loading}
-            error={error
-              ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }
-              : undefined}
-          />
+    <>
+      <MypageSectionWrapper>
+        <MypageHero textSource={textSource.streamAnalysisSection} />
+      </MypageSectionWrapper>
+      <MypageSectionWrapper>
+        <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
+          <Grid item>
+            <StreamCompareSection
+              handleSubmit={handleSubmit}
+              loading={loading}
+              error={error
+                ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }
+                : undefined}
+            />
+          </Grid>
+          <Grid item>
+            <StreamMetrics open={open} metricData={data} />
+          </Grid>
         </Grid>
-        <Grid item>
-          <StreamMetrics open={open} metricData={data} />
-        </Grid>
-      </Grid>
-    </MypageSectionWrapper>
+      </MypageSectionWrapper>
+    </>
+
   );
 }

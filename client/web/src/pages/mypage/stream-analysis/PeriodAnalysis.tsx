@@ -15,6 +15,8 @@ import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import MypageHero from '../../../organisms/shared/sub/MypageHero';
+import textSource from '../../../organisms/shared/source/MypageHeroText';
 
 export default function PeriodAnalysis(): JSX.Element {
   const [data, setData] = useState<PeriodAnalysisResType>();
@@ -46,27 +48,33 @@ export default function PeriodAnalysis(): JSX.Element {
   }, [subscribe.currUser]);
 
   return (
-    <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
-        <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
-          {/* 상단 섹션 */}
-          <PeriodAnalysisSection
-            error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
-            loading={loading}
-            handleSubmit={handleSubmit}
-            // handleGraphOpen={handleGraphOpen}
-          />
-        </Paper>
+    <>
+      <MypageSectionWrapper>
+        <MypageHero textSource={textSource.streamAnalysisSection} />
+      </MypageSectionWrapper>
+      <MypageSectionWrapper>
 
-        {/* 하단 섹션 */}
-        {open && data
+        <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
+          <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
+            {/* 상단 섹션 */}
+            <PeriodAnalysisSection
+              error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
+              loading={loading}
+              handleSubmit={handleSubmit}
+            />
+          </Paper>
+
+          {/* 하단 섹션 */}
+          {open && data
          && (
            <Paper elevation={1} style={{ padding: '40px' }}>
              <PeriodGraph data={data} loading={loading} selectedMetric={selectedMetric} />
            </Paper>
          )}
 
-      </Grid>
-    </MypageSectionWrapper>
+        </Grid>
+      </MypageSectionWrapper>
+    </>
+
   );
 }

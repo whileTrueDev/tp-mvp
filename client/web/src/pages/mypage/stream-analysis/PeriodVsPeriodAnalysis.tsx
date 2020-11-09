@@ -18,6 +18,8 @@ import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetri
 import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import MypageHero from '../../../organisms/shared/sub/MypageHero';
+import textSource from '../../../organisms/shared/source/MypageHeroText';
 
 export interface PeriodsRequestParams {
   userId: string;
@@ -69,16 +71,20 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   // }, [subscribe.currUser]);
 
   return (
-    <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
-        <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
-          <PeriodCompareSection
-            loading={loading}
-            error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
-            handleSubmit={handleSubmit}
-          />
-        </Paper>
-        {open && (
+    <>
+      <MypageSectionWrapper>
+        <MypageHero textSource={textSource.streamAnalysisSection} />
+      </MypageSectionWrapper>
+      <MypageSectionWrapper>
+        <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
+          <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
+            <PeriodCompareSection
+              loading={loading}
+              error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
+              handleSubmit={handleSubmit}
+            />
+          </Paper>
+          {open && (
           <Paper elevation={1} style={{ padding: '40px' }}>
             <Grid item container direction="column" spacing={8}>
               <Grid item container direction="row">
@@ -114,8 +120,10 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
               </Grid>
             </Grid>
           </Paper>
-        )}
-      </Grid>
-    </MypageSectionWrapper>
+          )}
+        </Grid>
+      </MypageSectionWrapper>
+    </>
+
   );
 }
