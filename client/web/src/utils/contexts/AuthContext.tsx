@@ -13,6 +13,9 @@ export interface AuthContextValue {
   accessToken?: string;
   handleLogin: (accessToken: string) => void;
   handleLogout: () => void;
+  loginLoading: boolean;
+  handleLoginLoadingStart: () => void;
+  handleLoginLoadingEnd: () => void;
 }
 
 const defaultUserValue = {
@@ -24,11 +27,15 @@ const AuthContext = React.createContext<AuthContextValue>({
   /* eslint-disable @typescript-eslint/no-empty-function */
   handleLogin: () => {},
   handleLogout: () => {},
+  loginLoading: false,
+  handleLoginLoadingStart: () => {},
+  handleLoginLoadingEnd: () => {},
   /* eslint-enable @typescript-eslint/no-empty-function */
 });
 
 export function useLogin(): AuthContextValue {
   const [user, setUser] = React.useState<LoginUser>(defaultUserValue);
+  const [loginLoading, setLoginLoading] = React.useState<boolean>(false);
   const [accessTokenState, setAccessToken] = React.useState<string>();
 
   function handleLogin(accessToken: string): void {
@@ -62,11 +69,22 @@ export function useLogin(): AuthContextValue {
       });
   }
 
+  // 로딩 제어 함수
+  function handleLoginLoadingStart() {
+    setLoginLoading(true);
+  }
+  function handleLoginLoadingEnd() {
+    setLoginLoading(false);
+  }
+
   return {
     user,
     accessToken: accessTokenState,
     handleLogin,
     handleLogout,
+    loginLoading,
+    handleLoginLoadingStart,
+    handleLoginLoadingEnd,
   };
 }
 
