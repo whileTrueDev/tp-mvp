@@ -47,7 +47,7 @@ export default function DualMessageForm(props: Props): JSX.Element {
   } = props;
 
   const [, executePost] = useAxios({
-    url: 'http://localhost:3000/notification/admin', method: 'POST',
+    url: 'http://localhost:3000/notification', method: 'POST',
   });
 
   // For text

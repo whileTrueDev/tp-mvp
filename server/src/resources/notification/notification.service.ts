@@ -4,7 +4,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChangeReadState } from '@truepoint/shared/dist/dto/notification/changeReadState.dto';
-import { FindAllNotifications } from '@truepoint/shared/dist/dto/notification/findAllNotifications.dto';
 import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/notificationGet.dto';
 import { NotificationPostRequest } from '@truepoint/shared/dist/dto/notification/notificationPost.dto';
 import { NotificationEntity } from './entities/notification.entity';
@@ -15,24 +14,6 @@ export class NotificationService {
     @InjectRepository(NotificationEntity)
       private readonly notificationRepository: Repository<NotificationEntity>,
   ) {}
-
-  /* 
-    로그인한 유저 아이디에 대한 모든 알림 검색 (빈 리스트 포함)
-
-    input   : userId
-    output  : NotificationEntity[]
-  */
-  async findAllWithUserId(findAllRequest: FindAllNotifications): Promise<NotificationEntity[]> {
-    const notificationList = await this.notificationRepository
-      .createQueryBuilder()
-      .where('userId = :id', { id: findAllRequest.userId })
-      .getMany()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in Notification ... ');
-      });
-
-    return notificationList;
-  }
 
   /* 
     특정 알림의 readState 를 0 -> 1 수정
@@ -60,7 +41,8 @@ export class NotificationService {
   }
 
   /* 
-    유저 상관 없이 모든 알림 내역 조회
+    유저 상관 없이 모든 알림 내역 조회 or
+    특정 유저에 대한 알림 내역 조회
 
     input   : empty
     output  : NotificationEntity[]

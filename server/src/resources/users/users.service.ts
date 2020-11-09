@@ -149,6 +149,7 @@ export class UsersService {
   }
 
   /*
+    관리자 페이지 개인 알림 보낼 유저 리스트 조회
     input   : empty
     output  : [ userId1, userId2, ... ]
   */

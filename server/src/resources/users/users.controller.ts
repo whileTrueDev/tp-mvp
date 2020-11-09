@@ -96,6 +96,7 @@ export class UsersController {
 
   /*
     admin page 에서의 요청만 수락하도록 하는 로직이 필요
+    관리자 페이지 개인 알림 보낼 유저 리스트 조회
     input   : empty
     output  : [userId1, userId2, ... ]
   */

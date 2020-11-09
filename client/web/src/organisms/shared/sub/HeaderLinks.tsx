@@ -12,7 +12,7 @@ import Notifications from '@material-ui/icons/Notifications';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 // shared dtos and interfaces
-import { FindAllNotifications } from '@truepoint/shared/dist/dto/notification/findAllNotifications.dto';
+import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/notificationGet.dto';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 // notificaiton list component
 import NotificationPopper from './NotificationPopper';
@@ -61,7 +61,7 @@ function HeaderLinks(): JSX.Element {
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const findReqParam: FindAllNotifications = {
+    const findReqParam: NotificationGetRequest = {
       userId: auth.user.userId,
     };
     executeGet({

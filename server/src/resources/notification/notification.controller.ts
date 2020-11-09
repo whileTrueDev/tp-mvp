@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 
 // shared DTOs
-import { FindAllNotifications } from '@truepoint/shared/dist/dto/notification/findAllNotifications.dto';
 import { ChangeReadState } from '@truepoint/shared/dist/dto/notification/changeReadState.dto';
 import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/notificationGet.dto';
 import { NotificationPostRequest } from '@truepoint/shared/dist/dto/notification/notificationPost.dto';
@@ -24,18 +23,7 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   /*
-    input   :  userId
-    output  :  NotificationEntity[]
-  */
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  findAllUserNotifications(
-    @Query(new ValidationPipe()) findRequest: FindAllNotifications,
-  ): Promise<NotificationEntity[]> {
-    return this.notificationService.findAllWithUserId(findRequest);
-  }
-
-  /*
+    특정 유저 알림 읽음 표시
     input   :  userId, notification Index (primary index)
     output  :  true | false
   */
@@ -48,10 +36,11 @@ export class NotificationController {
   }
 
   /*
-    input   :  empty
+    특정 유저에 대한 알림 내역 조회 or 모든 알림 조회
+    input   :  userId?
     output  :  NotificationEntity[]
   */
-  @Get('admin')
+  @Get()
   getNotification(
       @Query(new ValidationPipe()) req: NotificationGetRequest,
   ): Promise<NotificationEntity[]> {
@@ -59,6 +48,7 @@ export class NotificationController {
   }
 
   /*
+    알림 생성
     json.stringfy() => 하나라도 반드시 [] 내부에 존재하도록 한다.
     포맷이 반드시 ['userId1', 'userId2']
 
@@ -69,7 +59,7 @@ export class NotificationController {
     }
     output  : NotificationEntity[]
   */
-  @Post('admin')
+  @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   async createNotification(
     @Body(new ValidationPipe()) data: NotificationPostRequest,
