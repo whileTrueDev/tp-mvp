@@ -227,6 +227,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
     const day = makeDay(selectedStream.fullDate.getDate());
     const file = selectedStream.fileId;
+
     Promise.all([
       fetchHighlightData(id, year, month, day, file),
       fetchMetricsData(id, year, month, day, file)])

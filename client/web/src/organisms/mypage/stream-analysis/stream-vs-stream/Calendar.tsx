@@ -194,11 +194,6 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
                   variant="static"
                   openTo="date"
                   disableToolbar
-                  inputProps={{
-                    style: {
-                      color: 'red',
-                    },
-                  }}
                 />
               </ThemeProvider>
             </Grid>

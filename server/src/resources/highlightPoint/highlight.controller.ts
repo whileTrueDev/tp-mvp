@@ -9,25 +9,27 @@ export class HighlightController {
 
   @Get('/list')
   async getDateListForCalendar(
+    @Query('platform') platform: 'afreeca'|'youtube'|'twitch',
     @Query('name') name: string,
     @Query('year') year: string,
     @Query('month') month: string,
   ): Promise<string[]> {
     if (name) {
-      return this.highlightService.getDateListForCalendar(name, year, month);
+      return this.highlightService.getDateListForCalendar(platform, name, year, month);
     }
     throw new HttpException('name is required!!', HttpStatus.BAD_REQUEST);
   }
 
   @Get('/stream')
   getStreamListForCalendarBtn(
+    @Query('platform') platform: 'afreeca'|'youtube'|'twitch',
     @Query('name') name: string,
     @Query('year') year: string,
     @Query('month') month: string,
     @Query('day') day: string,
   ): Promise<string[]> {
     if (name && year && month && day) {
-      return this.highlightService.getStreamListForCalendarBtn(name, year, month, day);
+      return this.highlightService.getStreamListForCalendarBtn(platform, name, year, month, day);
     }
     throw new HttpException('name && year && month && day are required!!', HttpStatus.BAD_REQUEST);
   }
