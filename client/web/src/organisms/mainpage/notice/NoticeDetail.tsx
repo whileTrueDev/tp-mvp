@@ -5,7 +5,7 @@ import { Button, Paper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import { NoticeData } from '../../../interfaces/Notice';
 // 날짜표현 컴포넌트 추가
-import MakedateForm from '../../../utils/MakedateForm';
+import dateExpression from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -60,7 +60,10 @@ export default function NoticeDetail({
           </Typography>
           <Typography color="textSecondary">
             {noticeTabSwitch(currentNotice?.category)}
-            <MakedateForm compoName="selected-view" createdAt={currentNotice?.createdAt} />
+            {dateExpression({
+              compoName: 'selected-view',
+              createdAt: currentNotice?.createdAt,
+            })}
           </Typography>
         </div>
 

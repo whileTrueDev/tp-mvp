@@ -8,7 +8,7 @@ import NotificationImportantIcon from '@material-ui/icons/NotificationImportant'
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
-import MakedateForm from '../../../utils/MakedateForm';
+import dateExpression from '../../../utils/dateExpression';
 
 interface TableProps {
   metrics: any;
@@ -113,8 +113,11 @@ export default function MaterialTable({
                   <TableCell className={classnames({ [classes.tableCell]: true, [classes.importantText]: eachRow.isImportant })} scope="row" align="left">
                     {eachRow.title}
                   </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="right">
-                    <MakedateForm compoName="table-view" createdAt={eachRow.createdAt} />
+                  <TableCell className={classes.tableCell} scope="row" align="center">
+                    {dateExpression({
+                      compoName: 'table-view',
+                      createdAt: eachRow.createdAt,
+                    })}
                   </TableCell>
                 </TableRow>
               ))}

@@ -15,7 +15,7 @@ import { FeatureData } from '../../../interfaces/FeatureSuggestion';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 // 날짜표현 컴포넌트 추가
-import MakedateForm from '../../../utils/MakedateForm';
+import dateExpression from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -124,7 +124,10 @@ export default function FeatureDetail({
           </div>
           <Typography color="textSecondary" component="div">
             {categoryTabSwitch(Number(currentSuggestion?.category))}
-            <MakedateForm compoName="selected-view" createdAt={currentSuggestion?.createdAt} />
+            {dateExpression({
+              compoName: 'selected-view',
+              createdAt: 'currentSuggestion?.createdAt',
+            })}
           </Typography>
         </div>
         {currentSuggestion?.author === authContext.user.userId

@@ -16,7 +16,7 @@ import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // interfaces
 import { PeriodStreamsListProps, StreamsListItem } from './StreamAnalysisShared.interface';
-import MakedateForm from '../../../../utils/MakedateForm';
+import dateExpression from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -140,7 +140,13 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
       <Typography className={classes.listItemText}>
         {/* 날짜 표현 컴포넌트로 변경 */}
-        <MakedateForm createdAt={new Date(stream.startedAt)} compoName="calendar" streamAirtime={stream.airTime} />
+        {
+          dateExpression({
+            createdAt: new Date(stream.startedAt),
+            compoName: 'calendar',
+            streamAirtime: stream.airTime,
+          })
+        }
       </Typography>
 
       <Typography className={classes.listItemText}>
@@ -166,7 +172,11 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
       <Typography className={classes.removedListItemText}>
         {/* 날짜 표현 컴포넌트로 변경 */}
-        <MakedateForm createdAt={new Date(stream.startedAt)} compoName="calendar" streamAirtime={stream.airTime} />
+        {dateExpression({
+          createdAt: new Date(stream.startedAt),
+          compoName: 'calendar',
+          streamAirtime: stream.airTime,
+        })}
       </Typography>
 
       <Typography className={classes.removedListItemText}>

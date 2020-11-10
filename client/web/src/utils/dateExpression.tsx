@@ -7,7 +7,7 @@ interface makeDate {
   finishAt?: any;
 }
 
-export default function MakedateForm(data: makeDate): any {
+export default function makedateForm(data: makeDate): any {
   const {
     compoName, createdAt, streamAirtime, finishAt,
   } = data;

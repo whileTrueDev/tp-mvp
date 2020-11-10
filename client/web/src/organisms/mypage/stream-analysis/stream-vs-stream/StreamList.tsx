@@ -9,7 +9,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // interface
 import { StreamListProps } from './StreamCompareSectioninterface';
-import MakedateForm from '../../../../utils/MakedateForm';
+import dateExpression from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -51,6 +51,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     dayStreamsList, handleSeletedStreams, baseStream, compareStream,
     handleFullMessage, platformIcon,
   } = props;
+
   const classes = useStyles();
   /*
     위치를 MakedateForm.tsx로 옮겼습니다. 
@@ -101,7 +102,11 @@ export default function StreamList(props: StreamListProps): JSX.Element {
             {platformIcon(stream)}
           </ListItemIcon>
           <Typography className={classes.listItemText}>
-            <MakedateForm compoName="calendar" createdAt={new Date(stream.startedAt)} streamAirtime={stream.airTime} />
+            {dateExpression({
+              compoName: 'calendar',
+              createdAt: new Date(stream.startedAt),
+              streamAirtime: stream.airTime,
+            })}
           </Typography>
 
         </ListItem>

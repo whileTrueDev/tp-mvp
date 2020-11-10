@@ -12,7 +12,7 @@ import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // interface
 import { StreamCardProps } from './StreamCompareSectioninterface';
 // dateform change function
-import MakedateForm from '../../../../utils/MakedateForm';
+import dateExpression from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardWrapper: {
@@ -120,7 +120,11 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
               )}
             <Typography variant="body1" color="textSecondary">
               {/* 날짜표현 컴포넌트로 변경 */}
-              <MakedateForm createdAt={new Date(stream.startedAt)} compoName="calendar" streamAirtime={new Date(stream.airTime)} />
+              {dateExpression({
+                compoName: 'calendar',
+                createdAt: new Date(stream.startedAt),
+                streamAirtime: new Date(stream.airTime),
+              })}
               {' '}
               {platformIcon(stream)}
             </Typography>
