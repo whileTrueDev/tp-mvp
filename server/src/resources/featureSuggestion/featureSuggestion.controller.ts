@@ -1,41 +1,113 @@
 import {
-  Controller, Get, Req, Post, Body, Patch, Delete, Query,
+  Controller, Get, Post, Body,
+  Patch, Delete, ValidationPipe,
+  ParseIntPipe, UseInterceptors,
+  ClassSerializerInterceptor, Query,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { FeatureSuggestionStateUpdateDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionStateUpdate.dto';
+import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
+import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
+import { ReplyGet } from '@truepoint/shared/dist/dto/featureSuggestion/replyGet.dto';
+import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
+import { ReplyPatch } from '@truepoint/shared/dist/dto/featureSuggestion/replyPatch.dto';
+import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
+import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
 import { FeatureSuggestionService } from './featureSuggestion.service';
+import { FeatureSuggestionReplyService } from './featureSuggestionReply.service';
 
-@Controller('feature')
+@Controller('feature-suggestion')
 export class FeatureSuggestionController {
-  constructor(private readonly featureSuggestionService: FeatureSuggestionService) { }
+  constructor(
+    private readonly featureSuggestionService: FeatureSuggestionService,
+    private readonly featureSuggestionReplyService: FeatureSuggestionReplyService,
+  ) { }
 
+  /**
+   * 기능제안 리스트 조회 라우터
+   */
   @Get()
-  getBoardData(@Req() request: Request): Promise<any> {
-    return this.featureSuggestionService.getBoardData();
+  async findAll(): Promise<FeatureSuggestionEntity[]> {
+    return this.featureSuggestionService.findAll();
   }
 
-  @Post('/upload')
-  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
-  // @leejineun 올바른 타입 정의 후 처리바람니다~~!! 처리 이후 eslint-disable 주석 제거해주세요
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  insertFeatureSuggestion(@Body() data): Promise<any> {
-    return this.featureSuggestionService.insertFeatureSuggestion(data);
+  /**
+   * 기능제안 개별 글 생성 라우터
+   * @param data 생성할 기능제안 데이터
+   */
+  @Post()
+  async insertOne(
+    @Body(ValidationPipe) featureSuggestionPostDto: FeatureSuggestionPostDto,
+  ): Promise<FeatureSuggestionEntity> {
+    return this.featureSuggestionService.insert(featureSuggestionPostDto);
   }
 
-  @Patch('/upload-edit')
-  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
-  // @leejineun 올바른 타입 정의 후 처리바람니다~~!! 처리 이후 eslint-disable 주석 제거해주세요
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  updateFeatureSuggestion(@Body() data): Promise<any> {
-    return this.featureSuggestionService.updateFeatureSuggestion(data);
+  /**
+   * 기능제안 개별 글 수정 라우터
+   * @param data 수정할 기능제안 데이터
+   */
+  @Patch()
+  async updateOne(
+    @Body(ValidationPipe) featureSuggestionPatchDto: FeatureSuggestionPatchDto,
+  ): Promise<number> {
+    return this.featureSuggestionService.update(featureSuggestionPatchDto);
   }
 
-  @Delete('/upload-delete')
-  deleteFeatureSuggestion(@Query('data') data: number): Promise<any> {
-    return this.featureSuggestionService
-      .deleteFeatureSuggestion(data);
+  /**
+   * 기능제안 개별 글 삭제 라우터
+   * @param id 기능제안 글 고유 ID
+   */
+  @Delete()
+  async deleteOne(
+    @Body('id', ParseIntPipe) id: number,
+  ): Promise<number> {
+    return this.featureSuggestionService.deleteOne(id);
   }
-  // uploadImage(@Body() data) {
-  //   console.log(data);
-  //   return this.featureSuggestionService.uploadImage(data);
-  // }
+
+  /**
+   * 기능제안 상태값 변경 라우터
+   * @param data 상태값 변경할 기능제안 글 데이터
+   */
+  @Patch('state')
+  async updateSuggestion(
+    @Body(ValidationPipe) data: FeatureSuggestionStateUpdateDto,
+  ): Promise<number> {
+    return this.featureSuggestionService.stateUpdate(data);
+  }
+
+  // ****************************************************************************************
+  // ********************************* feature suggestion reply *****************************
+  @Get('reply')
+  async getReply(
+    @Query(ValidationPipe) req: ReplyGet,
+  ): Promise<FeatureSuggestionReplyEntity[]> {
+    return this.featureSuggestionReplyService.findAll(req);
+  }
+
+  @Post('reply')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async createReply(
+    @Body(ValidationPipe) data: ReplyPost,
+  ): Promise<FeatureSuggestionReplyEntity> {
+    return this
+      .featureSuggestionReplyService
+      .insertOne(data);
+  }
+
+  @Patch('reply')
+  async updateReply(
+    @Body(ValidationPipe) data: ReplyPatch,
+  ): Promise<number> {
+    return this
+      .featureSuggestionReplyService
+      .updateOne(data);
+  }
+
+  @Delete('reply')
+  async deleteReply(
+    @Body(ValidationPipe) data: Pick<ReplyPatch, 'id'>,
+  ): Promise<number> {
+    return this
+      .featureSuggestionReplyService
+      .deleteOne(data);
+  }
 }

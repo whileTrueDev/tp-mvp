@@ -1,7 +1,9 @@
+import { FeatureSuggestionReply } from './FeatureSuggestionReply.interface';
+
 export interface FeatureSuggestion {
   suggestionId: number;
 
-  category: number;
+  category: string;
 
   title: string;
 
@@ -17,4 +19,5 @@ export interface FeatureSuggestion {
 
   createdAt: Date;
 
+  replies?: FeatureSuggestionReply[];
 }
