@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 
 // DTOs
 // notification (개인알림)
-import { NotificationGetRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationGet.dto';
-import { NotificationPostRequest } from '@truepoint/shared/dist/dto/admin/notification/notificationPost.dto';
+import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/notificationGet.dto';
+import { NotificationPostRequest } from '@truepoint/shared/dist/dto/notification/notificationPost.dto';
 // Entities
 // notification (개인알림)
 import { NotificationEntity } from '../notification/entities/notification.entity';
