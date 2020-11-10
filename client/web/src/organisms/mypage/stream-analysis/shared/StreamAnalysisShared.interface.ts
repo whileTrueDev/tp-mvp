@@ -51,6 +51,7 @@ export interface PeriodStreamsListProps {
   selectedStreams: (StreamsListItem)[];
   handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
   selectedDate?: Date;
+  small?: boolean
 }
 export interface CheckBoxGroupProps {
   handleCheckStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
