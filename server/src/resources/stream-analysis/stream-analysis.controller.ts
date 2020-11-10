@@ -7,22 +7,18 @@ import {
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchEachStream } from '@truepoint/shared/dist/dto/stream-analysis/searchEachStreamData.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
-// import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
-// import { PeriodData } from '@truepoint/shared/dist/dto/stream-analysis/periodData.dto';
 import { SearchUserStatisticData } from '@truepoint/shared/dist/dto/stream-analysis/searchUserStatisticData.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-// services
 // Services
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
 // // pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
-// import { ArrayValidationPipe } from '../../pipes/arrayValidation.pipe';
 // guard
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // Entity
@@ -35,10 +31,9 @@ export class StreamAnalysisController {
     @Inject(UsersService) private usersService: UsersService,
   ) {}
 
-  /*
-    캘린더 방송 날짜 표시
-    input   :  { startDate, endDate, targetUserId? , userId }
-    output  :  { chat_count , smile_count , viewer }
+  /**
+  * 캘린더 방송 정보 표시
+  * @param findDaysStreamRequest endDate 가 존재시 기간에 해당하는 정보를 , 이외 startDate 가 속한 달에 대한 정보 조회
   */
   @Get('stream-list')
   @UseGuards(JwtAuthGuard)
@@ -51,13 +46,9 @@ export class StreamAnalysisController {
     );
   }
 
-  /*
-    방송 대 방송 분석
-    input   :  params: {
-                  streams: 
-                    [ { streamId: 'streamId1', platform: 'twitch' }, 
-                      { streamId: 'streamId2', platform: 'twitch' }] 
-                } 
+  /**
+  * 방송 대 방송 분석
+  * @param findInfoRequest 2개의 방송을 배열 형태로 받는다.
   */
   @Get('streams')
   @UseGuards(JwtAuthGuard)
@@ -67,11 +58,11 @@ export class StreamAnalysisController {
     return this.streamAnalysisService.SearchStreamInfoByStreamId(findInfoRequest);
   }
 
-  /*
-    기간 대 기간 분석
-    input   :  { userId, baseStartAt, baseEndAt, compareStartAt, compareEndAt }
-  */
-
+  /**
+   * 기간 대 기간 분석
+   * @param base 분석 가능 방송 리스트 
+   * @param compare 분석 가능 방송 리스트
+   */
   @Post('periods')
   @UseGuards(JwtAuthGuard)
   getPeriodsStreamsInfo(
@@ -81,9 +72,9 @@ export class StreamAnalysisController {
     return this.streamAnalysisService.findStreamInfoByPeriods([base, compare]);
   }
 
-  /*
-    기간 추이 분석
-    input   : streams : [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
+  /**
+  * 기간 추이 분석
+  * @param s3Request S3 조회 규격 방송 리스트
   */
   @Get('period')
   @UseGuards(JwtAuthGuard)
@@ -94,14 +85,9 @@ export class StreamAnalysisController {
     return this.streamAnalysisService.findStreamInfoByPeriod(s3Request);
   }
 
-  /*
-    jwt guard -> 권한 검사 , 구독 확인
-    input   :   params: {
-                  nowDate: (new Date()).toISOString(),
-                  userId: 'userId1'
-                }
-    output  :  { allPlatformData: { avgViewer, avgLength, changeFan, totalChatCount , count }, 
-                 afreecaData : // , twitchData : // , youtubeData : // }
+  /**
+  * 대쉬보드 통계 정보
+  * @param findUserStatisticRequest 유저 아이디 
   */
   @Get('user-statistics')
   @UseGuards(JwtAuthGuard)

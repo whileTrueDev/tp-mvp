@@ -20,6 +20,8 @@ import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/peri
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import MypageHero from '../../../organisms/shared/sub/MypageHero';
 import textSource from '../../../organisms/shared/source/MypageHeroText';
+// layout style
+import useStreamAnalysisStyles from './streamAnalysisLayout.style';
 
 export interface PeriodsRequestParams {
   userId: string;
@@ -30,6 +32,7 @@ export interface PeriodsRequestParams {
 }
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
+  const classes = useStreamAnalysisStyles();
   const [timeLineData, setTimeLine] = useState<EachStream[][]>();
   const [metricData, setMetric] = useState<any>(null);
   const [type, setType] = useState<string>('');
@@ -73,20 +76,25 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   return (
     <>
       <MypageSectionWrapper>
+        {/* Hero Section */}
         <MypageHero textSource={textSource.streamAnalysisSection} />
       </MypageSectionWrapper>
+
       <MypageSectionWrapper>
-        <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
-          <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
+        {/* Analysis Section */}
+        <Grid container direction="column" style={{ minHeight: '1500px' }}>
+          <Paper elevation={0} className={classes.analysisSectionPaper}>
             <PeriodCompareSection
               loading={loading}
               error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
               handleSubmit={handleSubmit}
             />
           </Paper>
+
+          {/* Graph Section */}
           {open && (
-          <Paper elevation={1} style={{ padding: '40px' }}>
-            <Grid item container direction="column" spacing={8}>
+          <Paper elevation={0} className={classes.graphSectionPaper}>
+            <Grid item container direction="column" spacing={8} style={{ marginTop: '16px' }}>
               <Grid item container direction="row">
                 <Grid item xs={6}>
                   {timeLineData && (

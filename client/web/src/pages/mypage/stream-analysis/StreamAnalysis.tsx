@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // axios
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-import { Grid } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 // shared dto
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 import { StreamAnalysisResType } from '@truepoint/shared/res/StreamAnalysisResType.interface';
@@ -16,8 +16,11 @@ import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetri
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import MypageHero from '../../../organisms/shared/sub/MypageHero';
 import textSource from '../../../organisms/shared/source/MypageHeroText';
+// layout style
+import useStreamAnalysisStyles from './streamAnalysisLayout.style';
 
 export default function StreamAnalysis(): JSX.Element {
+  const classes = useStreamAnalysisStyles();
   const [data, setData] = useState<StreamAnalysisResType[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -44,11 +47,14 @@ export default function StreamAnalysis(): JSX.Element {
   return (
     <>
       <MypageSectionWrapper>
+        {/* Hero Section */}
         <MypageHero textSource={textSource.streamAnalysisSection} />
       </MypageSectionWrapper>
+
       <MypageSectionWrapper>
-        <Grid container direction="column" spacing={2} style={{ height: 'auto' }}>
-          <Grid item>
+        <Grid container direction="column">
+          {/* Analysis Section */}
+          <Paper elevation={0} className={classes.analysisSectionPaper}>
             <StreamCompareSection
               handleSubmit={handleSubmit}
               loading={loading}
@@ -56,10 +62,14 @@ export default function StreamAnalysis(): JSX.Element {
                 ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }
                 : undefined}
             />
-          </Grid>
-          <Grid item>
-            <StreamMetrics open={open} metricData={data} />
-          </Grid>
+          </Paper>
+
+          {/* Graph Section */}
+          {open && (
+            <Paper elevation={0} className={classes.graphSectionPaper}>
+              <StreamMetrics open={open} metricData={data} />
+            </Paper>
+          )}
         </Grid>
       </MypageSectionWrapper>
     </>

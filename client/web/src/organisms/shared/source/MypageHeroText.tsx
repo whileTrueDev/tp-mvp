@@ -30,25 +30,25 @@ const textSource = {
   streamAnalysisSection: {
     eachCardContent: [
       {
-        cardHeader: '분석 대시보드',
-        cardTitle: '방송별 비교',
-        cardIcon: '/images/analyticsPage/balloon.png',
+        cardHeader: '비교 대시보드',
+        cardTitle: '방송별 비교\n\0',
+        cardIcon: '/images/stream-analysis/streamsCompare.png',
         cardText: `어떤 방송을 했을 때 
         더 시청자들의 반응이 가장 좋았을까요? 
         다양한 수치로 비교하실 수 있습니다.`,
       },
       {
-        cardHeader: '분석 대시보드',
-        cardTitle: '기간별 비교',
-        cardIcon: '/images/analyticsPage/smile.png',
+        cardHeader: '비교 대시보드',
+        cardTitle: '기간별 비교\n\0',
+        cardIcon: '/images/stream-analysis/periodsCompare.png',
         cardText: `
         \n내 방송의 민심은 상승세일까요 하락세일까요?
         `,
       },
       {
-        cardHeader: '분석 대시보드',
-        cardTitle: '유튜브 동시비교',
-        cardIcon: '/images/analyticsPage/magnify.png',
+        cardHeader: '비교 대시보드',
+        cardTitle: '유튜브 동시비교\n\0',
+        cardIcon: '/images/stream-analysis/youtubeCompare.png',
         cardText: `
         \n추후업데이트 예정입니다.
         `,

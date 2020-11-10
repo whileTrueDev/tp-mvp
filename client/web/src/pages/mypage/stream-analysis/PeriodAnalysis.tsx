@@ -17,8 +17,11 @@ import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/per
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import MypageHero from '../../../organisms/shared/sub/MypageHero';
 import textSource from '../../../organisms/shared/source/MypageHeroText';
+// layout style
+import useStreamAnalysisStyles from './streamAnalysisLayout.style';
 
 export default function PeriodAnalysis(): JSX.Element {
+  const classes = useStreamAnalysisStyles();
   const [data, setData] = useState<PeriodAnalysisResType>();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
@@ -50,13 +53,14 @@ export default function PeriodAnalysis(): JSX.Element {
   return (
     <>
       <MypageSectionWrapper>
+        {/* Hero Section */}
         <MypageHero textSource={textSource.streamAnalysisSection} />
       </MypageSectionWrapper>
-      <MypageSectionWrapper>
 
-        <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
-          <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
-            {/* 상단 섹션 */}
+      <MypageSectionWrapper>
+        <Grid container direction="column" style={{ minHeight: '1500px' }}>
+          <Paper elevation={0} className={classes.analysisSectionPaper}>
+            {/* Analysis Section */}
             <PeriodAnalysisSection
               error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
               loading={loading}
@@ -64,10 +68,10 @@ export default function PeriodAnalysis(): JSX.Element {
             />
           </Paper>
 
-          {/* 하단 섹션 */}
+          {/* Graph Section */}
           {open && data
          && (
-           <Paper elevation={1} style={{ padding: '40px' }}>
+           <Paper elevation={0} className={classes.graphSectionPaper}>
              <PeriodGraph data={data} loading={loading} selectedMetric={selectedMetric} />
            </Paper>
          )}

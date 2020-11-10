@@ -93,9 +93,11 @@ export class StreamAnalysisService {
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
   ) {}
 
-  /*
-    input   :  userId, date
-    output  :  date 의 month 에 해당하는 [ {streamId, platform, title, startAt, airTime,creatorId}, ... ]
+  /**
+  * 유저아이디에 대해 기간 혹은 시작 날짜가 속한 달의 방송 정보를 조회
+  * @param userId 유저아이디
+  * @param startDate 검색 시작 날짜
+  * @param endDate 검색 종료 날짜
   */
   async findDayStreamList(
     userId: string,
@@ -143,10 +145,10 @@ export class StreamAnalysisService {
     return TermStreamsData;
   }
 
-  /*
-    input   :  streamId , platform
-    output  :  chat_count , smile_count , viewer
-  */
+  /**
+   * 두 방송에 대한 정보를 조회하고 분석 결과를 생성
+   * @param streams [방송1, 방송2]
+   */
   async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
       const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
@@ -188,43 +190,10 @@ export class StreamAnalysisService {
     return [null, null];
   }
 
-  /*
-    기간 대 기간을 비교하기 위한 service
-    input   :  terms: [{startAt , endAt , userId}, {startAt, endAt,userId}]
-    output  :  
-    { 
-      timeline : [
-        {viewer, chatCount, smileCount, date}, 
-        {viewer, chatCount, smileCount, date},
-        ...
-      ],
-      type: 'periods',
-      metrics: [  
-        {
-          title: '평균 시청자 수',
-          tag: 'viewer',
-          key: 'viewer',
-          value: [],
-          unit: '명'
-        },
-        {
-          title: '웃음 발생 수',
-          tag: 'smile',
-          key: 'smileCount',
-          value: [],
-          unit: '회'
-        },
-        {
-          title: '채팅 발생 수',
-          tag: 'chat',
-          key: 'chatCount',
-          value: [],
-          unit: '회'
-        }
-      ]
-    }
-  */
-
+  /**
+   * 두 기간에 대한 방송들을 각각 날짜 단위로 그룹화시킨 뒤 분석 결과 생성
+   * @param timeline [[방송1, 방송2 ... ], [방송1, 방송2 ...]]
+   */
   async findStreamInfoByPeriods(timeline: EachStream[][]): Promise<PeriodsAnalysisResType> {
     /* timeline 같은 날 일 경우 하나로 병합 및 평균 처리 */
     interface Temp {
@@ -307,10 +276,10 @@ export class StreamAnalysisService {
     });
   }
 
-  /*
-    input   :  userId, nowDate
-    output  :  "airTime, viewer, fan" in Streams  +  "chat_count" in StreamSummary 
-  */
+  /**
+   * 유저 아이디에 대해 10일간의 방송 정보 조회
+   * @param userId 유저아이디
+   */
   async findUserWeekStreamInfoByUserId(userId: string): Promise<StreamsEntity[]> {
     /*
       streamsInfoArray
@@ -331,25 +300,9 @@ export class StreamAnalysisService {
     return streams;
   }
 
-  /*
-    기간 추이 분석
-    input   : streams: [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
-    output  : {
-      start_date,
-      end_date,
-      chat_count,
-      view_count,
-      value: [
-        {
-          smile_count,
-          chat_count,
-          viewer => 분석기에 아직 탑재 미완료.
-          date
-        },
-        { smile_count, chat_count, viewer, date },
-        ...
-      ],
-    }
+  /**
+  * s3 데이터 조회 후 각 조회된 결과 값들의 타임라인을 병합하여 분석 결과 생성
+  * @param s3Request [s3조회가능방송1, s3조회가능방송2 ...]
   */
   async findStreamInfoByPeriod(s3Request: SearchEachS3StreamData[]): Promise<PeriodAnalysisResType> {
     const keyArray: string[] = [];

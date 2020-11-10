@@ -2,7 +2,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   root: {
-    marginTop: theme.spacing(4),
+    padding: theme.spacing(6),
   },
   mainTitle: {
     color: theme.palette.text.primary,
