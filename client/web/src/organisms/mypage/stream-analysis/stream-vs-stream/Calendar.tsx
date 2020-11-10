@@ -1,6 +1,6 @@
 import React from 'react';
 // material-ui core components
-import { Grid } from '@material-ui/core';
+import { Grid, ThemeProvider } from '@material-ui/core';
 // material-ui picker components
 import {
   MuiPickersUtilsProvider, DatePicker,
@@ -63,6 +63,17 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
       url: '/stream-analysis/stream-list',
     }, { manual: true });
+
+  const DATE_THEME = (others: Theme) => ({
+    ...others,
+    overrides: {
+      MuiPickersDay: {
+        daySelected: {
+          backgroundColor: '#3a86ff',
+        },
+      },
+    },
+  });
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
@@ -134,7 +145,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
             [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
           })}
           >
-            {React.cloneElement(dayComponent, { style: { color: '#3a86ff' } })}
+            {React.cloneElement(dayComponent, { style: { backgroundColor: '#3a86ff', color: 'white' } })}
             <div className={classnames({
               [classes.hasStreamDayDot]: hasStreamDays.includes(date.getDate()),
             })}
@@ -173,21 +184,23 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
             {(getStreamsLoading || getStreamsError)
             && <CenterLoading />}
             <Grid item>
-              <DatePicker
-                value={clickedDate}
-                onChange={handleDayChange}
-                onMonthChange={handleMonthChange}
-                disableFuture
-                renderDay={renderDayInPicker}
-                variant="static"
-                openTo="date"
-                disableToolbar
-                inputProps={{
-                  style: {
-                    color: 'red',
-                  },
-                }}
-              />
+              <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
+                <DatePicker
+                  value={clickedDate}
+                  onChange={handleDayChange}
+                  onMonthChange={handleMonthChange}
+                  disableFuture
+                  renderDay={renderDayInPicker}
+                  variant="static"
+                  openTo="date"
+                  disableToolbar
+                  inputProps={{
+                    style: {
+                      color: 'red',
+                    },
+                  }}
+                />
+              </ThemeProvider>
             </Grid>
           </Grid>
         </MuiPickersUtilsProvider>

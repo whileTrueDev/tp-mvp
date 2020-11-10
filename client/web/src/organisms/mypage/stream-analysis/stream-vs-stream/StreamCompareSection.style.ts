@@ -27,7 +27,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     borderRadius: '12px',
     border: `solid 1px ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
-    width: '276px',
+    width: 'auto',
     height: '75px',
     paddingTop: '22.5px',
     paddingBottom: '10.5px',

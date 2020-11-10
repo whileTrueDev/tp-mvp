@@ -107,11 +107,11 @@ export default function StreamCompareSection(
   const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':
-        return <AfreecaIcon style={{ marginRight: '10px' }} />;
+        return <AfreecaIcon />;
       case 'twitch':
-        return <TwitchIcon style={{ marginRight: '10px' }} />;
+        return <TwitchIcon />;
       case 'youtube':
-        return <YoutubeIcon style={{ marginRight: '10px' }} />;
+        return <YoutubeIcon />;
       default:
         return <div />;
     }
@@ -169,9 +169,9 @@ export default function StreamCompareSection(
         )}
 
         {/* 달력 선택 */}
-        <Grid item container direction="row" xs={12}>
-          <Grid className={classes.bodyWrapper} container xs={8} item>
-            <Grid item xs style={{ width: '310px' }}>
+        <Grid item container direction="row">
+          <Grid container className={classes.bodyWrapper} style={{ width: 'auto' }}>
+            <Grid item style={{ width: '310px' }}>
               <Typography className={classes.bodyTitle}>
                 <SelectDateIcon
                   style={{ fontSize: '28.5px', marginRight: '26px' }}
@@ -179,16 +179,18 @@ export default function StreamCompareSection(
                 날짜 선택
               </Typography>
               {/* Custom Date Picker 달력 컴포넌트 */}
+              <div style={{ marginLeft: '16px', marginTop: '16px' }}>
+                <StreamCalendar
+                  handleDayStreamList={handleDayStreamList}
+                  clickedDate={clickedDate}
+                  setClickedDate={setClickedDate}
+                  baseStream={baseStream}
+                  compareStream={compareStream}
+                />
+              </div>
 
-              <StreamCalendar
-                handleDayStreamList={handleDayStreamList}
-                clickedDate={clickedDate}
-                setClickedDate={setClickedDate}
-                baseStream={baseStream}
-                compareStream={compareStream}
-              />
             </Grid>
-            <Grid item xs>
+            <Grid item style={{ width: '666px', marginRight: '16px' }}>
               <Typography className={classes.bodyTitle}>
                 <SelectVideoIcon
                   style={{ fontSize: '28.5px', marginRight: '26px' }}
@@ -196,14 +198,16 @@ export default function StreamCompareSection(
                 방송 선택
               </Typography>
               {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
-              <StreamList
-                dayStreamsList={dayStreamsList}
-                baseStream={baseStream}
-                compareStream={compareStream}
-                handleSeletedStreams={handleSeletedStreams}
-                handleFullMessage={handleFullMessage}
-                platformIcon={platformIcon}
-              />
+              <div style={{ marginLeft: '16px', marginTop: '16px' }}>
+                <StreamList
+                  dayStreamsList={dayStreamsList}
+                  baseStream={baseStream}
+                  compareStream={compareStream}
+                  handleSeletedStreams={handleSeletedStreams}
+                  handleFullMessage={handleFullMessage}
+                  platformIcon={platformIcon}
+                />
+              </div>
             </Grid>
           </Grid>
         </Grid>
