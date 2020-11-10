@@ -60,7 +60,7 @@ export default function SimpleNoticeTable({
                 <TableCell width={250} align="right">
                   <Typography>
                     {/* {new Date(row.createdAt).toLocaleString()} */}
-                    <MakedateForm createdAt={new Date(row.createdAt)} pagename="table-view" />
+                    <MakedateForm createdAt={new Date(row.createdAt)} compoName="table-view" />
                   </Typography>
                 </TableCell>
               </TableRow>

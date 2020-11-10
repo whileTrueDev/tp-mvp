@@ -189,8 +189,8 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
                                ${`${value.finishAt.slice(4, 6)}:${value.finishAt.slice(6, 8)}`}`} */}
                               <MakedateForm
                                 createdAt={new Date(value.startAt)}
-                                streamAirtime={new Date(value.finishAt)}
-                                pagename="highlight-calendar"
+                                finishAt={new Date(value.finishAt)}
+                                compoName="highlight-calendar"
                               />
                             </Button>
                           </Grid>

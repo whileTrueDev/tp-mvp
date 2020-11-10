@@ -124,7 +124,7 @@ export default function FeatureDetail({
           </div>
           <Typography color="textSecondary" component="div">
             {categoryTabSwitch(Number(currentSuggestion?.category))}
-            <MakedateForm pagename="selected-view" createdAt={currentSuggestion?.createdAt} />
+            <MakedateForm compoName="selected-view" createdAt={currentSuggestion?.createdAt} />
           </Typography>
         </div>
         {currentSuggestion?.author === authContext.user.userId

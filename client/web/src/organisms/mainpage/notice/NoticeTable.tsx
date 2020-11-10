@@ -114,7 +114,7 @@ export default function MaterialTable({
                     {eachRow.title}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="right">
-                    <MakedateForm pagename="table-view" createdAt={eachRow.createdAt} />
+                    <MakedateForm compoName="table-view" createdAt={eachRow.createdAt} />
                   </TableCell>
                 </TableRow>
               ))}

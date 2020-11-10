@@ -60,7 +60,7 @@ export default function NoticeDetail({
           </Typography>
           <Typography color="textSecondary">
             {noticeTabSwitch(currentNotice?.category)}
-            <MakedateForm pagename="selected-view" createdAt={currentNotice?.createdAt} />
+            <MakedateForm compoName="selected-view" createdAt={currentNotice?.createdAt} />
           </Typography>
         </div>
 

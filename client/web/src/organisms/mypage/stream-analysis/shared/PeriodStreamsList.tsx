@@ -140,7 +140,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
       <Typography className={classes.listItemText}>
         {/* 날짜 표현 컴포넌트로 변경 */}
-        <MakedateForm createdAt={new Date(stream.startedAt)} pagename="calendar" streamAirtime={stream.airTime} />
+        <MakedateForm createdAt={new Date(stream.startedAt)} compoName="calendar" streamAirtime={stream.airTime} />
       </Typography>
 
       <Typography className={classes.listItemText}>
@@ -166,7 +166,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
       <Typography className={classes.removedListItemText}>
         {/* 날짜 표현 컴포넌트로 변경 */}
-        <MakedateForm createdAt={new Date(stream.startedAt)} pagename="calendar" streamAirtime={stream.airTime} />
+        <MakedateForm createdAt={new Date(stream.startedAt)} compoName="calendar" streamAirtime={stream.airTime} />
       </Typography>
 
       <Typography className={classes.removedListItemText}>

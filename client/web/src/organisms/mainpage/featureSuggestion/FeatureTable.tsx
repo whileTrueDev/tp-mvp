@@ -122,7 +122,7 @@ export default function MaterialTable({
                     {eachRow.title}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    <MakedateForm pagename="table-view" createdAt={eachRow.createdAt} />
+                    <MakedateForm compoName="table-view" createdAt={eachRow.createdAt} />
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {progressTab(eachRow.progress)}

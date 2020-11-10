@@ -119,8 +119,8 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
                 </Typography>
               )}
             <Typography variant="body1" color="textSecondary">
-              {/* {airTimeFormmater(new Date(stream.startedAt), stream.airTime)} */}
-              <MakedateForm createdAt={new Date(stream.startedAt)} pagename="calendar" streamAirtime={new Date(stream.airTime)} />
+              {/* 날짜표현 컴포넌트로 변경 */}
+              <MakedateForm createdAt={new Date(stream.startedAt)} compoName="calendar" streamAirtime={new Date(stream.airTime)} />
               {' '}
               {platformIcon(stream)}
             </Typography>

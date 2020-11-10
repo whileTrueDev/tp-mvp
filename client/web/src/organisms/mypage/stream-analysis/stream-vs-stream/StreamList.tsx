@@ -101,7 +101,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
             {platformIcon(stream)}
           </ListItemIcon>
           <Typography className={classes.listItemText}>
-            <MakedateForm pagename="calendar" createdAt={new Date(stream.startedAt)} streamAirtime={stream.airTime} />
+            <MakedateForm compoName="calendar" createdAt={new Date(stream.startedAt)} streamAirtime={stream.airTime} />
           </Typography>
 
         </ListItem>
