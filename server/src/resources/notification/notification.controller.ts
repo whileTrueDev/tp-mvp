@@ -22,11 +22,10 @@ import { ValidationPipe } from '../../pipes/validation.pipe';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  /*
-    특정 유저 알림 읽음 표시
-    input   :  userId, notification Index (primary index)
-    output  :  true | false
-  */
+  /**
+   * 특정 유저 알림 읽음 표시
+   * @param changeReadState 유저아이디와 인덱스
+   */
   @Patch()
   @UseGuards(JwtAuthGuard)
   updateNotificationReadState(
@@ -35,10 +34,9 @@ export class NotificationController {
     return this.notificationService.changeWithUserId(changeReadState);
   }
 
-  /*
-    특정 유저에 대한 알림 내역 조회 or 모든 알림 조회
-    input   :  userId?
-    output  :  NotificationEntity[]
+  /**
+  * 특정 유저에 대한 알림 내역 조회 or 모든 알림 조회
+  * @param req 유저아이디 존재시 해당 유저에 대한 알림 조회
   */
   @Get()
   getNotification(
@@ -47,17 +45,9 @@ export class NotificationController {
     return this.notificationService.findAll(req);
   }
 
-  /*
-    알림 생성
-    json.stringfy() => 하나라도 반드시 [] 내부에 존재하도록 한다.
-    포맷이 반드시 ['userId1', 'userId2']
-
-    input   : {
-      userIds : string[];
-      title   : string;
-      content : string;
-    }
-    output  : NotificationEntity[]
+  /**
+  * 알림 생성 , json.stringfy()
+  * @param data userIds 는 반드시 하나라도 유저 아이디가 존재하여야 한다. ['userId1','userId2' ... ]
   */
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)

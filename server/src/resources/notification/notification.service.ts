@@ -15,11 +15,9 @@ export class NotificationService {
       private readonly notificationRepository: Repository<NotificationEntity>,
   ) {}
 
-  /* 
-    특정 알림의 readState 를 0 -> 1 수정
-
-    input   : { userId, index }
-    output  : boolean
+  /**
+  * 특정 알림의 readState 를 수정
+  * @param changeReadState 알림의 고유 인덱스와 유저 아이디
   */
   async changeWithUserId(changeReadState: ChangeReadState): Promise<boolean> {
     const updateResult = await this.notificationRepository
@@ -40,12 +38,9 @@ export class NotificationService {
     return true;
   }
 
-  /* 
-    유저 상관 없이 모든 알림 내역 조회 or
-    특정 유저에 대한 알림 내역 조회
-
-    input   : empty
-    output  : NotificationEntity[]
+  /**
+  * 특정 유저 알림 내역 조회 or 모든 유저 알림 내역 조회
+  * @param req userId의 포함 여부에 따라 조회 범위 조정
   */
   async findAll(req: NotificationGetRequest): Promise<NotificationEntity[]> {
   // 단일 공지사항 조회
@@ -69,15 +64,10 @@ export class NotificationService {
       });
   }
 
-  /* 
-    개인 알림 전송 및 다인 전송
-
-    input   : {
-      userIds : string[];
-      title   : string;
-      content : string;
-    }
-    output  : NotificationEntity[]
+  /**
+  * 알림 전송
+  * @param req userIds: string[] 에 존재하는 userIds 의 유저에게 알림 생성 (전송)
+  * 
   */
   async send(req: NotificationPostRequest): Promise<boolean> {
     const { title, content, userId } = req;
