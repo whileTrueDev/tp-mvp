@@ -1,14 +1,16 @@
 import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn,
 } from 'typeorm';
+import { FeatureSuggestionEntity } from './featureSuggestion.entity';
 
 @Entity({ name: 'FeatureSuggestionReplyTest' })
 export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @PrimaryGeneratedColumn()
   replyId: number;
 
-  @Column()
+  @JoinColumn({ name: 'suggestionId' })
+  @ManyToOne((type) => FeatureSuggestionEntity, (fs) => fs.replies)
   suggestionId: number;
 
   @Column()

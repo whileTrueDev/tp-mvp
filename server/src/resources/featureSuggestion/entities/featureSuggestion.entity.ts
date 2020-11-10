@@ -1,32 +1,53 @@
-// import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface'; // Reply등, DB구조 확실히 정해진 뒤 올바르게 interface 정의 
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
+
 import {
-  Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany,
 } from 'typeorm';
+import { FeatureSuggestionReplyEntity } from './featureSuggestionReply.entity';
 
-@Entity('FeatureSuggestion')
-export class FeatureSuggestionEntity {
-// export class FeatureSuggestionEntity implements FeatureSuggestion { // Reply등, DB구조 확실히 정해진 뒤 올바른 interface를 implements 하는 방식으로 변경
+@Entity({ name: 'FeatureSuggestionTest' })
+export class FeatureSuggestionEntity implements FeatureSuggestion {
   @PrimaryGeneratedColumn()
-  id: number;
+  suggestionId: number;
 
-  @Column({ comment: '기능제안 구분' })
-  category: number;
+  @Column({
+    type: 'varchar',
+    length: 50,
+  })
+  category: string;
 
-  @Column({ comment: '기능제안 작성자' })
-  author: string;
-
-  @Column({ comment: '기능제안 제목' })
+  @Column()
   title: string;
 
-  @Column('text', { comment: '기능제안 내용' })
+  @Column()
   content: string;
 
-  @Column('text', { comment: '관리자 답변', nullable: true })
-  reply: string | null;
+  @Column({
+    type: 'varchar',
+    length: 50,
+  })
+  author: string;
 
-  @Column({ comment: '답변상태 플래그 0=미확인, 1=승인, 2=보류' })
-  progress: number;
+  @Column({
+    type: 'varchar',
+    length: 20,
+  })
+  userId: string;
+
+  @Column({ type: 'tinyint', default: 0, comment: '기능제안 상태 플래그 0=미확인, 1=승인, 2=보류' })
+  state: number;
+
+  @Column({ type: 'smallint', default: 0 })
+  like: number;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  // 기능제안 답장. 관계설정
+  @OneToMany((type) => FeatureSuggestionReplyEntity, (reply) => reply.suggestionId)
+  replies? : FeatureSuggestionReplyEntity[];
+
+  constructor(partial: Partial<FeatureSuggestionEntity>) {
+    Object.assign(this, partial);
+  }
 }

@@ -3,13 +3,13 @@ import {
   IsString,
 } from 'class-validator';
 
-export class ReplyPostRequest {
+export class ReplyPatch {
   @IsNumber()
-  suggestionId: number;
-
-  @IsString()
-  content: string;
+  id: number;
 
   @IsString()
   author: string;
+
+  @IsString()
+  content: string;
 }

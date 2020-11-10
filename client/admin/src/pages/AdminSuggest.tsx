@@ -24,7 +24,7 @@ export default function AdminSuggest(): JSX.Element {
     기능제안글 가져오기 요청
  */
   const [{ loading: suggestionLoading, data: getData }, suggestreload] = useAxios(
-    { url: 'http://localhost:3000/admin/feature-suggestion', method: 'GET' },
+    { url: 'http://localhost:3000/feature-suggestion', method: 'GET' },
   );
 
   return (

@@ -1,13 +1,14 @@
 import React from 'react';
+import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Chip } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
-import FeatureCategoryButtonGroup from '../../organisms/mainpage/featureSuggestion/FeatureCategoryButtonGroup';
+import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
-import { FeatureData } from '../../interfaces/FeatureSuggestion';
 import Button from '../../atoms/Button/Button';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import Appbar from '../../organisms/shared/Appbar';
@@ -21,23 +22,29 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   featureContainer: { width: 968, margin: '64px auto' },
-  contents: { marginTop: theme.spacing(4) },
+  contents: { marginTop: theme.spacing(2) },
+  buttonSection: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   chipArea: {
     marginBottom: theme.spacing(1),
     display: 'flex',
     justifyContent: 'flex-end',
     alignContent: 'flex-end',
   },
+  tableContainer: { marginTop: theme.spacing(1) },
 }));
 
-export default function FeatureSuggestion(): JSX.Element {
+export default function FeatureSuggestionPage(): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
   const history = useHistory();
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
+
+  // 카테고리 필터링
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
-  const [page, setPage] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(8);
   function handleCategorySelect(str: string): void {
     setSelectedCategory(str);
   }
@@ -50,18 +57,19 @@ export default function FeatureSuggestion(): JSX.Element {
   }
   function handleResetFeatureSelect(): void {
     history.push('/feature-suggestion');
+    // "목록" 버튼 클릭으로 목록으로 돌아온 경우 "전체" 카테고리로 수정
+    setSelectedCategory('전체');
   }
-  const [{ loading, data }] = useAxios<FeatureData[]>({
-    url: '/feature', method: 'GET',
+
+  // 데이터 요청
+  const [{ loading, data }, featureRefetch] = useAxios<FeatureSuggestion[]>({
+    url: '/feature-suggestion', method: 'GET',
   });
-  const categoryTabSwitch = (value: number) => {
-    switch (value) {
-      case 0: return (<Typography> 홈페이지관련 </Typography>);
-      case 1: return (<Typography> 편집점관련 </Typography>);
-      case 2: return (<Typography> 기타 </Typography>);
-      default: return (<Typography> 전체 </Typography>);
-    }
-  };
+
+  // 페이지네이션
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(8);
+
   return (
     <div>
       <Appbar />
@@ -75,7 +83,7 @@ export default function FeatureSuggestion(): JSX.Element {
           <Typography variant="h4">기능제안</Typography>
 
           {/* 기능제안 개별 보기 */}
-          {selectedSuggestionId && !loading && data ? (
+          {selectedSuggestionId && !loading && data && (
             <div className={classes.contents}>
               <FeatureDetail
                 selectedSuggestionId={selectedSuggestionId}
@@ -86,59 +94,57 @@ export default function FeatureSuggestion(): JSX.Element {
                     ? row.category === selectedCategory : row))}
                 onOtherFeatureClick={handleFeatureClick}
                 onBackClick={handleResetFeatureSelect}
-                categoryTabSwitch={categoryTabSwitch}
+                refetch={featureRefetch}
               />
             </div>
-          )
-            : (
-              <>
-                {/* 기능제안 목록 보기 */}
-                <div className={classes.contents}>
-                  <FeatureCategoryButtonGroup
-                    categories={!loading && data
-                      ? Array
-                        .from(new Set(data.map((d) => d.category)))
-                        .sort()
-                      : []}
-                    onChange={handleCategorySelect}
-                    selected={selectedCategory}
-                    categoryTabSwitch={categoryTabSwitch}
-                  />
-                </div>
+          )}
 
-                <div className={classes.contents}>
-                  <div className={classes.chipArea}>
-                    <Chip style={{ margin: 4 }} variant="outlined" label="미확인" />
-                    <Chip style={{ margin: 4 }} color="secondary" label="개발 확정" />
-                    <Chip style={{ margin: 4 }} color="primary" label="개발보류" />
-                  </div>
-                  <FeatureTable
-                    metrics={!loading && data
-                      ? data
-                        .sort((row1, row2) => new Date(row2.createdAt).getTime()
+          {/* 기능제안 카테고리 목록 필터링 */}
+          {!selectedSuggestionId && (
+          <div className={classes.contents}>
+            <FilterCategoryButtonGroup
+              categories={!loading && data
+                ? Array
+                  .from(new Set(data.map((d) => d.category)))
+                  .sort()
+                : []}
+              onChange={handleCategorySelect}
+              selected={selectedCategory}
+            />
+          </div>
+          )}
+
+          {/* 기능제안 글 목록 */}
+          <div className={classnames(classes.contents, classes.buttonSection)}>
+            <div>
+              {authContext.user.userId && (
+                <Button onClick={handleWriteClick}>
+                  글쓰기
+                </Button>
+              )}
+            </div>
+            <div className={classes.chipArea}>
+              <Chip style={{ margin: 4 }} variant="outlined" label="미확인" />
+              <Chip style={{ margin: 4 }} color="secondary" label="개발 확정" />
+              <Chip style={{ margin: 4 }} color="primary" label="개발보류" />
+            </div>
+          </div>
+          <div className={classes.tableContainer}>
+            <FeatureTable
+              metrics={!loading && data
+                ? data
+                  .sort((row1, row2) => new Date(row2.createdAt).getTime()
                           - new Date(row1.createdAt).getTime())
-                        .filter((row) => (selectedCategory !== '전체'
-                          ? row.category === selectedCategory : row))
-                      : []}
-                    handleClick={handleFeatureClick}
-                    page={page}
-                    pageSize={pageSize}
-                    handlePage={setPage}
-                    handlePageSize={setPageSize}
-                    categoryTabSwitch={categoryTabSwitch}
-                  />
-                </div>
-                <div>
-                  {authContext.user.userId ? (
-                    <Button
-                      onClick={handleWriteClick}
-                    >
-                      글쓰기
-                    </Button>
-                  ) : null}
-                </div>
-              </>
-            )}
+                  .filter((row) => (selectedCategory !== '전체'
+                    ? row.category === selectedCategory : row))
+                : []}
+              handleClick={handleFeatureClick}
+              page={page}
+              pageSize={pageSize}
+              handlePage={setPage}
+              handlePageSize={setPageSize}
+            />
+          </div>
         </div>
       </section>
       <Footer />
