@@ -61,6 +61,11 @@ export default function UserlistTable(props: Props): JSX.Element {
   const { userData, handleClick } = props;
   const [list, setList] = React.useState<any[]>([]);
 
+  // //전체 회원에대한 알람데이터
+  // const [{ data }] = useAxios({
+  //   url: 'http://localhost:3000/notification/admin', method: 'GET',
+  // });
+
   // DialogOpen
   const [open, setOpen] = React.useState(false);
 
@@ -91,9 +96,9 @@ export default function UserlistTable(props: Props): JSX.Element {
         columns={[
           {
             title: '사용자',
-            field: 'userName',
+            field: 'userId',
             render: (rowData) => (
-              <AvatarWithName name={rowData.userName} />
+              <AvatarWithName name={rowData.userId} />
             ),
           },
         ]}

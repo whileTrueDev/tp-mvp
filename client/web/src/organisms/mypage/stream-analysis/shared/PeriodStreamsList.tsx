@@ -25,7 +25,7 @@ import { PeriodStreamsListProps, StreamsListItem } from './StreamAnalysisShared.
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
-    padding: '0px',
+    padding: 0,
     maxHeight: '200px',
     overflow: 'auto',
   },
@@ -121,7 +121,7 @@ const StyledToolTip = withStyles((theme) => ({
 
 export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.Element {
   const {
-    selectedStreams, handleStreamList, selectedDate,
+    selectedStreams, handleStreamList, selectedDate, small,
   } = props;
   const classes = useStyles();
 
@@ -225,9 +225,11 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
               {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
             </Typography>
 
-            <Typography className={classes.removedListItemText}>
-              {stream.title}
+            {!small && (
+            <Typography className={classes.listItemText}>
+              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
             </Typography>
+            )}
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -237,6 +239,11 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
             >
               <ClearOutlinedIcon />
             </IconButton>
+            {!small && (
+            <Typography className={classes.listItemText}>
+              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+            </Typography>
+            )}
 
             <ListItemIcon>
               {platformIcon(stream)}
@@ -253,6 +260,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         )}
 
       </StyledToolTip>
+
     </ListItem>
   );
 

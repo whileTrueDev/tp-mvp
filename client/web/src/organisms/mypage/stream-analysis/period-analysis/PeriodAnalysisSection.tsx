@@ -123,12 +123,13 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
+      const searchParam: SearchCalendarStreams = {
+        userId: auth.user.userId,
+        startDate: period[0].toISOString(),
+        endDate: period[1].toISOString(),
+      };
       excuteGetStreams({
-        params: {
-          userId: auth.user.userId,
-          startDate: period[0].toISOString(),
-          endDate: period[1].toISOString(),
-        },
+        params: searchParam,
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         setTermStreamsList(res.data.map((data) => ({
           ...data,

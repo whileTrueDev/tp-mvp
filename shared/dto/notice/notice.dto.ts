@@ -2,7 +2,7 @@ import {
   IsNumber, IsString, IsOptional, IsBoolean,
 } from 'class-validator';
 
-export class Notice {
+export class NoticeDto {
   @IsNumber()
   @IsOptional()
   id: number;

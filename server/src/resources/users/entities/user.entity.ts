@@ -9,6 +9,7 @@ import { PlatformTwitchEntity } from './platformTwitch.entity';
 import { PlatformAfreecaEntity } from './platformAfreeca.entity';
 import { PlatformYoutubeEntity } from './platformYoutube.entity';
 import { SubscribeEntity } from './subscribe.entity';
+import { NotificationEntity } from '../../notification/entities/notification.entity';
 
 @Entity({ name: 'UserTest' })
 export class UserEntity implements User {
@@ -77,4 +78,7 @@ export class UserEntity implements User {
 
   @OneToMany((type) => SubscribeEntity, (subscribe) => subscribe.user)
   subscribe? : SubscribeEntity[];
+
+  @OneToMany((type) => NotificationEntity, (notification) => notification.user)
+  notification? : NotificationEntity[];
 }

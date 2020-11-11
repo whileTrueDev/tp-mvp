@@ -32,10 +32,10 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
   } = props;
 
   const [, executePatch] = useAxios(
-    { url: 'http://localhost:3000/admin/notice', method: 'PATCH' }, { manual: true },
+    { url: 'http://localhost:3000/notice', method: 'PATCH' }, { manual: true },
   );
   const [, executePost] = useAxios(
-    { url: 'http://localhost:3000/admin/notice', method: 'POST' }, { manual: true },
+    { url: 'http://localhost:3000/notice', method: 'POST' }, { manual: true },
   );
 
   return (

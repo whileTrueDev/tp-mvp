@@ -1,4 +1,3 @@
-import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { SvgIconProps } from '@material-ui/core';
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 
@@ -15,8 +14,8 @@ export interface StreamsListItem {
   platform: 'afreeca'|'youtube'|'twitch';
   airTime: number;
   isRemoved: boolean;
-  smileCount: number;
   chatCount: number;
+  smileCount: number;
   viewer: number;
 }
 
@@ -51,6 +50,7 @@ export interface PeriodStreamsListProps {
   selectedStreams: (StreamsListItem)[];
   handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
   selectedDate?: Date;
+  small?: boolean
 }
 export interface CheckBoxGroupProps {
   handleCheckStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -70,7 +70,7 @@ export interface PeriodSelectPopperProps {
 
 export interface PeriodCompareSubmitInterface {
   category: string[];
-  params: SearchStreamInfoByPeriods;
+  params: any;
 }
 
 export interface PeriodAnalysisSubmitInterface {

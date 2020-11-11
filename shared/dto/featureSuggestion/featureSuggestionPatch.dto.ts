@@ -1,8 +1,8 @@
 import {
-  IsString, IsNumber, IsDate,
+  IsString, IsNumber,
 } from 'class-validator';
 
-export class FeatureSuggestionDto {
+export class FeatureSuggestionPatchDto {
   @IsNumber()
   suggestionId: number;
 
@@ -16,17 +16,8 @@ export class FeatureSuggestionDto {
   content: string;
 
   @IsString()
-  author: string;
-
-  @IsString()
   userId: string;
 
-  @IsNumber()
-  state: number;
-
-  @IsNumber()
-  like: number;
-
-  @IsDate()
-  createdAt: Date;
+  @IsString()
+  author: string;
 }

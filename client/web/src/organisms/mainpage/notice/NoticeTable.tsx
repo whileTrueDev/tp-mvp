@@ -9,6 +9,7 @@ import NotificationImportantIcon from '@material-ui/icons/NotificationImportant'
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 
+const TABLE_ROW_HEIGHT = 45;
 interface TableProps {
   metrics: any;
   page: number;
@@ -16,12 +17,11 @@ interface TableProps {
   handlePage: any;
   handlePageSize: any;
   handleClick: (a: any) => void;
-  categoryTabSwitch: (value: string | undefined) => JSX.Element;
 }
 const useStyles = makeStyles((theme) => ({
   tableCell: { padding: theme.spacing(1) },
   tableRow: {
-    height: 60,
+    height: TABLE_ROW_HEIGHT,
     cursor: 'pointer',
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
@@ -44,7 +44,6 @@ export default function MaterialTable({
   pageSize,
   handlePage,
   handlePageSize,
-  categoryTabSwitch,
 }: TableProps): JSX.Element {
   const classes = useStyles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
@@ -56,7 +55,7 @@ export default function MaterialTable({
       <Table
         columns={[
           {
-            width: '70px',
+            width: '80px',
             align: 'center',
             title: ' ',
           },
@@ -107,9 +106,16 @@ export default function MaterialTable({
                     ) : eachRow.id}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {categoryTabSwitch(eachRow.category)}
+                    {eachRow.category}
                   </TableCell>
-                  <TableCell className={classnames({ [classes.tableCell]: true, [classes.importantText]: eachRow.isImportant })} scope="row" align="left">
+                  <TableCell
+                    className={classnames({
+                      [classes.tableCell]: true,
+                      [classes.importantText]: eachRow.isImportant,
+                    })}
+                    scope="row"
+                    align="left"
+                  >
                     {eachRow.title}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="right">
@@ -118,7 +124,7 @@ export default function MaterialTable({
                 </TableRow>
               ))}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 60 * emptyRows }}>
+                <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
                   <TableCell colSpan={4} />
                 </TableRow>
               )}

@@ -7,7 +7,7 @@ export interface Notification {
 
   content: string;
 
-  dateform: Date;
-
   readState: number;
+
+  createdAt: Date;
 }

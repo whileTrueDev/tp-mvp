@@ -11,6 +11,9 @@ import MetricIcons from '../../../atoms/Graph-icons/MetricIcons';
 import SectionTitle from '../../shared/sub/SectionTitles';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: theme.spacing(6),
+  },
   center: {
     display: 'flex',
     justifyContent: 'center',
@@ -57,7 +60,7 @@ export default function StreamAnalysis(
   ];
 
   return (
-    <Grid container direction="column" spacing={1}>
+    <Grid container direction="column" spacing={1} className={classes.root}>
       {/* {!open && metricData && (
         <Grid item className={classes.center}>
           <CircularProgress />

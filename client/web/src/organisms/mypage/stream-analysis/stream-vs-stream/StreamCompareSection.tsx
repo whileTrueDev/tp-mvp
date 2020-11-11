@@ -212,7 +212,7 @@ export default function StreamCompareSection(
           </Grid>
         </Grid>
       </Grid>
-      <Grid container justify="flex-end">
+      <Grid container justify="center">
         <Button
           variant="contained"
           className={classes.anlaysisButton}
