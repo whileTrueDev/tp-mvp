@@ -47,6 +47,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(4),
   },
+  completeButton: {
+    alignSelf: 'flex-end',
+    marginTop: theme.spacing(2),
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.primary.contrastText,
+  },
 }));
 
 export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.Element {
@@ -142,9 +148,8 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
 
           <Button
             variant="contained"
-            color="secondary"
-            style={{ alignSelf: 'flex-end', marginTop: '16px', color: 'white' }}
             onClick={handleAnchorClose}
+            className={classes.completeButton}
           >
             완료
           </Button>

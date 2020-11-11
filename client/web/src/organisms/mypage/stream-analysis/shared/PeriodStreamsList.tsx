@@ -20,7 +20,7 @@ import { PeriodStreamsListProps, StreamsListItem } from './StreamAnalysisShared.
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
-    padding: '0px',
+    padding: 0,
     maxHeight: '200px',
     overflow: 'auto',
   },
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: 'red',
+      color: theme.palette.error,
     },
   },
   addButton: {
