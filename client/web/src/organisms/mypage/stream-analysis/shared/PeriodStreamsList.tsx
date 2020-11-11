@@ -5,6 +5,7 @@ import {
   Typography, List, ListItem, IconButton, ListItemIcon, Button,
   Tooltip, Chip, Avatar,
 } from '@material-ui/core';
+import classnames from 'classnames';
 //  styles
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 // material-ui icons
@@ -73,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: 'red',
+      color: theme.palette.error,
     },
   },
   addButton: {
@@ -194,49 +195,14 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     </div>
   );
 
-  const listItems = (stream: StreamsListItem): JSX.Element => (
+  const listItem = (stream: StreamsListItem, removed: boolean) => (
     <ListItem
       key={stream.streamId}
       button
-      className={classes.listItem}
-    >
-      <StyledToolTip
-        arrow
-        placement="top"
-        title={tooltipContents(stream)}
-      >
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton
-            className={classes.closeIcon}
-            onClick={() => handleStreamList(stream)}
-          >
-            <ClearOutlinedIcon />
-          </IconButton>
-
-          <ListItemIcon>
-            {platformIcon(stream)}
-          </ListItemIcon>
-
-          <Typography className={classes.listItemText}>
-            {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
-          </Typography>
-
-          <Typography className={classes.listItemText}>
-            {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
-          </Typography>
-        </div>
-
-      </StyledToolTip>
-
-    </ListItem>
-  );
-
-  const removedListItems = (stream: StreamsListItem): JSX.Element => (
-
-    <ListItem
-      key={stream.streamId}
-      button
-      className={classes.removedListItem}
+      className={classnames({
+        [classes.listItem]: !removed,
+        [classes.removedListItem]: removed,
+      })}
     >
       <StyledToolTip
         arrow
@@ -244,28 +210,50 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         title={tooltipContents(stream)}
         classes={{ tooltip: classes.noMaxWidth }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
 
-          <Button
-            variant="contained"
-            className={classes.addButton}
-            onClick={() => handleStreamList(stream, false)}
-          >
-            재등록
-          </Button>
+        {removed ? (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <Button
+              variant="contained"
+              className={classes.addButton}
+              onClick={() => handleStreamList(stream, false)}
+            >
+              재등록
+            </Button>
 
-          <Typography className={classes.removedListItemText}>
-            {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
-          </Typography>
+            <Typography className={classes.removedListItemText}>
+              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+            </Typography>
 
-          <Typography className={classes.removedListItemText}>
-            {stream.title}
-          </Typography>
+            <Typography className={classes.removedListItemText}>
+              {stream.title}
+            </Typography>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <IconButton
+              className={classes.closeIcon}
+              onClick={() => handleStreamList(stream)}
+            >
+              <ClearOutlinedIcon />
+            </IconButton>
 
-        </div>
+            <ListItemIcon>
+              {platformIcon(stream)}
+            </ListItemIcon>
+
+            <Typography className={classes.listItemText}>
+              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+            </Typography>
+
+            <Typography className={classes.listItemText}>
+              {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
+            </Typography>
+          </div>
+        )}
+
       </StyledToolTip>
     </ListItem>
-
   );
 
   return (
@@ -273,14 +261,9 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
       {selectedDate && selectedStreams
         && selectedStreams
           .filter((stream) => moment(stream.startedAt).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
-          .map((stream) => {
-            if (stream.isRemoved) return removedListItems(stream);
-            return listItems(stream);
-          })}
-      {!selectedDate && selectedStreams && selectedStreams.map((stream) => {
-        if (stream.isRemoved) return removedListItems(stream);
-        return listItems(stream);
-      })}
+          .map((stream) => listItem(stream, stream.isRemoved))}
+      {!selectedDate && selectedStreams && selectedStreams
+        .map((stream) => listItem(stream, stream.isRemoved))}
     </List>
   );
 }
