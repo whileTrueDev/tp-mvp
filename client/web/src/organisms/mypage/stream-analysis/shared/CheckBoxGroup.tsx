@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     lineHeight: 1,
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    marginRight: '55px',
+    marginRight: theme.spacing(7),
   },
   checkBox: {
     color: '#3b86ff',
