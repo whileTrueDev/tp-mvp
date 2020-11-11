@@ -1,5 +1,5 @@
 import {
-  IsString, IsDateString,
+  IsString, IsDateString, IsIn,
 } from 'class-validator';
 
 export class SearchEachS3StreamData {
@@ -11,4 +11,7 @@ export class SearchEachS3StreamData {
 
   @IsDateString()
   startedAt: string;
+
+  @IsIn(['afreeca', 'twitch', 'youtube'])
+  platform: string;
 }

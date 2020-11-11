@@ -319,7 +319,8 @@ export class StreamAnalysisService {
     /* input param 을 통해 S3 키 배열 생성 함수 정의 */
     const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
       const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
-      const path = `metrics_json/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
+      const { platform } = stream;
+      const path = `metrics_json/${platform}/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
