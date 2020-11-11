@@ -11,7 +11,7 @@ import koLocale from 'date-fns/locale/ko';
 import Grid from '@material-ui/core/Grid';
 import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import dateExpression from '../../../utils/dateExpression';
+// import dateExpression from '../../../utils/dateExpression';
 
 interface StreamData {
   getState: boolean;
@@ -183,11 +183,13 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
                                 handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
                               }}
                             >
-                              {dateExpression({
+                              {`${`${String(value.startAt).slice(2, 4)}일  ${value.startAt.slice(4, 6)}:${value.startAt.slice(6, 8)}`} ~ ${String(value.finishAt).slice(2, 4)}일  ${`${value.finishAt.slice(4, 6)}:${value.finishAt.slice(6, 8)}`}`}
+                              {/* {dateExpression({
                                 compoName: 'highlight-calendar',
-                                createdAt: new Date(value.startAt),
-                                finishAt: new Date(value.finishAt),
-                              })}
+                                createdAt: (value.startAt),
+                                finishAt: (value.finishAt),
+                              })} */}
+
                             </Button>
                           </Grid>
                         ) : null
