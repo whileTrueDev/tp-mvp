@@ -255,7 +255,7 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
                               handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
                             }}
                           >
-                            <div style={{ marginRight: '32px' }}>
+                            <div style={{ marginRight: '40px' }}>
                               {platformIcon(value)}
                             </div>
 

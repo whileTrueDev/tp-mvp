@@ -70,8 +70,8 @@ export class HighlightService {
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
     filterEmpty.forEach((value) => {
-      const startAt = value.split('_')[1];
-      const finishAt = value.split('_')[2];
+      const startAt = value.split('_')[0];
+      const finishAt = value.split('_')[1];
       const fileId = value;
       const oneStream = {
         getState: true, startAt, finishAt, fileId, platform,
