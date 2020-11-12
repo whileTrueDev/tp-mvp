@@ -30,11 +30,10 @@ export interface NoticeDetailProps {
   selectedNoticeId: string;
   onBackClick: () => void;
   onOtherNoticeClick: (num: number) => void;
-  noticeTabSwitch: (value: string | undefined) => JSX.Element;
 }
 export default function NoticeDetail({
   data, onBackClick, selectedNoticeId,
-  onOtherNoticeClick, noticeTabSwitch,
+  onOtherNoticeClick,
 }: NoticeDetailProps): JSX.Element {
   const classes = useStyles();
 
@@ -59,7 +58,6 @@ export default function NoticeDetail({
             {currentNotice?.title}
           </Typography>
           <Typography color="textSecondary">
-            {noticeTabSwitch(currentNotice?.category)}
             {dateExpression({
               compoName: 'selected-view',
               createdAt: currentNotice?.createdAt,
