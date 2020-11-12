@@ -103,7 +103,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           </ListItemIcon>
           <Typography className={classes.listItemText}>
             {dateExpression({
-              compoName: 'calendar',
+              compoName: 'analysys-calender',
               createdAt: new Date(stream.startedAt),
               streamAirtime: stream.airTime,
             })}

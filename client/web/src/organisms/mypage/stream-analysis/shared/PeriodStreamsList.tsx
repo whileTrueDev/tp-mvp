@@ -9,7 +9,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared dto and interface
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+// import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // atom svg icons
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
@@ -102,7 +102,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
   //   return airTimeText;
   // };
 
-  const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
+  const platformIcon = (stream: StreamsListItem): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':
         return (
@@ -143,7 +143,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         {
           dateExpression({
             createdAt: new Date(stream.startedAt),
-            compoName: 'calendar',
+            compoName: 'analysys-calender',
             streamAirtime: stream.airTime,
           })
         }
@@ -174,7 +174,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         {/* 날짜 표현 컴포넌트로 변경 */}
         {dateExpression({
           createdAt: new Date(stream.startedAt),
-          compoName: 'calendar',
+          compoName: 'analysys-calender',
           streamAirtime: stream.airTime,
         })}
       </Typography>

@@ -126,7 +126,7 @@ export default function FeatureDetail({
             {categoryTabSwitch(Number(currentSuggestion?.category))}
             {dateExpression({
               compoName: 'selected-view',
-              createdAt: 'currentSuggestion?.createdAt',
+              createdAt: currentSuggestion?.createdAt,
             })}
           </Typography>
         </div>

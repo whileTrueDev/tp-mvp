@@ -17,6 +17,7 @@ import Loading from '../../shared/sub/Loading';
 import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
+import dateExpression from '../../../utils/dateExpression';
 
 interface StreamDate {
   fullDate: Date;
@@ -264,7 +265,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               && (
                 <Card className={classes.card}>
                   <Typography className={classes.cardText}>
-                    {`${`${String(selectedStream.startAt).slice(2, 4)}일  ${selectedStream.startAt.slice(4, 6)}:${selectedStream.startAt.slice(6, 8)}`} ~ ${String(selectedStream.finishAt).slice(2, 4)}일  ${`${selectedStream.finishAt.slice(4, 6)}:${selectedStream.finishAt.slice(6, 8)}`}`}
+                    {dateExpression({
+                      compoName: 'highlight-calendar',
+                      createdAt: (selectedStream.startAt),
+                      finishAt: (selectedStream.finishAt),
+                    })}
                   </Typography>
                 </Card>
               )}
