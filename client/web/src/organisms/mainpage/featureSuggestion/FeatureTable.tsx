@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import {
   TablePagination, TableCell, TableRow, TableBody, Chip, Typography,
 } from '@material-ui/core';
@@ -8,6 +7,8 @@ import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+// 날짜표현 컴포넌트 추가
+import dateExpression from '../../../utils/dateExpression';
 
 const TABLE_ROW_HEIGHT = 45;
 const useStyles = makeStyles((theme) => ({
@@ -129,7 +130,12 @@ export default function MaterialTable({
                     </div>
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {moment(eachRow.createdAt).format('YYYY년 MM월 DD일')}
+                    {
+                      dateExpression({
+                        compoName: 'table-view',
+                        createdAt: eachRow.createdAt,
+                      })
+                    }
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {progressColumn(eachRow.state)}

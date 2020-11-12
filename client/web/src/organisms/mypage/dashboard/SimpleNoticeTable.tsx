@@ -11,6 +11,8 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
+// 날짜표현추가
+import dateExpression from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -57,7 +59,10 @@ export default function SimpleNoticeTable({
                 </TableCell>
                 <TableCell width={250} align="right">
                   <Typography>
-                    {new Date(row.createdAt).toLocaleString()}
+                    {dateExpression({
+                      compoName: 'table-view',
+                      createdAt: new Date(row.createdAt),
+                    })}
                   </Typography>
                 </TableCell>
               </TableRow>
