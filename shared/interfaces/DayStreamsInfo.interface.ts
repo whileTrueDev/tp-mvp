@@ -5,4 +5,7 @@ export interface DayStreamsInfo{
   airTime: number;
   startedAt: Date;
   creatorId: string;
+  smileCount: number;
+  viewer: number;
+  chatCount: number;
 }

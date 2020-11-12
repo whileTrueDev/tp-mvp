@@ -15,15 +15,20 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   cardText: {
-    fontsize: 40,
-    fontWeight: 'bold',
-    color: theme.palette.text.secondary,
+    fontSize: 15,
+    margin: 8,
+    // color: theme.palette.text.secondary,
   },
   card: {
-    height: '2vw',
-    paddingTop: 6,
+    margin: `0px ${theme.spacing(4)}px`,
     textAlign: 'center',
-    background: '#e4e4e4',
+    background: theme.palette.action.focus,
+    borderRadius: 6,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 700,
+    padding: `${theme.spacing(1)}px ${theme.spacing(4)}px`,
   },
 }));
 

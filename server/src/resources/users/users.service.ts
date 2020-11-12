@@ -148,6 +148,20 @@ export class UsersService {
     return false;
   }
 
+  /*
+    관리자 페이지 개인 알림 보낼 유저 리스트 조회
+    input   : empty
+    output  : [ userId1, userId2, ... ]
+  */
+  async findAllUserList(): Promise<{userId: string}[]> {
+    const allUserId = await this.usersRepository
+      .createQueryBuilder('users')
+      .select(['userId'])
+      .execute();
+
+    return allUserId;
+  }
+
   // **********************************************
   // User Tokens 관련
 

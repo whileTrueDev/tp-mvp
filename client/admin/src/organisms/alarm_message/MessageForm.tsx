@@ -50,10 +50,11 @@ export default function MessageTable(props: Props): JSX.Element {
   const [title, setTitle] = React.useState('');
 
   const [{ data: getData, loading: getLoading }] = useAxios({
-    url: 'http://localhost:3000/admin/notification', method: 'GET',
+    url: 'http://localhost:3000/notification', method: 'GET', params: { userId: data.userId },
   });
+
   const [, executePost] = useAxios({
-    url: 'http://localhost:3000/admin/notification', method: 'POST',
+    url: 'http://localhost:3000/notification', method: 'POST',
   });
   function handleTitle(e: any) {
     setTitle(e.target.value);
@@ -69,9 +70,9 @@ export default function MessageTable(props: Props): JSX.Element {
 
   function handleSendClick() {
     if (title && content) {
-      if (window.confirm(`정말로 ${data.userId}에게 메시지를 보내시겠습니까?`)) {
-        setTitle('');
-        setContent('');
+      if (window.confirm(`정말로 ${getData.userId}에게 메시지를 보내시겠습니까?`)) {
+        // setTitle('');
+        // setContent('');
         executePost({
           data: {
             userId: [data.userId],
@@ -101,8 +102,8 @@ export default function MessageTable(props: Props): JSX.Element {
       }}
     >
       <div className={classes.container}>
-        {data && (
-        <AvatarWithName name={data.userId} logo={data.logo ? data.logo : null} />
+        {getData && (
+        <AvatarWithName name={getData.userId} logo={getData.logo ? getData.logo : null} />
         )}
         <Divider />
 

@@ -10,9 +10,10 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
+
 import dateExpression from '../../../utils/dateExpression';
 
-import { NoticeData } from '../../../interfaces/Notice';
+import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },

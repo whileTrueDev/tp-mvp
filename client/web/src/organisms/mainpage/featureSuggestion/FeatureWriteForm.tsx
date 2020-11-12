@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -9,6 +9,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
+import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
+import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import Button from '../../../atoms/Button/Button';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
@@ -27,96 +30,82 @@ const useStyles = makeStyles((theme) => ({
   writeForm: { marginTop: theme.spacing(8) },
   buttonSet: { textAlign: 'right' },
 }));
-interface FeatureSuggestion {
-  title: string;
-  category: string | number;
-  contents: string;
-  userId: string;
-  image: any;
-}
-
-interface FeatureSuggestionData {
-  id: number;
-  title: string;
-  category: string | number;
-  content: string;
-  author: string;
-  createdAt: Date;
-  reply: boolean | string;
-  progress: number;
-}
 
 export default function FeatureWriteForm(): JSX.Element {
-  const { enqueueSnackbar } = useSnackbar();
-  const authContext = useAuthContext();
-  const [state, setState] = React.useState<FeatureSuggestion>({
-    title: '',
-    category: '0',
-    contents: '',
-    userId: authContext.user.userId,
-    image: null,
-  });
-  const history = useHistory();
-  const location = useLocation<FeatureSuggestionData[]>();
-
   const classes = useStyles();
-  // const [selectedFile, setSelectedFile] = React.useState(null);
-  const imageObject = React.useRef<HTMLInputElement | null>(null);
-  const handleImageUpload = () => {
-    if (imageObject && imageObject.current && imageObject.current.files) {
-      setState({ ...state, image: imageObject.current.files[0] ? imageObject.current.src : null });
-    }
-  };
-  // const handleImageUpload = (event: any) => {
-  //   console.log(typeof event.target.src);
-  // };
+  const authContext = useAuthContext();
+  const history = useHistory();
+  const param = useParams<{id: string} | undefined>();
+  const location = useLocation<FeatureSuggestion[]>();
+  const { enqueueSnackbar } = useSnackbar();
+
+  // ******************************************************
+  // 기능제안 state
+  const [featureSource, setFeatureSource] = React.useState<Pick<FeatureSuggestion, 'title' | 'category' | 'content'>>({
+    title: '',
+    category: '',
+    content: '',
+  });
+
   const handleTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, title: event.target.value });
+    setFeatureSource({ ...featureSource, title: event.target.value });
   };
 
   const handleCategory = (event: any) => {
-    setState({ ...state, category: event.target.value });
+    setFeatureSource({ ...featureSource, category: event.target.value });
   };
 
   const handleContents = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, contents: event.target.value });
+    setFeatureSource({ ...featureSource, content: event.target.value });
   };
 
+  // ******************************************************
+  // 기능제안 등록
   const [, postRequest] = useAxios(
-    { url: '/feature/upload', method: 'post' }, { manual: true },
+    { url: '/feature-suggestion', method: 'post' }, { manual: true },
   );
+  function handlePostSubmit() {
+    const data: FeatureSuggestionPostDto = {
+      ...featureSource,
+      userId: authContext.user.userId,
+      author: authContext.user.userId,
+    };
+    postRequest({ data })
+      .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
+      .then(() => history.push('/feature-suggestion'))
+      .catch(() => ShowSnack('기능제안 등록 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
+  }
+
+  // ******************************************************
+  // 기존 기능제안 수정
   const [, editPatchRequest] = useAxios(
-    { url: '/feature/upload-edit', method: 'patch' }, { manual: true },
+    { url: '/feature-suggestion', method: 'patch' }, { manual: true },
   );
+  function handlePatchSubmit(targetSuggestionId: string | number) {
+    const data: FeatureSuggestionPatchDto = {
+      ...featureSource,
+      suggestionId: Number(targetSuggestionId),
+      userId: authContext.user.userId,
+      author: authContext.user.userId,
+    };
+    editPatchRequest({ data })
+      .then(() => ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar))
+      .then(() => history.push('/feature-suggestion'))
+      .catch(() => ShowSnack('기능제안 수정 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
+  }
 
-  const handleSubmit = () => {
-    if (location.state[0].id) {
-      editPatchRequest({ data: [state, location.state[0].id] }).then(() => {
-        ShowSnack('수정 되었습니다', 'info', enqueueSnackbar);
-        window.location.replace('/feature-suggestion');
-      });
-    } else {
-      postRequest({ data: state }).then(() => {
-        ShowSnack('등록 되었습니다.', 'success', enqueueSnackbar);
-        window.location.replace('/feature-suggestion');
-      });
-    }
-    // if (imageObject && imageObject.current) {
-    // postRequest({ data: state });
-    // }
-  };
-
+  // 취소 버튼 클릭 핸들러
   const handleCancelButton = () => {
     history.push('/feature-suggestion');
   };
 
   React.useEffect(() => {
-    if (location.state) {
-      setState({
-        ...state,
+    if (param && param.id) {
+      setFeatureSource({
+        ...featureSource,
         title: location.state[0].title,
         category: location.state[0].category,
-        contents: location.state[0].content,
+        content: location.state[0].content,
       });
     }
   // 한번만 실행되어야 함.
@@ -134,17 +123,17 @@ export default function FeatureWriteForm(): JSX.Element {
             native
             id="feature-category"
             label="카테고리"
-            defaultValue={state.category}
-            value={state.category}
+            value={featureSource.category}
             onChange={handleCategory}
             inputProps={{
               name: '카테고리',
               id: 'outlined-age-native-simple',
             }}
           >
-            <option value="0">홈페이지 개선</option>
-            <option value="1">하이라이트 관련</option>
-            <option value="2">기타</option>
+            <option value="홈페이지 개선">홈페이지 개선</option>
+            <option value="하이라이트 관련">하이라이트 관련</option>
+            <option value="지속적으로 추가">지속적으로 추가</option>
+            <option value="기타">기타</option>
           </Select>
         </FormControl>
       </div>
@@ -154,8 +143,7 @@ export default function FeatureWriteForm(): JSX.Element {
         <TextField
           className={classes.titleInput}
           id="feature-title"
-          // defaultValue={state.title}
-          value={state.title}
+          value={featureSource.title}
           rowsMax={1}
           variant="outlined"
           placeholder="제목을 입력해주세요."
@@ -168,17 +156,12 @@ export default function FeatureWriteForm(): JSX.Element {
           fullWidth
           id="feature-contents"
           multiline
-          value={state.contents}
+          value={featureSource.content}
           onChange={handleContents}
           rows={12}
           placeholder="내용을 입력해주세요."
           variant="outlined"
         />
-      </div>
-      <div className={classes.contents}>
-        <Button>
-          <input type="file" name="file" ref={imageObject} onChange={handleImageUpload} />
-        </Button>
       </div>
       <div className={classes.buttonSet}>
         <Button
@@ -190,9 +173,14 @@ export default function FeatureWriteForm(): JSX.Element {
         </Button>
         <Button
           className={classnames(classes.contents, classes.button)}
-          onClick={handleSubmit}
+          onClick={() => {
+            // 글수정의 경우
+            if (param && param.id) handlePatchSubmit(param.id);
+            // 글 첫 게시
+            else handlePostSubmit();
+          }}
         >
-          등록하기
+          {param && param.id ? '수정하기' : '등록하기'}
         </Button>
       </div>
     </div>

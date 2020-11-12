@@ -87,11 +87,22 @@ export class UsersController {
     output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
   */
   @Get('/subscribe-users')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   getUserValidSubscribeInfo(
     @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers,
   ): Promise<{validUserList: SubscribeEntity[]; inValidUserList: SubscribeEntity[]}> {
     return this.usersService.findUserSubscribeInfo(subscribeUsersRequest.userId);
+  }
+
+  /*
+    admin page 에서의 요청만 수락하도록 하는 로직이 필요
+    관리자 페이지 개인 알림 보낼 유저 리스트 조회
+    input   : empty
+    output  : [userId1, userId2, ... ]
+  */
+  @Get('/id-list')
+  getAllUserIdList(): Promise<{userId: string}[]> {
+    return this.usersService.findAllUserList();
   }
 
   @Post()
