@@ -72,6 +72,13 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
           backgroundColor: '#3a86ff',
         },
       },
+      MuiPickersCalendar: {
+        transitionContainer: {
+          overflowY: 'hidden',
+          overflowX: 'hidden',
+          margin: others.spacing(1),
+        },
+      },
     },
   });
 

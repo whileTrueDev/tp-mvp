@@ -156,6 +156,13 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
           backgroundColor: '#d7e7ff',
         },
       },
+      MuiPickersCalendar: {
+        transitionContainer: {
+          overflowY: 'hidden',
+          overflowX: 'hidden',
+          margin: others.spacing(1),
+        },
+      },
     },
   });
 
@@ -221,7 +228,7 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
             justify="flex-start"
             alignItems="center"
           >
-            <Grid item>
+            <Grid item style={{ overflowY: 'hidden' }}>
               <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
                 <DatePicker
                   value={selectedDate}

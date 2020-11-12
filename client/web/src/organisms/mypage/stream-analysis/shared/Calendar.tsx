@@ -93,6 +93,13 @@ function Calendar(props: CalendarProps): JSX.Element {
           backgroundColor: base ? '#3a86ff' : '#b1ae71',
         },
       },
+      MuiPickersCalendar: {
+        transitionContainer: {
+          overflowY: 'hidden',
+          overflowX: 'hidden',
+          margin: others.spacing(1),
+        },
+      },
     },
   });
 
