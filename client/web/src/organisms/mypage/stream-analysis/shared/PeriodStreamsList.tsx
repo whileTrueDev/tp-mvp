@@ -88,19 +88,6 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     selectedStreams, handleStreamList, selectedDate,
   } = props;
   const classes = useStyles();
-  /*
-    MakedateForm으로 이동하였습니다. 
- */
-  // const airTimeFormmater = (startDate: Date, streamLength: number) => {
-  //   const endAt = new Date(startDate);
-  //   endAt.setHours(startDate.getHours() + streamLength);
-  //   const airTimeText = `${startDate.getDate()}일
-  //                        ${moment(startDate).format('HH:mm')} ~
-  //                        ${endAt.getDate()}일
-  //                        ${moment(endAt).format('HH:mm')}`;
-
-  //   return airTimeText;
-  // };
 
   const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
     switch (stream.platform) {

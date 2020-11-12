@@ -53,18 +53,6 @@ export default function StreamList(props: StreamListProps): JSX.Element {
   } = props;
 
   const classes = useStyles();
-  /*
-    위치를 MakedateForm.tsx로 옮겼습니다. 
- */
-  // const airTimeFormmater = (startDate: Date, streamLength: number) => {
-  //   const endAt = new Date(startDate);
-  //   endAt.setHours(startDate.getHours() + streamLength);
-  //   const airTimeText = `${startDate.getDate()}일
-  //                        ${moment(startDate).format('HH:mm')}~ 
-  //                        ${endAt.getDate()}일
-  //                        ${moment(endAt).format('HH:mm')}`;
-  //   return airTimeText;
-  // };
 
   const handleListStreamClick = (stream: DayStreamsInfo) => {
     if (baseStream && compareStream) {
