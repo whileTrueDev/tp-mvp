@@ -24,7 +24,10 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
   const [, executePatch] = useAxios(
     { url: 'http://localhost:3000/admin/suggestion-reply', method: 'PATCH' }, { manual: true },
   );
-
+  const [authorfix, setAuthor] = React.useState('TruePoint 관리자');
+  function handleAuthorname() {
+    setAuthor('TruePoint 관리자');
+  }
   return (
     <Paper>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: 14 }}>
@@ -49,8 +52,8 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
           label="작성자명을 작성하세요."
           variant="outlined"
           style={{ width: '65%', padding: 5 }}
-          value={state.author}
-          onChange={(e) => dispatch({ type: 'handleTitle', author: e.target.value })}
+          value={authorfix}
+          onChange={handleAuthorname}
           margin="normal"
         />
 
@@ -81,7 +84,7 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
                       data: {
                         id: state.replyId,
                         content: state.content,
-                        author: state.author,
+                        author: authorfix,
                       },
                     })
                       .then((res) => {
@@ -109,7 +112,7 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
                     data: {
                       suggestionId: suggestid,
                       content: state.content,
-                      author: state.author,
+                      author: authorfix,
                     },
                   })
                     .then((res) => {
