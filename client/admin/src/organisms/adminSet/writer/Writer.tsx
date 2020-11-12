@@ -20,10 +20,7 @@ function reducer(state: any, action: any) {
       return { ...state, title };
 
     case 'handleCategory':
-      if (state.title.indexOf(']') > 0) {
-        return { ...state, category, title: `[${category}]${state.title.split(']')[1]}` };
-      }
-      return { ...state, category, title: `[${category}] ${state.title}` };
+      return { ...state, category, title };
 
     case 'handleContent':
       return { ...state, content };
