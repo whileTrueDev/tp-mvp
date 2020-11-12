@@ -85,6 +85,16 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(2),
     paddingTop: theme.spacing(1),
   },
+  calendarAndListWrapper: {
+    marginLeft: theme.spacing(2),
+    marginTop: theme.spacing(2),
+  },
+  selectIcon: {
+    fontSize: '28.5px', marginRight: theme.spacing(3),
+  },
+  streamSelectWrapper: {
+    width: '666px', marginRight: theme.spacing(2),
+  },
 }));
 
 export default useStreamSectionStyles;

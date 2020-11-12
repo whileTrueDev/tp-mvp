@@ -5,7 +5,6 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 // shared dtos , interfaces
-// import { FindAllStreams } from '@truepoint/shared/dist/dto/stream-analysis/findAllStreams.dto';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 // custom svg icon
@@ -173,13 +172,12 @@ export default function StreamCompareSection(
           <Grid container className={classes.bodyWrapper} style={{ width: 'auto' }}>
             <Grid item style={{ width: '310px' }}>
               <Typography className={classes.bodyTitle}>
-                <SelectDateIcon
-                  style={{ fontSize: '28.5px', marginRight: '26px' }}
-                />
+                <SelectDateIcon className={classes.selectIcon} />
                 날짜 선택
               </Typography>
+
               {/* Custom Date Picker 달력 컴포넌트 */}
-              <div style={{ marginLeft: '16px', marginTop: '16px' }}>
+              <div className={classes.calendarAndListWrapper}>
                 <StreamCalendar
                   handleDayStreamList={handleDayStreamList}
                   clickedDate={clickedDate}
@@ -190,15 +188,13 @@ export default function StreamCompareSection(
               </div>
 
             </Grid>
-            <Grid item style={{ width: '666px', marginRight: '16px' }}>
+            <Grid item className={classes.streamSelectWrapper}>
               <Typography className={classes.bodyTitle}>
-                <SelectVideoIcon
-                  style={{ fontSize: '28.5px', marginRight: '26px' }}
-                />
+                <SelectVideoIcon className={classes.selectIcon} />
                 방송 선택
               </Typography>
               {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
-              <div style={{ marginLeft: '16px', marginTop: '16px' }}>
+              <div className={classes.calendarAndListWrapper}>
                 <StreamList
                   dayStreamsList={dayStreamsList}
                   baseStream={baseStream}
@@ -209,9 +205,11 @@ export default function StreamCompareSection(
                 />
               </div>
             </Grid>
+
           </Grid>
         </Grid>
       </Grid>
+
       <Grid container justify="center">
         <Button
           variant="contained"
