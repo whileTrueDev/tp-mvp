@@ -27,7 +27,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     borderRadius: '12px',
     border: `solid 1px ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
-    width: '276px',
+    width: 'auto',
     height: '75px',
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(2),
@@ -84,6 +84,16 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     borderRadius: '5px',
     marginBottom: theme.spacing(2),
     paddingTop: theme.spacing(1),
+  },
+  calendarAndListWrapper: {
+    marginLeft: theme.spacing(2),
+    marginTop: theme.spacing(2),
+  },
+  selectIcon: {
+    fontSize: '28.5px', marginRight: theme.spacing(3),
+  },
+  streamSelectWrapper: {
+    width: '666px', marginRight: theme.spacing(2),
   },
 }));
 

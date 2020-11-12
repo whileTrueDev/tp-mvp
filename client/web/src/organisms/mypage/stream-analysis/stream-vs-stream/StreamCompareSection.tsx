@@ -5,7 +5,6 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 // shared dtos , interfaces
-// import { FindAllStreams } from '@truepoint/shared/dist/dto/stream-analysis/findAllStreams.dto';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 // custom svg icon
@@ -107,11 +106,11 @@ export default function StreamCompareSection(
   const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':
-        return <AfreecaIcon style={{ marginRight: '10px' }} />;
+        return <AfreecaIcon />;
       case 'twitch':
-        return <TwitchIcon style={{ marginRight: '10px' }} />;
+        return <TwitchIcon />;
       case 'youtube':
-        return <YoutubeIcon style={{ marginRight: '10px' }} />;
+        return <YoutubeIcon />;
       default:
         return <div />;
     }
@@ -169,45 +168,48 @@ export default function StreamCompareSection(
         )}
 
         {/* 달력 선택 */}
-        <Grid item container direction="row" xs={12}>
-          <Grid className={classes.bodyWrapper} container xs={8} item>
-            <Grid item xs style={{ width: '310px' }}>
+        <Grid item container direction="row">
+          <Grid container className={classes.bodyWrapper} style={{ width: 'auto' }}>
+            <Grid item style={{ width: '310px' }}>
               <Typography className={classes.bodyTitle}>
-                <SelectDateIcon
-                  style={{ fontSize: '28.5px', marginRight: '26px' }}
-                />
+                <SelectDateIcon className={classes.selectIcon} />
                 날짜 선택
               </Typography>
-              {/* Custom Date Picker 달력 컴포넌트 */}
 
-              <StreamCalendar
-                handleDayStreamList={handleDayStreamList}
-                clickedDate={clickedDate}
-                setClickedDate={setClickedDate}
-                baseStream={baseStream}
-                compareStream={compareStream}
-              />
-            </Grid>
-            <Grid item xs>
-              <Typography className={classes.bodyTitle}>
-                <SelectVideoIcon
-                  style={{ fontSize: '28.5px', marginRight: '26px' }}
+              {/* Custom Date Picker 달력 컴포넌트 */}
+              <div className={classes.calendarAndListWrapper}>
+                <StreamCalendar
+                  handleDayStreamList={handleDayStreamList}
+                  clickedDate={clickedDate}
+                  setClickedDate={setClickedDate}
+                  baseStream={baseStream}
+                  compareStream={compareStream}
                 />
+              </div>
+
+            </Grid>
+            <Grid item className={classes.streamSelectWrapper}>
+              <Typography className={classes.bodyTitle}>
+                <SelectVideoIcon className={classes.selectIcon} />
                 방송 선택
               </Typography>
               {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
-              <StreamList
-                dayStreamsList={dayStreamsList}
-                baseStream={baseStream}
-                compareStream={compareStream}
-                handleSeletedStreams={handleSeletedStreams}
-                handleFullMessage={handleFullMessage}
-                platformIcon={platformIcon}
-              />
+              <div className={classes.calendarAndListWrapper}>
+                <StreamList
+                  dayStreamsList={dayStreamsList}
+                  baseStream={baseStream}
+                  compareStream={compareStream}
+                  handleSeletedStreams={handleSeletedStreams}
+                  handleFullMessage={handleFullMessage}
+                  platformIcon={platformIcon}
+                />
+              </div>
             </Grid>
+
           </Grid>
         </Grid>
       </Grid>
+
       <Grid container justify="center">
         <Button
           variant="contained"

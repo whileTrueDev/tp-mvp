@@ -28,19 +28,21 @@ export class HighlightService {
     return returnHighlight.Body.toString('utf-8');
   }
 
-  async getDateListForCalendar(name: string, year: string, month: string): Promise<string[]> {
+  async getDateListForCalendar(
+    platform: 'afreeca'|'youtube'|'twitch', name: string, year: string, month: string,
+  ): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${name}/${year}/${month}`,
+      Prefix: `highlight_json/${platform}/${name}/${year}/${month}`,
     };
     const keyArray = [];
-    s3.listObjects(params).promise()
+    await s3.listObjects(params).promise()
       .then((value) => {
         value.Contents.forEach((v) => {
-          const getKey = v.Key.split('/')[4];
+          const getKey = v.Key.split('/')[5];
           // 공백제거
-          if (v.Key.split('/')[4].length !== 0) {
+          if (v.Key.split('/')[5].length !== 0) {
             keyArray.push(Number(getKey));
           }
         });
@@ -50,19 +52,19 @@ export class HighlightService {
   }
 
   async getStreamListForCalendarBtn(
-    name: string, year: string, month: string, day: string,
+    platform: 'afreeca'|'youtube'|'twitch', name: string, year: string, month: string, day: string,
   ): Promise<string[]> {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${name}/${year}/${month}/${day}`,
+      Prefix: `highlight_json/${platform}/${name}/${year}/${month}/${day}`,
     };
     const keyArray = [];
     const returnArray = [];
     await s3.listObjects(params).promise()
       .then((value) => {
         value.Contents.forEach((v) => {
-          const getKey = v.Key.split('/')[5];
+          const getKey = v.Key.split('/')[6];
           keyArray.push(getKey);
         });
       });
@@ -72,7 +74,7 @@ export class HighlightService {
       const finishAt = value.split('_')[1];
       const fileId = value;
       const oneStream = {
-        getState: true, startAt, finishAt, fileId,
+        getState: true, startAt, finishAt, fileId, platform,
       };
       returnArray.push(oneStream);
     });

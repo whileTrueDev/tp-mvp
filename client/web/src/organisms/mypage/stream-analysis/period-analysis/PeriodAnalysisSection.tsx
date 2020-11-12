@@ -161,6 +161,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         creatorId: dayStreamInfo.creatorId,
         startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
         streamId: dayStreamInfo.streamId,
+        platform: dayStreamInfo.platform,
       }));
 
     const selectedCategory: string[] = Object
