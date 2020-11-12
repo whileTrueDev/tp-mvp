@@ -69,6 +69,7 @@ export default function NoticeDetail({
           </Typography>
           <Typography color="textSecondary" component="div">
             <Typography>
+              {/* {noticeTabSwitch(currentNotice?.category)} */}
               {currentNotice?.category}
             </Typography>
             <Typography>
@@ -77,6 +78,7 @@ export default function NoticeDetail({
                 createdAt: currentNotice?.createdAt,
               })}
             </Typography>
+
           </Typography>
         </div>
 

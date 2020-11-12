@@ -14,7 +14,7 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 // import Card from '../../../atoms/Card/Card';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
-// 날짜표현 컴포넌트 추가
+
 import dateExpression from '../../../utils/dateExpression';
 import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
