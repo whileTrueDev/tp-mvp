@@ -1,118 +1,101 @@
-import * as AWS from 'aws-sdk';
-import * as dotenv from 'dotenv';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as fs from 'fs';
 import { Repository } from 'typeorm';
+import { FeatureSuggestionStateUpdateDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionStateUpdate.dto';
+import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
+import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 
-dotenv.config();
-const s3 = new AWS.S3();
-// function encodeBase64ImageFile(image): Promise<string | Buffer> {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     // convert the file to base64 text
-//     // on reader load somthing...
-//     resolve(reader.readAsDataURL(image));
-//   });
-// }
 @Injectable()
 export class FeatureSuggestionService {
   constructor(
     @InjectRepository(FeatureSuggestionEntity)
-    private readonly FeatureRepository: Repository<FeatureSuggestionEntity>,
-  ) { }
+    private readonly FeatureSuggestionRepository: Repository<FeatureSuggestionEntity>,
+  ) {}
 
-  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
-  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async insertFeatureSuggestion(state: any): Promise<void> {
-    await this.FeatureRepository
-      .createQueryBuilder()
-      .insert()
-      .into('FeatureSuggestion')
-      .values([
-        {
-          category: state.category,
-          author: state.userId,
-          title: state.title,
-          content: state.contents,
-          reply: null,
-          progress: 0,
-        },
-      ])
-      .execute();
-  }
-
-  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
-  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async updateFeatureSuggestion(state: any): Promise<void> {
-    const initialData = state[0];
-    const postId = state[1];
-    await this.FeatureRepository
-      .createQueryBuilder()
-      .update('FeatureSuggestion', {
-        category: initialData.category,
-        author: initialData.userId,
-        title: initialData.title,
-        content: initialData.contents,
-      })
-      .where('author= :userId', { userId: initialData.userId })
-      .andWhere('FeatureSuggestion.id= :postId', { postId })
-      .execute()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in featureSuggstion ... ');
-      });
-  }
-
-  async deleteFeatureSuggestion(postId: number): Promise<void> {
-    await this.FeatureRepository
-      .createQueryBuilder()
-      .delete()
-      .from('FeatureSuggestion')
-      .where('id = :id', { id: postId })
-      .execute()
-      .catch((err) => {
-        throw new InternalServerErrorException(err, 'mySQL Query Error in featureSuggstion-Analysis ... ');
-      });
-  }
-
-  async getBoardData(): Promise<any> {
-    return this.FeatureRepository.find();
-  }
-
-  async getData(): Promise<any> {
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'feature-image/myimage.png',
-    };
-    const returnList = await s3.getObject(params).promise()
-      .then((value) => {
-        const b64 = Buffer.from(value.Body).toString('base64');
-        // CHANGE THIS IF THE IMAGE YOU ARE WORKING WITH IS .jpg OR WHATEVER0
-        const mimeType = 'image/*'; // e.g., image/png
-        return (`<img src="data:${mimeType};base64,${b64}" />`);
-      });
-    return returnList;
-  }
-
-  async uploadImage(file: string): Promise<void> {
-    // const encodedFile = await encodeBase64ImageFile(file);
-    const param = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: 'feature-image/myimage.png',
-      ACL: 'public-read',
-      ContentEncoding: 'base64',
-      Body: fs.createReadStream(file),
-      ContentType: 'image/*',
-    };
-    s3.putObject(param, (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        // console.log('upload');
-      }
+  /**
+   * 기능 제안 리스트 조회 메소드
+   */
+  public async findAll(): Promise<FeatureSuggestionEntity[]> {
+    return this.FeatureSuggestionRepository.find({
+      order: { createdAt: 'DESC' },
+      relations: ['replies'],
     });
   }
+
+  /**
+   * 개별 기능제안 글의 상태를 수정하는 메소드
+   * @param featureSuggestionData 상태 변경할 기능제안 데이터
+   */
+  public async stateUpdate(featureSuggestionData: FeatureSuggestionStateUpdateDto): Promise<number> {
+    const { state, id } = featureSuggestionData;
+    const result = await this.FeatureSuggestionRepository
+      .update({ suggestionId: id }, { state });
+    return result.affected;
+  }
+
+  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
+  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async insert(fsDto: FeatureSuggestionPostDto): Promise<FeatureSuggestionEntity> {
+    return this.FeatureSuggestionRepository.save(fsDto);
+  }
+
+  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
+  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async update(fsPatchDto: FeatureSuggestionPatchDto): Promise<number> {
+    const {
+      suggestionId, author, userId, category, title, content,
+    } = fsPatchDto;
+    const result = await this.FeatureSuggestionRepository
+      .update({ suggestionId }, {
+        author, userId, category, title, content,
+      });
+    return result.affected;
+  }
+
+  /**
+   * 개별 기능제안 글 삭제 메소드
+   * @param postId 삭제할 기능제안 글 고유 번호
+   */
+  async deleteOne(postId: number): Promise<number> {
+    const result = await this.FeatureSuggestionRepository
+      .delete(postId);
+    return result.affected;
+  }
+
+  // async getData(): Promise<any> {
+  //   const params = {
+  //     Bucket: process.env.BUCKET_NAME,
+  //     Key: 'feature-image/myimage.png',
+  //   };
+  //   const returnList = await s3.getObject(params).promise()
+  //     .then((value) => {
+  //       const b64 = Buffer.from(value.Body).toString('base64');
+  //       // CHANGE THIS IF THE IMAGE YOU ARE WORKING WITH IS .jpg OR WHATEVER0
+  //       const mimeType = 'image/*'; // e.g., image/png
+  //       return (`<img src="data:${mimeType};base64,${b64}" />`);
+  //     });
+  //   return returnList;
+  // }
+
+  // async uploadImage(file: string): Promise<void> {
+  //   // const encodedFile = await encodeBase64ImageFile(file);
+  //   const param = {
+  //     Bucket: process.env.BUCKET_NAME,
+  //     Key: 'feature-image/myimage.png',
+  //     ACL: 'public-read',
+  //     ContentEncoding: 'base64',
+  //     Body: fs.createReadStream(file),
+  //     ContentType: 'image/*',
+  //   };
+  //   s3.putObject(param, (err) => {
+  //     if (err) {
+  //       console.error(err);
+  //     } else {
+  //       // console.log('upload');
+  //     }
+  //   });
+  // }
 }

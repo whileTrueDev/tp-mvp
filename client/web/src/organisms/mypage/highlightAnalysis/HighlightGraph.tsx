@@ -1,22 +1,17 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { rank } from '../../shared/sub/MetricsTable';
+import { Typography } from '@material-ui/core';
 
 const styles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
+    width: '100%',
   },
   wraper: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    height: 25,
-  },
-  wraper2: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
     alignItems: 'center',
     height: 25,
   },
@@ -29,11 +24,6 @@ const styles = makeStyles((theme) => ({
     fill: '#6c61ff',
     stroke: '#6c61ff',
     strokeWidth: '1px',
-  },
-  timelineChecker: {
-    height: 5,
-    backgroundColor: theme.palette.success.main,
-    borderRadius: 3,
   },
   lower: {
     backgroundColor: theme.palette.primary.light,
@@ -58,6 +48,10 @@ const styles = makeStyles((theme) => ({
   },
   clickedPoint: {
     backgroundColor: theme.palette.success.main,
+  },
+  timelineTitle: {
+    paddingLeft: 30,
+    fontWeight: 700,
   },
 }));
 
@@ -96,14 +90,12 @@ export default function HighlightGraph({
 
   return (
     <div className={styling.root}>
-      <div className={design.gridChecker}>
-        { highlight.start_index && (
-          <div
-            style={{ gridColumn: `${highlight.start_index} / ${Number(highlight.end_index) + 1}`, gridRow: 1 }}
-            className="timelineChecker"
-          />
-        )}
-      </div>
+      <Typography display="inline" variant="h5" className={styling.timelineTitle}>타임라인</Typography>
+      <Typography display="inline" variant="body1"> 방송 플레이타임 기준의 편집점 위치입니다</Typography>
+      {/* <div>
+        <span className={styling.timelineTitle}>타임라인</span>
+        <span className={styling.timelineTitleSub}> 방송 플레이타임 기준의 편집점 위치입니다</span>
+      </div> */}
       <div className={styling.wraper}>
         <svg className={styling.arrowSVG}>
           <polyline points="0,0 15,10 0,20" />
@@ -135,7 +127,6 @@ export default function HighlightGraph({
                 handleClick({
                   start_index: point.start_index,
                   end_index: point.end_index,
-                  rank: rank(point, [...data.highlight_points]),
                   index,
                 });
                 handlePage(Math.floor(index / pageSize));

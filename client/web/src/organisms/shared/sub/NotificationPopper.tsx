@@ -5,10 +5,15 @@ import {
   Typography, Divider, Badge, List, ListSubheader, Popover,
 } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-// types
+// axios hooks
 import useAxios from 'axios-hooks';
+// snackbar
+import { useSnackbar } from 'notistack';
+// shared dtos and interfaces
+import { ChangeReadState } from '@truepoint/shared/dist/dto/notification/changeReadState.dto';
 // context
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 export interface Notification {
   index: number;
@@ -52,18 +57,16 @@ function NotificationPopper({
   anchorEl,
   notificationData,
   setChangeReadState,
-  handleError,
   onClose,
 }: {
   anchorEl: HTMLElement;
   notificationData: Notification[];
   setChangeReadState: React.Dispatch<React.SetStateAction<boolean>>;
-  handleError: (newError: FatalError) => void;
   onClose: () => void;
 }): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
-
+  const { enqueueSnackbar } = useSnackbar();
   // 알림 목록 불러오기
   const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
     url: '/notification',
@@ -73,22 +76,19 @@ function NotificationPopper({
   // 알림 클릭 핸들러
   const handleNotificationListItemClick = (notification: Notification) => {
     if (notification.readState === UNREAD_STATE) {
+      const changeReqParam: ChangeReadState = {
+        userId: auth.user.userId, // userId (client login user)
+        index: notification.index,
+      };
       excutePatch({
-        data: {
-          userId: auth.user.userId, // userId (client login user)
-          index: notification.index,
-        },
+        data: changeReqParam,
       }).then(() => {
         setChangeReadState(true);
       }).catch((err) => {
         if (err.response) {
-          handleError({
-            isError: true,
-            helperText: '알림을 수정하는 동안 문제가 발생했습니다.',
-          });
+          ShowSnack('알림을 읽음 표시하는 동안 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
         }
       });
-      // snack bar 일감 이후 snack bar 삽입
 
       if (!patchError && !patchLoading) setChangeReadState(true);
     }

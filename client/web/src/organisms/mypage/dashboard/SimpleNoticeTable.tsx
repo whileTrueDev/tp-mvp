@@ -10,9 +10,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
+import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
+// 날짜표현추가
 import dateExpression from '../../../utils/dateExpression';
-
-import { NoticeData } from '../../../interfaces/Notice';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },

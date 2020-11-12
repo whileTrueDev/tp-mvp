@@ -92,11 +92,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: '80%',
     backGroundColor: '#b1ae71',
   },
-  rangeHover: {
-    '&:hover,select': {
-      backgroundColor: 'red',
-    },
-  },
 }));
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {

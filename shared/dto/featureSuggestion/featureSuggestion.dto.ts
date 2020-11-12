@@ -6,8 +6,8 @@ export class FeatureSuggestionDto {
   @IsNumber()
   suggestionId: number;
 
-  @IsNumber()
-  category: number;
+  @IsString()
+  category: string;
 
   @IsString()
   title: string;
@@ -30,27 +30,3 @@ export class FeatureSuggestionDto {
   @IsDate()
   createdAt: Date;
 }
-
-// export interface FeatureSuggestion {
-//   @IsNumber()
-//   suggestionId: number;
-
-//   @IsNumber()
-//   category: number;
-
-//   @isString()
-//   title: string;
-//   @isString()
-//   content: string;
-//   @isString()
-//   author: string;
-//   @isString()
-//   userId: string;
-//   @IsNumber()
-//   state: number;
-//   @IsNumber()
-//   like: number;
-//   @IsDate()
-//   createdAt: Date;
-
-// }

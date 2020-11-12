@@ -9,13 +9,15 @@ import {
   Create, Delete, KeyboardArrowLeft, KeyboardArrowRight,
 } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
-import Divider from '@material-ui/core/Divider';
-import Card from '../../../atoms/Card/Card';
-import { FeatureData } from '../../../interfaces/FeatureSuggestion';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
+// import Divider from '@material-ui/core/Divider';
+// import Card from '../../../atoms/Card/Card';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
+import FeatureReply from './sub/FeatureReply';
+import FeatureReplyInput from './sub/FeatureReplyInput';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -23,29 +25,16 @@ const useStyles = makeStyles((theme) => ({
     padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  idText: {
-    color: theme.palette.grey[400],
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 300 },
   buttonSet: {
-    padding: `${theme.spacing(4)}px 0px`,
+    padding: `${theme.spacing(4)}px 0px ${theme.spacing(2)}px`,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  replyCard: {
-    padding: theme.spacing(2),
-    width: '50%',
-    display: 'column',
-    justifyContent: 'space-between',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  replyTextCard: {
-    backgroundColor: theme.palette.grey[400],
-    padding: theme.spacing(2),
   },
   editDeleteButtonSet: {
     padding: theme.spacing(1),
@@ -55,29 +44,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface FeatureDetailProps {
-  data: FeatureData[];
+  data: FeatureSuggestion[];
   selectedSuggestionId: string;
   onBackClick: () => void;
   onOtherFeatureClick: (num: number) => void;
-  categoryTabSwitch: (value: number) => JSX.Element;
+  refetch: () => void;
 }
 export default function FeatureDetail({
   data, onBackClick, selectedSuggestionId,
-  onOtherFeatureClick, categoryTabSwitch,
+  onOtherFeatureClick, refetch,
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
 
   const [, deleteRequest] = useAxios(
-    { url: '/feature/upload-delete', method: 'delete' }, { manual: true },
+    { url: '/feature-suggestion', method: 'delete' }, { manual: true },
   );
   // length of title to render on Next/Previous button
   const TITLE_LENGTH = 15;
 
   // Current Feature
-  const currentSuggestion = data.find((d) => d.id === Number(selectedSuggestionId));
-  const currentSuggestionIndex = data.findIndex((d) => d.id === Number(selectedSuggestionId));
-
+  const currentSuggestion = data.find((d) => d.suggestionId === Number(selectedSuggestionId))!; // 선택된 기능제안 글은 언제나 있으므로, type assertion.
+  const currentSuggestionIndex = data.findIndex((d) => d.suggestionId === Number(selectedSuggestionId));
   // Previous Feature
   const previousFeature = data[currentSuggestionIndex - 1];
 
@@ -87,7 +75,7 @@ export default function FeatureDetail({
   const doDelete = () => {
     const doConfirm = window.confirm('삭제 하시겠습니까?');
     if (doConfirm) {
-      deleteRequest({ params: { data: currentSuggestion?.id } });
+      deleteRequest({ params: { data: currentSuggestion.suggestionId } });
       window.location.replace('/feature-suggestion');
     }
   };
@@ -96,7 +84,7 @@ export default function FeatureDetail({
   const paperRef = useRef<HTMLDivElement>();
   useEffect(() => {
     if (paperRef.current) {
-      window.scrollTo(0, paperRef.current.scrollHeight + 70);
+      window.scrollTo(0, paperRef.current.scrollHeight + 100);
     }
   });
 
@@ -108,36 +96,47 @@ export default function FeatureDetail({
       default: return (<Chip variant="outlined" label="미확인" />);
     }
   };
+
   return (
     <div>
       <Paper component="article" ref={paperRef}>
         <div className={classes.title}>
           <div>
             <Typography component="div" variant="h6" className={classes.titleText}>
-              {currentSuggestion?.title}
+              {currentSuggestion.title}
               {' '}
-              {currentSuggestion && progressTab(currentSuggestion?.progress)}
+              {progressTab(currentSuggestion.state)}
             </Typography>
-            <Typography variant="body1" className={classes.idText}>
-              {currentSuggestion?.author ? transformIdToAsterisk(currentSuggestion.author) : null}
+            <Typography variant="body1" color="textSecondary">
+              {currentSuggestion.author && (
+                <span>
+                  {authContext.user.userId === currentSuggestion.author
+                    ? currentSuggestion.author
+                    : transformIdToAsterisk(currentSuggestion.author, 1.8)}
+                </span>
+              )}
             </Typography>
           </div>
           <Typography color="textSecondary" component="div">
-            {categoryTabSwitch(Number(currentSuggestion?.category))}
-            {dateExpression({
-              compoName: 'selected-view',
-              createdAt: currentSuggestion?.createdAt,
-            })}
+            <Typography>
+              {currentSuggestion.category}
+            </Typography>
+            <Typography>
+              {dateExpression({
+                compoName: 'selected-view',
+                createdAt: currentSuggestion?.createdAt,
+              })}
+            </Typography>
           </Typography>
         </div>
-        {currentSuggestion?.author === authContext.user.userId
+        {currentSuggestion.author === authContext.user.userId
         && (
           <div className={classes.editDeleteButtonSet}>
             <Button
               className={classes.editDeleteButton}
               component={Link}
               to={{
-                pathname: `/feature-suggestion/write/${currentSuggestion?.id}`,
+                pathname: `/feature-suggestion/write/${currentSuggestion.suggestionId}`,
                 state: [currentSuggestion],
               }}
               variant="outlined"
@@ -154,40 +153,52 @@ export default function FeatureDetail({
               삭제
             </Button>
           </div>
-          )}
+        )}
         <div className={classes.contentsText}>
           <Markdown
             className={classes.markdown}
-            source={currentSuggestion?.content}
+            source={currentSuggestion.content}
             escapeHtml={false}
                 // eslint-disable-next-line react/prop-types
             renderers={{ code: ({ value }) => <Markdown source={value} /> }}
           />
         </div>
-        {currentSuggestion?.reply && (
-          <div className={classes.replyCard}>
-            <Divider />
-            <Typography variant="h6">
-              관리자 답글
-            </Typography>
-            <Card className={classes.replyTextCard}>
-              <Typography variant="body1">
-                {currentSuggestion.reply}
-              </Typography>
-            </Card>
-          </div>
-        )}
       </Paper>
 
+      {/* 댓글 작성하기 */}
+      {currentSuggestion.author === authContext.user.userId && (
+        <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
+      )}
+      {/* 댓글 리스트 섹션 */}
+      {currentSuggestion.replies
+      && currentSuggestion.replies.length > 0
+      && (
+        <div style={{ marginTop: 16 }}>
+            {currentSuggestion.replies
+              ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .map((reply) => (
+                <FeatureReply
+                  avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
+                  key={reply.author + reply.createdAt}
+                  author={reply.author}
+                  content={reply.content}
+                  createdAt={reply.createdAt}
+                  replyId={reply.replyId}
+                  refetch={refetch}
+                />
+              ))}
+        </div>
+      )}
+
+      {/* 이전글, 목록, 다음글 버튼셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button
           style={{ width: '30%' }}
           size="large"
           disabled={currentSuggestionIndex === 0}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           onClick={() => {
-            onOtherFeatureClick(previousFeature.id);
+            onOtherFeatureClick(previousFeature.suggestionId);
           }}
         >
           <KeyboardArrowLeft />
@@ -202,7 +213,7 @@ export default function FeatureDetail({
         <Button
           style={{ width: '10%' }}
           size="large"
-          variant="contained"
+          variant="outlined"
           onClick={() => {
             onBackClick();
           }}
@@ -213,10 +224,9 @@ export default function FeatureDetail({
           style={{ width: '30%' }}
           size="large"
           disabled={currentSuggestionIndex === data.length - 1}
-          variant="contained"
-          color="primary"
+          variant="outlined"
           onClick={() => {
-            onOtherFeatureClick(nextFeature.id);
+            onOtherFeatureClick(nextFeature.suggestionId);
           }}
         >
           {currentSuggestionIndex !== data.length - 1 && (

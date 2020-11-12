@@ -2,7 +2,7 @@ import {
   IsNumberString, IsOptional,
 } from 'class-validator';
 
-export class NoticeGetRequest {
+export class ReplyGet {
   @IsNumberString()
   @IsOptional()
   id: number;

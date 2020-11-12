@@ -2,7 +2,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 
 const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   root: {
-    marginTop: theme.spacing(4),
+    padding: theme.spacing(6),
   },
   mainTitle: {
     color: theme.palette.text.primary,
@@ -12,7 +12,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     fontWeight: 500,
     fontSize: '30px',
     fontFamily: 'AppleSDGothicNeo',
-    marginBottom: '28px',
+    marginBottom: theme.spacing(5),
   },
   mainBody: {
     color: theme.palette.text.secondary,
@@ -21,7 +21,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     lineHeight: 1.5,
     fontSize: '22px',
     fontFamily: 'AppleSDGothicNeo',
-    marginBottom: '28px',
+    marginBottom: theme.spacing(4),
   },
   bodyPapper: {
     borderRadius: '12px',
@@ -29,8 +29,8 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     width: '276px',
     height: '75px',
-    paddingTop: '22.5px',
-    paddingBottom: '10.5px',
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(2),
     boxShadow: '0',
   },
   subTitle: {
@@ -61,10 +61,10 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     lineHeight: 1.5,
     fontSize: '17px',
     fontFamily: 'AppleSDGothicNeo',
-    marginLeft: '45.5px',
-    marginRight: '35.5px',
+    marginLeft: theme.spacing(6),
+    marginRight: theme.spacing(5),
     display: 'flex',
-    marginBottom: '5px',
+    marginBottom: theme.spacing(1),
   },
   anlaysisButton: {
     width: '136.2px',
@@ -73,17 +73,17 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.dark,
     fontFamily: 'AppleSDGothicNeo',
     fontSize: '24px',
-    marginTop: '20px',
-    marginRight: '93.5px',
-    color: theme.palette.common.white,
+    marginTop: theme.spacing(3),
+    marginRight: theme.spacing(10),
+    color: theme.palette.primary.contrastText,
     '&:hover': {
       backgroundColor: theme.palette.primary.light,
     },
   },
   alert: {
     borderRadius: '5px',
-    marginBottom: '12px',
-    paddingTop: '4px',
+    marginBottom: theme.spacing(2),
+    paddingTop: theme.spacing(1),
   },
 }));
 

@@ -21,7 +21,7 @@ import dateExpression from '../../../../utils/dateExpression';
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
-    padding: '0px',
+    padding: 0,
     maxHeight: '200px',
     overflow: 'auto',
   },
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: 'red',
+      color: theme.palette.error,
     },
   },
   addButton: {
@@ -85,7 +85,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.Element {
   const {
-    selectedStreams, handleStreamList, selectedDate,
+    selectedStreams, handleStreamList, selectedDate, small,
   } = props;
   const classes = useStyles();
   /*
@@ -149,9 +149,11 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         }
       </Typography>
 
+      {!small && (
       <Typography className={classes.listItemText}>
-        {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
+        {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
       </Typography>
+      )}
 
     </ListItem>
   );
@@ -179,9 +181,12 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         })}
       </Typography>
 
+      {!small && (
       <Typography className={classes.removedListItemText}>
-        {stream.title}
+        {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
       </Typography>
+      )}
+
     </ListItem>
   );
 
