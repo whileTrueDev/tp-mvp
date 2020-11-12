@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 // material - ui core components
 import {
   Typography, List, ListItem, ListItemIcon,
@@ -14,6 +13,7 @@ import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // interface
 import { StreamListProps } from './StreamCompareSectioninterface';
+import dateExpression from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -85,7 +85,6 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     dayStreamsList, handleSeletedStreams, baseStream, compareStream,
     handleFullMessage, platformIcon,
   } = props;
-  const classes = useStyles();
 
   const tooltipContents = (stream: DayStreamsInfo): JSX.Element => (
     <div className={classes.tooltip}>
@@ -127,15 +126,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     </div>
   );
 
-  const airTimeFormmater = (startDate: Date, streamLength: number) => {
-    const endAt = new Date(startDate);
-    endAt.setHours(startDate.getHours() + streamLength);
-    const airTimeText = `${startDate.getDate()}일
-                         ${moment(startDate).format('HH:mm')}~ 
-                         ${endAt.getDate()}일
-                         ${moment(endAt).format('HH:mm')}`;
-    return airTimeText;
-  };
+  const classes = useStyles();
 
   const handleListStreamClick = (stream: DayStreamsInfo) => {
     if (baseStream && compareStream) {
@@ -173,13 +164,17 @@ export default function StreamList(props: StreamListProps): JSX.Element {
             className={classes.listItem}
             onClick={() => handleListStreamClick(stream)}
           >
-
             <ListItemIcon>
               {platformIcon(stream)}
             </ListItemIcon>
             <Typography className={classes.listItemText}>
-              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+              {dateExpression({
+                compoName: 'analysys-calender',
+                createdAt: new Date(stream.startedAt),
+                streamAirtime: stream.airTime,
+              })}
             </Typography>
+
             <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
               {stream.title.length > 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
             </Typography>

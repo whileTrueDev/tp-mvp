@@ -2,6 +2,7 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -16,6 +17,7 @@ import Loading from '../../shared/sub/Loading';
 import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
+import dateExpression from '../../../utils/dateExpression';
 
 interface StreamDate {
   fullDate: Date;
@@ -264,9 +266,15 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Grid item xs={9} className={classes.card}>
             {selectedStream.fileId
               && (
-                <p className={classes.cardText}>
-                  {`${`${String(selectedStream.startAt).slice(2, 4)}일  ${selectedStream.startAt.slice(4, 6)}:${selectedStream.startAt.slice(6, 8)}`} ~ ${String(selectedStream.finishAt).slice(2, 4)}일  ${`${selectedStream.finishAt.slice(4, 6)}:${selectedStream.finishAt.slice(6, 8)}`}`}
-                </p>
+                <Card className={classes.card}>
+                  <Typography className={classes.cardText}>
+                    {dateExpression({
+                      compoName: 'highlight-calendar',
+                      createdAt: (selectedStream.startAt),
+                      finishAt: (selectedStream.finishAt),
+                    })}
+                  </Typography>
+                </Card>
               )}
           </Grid>
         </Grid>

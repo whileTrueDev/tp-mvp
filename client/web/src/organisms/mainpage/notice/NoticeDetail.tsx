@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, Paper, Typography } from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
+// 날짜표현 컴포넌트 추가
+import dateExpression from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -70,8 +72,12 @@ export default function NoticeDetail({
               {currentNotice?.category}
             </Typography>
             <Typography>
-              {`${currentNotice ? new Date(currentNotice.createdAt).toLocaleString() : ''}`}
+              {dateExpression({
+                compoName: 'selected-view',
+                createdAt: currentNotice?.createdAt,
+              })}
             </Typography>
+
           </Typography>
         </div>
 

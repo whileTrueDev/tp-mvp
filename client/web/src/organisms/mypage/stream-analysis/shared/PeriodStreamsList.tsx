@@ -11,7 +11,7 @@ import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared dto and interface
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+// import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // atom svg icons
 import ChatIcon from '@material-ui/icons/Chat';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -21,6 +21,7 @@ import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // interfaces
 import { PeriodStreamsListProps, StreamsListItem } from './StreamAnalysisShared.interface';
+import dateExpression from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -125,18 +126,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
   } = props;
   const classes = useStyles();
 
-  const airTimeFormmater = (startDate: Date, streamLength: number) => {
-    const endAt = new Date(startDate);
-    endAt.setHours(startDate.getHours() + streamLength);
-    const airTimeText = `${startDate.getDate()}일
-                         ${moment(startDate).format('HH:mm')} ~
-                         ${endAt.getDate()}일
-                         ${moment(endAt).format('HH:mm')}`;
-
-    return airTimeText;
-  };
-
-  const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
+  const platformIcon = (stream: StreamsListItem): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':
         return (
@@ -221,8 +211,14 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
               재등록
             </Button>
 
-            <Typography className={classes.removedListItemText}>
-              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+            <Typography className={classes.listItemText}>
+              {/* 날짜 표현 컴포넌트로 변경 */}
+
+              {dateExpression({
+                createdAt: new Date(stream.startedAt),
+                compoName: 'analysys-calender',
+                streamAirtime: stream.airTime,
+              })}
             </Typography>
 
             {!small && (
@@ -239,23 +235,24 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
             >
               <ClearOutlinedIcon />
             </IconButton>
-            {!small && (
-            <Typography className={classes.listItemText}>
-              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
-            </Typography>
-            )}
 
             <ListItemIcon>
               {platformIcon(stream)}
             </ListItemIcon>
 
-            <Typography className={classes.listItemText}>
-              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+            <Typography className={classes.removedListItemText}>
+              {dateExpression({
+                createdAt: new Date(stream.startedAt),
+                compoName: 'analysys-calender',
+                streamAirtime: stream.airTime,
+              })}
             </Typography>
 
+            {!small && (
             <Typography className={classes.listItemText}>
-              {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
+              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
             </Typography>
+            )}
           </div>
         )}
 

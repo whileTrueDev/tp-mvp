@@ -14,6 +14,8 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 // import Card from '../../../atoms/Card/Card';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
+
+import dateExpression from '../../../utils/dateExpression';
 import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
 
@@ -120,7 +122,10 @@ export default function FeatureDetail({
               {currentSuggestion.category}
             </Typography>
             <Typography>
-              {new Date(currentSuggestion.createdAt).toLocaleString()}
+              {dateExpression({
+                compoName: 'selected-view',
+                createdAt: currentSuggestion?.createdAt,
+              })}
             </Typography>
           </Typography>
         </div>

@@ -18,6 +18,7 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
+import dateExpression from '../../../utils/dateExpression';
 
 interface StreamData {
   getState: boolean;
@@ -45,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
   },
   hasStreamDayDotContainer: {
     position: 'relative',
+  },
+  platformIcon: {
+    marginRight: theme.spacing(3),
   },
 }));
 
@@ -262,11 +266,14 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
                               handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
                             }}
                           >
-                            <div style={{ marginRight: '40px' }}>
+                            <div className={classes.platformIcon}>
                               {platformIcon(value)}
                             </div>
-
-                            {`${`${String(value.startAt).slice(2, 4)}일  ${value.startAt.slice(4, 6)}:${value.startAt.slice(6, 8)}`} ~ ${String(value.finishAt).slice(2, 4)}일  ${`${value.finishAt.slice(4, 6)}:${value.finishAt.slice(6, 8)}`}`}
+                            {dateExpression({
+                              compoName: 'highlight-calendar',
+                              createdAt: (value.startAt),
+                              finishAt: (value.finishAt),
+                            })}
 
                           </Button>
                         </Grid>

@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import classnames from 'classnames';
 // material-ui core components
 import {
@@ -12,6 +11,8 @@ import VideocamIcon from '@material-ui/icons/Videocam';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // interface
 import { StreamCardProps } from './StreamCompareSectioninterface';
+// dateform change function
+import dateExpression from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cardWrapper: {
@@ -43,17 +44,6 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
   } = props;
   const classes = useStyles();
 
-  // 방송시간 날짜 Formmater
-  const airTimeFormmater = (startDate: Date, streamLength: number) => {
-    const endAt = new Date(startDate);
-    endAt.setHours(startDate.getHours() + streamLength);
-    const airTimeText = `${startDate.getDate()}일
-                        ${moment(startDate).format('HH:mm')} ~ 
-                        ${endAt.getDate()}일
-                        ${moment(endAt).format('HH:mm')}`;
-    return airTimeText;
-  };
-
   const handleCloseButton = () => {
     if (base)handleSeletedStreams(null, true);
     else handleSeletedStreams(null);
@@ -75,7 +65,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
             <div className={classes.title}>
               <VideocamIcon className={base ? classes.baseBeforeIcon : classes.compareBeforeIcon} fontSize="large" />
               <Typography variant="h6" color="textSecondary" className={classes.titleText}>
-                {base ? '기준 방송' : '비교 방송'}
+                {base ? '' : '비교 방송'}
               </Typography>
             </div>
           </div>
@@ -118,7 +108,12 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
                 </Typography>
               )}
             <Typography variant="body1" color="textSecondary">
-              {airTimeFormmater(new Date(stream.startedAt), stream.airTime)}
+              {/* 날짜표현 컴포넌트로 변경 */}
+              {dateExpression({
+                compoName: 'analysys-calender',
+                createdAt: new Date(stream.startedAt),
+                streamAirtime: stream.airTime,
+              })}
               {' '}
               {platformIcon(stream)}
             </Typography>
