@@ -44,17 +44,6 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
   } = props;
   const classes = useStyles();
 
-  // 방송시간 날짜 Formmater
-  // const airTimeFormmater = (startDate: Date, streamLength: number) => {
-  //   const endAt = new Date(startDate);
-  //   endAt.setHours(startDate.getHours() + streamLength);
-  //   const airTimeText = `${startDate.getDate()}일
-  //                       ${moment(startDate).format('HH:mm')} ~ 
-  //                       ${endAt.getDate()}일
-  //                       ${moment(endAt).format('HH:mm')}`;
-  //   return airTimeText;
-  // };
-
   const handleCloseButton = () => {
     if (base)handleSeletedStreams(null, true);
     else handleSeletedStreams(null);
