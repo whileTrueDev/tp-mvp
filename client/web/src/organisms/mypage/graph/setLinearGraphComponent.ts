@@ -2,6 +2,7 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import graphColor from './Color';
+// import { timelineGraphInterface } from './graphsInterface';
 
 const metricSetting: any = {
   smile: {
@@ -9,18 +10,21 @@ const metricSetting: any = {
     valueY: 'smileCount',
     tooltipText: '웃음 발생 수: [bold]{smileCount}[/]',
     color: am4core.color(graphColor.line),
+    unit: '회',
   },
   chat: {
     name: '채팅 발생 수',
     valueY: 'chatCount',
     tooltipText: '채팅 발생 수: [bold]{chatCount}[/]',
     color: am4core.color(graphColor.broad1),
+    unit: '회',
   },
   viewer: {
     name: '평균 시청자 수',
     valueY: 'viewer',
     tooltipText: '평균 시청자 수: [bold]{viewer}[/]',
     color: am4core.color(graphColor.broad2),
+    unit: '명',
   },
 };
 
@@ -40,9 +44,9 @@ const setSeries = (
     const series: any = chart.series.push(new am4charts.LineSeries());
     series.yAxis = valueAxis;
     series.dataFields.valueY = setting.valueY;
-    series.dataFields.dateX = 'date';
+    series.dataFields.dateX = 'startedAt';
     series.name = setting.name;
-    series.tooltipText = setting.tooltipText;
+    series.tooltipText = `${setting.tooltipText}${setting.unit}`;
     series.strokeWidth = 2.5;
     series.tensionX = 0.8;
     series.tooltip.getFillFromObject = false;
@@ -56,13 +60,14 @@ const setSeries = (
     series.tooltip.label.minHeight = 40;
     series.tooltip.label.textAlign = 'middle';
     series.tooltip.label.textValign = 'middle';
+    // Bullet 설정
+    series.bullets.push(new am4charts.CircleBullet());
   });
 };
-
 // @hwasurr - 2020.10.13 eslint error 정리 중
 // any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function setComponent(data: any,
+export default function setComponent(data: any[],
   selectedMetric: string[], name?: string, opposite?: number, fontColor?: string): am4charts.XYChart {
   am4core.useTheme(am4themesAnimated);
   const chart: am4charts.XYChart = am4core.create(name || 'chartdiv', am4charts.XYChart);

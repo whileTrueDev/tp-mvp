@@ -5,12 +5,6 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     padding: theme.spacing(6),
   },
-  titleDivider: {
-    backgroundColor: theme.palette.primary.main,
-    width: '200px',
-    marginBottom: '12px',
-    height: '3px',
-  },
   mainTitle: {
     color: theme.palette.text.primary,
     letterSpacing: '-1.2px',
@@ -19,7 +13,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     fontWeight: 500,
     fontSize: '30px',
     fontFamily: 'AppleSDGothicNeo',
-    marginBottom: '60px',
+    marginBottom: theme.spacing(5),
   },
   infoText: {
     color: theme.palette.text.secondary,
@@ -37,18 +31,18 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     fontWeight: 'bold',
     fontSize: '23px',
     fontFamily: 'AppleSDGothicNeo',
-    marginBottom: '28px',
+    marginBottom: theme.spacing(4),
   },
   bodyContainer: {
-    marginRight: '30px',
-    marginTop: '60px',
+    marginRight: theme.spacing(4),
+    marginTop: theme.spacing(8),
   },
   bodyPapper: {
-    marginTop: '60px',
+    marginTop: theme.spacing(8),
     border: `solid 1px ${theme.palette.divider}`,
     borderRadius: '10px',
-    paddingTop: '27px',
-    paddingBottom: '20px',
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(2),
   },
   bodyTitle: {
     fontSize: '19px',
@@ -62,11 +56,11 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
   bodyTitleHighlite: {
     fontSize: '19px',
     fontWeight: 'bold',
-    marginRight: '5px',
+    marginRight: theme.spacing(1),
   },
   bodyTitleIcon: {
     fontSize: '28px',
-    marginRight: '18px',
+    marginRight: theme.spacing(2),
   },
   vsText: {
     color: theme.palette.text.secondary,
@@ -76,28 +70,28 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     fontWeight: 500,
     fontSize: '30px',
     fontFamily: 'AppleSDGothicNeo',
-    marginBottom: '28px',
-    marginRight: '30px',
-    marginTop: '80px',
+    marginBottom: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    marginTop: theme.spacing(10),
   },
   anlaysisButton: {
     width: '136.2px',
     height: '51.1px',
     borderRadius: '6px',
-    backgroundColor: '#4b5ac7',
+    backgroundColor: theme.palette.primary.dark,
     fontFamily: 'AppleSDGothicNeo',
     fontSize: '24px',
     marginTop: theme.spacing(3),
-    marginRight: '93.5px',
-    color: theme.palette.common.white,
+    marginRight: theme.spacing(10),
+    color: theme.palette.primary.contrastText,
     '&:hover': {
       backgroundColor: theme.palette.primary.light,
     },
   },
   alert: {
     borderRadius: '5px',
-    marginBottom: '12px',
-    paddingTop: '4px',
+    marginBottom: theme.spacing(2),
+    paddingTop: theme.spacing(1),
   },
 }));
 

@@ -10,6 +10,7 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
 import moment from 'moment';
+
 // shared dto , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
@@ -17,15 +18,17 @@ import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-an
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
-// import { dataArray } from './s3TestData.test';
+import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
 
 // interfaces
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
+// import { TimeLineData } from './interface/timeLineData.interface';
 
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
@@ -90,9 +93,11 @@ export class StreamAnalysisService {
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
   ) {}
 
-  /*
-    input   :  userId, date
-    output  :  date 의 month 에 해당하는 [ {streamId, platform, title, startAt, airTime,creatorId}, ... ]
+  /**
+  * 유저아이디에 대해 기간 혹은 시작 날짜가 속한 달의 방송 정보를 조회
+  * @param userId 유저아이디
+  * @param startDate 검색 시작 날짜
+  * @param endDate 검색 종료 날짜
   */
   async findDayStreamList(
     userId: string,
@@ -111,7 +116,7 @@ export class StreamAnalysisService {
           'streamSummary',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
-        .select(['streams.*'])
+        .select(['streams.*, streamSummary.smileCount as smileCount'])
         .where('streams.userId = :id', { id: userId })
         .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
         .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
@@ -130,7 +135,7 @@ export class StreamAnalysisService {
         'streamSummary',
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
-      .select(['streams.*'])
+      .select(['streams.*, streamSummary.smileCount as smileCount'])
       .where('streams.userId = :id', { id: userId })
       .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
       .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
@@ -140,10 +145,10 @@ export class StreamAnalysisService {
     return TermStreamsData;
   }
 
-  /*
-    input   :  streamId , platform
-    output  :  chat_count , smile_count , viewer
-  */
+  /**
+   * 두 방송에 대한 정보를 조회하고 분석 결과를 생성
+   * @param streams [방송1, 방송2]
+   */
   async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
       const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
@@ -185,92 +190,96 @@ export class StreamAnalysisService {
     return [null, null];
   }
 
-  /*
-    기간 대 기간을 비교하기 위한 service
-    input   :  terms: [{startAt , endAt , userId}, {startAt, endAt,userId}]
-    output  :  
-    { 
-      timeline : [
-        {viewer, chatCount, smileCount, date}, 
-        {viewer, chatCount, smileCount, date},
-        ...
-      ],
-      type: 'periods',
-      metrics: [  
-        {
-          title: '평균 시청자 수',
-          tag: 'viewer',
-          key: 'viewer',
-          value: [],
-          unit: '명'
-        },
-        {
-          title: '웃음 발생 수',
-          tag: 'smile',
-          key: 'smileCount',
-          value: [],
-          unit: '회'
-        },
-        {
-          title: '채팅 발생 수',
-          tag: 'chat',
-          key: 'chatCount',
-          value: [],
-          unit: '회'
-        }
-      ]
+  /**
+   * 두 기간에 대한 방송들을 각각 날짜 단위로 그룹화시킨 뒤 분석 결과 생성
+   * @param timeline [[방송1, 방송2 ... ], [방송1, 방송2 ...]]
+   */
+  async findStreamInfoByPeriods(timeline: EachStream[][]): Promise<PeriodsAnalysisResType> {
+    /* timeline 같은 날 일 경우 하나로 병합 및 평균 처리 */
+    interface Temp {
+      count: number;
+      arr: EachStream[];
     }
-  */
-  async findStreamInfoByPeriods(userId: string, periods: {startAt: string; endAt: string}[]):
-  Promise<PeriodsAnalysisResType> {
-    // 전달되는 형태가 두개의 기간으로 전달되어야한다.
-    return new Promise((resolve) => {
-      Promise.all(
-        periods.map(({ startAt, endAt }) => {
-          // 1. 곡선 그래프를 위한 데이터 구현
-          const query = `
-          SELECT ROUND(AVG(viewer)) as viewer, 
-            ROUND(AVG(chatCount)) as chatCount,  
-            ROUND(AVG(smileCount)) AS smileCount, 
-            DATE_FORMAT(startedAt, "%Y-%m-%d") AS date
-          FROM Streams JOIN StreamSummary
-          USING (streamId, platform)
-          WHERE userId = ?
-          AND startedAt BETWEEN ? AND ?
-          GROUP BY date
-          ORDER BY date`;
-          return this.streamSummaryRepository
-            .query(query, [userId, startAt, endAt])
-            .catch((err) => {
-              throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
-            });
-        }),
-      )
-        .then((timeline) => {
-          const metrics = timeline.map((period) => period.reduce((sum, element) => [
-            sum[0] + Number(element.viewer),
-            sum[1] + Number(element.chatCount),
-            sum[2] + Number(element.smileCount),
-          ], [0, 0, 0]))
-            .map((sums, index) => ({
-              viewer: Math.round(sums[0] / timeline[index].length),
-              chatCount: Math.round(sums[1] / timeline[index].length),
-              smileCount: Math.round(sums[2] / timeline[index].length),
-            }));
 
-          resolve({
-            timeline,
-            type: 'periods',
-            metrics: calculateStreamData(metrics),
-          });
-        });
+    /* 1. 기준 기간 타임라인, 비교 기간 타임라인 startedAt 기준 오름차순 정렬 */
+    timeline[0].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
+    timeline[1].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
+
+    /* 2. 각 타임라인 같은 날짜에 대한 데이터는 평균으로 병합 */
+    const result: EachStream[][] = [[], []];
+    function merge(temp: Temp, periodIndex: number): void {
+      const tempResult = temp.arr.reduce((prev2, curr2) => [
+        prev2[0] + curr2.chatCount,
+        prev2[1] + curr2.smileCount,
+        prev2[2] + curr2.viewer,
+        prev2[3],
+      ], [0, 0, 0, temp.arr[0].startedAt]);
+
+      result[periodIndex].push({
+        viewer: Math.round(tempResult[0] / temp.arr.length),
+        chatCount: Math.round(tempResult[1] / temp.arr.length),
+        smileCount: Math.round(tempResult[2] / temp.arr.length),
+        startedAt: moment(tempResult[3]).format('YYYY-MM-DD'),
+        isRemoved: false,
+      });
+    }
+
+    timeline.map(async (eachTimeline, periodIndex) => {
+      const temp: Temp = {
+        count: 0,
+        arr: [],
+      };
+
+      eachTimeline.map((curr, index) => {
+        if (index === 0) {
+          /* 첫번쨰 타임라인은 무조건 temp 에 삽입 */
+          temp.count += 1;
+          temp.arr.push(curr);
+        } else if (temp.count > 0 && index === eachTimeline.length - 1) {
+          /* 마지막 타임라인 일 떄 temp 가 존재 한다면 해당 temp 병합 */
+          merge(temp, periodIndex);
+        } else {
+          /* 전후 비교 및 temp 삽입 */
+          const prev = timeline[periodIndex][index - 1];
+          if (moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+            temp.arr.push(curr);
+            temp.count += 1;
+          } else if (!moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+            merge(temp, periodIndex);
+
+            temp.arr = []; temp.count = 0;
+            temp.arr.push(curr); temp.count += 1;
+          }
+        }
+
+        return false;
+      });
+    });
+
+    return new Promise<PeriodsAnalysisResType>((periodsResolve) => {
+      const metrics = timeline.map((each) => each.reduce((sum, element) => [
+        sum[0] + Number(element.viewer),
+        sum[1] + Number(element.chatCount),
+        sum[2] + Number(element.smileCount),
+      ], [0, 0, 0]))
+        .map((sums, index) => ({
+          viewer: Math.round(sums[0] / timeline[index].length),
+          chatCount: Math.round(sums[1] / timeline[index].length),
+          smileCount: Math.round(sums[2] / timeline[index].length),
+        }));
+
+      periodsResolve({
+        timeline: [...result],
+        type: 'periods',
+        metrics: calculateStreamData(metrics),
+      });
     });
   }
 
-  /*
-    input   :  userId, nowDate
-    output  :  "airTime, viewer, fan" in Streams  +  "chat_count" in StreamSummary 
-  */
+  /**
+   * 유저 아이디에 대해 10일간의 방송 정보 조회
+   * @param userId 유저아이디
+   */
   async findUserWeekStreamInfoByUserId(userId: string): Promise<StreamsEntity[]> {
     /*
       streamsInfoArray
@@ -291,25 +300,9 @@ export class StreamAnalysisService {
     return streams;
   }
 
-  /*
-    기간 추이 분석
-    input   : streams: [{creatorId, streamId, startedAt}, {creatorId, streamId, startedAt}, ...]
-    output  : {
-      start_date,
-      end_date,
-      chat_count,
-      view_count,
-      value: [
-        {
-          smile_count,
-          chat_count,
-          viewer => 분석기에 아직 탑재 미완료.
-          date
-        },
-        { smile_count, chat_count, viewer, date },
-        ...
-      ],
-    }
+  /**
+  * s3 데이터 조회 후 각 조회된 결과 값들의 타임라인을 병합하여 분석 결과 생성
+  * @param s3Request [s3조회가능방송1, s3조회가능방송2 ...]
   */
   async findStreamInfoByPeriod(s3Request: SearchEachS3StreamData[]): Promise<PeriodAnalysisResType> {
     const keyArray: string[] = [];

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TablePagination, TableCell, TableRow, TableBody, Chip,
+  TablePagination, TableCell, TableRow, TableBody, Chip, Typography,
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import shortid from 'shortid';
@@ -10,25 +10,27 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
 
-interface TableProps {
-  metrics: any;
-  page: number;
-  pageSize: number;
-  handlePage: any;
-  handlePageSize: any;
-  handleClick: (a: any) => void;
-  categoryTabSwitch: (value: number) => JSX.Element;
-}
+const TABLE_ROW_HEIGHT = 45;
 const useStyles = makeStyles((theme) => ({
   tableRow: {
+    height: TABLE_ROW_HEIGHT,
     cursor: 'pointer',
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
     },
   },
   tableCell: { padding: theme.spacing(1) },
+  commentCount: { marginLeft: theme.spacing(1), fontWeight: 'bold' },
 }));
 
+export interface TableProps {
+  metrics: any;
+  page: number;
+  pageSize: number;
+  handlePage: any;
+  handlePageSize: any;
+  handleClick: (a: any) => void;
+}
 export default function MaterialTable({
   metrics,
   handleClick,
@@ -36,7 +38,6 @@ export default function MaterialTable({
   pageSize,
   handlePage,
   handlePageSize,
-  categoryTabSwitch,
 }: TableProps): JSX.Element {
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
   const classes = useStyles();
@@ -45,7 +46,7 @@ export default function MaterialTable({
   // 현재 사용자와 기능제안 글쓴이가 같은 사람인지 체크하기 위해
   const auth = useAuthContext();
 
-  const progressTab = (value: number) => {
+  const progressColumn = (value: number) => {
     switch (value) {
       case 1: return (<Chip color="secondary" label="개발 확정" />);
       case 2: return (<Chip color="primary" label="개발보류" />);
@@ -63,12 +64,12 @@ export default function MaterialTable({
             title: ' ',
           },
           {
-            width: '200px',
+            width: '150px',
             align: 'center',
             title: '카테고리',
           },
           {
-            width: '200px',
+            width: '150px',
             align: 'center',
             title: '작성자',
           },
@@ -78,7 +79,7 @@ export default function MaterialTable({
             title: '제목',
           },
           {
-            width: '250px',
+            width: '200px',
             align: 'center',
             title: '작성일',
           },
@@ -105,21 +106,28 @@ export default function MaterialTable({
                 <TableRow
                   className={classes.tableRow}
                   key={shortid.generate()}
-                  onClick={() => handleClick(eachRow.id)}
+                  onClick={() => handleClick(eachRow.suggestionId)}
                 >
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.id}
+                    {eachRow.suggestionId}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {categoryTabSwitch(eachRow.category)}
+                    {eachRow.category}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {auth.user.userId === eachRow.author
                       ? eachRow.author
-                      : transformIdToAsterisk(eachRow.author)}
+                      : transformIdToAsterisk(eachRow.author, 1.8)}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="left">
-                    {eachRow.title}
+                    <div>
+                      {eachRow.title}
+                      {eachRow.replies.length > 0 && (
+                      <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
+                        {`(${eachRow.replies.length})`}
+                      </Typography>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {
@@ -130,12 +138,12 @@ export default function MaterialTable({
                     }
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {progressTab(eachRow.progress)}
+                    {progressColumn(eachRow.state)}
                   </TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 30 * emptyRows }}>
+                <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}

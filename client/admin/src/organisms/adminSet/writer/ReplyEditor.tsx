@@ -19,10 +19,10 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
     state, dispatch, handleHelpToggle, handleReplyReload, replyData, suggestid,
   } = props;
   const [, executePost] = useAxios(
-    { url: 'http://localhost:3000/admin/suggestion-reply', method: 'POST' }, { manual: true },
+    { url: 'http://localhost:3000/feature-suggestion/reply', method: 'POST' }, { manual: true },
   );
   const [, executePatch] = useAxios(
-    { url: 'http://localhost:3000/admin/suggestion-reply', method: 'PATCH' }, { manual: true },
+    { url: 'http://localhost:3000/feature-suggestion/reply', method: 'PATCH' }, { manual: true },
   );
   const [authorfix, setAuthor] = React.useState('TruePoint 관리자');
   function handleAuthorname() {

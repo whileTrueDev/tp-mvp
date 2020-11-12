@@ -2,10 +2,8 @@ import React from 'react';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Typography, Popper, Box, Grid, IconButton, Divider, Button, ClickAwayListener,
+  Typography, Popper, Box, Grid, Divider, Button, ClickAwayListener,
 } from '@material-ui/core';
-// material-ui icons
-import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared sub components
 import Calendar from './Calendar';
 import PeriodStreamsList from './PeriodStreamsList';
@@ -18,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     zIndex: 900, // 마이페이지 내부 컴포넌트 < popper < 마이페이지 상단 네비바 && 최상단 네비바
   },
   box: {
-    width: '914px',
+    width: '800px',
     minHeight: '855px',
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(4),
@@ -48,6 +46,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   divider: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(4),
+  },
+  completeButton: {
+    alignSelf: 'flex-end',
+    marginTop: theme.spacing(2),
+    backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.primary.contrastText,
   },
 }));
 
@@ -95,18 +99,11 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
             <Typography className={classes.boxTitle}>
               제외할 방송 선택
             </Typography>
-
-            <IconButton
-              onClick={() => handleAnchorClose()}
-            >
-              <ClearOutlinedIcon />
-            </IconButton>
           </Grid>
 
           <Grid className={classes.calendarWrapper}>
             <Calendar
               period={period}
-            // handlePeriod={handlePeriod}
               base={base}
               handleSelectedDate={handleSelectedDate}
               currDate={selectedDate}
@@ -118,6 +115,7 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
                 selectedStreams={selectedStreams}
                 selectedDate={selectedDate}
                 handleStreamList={handleStreamList}
+                small
               />
             </div>
 
@@ -150,9 +148,8 @@ export default function PeriodSelectPopper(props: PeriodSelectPopperProps): JSX.
 
           <Button
             variant="contained"
-            color="secondary"
-            style={{ alignSelf: 'flex-end', marginTop: '16px', color: 'white' }}
             onClick={handleAnchorClose}
+            className={classes.completeButton}
           >
             완료
           </Button>

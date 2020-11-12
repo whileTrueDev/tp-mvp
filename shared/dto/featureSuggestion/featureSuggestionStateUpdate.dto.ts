@@ -2,7 +2,7 @@ import {
   IsNumber,
 } from 'class-validator';
 
-export class FeatureSuggestionPatchRequest {
+export class FeatureSuggestionStateUpdateDto {
   @IsNumber()
   id: number;
 

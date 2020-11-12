@@ -9,7 +9,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared dto and interface
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+// import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // atom svg icons
 import YoutubeIcon from '../../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
@@ -21,7 +21,7 @@ import dateExpression from '../../../../utils/dateExpression';
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
-    padding: '0px',
+    padding: 0,
     maxHeight: '200px',
     overflow: 'auto',
   },
@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: 'red',
+      color: theme.palette.error,
     },
   },
   addButton: {
@@ -85,11 +85,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.Element {
   const {
-    selectedStreams, handleStreamList, selectedDate,
+    selectedStreams, handleStreamList, selectedDate, small,
   } = props;
   const classes = useStyles();
 
-  const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
+  const platformIcon = (stream: StreamsListItem): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':
         return (
@@ -130,15 +130,17 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         {
           dateExpression({
             createdAt: new Date(stream.startedAt),
-            compoName: 'calendar',
+            compoName: 'analysys-calender',
             streamAirtime: stream.airTime,
           })
         }
       </Typography>
 
+      {!small && (
       <Typography className={classes.listItemText}>
-        {stream.title.length >= 7 ? `${stream.title.slice(0, 7)} ...` : stream.title}
+        {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
       </Typography>
+      )}
 
     </ListItem>
   );
@@ -161,14 +163,17 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
         {/* 날짜 표현 컴포넌트로 변경 */}
         {dateExpression({
           createdAt: new Date(stream.startedAt),
-          compoName: 'calendar',
+          compoName: 'analysys-calender',
           streamAirtime: stream.airTime,
         })}
       </Typography>
 
+      {!small && (
       <Typography className={classes.removedListItemText}>
-        {stream.title}
+        {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
       </Typography>
+      )}
+
     </ListItem>
   );
 

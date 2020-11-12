@@ -65,7 +65,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
             <div className={classes.title}>
               <VideocamIcon className={base ? classes.baseBeforeIcon : classes.compareBeforeIcon} fontSize="large" />
               <Typography variant="h6" color="textSecondary" className={classes.titleText}>
-                {base ? '기준 방송' : '비교 방송'}
+                {base ? '' : '비교 방송'}
               </Typography>
             </div>
           </div>
@@ -110,9 +110,9 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
             <Typography variant="body1" color="textSecondary">
               {/* 날짜표현 컴포넌트로 변경 */}
               {dateExpression({
-                compoName: 'calendar',
+                compoName: 'analysys-calender',
                 createdAt: new Date(stream.startedAt),
-                streamAirtime: new Date(stream.airTime),
+                streamAirtime: stream.airTime,
               })}
               {' '}
               {platformIcon(stream)}

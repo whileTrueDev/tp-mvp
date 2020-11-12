@@ -15,10 +15,10 @@ export interface metricInterface {
 }
 
 export interface timelineGraphInterface {
-  smile_count: number,
-  chat_count: number,
+  smileCount: number,
+  chatCount: number,
   viewer?: number,
-  date: string,
+  startedAt: string,
 }
 
 export interface timelineInterface {

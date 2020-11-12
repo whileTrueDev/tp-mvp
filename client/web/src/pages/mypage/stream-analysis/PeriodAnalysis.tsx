@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 // axios
 import useAxios from 'axios-hooks';
-import { AxiosError } from 'axios';
 // material - ui core
 import { Grid, Paper } from '@material-ui/core';
 // shared
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 // attoms
+import { useSnackbar } from 'notistack';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // Graph components
 import PeriodGraph from '../../../organisms/mypage/stream-analysis/PeriodGraph';
 // contexts
 import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 import PeriodAnalysisSection from '../../../organisms/mypage/stream-analysis/period-analysis/PeriodAnalysisSection';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import MypageHero from '../../../organisms/shared/sub/MypageHero';
+import textSource from '../../../organisms/shared/source/MypageHeroText';
+// layout style
+import useStreamAnalysisStyles from './streamAnalysisLayout.style';
 
 export default function PeriodAnalysis(): JSX.Element {
+  const classes = useStreamAnalysisStyles();
   const [data, setData] = useState<PeriodAnalysisResType>();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
@@ -23,6 +29,7 @@ export default function PeriodAnalysis(): JSX.Element {
     '/stream-analysis/period', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
+  const { enqueueSnackbar } = useSnackbar();
   const handleSubmit = ({ category, params }: {category: string[]; params: SearchEachS3StreamData[]}) => {
     selectMetric(category);
     getRequest({
@@ -34,7 +41,9 @@ export default function PeriodAnalysis(): JSX.Element {
         setData(res.data);
         setOpen(true);
       })
-      .catch((err): AxiosError<any> | undefined => err);
+      .catch(() => {
+        ShowSnack('분석 과정에서 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
+      });
   };
 
   React.useEffect(() => {
@@ -42,27 +51,34 @@ export default function PeriodAnalysis(): JSX.Element {
   }, [subscribe.currUser]);
 
   return (
-    <MypageSectionWrapper>
-      <Grid container direction="column" spacing={2} style={{ minHeight: '1500px' }}>
-        <Paper elevation={1} style={{ padding: '40px', marginBottom: '16px' }}>
-          {/* 상단 섹션 */}
-          <PeriodAnalysisSection
-            error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
-            loading={loading}
-            handleSubmit={handleSubmit}
-            // handleGraphOpen={handleGraphOpen}
-          />
-        </Paper>
+    <>
+      <MypageSectionWrapper>
+        {/* Hero Section */}
+        <MypageHero textSource={textSource.streamAnalysisSection} />
+      </MypageSectionWrapper>
 
-        {/* 하단 섹션 */}
-        {open && data
+      <MypageSectionWrapper>
+        <Grid container direction="column" style={{ minHeight: '1500px' }}>
+          <Paper elevation={0} className={classes.analysisSectionPaper}>
+            {/* Analysis Section */}
+            <PeriodAnalysisSection
+              error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
+              loading={loading}
+              handleSubmit={handleSubmit}
+            />
+          </Paper>
+
+          {/* Graph Section */}
+          {open && data
          && (
-           <Paper elevation={1} style={{ padding: '40px' }}>
+           <Paper elevation={0} className={classes.graphSectionPaper}>
              <PeriodGraph data={data} loading={loading} selectedMetric={selectedMetric} />
            </Paper>
          )}
 
-      </Grid>
-    </MypageSectionWrapper>
+        </Grid>
+      </MypageSectionWrapper>
+    </>
+
   );
 }

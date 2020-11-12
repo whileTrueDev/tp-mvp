@@ -70,10 +70,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: '80%',
     backGroundColor: '#b1ae71',
   },
-  test: {
-    color: 'red',
-    backgroundColor: 'blue',
-  },
 }));
 
 function Calendar(props: CalendarProps): JSX.Element {

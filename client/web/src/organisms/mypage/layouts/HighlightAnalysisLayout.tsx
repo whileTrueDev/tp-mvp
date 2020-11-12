@@ -2,6 +2,7 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -9,7 +10,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { useSnackbar } from 'notistack';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
-import Card from '../../../atoms/Card/Card';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
@@ -17,6 +17,7 @@ import Loading from '../../shared/sub/Loading';
 import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
+import dateExpression from '../../../utils/dateExpression';
 
 interface StreamDate {
   fullDate: Date;
@@ -43,6 +44,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     finishAt: '',
     fileId: '',
   };
+
   const [highlightData, setHighlightData] = React.useState(null);
   const [metricsData, setMetricsData] = React.useState(null);
   const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
@@ -186,6 +188,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   const fetchHighlightData = async (
     id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
     // 134859149/2020/08/01/09161816_09162001_39667416302.json
+    setHighlightData(null);
     getHighlightPoints({
       params: {
         id, year, month, day, fileId,
@@ -202,6 +205,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
   const fetchMetricsData = async (
     id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
+    setMetricsData(null);
     getMetricsData(
       {
         params: {
@@ -253,18 +257,21 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           container
           direction="row"
           alignItems="center"
+          justify="space-between"
         >
-          <Grid item xs={12} className={classes.root}>
-            <Typography variant="h4" className={classes.sub}>
-              선택된 방송 &gt;
-            </Typography>
+          <Grid item xs={2} className={classes.title}>
+            선택된 방송
           </Grid>
-          <Grid item>
+          <Grid item xs={9} className={classes.card}>
             {selectedStream.fileId
               && (
                 <Card className={classes.card}>
                   <Typography className={classes.cardText}>
-                    {`${`${String(selectedStream.startAt).slice(2, 4)}일  ${selectedStream.startAt.slice(4, 6)}:${selectedStream.startAt.slice(6, 8)}`} ~ ${String(selectedStream.finishAt).slice(2, 4)}일  ${`${selectedStream.finishAt.slice(4, 6)}:${selectedStream.finishAt.slice(6, 8)}`}`}
+                    {dateExpression({
+                      compoName: 'highlight-calendar',
+                      createdAt: (selectedStream.startAt),
+                      finishAt: (selectedStream.finishAt),
+                    })}
                   </Typography>
                 </Card>
               )}
