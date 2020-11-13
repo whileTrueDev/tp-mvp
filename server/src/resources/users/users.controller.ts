@@ -1,12 +1,13 @@
 import {
   Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, UseGuards,
+  ClassSerializerInterceptor, Query, Patch, UseGuards, Req,
 } from '@nestjs/common';
 // DTOs
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
 
+import { Request } from 'express';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
@@ -28,6 +29,7 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async findSubscriberInfo(
+    @Req() req: Request,
     @Query('userId') userId: string,
   ): Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
     return this.usersService.findSubscriberInfo(userId);
@@ -67,21 +69,6 @@ export class UsersController {
     return this.usersService.findPW(userDI, password);
   }
 
-  // @Get('/:id')
-  // @UseGuards(JwtAuthGuard, ACGuard)
-  // @UseRoles({ resource: 'profile', action: 'read', possession: 'own' })
-  // @UseInterceptors(ClassSerializerInterceptor)
-  // async find(
-  //   @Param('id') id: string,
-  //   @Req() req: LogedInExpressRequest,
-  // ): Promise<UserEntity> {
-  //   const { user } = req;
-  //   if (user.userId === id) {
-  //     return this.usersService.findOne(user.userId);
-  //   }
-  //   throw new ForbiddenException();
-  // }
-
   /*
     input   : userId (로그인한 유저 아이디) 
     output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
@@ -105,6 +92,7 @@ export class UsersController {
     return this.usersService.findAllUserList();
   }
 
+  // 회원 가입
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   async create(

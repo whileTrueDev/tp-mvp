@@ -7,6 +7,9 @@ import { UsersModule } from '../users/users.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TwitchStrategy } from './strategies/twitch.strategy';
+import { YoutubeStrategy } from './strategies/youtube.strategy';
+import { AfreecaPreLinker } from './strategies/afreeca.linker';
 
 @Module({
   imports: [
@@ -16,7 +19,10 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
     forwardRef(() => UsersModule), // Resolve circular dependencies between Moduels
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService, LocalStrategy,
+    JwtStrategy, TwitchStrategy, YoutubeStrategy, AfreecaPreLinker,
+  ],
   controllers: [AuthController],
   exports: [AuthService],
 })

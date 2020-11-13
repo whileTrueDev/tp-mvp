@@ -1,20 +1,32 @@
 import express from 'express';
 import {
   Controller, Request, Post, UseGuards, Get, Query,
-  HttpException, HttpStatus, Res, BadRequestException, Body,
+  HttpException, HttpStatus, Res, BadRequestException, Body, Req, Delete, UseFilters, InternalServerErrorException,
 } from '@nestjs/common';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from './auth.service';
-import { UserLoginPayload } from '../../interfaces/logedInUser.interface';
+import { LogedInExpressRequest, UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
+import { UsersService } from '../users/users.service';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { UserEntity } from '../users/entities/user.entity';
+import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
+import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
+import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
+import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
+import { AfreecaPreLinker } from './strategies/afreeca.linker';
+import { TwitchLinkExceptionFilter } from '../../filters/twitch-link.filter';
+import { YoutubeLinkExceptionFilter } from '../../filters/youtube-link.filter';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+    private readonly afreecaLinker: AfreecaPreLinker,
   ) {}
 
   @Post('logout')
@@ -75,5 +87,129 @@ export class AuthController {
       .getCertificationInfo(checkCertificationDto.impUid);
     if (!certificationInfo) throw new HttpException('error on server of truepoint', HttpStatus.BAD_REQUEST);
     return certificationInfo;
+  }
+
+  // *******************************************
+  // 채널 연동
+
+  /**
+   * 트루포인트 유저와 플랫폼 계정을 연동하는 요청 핸들러
+   * @param req jwt Guard를 통해 user 정보를 포함한 요청 객체
+   * @param platform 연동하는 플랫폼 문자열 twitch|youtube|afreeca 셋 중 하나.
+   * @param id 연동하는 플랫폼의 고유 아이디
+   */
+  @Post('link')
+  @UseGuards(JwtAuthGuard)
+  async platformLink(
+    @Req() req: LogedInExpressRequest,
+    @Body('platform') platform: string, @Body('id') id: string,
+  ): Promise<UserEntity> {
+    const { userId } = req.user;
+    return this.usersService.linkUserToPlatform(userId, platform, id);
+  }
+
+  /**
+   * 트루포인트 유저와 1인미디어 플랫폼 연동을 제거하는 요청 핸들러
+   * @param req jwt Guard를 통해 user 정보를 포함한 요청 객체
+   * @param platform 연동 제거할 플랫폼 문자열 twitch|youtube|afreeca 셋 중 하나.
+   */
+  @Delete('link')
+  @UseGuards(JwtAuthGuard)
+  async deletePlatformLink(
+    @Req() req: LogedInExpressRequest, @Body('platform') platform: string,
+  ): Promise<number[]> {
+    const { userId } = req.user;
+    const result = await this.usersService.deleteLinkUserPlatform(userId, platform);
+    const result2 = await this.usersService.disconnectLink(userId, platform);
+
+    return [result, result2];
+  }
+
+  // *********** Twitch ******************
+  // Twitch Link start
+  @Get('twitch')
+  @UseGuards(TwitchLinkGuard)
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  twitch(): void {}
+
+  // Twitch oauth Callback url
+  @Get('twitch/callback')
+  @UseFilters(TwitchLinkExceptionFilter)
+  @UseGuards(TwitchLinkGuard)
+  twitchCallback(
+    @Req() req: express.Request,
+    @Res() res: express.Response,
+  ): void {
+    const { twitchId } = req.user as PlatformTwitchEntity;
+    res.redirect(`http://localhost:3001/mypage/my-office/settings?id=${twitchId}&platform=twitch`);
+  }
+
+  // *********** Youtube ******************
+  // Youtube link start
+  @Get('youtube')
+  @UseGuards(YoutubeLinkGuard)
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  youtube(): void {}
+
+  @Get('youtube/callback')
+  @UseFilters(YoutubeLinkExceptionFilter)
+  @UseGuards(YoutubeLinkGuard)
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  youtubeCallback(
+    @Req() req: express.Request,
+    @Res() res: express.Response,
+  ): void {
+    const { youtubeId } = req.user as PlatformYoutubeEntity;
+    res.redirect(`http://localhost:3001/mypage/my-office/settings?id=${youtubeId}&platform=youtube`);
+  }
+
+  // *********** Afreeca ******************
+  // creator - afreeca 로그인
+  @Get('afreeca')
+  async afreeca(
+    @Req() req: express.Request,
+    @Res() res: express.Response,
+  ): Promise<void> {
+    // 현재 userId를 response의 쿠키로 설정
+    const userId = req.query.__userId;
+    if (!userId) {
+      throw new BadRequestException('__userId parameter must be defined');
+    }
+    res.cookie('__userId', userId);
+    // 아프리카 티비로 로그인 - ID/PW 입력창 URL 가져오기
+    const afreecaAuthUrl = await this.afreecaLinker.getAfreecaLoginUrl();
+    // 아프리카 티비로 로그인으로 redirect
+    res.redirect(afreecaAuthUrl);
+  }
+
+  // afreeca auth  callback
+  @Get('afreeca/callback')
+  async afreecaCallback(
+    @Req() req: express.Request,
+    @Res() res: express.Response,
+  ): Promise<void> {
+    const afreecaAuthorizationCode = req.query.code;
+
+    if (!afreecaAuthorizationCode) {
+      throw new InternalServerErrorException('can not get authorization code from afreecatv');
+    }
+
+    const userId = req.cookies.__userId;
+
+    if (!userId) {
+      throw new BadRequestException('__userId parameter must be defined');
+    }
+
+    // get refresh and accessToken
+    const {
+      // accessToken,
+      refreshToken,
+    } = await this.afreecaLinker.getTokens(afreecaAuthorizationCode as string);
+
+    // link with truepoint user
+    this.afreecaLinker.link(refreshToken, userId)
+      .then(() => {
+        res.redirect('http://localhost:3001/mypage/my-office/settings'); // ?id=${afreecaId}&platform=afreeca
+      });
   }
 }

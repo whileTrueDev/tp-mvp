@@ -149,6 +149,10 @@ export class AuthService {
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
+  /**
+   * 아임포트 본인인증 유저 정보 받는 메소드
+   * @param impUid import UID
+   */
   async getCertificationInfo(impUid: string): Promise<CertificationInfo> {
     try {
       // 인증 토큰 발급 받기
