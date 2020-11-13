@@ -1,4 +1,5 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   TextField, ClickAwayListener, Popper, List, ListItem,
   Typography,
@@ -11,6 +12,51 @@ import { spreadKorean } from './spreadKorean';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    height: '70px',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  textField: {
+    marginRight: theme.spacing(2),
+    width: '200px',
+  },
+  arrowIcon: {
+    marginRight: theme.spacing(2),
+    fontSize: '60px',
+    fontWeight: 'bold',
+  },
+  analysisWordWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  quotesImg: { width: '22px', height: '22px' },
+  analysisWord: { margin: theme.spacing(2) },
+  popper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '200px',
+    zIndex: 999,
+    marginTop: 0,
+  },
+  list: { backgroundColor: theme.palette.background.paper },
+  listItem: {
+    borderRadius: 4,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  checkIcon: {
+    color: 'green',
+    fontWeight: 'bold',
+    marginRight: theme.spacing(1),
+  },
+}));
+
 export interface SearchBoxProps {
   words: string[];
   handleAnalysisWord: (targetWord: string) => void;
@@ -18,6 +64,7 @@ export interface SearchBoxProps {
 }
 
 export default function SearchBox(props: SearchBoxProps): JSX.Element {
+  const classes = useStyles();
   const {
     words, handleAnalysisWord, analysisWord,
   } = props;
@@ -54,13 +101,11 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
   const handleKeyboard = (e: React.KeyboardEvent<HTMLDivElement>): void => {
     if (e.key === 'ArrowDown') {
       if (!anchorEl) handleAnchorOpenWithRef(targetRef);
-      // console.log('up');
       if (filterKoeranSpread(value)[selectedIndex + 1]) {
         if (selectedIndex + 1 < words.length) setSelectedIndex(selectedIndex + 1);
       } else setSelectedIndex(0);
     } else if (e.key === 'ArrowUp') {
       if (!anchorEl) handleAnchorOpenWithRef(targetRef);
-      // console.log('down');
       if (filterKoeranSpread(value)[selectedIndex - 1]) {
         if (selectedIndex - 1 >= 0) setSelectedIndex(selectedIndex - 1);
       } else setSelectedIndex(words.length - 1);
@@ -76,65 +121,39 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
 
   return (
     <ClickAwayListener onClickAway={handleAnchorClose}>
-      <div
-        ref={targetRef}
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          width: '100%',
-          height: '70px',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-        }}
-      >
+      <div className={classes.root} ref={targetRef}>
 
         <TextField
           variant="outlined"
           autoFocus
           label="검색값"
           color="primary"
-          onClick={() => {
-            handleAnchorOpenWithRef(targetRef);
-            // handleAnchorOpen(e);
-          }}
+          onClick={() => handleAnchorOpenWithRef(targetRef)}
           value={value}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             handleChange(e);
             setSelectedIndex(0);
-            if (!anchorEl) handleAnchorOpenWithRef(targetRef);
+            handleAnchorOpenWithRef(targetRef);
           }}
           onKeyUp={(event) => {
             handleKeyboard(event);
           }}
-          style={{
-            marginRight: '16px',
-            width: '200px',
-          }}
+          className={classes.textField}
         />
 
-        <TrendingFlatIcon
-          color="primary"
-          style={{
-            marginRight: '16px',
-            fontSize: '60px',
-            fontWeight: 'bold',
-          }}
-        />
+        <TrendingFlatIcon className={classes.arrowIcon} />
 
         {analysisWord && (
         <Typography
           variant="h4"
           color="textSecondary"
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
+          className={classes.analysisWordWrapper}
         >
-          <img src="/images/analyticsPage/quotesLeft.png" alt="left qut" style={{ width: '22px', height: '22px' }} />
-          <div style={{ margin: '8px' }}>
+          <img src="/images/analyticsPage/quotesLeft.png" alt="left qut" className={classes.quotesImg} />
+          <div className={classes.analysisWord}>
             {`${analysisWord}`}
           </div>
-          <img src="/images/analyticsPage/quotesRight.png" alt="left qut" style={{ width: '22px', height: '22px' }} />
+          <img src="/images/analyticsPage/quotesRight.png" alt="right qut" className={classes.quotesImg} />
         </Typography>
         )}
 
@@ -149,19 +168,9 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
             preventOverflow: { enabled: false, boundariesElement: 'scrollParent' },
             hide: { enabled: false },
           }}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '200px',
-            zIndex: 999,
-            marginTop: 0,
-          }}
+          className={classes.popper}
         >
-          <List
-            style={{
-              backgroundColor: '#ffff',
-            }}
-          >
+          <List className={classes.list}>
             {filterKoeranSpread(value).map((word, index) => (
               <ListItem
                 key={word}
@@ -169,27 +178,14 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
                 onClick={() => {
                   handleAnalysisWord(word); setValue(word);
                 }}
-                style={{
-                  borderRadius: 4,
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
+                className={classes.listItem}
                 selected={selectedIndex === index}
               >
-                <Typography variant="h6" style={{ alignSelf: 'flex-start', marginLeft: '8px' }}>
+                <Typography variant="h6">
                   {word}
                 </Typography>
 
-                {selectedIndex === index && (
-                  <CheckIcon
-                    style={{
-                      color: 'green',
-                      fontWeight: 'bold',
-                      marginRight: '8px',
-                    }}
-                  />
-                )}
+                {selectedIndex === index && (<CheckIcon className={classes.checkIcon} />)}
 
               </ListItem>
             ))}
