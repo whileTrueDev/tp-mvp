@@ -17,6 +17,8 @@ export interface FeatureSuggestion {
 
   like: number;
 
+  isLock?: boolean;
+
   createdAt: Date;
 
   replies?: FeatureSuggestionReply[];

@@ -4,6 +4,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import shortid from 'shortid';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import Table from '../../../atoms/Table/MaterialTable';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
@@ -23,22 +24,22 @@ const useStyles = makeStyles((theme) => ({
   commentCount: { marginLeft: theme.spacing(1), fontWeight: 'bold' },
 }));
 
-export interface TableProps {
-  metrics: any;
+export interface FeatureTableProps {
+  metrics: FeatureSuggestion[];
   page: number;
   pageSize: number;
   handlePage: any;
   handlePageSize: any;
   handleClick: (a: any) => void;
 }
-export default function MaterialTable({
+export default function FeatureTable({
   metrics,
   handleClick,
   page,
   pageSize,
   handlePage,
   handlePageSize,
-}: TableProps): JSX.Element {
+}: FeatureTableProps): JSX.Element {
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
   const classes = useStyles();
   const theme = useTheme();
@@ -56,7 +57,7 @@ export default function MaterialTable({
 
   return (
     <>
-      <Table
+      <Table<FeatureSuggestion>
         columns={[
           {
             width: '50px',
