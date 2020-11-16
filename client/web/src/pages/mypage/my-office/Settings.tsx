@@ -1,11 +1,15 @@
-import { Button, Typography } from '@material-ui/core';
+import {
+  Avatar, Button, Paper, TextField, Typography,
+} from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
+import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 export default function Settings(): JSX.Element {
+  // const theme = useTheme();
   const auth = useAuthContext();
   const location = useLocation();
 
@@ -41,87 +45,176 @@ export default function Settings(): JSX.Element {
 
   return (
     <MypageSectionWrapper>
-      <div style={{ margin: 16 }}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => {
-            window.location.href = 'http://localhost:3000/auth/twitch';
-          }}
-        >
-          트위치 연동 프론트에서 요청
-        </Button>
-        {linkedId && (
-        <>
-          <Typography>
-            방금 연동된 Twitch 아이디:
-            {' '}
-            {linkedId}
-          </Typography>
+      <Paper elevation={0} variant="outlined" style={{ padding: 48 }}>
 
-          <Button onClick={() => {
-            linkDeleteRequest({
-              data: { platform: 'twitch' },
-            });
-          }}
+        <div style={{ padding: 16 }}>
+          <SectionTitle mainTitle="내 정보 관리" />
+        </div>
+
+        <div style={{
+          display: 'flex', alignItems: 'center', padding: 16,
+        }}
+        >
+
+          <div style={{ width: '200px', marginRight: 8 }}>
+            <Typography>
+              프로필 사진
+            </Typography>
+          </div>
+          <div style={{ width: '100%' }}>
+            <Avatar style={{ width: 48, height: 48, marginRight: 16 }} />
+          </div>
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', padding: 16,
+        }}
+        >
+          <div style={{ width: '200px', marginRight: 8 }}>
+            <Typography>아이디</Typography>
+          </div>
+          <div style={{ width: '100%' }}>
+            <TextField value="hwasurr" disabled style={{ minWidth: 300 }} />
+          </div>
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', padding: 16,
+        }}
+        >
+          <div style={{ width: '200px', marginRight: 8 }}>
+            <Typography>이메일</Typography>
+          </div>
+          <div style={{ width: '100%' }}>
+            <TextField value="something@something.gosomething@something.gosomething@something.gosomething@something.go" disabled style={{ width: 300 }} />
+          </div>
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', padding: 16,
+        }}
+        >
+          <div style={{ width: '200px', marginRight: 8 }}>
+            <Typography>닉네임</Typography>
+          </div>
+          <div style={{ width: '100%' }}>
+            <TextField value="BJ닉네임/TwitchName" disabled style={{ minWidth: 300 }} />
+          </div>
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', padding: 16,
+        }}
+        >
+          <div style={{ width: '200px', marginRight: 8 }}>
+            <Typography>비밀번호</Typography>
+          </div>
+          <div style={{ width: '100%' }}>
+            <TextField value="비밀번호" disabled style={{ minWidth: 300 }} />
+          </div>
+        </div>
+
+        {/* 버튼 셋 */}
+        <div style={{
+          display: 'flex', alignItems: 'center', padding: 16,
+        }}
+        >
+          <div style={{ width: '200px', marginRight: 8 }}>
+            <Button variant="contained" color="primary">
+              변경 저장하기
+            </Button>
+          </div>
+        </div>
+      </Paper>
+
+      <Paper elevation={0} variant="outlined" style={{ marginTop: 16, padding: 48 }}>
+        <div style={{ padding: 16 }}>
+          <SectionTitle mainTitle="플랫폼 연동 관리" />
+        </div>
+
+        <div style={{ margin: 16 }}>
+          <Avatar src="/images/logo/twitchLogo.png" />
+          <Typography>트위치</Typography>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              window.location.href = 'http://localhost:3000/auth/twitch';
+            }}
           >
-            연동 제거
+            트위치 연동 프론트에서 요청
           </Button>
-        </>
-        )}
-      </div>
+          {linkedId && (
+          <>
+            <Typography>
+              방금 연동된 Twitch 아이디:
+              {' '}
+              {linkedId}
+            </Typography>
 
-      <div style={{ margin: 16 }}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => {
-            window.location.href = 'http://localhost:3000/auth/youtube';
-          }}
-        >
-          유튜브 연동 프론트에서 요청
-        </Button>
+            <Button onClick={() => {
+              linkDeleteRequest({
+                data: { platform: 'twitch' },
+              });
+            }}
+            >
+              연동 제거
+            </Button>
+          </>
+          )}
+        </div>
 
-        {linkedId && (
-        <>
-          <Typography>
-            방금 연동된 Youtube 아이디:
-            {' '}
-            {linkedId}
-          </Typography>
-
-          <Button onClick={() => {
-            linkDeleteRequest({
-              data: { platform: 'youtube' },
-            });
-          }}
+        <div style={{ margin: 16 }}>
+          <Avatar src="/images/logo/youtubeLogo.png" />
+          <Typography>유튜브</Typography>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              window.location.href = 'http://localhost:3000/auth/youtube';
+            }}
           >
-            연동 제거
+            유튜브 연동 프론트에서 요청
           </Button>
-        </>
-        )}
-      </div>
 
-      <div style={{ margin: 16 }}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => {
-            window.location.href = `http://localhost:3000/auth/afreeca?__userId=${auth.user.userId}`;
-          }}
-        >
-          아프리카 연동 프론트에서 요청
-        </Button>
+          {linkedId && (
+          <>
+            <Typography>
+              방금 연동된 Youtube 아이디:
+              {' '}
+              {linkedId}
+            </Typography>
 
-        {linkedId && (
-        <>
-          <Typography>
-            방금 연동된 Afreeca 아이디:
-            {' '}
-            {linkedId}
-          </Typography>
+            <Button onClick={() => {
+              linkDeleteRequest({
+                data: { platform: 'youtube' },
+              });
+            }}
+            >
+              연동 제거
+            </Button>
+          </>
+          )}
+        </div>
 
-          {/* <Button onClick={() => {
+        <div style={{ margin: 16 }}>
+          <Avatar src="/images/logo/afreecaLogo.png" />
+          <Typography>아프리카 TV</Typography>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              window.location.href = `http://localhost:3000/auth/afreeca?__userId=${auth.user.userId}`;
+            }}
+          >
+            아프리카 연동 프론트에서 요청
+          </Button>
+
+          {linkedId && (
+          <>
+            <Typography>
+              방금 연동된 Afreeca 아이디:
+              {' '}
+              {linkedId}
+            </Typography>
+
+            {/* <Button onClick={() => {
             linkDeleteRequest({
               data: { platform: 'youtube' },
             });
@@ -129,9 +222,10 @@ export default function Settings(): JSX.Element {
           >
             연동 제거
           </Button> */}
-        </>
-        )}
-      </div>
+          </>
+          )}
+        </div>
+      </Paper>
     </MypageSectionWrapper>
   );
 }
