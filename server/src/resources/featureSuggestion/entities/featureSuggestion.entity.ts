@@ -40,6 +40,9 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @Column({ type: 'smallint', default: 0 })
   like: number;
 
+  @Column({ comment: '비밀글 여부 0=비밀글X, 1=비밀글O', default: false })
+  isLock?: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
