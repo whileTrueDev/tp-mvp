@@ -79,9 +79,9 @@ export default function MetricsAccordian(
   const [page2, setPage2] = React.useState(0);
   const [pageSize2, setPageSize2] = React.useState(5);
   const [point2, setPoint2] = React.useState(initialPoint);
-  const [page3, setPage3] = React.useState(0);
-  const [pageSize3, setPageSize3] = React.useState(5);
-  const [point3, setPoint3] = React.useState(initialPoint);
+  // const [page3, setPage3] = React.useState(0);
+  // const [pageSize3, setPageSize3] = React.useState(5);
+  // const [point3, setPoint3] = React.useState(initialPoint);
 
   return (
     <Paper>
@@ -139,6 +139,7 @@ export default function MetricsAccordian(
         </AccordionDetails>
       </Accordion>
       <Accordion>
+
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
         >
@@ -207,7 +208,7 @@ export default function MetricsAccordian(
           <Grid item md={12}>
             <MetricTitle
               subTitle={`"${analysisWord}" 발생수 편집점`}
-              iconSrc="/images/analyticsPage/logo_smile.svg"
+              iconSrc="/images/analyticsPage/logo_search.svg"
               pointNumber={metricsData.smile_points.length}
             />
             <Grid container direction="column" justify="center">
@@ -215,30 +216,30 @@ export default function MetricsAccordian(
                 <Chart
                   data={metricsData.smile_points}
                   chartType="smile"
-                  highlight={point3}
-                  handleClick={setPoint3}
-                  handlePage={setPage3}
-                  pageSize={pageSize3}
+                  highlight={point2}
+                  handleClick={setPoint2}
+                  handlePage={setPage2}
+                  pageSize={pageSize2}
                 />
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
                   metrics={metricsData.smile_points}
-                  handleClick={setPoint3}
-                  row={point3}
-                  page={page3}
-                  pageSize={pageSize3}
-                  handlePage={setPage3}
-                  handlePageSize={setPageSize3}
+                  handleClick={setPoint2}
+                  row={point2}
+                  page={page2}
+                  pageSize={pageSize2}
+                  handlePage={setPage2}
+                  handlePageSize={setPageSize2}
                   type={`"${analysisWord}" 발생수 기반 편집점`}
                 />
                 <div className={classes.buttonWraper}>
                   <Button
                     onClick={() => {
                       /**
-               * @hwasurr 2020.10.13 eslint error 처리 도중 처리
-               * 빈 화살표 함수 => 이후 처리 바람
-               * */
+                       * @hwasurr 2020.10.13 eslint error 처리 도중 처리
+                       * 빈 화살표 함수 => 이후 처리 바람
+                       * */
                     }}
                     style={{ color: 'white' }}
                   >

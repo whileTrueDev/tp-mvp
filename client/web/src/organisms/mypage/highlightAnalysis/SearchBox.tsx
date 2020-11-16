@@ -84,8 +84,6 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
   /**
    * 입력한 단어를 단어 리스트에 존재하는 스트링 중 최대 일치 스트링 비교 후 필터링
    * @param targetString 사용자가 입력한 e.target.value
-   * 
-   * 추후 추가사항 -> 최대부분 집합에서 종속 순열 찾기로
    */
   const filterKoeranSpread = (targetString: string): string[] => words
     .filter(
