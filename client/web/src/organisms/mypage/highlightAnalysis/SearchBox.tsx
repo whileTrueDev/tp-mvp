@@ -71,26 +71,38 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
 
   const {
     value, handleChange, setValue,
-  } = useEventTargetValue();
+  } = useEventTargetValue(); // text input
 
   const {
     anchorEl, handleAnchorClose, handleAnchorOpenWithRef,
-  } = useAnchorEl();
+  } = useAnchorEl(); // popper ref
   const targetRef = React.useRef<HTMLDivElement | null>(null);
 
-  const [selectedIndex, setSelectedIndex] = React.useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = React.useState<number>(0); // selected popper list item index
   const { enqueueSnackbar } = useSnackbar();
 
   /**
    * 입력한 단어를 단어 리스트에 존재하는 스트링 중 최대 일치 스트링 비교 후 필터링
    * @param targetString 사용자가 입력한 e.target.value
    */
-  const filterKoeranSpread = (targetString: string): string[] => words
-    .filter(
+  const filterKoeranSpread = (targetString: string): string[] => {
+    const includedWords: string[] = words.filter(
       (word) => spreadKorean(targetString).split('').every(
         (each) => spreadKorean(word).split('').includes(each),
       ),
     );
+
+    const longestLength = includedWords.sort((a, b) => b.length - a.length)[0].length;
+    /* 자모 전부 포함되는 단어 리스트를
+       가중치 합이 가장 큰 단어를 기준으로 내림차순 정렬
+    */
+    return includedWords.sort((a, b) => targetString.split('').reduce((acc, curr, index) => {
+      if (spreadKorean(a).indexOf(targetString.split('')[0]) > spreadKorean(b).indexOf(targetString.split('')[0])) {
+        return acc + (longestLength - index);
+      }
+      return acc - (longestLength - index);
+    }, 0));
+  };
 
   /**
    * up , down , enter 키보드 리스트 셀렉터

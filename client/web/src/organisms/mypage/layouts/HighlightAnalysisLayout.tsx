@@ -245,12 +245,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     '나락',
     '극락',
     '굿',
-    '에바',
     '지렷다',
+    '레전드',
     '노답',
     '가능?',
-    '레전드',
     '침디',
+    '가장긴 문자열',
   ];
   const [analysisWord, setAnalysisWord] = React.useState<string>();
   const handleAnalysisWord = (targetWord: string) => {
