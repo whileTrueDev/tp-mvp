@@ -1,13 +1,13 @@
 import {
   Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, UseGuards, Req,
+  ClassSerializerInterceptor, Query, Patch, UseGuards, Req, ForbiddenException,
 } from '@nestjs/common';
 // DTOs
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
-
-import { Request } from 'express';
+import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
+import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
@@ -16,6 +16,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserEntity } from './entities/user.entity';
 import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';
 import { SubscribeEntity } from './entities/subscribe.entity';
+import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 
 @Controller('users')
 export class UsersController {
@@ -24,15 +25,50 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
-  // 구독자가 피구독자의 데이터에 접근하는 경우
-  // 프로필 데이터 (채널 연동 정보, 닉네임)
+  /**
+   * 유저 정보 열람 GET 컨트롤러
+   * @param req user를 포함한 리퀘스트 객체
+   * @param userId 유저 정보를 열람하고자 하는 유저의 아이디
+   */
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findSubscriberInfo(
-    @Req() req: Request,
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findUser(
+    @Req() req: LogedInExpressRequest,
     @Query('userId') userId: string,
-  ): Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
-    return this.usersService.findSubscriberInfo(userId);
+  ): Promise<UserEntity> {
+    if (userId) return this.usersService.findOne(userId);
+    return this.usersService.findOne(req.user.userId);
+  }
+
+  @Get('profile-images')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findUserProfileImages(
+    @Req() req: LogedInExpressRequest,
+    @Query('userId') userId: string,
+  ): Promise<ProfileImages> {
+    if (userId) return this.usersService.findOneProfileImage(userId);
+    return this.usersService.findOneProfileImage(req.user.userId);
+  }
+
+  /**
+   * 유저 정보 변경 PATCH 컨트롤러
+   * @param req user를 포함한 리퀘스트 객체
+   * @param updateUserDto 변경할 유저 정보 Data Transfer Object
+   */
+  @Patch()
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async updateUser(
+    @Req() req: LogedInExpressRequest,
+    @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+  ): Promise<number> {
+    if (req.user.userId && req.user.userId === updateUserDto.userId) {
+      return this.usersService.updateOne(updateUserDto);
+    }
+    // 로그인 되어있지 않거나, 로그인한 유저와 변경요청한 유저가 다른 경우
+    throw new ForbiddenException('Forbidden for you');
   }
 
   // get request에 반응하는 router, 함수정의
@@ -66,7 +102,7 @@ export class UsersController {
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto,
   ): Promise<boolean> {
-    return this.usersService.findPW(userDI, password);
+    return this.usersService.updatePW(userDI, password);
   }
 
   /*

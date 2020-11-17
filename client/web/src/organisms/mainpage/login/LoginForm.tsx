@@ -81,12 +81,9 @@ export default function LoginForm(): JSX.Element {
   return (
     <>
       {/* 로딩 컴포넌트 */}
-      {loading && (<CenterLoading color="secondary" size="5rem" />)}
+      {loading && (<CenterLoading color="primary" size="5rem" />)}
 
-      <form
-        onSubmit={handleLoginSubmit}
-        className={classes.formWidth}
-      >
+      <form onSubmit={handleLoginSubmit} className={classes.formWidth}>
         <div className={classes.alignCenter}>
           { theme.palette.type === 'light' ? <TruepointLogo width={350} /> : <TruepointLogoLight width={350} /> }
         </div>

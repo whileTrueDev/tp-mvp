@@ -46,8 +46,11 @@ export class UserEntity implements User {
   @Column()
   marketingAgreement: boolean;
 
-  @Column({ default: 'user' })
+  @Column({ default: 'user', comment: '유저 역할(관리자,유저,...)' })
   roles?: string;
+
+  @Column({ comment: '대표 프로필 사진' })
+  profileImage?: string;
 
   @Column({ nullable: true, default: null })
   twitchId?: string | null;

@@ -4,6 +4,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
+import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
@@ -40,6 +42,35 @@ export class UsersService {
   async findSubscriberInfo(userId: string): Promise<Pick<UserEntity, 'nickName' | 'afreecaId' | 'youtubeId' | 'twitchId'>> {
     return this.usersRepository.findOne(userId, {
       select: ['nickName', 'afreecaId', 'youtubeId', 'twitchId'],
+    });
+  }
+
+  async findOneProfileImage(userId: string): Promise<ProfileImages> {
+    const user = await this.usersRepository.findOne(userId);
+    const images = [];
+
+    // const afreecaLink = await this.afreecaRepository.findOne(user.afreecaId);
+    // if (afreecaLink) images.push({ platform: 'afreeca', logo: afreecaLink.logo });
+
+    const twitchLink = await this.twitchRepository.findOne(user.twitchId);
+    if (twitchLink) images.push({ platform: 'twitch', logo: twitchLink.logo });
+
+    const youtubeLink = await this.youtubeRepository.findOne(user.youtubeId);
+    if (youtubeLink) {
+      images.push(
+        { platform: 'youtube', logo: youtubeLink.youtubeLogo.replace('{size}', '150') },
+      );
+    }
+    return images;
+  }
+
+  async updateOne(dto: UpdateUserDto): Promise<any> {
+    return this.usersRepository.save({
+      userId: dto.userId,
+      gender: dto.gender,
+      mail: dto.mail,
+      nickName: dto.nickName,
+      profileImage: dto.profileImage,
     });
   }
 
@@ -91,12 +122,11 @@ export class UsersService {
   }
 
   // 본인인증의 결과가 인증이 되면,  해당 계정의 패스워드를 변경한다.
-  async findPW(userDI: string, password: string): Promise<boolean> {
+  async updatePW(userDI: string, password: string): Promise<boolean> {
     try {
       const user = await this.usersRepository
         .findOne({ where: { userDI } });
       if (user) {
-        // 임시번호 저장 후에 임시비밀번호 저장.
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await this.usersRepository
@@ -111,7 +141,7 @@ export class UsersService {
       }
       return false;
     } catch {
-      throw new HttpException('findPW error', HttpStatus.BAD_REQUEST);
+      throw new HttpException('updatePW error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -259,13 +289,35 @@ export class UsersService {
 
   /**
    * 연결된 트루포인트 Users 에서 플랫폼 연결 link를 삭제하는 메소드
+   * 부가적으로, 대표 프로필 사진이 삭제하고자하는 플랫폼으로 설정되어 있는 경우 대표 프로필 사진을 삭제합니다.
    * @param {string} userId 트루포인트 유저 아이디 문자열
    * @param {string} platform 연결된 플랫폼 문자열
    */
   async disconnectLink(
     userId: string, platform: string,
   ): Promise<number> {
-    const result = await this.usersRepository.update(userId, { [`${platform}Id`]: undefined });
+    const targetUser = await this.usersRepository.findOne(userId);
+    let targetPlatformLogo: string;
+    if (platform === 'afreeca') {
+      const afreeca = await this.twitchRepository.findOne(targetUser.afreecaId);
+      targetPlatformLogo = afreeca.logo;
+    }
+    if (platform === 'twitch') {
+      const twitch = await this.twitchRepository.findOne(targetUser.twitchId);
+      targetPlatformLogo = twitch.logo;
+    }
+    if (platform === 'youtube') {
+      const youtube = await this.youtubeRepository.findOne(targetUser.youtubeId);
+      targetPlatformLogo = youtube.youtubeLogo;
+    }
+
+    // 플랫폼 연결 정보 삭제 및 대표 프로필 사진이 해당 플랫폼의 프로필사진인 경우 함께 삭제
+    const result = await this.usersRepository.update(
+      userId, {
+        [`${platform}Id`]: undefined,
+        profileImage: targetPlatformLogo === targetUser.profileImage ? undefined : targetUser.profileImage,
+      },
+    );
     return result.affected;
   }
 

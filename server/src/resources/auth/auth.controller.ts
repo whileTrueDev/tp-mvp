@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   Controller, Request, Post, UseGuards, Get, Query,
-  HttpException, HttpStatus, Res, BadRequestException, Body, Req, Delete, UseFilters, InternalServerErrorException,
+  HttpException, HttpStatus, Res, BadRequestException, Body, Req, Delete, UseFilters, InternalServerErrorException, ForbiddenException,
 } from '@nestjs/common';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
@@ -20,6 +20,7 @@ import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
 import { AfreecaPreLinker } from './strategies/afreeca.linker';
 import { TwitchLinkExceptionFilter } from '../../filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from '../../filters/youtube-link.filter';
+import { AfreecaLinkExceptionFilter } from '../../filters/afreeca-link.filter';
 
 @Controller('auth')
 export class AuthController {
@@ -55,6 +56,23 @@ export class AuthController {
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     res.send({ access_token: accessToken });
+  }
+
+  /**
+   * 패스워드가 맞는지 확인하여 true , false를 반환하는 컨트롤러로,
+   * 보안 인증이 필요한 곳에서 (ex. 비밀번호 변경, 회원탈퇴 등 ) 자신의 비밀번호 확인에 사용됩니다.
+   * @param req 로그인 user 정보를 포함한 요청 객체
+   * @param password 패스워드 plain 문자열
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('check-pw')
+  async checkPw(
+    @Req() req: LogedInExpressRequest,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    const result = await this.authService.validateUser(req.user.userId, password);
+    if (result) return true;
+    throw new ForbiddenException('password incorrect');
   }
 
   // 토큰 새로고침 컨트롤러
@@ -117,12 +135,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async deletePlatformLink(
     @Req() req: LogedInExpressRequest, @Body('platform') platform: string,
-  ): Promise<number[]> {
+  ): Promise<number> {
     const { userId } = req.user;
-    const result = await this.usersService.deleteLinkUserPlatform(userId, platform);
-    const result2 = await this.usersService.disconnectLink(userId, platform);
+    const result = await this.usersService.disconnectLink(userId, platform);
 
-    return [result, result2];
+    // 링크 정보 (PlatformTwitch, PlatformYoutube PlatformAfreeca) 삭제
+    // const result2 = await this.usersService.deleteLinkUserPlatform(userId, platform);
+
+    return result;
   }
 
   // *********** Twitch ******************
@@ -166,6 +186,7 @@ export class AuthController {
   // *********** Afreeca ******************
   // creator - afreeca 로그인
   @Get('afreeca')
+  @UseFilters(AfreecaLinkExceptionFilter)
   async afreeca(
     @Req() req: express.Request,
     @Res() res: express.Response,
@@ -184,6 +205,7 @@ export class AuthController {
 
   // afreeca auth  callback
   @Get('afreeca/callback')
+  @UseFilters(AfreecaLinkExceptionFilter)
   async afreecaCallback(
     @Req() req: express.Request,
     @Res() res: express.Response,
