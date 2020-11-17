@@ -92,7 +92,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
       ),
     );
 
-    const longestLength = includedWords.sort((a, b) => b.length - a.length)[0].length;
+    const longestLength = includedWords.length > 1 ? includedWords.sort((a, b) => b.length - a.length)[0].length : 1;
     /* 자모 전부 포함되는 단어 리스트를
        가중치 합이 가장 큰 단어를 기준으로 내림차순 정렬
     */
