@@ -113,9 +113,15 @@ export default function FeatureTable({
                 <TableRow
                   className={classes.tableRow}
                   key={shortid.generate()}
-                  onClick={() => (eachRow.userId === auth.user.userId
-                    ? handleClick(eachRow.suggestionId)
-                    : ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar))}
+                  // onClick={() => (eachRow.userId === auth.user.userId
+                  //   ? handleClick(eachRow.suggestionId)
+                  //   : ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar))}
+                  onClick={() => {
+                    if (eachRow.isLock) {
+                      if (eachRow.author === auth.user.userId) handleClick(eachRow.suggestionId);
+                      else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+                    } else handleClick(eachRow.suggestionId);
+                  }}
                 >
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.suggestionId}

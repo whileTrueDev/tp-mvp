@@ -13,12 +13,15 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 // import Divider from '@material-ui/core/Divider';
 // import Card from '../../../atoms/Card/Card';
 import LockIcon from '@material-ui/icons/Lock';
+import { useSnackbar } from 'notistack';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 import dateExpression from '../../../utils/dateExpression';
 import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
+// attoms snackbar
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -57,6 +60,7 @@ export default function FeatureDetail({
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [, deleteRequest] = useAxios(
     { url: '/feature-suggestion', method: 'delete' }, { manual: true },
@@ -210,7 +214,12 @@ export default function FeatureDetail({
           disabled={currentSuggestionIndex === 0}
           variant="outlined"
           onClick={() => {
-            onOtherFeatureClick(previousFeature.suggestionId);
+            if (previousFeature.isLock) {
+              if (previousFeature.author === authContext.user.userId) onOtherFeatureClick(previousFeature.suggestionId);
+              else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+            } else {
+              onOtherFeatureClick(previousFeature.suggestionId);
+            }
           }}
         >
           <KeyboardArrowLeft />
@@ -238,7 +247,12 @@ export default function FeatureDetail({
           disabled={currentSuggestionIndex === data.length - 1}
           variant="outlined"
           onClick={() => {
-            onOtherFeatureClick(nextFeature.suggestionId);
+            if (nextFeature.isLock) {
+              if (nextFeature.author === authContext.user.userId) onOtherFeatureClick(nextFeature.suggestionId);
+              else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+            } else {
+              onOtherFeatureClick(nextFeature.suggestionId);
+            }
           }}
         >
           {currentSuggestionIndex !== data.length - 1 && (
