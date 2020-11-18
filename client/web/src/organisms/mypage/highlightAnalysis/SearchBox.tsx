@@ -9,7 +9,7 @@ import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import CheckIcon from '@material-ui/icons/Check';
 import { useSnackbar } from 'notistack';
 import useEventTargetValue from '../../../utils/hooks/useEventTargetValue';
-import { spreadKorean } from './spreadKorean';
+import { spreadKorean } from '../../../utils/spreadKorean';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'row',
   },
-  analysisCaption: { paddingTop: theme.spacing(6), marginLeft: theme.spacing(3) },
+  analysisCaption: { paddingTop: theme.spacing(3), marginLeft: theme.spacing(3) },
   quotesImg: { width: '22px', height: '22px' },
   analysisWord: { margin: theme.spacing(2) },
   popper: {
@@ -45,8 +45,12 @@ const useStyles = makeStyles((theme) => ({
     width: searchBoxWidth,
     zIndex: 999,
     marginTop: 0,
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: 4,
+    // padding: theme.spacing(1),
+    backgroundColor: theme.palette.background.paper,
   },
-  list: { backgroundColor: theme.palette.background.paper },
+  list: { },
   listItem: {
     borderRadius: 4,
     display: 'flex',
@@ -157,7 +161,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
 
         {analysisWord ? (
           <Typography
-            variant="h2"
+            variant="h4"
             color="textSecondary"
             className={classes.analysisWordWrapper}
           >
@@ -166,7 +170,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
               {`${analysisWord} `}
             </div>
             <img src="/images/analyticsPage/quotesRight.png" alt="right qut" className={classes.quotesImg} />
-            <Typography variant="h6" color="textSecondary" className={classes.analysisCaption}>
+            <Typography variant="h6" color="textSecondary" className={classes.analysisCaption} component="span">
               단어에 대해 분석을 시작 합니다.
             </Typography>
           </Typography>
@@ -198,6 +202,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
                 button
                 onClick={() => {
                   handleAnalysisWord(word); setValue(word);
+                  handleAnchorClose();
                 }}
                 className={classes.listItem}
                 selected={selectedIndex === index}

@@ -30,6 +30,12 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     fontWeight: 700,
     padding: `${theme.spacing(1)}px ${theme.spacing(4)}px`,
   },
+  searchTitle: {
+    marginTop: theme.spacing(2),
+  },
+  searchBox: { margin: theme.spacing(4) },
+  analysisButton: { textAlign: 'right', paddingBottom: theme.spacing(2) },
+  helperPopOver: { textAlign: 'right' },
 }));
 
 export default useHighlightAnalysisLayoutStyles;

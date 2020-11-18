@@ -8,6 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
+import classnames from 'classnames';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -308,11 +309,18 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Calendar handleDatePick={handleDatePick} />
         </Grid>
 
-        <Grid item xs className={classes.title} style={{ marginTop: '16px' }}>
+        <Grid
+          item
+          xs
+          className={classnames({
+            [classes.title]: true,
+            [classes.searchTitle]: true,
+          })}
+        >
           분석할 검색값 입력
         </Grid>
 
-        <div style={{ margin: '32px' }}>
+        <div className={classes.searchBox}>
           <SearchBox
             words={dummy}
             handleAnalysisWord={handleAnalysisWord}
@@ -329,7 +337,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         justify="flex-end"
       >
         <Grid item direction="column">
-          <div style={{ textAlign: 'right', paddingBottom: 20 }}>
+          <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
               disabled={isClicked || Boolean(!selectedStream.fileId)}
@@ -337,7 +345,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               분석하기
             </Button>
           </div>
-          <div style={{ textAlign: 'right' }}>
+          <div className={classes.helperPopOver}>
             <HelperPopOver />
           </div>
           <div>
@@ -392,7 +400,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <MetricsAccordian
             metricsData={metricsData}
             analysisWord={analysisWord}
-
           />
         </>
       )}
