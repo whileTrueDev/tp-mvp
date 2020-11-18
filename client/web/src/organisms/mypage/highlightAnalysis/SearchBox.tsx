@@ -4,6 +4,7 @@ import {
   TextField, ClickAwayListener, Popper, List, ListItem,
   Typography,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import CheckIcon from '@material-ui/icons/Check';
 import { useSnackbar } from 'notistack';
@@ -12,6 +13,7 @@ import { spreadKorean } from './spreadKorean';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
+const searchBoxWidth = 250;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -22,24 +24,25 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
   },
   textField: {
-    marginRight: theme.spacing(2),
-    width: '200px',
+    marginRight: theme.spacing(4),
+    width: searchBoxWidth,
   },
   arrowIcon: {
-    marginRight: theme.spacing(2),
-    fontSize: '60px',
+    marginRight: theme.spacing(4),
     fontWeight: 'bold',
+    fontSize: '80px',
   },
   analysisWordWrapper: {
     display: 'flex',
     flexDirection: 'row',
   },
+  analysisCaption: { paddingTop: theme.spacing(6), marginLeft: theme.spacing(3) },
   quotesImg: { width: '22px', height: '22px' },
   analysisWord: { margin: theme.spacing(2) },
   popper: {
     display: 'flex',
     flexDirection: 'column',
-    width: '200px',
+    width: searchBoxWidth,
     zIndex: 999,
     marginTop: 0,
   },
@@ -135,7 +138,6 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
 
         <TextField
           variant="outlined"
-          // autoFocus
           label="검색값"
           color="primary"
           onClick={() => handleAnchorOpenWithRef(targetRef)}
@@ -151,20 +153,29 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
           className={classes.textField}
         />
 
-        <TrendingFlatIcon className={classes.arrowIcon} />
+        <TrendingFlatIcon className={classes.arrowIcon} color="primary" />
 
-        {analysisWord && (
-        <Typography
-          variant="h4"
-          color="textSecondary"
-          className={classes.analysisWordWrapper}
-        >
-          <img src="/images/analyticsPage/quotesLeft.png" alt="left qut" className={classes.quotesImg} />
-          <div className={classes.analysisWord}>
-            {`${analysisWord}`}
-          </div>
-          <img src="/images/analyticsPage/quotesRight.png" alt="right qut" className={classes.quotesImg} />
-        </Typography>
+        {analysisWord ? (
+          <Typography
+            variant="h2"
+            color="textSecondary"
+            className={classes.analysisWordWrapper}
+          >
+            <img src="/images/analyticsPage/quotesLeft.png" alt="left qut" className={classes.quotesImg} />
+            <div className={classes.analysisWord}>
+              {`${analysisWord} `}
+            </div>
+            <img src="/images/analyticsPage/quotesRight.png" alt="right qut" className={classes.quotesImg} />
+            <Typography variant="h6" color="textSecondary" className={classes.analysisCaption}>
+              단어에 대해 분석을 시작 합니다.
+            </Typography>
+          </Typography>
+        ) : (
+          <Alert severity="info">
+            <Typography variant="body1" className={classes.analysisWordWrapper}>
+              검색값 분석을 위해 단어를 선택해 주세요
+            </Typography>
+          </Alert>
         )}
 
         {anchorEl && (
