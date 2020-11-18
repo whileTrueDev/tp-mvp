@@ -15,6 +15,8 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 import Button from '../../../atoms/Button/Button';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+// import Write2 from './Test';
+import PrettyEditor from './PrettyEditor';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,9 +57,9 @@ export default function FeatureWriteForm(): JSX.Element {
     setFeatureSource({ ...featureSource, category: event.target.value });
   };
 
-  const handleContents = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFeatureSource({ ...featureSource, content: event.target.value });
-  };
+  // const handleContents = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setFeatureSource({ ...featureSource, content: event.target.value });
+  // };
 
   // ******************************************************
   // 기능제안 등록
@@ -152,7 +154,7 @@ export default function FeatureWriteForm(): JSX.Element {
       </div>
       {/* 기능 제안 내용 입력 */}
       <div className={classes.contents}>
-        <TextField
+        {/* <TextField
           fullWidth
           id="feature-contents"
           multiline
@@ -161,7 +163,9 @@ export default function FeatureWriteForm(): JSX.Element {
           rows={12}
           placeholder="내용을 입력해주세요."
           variant="outlined"
-        />
+        /> */}
+        {/* <Write2 /> */}
+        <PrettyEditor />
       </div>
       <div className={classes.buttonSet}>
         <Button
