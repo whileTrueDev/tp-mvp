@@ -47,7 +47,7 @@ export default function NickNameChangeDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" disableScrollLock>
       <form onSubmit={(evt) => {
         evt.preventDefault();
         if (selectednickName) onEdit('nickName', selectednickName);
