@@ -115,9 +115,9 @@ export default function MaterialTable({
                     {eachRow.category}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {auth.user.userId === eachRow.author
-                      ? eachRow.author
-                      : transformIdToAsterisk(eachRow.author, 1.8)}
+                    {auth.user.userId === eachRow.author.userId
+                      ? eachRow.author.userId
+                      : transformIdToAsterisk(eachRow.author.userId, 1.8)}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="left">
                     <div>

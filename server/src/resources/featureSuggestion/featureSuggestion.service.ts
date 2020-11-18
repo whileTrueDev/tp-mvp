@@ -5,10 +5,13 @@ import { FeatureSuggestionStateUpdateDto } from '@truepoint/shared/dist/dto/feat
 import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
 import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
+import { UserEntity } from '../users/entities/user.entity';
 
 @Injectable()
 export class FeatureSuggestionService {
   constructor(
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(FeatureSuggestionEntity)
     private readonly FeatureSuggestionRepository: Repository<FeatureSuggestionEntity>,
   ) {}
@@ -19,7 +22,7 @@ export class FeatureSuggestionService {
   public async findAll(): Promise<FeatureSuggestionEntity[]> {
     return this.FeatureSuggestionRepository.find({
       order: { createdAt: 'DESC' },
-      relations: ['replies'],
+      relations: ['author', 'replies', 'replies.author'],
     });
   }
 
@@ -38,7 +41,10 @@ export class FeatureSuggestionService {
   // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async insert(fsDto: FeatureSuggestionPostDto): Promise<FeatureSuggestionEntity> {
-    return this.FeatureSuggestionRepository.save(fsDto);
+    const author = await this.usersRepository.findOne(fsDto.author);
+    return this.FeatureSuggestionRepository.save({
+      ...fsDto, author,
+    });
   }
 
   // @hwasurr 2020.10.13 eslint error 정리중 disalbe
@@ -46,11 +52,12 @@ export class FeatureSuggestionService {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async update(fsPatchDto: FeatureSuggestionPatchDto): Promise<number> {
     const {
-      suggestionId, author, userId, category, title, content,
+      suggestionId, author, category, title, content,
     } = fsPatchDto;
+    const authorEntity = await this.usersRepository.findOne(author);
     const result = await this.FeatureSuggestionRepository
       .update({ suggestionId }, {
-        author, userId, category, title, content,
+        category, title, content, author: authorEntity,
       });
     return result.affected;
   }

@@ -1,4 +1,5 @@
 import { FeatureSuggestionReply } from './FeatureSuggestionReply.interface';
+import { User } from './User.interface';
 
 export interface FeatureSuggestion {
   suggestionId: number;
@@ -9,9 +10,7 @@ export interface FeatureSuggestion {
 
   content: string;
 
-  author: string;
-
-  userId: string;
+  author: User;
 
   state: number;
 

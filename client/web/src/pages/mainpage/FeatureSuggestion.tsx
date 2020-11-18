@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
@@ -65,6 +65,11 @@ export default function FeatureSuggestionPage(): JSX.Element {
   const [{ loading, data }, featureRefetch] = useAxios<FeatureSuggestion[]>({
     url: '/feature-suggestion', method: 'GET',
   });
+
+  // 기능제아 데이터 요청 (글쓰기 -> 목록으로 돌아와도 새로운 기능제안을 재 요청하지 않는 현상을 수정하기 위해.)
+  useEffect(() => {
+    featureRefetch();
+  }, [featureRefetch]);
 
   // 페이지네이션
   const [page, setPage] = React.useState(0);

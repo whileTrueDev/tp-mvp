@@ -1,57 +1,84 @@
 import React from 'react';
 import classnames from 'classnames';
-import { Avatar, Paper, Typography } from '@material-ui/core';
+import {
+  Avatar, Chip, CircularProgress, Paper, Typography,
+} from '@material-ui/core';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import useAuthContext from '../../../utils/hooks/useAuthContext';
+import useAxios from 'axios-hooks';
 
 const useStyles = makeStyles((theme) => ({
-  container: { padding: theme.spacing(4), display: 'flex', alignItems: 'center' },
+  container: {
+    height: '100%', padding: theme.spacing(4), display: 'flex', alignItems: 'center',
+  },
+  loading: {
+    height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center',
+  },
   avatar: { width: 150, height: 150, margin: theme.spacing(4) },
   platformLogo: { width: 30, height: 30, margin: '0px 4px' },
   flexBox: { display: 'flex', alignItems: 'center' },
-  userTier: { marginLeft: 16, color: theme.palette.text.secondary },
+  userTier: { marginLeft: theme.spacing(2), marginTop: theme.spacing(1) },
   text: { paddingTop: theme.spacing(1) },
+  bold: { fontWeight: 'bold' },
 }));
 
 export default function UserProfile(): JSX.Element {
   const classes = useStyles();
-  const authValue = useAuthContext();
+  const [profileRequestObject] = useAxios<User>({
+    url: 'users', method: 'GET',
+  });
 
   return (
     <Paper className={classes.container}>
-      <Avatar className={classes.avatar} />
+      {/* 로딩중 */}
+      {profileRequestObject.loading && (
+      <div className={classes.loading}><CircularProgress /></div>
+      )}
 
-      <div>
-        {/* 이름 */}
-        <div className={classes.flexBox}>
-          <Typography variant="h4" style={{ fontWeight: 'bold' }}>
-            {`${authValue.user.userId} 님`}
-            {/* "님" 볼드처리 제거의 경우 */}
-            {/* <Typography component="span">님</Typography> */}
-          </Typography>
+      {!profileRequestObject.loading && profileRequestObject.data && (
+        <>
+          <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
 
-          <img className={classes.platformLogo} src="/images/logo/afreecaLogo.png" alt="" draggable={false} />
-          <img className={classes.platformLogo} src="/images/logo/twitchLogo.png" alt="" draggable={false} />
-          <img className={classes.platformLogo} src="/images/logo/youtubeLogo.png" alt="" draggable={false} />
-        </div>
+          <div>
+            {/* 이름 */}
+            <div className={classes.flexBox}>
+              <Typography variant="h4" style={{ fontWeight: 'bold' }}>
+                {`${profileRequestObject.data.nickName || profileRequestObject.data.userId} 님`}
+              </Typography>
 
-        {/* 요금제 */}
-        <div>
-          <div className={classes.flexBox}>
-            <Typography className={classes.text} variant="body1">요금제</Typography>
-            <Typography className={classnames(classes.text, classes.userTier)} variant="body1">클로즈베타 테스터</Typography>
+              {/* 연동된 플랫폼 목록 */}
+              {profileRequestObject.data.afreecaId && (
+              <img className={classes.platformLogo} src="/images/logo/afreecaLogo.png" alt="" draggable={false} />
+              )}
+              {profileRequestObject.data.twitchId && (
+              <img className={classes.platformLogo} src="/images/logo/twitchLogo.png" alt="" draggable={false} />
+              )}
+              {profileRequestObject.data.youtubeId && (
+              <img className={classes.platformLogo} src="/images/logo/youtubeLogo.png" alt="" draggable={false} />
+              )}
+            </div>
+
+            <div>
+              {/* 이메일 */}
+              <Typography className={classes.text}>{profileRequestObject.data.mail}</Typography>
+
+              {/* 요금제 */}
+              <div className={classes.flexBox}>
+                <Typography className={classnames(classes.text, classes.bold)} variant="body1">요금제</Typography>
+                <Chip label="클로즈베타 테스터" size="small" color="primary" className={classnames(classes.userTier)} />
+              </div>
+
+              {/* 클로즈베타 처리 - 잠시 제거 */}
+              {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
+                  업그레이드
+                  <ArrowForwardIosIcon fontSize="inherit" />
+                </Typography> */}
+            </div>
           </div>
-
-          {/* 클로즈베타 처리 - 잠시 제거 */}
-          {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
-            업그레이드
-            <ArrowForwardIosIcon fontSize="inherit" />
-          </Typography> */}
-
-        </div>
-      </div>
+        </>
+      )}
     </Paper>
   );
 }

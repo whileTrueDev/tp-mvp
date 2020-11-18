@@ -1,5 +1,6 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module, forwardRef, ClassSerializerInterceptor } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UsersService } from './users.service';
 import { AuthModule } from '../auth/auth.module';
 import { UsersController } from './users.controller';
@@ -21,7 +22,13 @@ import { SubscribeEntity } from './entities/subscribe.entity';
   ]),
   forwardRef(() => AuthModule), // Resolve circular dependencies between Modules
   ],
-  providers: [UsersService],
+  providers: [
+    UsersService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+  ],
   controllers: [UsersController],
   exports: [UsersService],
 })

@@ -8,7 +8,7 @@ import { Exclude } from 'class-transformer';
 import { SubscribeEntity } from './subscribe.entity';
 import { NotificationEntity } from '../../notification/entities/notification.entity';
 
-@Entity({ name: 'UserTest' })
+@Entity({ name: 'UserTest2' })
 export class UserEntity implements User {
   // For Exclude Decorator
   constructor(partial: Partial<UserEntity>) {

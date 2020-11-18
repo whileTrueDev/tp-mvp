@@ -38,12 +38,13 @@ const useStyles = makeStyles((theme) => ({
 
 export interface UserMenuPopperProps extends Omit<PopoverProps, 'children'> {
   anchorEl: HTMLElement | null;
+  avatarSrc?: string
 }
 export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element {
   const classes = useStyles();
   const theme = useTheme<TruepointTheme>();
   const {
-    open, anchorEl, onClose, ...prop
+    open, anchorEl, onClose, avatarSrc, ...prop
   } = props;
 
   const authContext = useAuthContext();
@@ -67,7 +68,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
     >
       <Paper elevation={2} className={classes.container}>
         <div className={classes.description}>
-          <Avatar />
+          <Avatar src={avatarSrc} />
           <div className={classes.descriptionDetail}>
             <Typography variant="h6">{authContext.user.userName}</Typography>
             <Typography variant="body2" component="span">{authContext.user.userId}</Typography>

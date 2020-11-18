@@ -16,8 +16,8 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 import dateExpression from '../../../utils/dateExpression';
-import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
+import FeatureReply from './sub/FeatureReply';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -108,11 +108,11 @@ export default function FeatureDetail({
               {progressTab(currentSuggestion.state)}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              {currentSuggestion.author && (
+              {currentSuggestion.author.userId && (
                 <span>
-                  {authContext.user.userId === currentSuggestion.author
-                    ? currentSuggestion.author
-                    : transformIdToAsterisk(currentSuggestion.author, 1.8)}
+                  {authContext.user.userId === currentSuggestion.author.userId
+                    ? currentSuggestion.author.userId
+                    : transformIdToAsterisk(currentSuggestion.author.userId, 1.8)}
                 </span>
               )}
             </Typography>
@@ -129,7 +129,7 @@ export default function FeatureDetail({
             </Typography>
           </Typography>
         </div>
-        {currentSuggestion.author === authContext.user.userId
+        {currentSuggestion.author.userId === authContext.user.userId
         && (
           <div className={classes.editDeleteButtonSet}>
             <Button
@@ -166,8 +166,12 @@ export default function FeatureDetail({
       </Paper>
 
       {/* 댓글 작성하기 */}
-      {currentSuggestion.author === authContext.user.userId && (
-        <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
+      {currentSuggestion.author.userId === authContext.user.userId && (
+        <FeatureReplyInput
+          currentSuggestion={currentSuggestion}
+          refetch={refetch}
+          avatarLogo={currentSuggestion.author.profileImage || ''}
+        />
       )}
       {/* 댓글 리스트 섹션 */}
       {currentSuggestion.replies
@@ -178,9 +182,9 @@ export default function FeatureDetail({
               ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map((reply) => (
                 <FeatureReply
-                  avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
-                  key={reply.author + reply.createdAt}
-                  author={reply.author}
+                  avatarLogo={reply.author.profileImage}
+                  key={reply.author.userId + reply.createdAt}
+                  author={reply.author.userId}
                   content={reply.content}
                   createdAt={reply.createdAt}
                   replyId={reply.replyId}

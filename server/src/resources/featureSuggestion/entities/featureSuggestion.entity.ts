@@ -1,19 +1,17 @@
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, JoinColumn,
 } from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionReplyEntity } from './featureSuggestionReply.entity';
 
-@Entity({ name: 'FeatureSuggestionTest' })
+@Entity({ name: 'FeatureSuggestionTest2' })
 export class FeatureSuggestionEntity implements FeatureSuggestion {
   @PrimaryGeneratedColumn()
   suggestionId: number;
 
-  @Column({
-    type: 'varchar',
-    length: 50,
-  })
+  @Column({ type: 'varchar', length: 50 })
   category: string;
 
   @Column()
@@ -22,17 +20,9 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @Column()
   content: string;
 
-  @Column({
-    type: 'varchar',
-    length: 50,
-  })
-  author: string;
-
-  @Column({
-    type: 'varchar',
-    length: 20,
-  })
-  userId: string;
+  @JoinColumn()
+  @ManyToOne((type) => UserEntity, (user) => user.userId)
+  author: UserEntity;
 
   @Column({ type: 'tinyint', default: 0, comment: '기능제안 상태 플래그 0=미확인, 1=승인, 2=보류' })
   state: number;

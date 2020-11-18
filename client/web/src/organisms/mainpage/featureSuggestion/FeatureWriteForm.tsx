@@ -43,7 +43,7 @@ export default function FeatureWriteForm(): JSX.Element {
   // 기능제안 state
   const [featureSource, setFeatureSource] = React.useState<Pick<FeatureSuggestion, 'title' | 'category' | 'content'>>({
     title: '',
-    category: '',
+    category: '홈페이지 개선',
     content: '',
   });
 
