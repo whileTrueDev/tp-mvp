@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 // import Divider from '@material-ui/core/Divider';
 // import Card from '../../../atoms/Card/Card';
+import LockIcon from '@material-ui/icons/Lock';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
@@ -102,7 +103,18 @@ export default function FeatureDetail({
       <Paper component="article" ref={paperRef}>
         <div className={classes.title}>
           <div>
+
             <Typography component="div" variant="h6" className={classes.titleText}>
+              {currentSuggestion.isLock && (
+                <LockIcon
+                  color="primary"
+                  style={{
+                    verticalAlign: 'middle',
+                    display: 'inline-flex',
+                    marginRight: '8px',
+                  }}
+                />
+              )}
               {currentSuggestion.title}
               {' '}
               {progressTab(currentSuggestion.state)}

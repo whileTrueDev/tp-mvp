@@ -10,9 +10,9 @@ import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTabl
 import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
 import Button from '../../atoms/Button/Button';
-import useAuthContext from '../../utils/hooks/useAuthContext';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
+import useAuthContext from '../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {

@@ -41,7 +41,7 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   like: number;
 
   @Column({ comment: '비밀글 여부 0=비밀글X, 1=비밀글O', default: false })
-  isLock?: boolean;
+  isLock: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
