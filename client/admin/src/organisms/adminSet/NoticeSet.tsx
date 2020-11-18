@@ -10,11 +10,6 @@ import Writer from './writer/Writer';
   게재할 목록 Table에대한 data를 GET하는 요청을 이 컴포넌트가 위치할 페이지에서 하여서, table데이터를 전달하면 됩니다.
  */
 
-/*
-  각 페이지에서 NoticeData와 같은 Data에대한 props는 수정되어져야한다.
-  앞으로 이 컴포넌트를 다른 페이지에서도 사용할 것이므로 NoticeData 프롭스로 
-  고정해두면 안됩니다!
- */
 interface dataprops {
   tabledata?: any;
   noticeLoading?: any;
