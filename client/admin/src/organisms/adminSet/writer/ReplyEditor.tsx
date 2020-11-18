@@ -24,9 +24,9 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
   const [, executePatch] = useAxios(
     { url: 'http://localhost:3000/feature-suggestion/reply', method: 'PATCH' }, { manual: true },
   );
-  const [authorfix, setAuthor] = React.useState('TruePoint 관리자');
+  const [authorfix, setAuthor] = React.useState('TruePoint');
   function handleAuthorname() {
-    setAuthor('TruePoint 관리자');
+    setAuthor('TruePoint');
   }
   return (
     <Paper>

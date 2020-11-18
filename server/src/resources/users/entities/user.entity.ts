@@ -49,7 +49,7 @@ export class UserEntity implements User {
   @Column({ default: 'user', comment: '유저 역할(관리자,유저,...)' })
   roles?: string;
 
-  @Column({ comment: '대표 프로필 사진' })
+  @Column({ type: 'text', comment: '대표 프로필 사진' })
   profileImage?: string;
 
   @Column({ nullable: true, default: null })

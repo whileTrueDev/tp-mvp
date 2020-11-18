@@ -44,7 +44,7 @@ export default function SuggestPreview(props: Props): JSX.Element {
         }}
         >
           <Table size="small">
-            <CostomTableRow title="작성자" data={selectedData.author} />
+            <CostomTableRow title="작성자" data={`${selectedData.author.userId} ${selectedData.author.nickName ? `(${selectedData.author.nickName})` : ''}`} />
             <CostomTableRow title="SuggestionId" data={selectedData.suggestionId} />
             <CostomTableRow title="날짜" data={new Date(selectedData.createdAt).toLocaleString()} />
             <CostomTableRow title="카테고리" data={selectedData.category} />

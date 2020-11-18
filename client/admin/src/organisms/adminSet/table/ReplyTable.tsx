@@ -86,7 +86,7 @@ export default function ReplyTable(props: ReplyTableProps): JSX.Element {
           title: '작성자',
           field: 'author',
           render: (rowData) => (
-            <Typography>{rowData.author}</Typography>
+            <Typography>{`${rowData.author.userId} ${rowData.author.nickName ? `(${rowData.author.nickName})` : ''}`}</Typography>
           ),
         },
         {
