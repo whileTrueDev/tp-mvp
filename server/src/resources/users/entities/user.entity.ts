@@ -1,13 +1,10 @@
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
-  Entity, Column, OneToOne, CreateDateColumn, UpdateDateColumn, OneToMany,
+  Entity, Column, CreateDateColumn, UpdateDateColumn, OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 // Related Entities
-import { PlatformTwitchEntity } from './platformTwitch.entity';
-import { PlatformAfreecaEntity } from './platformAfreeca.entity';
-import { PlatformYoutubeEntity } from './platformYoutube.entity';
 import { SubscribeEntity } from './subscribe.entity';
 import { NotificationEntity } from '../../notification/entities/notification.entity';
 
@@ -36,9 +33,6 @@ export class UserEntity implements User {
   @Column({ length: 70, unique: true })
   userDI?: string;
 
-  // The ClassSerializerInterceptor interceptor uses the powerful class-transformer package
-  // to provide a declarative and extensible way of transforming objects
-  // it can apply rules expressed by class-transformer decorators on an entity/DTO class
   @Exclude()
   @Column({ nullable: false })
   password!: string;
@@ -49,26 +43,20 @@ export class UserEntity implements User {
   @Column({ length: 1 })
   gender!: string;
 
+  @Column()
+  marketingAgreement: boolean;
+
   @Column({ default: 'user' })
   roles?: string;
 
-  @Exclude()
-  @OneToOne(() => PlatformTwitchEntity, (twitch) => twitch.twitchId)
-  @Column({ nullable: true })
-  twitchId?: string;
+  @Column({ nullable: true, default: null })
+  twitchId?: string | null;
 
-  @Exclude()
-  @OneToOne(() => PlatformAfreecaEntity, (affreca) => affreca.afreecaId)
-  @Column({ nullable: true })
-  afreecaId?: string;
+  @Column({ nullable: true, default: null })
+  afreecaId?: string | null;
 
-  @Exclude()
-  @OneToOne(() => PlatformYoutubeEntity, (youtube) => youtube.youtubeId)
-  @Column({ nullable: true })
-  youtubeId?: string;
-
-  @Column()
-  marketingAgreement: boolean;
+  @Column({ nullable: true, default: null })
+  youtubeId?: string | null;
 
   @CreateDateColumn()
   createdAt?: Date;

@@ -24,7 +24,7 @@ export class FeatureSuggestionService {
   }
 
   /**
-   * 개별 기능제안 글의 상태를 수정하는 메소드
+   * 개별 기능제안 글의 진행상태(개발중, 완료, 등등)를 수정하는 메소드
    * @param featureSuggestionData 상태 변경할 기능제안 데이터
    */
   public async stateUpdate(featureSuggestionData: FeatureSuggestionStateUpdateDto): Promise<number> {
@@ -34,23 +34,25 @@ export class FeatureSuggestionService {
     return result.affected;
   }
 
-  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
-  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  /**
+   * 기능제안 개별 글 UPDATE 메서드
+   * @param fsDto 기능제안 개별 글 Insert 요청 DTO
+   */
   async insert(fsDto: FeatureSuggestionPostDto): Promise<FeatureSuggestionEntity> {
     return this.FeatureSuggestionRepository.save(fsDto);
   }
 
-  // @hwasurr 2020.10.13 eslint error 정리중 disalbe
-  // @leejineun 올바른 타입 정의 후 처리바람니다~~!!
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  /**
+   * 기능제안 개별 글 update 메서드
+   * @param fsPatchDto 기능제안 개별 글 Patch 요청 DTO
+   */
   async update(fsPatchDto: FeatureSuggestionPatchDto): Promise<number> {
     const {
-      suggestionId, author, userId, category, title, content,
+      suggestionId, author, userId, category, title, content, isLock,
     } = fsPatchDto;
     const result = await this.FeatureSuggestionRepository
       .update({ suggestionId }, {
-        author, userId, category, title, content,
+        author, userId, category, title, content, isLock,
       });
     return result.affected;
   }

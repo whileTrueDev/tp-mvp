@@ -1,10 +1,10 @@
 import { PlatformTwitch } from '@truepoint/shared/dist/interfaces/PlatformTwitch.interface';
-import { Entity, Column, OneToOne } from 'typeorm';
-import { UserEntity } from './user.entity';
+import {
+  Entity, Column, CreateDateColumn, UpdateDateColumn,
+} from 'typeorm';
 
-@Entity({ name: 'PlatformTwitch' })
+@Entity({ name: 'PlatformTwitchTest' })
 export class PlatformTwitchEntity implements PlatformTwitch {
-  @OneToOne((type) => UserEntity, (user) => user.twitchId)
   @Column({ primary: true })
   twitchId!: string;
 
@@ -18,4 +18,13 @@ export class PlatformTwitchEntity implements PlatformTwitch {
   // ex) zilioner
   @Column()
   twitchChannelName!: string;
+
+  @Column()
+  refreshToken!: string;
+
+  @CreateDateColumn({ comment: '첫 연동 날짜' })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ comment: '연동 정보 최신화 날짜' })
+  updatedAt?: Date;
 }

@@ -71,6 +71,7 @@ export default function FeatureWriteForm(): JSX.Element {
       ...featureSource,
       userId: authContext.user.userId,
       author: authContext.user.userId,
+      isLock: false, // 비밀글 여부
     };
     postRequest({ data })
       .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
@@ -89,6 +90,7 @@ export default function FeatureWriteForm(): JSX.Element {
       suggestionId: Number(targetSuggestionId),
       userId: authContext.user.userId,
       author: authContext.user.userId,
+      isLock: false, // 비밀글 여부 비밀글인 경우 true.
     };
     editPatchRequest({ data })
       .then(() => ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar))

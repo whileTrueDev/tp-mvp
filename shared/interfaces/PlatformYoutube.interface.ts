@@ -1,9 +1,27 @@
 export interface PlatformYoutube {
+  // **************************************
+  // 구글 아이디 연동 정보
+  googleId: string;
+
+  googleName: string;
+
+  googleEmail: string;
+
+  googleLogo: string;
+
+  // *****************************************
+  // youtube 정보
   youtubeId: string;
 
-  logo: string;
+  youtubeTitle: string;
+
+  youtubeLogo: string;
+
+  youtubePublishedAt: Date;
 
   refreshToken: string;
 
-  youtubeChannelName: string;
+  createdAt?: Date;
+
+  updatedAt?: Date;
 }

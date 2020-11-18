@@ -6,4 +6,10 @@ export interface PlatformTwitch {
   twitchStreamerName: string;
 
   twitchChannelName: string;
+
+  refreshToken: string;
+
+  createdAt?: Date;
+
+  updatedAt?: Date;
 }

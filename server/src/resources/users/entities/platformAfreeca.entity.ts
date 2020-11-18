@@ -1,20 +1,25 @@
 import { PlatformAfreeca } from '@truepoint/shared/dist/interfaces/PlatformAfreeca.interface';
-import { Entity, Column, OneToOne } from 'typeorm';
-import { UserEntity } from './user.entity';
+import {
+  Entity, Column, CreateDateColumn, UpdateDateColumn,
+} from 'typeorm';
 
-@Entity({ name: 'PlatformAfreeca' })
+@Entity({ name: 'PlatformAfreecaTest' })
 export class PlatformAfreecaEntity implements PlatformAfreeca {
-  @OneToOne((type) => UserEntity, (user) => user.afreecaId)
   @Column({ primary: true })
   afreecaId!: string;
-
-  @Column()
-  logo!: string;
 
   @Column({ nullable: false })
   refreshToken!: string;
 
-  // ex) 저라뎃
-  @Column()
-  afreecaStreamerName!: string;
+  @Column({ nullable: true }) // ex) 저라뎃
+  afreecaStreamerName?: string;
+
+  @Column({ nullable: true })
+  logo?: string;
+
+  @CreateDateColumn({ comment: '첫 연동 날짜' })
+  createdAt?: Date;
+
+  @UpdateDateColumn({ comment: '연동 정보 최신화 날짜' })
+  updatedAt?: Date;
 }

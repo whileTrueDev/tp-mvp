@@ -1,5 +1,5 @@
 import {
-  IsString, IsNumber,
+  IsString, IsNumber, IsBoolean, IsOptional,
 } from 'class-validator';
 
 export class FeatureSuggestionPatchDto {
@@ -20,4 +20,8 @@ export class FeatureSuggestionPatchDto {
 
   @IsString()
   author: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isLock?: boolean;
 }

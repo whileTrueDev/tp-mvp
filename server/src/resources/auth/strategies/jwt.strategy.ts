@@ -14,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  // jwt 토큰으로 만들 데이터를 반환
   async validate(payload: UserLoginPayload): Promise<LogedinUser> {
     const reqAttachTargetUser = {
       userId: payload.userId,
