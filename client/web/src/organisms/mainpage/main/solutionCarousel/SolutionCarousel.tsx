@@ -1,4 +1,4 @@
-import { Container } from '@material-ui/core';
+import { Container, useMediaQuery } from '@material-ui/core';
 import React from 'react';
 import Slider from 'react-slick';
 import styles from '../style/SolutionCarousel.style';
@@ -7,15 +7,16 @@ import 'slick-carousel/slick/slick-theme.css';
 
 export default function SolutionCarousel(): JSX.Element {
   const classes = styles();
+  const isXsWidth = useMediaQuery('(max-width:600px)');
 
   const settings = {
     customPaging(i: number): JSX.Element {
       return (
         <div data-id={i} className={classes.dot}>
-          {(i === 0) && <p>일백번</p>}
-          {(i === 1) && <p>사나건</p>}
-          {(i === 2) && <p>진로되어</p>}
-          {(i === 3) && <p>캐러셀</p>}
+          {(i === 0) && <span>일백번</span>}
+          {(i === 1) && <span>사나건</span>}
+          {(i === 2) && <span>진로되어</span>}
+          {(i === 3) && <span>캐러셀</span>}
         </div>
       );
     },
@@ -24,8 +25,7 @@ export default function SolutionCarousel(): JSX.Element {
     infinite: true,
     centerMode: true,
     speed: 500,
-    centerPadding: '60px',
-    slidesToShow: 3,
+    slidesToShow: isXsWidth ? 1 : 3,
     pauseOnHover: false,
   };
 
@@ -44,25 +44,34 @@ export default function SolutionCarousel(): JSX.Element {
               1번 그림 준비해주세용
             </div>
           </div>
-          <div className={classes.carousel}>
-            <div className={classes.content}>
-              2번 그림 준비해주세용
+          {!isXsWidth
+            && (
+            <div className={classes.carousel}>
+              <div className={classes.content}>
+                2번 그림 준비해주세용
+              </div>
             </div>
-          </div>
-          <div className={classes.carousel}>
-            <div className={classes.content}>
-              3번 그림 준비해주세용
+            )}
+          {!isXsWidth
+            && (
+            <div className={classes.carousel}>
+              <div className={classes.content}>
+                3번 그림 준비해주세용
+              </div>
             </div>
-          </div>
-          <div className={classes.carousel}>
-            <div className={classes.content}>
-              4번 그림 준비해주세용
+            )}
+          {!isXsWidth
+            && (
+            <div className={classes.carousel}>
+              <div className={classes.content}>
+                4번 그림 준비해주세용
+              </div>
             </div>
-          </div>
+            )}
         </Slider>
       </Container>
-
       <div className={classes.back} />
+
     </div>
   );
 }

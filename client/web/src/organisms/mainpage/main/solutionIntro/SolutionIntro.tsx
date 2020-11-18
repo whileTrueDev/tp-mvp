@@ -14,7 +14,7 @@ export default function SolutionIntro(): JSX.Element {
         <div className={classes.solutionWraper}>
 
           <div className={classes.solution}>
-            <img src="/images/main/solutionfirst.svg" alt="solutionFirst" className={classes.stepOne} />
+            <img src="/images/main/solutionfirst.svg" alt="solutionFirst" className={classes.stepSVG} />
             <div className={classes.mainContent}>
               <div className={classes.eachTitle}>
                 {source.solutionIntro.title.stepOne}
@@ -36,11 +36,11 @@ export default function SolutionIntro(): JSX.Element {
                 <p key={shortid.generate()} className={classes.eachContent}>{row}</p>
               ))}
             </div>
-            <img src="/images/main/solutionsecond.svg" alt="solutionSecond" className={classes.stepTwo} />
+            <img src="/images/main/solutionsecond.svg" alt="solutionSecond" className={classes.stepSVG} />
           </div>
 
           <div className={classes.solution}>
-            <img src="/images/main/solutionthird.svg" alt="solutionThird" className={classes.stepThree} />
+            <img src="/images/main/solutionthird.svg" alt="solutionThird" className={classes.stepSVG} />
             <div className={classes.stepThreeLine} />
             <div className={classes.mainContent}>
               <div className={classes.eachTitle}>
@@ -49,10 +49,10 @@ export default function SolutionIntro(): JSX.Element {
               {source.solutionIntro.content.stepThree.split('\n').map((row) => (
                 <p key={shortid.generate()} className={classes.eachContent}>{row}</p>
               ))}
-              <div className={classes.accent}>{source.solutionIntro.content.accent}</div>
+
             </div>
           </div>
-
+          <div className={classes.accent}>{source.solutionIntro.content.accent}</div>
           <div className={classes.mainBottomLine} />
 
           <div className={classes.finishComment}>이제, 트루포인트가 시작합니다</div>

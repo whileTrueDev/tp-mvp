@@ -12,7 +12,6 @@ import Appbar from '../../organisms/shared/Appbar';
 export default function Main(): JSX.Element {
   return (
     <div>
-      {/* 최상단 바 들어가야 함 */}
       <Appbar />
       <ProductHero />
       <WithMedia />

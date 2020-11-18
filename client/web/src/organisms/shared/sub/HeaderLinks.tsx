@@ -125,7 +125,6 @@ function HeaderLinks(): JSX.Element {
 
       <Tooltip title="알림">
         <IconButton
-          style={{ color: 'white' }}
           aria-label="notifications"
           ref={notificationRef}
           onClick={(e): void => {

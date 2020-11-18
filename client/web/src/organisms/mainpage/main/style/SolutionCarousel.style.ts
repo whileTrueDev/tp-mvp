@@ -4,6 +4,9 @@ const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 500,
+    [theme.breakpoints.down('sm')]: {
+      height: 400,
+    },
   },
   mainSubTitle: {
     fontFamily: 'AppleSDGothicNeo',
@@ -19,42 +22,58 @@ const styles = makeStyles((theme) => ({
   },
   slider: {
     '&>ul>li': {
-      width: 80,
+      width: 50,
     },
   },
   front: {
     '&>*': {
-      zIndex: 200,
+      zIndex: 100,
     },
   },
   back: {
     zIndex: 1,
-    height: 250,
+    height: 220,
     width: '100%',
     position: 'relative',
-    top: -350,
+    top: -260,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+    [theme.breakpoints.down('sm')]: {
+      top: -140,
+      height: 130,
+    },
+    [theme.breakpoints.down('xs')]: {
+      top: -260,
+      height: 220,
+    },
   },
   carousel: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingTop: 20,
-    height: 350,
+    height: 260,
     outline: 'none',
+    [theme.breakpoints.down('sm')]: {
+      height: 140,
+    },
+    [theme.breakpoints.down('xs')]: {
+      height: 260,
+    },
   },
   content: {
     margin: 'auto',
-    width: '90%',
-    height: '85%',
+    width: 260,
+    height: '100%',
     background: 'white',
-    boxShadow: '0px 0px 2px 1px #cfcfcf',
+    boxShadow: '0px 0px 1px 1px #cfcfcf',
+    [theme.breakpoints.down('sm')]: {
+      width: 140,
+    },
+    [theme.breakpoints.down('xs')]: {
+      width: 260,
+    },
   },
   dot: {
     fontFamily: 'AppleSDGothicNeo',
-    width: 80,
-    height: 40,
+    fontSize: 12,
+    margin: 0,
   },
 }));
 
