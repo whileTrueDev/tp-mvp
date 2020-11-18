@@ -1,6 +1,6 @@
 import {
   Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, UseGuards, Req, ForbiddenException,
+  ClassSerializerInterceptor, Query, Patch, UseGuards, Req, ForbiddenException, Delete,
 } from '@nestjs/common';
 // DTOs
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
@@ -69,6 +69,23 @@ export class UsersController {
     }
     // 로그인 되어있지 않거나, 로그인한 유저와 변경요청한 유저가 다른 경우
     throw new ForbiddenException('Forbidden for you');
+  }
+
+  @Delete()
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async deleteUser(
+    @Req() req: LogedInExpressRequest,
+  ): Promise<number> {
+    const { userId } = req.user;
+
+    // 유저 정보 삭제
+    const affected = await this.usersService.remove(userId);
+
+    // 유저 로그아웃 (액세스/리프레시 토큰 삭제)
+    await this.authService.logout(req.user);
+
+    return affected;
   }
 
   // get request에 반응하는 router, 함수정의

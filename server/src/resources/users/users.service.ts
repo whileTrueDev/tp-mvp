@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import {
-  Injectable, HttpException, HttpStatus, BadRequestException,
+  Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -74,8 +74,28 @@ export class UsersService {
     });
   }
 
-  async remove(userid: string): Promise<void> {
-    await this.usersRepository.delete(userid);
+  /**
+   * 유저 정보 삭제 메서드 userId를 제외한 모든 column을 없앱니다.
+   * @param userId 삭제할 유저 고유 아이디
+   */
+  async remove(userId: string): Promise<number> {
+    const targetUser = await this.usersRepository.findOne(userId);
+    const result = await this.usersRepository.update(userId, {
+      name: '',
+      mail: '',
+      nickName: '',
+      userDI: `DELETED_${targetUser.userDI}`,
+      profileImage: '',
+      afreecaId: '',
+      youtubeId: '',
+      twitchId: '',
+      password: '',
+      birth: '',
+      gender: '',
+      marketingAgreement: false,
+      phone: '',
+    });
+    return result.affected;
   }
 
   async register(user: UserEntity): Promise<UserEntity> {
@@ -218,6 +238,9 @@ export class UsersService {
   // Refresh Token 삭제 - 로그아웃을 위해
   async removeOneToken(userId: string): Promise<UserTokenEntity> {
     const userToken = await this.userTokensRepository.findOne(userId);
+    if (!userToken) {
+      throw new InternalServerErrorException('userToken waht you request to logout is not exists');
+    }
     return this.userTokensRepository.remove(userToken);
   }
 

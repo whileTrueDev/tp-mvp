@@ -14,6 +14,7 @@ import ManagePlatformLink from '../../../organisms/mypage/my-office/ManagePlatfo
 import ManageUserProfile from '../../../organisms/mypage/my-office/ManageUserProfile';
 import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import DeleteUser from '../../../organisms/mypage/my-office/DeleteUser';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -63,37 +64,42 @@ export default function Settings(): JSX.Element {
   }, [enqueueSnackbar, location.search, linkToUserRequest, doUserFetch]);
 
   return (
-    <MypageSectionWrapper>
-      {/* 플랫폼 연동 관리 */}
-      <Paper elevation={0} variant="outlined" className={classes.container}>
-        <div className={classes.content}>
-          <SectionTitle mainTitle="플랫폼 연동 관리" />
-          <Typography variant="body2" color="textSecondary">
-            플랫폼 연동을 통해 트루포인트를 바로 시작해보세요.
-          </Typography>
-        </div>
-        {!userDataRequest.loading ? (
-          <ManagePlatformLink
-            twitchId={userDataRequest.data.twitchId}
-            afreecaId={userDataRequest.data.afreecaId}
-            youtubeId={userDataRequest.data.youtubeId}
-            userDataRefetch={doUserFetch}
-          />
-        ) : (<CircularProgress />)}
-      </Paper>
+    <>
+      <MypageSectionWrapper>
+        {/* 플랫폼 연동 관리 */}
+        <Paper elevation={0} variant="outlined" className={classes.container}>
+          <div className={classes.content}>
+            <SectionTitle mainTitle="플랫폼 연동 관리" />
+            <Typography variant="body2" color="textSecondary">
+              플랫폼 연동을 통해 트루포인트를 바로 시작해보세요.
+            </Typography>
+          </div>
+          {!userDataRequest.loading ? (
+            <ManagePlatformLink
+              twitchId={userDataRequest.data.twitchId}
+              afreecaId={userDataRequest.data.afreecaId}
+              youtubeId={userDataRequest.data.youtubeId}
+              userDataRefetch={doUserFetch}
+            />
+          ) : (<CircularProgress />)}
+        </Paper>
 
-      {/* 내 정보 관리 */}
-      <Paper elevation={0} variant="outlined" className={classnames(classes.container, classes.second)}>
-        <div className={classes.content}>
-          <SectionTitle mainTitle="내 정보 관리" />
-        </div>
-        {!userDataRequest.loading ? (
-          <ManageUserProfile
-            userProfileData={userDataRequest.data}
-            doUserFetch={doUserFetch}
-          />
-        ) : (<CircularProgress />)}
-      </Paper>
-    </MypageSectionWrapper>
+        {/* 내 정보 관리 */}
+        <Paper elevation={0} variant="outlined" className={classnames(classes.container, classes.second)}>
+          <div className={classes.content}>
+            <SectionTitle mainTitle="내 정보 관리" />
+          </div>
+          {!userDataRequest.loading ? (
+            <ManageUserProfile
+              userProfileData={userDataRequest.data}
+              doUserFetch={doUserFetch}
+            />
+          ) : (<CircularProgress />)}
+        </Paper>
+      </MypageSectionWrapper>
+      <MypageSectionWrapper>
+        <DeleteUser />
+      </MypageSectionWrapper>
+    </>
   );
 }

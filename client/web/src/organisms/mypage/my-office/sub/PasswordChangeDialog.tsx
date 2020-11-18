@@ -1,5 +1,5 @@
 import {
-  Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, Typography,
+  Button, Dialog, DialogActions, DialogContent, makeStyles, Typography,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import PasswordTextField from '../../../../atoms/Input/PasswordTextField';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import PasswordConfirmForm from './PasswordConfirmForm';
 
 const useStyles = makeStyles((theme) => ({
   titleSection: { padding: `${theme.spacing(2)}px ${theme.spacing(3)}px` },
@@ -32,42 +33,6 @@ export default function PasswordChangeDialog({
   }
   function handleStepReset() {
     setActiveStep(0);
-  }
-
-  // ********************************************
-  // 기존 비밀번호 체크
-
-  // 비밀번호가 틀린 경우 에러메시지를 표시하기 위한 스테이트
-  const [currentPwErrMsg, setCurrentPwErrMsg] = React.useState<string>('');
-  function handleErrMsg() { // 비밀번호 틀림 에러 도움말
-    setCurrentPwErrMsg('비밀번호가 일치하지 않습니다.');
-  }
-  function handleErrMsgReset() { // 비밀번호 틀림 에러 도움말 제거
-    setCurrentPwErrMsg('');
-  }
-
-  // 패스워드 문자열 스테이트
-  const [currentPw, setCurrentPw] = React.useState<string>('');
-  function handleCurrentPwChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setCurrentPw(e.target.value);
-    if (currentPwErrMsg) handleErrMsgReset(); // 패스워드를 쓰기 시작하면 기존 에러메시지 제거
-  }
-  // 패스워드 체크 요청
-  const [checkPwObject, checkPwRequest] = useAxios({
-    url: '/auth/check-pw', method: 'post',
-  }, { manual: true });
-
-  // 비밀번호 확인 form 핸들러
-  function handlePasswordCheckSubmit(evt: React.FormEvent<HTMLFormElement>) {
-    evt.preventDefault();
-    checkPwRequest({
-      data: { password: currentPw },
-    }).then(() => {
-      handleNext();
-    }).catch((err) => {
-      if (err.response && err.response.status === 403) handleErrMsg();
-      ShowSnack('비밀번호가 일치하지 않습니다.', 'error', enqueueSnackbar);
-    });
   }
 
   // ********************************************
@@ -110,55 +75,28 @@ export default function PasswordChangeDialog({
     handleStepReset();
     setNewPwCheck('');
     setNewPw('');
-    setCurrentPw('');
   }
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       {/* 기존 비밀번호 확인 */}
       {activeStep === 0 && (
-      <form onSubmit={handlePasswordCheckSubmit}>
-        <div className={classes.titleSection}>
-          <Typography variant="h6" className={classes.bold}>비밀번호 확인</Typography>
-          <Typography variant="body2">보안을 위해 비밀번호를 입력하고 계속 진행하세요.</Typography>
-        </div>
-        <DialogContent>
-          <PasswordTextField
-            variant="filled"
-            label="비밀번호"
-            autoFocus
-            margin="dense"
-            id="password"
-            value={currentPw}
-            onChange={handleCurrentPwChange}
-            error={!!currentPwErrMsg}
-            helperText={currentPwErrMsg}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            disabled={checkPwObject.loading}
-            variant="contained"
-            onClick={() => {
-              onClose(); allReset();
-            }}
-          >
-            취소
-          </Button>
-          <Button variant="contained" color="primary" type="submit">다음</Button>
-        </DialogActions>
-      </form>
+        <PasswordConfirmForm
+          successCallback={handleNext}
+          onClose={() => {
+            onClose(); allReset();
+          }}
+        />
       )}
 
       {/* 비밀번호 변경 */}
       {activeStep === 1 && (
       <form onSubmit={handleNewPasswordSubmit}>
-        <DialogTitle>
+        <div className={classes.titleSection}>
           <Typography variant="h6" className={classes.bold}>비밀번호 변경</Typography>
           <Typography variant="body2">변경할 비밀번호를 입력해주세요.</Typography>
           <Typography color="textSecondary" variant="body2">*비밀번호는 특수문자를 포함한 8-20자 영문 또는 숫자만 가능합니다.</Typography>
-        </DialogTitle>
+        </div>
 
         <DialogContent>
           <PasswordTextField
