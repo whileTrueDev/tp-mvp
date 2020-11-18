@@ -36,10 +36,21 @@ export default function PasswordChangeDialog({
 
   // ********************************************
   // 기존 비밀번호 체크
+
+  // 비밀번호가 틀린 경우 에러메시지를 표시하기 위한 스테이트
+  const [currentPwErrMsg, setCurrentPwErrMsg] = React.useState<string>('');
+  function handleErrMsg() { // 비밀번호 틀림 에러 도움말
+    setCurrentPwErrMsg('비밀번호가 일치하지 않습니다.');
+  }
+  function handleErrMsgReset() { // 비밀번호 틀림 에러 도움말 제거
+    setCurrentPwErrMsg('');
+  }
+
   // 패스워드 문자열 스테이트
   const [currentPw, setCurrentPw] = React.useState<string>('');
   function handleCurrentPwChange(e: React.ChangeEvent<HTMLInputElement>) {
     setCurrentPw(e.target.value);
+    if (currentPwErrMsg) handleErrMsgReset(); // 패스워드를 쓰기 시작하면 기존 에러메시지 제거
   }
   // 패스워드 체크 요청
   const [checkPwObject, checkPwRequest] = useAxios({
@@ -53,7 +64,8 @@ export default function PasswordChangeDialog({
       data: { password: currentPw },
     }).then(() => {
       handleNext();
-    }).catch(() => {
+    }).catch((err) => {
+      if (err.response && err.response.status === 403) handleErrMsg();
       ShowSnack('비밀번호가 일치하지 않습니다.', 'error', enqueueSnackbar);
     });
   }
@@ -119,6 +131,8 @@ export default function PasswordChangeDialog({
             id="password"
             value={currentPw}
             onChange={handleCurrentPwChange}
+            error={!!currentPwErrMsg}
+            helperText={currentPwErrMsg}
             fullWidth
           />
         </DialogContent>
