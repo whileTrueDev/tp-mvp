@@ -8,6 +8,7 @@ import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
+import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
@@ -41,6 +42,11 @@ export class UsersController {
     return this.usersService.findOne(req.user.userId);
   }
 
+  /**
+   * 연동된 플랫폼 프로필 이미지 열람 GET 컨트롤러
+   * @param req user 정보를 포함한 리퀘스트 객체
+   * @param userId 연동된 플랫폼 프로필 이미지를 열람하고자 하는 유저 아이디
+   */
   @Get('profile-images')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
@@ -50,6 +56,17 @@ export class UsersController {
   ): Promise<ProfileImages> {
     if (userId) return this.usersService.findOneProfileImage(userId);
     return this.usersService.findOneProfileImage(req.user.userId);
+  }
+
+  @Get('platform-names')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findLinkedChannelNames(
+    @Req() req: LogedInExpressRequest,
+    @Query('userId') userId: string,
+  ): Promise<ChannelNames> {
+    if (userId) return this.usersService.findChannelNames(userId);
+    return this.usersService.findChannelNames(req.user.userId);
   }
 
   /**

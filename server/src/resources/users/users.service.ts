@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
+import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
+import { LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
@@ -45,10 +47,15 @@ export class UsersService {
     });
   }
 
+  /**
+   * 특정 유저의 연동된 플랫폼의 프로필 이미지 정보를 반환하는 메서드
+   * @param userId 프로필 이미지 정보를 열람하고자 하는 유저 아이디
+   */
   async findOneProfileImage(userId: string): Promise<ProfileImages> {
     const user = await this.usersRepository.findOne(userId);
     const images = [];
 
+    // 아프리카는 OPEN API 업데이트 이후 추가 20.11.18 hwasurr
     // const afreecaLink = await this.afreecaRepository.findOne(user.afreecaId);
     // if (afreecaLink) images.push({ platform: 'afreeca', logo: afreecaLink.logo });
 
@@ -62,6 +69,25 @@ export class UsersService {
       );
     }
     return images;
+  }
+
+  async findChannelNames(userId: string): Promise<ChannelNames> {
+    const user = await this.usersRepository.findOne(userId);
+    const nickNames: ChannelNames = [];
+    // 아프리카는 OPEN API 업데이트 이후 추가 20.11.18 hwasurr
+    // const afreecaLink = await this.afreecaRepository.findOne(user.afreecaId);
+    // if (afreecaLink) images.push({ platform: 'afreeca', logo: afreecaLink.logo });
+
+    const twitchLink = await this.twitchRepository.findOne(user.twitchId);
+    if (twitchLink) nickNames.push({ platform: 'twitch', nickName: twitchLink.twitchChannelName });
+
+    const youtubeLink = await this.youtubeRepository.findOne(user.youtubeId);
+    if (youtubeLink) {
+      nickNames.push(
+        { platform: 'youtube', nickName: youtubeLink.youtubeTitle },
+      );
+    }
+    return nickNames;
   }
 
   async updateOne(dto: UpdateUserDto): Promise<any> {
@@ -256,8 +282,8 @@ export class UsersService {
 
   async linkUserToPlatform(
     userId: string, platform: string, platformId: string,
-  ): Promise<UserEntity | null> {
-    // 적재된 연동 데이터의 실제 트루포인트 유저 정보에 추가
+  ): Promise<LinkPlatformRes> {
+    // 적재된 연동 데이터의 고유 아이디를 실제 트루포인트 유저 정보에 추가
     // 어느 트루포인트 유저가 트위치 연동을 진행했는 지 곧바로 알 수 없음..
     // twitch accesstoken 발급 이후 프론트로 리다이렉트할 때 방금 유저의 고유 id와 플랫폼 정보를 전달하고,
     // 그 정보를 다시 백엔드에서 받아와 올바르 유저에 맞게 적재하는 방식.
@@ -268,18 +294,39 @@ export class UsersService {
     // platformTwitch, platformYoutube, platformAfreeca 등을 체크한 후 있으면 그 때 넣도록 처리.
     switch (platform) {
       case 'twitch': {
+        // 이미 적재된 경우 다시 적재하지 않음.
+        if (targetUser.twitchId === platformId) return 'already-linked';
         const linkedInfo = await this.twitchRepository.findOne(platformId);
         if (linkedInfo) targetUser[`${platform}Id`] = platformId;
+        else {
+          throw new InternalServerErrorException(
+            'An error occurred during linking platform: there is no platform information',
+          );
+        }
         break;
       }
       case 'youtube': {
+        // 이미 적재된 경우 다시 적재하지 않음.
+        if (targetUser.youtubeId === platformId) return 'already-linked';
         const linkedInfo = await this.youtubeRepository.findOne(platformId);
         if (linkedInfo) targetUser[`${platform}Id`] = platformId;
+        else {
+          throw new InternalServerErrorException(
+            'An error occurred during linking platform: there is no platform information',
+          );
+        }
         break;
       }
       case 'afreeca': {
+        // 이미 적재된 경우 다시 적재하지 않음.
+        if (targetUser.afreecaId === platformId) return 'already-linked';
         const linkedInfo = await this.afreecaRepository.findOne(platformId);
         if (linkedInfo) targetUser[`${platform}Id`] = platformId;
+        else {
+          throw new InternalServerErrorException(
+            'An error occurred during linking platform: there is no platform information',
+          );
+        }
         break;
       }
       default: throw new BadRequestException('platform must be one of "twitch" | "afreeca" | "youtube"');

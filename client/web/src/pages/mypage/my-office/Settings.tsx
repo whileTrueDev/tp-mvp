@@ -6,6 +6,7 @@ import {
   makeStyles,
   Paper, Typography,
 } from '@material-ui/core';
+import { LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -37,7 +38,7 @@ export default function Settings(): JSX.Element {
 
   // ******************************************
   // 연동 요청
-  const [, linkToUserRequest] = useAxios({
+  const [, linkToUserRequest] = useAxios<LinkPlatformRes>({
     method: 'POST', url: '/auth/link',
   }, { manual: true });
   // 연동 작업
@@ -53,8 +54,11 @@ export default function Settings(): JSX.Element {
 
       linkToUserRequest({ data: { ...params } })
         .then((res) => {
-          doUserFetch(); // 링크 성공
-          ShowSnack('성공적으로 연동되었습니다.', 'success', enqueueSnackbar);
+          // 이미 같은 플랫폼/고유아이디로 연동되어있는 경우는 제외.
+          if (!(res.data === 'already-linked')) {
+            doUserFetch(); // 링크 성공
+            ShowSnack('성공적으로 연동되었습니다.', 'success', enqueueSnackbar);
+          }
         })
         .catch((err) => {
           ShowSnack('연동과정에서 오류가 발생했습니다. 문의바랍니다.', 'error', enqueueSnackbar);

@@ -1,10 +1,12 @@
 import express from 'express';
 import {
   Controller, Request, Post, UseGuards, Get, Query,
-  HttpException, HttpStatus, Res, BadRequestException, Body, Req, Delete, UseFilters, InternalServerErrorException, ForbiddenException,
+  HttpException, HttpStatus, Res, BadRequestException,
+  Body, Req, Delete, UseFilters, InternalServerErrorException, ForbiddenException,
 } from '@nestjs/common';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
+import { LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from './auth.service';
@@ -12,7 +14,6 @@ import { LogedInExpressRequest, UserLoginPayload } from '../../interfaces/logedI
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import { UsersService } from '../users/users.service';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { UserEntity } from '../users/entities/user.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
 import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
@@ -121,7 +122,7 @@ export class AuthController {
   async platformLink(
     @Req() req: LogedInExpressRequest,
     @Body('platform') platform: string, @Body('id') id: string,
-  ): Promise<UserEntity> {
+  ): Promise<LinkPlatformRes> {
     const { userId } = req.user;
     return this.usersService.linkUserToPlatform(userId, platform, id);
   }
