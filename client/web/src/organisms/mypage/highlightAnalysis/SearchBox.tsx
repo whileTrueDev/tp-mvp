@@ -135,7 +135,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
 
         <TextField
           variant="outlined"
-          autoFocus
+          // autoFocus
           label="검색값"
           color="primary"
           onClick={() => handleAnchorOpenWithRef(targetRef)}
