@@ -4,7 +4,7 @@ import { useHistory, Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
-  Button, TextField, Checkbox, FormControlLabel, Tooltip, Typography,
+  Button, TextField, Checkbox, FormControlLabel, Tooltip, Typography, Grid,
 } from '@material-ui/core';
 import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
 import CheckedCheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -18,10 +18,29 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
-  formWidth: { width: 400 },
+  formWidth: { width: '100%' },
+  inputWidth: {
+    width: '100%',
+    minWidth: 300,
+  },
   alignCenter: { textAlign: 'center' },
-  button: { width: 170, boxShadow: 'none', padding: 8 },
-  buttonset: { display: 'flex', justifyContent: 'space-between', width: '100%' },
+  button: {
+    width: 170,
+    boxShadow: 'none',
+    padding: 8,
+    margin: theme.spacing(1),
+  },
+  buttonset: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    minWidth: 300,
+  },
+  alignLeft: {
+    display: 'flex',
+    width: '100%',
+    minWidth: 300,
+  },
 }));
 
 export default function LoginForm(): JSX.Element {
@@ -85,50 +104,86 @@ export default function LoginForm(): JSX.Element {
 
       <form
         onSubmit={handleLoginSubmit}
-        className={classes.formWidth}
+        className={classnames(classes.formWidth, classes.alignCenter)}
       >
-        <div className={classes.alignCenter}>
+        <div>
           { theme.palette.type === 'light' ? <TruepointLogo width={350} /> : <TruepointLogoLight width={350} /> }
         </div>
-
-        <TextField
-          className={classnames(classes.upperSpace, classes.formWidth)}
-          color="primary"
-          type="text"
-          label="아이디"
-          placeholder="아이디를 입력해주세요"
-          inputProps={{ minLength: 3, required: true }}
-          inputRef={userIdRef}
-          autoFocus
-        />
-        <TextField
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
           className={classes.formWidth}
-          color="primary"
-          type="password"
-          label="비밀번호"
-          inputProps={{ minLength: 3, required: true }}
-          placeholder="비밀번호를 입력해주세요"
-          inputRef={passwordRef}
-          autoComplete="off"
-        />
-        <Tooltip
-          title={(<Typography variant="body2">개인정보 보호를 위해 개인 PC에서만 사용하시기 바랍니다.</Typography>)}
-          placement="right"
+          spacing={1}
         >
-          <FormControlLabel
-            control={(
-              <Checkbox
-                icon={<CheckCircleIcon />}
-                checkedIcon={<CheckedCheckCircleIcon />}
-                checked={stayLogedIn}
-                onChange={handleStayLogedInToggle}
-                name="checkedA"
-                color="primary"
+          <Grid item xs={12}>
+            <TextField
+              className={classnames(classes.upperSpace, classes.inputWidth)}
+              color="primary"
+              type="text"
+              label="아이디"
+              placeholder="아이디를 입력해주세요"
+              inputProps={{ minLength: 3, required: true }}
+              inputRef={userIdRef}
+              autoFocus
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              className={classes.inputWidth}
+              color="primary"
+              type="password"
+              label="비밀번호"
+              inputProps={{ minLength: 3, required: true }}
+              placeholder="비밀번호를 입력해주세요"
+              inputRef={passwordRef}
+              autoComplete="off"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Tooltip
+              title={(<Typography variant="body2">개인정보 보호를 위해 개인 PC에서만 사용하시기 바랍니다.</Typography>)}
+              placement="right"
+              className={classes.alignLeft}
+            >
+              <FormControlLabel
+                control={(
+                  <Checkbox
+                    icon={<CheckCircleIcon />}
+                    checkedIcon={<CheckedCheckCircleIcon />}
+                    checked={stayLogedIn}
+                    onChange={handleStayLogedInToggle}
+                    name="checkedA"
+                    color="primary"
+                  />
+                    )}
+                label="로그인 상태 유지"
               />
-            )}
-            label="로그인 상태 유지"
-          />
-        </Tooltip>
+            </Tooltip>
+          </Grid>
+          <Grid item xs={5} className={classnames(classes.buttonset, classes.upperSpace, classes.alignCenter)}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              style={{ color: theme.palette.common.white }}
+              type="submit"
+            >
+              로그인
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              className={classes.button}
+              style={{ color: theme.palette.text.primary }}
+              component={Link}
+              to="/signup"
+            >
+              회원가입
+            </Button>
+          </Grid>
+        </Grid>
 
         {/* 로그인 실패 도움말 */}
         {helperText && helperTextValue && (
@@ -137,28 +192,6 @@ export default function LoginForm(): JSX.Element {
             text={helperTextValue}
           />
         )}
-
-        <div className={classnames(classes.buttonset, classes.upperSpace)}>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            style={{ color: theme.palette.common.white }}
-            type="submit"
-          >
-            로그인
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            className={classes.button}
-            style={{ color: theme.palette.text.primary }}
-            component={Link}
-            to="/signup"
-          >
-            회원가입
-          </Button>
-        </div>
 
         <div className={classnames(classes.upperSpace, classes.alignCenter)}>
           <Button component={Link} to="/find-id">아이디 찾기</Button>
