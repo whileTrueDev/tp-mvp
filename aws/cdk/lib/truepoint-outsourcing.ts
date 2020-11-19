@@ -126,12 +126,12 @@ export class WhileTrueOutsourcingStack extends cdk.Stack {
     );
     const afreecaTaskDef = new ecs.FargateTaskDefinition(
       this, `${ID_PREFIX}${AFREECA_API_COLLECTOR_FAMILY_NAME}TaskDef`,
-      { family: AFREECA_API_COLLECTOR_FAMILY_NAME },
+      { family: AFREECA_API_COLLECTOR_FAMILY_NAME, memoryLimitMiB: 1024 },
     );
     afreecaTaskDef.addContainer(
       `${ID_PREFIX}${AFREECA_API_COLLECTOR_FAMILY_NAME}Container`, {
         image: ecs.ContainerImage.fromRegistry(`hwasurr/${AFREECA_API_COLLECTOR_FAMILY_NAME}`),
-        memoryLimitMiB: 512,
+        memoryLimitMiB: 1024,
         secrets: {
           AFREECA_KEY: ecs.Secret.fromSsmParameter(ssmParameters.AFREECA_KEY),
           AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
