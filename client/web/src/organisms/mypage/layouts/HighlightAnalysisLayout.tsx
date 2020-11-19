@@ -8,6 +8,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
+import classnames from 'classnames';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -18,6 +19,7 @@ import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 import dateExpression from '../../../utils/dateExpression';
+import SearchBox from '../highlightAnalysis/SearchBox';
 
 interface StreamDate {
   fullDate: Date;
@@ -240,6 +242,22 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       });
   };
 
+  const dummy: string[] = [
+    '나락',
+    '극락',
+    '굿',
+    '지렷다',
+    '레전드',
+    '노답',
+    '가능?',
+    '침디',
+    '가장긴 문자열',
+  ];
+  const [analysisWord, setAnalysisWord] = React.useState<string>();
+  const handleAnalysisWord = (targetWord: string) => {
+    setAnalysisWord(targetWord);
+  };
+
   return (
     <Paper className={classes.root}>
       <Grid
@@ -247,6 +265,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         direction="column"
       >
         <Grid item xs={12} className={classes.root}>
+
           <SectionTitle mainTitle="편집점 분석" />
           <Typography variant="body1" className={classes.sub}>
             방송을 선택하시면 편집점 분석을 시작합니다.
@@ -277,6 +296,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                 </Card>
               )}
           </Grid>
+
         </Grid>
         <Grid
           item
@@ -288,6 +308,25 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         >
           <Calendar handleDatePick={handleDatePick} />
         </Grid>
+
+        <Grid
+          item
+          xs
+          className={classnames({
+            [classes.title]: true,
+            [classes.searchTitle]: true,
+          })}
+        >
+          분석할 검색값 입력
+        </Grid>
+
+        <div className={classes.searchBox}>
+          <SearchBox
+            words={dummy}
+            handleAnalysisWord={handleAnalysisWord}
+            analysisWord={analysisWord}
+          />
+        </div>
       </Grid>
 
       <Grid
@@ -298,7 +337,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         justify="flex-end"
       >
         <Grid item direction="column">
-          <div style={{ textAlign: 'right', paddingBottom: 20 }}>
+          <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
               disabled={isClicked || Boolean(!selectedStream.fileId)}
@@ -306,7 +345,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               분석하기
             </Button>
           </div>
-          <div style={{ textAlign: 'right' }}>
+          <div className={classes.helperPopOver}>
             <HelperPopOver />
           </div>
           <div>
@@ -358,7 +397,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       { !isClicked && highlightData && metricsData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
-          <MetricsAccordian metricsData={metricsData} />
+          <MetricsAccordian
+            metricsData={metricsData}
+            analysisWord={analysisWord}
+          />
         </>
       )}
     </Paper>
