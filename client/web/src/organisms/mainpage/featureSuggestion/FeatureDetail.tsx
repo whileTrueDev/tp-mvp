@@ -109,38 +109,38 @@ export default function FeatureDetail({
     }
   };
 
-  // 비밀글 url 접근 방지
-  useEffect(() => {
-    if (currentSuggestion.isLock && currentSuggestion.author !== authContext.user.userId) {
-      window.location.replace('/feature-suggestion');
-    }
-  });
+  const rejectPage = (): JSX.Element => {
+    ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+    window.location.replace('/feature-suggestion');
+    return (
+      <div />
+    );
+  };
 
-  return (
+  const suggestionDetail = (): JSX.Element => (
     <div>
       <Paper component="article" ref={paperRef}>
         <div className={classes.title}>
           <div>
-
             <Typography component="div" variant="h6" className={classes.titleText}>
               {currentSuggestion.title}
               {' '}
               {progressTab(currentSuggestion.state)}
               {currentSuggestion.isLock && (
-                <LockIcon
-                  color="primary"
-                  className={classes.lockIcon}
-                  fontSize="small"
-                />
+              <LockIcon
+                color="primary"
+                className={classes.lockIcon}
+                fontSize="small"
+              />
               )}
             </Typography>
             <Typography variant="body1" color="textSecondary">
               {currentSuggestion.author && (
-                <span>
-                  {authContext.user.userId === currentSuggestion.author
-                    ? currentSuggestion.author
-                    : transformIdToAsterisk(currentSuggestion.author, 1.8)}
-                </span>
+              <span>
+                {authContext.user.userId === currentSuggestion.author
+                  ? currentSuggestion.author
+                  : transformIdToAsterisk(currentSuggestion.author, 1.8)}
+              </span>
               )}
             </Typography>
           </div>
@@ -194,7 +194,7 @@ export default function FeatureDetail({
 
       {/* 댓글 작성하기 */}
       {currentSuggestion.author === authContext.user.userId && (
-        <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
+      <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
       )}
       {/* 댓글 리스트 섹션 */}
       {currentSuggestion.replies
@@ -235,11 +235,11 @@ export default function FeatureDetail({
         >
           <KeyboardArrowLeft />
           {currentSuggestionIndex !== 0 && (
-            <Typography>
-              {previousFeature.title.length > TITLE_LENGTH
-                ? `${previousFeature.title.slice(0, TITLE_LENGTH)}...`
-                : previousFeature.title}
-            </Typography>
+          <Typography>
+            {previousFeature.title.length > TITLE_LENGTH
+              ? `${previousFeature.title.slice(0, TITLE_LENGTH)}...`
+              : previousFeature.title}
+          </Typography>
           )}
         </Button>
         <Button
@@ -267,15 +267,37 @@ export default function FeatureDetail({
           }}
         >
           {currentSuggestionIndex !== data.length - 1 && (
-            <Typography>
-              {nextFeature.title.length > TITLE_LENGTH
-                ? `${nextFeature.title.slice(0, TITLE_LENGTH)}...`
-                : nextFeature.title}
-            </Typography>
+          <Typography>
+            {nextFeature.title.length > TITLE_LENGTH
+              ? `${nextFeature.title.slice(0, TITLE_LENGTH)}...`
+              : nextFeature.title}
+          </Typography>
           )}
           <KeyboardArrowRight />
         </Button>
       </div>
+    </div>
+  );
+
+  return (
+    <div>
+      {currentSuggestion.isLock ? (
+        <div>
+          {currentSuggestion.author !== authContext.user.userId ? (
+            <div>
+              {rejectPage()}
+            </div>
+          ) : (
+            <div>
+              {suggestionDetail()}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          {suggestionDetail()}
+        </div>
+      )}
     </div>
   );
 }
