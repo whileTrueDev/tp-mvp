@@ -3,7 +3,7 @@ import {
 } from 'typeorm';
 import { BroadDetailEntity } from './broadDetail.entity';
 
-@Entity('afreecaBroad')
+@Entity('AfreecaBroad')
 export class BroadEntity {
   @OneToMany(() => BroadDetailEntity, (broadDetail) => broadDetail.broadId)
   @PrimaryColumn()

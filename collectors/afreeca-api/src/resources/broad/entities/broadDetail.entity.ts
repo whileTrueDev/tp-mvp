@@ -4,7 +4,7 @@ import {
 import { BroadCategoryEntity } from '../../category/entities/category.entity';
 import { BroadEntity } from './broad.entity';
 
-@Entity('afreecaBroadDetail')
+@Entity('AfreecaBroadDetail')
 export class BroadDetailEntity {
   @PrimaryGeneratedColumn()
   id?: number;

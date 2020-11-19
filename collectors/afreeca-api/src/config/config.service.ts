@@ -57,7 +57,7 @@ export class ConfigService {
   /**
    * aws secrets manager 로부터 DB 설정값을 가져오는 메서드
    */
-  public async getDbSecretsFromAws(secretName = 'WhileTrueCollector'): Promise<AwsSecretsManagerDBSecrets> {
+  public async getDbSecretsFromAws(secretName = 'WhileTrueOutsourcing'): Promise<AwsSecretsManagerDBSecrets> {
     let secret: AwsSecretsManagerDBSecrets;
     try {
       const list = await this.ssmClient.listSecrets().promise();
