@@ -9,7 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
+// import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
 import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import Button from '../../../atoms/Button/Button';
@@ -67,11 +67,11 @@ export default function FeatureWriteForm(): JSX.Element {
     { url: '/feature-suggestion', method: 'post' }, { manual: true },
   );
   function handlePostSubmit() {
-    const data: FeatureSuggestionPostDto = {
+    const data: any = {
       ...featureSource,
       userId: authContext.user.userId,
       author: authContext.user.userId,
-      isLock: false, // 비밀글 여부
+      // isLock: false, // 비밀글 여부
     };
     postRequest({ data })
       .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
@@ -90,7 +90,7 @@ export default function FeatureWriteForm(): JSX.Element {
       suggestionId: Number(targetSuggestionId),
       userId: authContext.user.userId,
       author: authContext.user.userId,
-      isLock: false, // 비밀글 여부 비밀글인 경우 true.
+    //  isLock: false, // 비밀글 여부 비밀글인 경우 true.
     };
     editPatchRequest({ data })
       .then(() => ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar))

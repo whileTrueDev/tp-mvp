@@ -21,6 +21,10 @@ export default function Write2() {
         height="300px"
         initialEditType="wysiwyg"
         placeholder="글쓰기"
+        // onChange={(event, editor) => {
+        //   const data = editor.getData();
+        //   console.log({ event, editor, data });
+        // }}
         ref={editorRef}
       />
       <button onClick={handleClick}>저장</button>

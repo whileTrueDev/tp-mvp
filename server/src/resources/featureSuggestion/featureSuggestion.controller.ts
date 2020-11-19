@@ -1,5 +1,7 @@
 import {
+  // UploadedFile,
   Controller, Get, Post, Body,
+  // Res, Param,
   Patch, Delete, ValidationPipe,
   ParseIntPipe, UseInterceptors,
   ClassSerializerInterceptor, Query,
@@ -10,11 +12,15 @@ import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSug
 import { ReplyGet } from '@truepoint/shared/dist/dto/featureSuggestion/replyGet.dto';
 import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
 import { ReplyPatch } from '@truepoint/shared/dist/dto/featureSuggestion/replyPatch.dto';
+// import { FileInterceptor } from '@nestjs/platform-express';
+
+// import { diskStorage } from 'multer';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
 import { FeatureSuggestionService } from './featureSuggestion.service';
 import { FeatureSuggestionReplyService } from './featureSuggestionReply.service';
 
+// import { imageFileFilter, editFileName } from '../../utils/file-uploading.utils';
 @Controller('feature-suggestion')
 export class FeatureSuggestionController {
   constructor(
@@ -40,7 +46,46 @@ export class FeatureSuggestionController {
   ): Promise<FeatureSuggestionEntity> {
     return this.featureSuggestionService.insert(featureSuggestionPostDto);
   }
+  /// //////////////////////////////////////////
+  // image post test
+  // @Post('test')
+  // async test(
+  //   @Body() featureSuggestionPostDto: any,
+  // ): Promise<any> {
+  //   console.log(featureSuggestionPostDto);
+  //   return (featureSuggestionPostDto);
+  // }
 
+  // @Post('upload')
+  // @UseInterceptors(
+  //   FileInterceptor('image', {
+  //     storage: diskStorage({
+  //       destination: './files',
+  //       filename: editFileName,
+  //     }),
+  //     fileFilter: imageFileFilter,
+  //   }),
+  // )
+  // async uploadFile(@UploadedFile() file: any): Promise<any> {
+  //   console.log('data?:');
+  //   const response = [];
+  //   file.forEach((f: any) => {
+  //     const fileResponse = {
+  //       originalname: f.originalname,
+  //       filename: f.filename,
+  //     };
+  //     response.push(fileResponse);
+  //   });
+  //   console.log('data?:');
+  //   return (console.log(file));
+  // }
+
+  // @Get(':imgpath')
+  // async seeUploadedFile(@Param('imgpath') image: any, @Res() res: any): Promise<any> {
+  //   return res.sendFile(image, { root: './files' });
+  // }
+
+  /// //////////////////////////////
   /**
    * 기능제안 개별 글 수정 라우터
    * @param data 수정할 기능제안 데이터
