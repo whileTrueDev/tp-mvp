@@ -18,6 +18,7 @@ const ID_PREFIX = 'WhileTrueCollector';
 const DATABASE_PORT = 3306;
 const TWITCH_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-collector';
 const TWITCH_CHAT_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-chat';
+const AFREECA_API_COLLECTOR_FAMILY_NAME = 'whiletrue-afreeca-api';
 // const DOMAIN_NAME = 'mytruepoint.com';
 
 export class WhileTrueCollectorStack extends cdk.Stack {
@@ -198,5 +199,42 @@ export class WhileTrueCollectorStack extends cdk.Stack {
         securityGroup: twitchtvChatsSecGrp,
       },
     );
+
+    // *************************************************
+    // Define task definition of Afreeca API Collector
+    const afreecaLogGroup = new logs.LogGroup(
+      this, `${ID_PREFIX}${AFREECA_API_COLLECTOR_FAMILY_NAME}LogGroup`, {
+        logGroupName: `/ecs/${AFREECA_API_COLLECTOR_FAMILY_NAME}`,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+      },
+    );
+    const afreecaTaskDef = new ecs.FargateTaskDefinition(
+      this, `${ID_PREFIX}${AFREECA_API_COLLECTOR_FAMILY_NAME}TaskDef`,
+      { family: AFREECA_API_COLLECTOR_FAMILY_NAME },
+    );
+    afreecaTaskDef.addContainer(
+      `${ID_PREFIX}${AFREECA_API_COLLECTOR_FAMILY_NAME}Container`, {
+        image: ecs.ContainerImage.fromRegistry(`hwasurr/${AFREECA_API_COLLECTOR_FAMILY_NAME}`),
+        memoryLimitMiB: 512,
+        secrets: {
+          AFREECA_KEY: ecs.Secret.fromSsmParameter(ssmParameters.AFREECA_KEY),
+          AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
+          AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_SECRET_ACCESS_KEY),
+        },
+        logging: new ecs.AwsLogDriver({ logGroup: afreecaLogGroup, streamPrefix: 'ecs' }),
+      },
+    );
+
+    // *********************************************
+    // Create ScheduledFargateTask for Twitchtv Collector
+    new ecsPatterns.ScheduledFargateTask(this,
+      `${AFREECA_API_COLLECTOR_FAMILY_NAME}Task`, {
+        cluster: ECSCluster,
+        desiredTaskCount: 1,
+        scheduledFargateTaskDefinitionOptions: {
+          taskDefinition: afreecaTaskDef,
+        },
+        schedule: events.Schedule.expression('cron(*/3 * * * ? *)'),
+      });
   }
 }

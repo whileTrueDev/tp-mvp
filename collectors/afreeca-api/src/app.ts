@@ -11,7 +11,7 @@ export class App {
 
   dbService: DatabaseService;
 
-  private config(): void {
+  private async config(): Promise<void> {
     this.configService.config();
   }
 
@@ -46,8 +46,8 @@ export class App {
     const alreadyInsertedCategories = await categoryService.findAll();
     if (
       (alreadyInsertedCategories.length <= 0) // 적재된 카테고리가 한개도 없거나
-      // 특정 시간 (18시 0분 또는 1분 또는 2분) 인 경우에만 실행.
-      || (new Date().getHours() === 20 && [0, 1, 2].includes(new Date().getMinutes()))
+      // 특정 시간 (20시 0분 또는 1분 또는 2분) 인 경우에만 실행.
+      || (new Date().getHours() === 20 && [0, 1, 2, 3].includes(new Date().getMinutes()))
     ) {
       console.info('Start to get Category data from afreeca tv');
       await categoryService.getAll();

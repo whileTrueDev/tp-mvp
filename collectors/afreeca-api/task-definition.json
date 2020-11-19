@@ -8,7 +8,7 @@
                 "logDriver": "awslogs",
                 "secretOptions": null,
                 "options": {
-                    "awslogs-group": "/ecs/onad-afreeca-crawl-v2",
+                    "awslogs-group": "/ecs/whiletrue-afreeca-api",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "ecs"
                 }
@@ -31,32 +31,16 @@
             "workingDirectory": null,
             "secrets": [
                 {
-                    "valueFrom": "arn:aws:ssm:ap-northeast-2:803609402610:parameter/AFREECA_KEY",
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/AFREECA_KEY",
                     "name": "AFREECA_KEY"
                 },
                 {
-                    "valueFrom": "arn:aws:ssm:ap-northeast-2:803609402610:parameter/DB_CHARSET",
-                    "name": "DB_CHARSET"
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_ACCESS_KEY_ID",
+                    "name": "AWS_ACCESS_KEY_ID"
                 },
                 {
-                    "valueFrom": "arn:aws:ssm:ap-northeast-2:803609402610:parameter/DB_DATABASE",
-                    "name": "DB_DATABASE"
-                },
-                {
-                    "valueFrom": "arn:aws:ssm:ap-northeast-2:803609402610:parameter/DB_HOST",
-                    "name": "DB_HOST"
-                },
-                {
-                    "valueFrom": "arn:aws:ssm:ap-northeast-2:803609402610:parameter/DB_PASSWORD",
-                    "name": "DB_PASSWORD"
-                },
-                {
-                    "valueFrom": "arn:aws:ssm:ap-northeast-2:803609402610:parameter/DB_PORT",
-                    "name": "DB_PORT"
-                },
-                {
-                    "valueFrom": "arn:aws:ssm:ap-northeast-2:803609402610:parameter/DB_USER",
-                    "name": "DB_USER"
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_SECRET_ACCESS_KEY",
+                    "name": "AWS_SECRET_ACCESS_KEY"
                 }
             ],
             "dockerSecurityOptions": null,
@@ -64,7 +48,7 @@
             "memoryReservation": 500,
             "volumesFrom": [],
             "stopTimeout": null,
-            "image": "hwasurr/afreeca-crawl-v2",
+            "image": "hwasurr/whiletrue-afreeca-api",
             "startTimeout": null,
             "firelensConfiguration": null,
             "dependsOn": null,
@@ -81,7 +65,7 @@
             "dockerLabels": null,
             "systemControls": null,
             "privileged": null,
-            "name": "onad-afreeca-crawl-v2"
+            "name": "whiletrue-afreeca-api"
         }
     ],
     "placementConstraints": [],
@@ -91,8 +75,8 @@
         "EC2",
         "FARGATE"
     ],
-    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:803609402610:task-definition/onad-afreeca-crawl-v2:2",
-    "family": "onad-afreeca-crawl-v2",
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:803609402610:task-definition/whiletrue-afreeca-api:2",
+    "family": "whiletrue-afreeca-api",
     "pidMode": null,
     "requiresCompatibilities": [
         "FARGATE"

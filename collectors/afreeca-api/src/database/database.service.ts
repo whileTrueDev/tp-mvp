@@ -9,7 +9,7 @@ export class DatabaseService {
   ) {}
 
   private async connect(): Promise<void> {
-    const option = this.databaseConfigService.getOptions();
+    const option = await this.databaseConfigService.getOptions();
     this.connection = await createConnection(option);
   }
 
