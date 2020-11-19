@@ -86,6 +86,7 @@ export default function DeleteUser(): JSX.Element {
         onClose={handleDialogClose}
         maxWidth="sm"
         fullWidth
+        disableScrollLock
       >
         {activeStep === 0 && (
         <>

@@ -15,6 +15,7 @@ import EditableRadio from './sub/EditableGenderRadio';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import ProfileImageChangeDialog from './sub/ProfileImageChangeDialog';
+import NickNameChangeDialog from './sub/NicknameChangeDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: { display: 'flex', alignItems: 'center', padding: theme.spacing(2) },
@@ -42,6 +43,9 @@ export default function ManageUserProfile({
 
   // 프로필 사진 변경 다이얼로그
   const profileImageChangeDialog = useDialog();
+
+  // 닉네임 변경 다이얼로그
+  const nickNameChangeDialog = useDialog();
 
   // 유저 정보 변경 요청 함수를 생성
   const [, updateRequest] = useAxios<number>({
@@ -128,7 +132,7 @@ export default function ManageUserProfile({
       {/* 이메일 변경 */}
       <div className={classes.container}>
         <div className={classes.labelField}>
-          <Typography>이메일</Typography>
+          <Typography>이메일</Typography>
           <Typography variant="body2" color="textSecondary">중요 이메일을 여기로 발송합니다.</Typography>
         </div>
         <EditableInput
@@ -143,13 +147,19 @@ export default function ManageUserProfile({
       {/* 닉네임 변경 */}
       <div className={classes.container}>
         <Typography className={classes.labelField}>닉네임</Typography>
-        <EditableInput
-          data={userProfileData.nickName || '아직 설정하지 않았습니다.'}
-          id="nickName"
-          helperText="활동명을 입력해주세요."
-          onEdit={editUserData}
-        />
+        <TextField value={userProfileData.nickName || '아직 설정하지 않았습니다.'} disabled className={classes.textField} />
+        <Button variant="contained" className={classes.editButton} onClick={nickNameChangeDialog.handleOpen}>
+          편집
+          <OpenInNew fontSize="small" />
+        </Button>
       </div>
+      {/* 닉네임 변경 다이얼로그 */}
+      <NickNameChangeDialog
+        userProfileData={userProfileData}
+        open={nickNameChangeDialog.open}
+        onClose={nickNameChangeDialog.handleClose}
+        onEdit={editUserData}
+      />
 
       <div className={classes.caption}>
         <Typography variant="caption">

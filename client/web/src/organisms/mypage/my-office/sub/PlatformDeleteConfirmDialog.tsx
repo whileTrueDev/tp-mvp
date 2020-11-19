@@ -30,7 +30,7 @@ export default function PlatformDeleteConfirmDialog({
   const classes = useStyles();
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth disableScrollLock>
       <div className={classes.titleSection}>
         <Typography
           variant="h6"

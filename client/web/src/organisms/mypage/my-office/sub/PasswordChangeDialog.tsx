@@ -86,7 +86,7 @@ export default function PasswordChangeDialog({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" disableScrollLock>
       {/* 기존 비밀번호 확인 */}
       {activeStep === 0 && (
         <PasswordConfirmForm
