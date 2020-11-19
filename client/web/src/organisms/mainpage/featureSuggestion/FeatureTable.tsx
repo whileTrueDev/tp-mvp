@@ -27,6 +27,11 @@ const useStyles = makeStyles((theme) => ({
   },
   tableCell: { padding: theme.spacing(1) },
   commentCount: { marginLeft: theme.spacing(1), fontWeight: 'bold' },
+  lockIcon: {
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+    marginLeft: '8px',
+  },
 }));
 
 export interface FeatureTableProps {
@@ -113,9 +118,6 @@ export default function FeatureTable({
                 <TableRow
                   className={classes.tableRow}
                   key={shortid.generate()}
-                  // onClick={() => (eachRow.userId === auth.user.userId
-                  //   ? handleClick(eachRow.suggestionId)
-                  //   : ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar))}
                   onClick={() => {
                     if (eachRow.isLock) {
                       if (eachRow.author === auth.user.userId) handleClick(eachRow.suggestionId);
@@ -135,12 +137,19 @@ export default function FeatureTable({
                       : transformIdToAsterisk(eachRow.author, 1.8)}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="left">
-                    {eachRow.isLock && <LockIcon color="primary" style={{ marginRight: '8px' }} />}
+
                     {eachRow.title}
                     {eachRow.replies.length > 0 && (
                       <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
                         {`(${eachRow.replies.length})`}
                       </Typography>
+                    )}
+                    {eachRow.isLock && (
+                    <LockIcon
+                      color="primary"
+                      fontSize="small"
+                      className={classes.lockIcon}
+                    />
                     )}
 
                   </TableCell>

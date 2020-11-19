@@ -45,6 +45,13 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'right',
   },
   editDeleteButton: { borderRadius: 0 },
+  lockIcon: {
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+    marginLeft: '8px',
+  },
+  pageButton: { width: '30%' },
+  listButton: { width: '10%' },
 }));
 
 export interface FeatureDetailProps {
@@ -102,6 +109,13 @@ export default function FeatureDetail({
     }
   };
 
+  // 비밀글 url 접근 방지
+  useEffect(() => {
+    if (currentSuggestion.isLock && currentSuggestion.author !== authContext.user.userId) {
+      window.location.replace('/feature-suggestion');
+    }
+  });
+
   return (
     <div>
       <Paper component="article" ref={paperRef}>
@@ -109,19 +123,16 @@ export default function FeatureDetail({
           <div>
 
             <Typography component="div" variant="h6" className={classes.titleText}>
-              {currentSuggestion.isLock && (
-                <LockIcon
-                  color="primary"
-                  style={{
-                    verticalAlign: 'middle',
-                    display: 'inline-flex',
-                    marginRight: '8px',
-                  }}
-                />
-              )}
               {currentSuggestion.title}
               {' '}
               {progressTab(currentSuggestion.state)}
+              {currentSuggestion.isLock && (
+                <LockIcon
+                  color="primary"
+                  className={classes.lockIcon}
+                  fontSize="small"
+                />
+              )}
             </Typography>
             <Typography variant="body1" color="textSecondary">
               {currentSuggestion.author && (
@@ -209,7 +220,7 @@ export default function FeatureDetail({
       {/* 이전글, 목록, 다음글 버튼셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button
-          style={{ width: '30%' }}
+          className={classes.pageButton}
           size="large"
           disabled={currentSuggestionIndex === 0}
           variant="outlined"
@@ -232,7 +243,7 @@ export default function FeatureDetail({
           )}
         </Button>
         <Button
-          style={{ width: '10%' }}
+          className={classes.listButton}
           size="large"
           variant="outlined"
           onClick={() => {
@@ -242,7 +253,7 @@ export default function FeatureDetail({
           목록
         </Button>
         <Button
-          style={{ width: '30%' }}
+          className={classes.pageButton}
           size="large"
           disabled={currentSuggestionIndex === data.length - 1}
           variant="outlined"
