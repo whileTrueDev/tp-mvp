@@ -178,8 +178,8 @@ export default function FeatureDetail({
       && currentSuggestion.replies.length > 0
       && (
         <div style={{ marginTop: 16 }}>
-            {currentSuggestion.replies
-              ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            {currentSuggestion.replies && currentSuggestion.replies
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map((reply) => (
                 <FeatureReply
                   avatarLogo={reply.author.profileImage}

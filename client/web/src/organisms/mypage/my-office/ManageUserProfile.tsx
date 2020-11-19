@@ -161,6 +161,7 @@ export default function ManageUserProfile({
         onEdit={editUserData}
       />
 
+      {/* 마지막 수정 시간 */}
       <div className={classes.caption}>
         <Typography variant="caption">
           {`마지막 수정 : ${moment(userProfileData.updatedAt).fromNow()}`}

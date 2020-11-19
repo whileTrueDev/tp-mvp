@@ -32,6 +32,10 @@ export class UsersService {
     private readonly youtubeRepository: Repository<PlatformYoutubeEntity>,
   ) {}
 
+  private resizeingYoutubeLogo(youtubeLogoString: string): string {
+    return youtubeLogoString.replace('{size}', '150');
+  }
+
   async findAll(): Promise<UserEntity[]> {
     return this.usersRepository.find();
   }
@@ -67,7 +71,7 @@ export class UsersService {
       const youtubeLink = await this.youtubeRepository.findOne(user.youtubeId);
       if (youtubeLink) {
         images.push(
-          { platform: 'youtube', logo: youtubeLink.youtubeLogo.replace('{size}', '150') },
+          { platform: 'youtube', logo: this.resizeingYoutubeLogo(youtubeLink.youtubeLogo) },
         );
       }
     }
@@ -77,18 +81,23 @@ export class UsersService {
   async findChannelNames(userId: string): Promise<ChannelNames> {
     const user = await this.usersRepository.findOne(userId);
     const nickNames: ChannelNames = [];
+
     // 아프리카는 OPEN API 업데이트 이후 추가 20.11.18 hwasurr
     // const afreecaLink = await this.afreecaRepository.findOne(user.afreecaId);
     // if (afreecaLink) images.push({ platform: 'afreeca', logo: afreecaLink.logo });
 
-    const twitchLink = await this.twitchRepository.findOne(user.twitchId);
-    if (twitchLink) nickNames.push({ platform: 'twitch', nickName: twitchLink.twitchChannelName });
+    if (user.twitchId) {
+      const twitchLink = await this.twitchRepository.findOne(user.twitchId);
+      if (twitchLink) nickNames.push({ platform: 'twitch', nickName: twitchLink.twitchChannelName });
+    }
 
-    const youtubeLink = await this.youtubeRepository.findOne(user.youtubeId);
-    if (youtubeLink) {
-      nickNames.push(
-        { platform: 'youtube', nickName: youtubeLink.youtubeTitle },
-      );
+    if (user.youtubeId) {
+      const youtubeLink = await this.youtubeRepository.findOne(user.youtubeId);
+      if (youtubeLink) {
+        nickNames.push(
+          { platform: 'youtube', nickName: youtubeLink.youtubeTitle },
+        );
+      }
     }
     return nickNames;
   }
@@ -382,7 +391,7 @@ export class UsersService {
     }
     if (platform === 'youtube') {
       const youtube = await this.youtubeRepository.findOne(targetUser.youtubeId);
-      targetPlatformLogo = youtube.youtubeLogo;
+      targetPlatformLogo = this.resizeingYoutubeLogo(youtube.youtubeLogo);
     }
 
     // 플랫폼 연결 정보 삭제 및 대표 프로필 사진이 해당 플랫폼의 프로필사진인 경우 함께 삭제

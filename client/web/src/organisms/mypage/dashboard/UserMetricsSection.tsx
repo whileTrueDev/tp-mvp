@@ -10,12 +10,14 @@ import { UserMetrics } from '../../../interfaces/UserMetrics';
 import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
 import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
 import UserMetricsChart from './sub/UserMetricsChart';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   chartContainer: { padding: theme.spacing(4), height: 575, overflow: 'hidden' },
   columnFlexBox: {
     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
   },
+  cardBase: { minHeight: 120 },
   card: {
     cursor: 'pointer',
     transition: '0.1s linear all',
@@ -44,6 +46,7 @@ export interface DataCard {
 }
 
 export default function UserMetricsSection(): JSX.Element {
+  const auth = useAuthContext();
   const PLATFORM_LIST = ['afreeca', 'twitch', 'youtube'];
   const classes = useStyles();
 
@@ -52,7 +55,7 @@ export default function UserMetricsSection(): JSX.Element {
   const [{ loading, data }] = useAxios<UserMetrics[]>({
     url: 'stream-analysis/user-statistics',
     method: 'GET',
-    params: { userId: 'userId1' },
+    params: { userId: auth.user.userId },
   });
 
   // **************************************************
@@ -178,7 +181,10 @@ export default function UserMetricsSection(): JSX.Element {
       <Grid item xs={3} container direction="column" justify="space-between" style={{ paddingLeft: 32 }}>
         {!loading && data && (
         <>
-          {preprocessedData
+          {(preprocessedData.length <= 0) && [1, 2, 3, 4].map((dummy) => (
+            <Card key={dummy} className={classes.cardBase} />
+          ))}
+          {preprocessedData.length > 0 && preprocessedData
             .map((card) => (
               <Card
                 key={card.name}

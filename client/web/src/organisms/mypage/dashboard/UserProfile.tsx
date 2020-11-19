@@ -49,15 +49,28 @@ export default function UserProfile(): JSX.Element {
               </Typography>
 
               {/* 연동된 플랫폼 목록 */}
-              {profileRequestObject.data.afreecaId && (
-              <img className={classes.platformLogo} src="/images/logo/afreecaLogo.png" alt="" draggable={false} />
-              )}
-              {profileRequestObject.data.twitchId && (
-              <img className={classes.platformLogo} src="/images/logo/twitchLogo.png" alt="" draggable={false} />
-              )}
-              {profileRequestObject.data.youtubeId && (
-              <img className={classes.platformLogo} src="/images/logo/youtubeLogo.png" alt="" draggable={false} />
-              )}
+              <img
+                className={classes.platformLogo}
+                src="/images/logo/afreecaLogo.png"
+                alt=""
+                draggable={false}
+                style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
+              />
+              <img
+                className={classes.platformLogo}
+                src="/images/logo/twitchLogo.png"
+                alt=""
+                draggable={false}
+                style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
+              />
+              <img
+                className={classes.platformLogo}
+                src="/images/logo/youtubeLogo.png"
+                alt=""
+                draggable={false}
+                style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
+              />
+
             </div>
 
             <div>
