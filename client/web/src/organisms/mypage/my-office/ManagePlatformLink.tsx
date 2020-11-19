@@ -1,5 +1,5 @@
 import {
-  Avatar, Button, makeStyles, Typography,
+  Avatar, Button, capitalize, makeStyles, Typography,
 } from '@material-ui/core';
 import { Check, OpenInNew } from '@material-ui/icons';
 import useAxios from 'axios-hooks';
@@ -50,9 +50,9 @@ export default function ManagePlatformLink({
     linkDeleteRequest({ data: { platform } })
       .then(() => {
         userDataRefetch();
-        ShowSnack('연동 해제 되었습니다.', 'success', enqueueSnackbar);
+        ShowSnack(`${capitalize(platform)} 연동 해제 되었습니다.`, 'success', enqueueSnackbar);
       })
-      .catch(() => ShowSnack('연동 해제중 오류가 발생했습니다. 문의바랍니다.', 'error', enqueueSnackbar));
+      .catch(() => ShowSnack(`${capitalize(platform)} 연동 해제중 오류가 발생했습니다. 문의바랍니다.`, 'error', enqueueSnackbar));
   }
 
   // *******************************

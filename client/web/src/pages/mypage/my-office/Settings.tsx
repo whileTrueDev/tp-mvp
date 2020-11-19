@@ -2,6 +2,7 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import {
+  capitalize,
   CircularProgress,
   makeStyles,
   Paper, Typography,
@@ -54,7 +55,7 @@ export default function Settings(): JSX.Element {
       linkToUserRequest({ data: { ...params } })
         .then((res) => {
           doUserFetch(); // 링크 성공
-          ShowSnack('성공적으로 연동되었습니다.', 'success', enqueueSnackbar);
+          ShowSnack(`${capitalize(params.platform)} 성공적으로 연동되었습니다.`, 'success', enqueueSnackbar);
         })
         .catch((err) => {
           ShowSnack('연동과정에서 오류가 발생했습니다. 문의바랍니다.', 'error', enqueueSnackbar);

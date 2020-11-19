@@ -7,14 +7,15 @@ import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import useAxios from 'axios-hooks';
-import React from 'react';
+import React, { useEffect } from 'react';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 const useStyles = makeStyles((theme) => ({
   titleSection: { padding: `${theme.spacing(2)}px ${theme.spacing(3)}px` },
+  refresh: { margin: `0px ${theme.spacing(2)}px`, textAlign: 'right' },
   bold: { fontWeight: 'bold' },
   avatar: { marginRight: theme.spacing(1) },
   form: { display: 'flex', justifyContent: 'space-around', alignItems: 'center' },
-  noPlatformHelperText: { display: 'flex', justifyContent: 'space-around', alignItems: 'center' },
   radioButton: { margin: theme.spacing(1) },
   radioContents: { display: 'flex', alignItems: 'center' },
 }));
@@ -32,9 +33,14 @@ export default function ProfileImageChangeDialog({
 
   // ***********************************
   // 플랫폼별 프로필 사진 목록 요청
-  const [{ loading, data }] = useAxios<ProfileImages>({
+  const [{ loading, data }, refetch] = useAxios<ProfileImages>({
     method: 'GET', url: '/users/profile-images',
   });
+  useEffect(() => {
+    if (userProfileData) {
+      refetch();
+    }
+  }, [userProfileData, refetch]);
 
   // ***********************************
   // 선택된 프로필 사진 스테이트
@@ -55,9 +61,20 @@ export default function ProfileImageChangeDialog({
       >
         <div className={classes.titleSection}>
           <Typography variant="h6" className={classes.bold}>대표 프로필 사진 변경</Typography>
-          <Typography variant="body2">대표 프로필 사진을 선택해주세요.</Typography>
-          <Typography color="textSecondary" variant="caption">연동한 플랫폼의 로고중에서 선택가능합니다.</Typography>
+          <Typography variant="body2">연동한 플랫폼의 로고중에서 선택해 설정해주세요.</Typography>
           <Typography color="textSecondary" variant="caption">아프리카TV의 경우 아직 지원하지 않습니다.</Typography>
+        </div>
+
+        <div className={classes.refresh}>
+          <Button
+            color="primary"
+            onClick={() => {
+              refetch();
+            }}
+          >
+            <RefreshIcon fontSize="small" />
+            새로고침
+          </Button>
         </div>
 
         <DialogContent>
@@ -65,9 +82,9 @@ export default function ProfileImageChangeDialog({
           <FormControl component="fieldset" className={classes.form}>
             <RadioGroup aria-label="profileImage" name="profileImage" value={selectedProfileImage} onChange={handleRadioChange}>
               {!loading && data.length === 0 && (
-                <div className={classes.noPlatformHelperText}>
-                  <Typography>아직 연동된 플랫폼이 없습니다.</Typography>
-                  <Typography>내정보 관리 &gt; 플랫폼 연동을 먼저 진행해주세요.</Typography>
+                <div>
+                  <Typography className={classes.bold}>아직 연동된 플랫폼이 없습니다.</Typography>
+                  <Typography color="textSecondary">내정보 관리 &gt; 플랫폼 연동을 먼저 진행해주세요.</Typography>
                 </div>
               )}
               {!loading && data && data.map((profileImage) => (

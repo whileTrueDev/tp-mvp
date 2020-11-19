@@ -36,6 +36,14 @@ export default function PasswordChangeDialog({
   }
 
   // ********************************************
+  // 비밀번호 값 스테이트 관련
+
+  // 비밀번호 벨리데이션 체크 함수
+  function checkPwValidate(pw: string) {
+    const passwordRegx = /^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^*+=-]).{8,20}$/;
+    return passwordRegx.test(pw);
+  }
+
   // 새로운 비밀번호
   const [newPw, setNewPw] = React.useState<string>('');
   function handleNewPwChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -95,7 +103,7 @@ export default function PasswordChangeDialog({
         <div className={classes.titleSection}>
           <Typography variant="h6" className={classes.bold}>비밀번호 변경</Typography>
           <Typography variant="body2">변경할 비밀번호를 입력해주세요.</Typography>
-          <Typography color="textSecondary" variant="body2">*비밀번호는 특수문자를 포함한 8-20자 영문 또는 숫자만 가능합니다.</Typography>
+          <Typography color="textSecondary" variant="body2">*비밀번호는 특수문자를 포함한 8-20자, 영문 또는 숫자만 가능합니다.</Typography>
         </div>
 
         <DialogContent>
@@ -108,6 +116,7 @@ export default function PasswordChangeDialog({
             fullWidth
             value={newPw}
             onChange={handleNewPwChange}
+            error={!checkPwValidate(newPw)}
             helperText="특수문자를 포함한 8-20자 영문 또는 숫자만 가능합니다."
           />
           <PasswordTextField
@@ -135,7 +144,8 @@ export default function PasswordChangeDialog({
           <Button
             variant="contained"
             color="primary"
-            disabled={!(newPwCheck === newPw) || !newPw}
+            disabled={!(newPwCheck === newPw) || !newPw || !checkPwValidate(newPw)}
+            // 비번/비번확인이 같지않거나, 비번이 없거나, validation 통과 못한경우
             type="submit"
           >
             변경

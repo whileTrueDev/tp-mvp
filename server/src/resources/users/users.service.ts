@@ -51,15 +51,18 @@ export class UsersService {
 
     // const afreecaLink = await this.afreecaRepository.findOne(user.afreecaId);
     // if (afreecaLink) images.push({ platform: 'afreeca', logo: afreecaLink.logo });
+    if (user.twitchId) {
+      const twitchLink = await this.twitchRepository.findOne(user.twitchId);
+      if (twitchLink) images.push({ platform: 'twitch', logo: twitchLink.logo });
+    }
 
-    const twitchLink = await this.twitchRepository.findOne(user.twitchId);
-    if (twitchLink) images.push({ platform: 'twitch', logo: twitchLink.logo });
-
-    const youtubeLink = await this.youtubeRepository.findOne(user.youtubeId);
-    if (youtubeLink) {
-      images.push(
-        { platform: 'youtube', logo: youtubeLink.youtubeLogo.replace('{size}', '150') },
-      );
+    if (user.youtubeId) {
+      const youtubeLink = await this.youtubeRepository.findOne(user.youtubeId);
+      if (youtubeLink) {
+        images.push(
+          { platform: 'youtube', logo: youtubeLink.youtubeLogo.replace('{size}', '150') },
+        );
+      }
     }
     return images;
   }
@@ -321,10 +324,11 @@ export class UsersService {
   ): Promise<number> {
     const targetUser = await this.usersRepository.findOne(userId);
     let targetPlatformLogo: string;
-    if (platform === 'afreeca') {
-      const afreeca = await this.twitchRepository.findOne(targetUser.afreecaId);
-      targetPlatformLogo = afreeca.logo;
-    }
+    // 아프리카의 경우 아직 채널/유저 프로필사진 데이터를 가져올 수 없다.
+    // if (platform === 'afreeca') {
+    //   const afreeca = await this.twitchRepository.findOne(targetUser.afreecaId);
+    //   targetPlatformLogo = afreeca.logo;
+    // }
     if (platform === 'twitch') {
       const twitch = await this.twitchRepository.findOne(targetUser.twitchId);
       targetPlatformLogo = twitch.logo;
