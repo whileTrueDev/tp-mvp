@@ -37,7 +37,7 @@ const styles = makeStyles((theme) => ({
     height: 220,
     width: '100%',
     position: 'relative',
-    top: -260,
+    top: -250,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
     // [theme.breakpoints.down('sm')]: {
     //   top: -140,
@@ -50,7 +50,7 @@ const styles = makeStyles((theme) => ({
   },
   carousel: {
     paddingTop: 20,
-    height: 260,
+    height: 250,
     outline: 'none',
     // [theme.breakpoints.down('sm')]: {
     //   height: 140,
@@ -61,7 +61,7 @@ const styles = makeStyles((theme) => ({
   },
   content: {
     margin: 'auto',
-    width: 260,
+    width: 250,
     height: '100%',
     background: 'white',
     boxShadow: '0px 0px 1px 1px #cfcfcf',
