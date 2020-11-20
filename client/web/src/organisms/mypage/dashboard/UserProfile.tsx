@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import {
   Avatar, Chip, CircularProgress, Paper, Typography,
@@ -26,9 +26,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserProfile(): JSX.Element {
   const classes = useStyles();
-  const [profileRequestObject] = useAxios<User>({
+  const [profileRequestObject, refetch] = useAxios<User>({
     url: 'users', method: 'GET',
   });
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <Paper className={classes.container}>

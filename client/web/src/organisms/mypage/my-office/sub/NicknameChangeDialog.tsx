@@ -57,7 +57,7 @@ export default function NickNameChangeDialog({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" disableScrollLock>
       <form onSubmit={(evt) => {
         evt.preventDefault();
-        if (selectedNickName) onEdit('nickName', selectedNickName);
+        onEdit('nickName', selectedNickName);
       }}
       >
         <div className={classes.titleSection}>
@@ -83,13 +83,13 @@ export default function NickNameChangeDialog({
           {loading && (<CircularProgress />)}
           <FormControl component="fieldset" className={classes.form}>
             <RadioGroup aria-label="nickName" name="nickName" value={selectedNickName} onChange={handleRadioChange}>
-              {!loading && data.length === 0 && (
+              {!loading && data && data.length === 0 && (
                 <div>
                   <Typography className={classes.bold}>아직 연동된 플랫폼이 없습니다.</Typography>
                   <Typography color="textSecondary">내정보 관리 &gt; 플랫폼 연동을 먼저 진행해주세요.</Typography>
                 </div>
               )}
-              {!loading && data && data.map((channelName) => (
+              {!loading && data && [{ platform: '', nickName: '' }].concat(data).map((channelName) => (
                 <FormControlLabel
                   className={classes.radioButton}
                   key={channelName.platform}
@@ -97,9 +97,11 @@ export default function NickNameChangeDialog({
                   control={<Radio color="primary" />}
                   label={(
                     <div key={channelName.platform} className={classes.radioContents}>
+                      {channelName.platform && (
                       <img src={`/images/logo/${channelName.platform}Logo.png`} alt="" className={classes.imglogo} />
+                      )}
                       <Typography>
-                        {channelName.nickName}
+                        {!channelName.nickName ? '닉네임 사용 안함' : channelName.nickName}
                       </Typography>
                       {channelName.nickName === userProfileData.nickName && (
                       <Typography className={classes.bold}>
@@ -127,7 +129,7 @@ export default function NickNameChangeDialog({
             variant="contained"
             color="primary"
             type="submit"
-            disabled={(loading || (!loading && data.length === 0))}
+            disabled={(loading || (!loading && data && data.length === 0))}
           >
             변경
           </Button>

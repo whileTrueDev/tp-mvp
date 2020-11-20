@@ -56,7 +56,7 @@ export default function ProfileImageChangeDialog({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" disableScrollLock>
       <form onSubmit={(evt) => {
         evt.preventDefault();
-        if (selectedProfileImage) onEdit('profileImage', selectedProfileImage);
+        onEdit('profileImage', selectedProfileImage || '');
       }}
       >
         <div className={classes.titleSection}>
@@ -81,13 +81,13 @@ export default function ProfileImageChangeDialog({
           {loading && (<CircularProgress />)}
           <FormControl component="fieldset" className={classes.form}>
             <RadioGroup aria-label="profileImage" name="profileImage" value={selectedProfileImage} onChange={handleRadioChange}>
-              {!loading && data.length === 0 && (
+              {!loading && data && data.length === 0 && (
                 <div>
                   <Typography className={classes.bold}>아직 연동된 플랫폼이 없습니다.</Typography>
                   <Typography color="textSecondary">내정보 관리 &gt; 플랫폼 연동을 먼저 진행해주세요.</Typography>
                 </div>
               )}
-              {!loading && data && data.map((profileImage) => (
+              {!loading && data && [{ platform: '', logo: '' }].concat(data).map((profileImage) => (
                 <FormControlLabel
                   className={classes.radioButton}
                   key={profileImage.platform}
@@ -97,7 +97,7 @@ export default function ProfileImageChangeDialog({
                     <div key={profileImage.platform} className={classes.radioContents}>
                       <Avatar src={profileImage.logo} className={classes.avatar} />
                       <Typography style={{ textTransform: 'capitalize' }}>
-                        {profileImage.platform}
+                        {profileImage.platform ? profileImage.platform : '프로필사진 사용 안함'}
                       </Typography>
                       {profileImage.logo === userProfileData.profileImage && (
                       <Typography className={classes.bold}>
@@ -125,7 +125,7 @@ export default function ProfileImageChangeDialog({
             variant="contained"
             color="primary"
             type="submit"
-            disabled={(loading || (!loading && data.length === 0))}
+            disabled={(loading || (!loading && data && data.length === 0))}
           >
             변경
           </Button>

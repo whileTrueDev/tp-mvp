@@ -52,11 +52,14 @@ export default function UserMetricsSection(): JSX.Element {
 
   // **************************************************
   // Data fetching from backend
-  const [{ loading, data }] = useAxios<UserMetrics[]>({
+  const [{ loading, data }, refetch] = useAxios<UserMetrics[]>({
     url: 'stream-analysis/user-statistics',
     method: 'GET',
     params: { userId: auth.user.userId },
   });
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   // **************************************************
   // Selected Platform

@@ -92,7 +92,10 @@ function HeaderLinks(): JSX.Element {
   const UserMenuOpen = Boolean(UserMenuAnchorEl);
   // ******************************************************************
   // 유저 프로필 사진 이미지 조회
-  const [profile] = useAxios<User>({ method: 'get', url: 'users' });
+  const [profile, profileRefetch] = useAxios<User>({ method: 'get', url: 'users' });
+  React.useEffect(() => {
+    profileRefetch();
+  }, [profileRefetch]);
 
   return (
     <Grid container alignItems="flex-end" justify="flex-end">

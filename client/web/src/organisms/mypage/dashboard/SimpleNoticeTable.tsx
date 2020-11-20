@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 // 날짜표현추가
+import useAxios from 'axios-hooks';
 import dateExpression from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
@@ -22,14 +23,16 @@ const useStyles = makeStyles((theme) => ({
   important: { fontWeight: 'bold' },
 }));
 
-export interface SimpleNoticeTableProps {
-  data: NoticeData[];
-}
-export default function SimpleNoticeTable({
-  data,
-}: SimpleNoticeTableProps): JSX.Element {
+export default function SimpleNoticeTable(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
+  // Notice data
+  const [{ loading, data }] = useAxios<NoticeData[]>({
+    url: '/notice/outline',
+    method: 'GET',
+    params: { important: 2 },
+  });
+
   return (
     <Paper className={classes.container}>
       <div style={{ marginBottom: 32 }}>
@@ -39,7 +42,7 @@ export default function SimpleNoticeTable({
       <TableContainer>
         <Table className={classes.table} aria-label="notice table" size="medium">
           <TableBody>
-            {data.map((row) => (
+            {!loading && data && data.map((row) => (
               <TableRow key={row.id} hover>
                 <TableCell width={150} scope="row" component="th" align="left">
                   <Typography>{row.category}</Typography>
@@ -67,7 +70,7 @@ export default function SimpleNoticeTable({
                 </TableCell>
               </TableRow>
             ))}
-            {data.length === 0 && (
+            {!loading && data.length === 0 && (
               <TableRow>
                 <TableCell align="center" colSpan={3}>아직 공지사항이 없습니다.</TableCell>
               </TableRow>
