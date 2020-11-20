@@ -21,6 +21,8 @@ export interface User {
 
   roles?: string;
 
+  profileImage?: string;
+
   twitchId?: string;
 
   afreecaId?: string;

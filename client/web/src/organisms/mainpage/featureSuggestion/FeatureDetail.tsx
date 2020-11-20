@@ -18,8 +18,8 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 import dateExpression from '../../../utils/dateExpression';
-import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
+import FeatureReply from './sub/FeatureReply';
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
@@ -135,12 +135,12 @@ export default function FeatureDetail({
               )}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              {currentSuggestion.author && (
-              <span>
-                {authContext.user.userId === currentSuggestion.author
-                  ? currentSuggestion.author
-                  : transformIdToAsterisk(currentSuggestion.author, 1.8)}
-              </span>
+              {currentSuggestion.author.userId && (
+                <span>
+                  {authContext.user.userId === currentSuggestion.author.userId
+                    ? currentSuggestion.author.userId
+                    : transformIdToAsterisk(currentSuggestion.author.userId, 1.8)}
+                </span>
               )}
             </Typography>
           </div>
@@ -156,7 +156,7 @@ export default function FeatureDetail({
             </Typography>
           </Typography>
         </div>
-        {currentSuggestion.author === authContext.user.userId
+        {currentSuggestion.author.userId === authContext.user.userId
         && (
           <div className={classes.editDeleteButtonSet}>
             <Button
@@ -193,21 +193,25 @@ export default function FeatureDetail({
       </Paper>
 
       {/* 댓글 작성하기 */}
-      {currentSuggestion.author === authContext.user.userId && (
-      <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
+      {currentSuggestion.author.userId === authContext.user.userId && (
+        <FeatureReplyInput
+          currentSuggestion={currentSuggestion}
+          refetch={refetch}
+          avatarLogo={currentSuggestion.author.profileImage || ''}
+        />
       )}
       {/* 댓글 리스트 섹션 */}
       {currentSuggestion.replies
       && currentSuggestion.replies.length > 0
       && (
         <div style={{ marginTop: 16 }}>
-            {currentSuggestion.replies
-              ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            {currentSuggestion.replies && currentSuggestion.replies
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map((reply) => (
                 <FeatureReply
-                  avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
-                  key={reply.author + reply.createdAt}
-                  author={reply.author}
+                  avatarLogo={reply.author.profileImage}
+                  key={reply.author.userId + reply.createdAt}
+                  author={reply.author.userId}
                   content={reply.content}
                   createdAt={reply.createdAt}
                   replyId={reply.replyId}
@@ -226,8 +230,9 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (previousFeature.isLock) {
-              if (previousFeature.author === authContext.user.userId) onOtherFeatureClick(previousFeature.suggestionId);
-              else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+              if (previousFeature.author.userId === authContext.user.userId) {
+                onOtherFeatureClick(previousFeature.suggestionId);
+              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             } else {
               onOtherFeatureClick(previousFeature.suggestionId);
             }
@@ -259,8 +264,9 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (nextFeature.isLock) {
-              if (nextFeature.author === authContext.user.userId) onOtherFeatureClick(nextFeature.suggestionId);
-              else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+              if (nextFeature.author.userId === authContext.user.userId) {
+                onOtherFeatureClick(nextFeature.suggestionId);
+              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             } else {
               onOtherFeatureClick(nextFeature.suggestionId);
             }
@@ -283,7 +289,7 @@ export default function FeatureDetail({
     <div>
       {currentSuggestion.isLock ? (
         <div>
-          {currentSuggestion.author !== authContext.user.userId ? (
+          {currentSuggestion.author.userId !== authContext.user.userId ? (
             <div>
               {rejectPage()}
             </div>

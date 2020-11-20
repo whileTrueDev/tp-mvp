@@ -43,13 +43,14 @@ function Navbar(props: NavbarProps): JSX.Element {
 
             <Grid container justify="space-between" direction="row">
               <Grid item container md={10} direction="row" alignItems="flex-end" spacing={1}>
+                <NavbarUserList />
                 { subscribe.validSubscribeUserList
               && subscribe.validSubscribeUserList.length > 0
               && (
                 <>
 
                     {/* 사용중인 유저 이름 , 클릭시 구독 유저 드롭다운 리스트 -> CBT 임시 주석 처리 */}
-                  <NavbarUserList />
+                  {/* <NavbarUserList /> */}
 
                   {/* 구독 기간 , 선택된 유저의 구독 기간을 표기 -> CBT 임시 주석 처리 */}
                   {/* <Grid item className={classes.subscribePeriod}>

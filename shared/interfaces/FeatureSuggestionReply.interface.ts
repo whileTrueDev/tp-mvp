@@ -1,3 +1,5 @@
+import { User } from './User.interface';
+
 export interface FeatureSuggestionReply {
   replyId: number;
 
@@ -5,9 +7,7 @@ export interface FeatureSuggestionReply {
 
   content: string;
 
-  author: string;
-
-  userId: string;
+  author: User;
 
   createdAt: Date;
 

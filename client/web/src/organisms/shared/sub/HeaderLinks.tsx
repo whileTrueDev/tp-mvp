@@ -13,6 +13,7 @@ import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 // shared dtos and interfaces
 import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/notificationGet.dto';
+import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 // notificaiton list component
 import NotificationPopper from './NotificationPopper';
@@ -22,13 +23,7 @@ import UserMenuPopover from './UserMenuPopover';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  leftGridIcon: {
-    fontSize: '32px',
-    marginTop: theme.spacing(1),
-  },
-  rightGridIcon: {
-    fontSize: '32px',
-  },
+  icon: { width: 32, height: 32 },
 }));
 
 export interface Notification {
@@ -96,6 +91,11 @@ function HeaderLinks(): JSX.Element {
   };
   const UserMenuOpen = Boolean(UserMenuAnchorEl);
   // ******************************************************************
+  // 유저 프로필 사진 이미지 조회
+  const [profile, profileRefetch] = useAxios<User>({ method: 'get', url: 'users' });
+  React.useEffect(() => {
+    profileRefetch();
+  }, [profileRefetch]);
 
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
@@ -119,13 +119,17 @@ function HeaderLinks(): JSX.Element {
               horizontal: 'right',
             }}
           >
-            <Notifications className={classes.rightGridIcon} />
+            <Notifications className={classes.icon} />
           </Badge>
         </IconButton>
       </Tooltip>
 
       <IconButton onClick={handleClick}>
-        <Avatar style={{ height: '32px', width: '32px' }} />
+        <Avatar
+          className={classes.icon}
+          src={(!profile.loading && profile.data && profile.data.profileImage)
+            ? profile.data.profileImage : ''}
+        />
       </IconButton>
 
       {anchorEl && !getLoading && getData && !getError && (
@@ -137,6 +141,8 @@ function HeaderLinks(): JSX.Element {
       />
       )}
       <UserMenuPopover
+        avatarSrc={(!profile.loading && profile.data && profile.data.profileImage)
+          ? profile.data.profileImage : ''}
         open={UserMenuOpen}
         anchorEl={UserMenuAnchorEl}
         onClose={handleClose}

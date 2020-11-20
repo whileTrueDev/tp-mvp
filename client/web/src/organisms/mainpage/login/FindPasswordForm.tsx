@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
-import { Typography, Button, TextField } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
@@ -9,6 +9,7 @@ import LoginHelper from '../../../atoms/LoginHelper';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import TruepointLogo from '../../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
+import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -163,18 +164,14 @@ export default function FindAccountForm(): JSX.Element {
         <Typography className={classes.subcontent} variant="body2">비밀번호는 8자 이상 16자 이하입니다.</Typography>
 
         <form className={classes.content} onSubmit={handleSubmit}>
-          <TextField
-            color="secondary"
-            type="password"
+          <PasswordTextField
             label="비밀번호"
             inputRef={passwordRef}
             autoComplete="off"
             className={classes.inputField}
             inputProps={{ required: true, minLength: 8 }}
           />
-          <TextField
-            color="secondary"
-            type="password"
+          <PasswordTextField
             label="비밀번호 확인"
             inputRef={passwordConfirmRef}
             autoComplete="off"
@@ -183,7 +180,7 @@ export default function FindAccountForm(): JSX.Element {
           />
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             className={classes.fullButton}
             style={{ color: 'white' }}
             disabled={activeStep === 1 && changePWRequest.loading}
@@ -202,7 +199,7 @@ export default function FindAccountForm(): JSX.Element {
         <div className={classes.content}>
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             className={classes.fullButton}
             style={{ color: 'white' }}
             component={Link}

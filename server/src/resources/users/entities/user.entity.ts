@@ -8,7 +8,7 @@ import { Exclude } from 'class-transformer';
 import { SubscribeEntity } from './subscribe.entity';
 import { NotificationEntity } from '../../notification/entities/notification.entity';
 
-@Entity({ name: 'UserTest' })
+@Entity({ name: 'UserTest2' })
 export class UserEntity implements User {
   // For Exclude Decorator
   constructor(partial: Partial<UserEntity>) {
@@ -46,8 +46,11 @@ export class UserEntity implements User {
   @Column()
   marketingAgreement: boolean;
 
-  @Column({ default: 'user' })
+  @Column({ default: 'user', comment: '유저 역할(관리자,유저,...)' })
   roles?: string;
+
+  @Column({ type: 'text', comment: '대표 프로필 사진' })
+  profileImage?: string;
 
   @Column({ nullable: true, default: null })
   twitchId?: string | null;

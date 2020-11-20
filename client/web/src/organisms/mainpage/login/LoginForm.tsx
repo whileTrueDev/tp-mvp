@@ -100,7 +100,7 @@ export default function LoginForm(): JSX.Element {
   return (
     <>
       {/* 로딩 컴포넌트 */}
-      {loading && (<CenterLoading color="secondary" size="5rem" />)}
+      {loading && (<CenterLoading color="primary" size="5rem" />)}
 
       <form
         onSubmit={handleLoginSubmit}

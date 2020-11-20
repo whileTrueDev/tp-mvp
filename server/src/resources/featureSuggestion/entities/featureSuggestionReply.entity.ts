@@ -2,9 +2,10 @@ import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/Featur
 import {
   Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn,
 } from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionEntity } from './featureSuggestion.entity';
 
-@Entity({ name: 'FeatureSuggestionReplyTest' })
+@Entity({ name: 'FeatureSuggestionReplyTest2' })
 export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @PrimaryGeneratedColumn()
   replyId: number;
@@ -16,17 +17,9 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @Column()
   content: string;
 
-  @Column({
-    type: 'varchar',
-    length: 50,
-  })
-  author: string;
-
-  @Column({
-    type: 'varchar',
-    length: 20,
-  })
-  userId: string;
+  @JoinColumn({ name: 'author' })
+  @ManyToOne((type) => UserEntity, (user) => user.userId)
+  author: UserEntity;
 
   @CreateDateColumn()
   createdAt: Date;

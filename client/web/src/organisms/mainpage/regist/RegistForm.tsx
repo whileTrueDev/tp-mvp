@@ -27,6 +27,7 @@ import StyledInput from '../../../atoms/StyledInput';
 import {
   StepAction, StepState,
 } from './Stepper.reducer';
+import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 
 // domain select용.
 const domains = [
@@ -189,10 +190,9 @@ function PlatformRegistForm({
               </Grid>
               <Grid container direction="row">
                 <Grid item>
-                  <TextField
+                  <PasswordTextField
                     required
                     label="PASSWORD"
-                    type="password"
                     placeholder="비밀번호를 입력하세요."
                     className={classes.textField}
                     onChange={handleChange('password')}
@@ -205,10 +205,9 @@ function PlatformRegistForm({
                   />
                 </Grid>
                 <Grid item>
-                  <TextField
+                  <PasswordTextField
                     required
                     label="RE-PASSWORD"
-                    type="password"
                     placeholder="비밀번호를 재입력하세요."
                     helperText={state.repasswd ? '비밀번호와 동일하지 않습니다.' : ' '}
                     error={state.repasswd}
