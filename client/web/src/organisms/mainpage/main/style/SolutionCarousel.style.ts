@@ -24,6 +24,8 @@ const styles = makeStyles((theme) => ({
     '&>ul>li': {
       width: 50,
     },
+    width: '95%',
+    margin: 'auto',
   },
   front: {
     '&>*': {
@@ -37,24 +39,24 @@ const styles = makeStyles((theme) => ({
     position: 'relative',
     top: -260,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-    [theme.breakpoints.down('sm')]: {
-      top: -140,
-      height: 130,
-    },
+    // [theme.breakpoints.down('sm')]: {
+    //   top: -140,
+    //   height: 130,
+    // },
     [theme.breakpoints.down('xs')]: {
-      top: -260,
-      height: 220,
+      top: -170,
+      height: 150,
     },
   },
   carousel: {
     paddingTop: 20,
     height: 260,
     outline: 'none',
-    [theme.breakpoints.down('sm')]: {
-      height: 140,
-    },
+    // [theme.breakpoints.down('sm')]: {
+    //   height: 140,
+    // },
     [theme.breakpoints.down('xs')]: {
-      height: 260,
+      height: 170,
     },
   },
   content: {
@@ -63,11 +65,11 @@ const styles = makeStyles((theme) => ({
     height: '100%',
     background: 'white',
     boxShadow: '0px 0px 1px 1px #cfcfcf',
-    [theme.breakpoints.down('sm')]: {
-      width: 140,
-    },
+    // [theme.breakpoints.down('sm')]: {
+    //   width: 140,
+    // },
     [theme.breakpoints.down('xs')]: {
-      width: 260,
+      width: 170,
     },
   },
   dot: {

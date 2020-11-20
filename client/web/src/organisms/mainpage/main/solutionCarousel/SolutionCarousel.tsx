@@ -7,7 +7,7 @@ import 'slick-carousel/slick/slick-theme.css';
 
 export default function SolutionCarousel(): JSX.Element {
   const classes = styles();
-  const isXsWidth = useMediaQuery('(max-width:600px)');
+  const isXsWidth = useMediaQuery('(max-width:960px)');
 
   const settings = {
     customPaging(i: number): JSX.Element {
@@ -44,7 +44,22 @@ export default function SolutionCarousel(): JSX.Element {
               1번 그림 준비해주세용
             </div>
           </div>
-          {!isXsWidth
+          <div className={classes.carousel}>
+            <div className={classes.content}>
+              1번 그림 준비해주세용
+            </div>
+          </div>
+          <div className={classes.carousel}>
+            <div className={classes.content}>
+              1번 그림 준비해주세용
+            </div>
+          </div>
+          <div className={classes.carousel}>
+            <div className={classes.content}>
+              1번 그림 준비해주세용
+            </div>
+          </div>
+          {/* {!isXsWidth
             && (
             <div className={classes.carousel}>
               <div className={classes.content}>
@@ -67,7 +82,7 @@ export default function SolutionCarousel(): JSX.Element {
                 4번 그림 준비해주세용
               </div>
             </div>
-            )}
+            )} */}
         </Slider>
       </Container>
       <div className={classes.back} />
