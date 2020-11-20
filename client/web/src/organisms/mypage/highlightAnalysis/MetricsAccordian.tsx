@@ -63,9 +63,15 @@ const styles = makeStyles((theme) => ({
 
 interface MetricsAccordianProps {
   metricsData: any;
+  analysisWord?: string;
 }
 
-export default function MetricsAccordian({ metricsData }: MetricsAccordianProps): JSX.Element {
+export default function MetricsAccordian(
+  {
+    metricsData,
+    analysisWord,
+  }: MetricsAccordianProps,
+): JSX.Element {
   const classes = styles();
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
@@ -73,6 +79,9 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
   const [page2, setPage2] = React.useState(0);
   const [pageSize2, setPageSize2] = React.useState(5);
   const [point2, setPoint2] = React.useState(initialPoint);
+  // const [page3, setPage3] = React.useState(0);
+  // const [pageSize3, setPageSize3] = React.useState(5);
+  // const [point3, setPoint3] = React.useState(initialPoint);
 
   return (
     <Paper>
@@ -130,6 +139,7 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
         </AccordionDetails>
       </Accordion>
       <Accordion>
+
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
         >
@@ -182,6 +192,67 @@ export default function MetricsAccordian({ metricsData }: MetricsAccordianProps)
           </Grid>
         </AccordionDetails>
       </Accordion>
+
+      {analysisWord && (
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+        >
+          <Typography className={classes.heading}>
+            {`"${analysisWord}"`}
+            {' '}
+            발생 수 기반 편집점
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails className={classes.wraper}>
+          <Grid item md={12}>
+            <MetricTitle
+              subTitle={`"${analysisWord}" 발생수 편집점`}
+              iconSrc="/images/analyticsPage/logo_search.svg"
+              pointNumber={metricsData.smile_points.length}
+            />
+            <Grid container direction="column" justify="center">
+              <Grid item md={12}>
+                <Chart
+                  data={metricsData.smile_points}
+                  chartType="smile"
+                  highlight={point2}
+                  handleClick={setPoint2}
+                  handlePage={setPage2}
+                  pageSize={pageSize2}
+                />
+              </Grid>
+              <Grid item md={12} className={classes.contentRight}>
+                <MetricsTable
+                  metrics={metricsData.smile_points}
+                  handleClick={setPoint2}
+                  row={point2}
+                  page={page2}
+                  pageSize={pageSize2}
+                  handlePage={setPage2}
+                  handlePageSize={setPageSize2}
+                  type={`"${analysisWord}" 발생수 기반 편집점`}
+                />
+                <div className={classes.buttonWraper}>
+                  <Button
+                    onClick={() => {
+                      /**
+                       * @hwasurr 2020.10.13 eslint error 처리 도중 처리
+                       * 빈 화살표 함수 => 이후 처리 바람
+                       * */
+                    }}
+                    style={{ color: 'white' }}
+                  >
+                    편집점 내보내기
+                  </Button>
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+        </AccordionDetails>
+      </Accordion>
+      )}
+
     </Paper>
   );
 }

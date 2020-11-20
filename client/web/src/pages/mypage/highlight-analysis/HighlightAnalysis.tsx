@@ -10,7 +10,7 @@ export default function HighlightAnalysis(): JSX.Element {
       <MypageSectionWrapper>
         <MypageHero textSource={textSource.hightlightHeroSection} />
       </MypageSectionWrapper>
-      <MypageSectionWrapper>
+      <MypageSectionWrapper style={{ minHeight: '1500px' }}>
         <HighlightAnalysisLayout />
       </MypageSectionWrapper>
     </>

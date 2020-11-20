@@ -1,4 +1,6 @@
 import {
+  IsBoolean,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -17,4 +19,8 @@ export class FeatureSuggestionPostDto {
 
   @IsString()
   author: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isLock?: boolean;
 }

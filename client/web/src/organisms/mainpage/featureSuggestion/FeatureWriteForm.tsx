@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Typography, Checkbox, FormControlLabel } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -41,6 +41,7 @@ export default function FeatureWriteForm(): JSX.Element {
 
   // ******************************************************
   // 기능제안 state
+  const [featureLock, setFeatureLock] = React.useState<boolean>(false);
   const [featureSource, setFeatureSource] = React.useState<Pick<FeatureSuggestion, 'title' | 'category' | 'content'>>({
     title: '',
     category: '홈페이지 개선',
@@ -59,6 +60,10 @@ export default function FeatureWriteForm(): JSX.Element {
     setFeatureSource({ ...featureSource, content: event.target.value });
   };
 
+  const handleLockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFeatureLock(event.target.checked);
+  };
+
   // ******************************************************
   // 기능제안 등록
   const [, postRequest] = useAxios(
@@ -69,6 +74,7 @@ export default function FeatureWriteForm(): JSX.Element {
       ...featureSource,
       userId: authContext.user.userId,
       author: authContext.user.userId,
+      isLock: featureLock, // 비밀글 여부
     };
     postRequest({ data })
       .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
@@ -87,6 +93,7 @@ export default function FeatureWriteForm(): JSX.Element {
       suggestionId: Number(targetSuggestionId),
       userId: authContext.user.userId,
       author: authContext.user.userId,
+      isLock: featureLock, // 비밀글 여부 비밀글인 경우 true.
     };
     editPatchRequest({ data })
       .then(() => ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar))
@@ -164,6 +171,20 @@ export default function FeatureWriteForm(): JSX.Element {
         />
       </div>
       <div className={classes.buttonSet}>
+        <FormControlLabel
+          label="비밀글"
+          control={(
+            <Checkbox
+              checked={featureLock}
+              onChange={handleLockChange}
+              color="primary"
+            />
+            )}
+          style={{
+            verticalAlign: 'bottom',
+            display: 'inline-flex',
+          }}
+        />
         <Button
           color="default"
           className={classnames(classes.contents, classes.button)}
