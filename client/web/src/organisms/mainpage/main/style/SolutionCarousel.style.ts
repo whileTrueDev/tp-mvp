@@ -39,10 +39,6 @@ const styles = makeStyles((theme) => ({
     position: 'relative',
     top: -250,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-    // [theme.breakpoints.down('sm')]: {
-    //   top: -140,
-    //   height: 130,
-    // },
     [theme.breakpoints.down('xs')]: {
       top: -170,
       height: 150,
@@ -52,9 +48,6 @@ const styles = makeStyles((theme) => ({
     paddingTop: 20,
     height: 250,
     outline: 'none',
-    // [theme.breakpoints.down('sm')]: {
-    //   height: 140,
-    // },
     [theme.breakpoints.down('xs')]: {
       height: 170,
     },
@@ -65,9 +58,6 @@ const styles = makeStyles((theme) => ({
     height: '100%',
     background: 'white',
     boxShadow: '0px 0px 1px 1px #cfcfcf',
-    // [theme.breakpoints.down('sm')]: {
-    //   width: 140,
-    // },
     [theme.breakpoints.down('xs')]: {
       width: 170,
     },
