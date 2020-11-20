@@ -230,8 +230,9 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (previousFeature.isLock) {
-              if (previousFeature.author === authContext.user.userId) onOtherFeatureClick(previousFeature.suggestionId);
-              else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+              if (previousFeature.author.userId === authContext.user.userId) {
+                onOtherFeatureClick(previousFeature.suggestionId);
+              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             } else {
               onOtherFeatureClick(previousFeature.suggestionId);
             }
@@ -263,8 +264,9 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (nextFeature.isLock) {
-              if (nextFeature.author === authContext.user.userId) onOtherFeatureClick(nextFeature.suggestionId);
-              else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+              if (nextFeature.author.userId === authContext.user.userId) {
+                onOtherFeatureClick(nextFeature.suggestionId);
+              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             } else {
               onOtherFeatureClick(nextFeature.suggestionId);
             }
@@ -287,7 +289,7 @@ export default function FeatureDetail({
     <div>
       {currentSuggestion.isLock ? (
         <div>
-          {currentSuggestion.author !== authContext.user.userId ? (
+          {currentSuggestion.author.userId !== authContext.user.userId ? (
             <div>
               {rejectPage()}
             </div>
