@@ -46,43 +46,19 @@ export default function SolutionCarousel(): JSX.Element {
           </div>
           <div className={classes.carousel}>
             <div className={classes.content}>
-              1번 그림 준비해주세용
+              2번 그림 준비해주세용
             </div>
           </div>
           <div className={classes.carousel}>
             <div className={classes.content}>
-              1번 그림 준비해주세용
+              3번 그림 준비해주세용
             </div>
           </div>
           <div className={classes.carousel}>
             <div className={classes.content}>
-              1번 그림 준비해주세용
+              4번 그림 준비해주세용
             </div>
           </div>
-          {/* {!isXsWidth
-            && (
-            <div className={classes.carousel}>
-              <div className={classes.content}>
-                2번 그림 준비해주세용
-              </div>
-            </div>
-            )}
-          {!isXsWidth
-            && (
-            <div className={classes.carousel}>
-              <div className={classes.content}>
-                3번 그림 준비해주세용
-              </div>
-            </div>
-            )}
-          {!isXsWidth
-            && (
-            <div className={classes.carousel}>
-              <div className={classes.content}>
-                4번 그림 준비해주세용
-              </div>
-            </div>
-            )} */}
         </Slider>
       </Container>
       <div className={classes.back} />
