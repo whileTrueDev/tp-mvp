@@ -5,13 +5,15 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/react-editor';
 
-export default function Write2() {
+export default function ToastUiEditor(data) {
+  const { handleContents } = data;
   const editorRef = React.createRef();
-  const [, setState] = React.useState();
-  function handleClick() {
-    setState({
-      content: editorRef.current.getInstance().getHtml(),
-    });
+
+  function handleChange() {
+    if (editorRef.current.getInstance().getHtml()) {
+      const str = editorRef.current.getInstance().getHtml().toString();
+      handleContents(str);
+    }
   }
 
   return (
@@ -21,13 +23,10 @@ export default function Write2() {
         height="300px"
         initialEditType="wysiwyg"
         placeholder="글쓰기"
-        // onChange={(event, editor) => {
-        //   const data = editor.getData();
-        //   console.log({ event, editor, data });
-        // }}
+        onChange={handleChange}
         ref={editorRef}
       />
-      <button onClick={handleClick}>저장</button>
+      {/* <button onClick={handleClick}>저장</button> */}
     </div>
   );
 }

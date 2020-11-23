@@ -15,8 +15,7 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 import Button from '../../../atoms/Button/Button';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-// import Write2 from './Test';
-import PrettyEditor from './PrettyEditor';
+import ToastUiEditor from './ToastUiEditor';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,9 +56,9 @@ export default function FeatureWriteForm(): JSX.Element {
     setFeatureSource({ ...featureSource, category: event.target.value });
   };
 
-  // const handleContents = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFeatureSource({ ...featureSource, content: event.target.value });
-  // };
+  const handleContents = (event: any) => {
+    setFeatureSource({ ...featureSource, content: event });
+  };
 
   // ******************************************************
   // 기능제안 등록
@@ -76,7 +75,7 @@ export default function FeatureWriteForm(): JSX.Element {
     postRequest({ data })
       .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
       .then(() => history.push('/feature-suggestion'))
-      .catch(() => ShowSnack('기능제안 등록 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
+      .catch((err) => ShowSnack('기능제안 등록 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
   }
 
   // ******************************************************
@@ -111,6 +110,7 @@ export default function FeatureWriteForm(): JSX.Element {
         category: location.state[0].category,
         content: location.state[0].content,
       });
+      // console.log(featureSource);
     }
   // 한번만 실행되어야 함.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -156,18 +156,7 @@ export default function FeatureWriteForm(): JSX.Element {
       </div>
       {/* 기능 제안 내용 입력 */}
       <div className={classes.contents}>
-        {/* <TextField
-          fullWidth
-          id="feature-contents"
-          multiline
-          value={featureSource.content}
-          onChange={handleContents}
-          rows={12}
-          placeholder="내용을 입력해주세요."
-          variant="outlined"
-        /> */}
-        {/* <Write2 /> */}
-        <PrettyEditor />
+        <ToastUiEditor handleContents={handleContents} />
       </div>
       <div className={classes.buttonSet}>
         <Button

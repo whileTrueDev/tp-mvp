@@ -19,7 +19,7 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ type: 'longtext' })
   content: string;
 
   @Column({

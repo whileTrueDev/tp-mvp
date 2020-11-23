@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import Markdown from 'react-markdown/with-html';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -12,12 +11,13 @@ import { Link } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 // import Divider from '@material-ui/core/Divider';
 // import Card from '../../../atoms/Card/Card';
+import { Viewer } from '@toast-ui/react-editor';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 import dateExpression from '../../../utils/dateExpression';
-import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
+import FeatureReply from './sub/FeatureReply';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -155,13 +155,9 @@ export default function FeatureDetail({
           </div>
         )}
         <div className={classes.contentsText}>
-          <Markdown
-            className={classes.markdown}
-            source={currentSuggestion.content}
-            escapeHtml={false}
-                // eslint-disable-next-line react/prop-types
-            renderers={{ code: ({ value }) => <Markdown source={value} /> }}
-          />
+          <div className={classes.markdown}>
+            <Viewer initialValue={currentSuggestion.content} />
+          </div>
         </div>
       </Paper>
 
@@ -170,12 +166,21 @@ export default function FeatureDetail({
         <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
       )}
       {/* 댓글 리스트 섹션 */}
+      {/* <FeatureReply
+                  avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
+                  key={reply.author + reply.createdAt}
+                  author={reply.author}
+                  content={reply.content}
+                  createdAt={reply.createdAt}
+                  replyId={reply.replyId}
+                  refetch={refetch}
+                /> */}
       {currentSuggestion.replies
       && currentSuggestion.replies.length > 0
       && (
         <div style={{ marginTop: 16 }}>
             {currentSuggestion.replies
-              ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map((reply) => (
                 <FeatureReply
                   avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
