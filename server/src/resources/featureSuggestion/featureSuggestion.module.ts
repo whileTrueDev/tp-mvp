@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MulterModule } from '@nestjs/platform-express';
 import { FeatureSuggestionController } from './featureSuggestion.controller';
 import { FeatureSuggestionService } from './featureSuggestion.service';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
@@ -14,9 +13,6 @@ import { UserEntity } from '../users/entities/user.entity';
     FeatureSuggestionReplyEntity,
     UserEntity,
   ]),
-  MulterModule.register({
-    dest: './files',
-  }),
   ],
   providers: [FeatureSuggestionService, FeatureSuggestionReplyService],
   controllers: [FeatureSuggestionController],

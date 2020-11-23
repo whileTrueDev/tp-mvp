@@ -9,6 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
+
 // import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
 import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
@@ -115,7 +116,6 @@ export default function FeatureWriteForm(): JSX.Element {
         category: location.state[0].category,
         content: location.state[0].content,
       });
-      // console.log(featureSource);
     }
   // 한번만 실행되어야 함.
   // eslint-disable-next-line react-hooks/exhaustive-deps

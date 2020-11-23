@@ -197,15 +197,6 @@ export default function FeatureDetail({
         />
       )}
       {/* 댓글 리스트 섹션 */}
-      {/* <FeatureReply
-                  avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
-                  key={reply.author + reply.createdAt}
-                  author={reply.author}
-                  content={reply.content}
-                  createdAt={reply.createdAt}
-                  replyId={reply.replyId}
-                  refetch={refetch}
-                /> */}
       {currentSuggestion.replies
       && currentSuggestion.replies.length > 0
       && (
