@@ -23,14 +23,14 @@ export default function ReplyPreViewer(props: Props): JSX.Element {
     <Paper>
       <div style={{ padding: 28 }}>
         <Typography variant="h4">
-          {replyData.author}
+          {`${replyData.author.userId} ${replyData.author.nickName ? `(${replyData.author.nickName})` : ''}`}
         </Typography>
         <div style={{
           display: 'flex', marginTop: 5, marginBottom: 5, justifyContent: 'space-bwtween',
         }}
         >
           <Table size="small">
-            <CostomTableRow title="작성자" data={replyData.author} />
+            <CostomTableRow title="작성자" data={`${replyData.author.userId} ${replyData.author.nickName ? `(${replyData.author.nickName})` : ''}`} />
             <CostomTableRow title="기능제안글 ID" data={String(replyData.suggestionId)} />
           </Table>
         </div>
@@ -57,8 +57,6 @@ export default function ReplyPreViewer(props: Props): JSX.Element {
                     executeDelete({
                       data: {
                         id: replyData.replyId,
-                        content: replyData.content,
-                        author: replyData.author,
                       },
                     }).then((res) => {
                       handleReload();

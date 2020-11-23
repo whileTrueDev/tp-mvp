@@ -22,10 +22,11 @@ const useStyles = makeStyles((theme) => ({
 export interface FeatureReplyInputProps {
   currentSuggestion: FeatureSuggestion;
   refetch: () => void;
+  avatarLogo?: string;
 }
 export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.Element {
   const classes = useStyles();
-  const { currentSuggestion, refetch } = props;
+  const { currentSuggestion, refetch, avatarLogo } = props;
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -57,7 +58,7 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
 
   return (
     <div className={classes.container}>
-      <Avatar variant="square" className={classes.avatar} />
+      <Avatar src={avatarLogo} variant="square" className={classes.avatar} />
       <TextField
         placeholder="댓글 추가..."
         fullWidth

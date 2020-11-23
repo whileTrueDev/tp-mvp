@@ -12,12 +12,16 @@ import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSugg
 // import Divider from '@material-ui/core/Divider';
 // import Card from '../../../atoms/Card/Card';
 import { Viewer } from '@toast-ui/react-editor';
+import LockIcon from '@material-ui/icons/Lock';
+import { useSnackbar } from 'notistack';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 import dateExpression from '../../../utils/dateExpression';
 import FeatureReplyInput from './sub/FeatureReplyInput';
 import FeatureReply from './sub/FeatureReply';
+// attoms snackbar
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -41,6 +45,13 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'right',
   },
   editDeleteButton: { borderRadius: 0 },
+  lockIcon: {
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+    marginLeft: '8px',
+  },
+  pageButton: { width: '30%' },
+  listButton: { width: '10%' },
 }));
 
 export interface FeatureDetailProps {
@@ -56,6 +67,7 @@ export default function FeatureDetail({
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [, deleteRequest] = useAxios(
     { url: '/feature-suggestion', method: 'delete' }, { manual: true },
@@ -97,7 +109,15 @@ export default function FeatureDetail({
     }
   };
 
-  return (
+  const rejectPage = (): JSX.Element => {
+    ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+    window.location.replace('/feature-suggestion');
+    return (
+      <div />
+    );
+  };
+
+  const suggestionDetail = (): JSX.Element => (
     <div>
       <Paper component="article" ref={paperRef}>
         <div className={classes.title}>
@@ -106,13 +126,20 @@ export default function FeatureDetail({
               {currentSuggestion.title}
               {' '}
               {progressTab(currentSuggestion.state)}
+              {currentSuggestion.isLock && (
+              <LockIcon
+                color="primary"
+                className={classes.lockIcon}
+                fontSize="small"
+              />
+              )}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              {currentSuggestion.author && (
+              {currentSuggestion.author.userId && (
                 <span>
-                  {authContext.user.userId === currentSuggestion.author
-                    ? currentSuggestion.author
-                    : transformIdToAsterisk(currentSuggestion.author, 1.8)}
+                  {authContext.user.userId === currentSuggestion.author.userId
+                    ? currentSuggestion.author.userId
+                    : transformIdToAsterisk(currentSuggestion.author.userId, 1.8)}
                 </span>
               )}
             </Typography>
@@ -129,7 +156,7 @@ export default function FeatureDetail({
             </Typography>
           </Typography>
         </div>
-        {currentSuggestion.author === authContext.user.userId
+        {currentSuggestion.author.userId === authContext.user.userId
         && (
           <div className={classes.editDeleteButtonSet}>
             <Button
@@ -162,8 +189,12 @@ export default function FeatureDetail({
       </Paper>
 
       {/* 댓글 작성하기 */}
-      {currentSuggestion.author === authContext.user.userId && (
-        <FeatureReplyInput currentSuggestion={currentSuggestion} refetch={refetch} />
+      {currentSuggestion.author.userId === authContext.user.userId && (
+        <FeatureReplyInput
+          currentSuggestion={currentSuggestion}
+          refetch={refetch}
+          avatarLogo={currentSuggestion.author.profileImage || ''}
+        />
       )}
       {/* 댓글 리스트 섹션 */}
       {/* <FeatureReply
@@ -179,13 +210,13 @@ export default function FeatureDetail({
       && currentSuggestion.replies.length > 0
       && (
         <div style={{ marginTop: 16 }}>
-            {currentSuggestion.replies
+            {currentSuggestion.replies && currentSuggestion.replies
               .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map((reply) => (
                 <FeatureReply
-                  avatarLogo={reply.author === '트루포인트 관리자' ? undefined : ''}
-                  key={reply.author + reply.createdAt}
-                  author={reply.author}
+                  avatarLogo={reply.author.profileImage}
+                  key={reply.author.userId + reply.createdAt}
+                  author={reply.author.userId}
                   content={reply.content}
                   createdAt={reply.createdAt}
                   replyId={reply.replyId}
@@ -198,25 +229,31 @@ export default function FeatureDetail({
       {/* 이전글, 목록, 다음글 버튼셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button
-          style={{ width: '30%' }}
+          className={classes.pageButton}
           size="large"
           disabled={currentSuggestionIndex === 0}
           variant="outlined"
           onClick={() => {
-            onOtherFeatureClick(previousFeature.suggestionId);
+            if (previousFeature.isLock) {
+              if (previousFeature.author.userId === authContext.user.userId) {
+                onOtherFeatureClick(previousFeature.suggestionId);
+              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+            } else {
+              onOtherFeatureClick(previousFeature.suggestionId);
+            }
           }}
         >
           <KeyboardArrowLeft />
           {currentSuggestionIndex !== 0 && (
-            <Typography>
-              {previousFeature.title.length > TITLE_LENGTH
-                ? `${previousFeature.title.slice(0, TITLE_LENGTH)}...`
-                : previousFeature.title}
-            </Typography>
+          <Typography>
+            {previousFeature.title.length > TITLE_LENGTH
+              ? `${previousFeature.title.slice(0, TITLE_LENGTH)}...`
+              : previousFeature.title}
+          </Typography>
           )}
         </Button>
         <Button
-          style={{ width: '10%' }}
+          className={classes.listButton}
           size="large"
           variant="outlined"
           onClick={() => {
@@ -226,24 +263,52 @@ export default function FeatureDetail({
           목록
         </Button>
         <Button
-          style={{ width: '30%' }}
+          className={classes.pageButton}
           size="large"
           disabled={currentSuggestionIndex === data.length - 1}
           variant="outlined"
           onClick={() => {
-            onOtherFeatureClick(nextFeature.suggestionId);
+            if (nextFeature.isLock) {
+              if (nextFeature.author.userId === authContext.user.userId) {
+                onOtherFeatureClick(nextFeature.suggestionId);
+              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+            } else {
+              onOtherFeatureClick(nextFeature.suggestionId);
+            }
           }}
         >
           {currentSuggestionIndex !== data.length - 1 && (
-            <Typography>
-              {nextFeature.title.length > TITLE_LENGTH
-                ? `${nextFeature.title.slice(0, TITLE_LENGTH)}...`
-                : nextFeature.title}
-            </Typography>
+          <Typography>
+            {nextFeature.title.length > TITLE_LENGTH
+              ? `${nextFeature.title.slice(0, TITLE_LENGTH)}...`
+              : nextFeature.title}
+          </Typography>
           )}
           <KeyboardArrowRight />
         </Button>
       </div>
+    </div>
+  );
+
+  return (
+    <div>
+      {currentSuggestion.isLock ? (
+        <div>
+          {currentSuggestion.author.userId !== authContext.user.userId ? (
+            <div>
+              {rejectPage()}
+            </div>
+          ) : (
+            <div>
+              {suggestionDetail()}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          {suggestionDetail()}
+        </div>
+      )}
     </div>
   );
 }

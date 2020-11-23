@@ -6,10 +6,13 @@ import { FeatureSuggestionService } from './featureSuggestion.service';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 import { FeatureSuggestionReplyService } from './featureSuggestionReply.service';
 import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
+import { UserEntity } from '../users/entities/user.entity';
+
 @Module({
   imports: [TypeOrmModule.forFeature([
     FeatureSuggestionEntity,
     FeatureSuggestionReplyEntity,
+    UserEntity,
   ]),
   MulterModule.register({
     dest: './files',

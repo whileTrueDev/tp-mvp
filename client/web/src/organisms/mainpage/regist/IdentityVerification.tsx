@@ -19,7 +19,6 @@ interface Props {
 const useStyles = makeStyles((theme) => ({
   box: {
     padding: `${theme.spacing(8)}px ${theme.spacing(4)}px`,
-    minWidth: 300,
     maxWidth: 600,
     border: `1px solid ${theme.palette.divider}`,
     display: 'flex',

@@ -5,10 +5,13 @@ import { FeatureSuggestionStateUpdateDto } from '@truepoint/shared/dist/dto/feat
 import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
 import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
+import { UserEntity } from '../users/entities/user.entity';
 
 @Injectable()
 export class FeatureSuggestionService {
   constructor(
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(FeatureSuggestionEntity)
     private readonly FeatureSuggestionRepository: Repository<FeatureSuggestionEntity>,
   ) {}
@@ -19,7 +22,7 @@ export class FeatureSuggestionService {
   public async findAll(): Promise<FeatureSuggestionEntity[]> {
     return this.FeatureSuggestionRepository.find({
       order: { createdAt: 'DESC' },
-      relations: ['replies'],
+      relations: ['author', 'replies', 'replies.author'],
     });
   }
 
@@ -39,7 +42,10 @@ export class FeatureSuggestionService {
    * @param fsDto 기능제안 개별 글 Insert 요청 DTO
    */
   async insert(fsDto: FeatureSuggestionPostDto): Promise<FeatureSuggestionEntity> {
-    return this.FeatureSuggestionRepository.save(fsDto);
+    const author = await this.usersRepository.findOne(fsDto.author);
+    return this.FeatureSuggestionRepository.save({
+      ...fsDto, author,
+    });
   }
 
   /**
@@ -48,11 +54,12 @@ export class FeatureSuggestionService {
    */
   async update(fsPatchDto: FeatureSuggestionPatchDto): Promise<number> {
     const {
-      suggestionId, author, userId, category, title, content, isLock,
+      suggestionId, author, category, title, content, isLock,
     } = fsPatchDto;
+    const authorEntity = await this.usersRepository.findOne(author);
     const result = await this.FeatureSuggestionRepository
       .update({ suggestionId }, {
-        author, userId, category, title, content, isLock,
+        category, title, content, author: authorEntity, isLock,
       });
     return result.affected;
   }

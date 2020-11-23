@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
       marginRight: 0,
     },
     [theme.breakpoints.up('sm')]: {
-      minWidth: '300px',
+      minWidth: '250px',
       marginRight: '10px',
     },
   },

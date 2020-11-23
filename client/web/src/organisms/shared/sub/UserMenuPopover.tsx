@@ -9,6 +9,7 @@ import {
   Brightness7 as LightThemeIcon,
   Brightness4 as DarkThemeIcon,
 } from '@material-ui/icons';
+import { useHistory } from 'react-router-dom';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
 
@@ -38,12 +39,14 @@ const useStyles = makeStyles((theme) => ({
 
 export interface UserMenuPopperProps extends Omit<PopoverProps, 'children'> {
   anchorEl: HTMLElement | null;
+  avatarSrc?: string
 }
 export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element {
   const classes = useStyles();
   const theme = useTheme<TruepointTheme>();
+  const history = useHistory();
   const {
-    open, anchorEl, onClose, ...prop
+    open, anchorEl, onClose, avatarSrc, ...prop
   } = props;
 
   const authContext = useAuthContext();
@@ -67,7 +70,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
     >
       <Paper elevation={2} className={classes.container}>
         <div className={classes.description}>
-          <Avatar />
+          <Avatar src={avatarSrc} />
           <div className={classes.descriptionDetail}>
             <Typography variant="h6">{authContext.user.userName}</Typography>
             <Typography variant="body2" component="span">{authContext.user.userId}</Typography>
@@ -76,9 +79,15 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
         <Divider />
         <List>
           <div className={classes.menulist}>
-            <ListItem button className={classes.menulistItem}>
+            <ListItem
+              button
+              className={classes.menulistItem}
+              onClick={() => {
+                history.push('/mypage/my-office/settings');
+              }}
+            >
               <AccountBox color="action" />
-              <Typography className={classes.menuText} variant="body1">내 정보</Typography>
+              <Typography className={classes.menuText} variant="body1">내 정보 관리</Typography>
             </ListItem>
             <ListItem
               button

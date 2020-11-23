@@ -5,11 +5,16 @@ import {
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
+import LockIcon from '@material-ui/icons/Lock';
+import { useSnackbar } from 'notistack';
 import Table from '../../../atoms/Table/MaterialTable';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
+
+// attoms snackbar
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const TABLE_ROW_HEIGHT = 45;
 const useStyles = makeStyles((theme) => ({
@@ -22,6 +27,11 @@ const useStyles = makeStyles((theme) => ({
   },
   tableCell: { padding: theme.spacing(1) },
   commentCount: { marginLeft: theme.spacing(1), fontWeight: 'bold' },
+  lockIcon: {
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+    marginLeft: '8px',
+  },
 }));
 
 export interface FeatureTableProps {
@@ -46,6 +56,7 @@ export default function FeatureTable({
 
   // 현재 사용자와 기능제안 글쓴이가 같은 사람인지 체크하기 위해
   const auth = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
 
   const progressColumn = (value: number) => {
     switch (value) {
@@ -107,7 +118,12 @@ export default function FeatureTable({
                 <TableRow
                   className={classes.tableRow}
                   key={shortid.generate()}
-                  onClick={() => handleClick(eachRow.suggestionId)}
+                  onClick={() => {
+                    if (eachRow.isLock) {
+                      if (eachRow.author === auth.user.userId) handleClick(eachRow.suggestionId);
+                      else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+                    } else handleClick(eachRow.suggestionId);
+                  }}
                 >
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.suggestionId}
@@ -116,19 +132,26 @@ export default function FeatureTable({
                     {eachRow.category}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {auth.user.userId === eachRow.author
-                      ? eachRow.author
-                      : transformIdToAsterisk(eachRow.author, 1.8)}
+                    {auth.user.userId === eachRow.author.userId
+                      ? eachRow.author.userId
+                      : transformIdToAsterisk(eachRow.author.userId, 1.8)}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="left">
-                    <div>
-                      {eachRow.title}
-                      {eachRow.replies.length > 0 && (
+
+                    {eachRow.title}
+                    {eachRow.replies.length > 0 && (
                       <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
                         {`(${eachRow.replies.length})`}
                       </Typography>
-                      )}
-                    </div>
+                    )}
+                    {eachRow.isLock && (
+                    <LockIcon
+                      color="primary"
+                      fontSize="small"
+                      className={classes.lockIcon}
+                    />
+                    )}
+
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {

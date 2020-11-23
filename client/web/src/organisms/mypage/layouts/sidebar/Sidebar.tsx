@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 // @material-ui/core components
 import {
   Grid,
@@ -41,7 +41,7 @@ export default function Sidebar({
           >
             <Grid container item direction="column">
               <Accordion square className={classes.accordian}>
-                <Link // 서브라우터 존재시 해당 상위 탭 클릭시 하위 탭 첫 번째 페이지를 default 로 설정
+                <NavLink // 서브라우터 존재시 해당 상위 탭 클릭시 하위 탭 첫 번째 페이지를 default 로 설정
                   to={route.subRoutes
                     ? (route.subRoutes[0].layout + route.subRoutes[0].path)
                     : (route.layout + route.path)}
@@ -83,7 +83,7 @@ export default function Sidebar({
                     </Grid>
 
                   </AccordionSummary>
-                </Link>
+                </NavLink>
                 {/* 서브라우터가 존재 하는 경우 */}
                 {route.subRoutes && (
                 <AccordionDetails className={classes.subRouteList}>

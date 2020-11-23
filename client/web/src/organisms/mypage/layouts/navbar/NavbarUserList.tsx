@@ -152,7 +152,7 @@ export default function NavbarUserList(): JSX.Element {
       </Typography>
       {/* 툴팁 및 유저 리스트 -> CBT 주석 처리 */}
       {/* <StyledToolTip
-        title={tooltipText()}
+        title={tooltipText()}e
         placement="bottom-start"
         open={tooltipOpen}
         arrow

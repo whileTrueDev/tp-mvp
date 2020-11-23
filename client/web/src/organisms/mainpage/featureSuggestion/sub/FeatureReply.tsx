@@ -55,7 +55,7 @@ export default function FeatureReply({
         <div>
           <div className={classes.titleSection}>
             <Typography variant="body2" className={classes.title}>
-              {((auth.user.userId === author) || author === '트루포인트 관리자')
+              {((auth.user.userId === author) || author === 'Truepoint')
                 ? author
                 : transformIdToAsterisk(author, 1.8)}
             </Typography>
