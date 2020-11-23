@@ -2,30 +2,28 @@
 ## Base image for Step 1: Node 10
 FROM node:12.18.3-alpine AS builder
 
+WORKDIR /tp-mvp
+
 ENV NODE_ENV production
 # timezone 설정
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-WORKDIR /app
-COPY . .
+# server, shared 복사
+COPY server server
+COPY shared shared
+
+# 최상위 packagejson , yarn.lock 복사
+COPY package.json .
+COPY yarn.lock .
+
+# monorepo 내부 패키지 (shared) 를 포함한 모든 디펜던시 설치
+RUN yarn install
+
 ## Build
-RUN npm install
-RUN npm run build
+WORKDIR /server
+RUN yarn build
 
-
-# Step 2
-## base image for Step 2: Node 12.18.3-alpine(light weight)
-FROM node:12.18.3-alpine
-WORKDIR /app
-
-ENV NODE_ENV production
-# timezone 설정
-ENV TZ=Asia/Seoul
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-## Step 1의 builder에서 build된 프로젝트를 가져온다
-COPY --from=builder /app ./
 ## application 실행
 EXPOSE 3000
-CMD ["npm", "run", "start:prod"]
+CMD ["yarn", "start:prod"]
