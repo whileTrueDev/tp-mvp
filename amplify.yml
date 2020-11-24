@@ -3,6 +3,7 @@
 # https://aws.amazon.com/ko/amplify/console/
 version: 1
 applications:
+  appRoot: /client/web
   frontend:
     phases:
       preBuild:
@@ -19,4 +20,3 @@ applications:
     cache:
       paths:
         - node_modules/**/*
-  appRoot: /client/web
