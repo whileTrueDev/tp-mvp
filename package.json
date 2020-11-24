@@ -15,6 +15,7 @@
       "shared"
     ],
     "nohoist": [
+      "**/react/",
       "**/@nestjs/",
       "**/@nestjs/**",
       "**/nest-access-control"
