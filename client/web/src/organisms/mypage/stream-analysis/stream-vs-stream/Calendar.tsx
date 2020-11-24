@@ -105,11 +105,13 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     if (newDate) setClickedDate(newDate);
     const dayStreamList: DayStreamsInfo[] = [];
     try {
-      getStreamsData.forEach((stream: DayStreamsInfo) => {
-        if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
-          dayStreamList.push(stream);
-        }
-      });
+      if (getStreamsData) {
+        getStreamsData.forEach((stream: DayStreamsInfo) => {
+          if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
+            dayStreamList.push(stream);
+          }
+        });
+      }
     } catch {
       handleDayStreamList([]);
     }
