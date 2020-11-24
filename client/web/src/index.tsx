@@ -8,7 +8,6 @@ import { createMuiTheme } from '@material-ui/core/styles';
 import {
   CssBaseline, ThemeProvider,
 } from '@material-ui/core';
-
 import { configure } from 'axios-hooks';
 import { SnackbarProvider } from 'notistack';
 import axios from './utils/axios';
