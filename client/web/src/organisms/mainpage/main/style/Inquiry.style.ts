@@ -5,6 +5,15 @@ const styles = makeStyles((theme) => ({
     width: '100%',
     marginTop: theme.spacing(18),
     marginBottom: theme.spacing(6),
+    [theme.breakpoints.down('md')]: {
+      marginTop: theme.spacing(14),
+    },
+    [theme.breakpoints.down('sm')]: {
+      marginTop: theme.spacing(10),
+    },
+    [theme.breakpoints.down('xs')]: {
+      marginTop: theme.spacing(6),
+    },
   },
   title: {
     fontFamily: 'AppleSDGothicNeo',

@@ -1,10 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { MYPAGE_MAIN_MIN_WIDTH } from '../../../assets/constants';
 
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 600,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
   },
   wraper: {
     display: 'flex',

@@ -3,6 +3,7 @@
 
 // 상단 네비바 높이
 export const COMMON_APP_BAR_HEIGHT = 96;
+export const SM_APP_BAR_HEIGHT = 72;
 
 // 마이페이지 상단 네비바 높이
 export const MYPAGE_APP_BAR_HEIGHT = 96;
