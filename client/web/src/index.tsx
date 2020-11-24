@@ -14,6 +14,7 @@ import axios from './utils/axios';
 import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
 import defaultTheme from './theme';
+
 // Pages and organisms
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
