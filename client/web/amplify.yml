@@ -1,0 +1,22 @@
+# AWS Amplify 배포를 위한 설정
+# https://aws.amazon.com/ko/amplify/
+# https://aws.amazon.com/ko/amplify/console/
+version: 1
+applications:
+  frontend:
+    phases:
+      preBuild:
+        commands:
+          - yarn install
+          - yarn lint
+      build:
+        commands:
+          - yarn build
+    artifacts:
+      baseDirectory: build
+      files:
+        - "**/*"
+    cache:
+      paths:
+        - node_modules/**/*
+  appRoot: /client/web
