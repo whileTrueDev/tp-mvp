@@ -14,7 +14,6 @@ import axios from './utils/axios';
 import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
 import defaultTheme from './theme';
-import './assets/truepoint.css';
 // Pages and organisms
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
@@ -34,6 +33,8 @@ import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
 import useAutoLogin from './utils/hooks/useAutoLogin';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
+
+import './assets/truepoint.css';
 
 function Index(): JSX.Element {
   // *******************************************
