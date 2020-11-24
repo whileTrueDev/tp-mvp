@@ -18,7 +18,7 @@ class AfreecaTargetStreamers(Model):
             allRow = db.table(self.__table__).get().all()
             rows = []
             for row in allRow:
-                row.append(row['creatorId'])
+                rows.append(row['creatorId'])
         except: rows = []
         return rows
 
@@ -134,7 +134,4 @@ class DatabasePipeline(object):
         afreecachat.save()
 
         return item
-
-
-
 

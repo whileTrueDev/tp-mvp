@@ -33,9 +33,13 @@ class SeleniumMiddleware(object):
 
     def spider_opened(self, spider):
         self.config = ConfigController()
+        lg.warning('작동은 하나')
         dirpath = os.path.dirname(os.path.abspath(__file__))
+        # C:\Users\kmoti\Desktop\truepoint\tp-mvp\collectors\afreecatv\crawler\crawler
         # CHROMEDRIVER_PATH = r'C:\Users\WHILETRUESECOND\Desktop\tp-mvp\collectors\afreecatv\crawler\crawler\drivers\chromedriver.exe'
-        CHROMEDRIVER_PATH = os.path.join(dirpath, r"drivers/chromedriver.exe")
+        CHROMEDRIVER_PATH = os.path.join(dirpath, r'drivers\chromedriver.exe')
+        lg.warning(CHROMEDRIVER_PATH)
+        lg.warning('작동은 하나2')
         WINDOW_SIZE = "1920, 1080"
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # 크롬창이 열리지 않게
@@ -52,8 +56,11 @@ class SeleniumMiddleware(object):
         'ssl_cert_decisions': 2, 'metro_switch_to_desktop' : 2, 'protected_media_identifier': 2,
         'app_banner': 2, 'site_engagement' : 2, 'durable_storage' : 2}}   
         chrome_options.add_experimental_option('prefs', prefs)
+        lg.warning('작동은 하나3')
         self.driver = webdriver.Chrome( executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options )
+        lg.warning('작동은 하나4')
         self.driver.get("https://login.afreecatv.com/afreeca/login.php?szFrom=full&request_uri=http%3A%2F%2Fafreecatv.com%2F")
+        lg.warning('작동은 하나5')
         sleep(3)
         elem_login = self.driver.find_element_by_id("uid")
         elem_login.clear()
@@ -181,7 +188,7 @@ class SeleniumMiddleware(object):
     def spider_closed(self, spider):
         afreecaCreator = AfreecaActiveStreams()
         lg.info(f'{self.creatorId} 타겟방송 크롬브라우저 종료 및 프로세스 킬')
-        afreecaCreator.updateLiveCreator([self.creatorId],'turn-off')
+        afreecaCreator.updateLiveCreator([self.creatorId],'live-off')
         self.driver.close()
         self.driver.quit()
 
