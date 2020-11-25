@@ -22,6 +22,7 @@ import { AfreecaPreLinker } from './strategies/afreeca.linker';
 import { TwitchLinkExceptionFilter } from '../../filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from '../../filters/youtube-link.filter';
 import { AfreecaLinkExceptionFilter } from '../../filters/afreeca-link.filter';
+import fronthost from '../../constants/fronthost';
 
 @Controller('auth')
 export class AuthController {
@@ -162,7 +163,7 @@ export class AuthController {
     @Res() res: express.Response,
   ): void {
     const { twitchId } = req.user as PlatformTwitchEntity;
-    res.redirect(`http://localhost:3001/mypage/my-office/settings?id=${twitchId}&platform=twitch`);
+    res.redirect(`${fronthost}/mypage/my-office/settings?id=${twitchId}&platform=twitch`);
   }
 
   // *********** Youtube ******************
@@ -181,7 +182,7 @@ export class AuthController {
     @Res() res: express.Response,
   ): void {
     const { youtubeId } = req.user as PlatformYoutubeEntity;
-    res.redirect(`http://localhost:3001/mypage/my-office/settings?id=${youtubeId}&platform=youtube`);
+    res.redirect(`${fronthost}/mypage/my-office/settings?id=${youtubeId}&platform=youtube`);
   }
 
   // *********** Afreeca ******************
@@ -232,7 +233,7 @@ export class AuthController {
     // link with truepoint user
     this.afreecaLinker.link(refreshToken, userId)
       .then(() => {
-        res.redirect('http://localhost:3001/mypage/my-office/settings'); // ?id=${afreecaId}&platform=afreeca
+        res.redirect(`${fronthost}/mypage/my-office/settings`); // ?id=${afreecaId}&platform=afreeca
       });
   }
 }

@@ -7,7 +7,7 @@ import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
-import getSSMParams from '../utils/getParams';
+import BaseStack from './class/BaseStack';
 
 interface WhileTrueCollectorStackProps extends cdk.StackProps {
   vpc: ec2.IVpc
@@ -20,7 +20,7 @@ const TWITCH_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-collector';
 const TWITCH_CHAT_COLLECTOR_FAMILY_NAME = 'whiletrue-twitch-chat';
 // const DOMAIN_NAME = 'mytruepoint.com';
 
-export class WhileTrueCollectorStack extends cdk.Stack {
+export class WhileTrueCollectorStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
     super(scope, id, props);
 
@@ -104,9 +104,13 @@ export class WhileTrueCollectorStack extends cdk.Stack {
     });
 
     // *********************************************
-    // *********** SSM Parameter Store *************
+    // secrets from SSM Paramater Store
     // *********************************************
-    const ssmParameters = getSSMParams(this);
+    const CRAWL_TWITCH_API_CLIENT_SECRET = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'CRAWL_TWITCH_API_CLIENT_SECRET'));
+    const CRAWL_TWITCH_API_KEY = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'CRAWL_TWITCH_API_KEY'));
+    const AWS_ACCESS_KEY_ID = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_ACCESS_KEY_ID'));
+    const AWS_SECRET_ACCESS_KEY = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_SECRET_ACCESS_KEY'));
+    const TWITCH_BOT_OAUTH_TOKEN = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TWITCH_BOT_OAUTH_TOKEN'));
 
     // *********************************************
     // ******************* ECS *********************
@@ -133,10 +137,10 @@ export class WhileTrueCollectorStack extends cdk.Stack {
         image: ecs.ContainerImage.fromRegistry(`hwasurr/${TWITCH_COLLECTOR_FAMILY_NAME}`),
         memoryLimitMiB: 512,
         secrets: {
-          CRAWL_TWITCH_API_CLIENT_SECRET: ecs.Secret.fromSsmParameter(ssmParameters.CRAWL_TWITCH_API_CLIENT_SECRET),
-          CRAWL_TWITCH_API_KEY: ecs.Secret.fromSsmParameter(ssmParameters.CRAWL_TWITCH_API_KEY),
-          AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
-          AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_SECRET_ACCESS_KEY),
+          CRAWL_TWITCH_API_CLIENT_SECRET,
+          CRAWL_TWITCH_API_KEY,
+          AWS_ACCESS_KEY_ID,
+          AWS_SECRET_ACCESS_KEY,
         },
         logging: new ecs.AwsLogDriver({ logGroup: twitchtvLogGroup, streamPrefix: 'ecs' }),
       },
@@ -170,9 +174,9 @@ export class WhileTrueCollectorStack extends cdk.Stack {
       `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Container`, {
         image: ecs.ContainerImage.fromRegistry(`hwasurr/${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}`),
         secrets: {
-          TWITCH_BOT_OAUTH_TOKEN: ecs.Secret.fromSsmParameter(ssmParameters.TWITCH_BOT_OAUTH_TOKEN),
-          AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_ACCESS_KEY_ID),
-          AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(ssmParameters.TRUEPOINT_SECRET_ACCESS_KEY),
+          TWITCH_BOT_OAUTH_TOKEN,
+          AWS_ACCESS_KEY_ID,
+          AWS_SECRET_ACCESS_KEY,
         },
         logging: new ecs.AwsLogDriver({ logGroup: twitchtvChatsLogGroup, streamPrefix: 'ecs' }),
       },
