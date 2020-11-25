@@ -1,6 +1,7 @@
 /* eslint-disable no-new */
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
+import * as amplify from '@aws-cdk/aws-amplify';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
@@ -10,11 +11,8 @@ import { ListenerCondition } from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as targets from '@aws-cdk/aws-route53-targets';
+import * as codebuild from '@aws-cdk/aws-codebuild';
 import BaseStack from './class/BaseStack';
-// import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
-// import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
-// import * as events from '@aws-cdk/aws-events';
-// import getSSMParams from '../utils/getParams';
 
 // CONSTANTS
 const DOMAIN = 'mytruepoint.com';
@@ -76,7 +74,6 @@ export class TruepointDevStack extends BaseStack {
     new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
       engine: dbEngine,
-      masterUsername: 'truepoint',
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
       databaseName: ID_PREFIX,
       // *********************************************
@@ -270,5 +267,47 @@ export class TruepointDevStack extends BaseStack {
         new targets.LoadBalancerTarget(truepointALB),
       ),
     });
+
+    // *****************************************
+    // react 앱 배포를 위한 Amplify Console
+    // *****************************************
+    const REPOSITORY_OWNER = 'whileTrueDev';
+    const REPOSITORY_NAME = 'tp-mvp';
+    const amplifyApp = new amplify.App(this, `${ID_PREFIX}AmplifyApp`, {
+      sourceCodeProvider: new amplify.GitHubSourceCodeProvider({
+        owner: REPOSITORY_OWNER,
+        repository: REPOSITORY_NAME,
+        oauthToken: cdk.SecretValue.ssmSecure('AMPLIFY_GITHUB_REPO_TOKEN', '1'),
+      }),
+      buildSpec: codebuild.BuildSpec.fromObject({
+        version: '1.0',
+        frontend: {
+          phases: {
+            preBuild: {
+              commands: ['yarn install', 'cd shared', 'yarn build', 'cd ../client/web'],
+            },
+            build: {
+              commands: ['yarn build'],
+            },
+          },
+          artifacts: { baseDirectory: '/client/web/build', files: '**/*' },
+          cache: { paths: 'node_modules/**/*' },
+        },
+      }),
+    });
+
+    // Add Branch
+    // master 로 변경 필요!!
+    const webBranch = amplifyApp.addBranch('hwasurr-infra');
+    const testBranch = amplifyApp.addBranch('test', {
+      basicAuth: amplify.BasicAuth.fromCredentials(
+        'dev', cdk.SecretValue.ssmSecure('AMPLIFY_TEST_PASSWORD', '1'),
+      ),
+    });
+
+    // Add Domain
+    const domain = amplifyApp.addDomain(DOMAIN);
+    domain.mapRoot(webBranch);
+    domain.mapSubDomain(testBranch);
   }
 }

@@ -163,7 +163,7 @@ export class AuthController {
     @Res() res: express.Response,
   ): void {
     const { twitchId } = req.user as PlatformTwitchEntity;
-    res.redirect(`${fronthost}/mypage/my-office/settings?id=${twitchId}&platform=twitch`);
+    res.redirect(`${fronthost}/mypage/my-office/settings/?id=${twitchId}&platform=twitch`);
   }
 
   // *********** Youtube ******************
@@ -182,7 +182,7 @@ export class AuthController {
     @Res() res: express.Response,
   ): void {
     const { youtubeId } = req.user as PlatformYoutubeEntity;
-    res.redirect(`${fronthost}/mypage/my-office/settings?id=${youtubeId}&platform=youtube`);
+    res.redirect(`${fronthost}/mypage/my-office/settings/?id=${youtubeId}&platform=youtube`);
   }
 
   // *********** Afreeca ******************
@@ -233,7 +233,8 @@ export class AuthController {
     // link with truepoint user
     this.afreecaLinker.link(refreshToken, userId)
       .then(() => {
-        res.redirect(`${fronthost}/mypage/my-office/settings`); // ?id=${afreecaId}&platform=afreeca
+        // 실제 아프리카 유저 아이디를 들고올 수 있을 때, id, platform 쿼리스트링 추가
+        res.redirect(`${fronthost}/mypage/my-office/settings/`); // ?id=${afreecaId}&platform=afreeca
       });
   }
 }
