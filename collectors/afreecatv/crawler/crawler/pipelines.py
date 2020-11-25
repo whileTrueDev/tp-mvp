@@ -75,7 +75,7 @@ class AfreecaStreams(Model):
     __table__ = 'AfreecaStreams'
 
     def addAfreecaStream(self, videoId, videoTitle, startDate, endDate, bookmark, resolution, videoQuality, needAnalysis, needCollect):
-        db.table(self.__table__).create(
+        db.table(self.__table__).insert(
             videoId=videoId,
             videoTitle=videoTitle,
             startDate=startDate,
