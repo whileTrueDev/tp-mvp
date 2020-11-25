@@ -1,38 +1,51 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Modal, Backdrop, Fade } from '@material-ui/core';
+import {
+  Modal, Backdrop, Fade, Typography,
+} from '@material-ui/core';
+
+/**
+   * clickOpen 프롭을 통해 로딩창 활성화
+   * 로딩 컴포넌트 타입은 총 3개
+   *  - short: 2초 로고 바운드 효과 로딩컴포넌트(간단한 로딩 필요시)
+   *  - medium: 5초 텍스트 캐러셀 효과 로딩컴포넌트(어디에서 쓸지...)
+   *  - long: 10초 텍스트 캐러셀 효과 로딩컴포넌트(분석하기 용)
+   * 
+   *  디폴트는 long 으로 프롭이 없을 시에는 분석하기 버튼용 로딩 컴포넌트가 활성화 됨
+  */
 
 const styles = makeStyles((theme) => ({
   wraper: {
-    backgroundColor: theme.palette.background.paper,
     width: '100%',
     height: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   animatedTitle: {
     fontFamily: 'AppleSDGothicNeo',
-    height: '50vmin',
-    position: 'absolute',
-    transform: 'translate(-50%, -50%)',
-    width: '50vmin',
-    left: '40%',
-    top: '50%',
+    height: '400px',
+    width: '500px',
+  },
+  animatedTitleMedium: {
+    fontFamily: 'AppleSDGothicNeo',
+    height: '400px',
+    width: '500px',
   },
   textTop: {
     height: '50%',
     overflow: 'hidden',
-    position: 'absolute',
     width: '100%',
-    borderBottom: `5px solid ${theme.palette.primary.main}`,
-    top: 0,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    borderBottom: `5px solid ${theme.palette.primary.main}`,
   },
   textBottom: {
     bottom: 0,
     height: '50%',
     overflow: 'hidden',
-    position: 'absolute',
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
@@ -48,13 +61,11 @@ const styles = makeStyles((theme) => ({
       fontWeight: 800,
       color: theme.palette.primary.main,
       padding: '2vmin 0',
-      position: 'absolute',
     },
   },
   textTopIn: {
+    paddingTop: '35px',
     fontSize: '60px',
-    padding: '2vmin 0',
-    position: 'absolute',
     '&> span': {
       display: 'block',
     },
@@ -81,10 +92,7 @@ const styles = makeStyles((theme) => ({
     '0%': {
       transform: 'translate3d(0, 100%, 0)',
     },
-    '40%': {
-      transform: 'translate3d(0, 50%, 0)',
-    },
-    '60%': {
+    '40%, 60%': {
       transform: 'translate3d(0, 50%, 0)',
     },
     '100%': {
@@ -100,17 +108,14 @@ const styles = makeStyles((theme) => ({
     },
   },
   wordCarousel: {
-    height: 65,
+    height: 500,
     width: 400,
-    left: '61.5%',
-    top: '44.5%',
     overflow: 'hidden',
-    transform: 'translate(-50%, -50%)',
-    position: 'absolute',
   },
   carouselWraper: {
     overflow: 'hidden',
     position: 'relative',
+    top: '33%',
     float: 'left',
     height: 65,
     paddingTop: 10,
@@ -130,40 +135,164 @@ const styles = makeStyles((theme) => ({
     visibility: 'hidden',
   },
   styledText: {
-    color: theme.palette.success.main,
+    color: theme.palette.error.main,
   },
   '@keyframes flip': {
-    '0%': { marginTop: -270, visibility: 'visible' },
-    '5%': { marginTop: -180, visibility: 'visible' },
-    '33%': { marginTop: -180, visibility: 'visible' },
-    '38%': { marginTop: -90, visibility: 'visible' },
-    '66%': { marginTop: -90, visibility: 'visible' },
-    '71%': { marginTop: 0, visibility: 'visible' },
-    '99.99%': { marginTop: 0, visibility: 'visible' },
-    '100%': { marginTop: -270, visibility: 'visible' },
+    '0%, 100%': { marginTop: -270, visibility: 'visible' },
+    '5%, 33%': { marginTop: -180, visibility: 'visible' },
+    '38%, 66%': { marginTop: -90, visibility: 'visible' },
+    '71%, 99.99%': { marginTop: 0, visibility: 'visible' },
+  },
+  loadingShortLogo: {
+    animation: '$bound 1s ease-in-out forwards',
+  },
+  '@keyframes bound': {
+    '0%, 50%, 80%, 100%': { transform: 'translateY(0)' },
+    '40%': { transform: 'translateY(-10px)' },
+    '60%': { transform: 'translateY(-5px)' },
+  },
+  shortWraper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 400,
+    height: 400,
   },
 }));
 
 interface LoadingComponentProps {
   clickOpen: boolean;
-  lodingTime: number;
+  loadingType?: string;
 }
 
 export default function LoadingComponent({
   clickOpen,
-  lodingTime,
+  loadingType = 'long',
 }: LoadingComponentProps): JSX.Element {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
+
+  let loadingTime = 10000;
+  switch (loadingType) {
+    case 'short':
+      loadingTime = 2000;
+      break;
+    case 'medium':
+      loadingTime = 5000;
+      break;
+    default:
+      break;
+  }
 
   React.useEffect(() => {
     if (clickOpen) {
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
-      }, lodingTime);
+      }, loadingTime);
     }
-  }, [clickOpen, lodingTime]);
+  }, [clickOpen, loadingTime]);
+
+  const longLoading = (
+    <>
+      <div className={loadingType === 'medium' ? classes.animatedTitleMedium : classes.animatedTitle}>
+        <div className={classes.textTop}>
+          <div className={classes.textTopIn}>
+            <span className={classes.firstText}>방송의 하이라이트</span>
+            <svg viewBox="0 0 100 20" className={classes.secondText}>
+              <defs>
+                <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="5%" stopColor="#a8c4f9" />
+                  <stop offset="95%" stopColor="#4b5ac7" />
+                </linearGradient>
+                <pattern
+                  id="wave"
+                  x="0"
+                  y="0"
+                  width="100"
+                  height="20"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    id="wavePath"
+                    d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z"
+                    mask="url(#mask)"
+                    fill="url(#gradient)"
+                  >
+                    <animateTransform
+                      attributeName="transform"
+                      begin="0s"
+                      dur="2s"
+                      type="translate"
+                      from="0,0"
+                      to="40,0"
+                      repeatCount="indefinite"
+                    />
+                  </path>
+                </pattern>
+              </defs>
+              <text
+                textAnchor="middle"
+                x="50"
+                y="15"
+                fontSize="17"
+                fill="url(#wave)"
+                fillOpacity="1"
+              >
+                TRUEPOINT:
+              </text>
+              <text
+                textAnchor="middle"
+                x="50"
+                y="15"
+                fontSize="17"
+                fill="url(#gradient)"
+                fillOpacity="0.5"
+              >
+                TRUEPOINT:
+              </text>
+            </svg>
+          </div>
+        </div>
+        <div className={classes.textBottom}>
+          {loadingType === 'medium' ? (
+            <div>잠시만 기다려 주세요</div>
+          ) : (
+            <div>오늘 방송 알찼나?</div>
+          ) }
+        </div>
+      </div>
+      {loadingType === 'medium' ? (
+        null
+      ) : (
+        <div className={classes.wordCarousel}>
+          <div className={classes.carouselWraper}>
+            <ul className={classes.flip}>
+              <li className={classes.styledText}>분석완료!</li>
+              <li>잠시만요! 끝나가요</li>
+              <li className={classes.styledText}>방송 분석중이에요</li>
+            </ul>
+          </div>
+        </div>
+      ) }
+    </>
+  );
+
+  const shortLoading = (
+    <div className={classes.shortWraper}>
+      <img
+        src="/images/logo/truepointLogo.png"
+        alt="truepointLogo"
+        width={70}
+        height={70}
+        className={classes.loadingShortLogo}
+      />
+      <Typography variant="h3" align="center" color="primary">
+        TRUEPOINT
+      </Typography>
+    </div>
+  );
 
   return (
     <Modal
@@ -177,80 +306,7 @@ export default function LoadingComponent({
     >
       <Fade in={open}>
         <div className={classes.wraper}>
-          <div className={classes.animatedTitle}>
-            <div className={classes.textTop}>
-              <div className={classes.textTopIn}>
-                <span className={classes.firstText}>방송의 하이라이트</span>
-                <svg viewBox="0 0 100 20" className={classes.secondText}>
-                  <defs>
-                    <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="5%" stopColor="#929ef8" />
-                      <stop offset="95%" stopColor="#4b5ac7" />
-                    </linearGradient>
-                    <pattern
-                      id="wave"
-                      x="0"
-                      y="0"
-                      width="100"
-                      height="20"
-                      patternUnits="userSpaceOnUse"
-                    >
-                      <path
-                        id="wavePath"
-                        d="M-40 9 Q-30 7 -20 9 T0 9 T20 9 T40 9 T60 9 T80 9 T100 9 T120 9 V20 H-40z"
-                        mask="url(#mask)"
-                        fill="url(#gradient)"
-                      >
-                        <animateTransform
-                          attributeName="transform"
-                          begin="0s"
-                          dur="2s"
-                          type="translate"
-                          from="0,0"
-                          to="40,0"
-                          repeatCount="indefinite"
-                        />
-                      </path>
-                    </pattern>
-                  </defs>
-                  <text
-                    textAnchor="middle"
-                    x="50"
-                    y="15"
-                    fontSize="17"
-                    fill="url(#wave)"
-                    fillOpacity="0.9"
-                  >
-                    TRUEPOINT:
-
-                  </text>
-                  <text
-                    textAnchor="middle"
-                    x="50"
-                    y="15"
-                    fontSize="17"
-                    fill="url(#gradient)"
-                    fillOpacity="0.5"
-                  >
-                    TRUEPOINT:
-
-                  </text>
-                </svg>
-              </div>
-            </div>
-            <div className={classes.textBottom}>
-              <div>오늘 방송 알찼나?</div>
-            </div>
-          </div>
-          <div className={classes.wordCarousel}>
-            <div className={classes.carouselWraper}>
-              <ul className={classes.flip}>
-                <li className={classes.styledText}>분석완료!</li>
-                <li>잠시만요! 끝나가요</li>
-                <li className={classes.styledText}>방송 분석중이에요</li>
-              </ul>
-            </div>
-          </div>
+          {loadingType === 'short' ? shortLoading : longLoading}
         </div>
       </Fade>
     </Modal>

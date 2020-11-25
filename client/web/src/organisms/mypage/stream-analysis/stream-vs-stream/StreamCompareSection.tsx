@@ -120,7 +120,7 @@ export default function StreamCompareSection(
     <div className={classes.root}>
 
       {!(error?.isError) && (
-        <Loading clickOpen={loading} lodingTime={10000} />
+        <Loading clickOpen={loading} />
       )}
 
       <Grid container direction="column" spacing={2}>
