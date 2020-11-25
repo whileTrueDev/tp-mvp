@@ -243,15 +243,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   const dummy: string[] = [
-    '나락',
-    '극락',
-    '굿',
-    '지렷다',
-    '레전드',
-    '노답',
-    '가능?',
-    '침디',
-    '가장긴 문자열',
+    '즐거움', '동의', '역겨움', '의문',
   ];
   const [analysisWord, setAnalysisWord] = React.useState<string>();
   const handleAnalysisWord = (targetWord: string) => {
@@ -317,7 +309,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             [classes.searchTitle]: true,
           })}
         >
-          분석할 검색값 입력
+          선택된 카테고리
         </Grid>
 
         <div className={classes.searchBox}>

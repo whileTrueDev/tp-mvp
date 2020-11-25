@@ -142,7 +142,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
 
         <TextField
           variant="outlined"
-          label="검색값"
+          label="카테고리"
           color="primary"
           onClick={() => handleAnchorOpenWithRef(targetRef)}
           value={value}
@@ -171,13 +171,13 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
             </div>
             <img src="/images/analyticsPage/quotesRight.png" alt="right qut" className={classes.quotesImg} />
             <Typography variant="h6" color="textSecondary" className={classes.analysisCaption} component="span">
-              단어에 대해 분석을 시작 합니다.
+              카테고리에 대해 분석을 시작 합니다.
             </Typography>
           </Typography>
         ) : (
           <Alert severity="info">
             <Typography variant="body1" className={classes.analysisWordWrapper}>
-              검색값 분석을 위해 단어를 선택해 주세요
+              분석을 위해 카테고리를 선택해 주세요
             </Typography>
           </Alert>
         )}

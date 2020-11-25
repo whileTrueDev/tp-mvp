@@ -201,13 +201,13 @@ export default function MetricsAccordian(
           <Typography className={classes.heading}>
             {`"${analysisWord}"`}
             {' '}
-            발생 수 기반 편집점
+            카테고리 기반 편집점
           </Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.wraper}>
           <Grid item md={12}>
             <MetricTitle
-              subTitle={`"${analysisWord}" 발생수 편집점`}
+              subTitle={`"${analysisWord}" 카테고리 편집점`}
               iconSrc="/images/analyticsPage/logo_search.svg"
               pointNumber={metricsData.smile_points.length}
             />
@@ -231,7 +231,7 @@ export default function MetricsAccordian(
                   pageSize={pageSize2}
                   handlePage={setPage2}
                   handlePageSize={setPageSize2}
-                  type={`"${analysisWord}" 발생수 기반 편집점`}
+                  type={`"${analysisWord}" 카테고리 기반 편집점`}
                 />
                 <div className={classes.buttonWraper}>
                   <Button
