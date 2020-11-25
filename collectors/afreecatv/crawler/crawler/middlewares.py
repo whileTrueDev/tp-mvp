@@ -18,7 +18,7 @@ import os
 
 chatAllData = []
 temporary_private = 0
-targetVideoId = None
+targetVideoId = []
 
 class SeleniumMiddleware(object):
 
@@ -35,7 +35,7 @@ class SeleniumMiddleware(object):
         self.config = ConfigController()
         dirpath = os.path.dirname(os.path.abspath(__file__))
         # CHROMEDRIVER_PATH = r'C:\Users\WHILETRUESECOND\Desktop\tp-mvp\collectors\afreecatv\crawler\crawler\drivers\chromedriver.exe'
-        CHROMEDRIVER_PATH = os.path.join(dirpath, r"drivers/chromedriver.exe")
+        CHROMEDRIVER_PATH = os.path.join(dirpath, r'drivers\chromedriver.exe')
         WINDOW_SIZE = "1920, 1080"
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # 크롬창이 열리지 않게
@@ -44,15 +44,15 @@ class SeleniumMiddleware(object):
         chrome_options.add_argument(f"--window-size={ WINDOW_SIZE }")
         chrome_options.add_argument("--mute-audio") # 브라우저 음소거
         # selenium 성능 향상을 위한 옵션 제어
-        prefs = {'profile.default_content_setting_values': 
-        {'cookies' : 2, 'images': 2, 'plugins' : 2, 'popups': 2, 'geolocation': 2, 'notifications' : 2,
-        'auto_select_certificate': 2, 'fullscreen' : 2, 'mouselock' : 2, 'mixed_script': 2,
-        'media_stream' : 2, 'media_stream_mic' : 2, 'media_stream_camera': 2, 'protocol_handlers' : 2,
-        'ppapi_broker' : 2, 'automatic_downloads': 2, 'midi_sysex' : 2, 'push_messaging' : 2, 
-        'ssl_cert_decisions': 2, 'metro_switch_to_desktop' : 2, 'protected_media_identifier': 2,
-        'app_banner': 2, 'site_engagement' : 2, 'durable_storage' : 2}}   
-        chrome_options.add_experimental_option('prefs', prefs)
-        self.driver = webdriver.Chrome( executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options )
+        # prefs = {'profile.default_content_setting_values': 
+        # {'cookies' : 2, 'images': 2, 'plugins' : 2, 'popups': 2, 'geolocation': 2, 'notifications' : 2,
+        # 'auto_select_certificate': 2, 'fullscreen' : 2, 'mouselock' : 2, 'mixed_script': 2,
+        # 'media_stream' : 2, 'media_stream_mic' : 2, 'media_stream_camera': 2, 'protocol_handlers' : 2,
+        # 'ppapi_broker' : 2, 'automatic_downloads': 2, 'midi_sysex' : 2, 'push_messaging' : 2, 
+        # 'ssl_cert_decisions': 2, 'metro_switch_to_desktop' : 2, 'protected_media_identifier': 2,
+        # 'app_banner': 2, 'site_engagement' : 2, 'durable_storage' : 2}}   
+        # chrome_options.add_experimental_option('prefs', prefs)
+        self.driver = webdriver.Chrome( executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
         self.driver.get("https://login.afreecatv.com/afreeca/login.php?szFrom=full&request_uri=http%3A%2F%2Fafreecatv.com%2F")
         sleep(3)
         elem_login = self.driver.find_element_by_id("uid")
@@ -60,22 +60,27 @@ class SeleniumMiddleware(object):
         elem_login.send_keys(self.config.AFREECA_ID) 
         elem_login = self.driver.find_element_by_id("password")
         elem_login.clear()
-        elem_login.send_keys(self.config.AFREECA_PASSWORD, Keys.ENTER)
+        elem_login.send_keys(self.config.AFREECA_PASSWORD)
+        elem_login.send_keys(Keys.RETURN)
         lg.info('크롬브라우저로 아프리카 로그인')
-        sleep(3)
+        sleep(5)
 
 
     def process_request( self, request, spider ):
         afreecaActive = AfreecaActiveStreams()
         self.driver.get( request.url )
         sleep(3)
-        self.driver.find_element_by_xpath('//*[@id="stop_screen"]/dl/dd[2]/a').click()
+        try:
+            self.driver.find_element_by_xpath('//*[@id="stop_screen"]/dl/dd[2]/a').click()
+        except:
+            pass
         self.creatorId  = request.url[26:-1]
         self.start_date = dt.strptime(self.driver.find_element_by_xpath('//*[@id="player_area"]/div[2]/div[2]/ul/li[1]/span').text, '%Y-%m-%d %H:%M:%S')
         self.videoId = dt.strftime(self.start_date, '%Y%m%d%H%M%S') + self.creatorId
-        targetVideoId = self.videoId
+        targetVideoId.append(self.videoId)
+
         # 채팅창 제어 변수 초깃값
-        chatNum = 1
+        chatNum = 2
         liveEndPoint = 0 # 생방송 상대 여부 판별
         tryTime = 0 # 채팅 업로드 시도횟수
         
@@ -171,7 +176,7 @@ class SeleniumMiddleware(object):
                     self.driver.find_element_by_xpath('//*[@id="stop_screen"]/dl/dd[2]/a').click()
                 except:
                     pass
-                chatNum = 1
+                chatNum = 2
                     
             chatNum = chatNum + 1
             
@@ -181,7 +186,7 @@ class SeleniumMiddleware(object):
     def spider_closed(self, spider):
         afreecaCreator = AfreecaActiveStreams()
         lg.info(f'{self.creatorId} 타겟방송 크롬브라우저 종료 및 프로세스 킬')
-        afreecaCreator.updateLiveCreator([self.creatorId],'turn-off')
+        afreecaCreator.updateLiveCreator([self.creatorId],'live-off')
         self.driver.close()
         self.driver.quit()
 
