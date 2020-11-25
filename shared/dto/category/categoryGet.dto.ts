@@ -4,7 +4,7 @@ import {
 
 export class CategoryGetRequest {
   @IsString()
-  categoryId: string;
+  categoryId: number;
 
   @IsString()
   category: string;

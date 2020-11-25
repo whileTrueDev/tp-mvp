@@ -1,7 +1,7 @@
 export interface CategoricalWords {
-  wordId: string;
+  wordId: number;
 
-  categoryId: string;
+  categoryId: number;
 
   word: string;
 

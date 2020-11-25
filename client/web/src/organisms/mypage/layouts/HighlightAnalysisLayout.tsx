@@ -9,6 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import classnames from 'classnames';
+import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -242,9 +243,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       });
   };
 
-  const dummy: string[] = [
-    '즐거움', '동의', '역겨움', '의문',
-  ];
+  const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
+    url: '/category',
+  });
+
   const [analysisWord, setAnalysisWord] = React.useState<string>();
   const handleAnalysisWord = (targetWord: string) => {
     setAnalysisWord(targetWord);
@@ -314,7 +316,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         <div className={classes.searchBox}>
           <SearchBox
-            words={dummy}
+            words={categoriesData ? categoriesData.map((each) => each.categoryName) : []}
             handleAnalysisWord={handleAnalysisWord}
             analysisWord={analysisWord}
           />

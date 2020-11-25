@@ -1,16 +1,20 @@
 import {
-  Entity, Column, PrimaryColumn,
+  Entity, Column, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Category } from '@truepoint/shared/dist/interfaces/Category.interface';
 
-@Entity({ name: 'CategoricalWords' })
+@Entity({ name: 'Category' })
 export class CategoryEntity implements Category {
-  @PrimaryColumn()
-  categoryId: string;
+  @PrimaryGeneratedColumn()
+  categoryId: number;
 
   @Column()
   category: string;
 
   @Column()
   categoryName: string;
+
+  constructor(partial: Partial<CategoryEntity>) {
+    Object.assign(this, partial);
+  }
 }
