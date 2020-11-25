@@ -9,7 +9,7 @@ async function bootstrap() {
   // Load .env file and set environment variables
   // dotenv.config();
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {});
 
   // **********************************************
   // Set global middlewares

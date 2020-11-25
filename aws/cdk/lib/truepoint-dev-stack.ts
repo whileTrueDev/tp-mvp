@@ -204,6 +204,11 @@ export class TruepointDevStack extends BaseStack {
         targetGroupName: `${API_SERVER_NAME}TargetGroup`,
         port: API_SERVER_PORT,
         protocol: elbv2.ApplicationProtocol.HTTP,
+        healthCheck: {
+          enabled: true,
+          path: '/health-check',
+          interval: cdk.Duration.minutes(1),
+        },
         targets: [apiService],
       },
     );
