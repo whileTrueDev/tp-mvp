@@ -277,7 +277,7 @@ export class TruepointDevStack extends BaseStack {
       sourceCodeProvider: new amplify.GitHubSourceCodeProvider({
         owner: REPOSITORY_OWNER,
         repository: REPOSITORY_NAME,
-        oauthToken: cdk.SecretValue.ssmSecure('AMPLIFY_GITHUB_REPO_TOKEN', '1'),
+        oauthToken: cdk.SecretValue.plainText(process.env.AMPLIFY_GITHUB_REPO_TOKEN!),
       }),
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '1.0',
@@ -294,20 +294,28 @@ export class TruepointDevStack extends BaseStack {
           cache: { paths: 'node_modules/**/*' },
         },
       }),
+      autoBranchDeletion: true,
     });
 
     // Add Branch
     // master 로 변경 필요!!
-    const webBranch = amplifyApp.addBranch('hwasurr-infra');
-    const testBranch = amplifyApp.addBranch('test', {
-      basicAuth: amplify.BasicAuth.fromCredentials(
-        'dev', cdk.SecretValue.ssmSecure('AMPLIFY_TEST_PASSWORD', '1'),
-      ),
-    });
-
     // Add Domain
     const domain = amplifyApp.addDomain(DOMAIN);
+
+    // master
+    const webBranch = amplifyApp.addBranch('hwasurr-infra');
     domain.mapRoot(webBranch);
+
+    // test
+    const testBranch = amplifyApp.addBranch('test', {
+      basicAuth: amplify.BasicAuth.fromCredentials(
+        'dev',
+        cdk.SecretValue.plainText(process.env.AMPLIFY_TEST_PASSWORD!),
+      ),
+    });
     domain.mapSubDomain(testBranch);
+
+    // SPA 설정
+    amplifyApp.addCustomRule(amplify.CustomRule.SINGLE_PAGE_APPLICATION_REDIRECT);
   }
 }
