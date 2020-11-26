@@ -56,21 +56,22 @@ export default function MaterialTable({
       <Table
         columns={[
           {
-            width: '80px',
+            width: '5%',
             align: 'center',
             title: ' ',
           },
           {
-            width: '130px',
+            width: '10%',
             align: 'center',
             title: '카테고리',
           },
           {
+            width: '70%',
             align: 'center',
             title: '제목',
           },
           {
-            width: '170px',
+            width: '15%',
             align: 'center',
             title: '작성일',
           },
@@ -98,7 +99,12 @@ export default function MaterialTable({
                 >
                   <TableCell className={classes.tableCell} scope="row" align="center">
                     {eachRow.isImportant ? (
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      >
                         <NotificationImportantIcon color="primary" />
                         <Typography className={classes.importantText}>
                           중요
