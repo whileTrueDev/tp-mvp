@@ -103,6 +103,8 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
     /* 자모 전부 포함되는 단어 리스트를
        가중치 합이 가장 큰 단어를 기준으로 내림차순 정렬
     */
+    if (includedWords.length === 0) ShowSnack('카테고리 목록에 존재하는 단어만 분석 할 수 있습니다. 다시 선택해주세요', 'error', enqueueSnackbar);
+
     return includedWords.sort((a, b) => targetString.split('').reduce((acc, curr, index) => {
       if (spreadKorean(a).indexOf(targetString.split('')[0]) > spreadKorean(b).indexOf(targetString.split('')[0])) {
         return acc + (longestLength - index);
@@ -131,10 +133,14 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
       else if (filterKoeranSpread(value)[selectedIndex]) {
         handleAnalysisWord(filterKoeranSpread(value)[selectedIndex]);
         setValue(filterKoeranSpread(value)[selectedIndex]);
-      } else ShowSnack('단어 목록에 존재하는 단어만 분석 할 수 있습니다. 다시 선택해주세요', 'info', enqueueSnackbar);
+      } else ShowSnack('카테고리 목록에 존재하는 단어만 분석 할 수 있습니다. 다시 선택해주세요', 'info', enqueueSnackbar);
       handleAnchorClose();
     }
   };
+
+  React.useEffect(() => {
+    if (!value && analysisWord) setValue(analysisWord);
+  }, [analysisWord, setValue, value]);
 
   return (
     <ClickAwayListener onClickAway={handleAnchorClose}>

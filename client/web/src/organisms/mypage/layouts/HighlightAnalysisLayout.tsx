@@ -252,6 +252,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     setAnalysisWord(targetWord);
   };
 
+  React.useEffect(() => {
+    if (categoriesData) {
+      setAnalysisWord(categoriesData[0].categoryName);
+    }
+  }, [categoriesData]);
+
   return (
     <Paper className={classes.root}>
       <Grid
@@ -334,7 +340,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
-              disabled={isClicked || Boolean(!selectedStream.fileId)}
+              disabled={isClicked || Boolean(!selectedStream.fileId) || Boolean(!analysisWord)}
             >
               분석하기
             </Button>
