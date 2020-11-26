@@ -2,6 +2,7 @@ import {
   ArgumentsHost, Catch, ExceptionFilter,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import fronthost from '../constants/fronthost';
 
 @Catch()
 export class TwitchLinkExceptionFilter implements ExceptionFilter {
@@ -12,7 +13,7 @@ export class TwitchLinkExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     response.redirect(
-      `http://localhost:3001/mypage/my-office/settings?${request.url.split('?')[1]}`,
+      `${fronthost}/mypage/my-office/settings?${request.url.split('?')[1]}`,
     );
   }
 }

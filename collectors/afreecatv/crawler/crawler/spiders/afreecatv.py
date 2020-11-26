@@ -42,9 +42,9 @@ class AfreecatvSpider(scrapy.Spider):
         if self.is_private[0] == 0:
             # 정상방송을 지속 진행하고 방송종료하는 경우
             if temporary_private == 0:
-                afreecaStreams.addAfreecaStream(targetVideoId, videoTitle, startDate, endDate, bookmark, resolution, videoQuality, 0, 0)
+                afreecaStreams.addAfreecaStream(targetVideoId[0], videoTitle, startDate, endDate, bookmark, resolution, videoQuality, 0, 0)
             else:
-                afreecaStreams.addAfreecaStream(targetVideoId, videoTitle, startDate, endDate, bookmark, resolution, videoQuality, 1, 1)
+                afreecaStreams.addAfreecaStream(targetVideoId[0], videoTitle, startDate, endDate, bookmark, resolution, videoQuality, 1, 1)
 
         else:
             if temporary_private == 0:

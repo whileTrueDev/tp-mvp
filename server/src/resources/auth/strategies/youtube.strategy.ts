@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import Axios from 'axios';
 import { VerifyCallback, Strategy } from 'passport-google-oauth20';
+import apihost from '../../../constants/apihost';
 import { UsersService } from '../../users/users.service';
 
 @Injectable()
@@ -21,7 +22,7 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'google') {
         'https://www.googleapis.com/auth/youtube', // 유튜브 계정 관리 및 보기
         // 'https://www.googleapis.com/auth/yt-analytics.readonly',
       ],
-      callbackURL: '/auth/youtube/callback',
+      callbackURL: `${apihost}/auth/youtube/callback`,
     });
   }
 

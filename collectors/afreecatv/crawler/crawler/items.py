@@ -2,7 +2,7 @@ import scrapy
 
 
 class AfreecatvChat(scrapy.Item):
-    viwer = scrapy.Field()
+    viewer = scrapy.Field()
     viewerId = scrapy.Field()
     category = scrapy.Field()
     videoTitle = scrapy.Field()
