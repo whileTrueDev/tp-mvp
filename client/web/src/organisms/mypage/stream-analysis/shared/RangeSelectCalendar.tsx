@@ -94,6 +94,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const reRequest = 3;
+
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
     period, handlePeriod, base, targetRef, anchorEl, handleAnchorOpenWithRef, handleAnchorClose,
@@ -103,11 +105,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
-  const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
+  const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
 
-  const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
+  const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
 
   const DATE_THEME = (others: Theme) => ({
     ...others,
@@ -131,24 +133,39 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     url: '/stream-analysis/stream-list',
   }, { manual: true });
 
+  /**
+   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
+   * @param originDate 현재 달력이 위치한 달
+   */
+  const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
+    if (originDate) {
+      const rangeStart = moment(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      const rangeEnd = moment(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      return [rangeStart, rangeEnd];
+    }
+
+    return [];
+  };
+
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
       userId: auth.user.userId,
-      startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
+      startDate: handleSubtractCurrMonth(currMonth)[0],
+      endDate: handleSubtractCurrMonth(currMonth)[1],
     };
 
     excuteGetStreams({
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
+        result.data.map((streamInfo) => moment(new Date(streamInfo.startedAt)).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.response) {
         ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [auth.user, excuteGetStreams, currMonth, enqueueSnackbar]);
+  }, [auth.user, excuteGetStreams, enqueueSnackbar, currMonth]);
 
   React.useEffect(() => {
     if (period.length > 1) {
@@ -207,25 +224,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     }
   };
 
+  /**
+   * 전후 3개월(임의)에 해당하는 방송 정보를 가져오도록 유도
+   * @param newMonth 해당 달의 첫째 날의 Date 객체
+   */
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
-    if (newMonth) setCurrMonth(newMonth);
-    if (newMonth) {
-      const params: SearchCalendarStreams = {
-        userId: auth.user.userId,
-        startDate: newMonth.toISOString(),
-      };
-
-      excuteGetStreams({
-        params,
-      }).then((result) => {
-        setHasStreamDays(
-          result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
-        );
-      }).catch((err) => {
-        if (err.response) {
-          ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-        }
-      });
+    if (newMonth && Math.abs(moment(newMonth).diff(moment(currMonth), 'month')) >= reRequest) {
+      setCurrMonth(newMonth);
     }
   };
 
@@ -255,13 +260,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     <div className={classnames({
       [classes.rangeDayBase]: base,
       [classes.rangeDayCompare]: !base,
-      [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
+      [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
     })}
     >
       {dayComponent}
       <div className={classnames({
-        [classes.hasStreamDayDotBase]: hasStreamDays.includes(date.getDate()) && base,
-        [classes.hasStreamDayDotCompare]: hasStreamDays.includes(date.getDate()) && !base,
+        [classes.hasStreamDayDotBase]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && base,
+        [classes.hasStreamDayDotCompare]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && !base,
       })}
       />
     </div>
@@ -295,13 +300,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         }
         return (
           <div className={classnames({
-            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
+            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
           })}
           >
             {dayComponent}
             <div className={classnames({
-              [classes.hasStreamDayDotBase]: hasStreamDays.includes(date.getDate()) && base,
-              [classes.hasStreamDayDotCompare]: hasStreamDays.includes(date.getDate()) && !base,
+              [classes.hasStreamDayDotBase]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && base,
+              [classes.hasStreamDayDotCompare]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && !base,
             })}
             />
           </div>
@@ -344,13 +349,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     if (date && dayInCurrentMonth) {
       return (
         <div className={classnames({
-          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
         })}
         >
           {dayComponent}
           <div className={classnames({
-            [classes.hasStreamDayDotBase]: hasStreamDays.includes(date.getDate()) && base,
-            [classes.hasStreamDayDotCompare]: hasStreamDays.includes(date.getDate()) && !base,
+            [classes.hasStreamDayDotBase]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && base,
+            [classes.hasStreamDayDotCompare]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && !base,
           })}
           />
         </div>
