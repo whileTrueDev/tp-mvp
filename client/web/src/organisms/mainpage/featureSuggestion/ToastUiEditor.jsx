@@ -16,13 +16,6 @@ export default function ToastUiEditor(data) {
     handleContents(str);
   }
 
-  React.useEffect(() => {
-    if (previousContents !== '') {
-    //  console.log(previousContents);
-      // console.log('previous content exist ? :', previousContents);
-    }
-  }, [previousContents]);
-
   return (
     <div>
       {(previousContents && state) ? (

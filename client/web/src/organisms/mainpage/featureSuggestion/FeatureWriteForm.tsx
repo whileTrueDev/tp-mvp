@@ -192,11 +192,8 @@ export default function FeatureWriteForm(): JSX.Element {
           className={classnames(classes.contents, classes.button)}
           onClick={() => {
             // 글수정의 경우
-
-            // handleContents(ref);
             if (param && param.id) handlePatchSubmit(param.id);
             // 글 첫 게시
-
             else handlePostSubmit();
           }}
         >
