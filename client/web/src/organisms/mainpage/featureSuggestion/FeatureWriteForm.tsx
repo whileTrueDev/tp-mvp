@@ -49,7 +49,6 @@ export default function FeatureWriteForm(): JSX.Element {
     category: '홈페이지 개선',
     content: '',
   });
-
   const handleTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFeatureSource({ ...featureSource, title: event.target.value });
   };
@@ -58,8 +57,8 @@ export default function FeatureWriteForm(): JSX.Element {
     setFeatureSource({ ...featureSource, category: event.target.value });
   };
 
-  const handleContents = (event: any) => {
-    setFeatureSource({ ...featureSource, content: event });
+  const handleContents = (str: string) => {
+    setFeatureSource({ ...featureSource, content: str });
   };
 
   const handleLockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,7 +160,11 @@ export default function FeatureWriteForm(): JSX.Element {
       </div>
       {/* 기능 제안 내용 입력 */}
       <div className={classes.contents}>
-        <ToastUiEditor handleContents={handleContents} />
+        <ToastUiEditor
+          state={!!(param && param.id)}
+          previousContents={featureSource.content}
+          handleContents={handleContents}
+        />
       </div>
       <div className={classes.buttonSet}>
         <FormControlLabel
@@ -189,8 +192,11 @@ export default function FeatureWriteForm(): JSX.Element {
           className={classnames(classes.contents, classes.button)}
           onClick={() => {
             // 글수정의 경우
+
+            // handleContents(ref);
             if (param && param.id) handlePatchSubmit(param.id);
             // 글 첫 게시
+
             else handlePostSubmit();
           }}
         >

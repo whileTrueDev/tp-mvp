@@ -6,27 +6,46 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 
 export default function ToastUiEditor(data) {
-  const { handleContents } = data;
+  const {
+    state, previousContents, handleContents,
+  } = data;
   const editorRef = React.createRef();
 
-  function handleChange() {
-    if (editorRef.current.getInstance().getHtml()) {
-      const str = editorRef.current.getInstance().getHtml().toString();
-      handleContents(str);
-    }
+  function handleFocus() {
+    const str = editorRef.current.getInstance().getHtml();
+    handleContents(str);
   }
+
+  React.useEffect(() => {
+    if (previousContents !== '') {
+    //  console.log(previousContents);
+      // console.log('previous content exist ? :', previousContents);
+    }
+  }, [previousContents]);
 
   return (
     <div>
-      <Editor
-        previewStyle="vertical"
-        height="300px"
-        initialEditType="wysiwyg"
-        placeholder="글쓰기"
-        onChange={handleChange}
-        ref={editorRef}
-      />
-      {/* <button onClick={handleClick}>저장</button> */}
+      {(previousContents && state) ? (
+        <Editor
+          previewStyle="vertical"
+          height="500px"
+          initialEditType="wysiwyg"
+          initialValue={previousContents}
+          onBlur={handleFocus}
+          ref={editorRef}
+        />
+      ) : (
+        <div>
+          <Editor
+            previewStyle="vertical"
+            height="500px"
+            initialEditType="wysiwyg"
+            initialValue=""
+            onBlur={handleFocus}
+            ref={editorRef}
+          />
+        </div>
+      )}
     </div>
   );
 }
