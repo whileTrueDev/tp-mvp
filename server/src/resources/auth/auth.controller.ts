@@ -239,7 +239,7 @@ export class AuthController {
       .then(() => {
         // settings뒤에 / 꼭 추가. amplify redirect 관련한 일종의 버그 있음.
         // https://github.com/aws-amplify/amplify-console/issues/97
-    
+
         // 실제 아프리카 유저 아이디를 들고올 수 있을 때, id, platform 쿼리스트링 추가
         res.redirect(`${fronthost}/mypage/my-office/settings/`); // ?id=${afreecaId}&platform=afreeca
       });

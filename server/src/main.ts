@@ -1,9 +1,10 @@
 import helmet from 'helmet';
+import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 // import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from './app.module';
-import morgan from 'morgan';
 
 async function bootstrap() {
   // **********************************************
@@ -18,7 +19,7 @@ async function bootstrap() {
 
   // helmet
   app.use(helmet());
-  
+
   // Set morgan Logger
   app.use(morgan('common'));
 
