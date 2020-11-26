@@ -49,8 +49,8 @@ export class FeatureSuggestionController {
   @Patch()
   async updateOne(
     @Body(ValidationPipe) featureSuggestionPatchDto: FeatureSuggestionPatchDto,
-  ): Promise<any> {
-    setTimeout(() => this.featureSuggestionService.update(featureSuggestionPatchDto), 1000);
+  ): Promise<number> {
+    return this.featureSuggestionService.update(featureSuggestionPatchDto);
   }
 
   /**

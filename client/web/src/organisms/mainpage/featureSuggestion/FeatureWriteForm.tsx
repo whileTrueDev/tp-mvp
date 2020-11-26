@@ -97,8 +97,12 @@ export default function FeatureWriteForm(): JSX.Element {
       isLock: featureLock, // 비밀글 여부 비밀글인 경우 true.
     };
     editPatchRequest({ data })
-      .then(() => ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar))
-      .then(() => history.push('/feature-suggestion'))
+      .then((res) => {
+        if (res.data) {
+          ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar);
+          history.push('/feature-suggestion');
+        }
+      })
       .catch(() => ShowSnack('기능제안 수정 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
   }
 
