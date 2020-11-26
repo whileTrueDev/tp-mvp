@@ -77,7 +77,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
   } = props;
 
   const {
-    value, handleChange, setValue,
+    value, handleChange, setValue, handleReset,
   } = useEventTargetValue(); // text input
 
   const {
@@ -144,7 +144,14 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
           variant="outlined"
           label="카테고리"
           color="primary"
-          onClick={() => handleAnchorOpenWithRef(targetRef)}
+          onClick={() => {
+            if (value.length > 1) {
+              handleReset();
+              handleAnalysisWord('');
+              setSelectedIndex(0);
+            }
+            handleAnchorOpenWithRef(targetRef);
+          }}
           value={value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             handleChange(e);
