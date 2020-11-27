@@ -169,7 +169,7 @@ export default function StreamCompareSection(
 
         {/* 달력 선택 */}
         <Grid item container direction="row">
-          <Grid container className={classes.bodyWrapper} style={{ width: 'auto' }}>
+          <Grid container className={classes.bodyWrapper} style={{ minWidth: '1000px' }}>
             <Grid item style={{ width: '310px' }}>
               <Typography className={classes.bodyTitle}>
                 <SelectDateIcon className={classes.selectIcon} />
