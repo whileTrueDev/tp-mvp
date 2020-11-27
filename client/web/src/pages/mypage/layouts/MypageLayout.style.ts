@@ -31,6 +31,7 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     '&:hover': {
       overflowY: 'auto',
     },
+    zIndex: theme.zIndex.drawer,
   },
   appbarWrapper: {
     height: MYPAGE_APP_BAR_HEIGHT,
