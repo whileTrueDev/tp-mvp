@@ -27,7 +27,9 @@ async function getDbSecrets(): Promise<TruepointDbSecret> {
     const target = list.SecretList.find(
       (x) => x.Name.includes(
         process.env.NODE_ENV === 'production'
-          ? 'TruepointProductionDB' : 'TruepointDevDB',
+          // ? 'TruepointProductionDB'
+          ? 'TruepointDevDB'
+          : 'TruepointDevDB',
       ),
     );
 

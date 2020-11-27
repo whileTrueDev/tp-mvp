@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import Axios from 'axios';
 import { VerifyCallback, Strategy } from 'passport-oauth2';
+import apihost from '../../../constants/apihost';
 import { PlatformTwitchEntity } from '../../users/entities/platformTwitch.entity';
 import { UsersService } from '../../users/users.service';
 import { TwitchProfile, TwitchProfileResponse } from '../interfaces/twitchProfile.interface';
@@ -21,7 +22,7 @@ export class TwitchStrategy extends PassportStrategy(Strategy, 'twitch') {
       scope: ['user:read:email', 'user:read:broadcast', 'channel:read:subscriptions', 'analytics:read:extensions', 'analytics:read:games'],
       authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
       tokenURL: 'https://id.twitch.tv/oauth2/token',
-      callbackURL: 'http://localhost:3000/auth/twitch/callback',
+      callbackURL: `${apihost}/auth/twitch/callback`,
     });
 
     this._oauth2.setAuthMethod('Bearer');

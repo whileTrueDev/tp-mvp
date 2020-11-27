@@ -5,6 +5,9 @@ const styles = makeStyles((theme) => ({
     width: '100%',
     height: 600,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+    [theme.breakpoints.down('sm')]: {
+      height: 500,
+    },
   },
   wraper: {
     display: 'flex',
@@ -12,6 +15,9 @@ const styles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'left',
     height: 600,
+    [theme.breakpoints.down('sm')]: {
+      height: 500,
+    },
   },
   main: {
     margin: '20px 0px 20px 0px',
@@ -28,12 +34,25 @@ const styles = makeStyles((theme) => ({
     fontWeight: 900,
     color: 'white',
     margin: 0,
+    [theme.breakpoints.down('md')]: {
+      wordBreak: 'keep-all',
+      fontSize: 40,
+    },
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 32,
+    },
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 25,
+    },
   },
   mainContent: {
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 20,
     margin: 0,
     color: 'white',
+    [theme.breakpoints.down('md')]: {
+      wordBreak: 'keep-all',
+    },
   },
   button: {
     fontFamily: 'AppleSDGothicNeo',
@@ -43,18 +62,26 @@ const styles = makeStyles((theme) => ({
     width: 150,
   },
   buttonLine: {
-    animation: '$lineSpread 1.2s ease-in-out',
+    animation: '$lineSpread 0.5s ease-in-out',
     borderBottom: '1px solid white',
-    width: 600,
+    width: '100%',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+    },
   },
   imgWraper: {
+    animationDelay: '1s',
+    animation: '$wraperEffect 2s ease-in-out',
     marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
   },
   mainSVGEffect: {
-    animationDelay: '1.5s',
+    animationDelay: '1s',
     animationIterationCount: 'infinite',
     animation: '$mainSVGEffect 2s ease-in-out',
     visibility: 'hidden',
@@ -62,7 +89,7 @@ const styles = makeStyles((theme) => ({
   },
   subSVGEffect: {
     width: 350,
-    animationDelay: '1.5s',
+    animationDelay: '1s',
     animationIterationCount: 'infinite',
     animation: '$subSVGEffect 2s ease-in-out',
     visibility: 'hidden',
@@ -74,7 +101,15 @@ const styles = makeStyles((theme) => ({
       width: 0,
     },
     '100%': {
-      width: 600,
+      width: '100%',
+    },
+  },
+  '@keyframes wraperEffect': {
+    '0%': {
+      opacity: 0,
+    },
+    '100%': {
+      opacity: 1,
     },
   },
   '@keyframes mainSVGEffect': {

@@ -393,7 +393,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
       </Grid>
-      <Loading clickOpen={isClicked} lodingTime={10000} />
+      <Loading clickOpen={isClicked} lodingTime={20000} />
       { !isClicked && highlightData && metricsData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
