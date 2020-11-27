@@ -100,6 +100,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   tooltip: {
     height: 'auto',
     padding: theme.spacing(1),
+    maxWidth: 400,
   },
   tooltipIconWrapper: {
     display: 'inline-flex', marginRight: '8px', paddingTop: '4px', flexDirection: 'row',
@@ -151,7 +152,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
   const tooltipContents = (stream: StreamsListItem): JSX.Element => (
     <div className={classes.tooltip}>
-      <Typography variant="h6" style={{ whiteSpace: 'nowrap' }}>
+      <Typography variant="h6">
         <div className={classes.tooltipIconWrapper}>
           <Avatar style={{ marginBottom: '8px' }}>
             {platformIcon(stream)}

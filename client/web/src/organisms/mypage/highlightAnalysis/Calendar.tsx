@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import {
-  Paper, Typography, makeStyles, ThemeProvider,
+  Box, Typography, makeStyles, ThemeProvider,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import {
@@ -19,6 +19,7 @@ import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 import dateExpression from '../../../utils/dateExpression';
+import SelectDateIcon from '../../../atoms/stream-analysis-icons/SelectDateIcon';
 
 interface StreamData {
   getState: boolean;
@@ -29,9 +30,15 @@ interface StreamData {
 }
 
 const useStyles = makeStyles((theme) => ({
+  paper: {
+    borderRadius: '12px',
+    border: `solid 1px ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(4),
+    paddingBottom: theme.spacing(2),
+  },
   day: {
     backgroundColor: theme.palette.primary.light,
-
   },
   hasStreamDayDot: {
     position: 'absolute',
@@ -221,9 +228,10 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
   return (
     <div>
 
-      <Paper style={{ padding: 20 }}>
+      <Box className={classes.paper}>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
-          <Typography variant="h5">
+          <Typography variant="h6" style={{ marginLeft: '64px', display: 'inline-flex', marginBottom: 8 }}>
+            <SelectDateIcon style={{ marginRight: '8px' }} />
             날짜선택
           </Typography>
           <Grid
@@ -291,7 +299,7 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
             )}
           </Grid>
         </MuiPickersUtilsProvider>
-      </Paper>
+      </Box>
 
     </div>
   );

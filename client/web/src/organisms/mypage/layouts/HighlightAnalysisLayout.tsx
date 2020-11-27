@@ -6,9 +6,11 @@ import Card from '@material-ui/core/Card';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import classnames from 'classnames';
+import ClearIcon from '@material-ui/icons/Clear';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -282,7 +284,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Grid item xs={2} className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={9} className={classes.card}>
+          <Grid item xs={9}>
             {selectedStream.fileId
               && (
                 <Card className={classes.card}>
@@ -293,6 +295,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                       finishAt: (selectedStream.finishAt),
                     })}
                   </Typography>
+
+                  <IconButton
+                    onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
+                  >
+                    <ClearIcon />
+                  </IconButton>
                 </Card>
               )}
           </Grid>
