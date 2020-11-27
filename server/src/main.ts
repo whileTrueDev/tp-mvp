@@ -1,6 +1,7 @@
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import { json, urlencoded } from 'express';
 // import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 
@@ -15,7 +16,9 @@ async function bootstrap() {
 
   // **********************************************
   // Set global middlewares
-  // bodyparser는 이미 활성화되어있다.
+  // bodyparser 설정.
+  app.use(json({ limit: '15mb' }));
+  app.use(urlencoded({ extended: true, limit: '15mb' }));
 
   // helmet
   app.use(helmet());

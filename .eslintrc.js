@@ -86,6 +86,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-var-requires': 'warn', // please use import
     "@typescript-eslint/no-use-before-define": 2,
+    
     // do not allow unused variables
     '@typescript-eslint/no-unused-vars': 2,
     '@typescript-eslint/camelcase': 'off',

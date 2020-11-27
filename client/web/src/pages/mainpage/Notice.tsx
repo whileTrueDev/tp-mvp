@@ -99,6 +99,7 @@ export default function Notice(): JSX.Element {
 
           <div className={classes.contents}>
             <NoticeTable
+              isLoading={loading}
               metrics={!loading && data
                 ? data
                   .sort((row1, row2) => {

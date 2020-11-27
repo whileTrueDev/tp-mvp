@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import Markdown from 'react-markdown/with-html';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -12,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 // import Divider from '@material-ui/core/Divider';
 // import Card from '../../../atoms/Card/Card';
+import { Viewer } from '@toast-ui/react-editor';
 import LockIcon from '@material-ui/icons/Lock';
 import { useSnackbar } from 'notistack';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
@@ -182,13 +182,9 @@ export default function FeatureDetail({
           </div>
         )}
         <div className={classes.contentsText}>
-          <Markdown
-            className={classes.markdown}
-            source={currentSuggestion.content}
-            escapeHtml={false}
-                // eslint-disable-next-line react/prop-types
-            renderers={{ code: ({ value }) => <Markdown source={value} /> }}
-          />
+          <div className={classes.markdown}>
+            <Viewer initialValue={currentSuggestion.content} />
+          </div>
         </div>
       </Paper>
 
