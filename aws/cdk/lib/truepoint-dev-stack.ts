@@ -284,13 +284,13 @@ export class TruepointDevStack extends BaseStack {
         frontend: {
           phases: {
             preBuild: {
-              commands: ['yarn install', 'cd shared', 'yarn build', 'cd ../client/web'],
+              commands: ['yarn install', 'cd shared', 'yarn build'],
             },
             build: {
-              commands: ['yarn build'],
+              commands: ['cd ../client/web', 'yarn build'],
             },
           },
-          artifacts: { baseDirectory: '/client/web/build', files: '**/*' },
+          artifacts: { baseDirectory: 'client/web/build', files: '**/*' },
           cache: { paths: 'node_modules/**/*' },
         },
       }),
@@ -302,18 +302,27 @@ export class TruepointDevStack extends BaseStack {
     // Add Domain
     const domain = amplifyApp.addDomain(DOMAIN);
 
-    // master
-    const webBranch = amplifyApp.addBranch('hwasurr-infra');
+    // master 환경
+    const webBranch = amplifyApp.addBranch('master');
     domain.mapRoot(webBranch);
 
-    // test
+    // Test 환경
     const testBranch = amplifyApp.addBranch('test', {
+      basicAuth: amplify.BasicAuth.fromCredentials(
+        'test',
+        cdk.SecretValue.plainText(process.env.AMPLIFY_TEST_PASSWORD!),
+      ),
+    });
+    domain.mapSubDomain(testBranch);
+
+    // Dev 환경
+    const devBranch = amplifyApp.addBranch('dev', {
       basicAuth: amplify.BasicAuth.fromCredentials(
         'dev',
         cdk.SecretValue.plainText(process.env.AMPLIFY_TEST_PASSWORD!),
       ),
     });
-    domain.mapSubDomain(testBranch);
+    domain.mapSubDomain(devBranch);
 
     // SPA 설정
     amplifyApp.addCustomRule(amplify.CustomRule.SINGLE_PAGE_APPLICATION_REDIRECT);
