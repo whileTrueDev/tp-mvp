@@ -17,6 +17,7 @@ import loadConfig from './config/loadConfig';
 import { roles } from './roles/app.roles';
 import { SlackModule } from './resources/slack/slack.module';
 import { NoticeModule } from './resources/notice/notice.module';
+import { HealthCheckModule } from './resources/health-check/healthcheck.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { NoticeModule } from './resources/notice/notice.module';
     InquiryModule,
     SlackModule,
     NoticeModule,
+    HealthCheckModule,
   ],
 })
 export class AppModule { }

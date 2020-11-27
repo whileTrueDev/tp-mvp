@@ -70,7 +70,7 @@ export default function SimpleNoticeTable(): JSX.Element {
                 </TableCell>
               </TableRow>
             ))}
-            {!loading && data.length === 0 && (
+            {!loading && data && data.length === 0 && (
               <TableRow>
                 <TableCell align="center" colSpan={3}>아직 공지사항이 없습니다.</TableCell>
               </TableRow>

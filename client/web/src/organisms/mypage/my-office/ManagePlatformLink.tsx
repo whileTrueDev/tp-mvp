@@ -58,9 +58,14 @@ export default function ManagePlatformLink({
   // *******************************
   // 연동 요청
   function handleLinkStart(platform: Platform) {
+    let host = 'http://localhost:3000';
     let params = platform;
     if (platform === 'afreeca') params += `?__userId=${auth.user.userId}`;
-    window.location.href = `http://localhost:3000/auth/${params}`;
+
+    if (process.env.NODE_ENV === 'production') {
+      host = 'https://api.mytruepoint.com';
+    }
+    window.location.href = `${host}/auth/${params}`;
   }
 
   // *******************************

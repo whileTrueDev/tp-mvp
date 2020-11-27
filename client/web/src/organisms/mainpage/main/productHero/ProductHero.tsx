@@ -13,7 +13,7 @@ export default function ProductHero(): JSX.Element {
     <div className={classes.root}>
       <Container>
         <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item md={8} className={classes.wraper}>
+          <Grid item md={8} sm={12} xs={12} className={classes.wraper}>
             <div className={classes.main}>
               {source.productHero.title.split('\n').map((row) => (
                 <h1 key={shortid.generate()} className={classes.mainTitle}>{row}</h1>

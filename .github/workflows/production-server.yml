@@ -22,18 +22,28 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      #  Install All Dependencies
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1 # install dependencies using cache
+
+      #  Build Shared Module
+      - name: Build shared module
+        id: shared-build
+        run: |
+          cd shared
+          yarn build
+
+      #  Build API server
       - name: TS Build
         run: |
           cd server
-          yarn
           yarn build
-          cd -
 
       - name: Build, tag, and push image to Docker Hub
         uses: elgohr/Publish-Docker-Github-Action@2.14
         with:
           workdir: server
-          name: ${{ secrets.DOCKER_USERNAME }}/truepoint-sever
+          name: ${{ secrets.DOCKER_USERNAME }}/truepoint-api
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tags: "${{ github.sha }},latest"
@@ -43,8 +53,8 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: server/task-definition.json
-          container-name: truepoint-server
-          image: ${{ secrets.DOCKER_USERNAME }}/truepoint-server:${{ github.sha }}
+          container-name: truepoint-api
+          image: ${{ secrets.DOCKER_USERNAME }}/truepoint-api:${{ github.sha }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

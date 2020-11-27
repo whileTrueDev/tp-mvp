@@ -81,9 +81,9 @@ export default function Settings(): JSX.Element {
           </div>
           {!userDataRequest.loading ? (
             <ManagePlatformLink
-              twitchId={userDataRequest.data.twitchId}
-              afreecaId={userDataRequest.data.afreecaId}
-              youtubeId={userDataRequest.data.youtubeId}
+              twitchId={userDataRequest.data?.twitchId}
+              afreecaId={userDataRequest.data?.afreecaId}
+              youtubeId={userDataRequest.data?.youtubeId}
               userDataRefetch={doUserFetch}
             />
           ) : (<CircularProgress />)}
@@ -95,10 +95,14 @@ export default function Settings(): JSX.Element {
             <SectionTitle mainTitle="내 정보 관리" />
           </div>
           {!userDataRequest.loading ? (
-            <ManageUserProfile
-              userProfileData={userDataRequest.data}
-              doUserFetch={doUserFetch}
-            />
+            <>
+              {userDataRequest.data && (
+              <ManageUserProfile
+                userProfileData={userDataRequest.data}
+                doUserFetch={doUserFetch}
+              />
+              )}
+            </>
           ) : (<CircularProgress />)}
         </Paper>
       </MypageSectionWrapper>

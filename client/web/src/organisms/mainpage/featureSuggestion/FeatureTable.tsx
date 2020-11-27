@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface FeatureTableProps {
+  isLoading: boolean;
   metrics: FeatureSuggestion[];
   page: number;
   pageSize: number;
@@ -43,6 +44,7 @@ export interface FeatureTableProps {
   handleClick: (a: any) => void;
 }
 export default function FeatureTable({
+  isLoading,
   metrics,
   handleClick,
   page,
@@ -174,6 +176,7 @@ export default function FeatureTable({
             </TableBody>
           ),
         }}
+        isLoading={isLoading}
         onChangePage={handlePage}
         onChangeRowsPerPage={handlePageSize}
         options={{

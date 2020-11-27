@@ -136,6 +136,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
           </div>
           <div className={classes.tableContainer}>
             <FeatureTable
+              isLoading={loading}
               metrics={!loading && data
                 ? data
                   .sort((row1, row2) => new Date(row2.createdAt).getTime()
