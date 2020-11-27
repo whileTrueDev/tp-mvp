@@ -336,7 +336,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         className={classes.root}
         justify="flex-end"
       >
-        <Grid item direction="column">
+        <Grid item direction="column" style={{ overflow: 'hiden' }}>
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}

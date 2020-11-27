@@ -90,6 +90,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: 'none',
     padding: theme.spacing(2),
   },
+  chipWapper: {
+    display: 'inline-flex',
+    flexDirection: 'column',
+  },
   chip: {
     marginRight: theme.spacing(2),
   },
@@ -98,7 +102,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(1),
   },
   tooltipIconWrapper: {
-    display: 'inline', marginRight: '8px', paddingTop: '4px',
+    display: 'inline-flex', marginRight: '8px', paddingTop: '4px', flexDirection: 'row',
   },
   tooltipChipWrapper: {
     display: 'flex',
@@ -152,35 +156,51 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           <Avatar style={{ marginBottom: '8px' }}>
             {platformIcon(stream)}
           </Avatar>
-          {stream.title}
         </div>
+        {stream.title}
       </Typography>
 
       <div className={classes.tooltipChipWrapper}>
-        <Chip
-          icon={<PersonAddIcon />}
-          label={stream.viewer}
-          size="medium"
-          color="primary"
-          className={classes.chip}
-        />
-        <Chip
-          icon={<ChatIcon />}
-          label={stream.chatCount}
-          size="medium"
-          color="secondary"
-          className={classes.chip}
-        />
-        <Chip
-          icon={<EmojiEmotionsIcon />}
-          label={stream.smileCount}
-          size="medium"
-          color="primary"
-          className={classes.chip}
-          style={{
-            background: '#d3d19d',
-          }}
-        />
+        <div className={classes.chipWapper}>
+          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 8 }}>
+            시청자수
+          </Typography>
+          <Chip
+            icon={<PersonAddIcon />}
+            label={stream.viewer}
+            size="medium"
+            color="primary"
+            className={classes.chip}
+          />
+        </div>
+        <div className={classes.chipWapper}>
+          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 12 }}>
+            채팅수
+          </Typography>
+          <Chip
+            icon={<ChatIcon />}
+            label={stream.chatCount}
+            size="medium"
+            color="secondary"
+            className={classes.chip}
+          />
+        </div>
+        <div className={classes.chipWapper}>
+          <Typography variant="caption" style={{ marginBottom: 4 }}>
+            웃음 발생 수
+          </Typography>
+          <Chip
+            icon={<EmojiEmotionsIcon />}
+            label={stream.smileCount}
+            size="medium"
+            color="primary"
+            className={classes.chip}
+            style={{
+              background: '#d3d19d',
+            }}
+          />
+        </div>
+
       </div>
     </div>
   );
