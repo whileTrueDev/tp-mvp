@@ -5,15 +5,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import HelpIcon from '@material-ui/icons/Help';
 
 const useStyles = makeStyles((theme) => ({
-  icon: {
-    color: '#4b5ac7',
-  },
-  popover: {
-    pointerEvents: 'none',
-  },
-  paper: {
-    padding: theme.spacing(1),
-  },
+  icon: { color: theme.palette.primary.dark },
+  popover: { pointerEvents: 'none' },
+  paper: { padding: theme.spacing(1) },
+  popoverContents: { width: 400, textAlign: 'center', padding: theme.spacing(1) },
 }));
 
 export default function HelperPopOver(): JSX.Element {
@@ -31,8 +26,9 @@ export default function HelperPopOver(): JSX.Element {
   const open = Boolean(anchorEl);
 
   return (
-    <div>
+    <div style={{ paddingLeft: 300 }}>
       <Typography
+        component="span"
         aria-owns={open ? 'mouse-over-popover' : undefined}
         aria-haspopup="true"
         onMouseEnter={handlePopoverOpen}
@@ -57,16 +53,21 @@ export default function HelperPopOver(): JSX.Element {
           horizontal: 'left',
         }}
         onClose={handlePopoverClose}
-        disableRestoreFocus
+        disableScrollLock
       >
-        <Typography>
-          차트에서 표시되는 방송의 편집점 구간을 편집점 툴의 타임라인에서 바로 확인할 수 있도록 파일로 내보낼 수 있습니다.
+        <div className={classes.popoverContents}>
+
+          <Typography>
+            차트에서 표시되는 방송의 편집점 구간을 편집점 툴의 타임라인에서 바로 확인할 수 있도록 파일로 내보낼 수 있습니다.
+          </Typography>
+          <Typography>
+            내보내고 싶은 확장자로 선택 후 버튼을 눌러주세요. 보다 상세한 사항은
+            {' '}
+            <strong>편집점 알아보기 버튼</strong>
+            을 클릭해주세요!
+          </Typography>
           <br />
-          내보내고 싶은 확장자로 선택 후 버튼을 눌러주세요. 보다 상세한 사항은
-          {' '}
-          <strong>편집점 알아보기 버튼</strong>
-          을 클릭해주세요!
-        </Typography>
+        </div>
       </Popover>
     </div>
   );

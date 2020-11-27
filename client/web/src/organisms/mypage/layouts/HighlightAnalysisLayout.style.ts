@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 
 const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
-  root: { padding: theme.spacing(4) },
+  root: { padding: theme.spacing(4), overflow: 'scroll' },
   sub: {
     fontSize: 22,
     color: theme.palette.text.secondary,
@@ -35,7 +35,7 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
   },
   searchBox: { margin: theme.spacing(4) },
   analysisButton: { textAlign: 'right', paddingBottom: theme.spacing(2) },
-  helperPopOver: { textAlign: 'right' },
+  helperPopOver: { textAlign: 'right', widht: 10 },
 }));
 
 export default useHighlightAnalysisLayoutStyles;
