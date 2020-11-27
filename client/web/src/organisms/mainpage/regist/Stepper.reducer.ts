@@ -41,7 +41,7 @@ export function myReducer(
 ): StepState {
   switch (action.type) {
     case 'id': {
-      const idReg = /^[A-za-z]+[a-z0-9]{5,15}$/g;
+      const idReg = /^[A-za-z]{1}[a-z0-9]{5,14}$/g;
       if (idReg.test(action.value)) {
         return {
           ...state, id: false, checkDuplication: true, idValue: action.value,
