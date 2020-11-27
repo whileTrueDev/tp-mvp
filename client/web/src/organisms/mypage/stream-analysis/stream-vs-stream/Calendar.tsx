@@ -34,9 +34,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
+    borderRadius: 5,
     borderColor: '#3a86ff',
-    right: '50%',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
   },
@@ -154,7 +154,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
             [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
           })}
           >
-            {React.cloneElement(dayComponent, { style: { backgroundColor: '#3a86ff', color: 'white' } })}
+            {React.cloneElement(dayComponent, { style: { backgroundColor: '#929ef8', color: 'white' } })}
             <div className={classnames({
               [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
             })}
