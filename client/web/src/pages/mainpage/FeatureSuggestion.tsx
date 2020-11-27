@@ -50,7 +50,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
   }
 
   function handleFeatureClick(num: number): void {
-    history.push(`/feature-suggestion/read/${num}`);
+    window.location.replace(`/feature-suggestion/read/${num}`);
   }
   function handleWriteClick(): void {
     history.push('/feature-suggestion/write');
