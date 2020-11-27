@@ -58,17 +58,17 @@ export default function MaterialTable({
       <Table
         columns={[
           {
-            width: '70px',
+            width: '5%',
             align: 'center',
             title: ' ',
           },
           {
-            width: '150px',
+            width: '10%',
             align: 'center',
             title: '카테고리',
           },
           {
-            // width: '70%',
+            width: '70%',
             align: 'center',
             title: '제목',
           },
