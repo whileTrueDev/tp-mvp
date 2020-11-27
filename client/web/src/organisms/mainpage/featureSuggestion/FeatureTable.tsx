@@ -120,7 +120,7 @@ export default function FeatureTable({
                   key={shortid.generate()}
                   onClick={() => {
                     if (eachRow.isLock) {
-                      if (eachRow.author === auth.user.userId) handleClick(eachRow.suggestionId);
+                      if (eachRow.author.userId === auth.user.userId) handleClick(eachRow.suggestionId);
                       else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
                     } else handleClick(eachRow.suggestionId);
                   }}
