@@ -12,6 +12,7 @@ import dateExpression from '../../../utils/dateExpression';
 
 const TABLE_ROW_HEIGHT = 45;
 interface TableProps {
+  isLoading: boolean;
   metrics: any;
   page: number;
   pageSize: number;
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function MaterialTable({
+  isLoading,
   metrics,
   handleClick,
   page,
@@ -71,7 +73,7 @@ export default function MaterialTable({
             title: '제목',
           },
           {
-            width: '15%',
+            width: '150px',
             align: 'center',
             title: '작성일',
           },
@@ -141,6 +143,7 @@ export default function MaterialTable({
             </TableBody>
           ),
         }}
+        isLoading={isLoading}
         onChangePage={handlePage}
         onChangeRowsPerPage={handlePageSize}
         options={{

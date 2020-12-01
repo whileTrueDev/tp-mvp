@@ -17,7 +17,7 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @Column()
   title: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'longtext' })
   content: string;
 
   @JoinColumn()

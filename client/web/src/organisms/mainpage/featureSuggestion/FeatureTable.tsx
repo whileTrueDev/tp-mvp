@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface FeatureTableProps {
+  isLoading: boolean;
   metrics: FeatureSuggestion[];
   page: number;
   pageSize: number;
@@ -43,6 +44,7 @@ export interface FeatureTableProps {
   handleClick: (a: any) => void;
 }
 export default function FeatureTable({
+  isLoading,
   metrics,
   handleClick,
   page,
@@ -120,7 +122,7 @@ export default function FeatureTable({
                   key={shortid.generate()}
                   onClick={() => {
                     if (eachRow.isLock) {
-                      if (eachRow.author === auth.user.userId) handleClick(eachRow.suggestionId);
+                      if (eachRow.author.userId === auth.user.userId) handleClick(eachRow.suggestionId);
                       else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
                     } else handleClick(eachRow.suggestionId);
                   }}
@@ -174,6 +176,7 @@ export default function FeatureTable({
             </TableBody>
           ),
         }}
+        isLoading={isLoading}
         onChangePage={handlePage}
         onChangeRowsPerPage={handlePageSize}
         options={{

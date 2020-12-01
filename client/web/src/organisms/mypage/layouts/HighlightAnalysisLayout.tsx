@@ -5,9 +5,11 @@ import Paper from '@material-ui/core/Paper';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import classnames from 'classnames';
+import ClearIcon from '@material-ui/icons/Clear';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -281,17 +283,24 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Grid item xs={3} className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={8} className={classes.card}>
+          <Grid item xs={9}>
             {selectedStream.fileId
               && (
-              <Typography className={classes.cardText}>
-                {dateExpression({
-                  compoName: 'highlight-calendar',
-                  createdAt: (selectedStream.startAt),
-                  finishAt: (selectedStream.finishAt),
-                })}
-              </Typography>
+                <Card className={classes.card}>
+                  <Typography className={classes.cardText}>
+                    {dateExpression({
+                      compoName: 'highlight-calendar',
+                      createdAt: (selectedStream.startAt),
+                      finishAt: (selectedStream.finishAt),
+                    })}
+                  </Typography>
 
+                  <IconButton
+                    onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </Card>
               )}
           </Grid>
 
@@ -334,7 +343,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         className={classes.root}
         justify="flex-end"
       >
-        <Grid item direction="column">
+        <Grid item direction="column" style={{ overflow: 'hiden' }}>
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
