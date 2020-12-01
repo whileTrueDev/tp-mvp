@@ -290,8 +290,11 @@ export class TruepointDevStack extends BaseStack {
               commands: ['cd ../client/web', 'yarn build'],
             },
           },
-          artifacts: { baseDirectory: 'client/web/build', files: '**/*' },
-          cache: { paths: 'node_modules/**/*' },
+          artifacts: {
+            baseDirectory: 'client/web/build',
+            files: ['**/*'],
+          },
+          cache: { paths: ['node_modules/**/*'] },
         },
       }),
       autoBranchDeletion: true,
