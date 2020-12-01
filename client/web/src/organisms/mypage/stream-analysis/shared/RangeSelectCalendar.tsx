@@ -154,17 +154,19 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
 
-    excuteGetStreams({
-      params,
-    }).then((result) => {
-      setHasStreamDays(
-        result.data.map((streamInfo) => moment(new Date(streamInfo.startedAt)).format('YYYY-MM-DD')),
-      );
-    }).catch((err) => {
-      if (err.response) {
-        ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-      }
-    });
+    if (auth.user.userId) {
+      excuteGetStreams({
+        params,
+      }).then((result) => {
+        setHasStreamDays(
+          result.data.map((streamInfo) => moment(new Date(streamInfo.startedAt)).format('YYYY-MM-DD')),
+        );
+      }).catch((err) => {
+        if (err.response) {
+          ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+        }
+      });
+    }
   }, [auth.user, excuteGetStreams, enqueueSnackbar, currMonth]);
 
   React.useEffect(() => {
