@@ -1,22 +1,41 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { CatsModule } from './resources/cats/cats.module';
+import { AccessControlModule } from 'nest-access-control';
+
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
+import { HighlightModule } from './resources/highlightPoint/hightlight.module';
+import { FeatureModule } from './resources/featureSuggestion/featureSuggestion.module';
+import { InquiryModule } from './resources/inquiry/inquiry.module';
+import { TypeOrmConfigService } from './config/database.config';
+import { NotificationModule } from './resources/notification/notification.module';
+import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
 
 import loadConfig from './config/loadConfig';
-import { TypeOrmConfigService } from './config/database.config';
+
+import { roles } from './roles/app.roles';
+import { SlackModule } from './resources/slack/slack.module';
+import { NoticeModule } from './resources/notice/notice.module';
+import { HealthCheckModule } from './resources/health-check/healthcheck.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
     TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService
+      useClass: TypeOrmConfigService,
     }),
-    CatsModule,
+    AccessControlModule.forRoles(roles),
     AuthModule,
-    UsersModule
+    UsersModule,
+    HighlightModule,
+    NotificationModule,
+    StreamAnalysisModule,
+    FeatureModule,
+    InquiryModule,
+    SlackModule,
+    NoticeModule,
+    HealthCheckModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

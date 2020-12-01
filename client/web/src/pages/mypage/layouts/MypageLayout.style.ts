@@ -1,41 +1,50 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
+import {
+  COMMON_APP_BAR_HEIGHT, MYPAGE_APP_BAR_HEIGHT,
+  MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_HEIGHT,
+  MYPAGE_MAIN_MIN_WIDTH, SIDE_BAR_WIDTH,
+} from '../../../assets/constants';
 
 const useLayoutStyles = makeStyles((theme: Theme) => ({
   wrapper: {
-    position: 'relative',
-    top: '0',
-    height: '100vh',
+    position: 'sticky',
+    minHeight: `calc(100vh - ${COMMON_APP_BAR_HEIGHT}px)`,
+    background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
-  mainPanel: {
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${300}px)`,
-    },
-    overflow: 'auto',
-    position: 'relative',
-    float: 'right',
-    transition: 'all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)',
-    maxHeight: '100%',
-    width: '100%',
-    overflowScrolling: 'touch',
+  conatiner: {
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
+    minHeight: MYPAGE_MAIN_MIN_HEIGHT,
+    margin: '0 auto',
+    display: 'flex',
+    boxShadow: theme.shadows[4],
     backgroundColor: theme.palette.background.default,
   },
-  content: {
-    marginTop: '70px',
-    padding: '15px 15px',
-    minHeight: 'calc(100vh - 123px)',
-    [theme.breakpoints.down('xs')]: {
-      padding: 0
-    }
-  },
-  container: {
-    [theme.breakpoints.down('xs')]: {
-      paddingLeft: 15,
-      paddingRight: 15
+  sidebarWrapper: {
+    position: 'fixed',
+    height: '100%',
+    width: SIDE_BAR_WIDTH,
+    marginTop: MYPAGE_APP_BAR_HEIGHT,
+    backgroundColor: theme.palette.background.paper,
+    borderRight: `1px solid ${theme.palette.divider}`,
+    overflow: 'hidden',
+    '&:hover': {
+      overflowY: 'auto',
     },
-    paddingRight: '15px',
-    paddingLeft: '15px',
-    marginRight: 'auto',
-    marginLeft: 'auto',
+    zIndex: theme.zIndex.drawer,
+  },
+  appbarWrapper: {
+    height: MYPAGE_APP_BAR_HEIGHT,
+    width: '100%',
+    position: 'fixed',
+    zIndex: 9999,
+  },
+  mainPanel: {
+    marginLeft: 230,
+    marginTop: MYPAGE_APP_BAR_HEIGHT,
+    width: '100%',
+    overflow: 'auto',
+    backgroundColor: theme.palette.background.default,
   },
 }));
 

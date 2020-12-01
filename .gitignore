@@ -1,7 +1,13 @@
+# python ignores
+/__pycache__
+__pycache__/
+__pycache__/*
+*.sql
+
 .env
 dist
 node_modules
-
+.venv/
 # *****************************************************
 # Server
 # *****************************************************
@@ -34,9 +40,10 @@ server/.idea
 .settings/
 *.sublime-workspace
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+
+__pycache__
+analyzer/highlightAnalyzer/.pylintrc
+analyzer/highlightAnalyzer/user_dictionary.txt
+
+# IDE -Visual Studio
+.vs

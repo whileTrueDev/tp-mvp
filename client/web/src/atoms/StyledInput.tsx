@@ -1,0 +1,24 @@
+import React from 'react';
+import { Input, InputProps } from '@material-ui/core';
+import { withStyles, Theme } from '@material-ui/core/styles';
+
+const StyledInput = withStyles((theme: Theme) => ({
+  root: {
+    fontSize: '16px',
+    fontWeight: 700,
+    color: theme.palette.text.secondary,
+    width: '300px',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+      fontSize: '12px',
+      margin: 0,
+    },
+  },
+  underline: {
+    color: theme.palette.text.secondary,
+  },
+}))((props: InputProps) => (
+  <Input {...props} />
+));
+
+export default StyledInput;

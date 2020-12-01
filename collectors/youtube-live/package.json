@@ -1,0 +1,26 @@
+{
+  "name": "youtube-live",
+  "version": "1.0.0",
+  "description": "youtube chat data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whileTrueDev/tp-mvp.git"
+  },
+  "keywords": [
+    "chat"
+  ],
+  "author": "simon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/whileTrueDev/tp-mvp/issues"
+  },
+  "homepage": "https://github.com/whileTrueDev/tp-mvp#readme",
+  "dependencies": {
+    "eslint": "^7.4.0",
+    "prettier": "^2.0.5"
+  }
+}

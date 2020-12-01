@@ -1,9 +1,8 @@
-import axios from 'axios';
+import Axios from 'axios';
 
-export const cancelToken = axios.CancelToken;
-export const { isCancel } = axios;
-const axiosInstance = axios.create({
+const axios = Axios.create({
+  baseURL: process.env.NODE_ENV === 'production' ? 'https://api.mytruepoint.com' : 'http://localhost:3000',
   withCredentials: true,
 });
 
-export default axiosInstance;
+export default axios;

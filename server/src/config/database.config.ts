@@ -5,7 +5,8 @@ import { TruepointDbSecret } from '../interfaces/Secrets.interface';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) { }
+
   createTypeOrmOptions(): TypeOrmModuleOptions {
     const database = this.configService.get<TruepointDbSecret>('database');
 
@@ -16,6 +17,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: database.username,
       password: database.password,
       database: 'TruepointDev',
+      timezone: 'Asia/Seoul',
       synchronize: true,
       autoLoadEntities: true,
     };
