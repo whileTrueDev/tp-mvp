@@ -27,23 +27,15 @@ const API_DOMAIN = 'api.mytruepoint.com';
 const API_SERVER_PORT = 3000;
 const API_SERVER_NAME = 'truepoint-api';
 
-export class TruepointDevStack extends BaseStack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+interface WhileTrueCollectorStackProps extends cdk.StackProps {
+  vpc: ec2.IVpc
+}
+
+export class TruepointProductionStack extends BaseStack {
+  constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
     super(scope, id, props);
 
-    // *********************************************
-    // ************** VPC and Subnets **************
-    // *********************************************
-    const vpc = new ec2.Vpc(this, `${ID_PREFIX}Vpc`, {
-      cidr: '11.0.0.0/24',
-      maxAzs: 4, // To use all Avaliability Zone
-      subnetConfiguration: [
-        {
-          subnetType: ec2.SubnetType.PUBLIC, // For internet-facing load balancer
-          name: 'Public for Dev',
-        },
-      ],
-    });
+    const { vpc } = props!;
 
     // *********************************************
     // *********** RDS for Production  *************
@@ -68,7 +60,7 @@ export class TruepointDevStack extends BaseStack {
     );
 
     const dbEngine = rds.DatabaseInstanceEngine.mysql({
-      version: rds.MysqlEngineVersion.VER_8_0_17,
+      version: rds.MysqlEngineVersion.VER_8_0_20,
     });
     new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
