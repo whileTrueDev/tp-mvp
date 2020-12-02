@@ -132,13 +132,35 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       return returnDict;
     }
 
-    const resultData: {chat_points: PointType[]; smile_points: PointType[]} = {
+    const resultData: {
+      chat_points: PointType[];
+      smile_points: PointType[];
+      funny_points: PointType[];
+      surprise_points: PointType[];
+      agree_points: PointType[];
+      disgust_points: PointType[];
+      question_points: PointType[];
+    } = {
       chat_points: [],
       smile_points: [],
+      funny_points: [],
+      surprise_points: [],
+      agree_points: [],
+      disgust_points: [],
+      question_points: [],
     };
 
+    console.log('metric : ', metric);
     const chatHighlight = metric.chat_points;
     const smileHighlight = metric.smile_points;
+    /**
+     * 카테고리별 하이라이트 metric data
+     */
+    const funnyHighlight = metric.funny_points;
+    const surpriseHighlight = metric.surprise_points;
+    const agreeHighlight = metric.agree_points;
+    const disgustHighlight = metric.disgust_points;
+    const questionHighlight = metric.question_points;
 
     chatHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'chat_count');
@@ -147,6 +169,34 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
     smileHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'smile_count');
+      resultData.smile_points.push(eachData);
+    });
+
+    /**
+     * 카테고리 별 metric data insert
+     */
+    funnyHighlight.forEach((item: number) => {
+      const eachData = insertPoints(item, 'funny_count');
+      resultData.smile_points.push(eachData);
+    });
+
+    surpriseHighlight.forEach((item: number) => {
+      const eachData = insertPoints(item, 'surprise_count');
+      resultData.smile_points.push(eachData);
+    });
+
+    agreeHighlight.forEach((item: number) => {
+      const eachData = insertPoints(item, 'agree_count');
+      resultData.smile_points.push(eachData);
+    });
+
+    disgustHighlight.forEach((item: number) => {
+      const eachData = insertPoints(item, 'disgust_count');
+      resultData.smile_points.push(eachData);
+    });
+
+    questionHighlight.forEach((item: number) => {
+      const eachData = insertPoints(item, 'question_count');
       resultData.smile_points.push(eachData);
     });
 
@@ -222,7 +272,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         if (res.data) {
           setMetricsData(getMetricsPoint(res.data));
         }
-      }).catch(() => {
+      }).catch((err) => {
         ShowSnack('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
@@ -245,20 +295,23 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       });
   };
 
+  /**
+   * 카테고리 리스트 요청부
+   */
   const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
     url: '/category',
   });
 
-  const [analysisWord, setAnalysisWord] = React.useState<string>();
-  const handleAnalysisWord = (targetWord: string) => {
-    setAnalysisWord(targetWord);
-  };
+  // const [analysisWord, setAnalysisWord] = React.useState<string>();
+  // const handleAnalysisWord = (targetWord: string) => {
+  //   setAnalysisWord(targetWord);
+  // };
 
-  React.useEffect(() => {
-    if (categoriesData) {
-      setAnalysisWord(categoriesData[0].categoryName);
-    }
-  }, [categoriesData]);
+  // React.useEffect(() => {
+  //   if (categoriesData) {
+  //     setAnalysisWord(categoriesData[0].categoryName);
+  //   }
+  // }, [categoriesData]);
 
   return (
     <Paper className={classes.root}>
@@ -317,7 +370,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Calendar handleDatePick={handleDatePick} />
         </Grid>
 
-        <Grid
+        {/* <Grid
           item
           xs
           className={classnames({
@@ -334,7 +387,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             handleAnalysisWord={handleAnalysisWord}
             analysisWord={analysisWord}
           />
-        </div>
+        </div> */}
       </Grid>
 
       <Grid
@@ -348,7 +401,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
-              disabled={isClicked || Boolean(!selectedStream.fileId) || Boolean(!analysisWord)}
+              disabled={isClicked || Boolean(!selectedStream.fileId)}
             >
               분석하기
             </Button>
@@ -401,13 +454,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
       </Grid>
-      <Loading clickOpen={isClicked} />
-      { !isClicked && highlightData && metricsData && (
+      {/* <Loading clickOpen={isClicked} /> */}
+      { !isClicked && highlightData && metricsData && categoriesData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
           <MetricsAccordian
             metricsData={metricsData}
-            analysisWord={analysisWord}
+            categories={categoriesData}
           />
         </>
       )}

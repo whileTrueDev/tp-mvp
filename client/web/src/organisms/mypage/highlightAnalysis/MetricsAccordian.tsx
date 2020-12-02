@@ -2,11 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Accordion, AccordionSummary,
-  AccordionDetails, Typography, Grid,
+  AccordionDetails, Typography, Grid, ListItem, Button,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Paper from '@material-ui/core/Paper';
-import Button from '../../../atoms/Button/Button';
+import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import MetricTitle from '../../shared/sub/MetricTitle';
 import MetricsTable from '../../shared/sub/MetricsTable';
 import { initialPoint } from './TruepointHighlight';
@@ -42,17 +42,32 @@ const styles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
+  selectedCategoryButton: {
+    boxShadow: theme.shadows[0],
+    backgroundColor: theme.palette.action.selected,
+  },
+  categoryButton: {
+    boxShadow: theme.shadows[3],
+    backgroundColor: theme.palette.background.paper,
+    '&:hover': {
+      transform: 'scale(1.04)',
+      boxShadow: theme.shadows[5],
+    },
+  },
+  selectedButtonTitle: { fontWeight: 'bold' },
 }));
 
 interface MetricsAccordianProps {
   metricsData: any;
   analysisWord?: string;
+  categories: CategoryGetRequest[];
 }
 
 export default function MetricsAccordian(
   {
     metricsData,
     analysisWord,
+    categories,
   }: MetricsAccordianProps,
 ): JSX.Element {
   const classes = styles();
@@ -62,9 +77,17 @@ export default function MetricsAccordian(
   const [page2, setPage2] = React.useState(0);
   const [pageSize2, setPageSize2] = React.useState(5);
   const [point2, setPoint2] = React.useState(initialPoint);
-  // const [page3, setPage3] = React.useState(0);
-  // const [pageSize3, setPageSize3] = React.useState(5);
-  // const [point3, setPoint3] = React.useState(initialPoint);
+  const [page3, setPage3] = React.useState(0);
+  const [pageSize3, setPageSize3] = React.useState(5);
+  const [point3, setPoint3] = React.useState(initialPoint);
+
+  console.log(metricsData);
+
+  const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
+
+  const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {
+    setSelectedCategory(clickedCategory);
+  };
 
   return (
     <Paper>
@@ -176,45 +199,65 @@ export default function MetricsAccordian(
         </AccordionDetails>
       </Accordion>
 
-      {analysisWord && (
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
         >
-          <Typography className={classes.heading}>
-            {`"${analysisWord}"`}
-            {' '}
-            카테고리 기반 편집점
-          </Typography>
+          <Typography className={classes.heading}>카테고리 기반 편집점</Typography>
         </AccordionSummary>
         <AccordionDetails className={classes.wraper}>
           <Grid item md={12}>
             <MetricTitle
-              subTitle={`"${analysisWord}" 카테고리 편집점`}
+              subTitle="카테고리 편집점"
               iconSrc="/images/analyticsPage/logo_search.svg"
               pointNumber={metricsData.smile_points.length}
             />
+            <div style={{
+              display: 'inline-flex', flexDirection: 'row', alignItems: 'center', height: 80,
+            }}
+            >
+              {categories.map((category) => (
+                <Button
+                  className={
+                    category.categoryId === selectedCategory.categoryId
+                      ? classes.selectedCategoryButton : classes.categoryButton
+                  }
+                  variant="contained"
+                  style={{ width: 150, marginLeft: 16, height: 60 }}
+                  onClick={() => handleCategorySelect(category)}
+                >
+                  <Typography
+                    variant="body1"
+                    color="textSecondary"
+                    className={category.categoryId === selectedCategory.categoryId
+                      ? classes.selectedButtonTitle : undefined}
+                  >
+                    {category.categoryName}
+                  </Typography>
+                </Button>
+              ))}
+            </div>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
                 <Chart
-                  data={metricsData.smile_points}
-                  chartType="smile"
-                  highlight={point2}
-                  handleClick={setPoint2}
-                  handlePage={setPage2}
-                  pageSize={pageSize2}
+                  data={metricsData[`${selectedCategory.category}_points`]}
+                  chartType={selectedCategory.category}
+                  highlight={point3}
+                  handleClick={setPoint3}
+                  handlePage={setPage3}
+                  pageSize={pageSize3}
                 />
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={metricsData.smile_points}
-                  handleClick={setPoint2}
-                  row={point2}
-                  page={page2}
-                  pageSize={pageSize2}
-                  handlePage={setPage2}
-                  handlePageSize={setPageSize2}
-                  type={`"${analysisWord}" 카테고리 기반 편집점`}
+                  metrics={metricsData[`${selectedCategory.category}_points`]}
+                  handleClick={setPoint3}
+                  row={point3}
+                  page={page3}
+                  pageSize={pageSize3}
+                  handlePage={setPage3}
+                  handlePageSize={setPageSize3}
+                  type="카테고리 기반 편집점"
                 />
                 <div className={classes.buttonWraper}>
                   <Button
@@ -234,7 +277,6 @@ export default function MetricsAccordian(
           </Grid>
         </AccordionDetails>
       </Accordion>
-      )}
 
     </Paper>
   );

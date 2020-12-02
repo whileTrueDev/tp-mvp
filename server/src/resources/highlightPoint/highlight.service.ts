@@ -10,21 +10,27 @@ const s3 = new AWS.S3();
 export class HighlightService {
   async getHighlightData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
+    console.log(id, year, month, day, fileId, 'get High\n\n');
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
     };
+    console.log(getParams, 'get highlight_json\n\n');
     const returnHighlight = await s3.getObject(getParams).promise();
+    console.log(returnHighlight);
     return returnHighlight.Body.toString('utf-8');
   }
 
   async getMetricsData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
+    console.log(id, year, month, day, fileId, 'get Met\n\n');
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`,
     };
+    console.log(getParams, 'get Met\n\n');
     const returnHighlight = await s3.getObject(getParams).promise();
+    console.log(returnHighlight);
     return returnHighlight.Body.toString('utf-8');
   }
 
