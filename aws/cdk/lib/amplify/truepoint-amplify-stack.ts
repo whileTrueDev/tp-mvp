@@ -28,6 +28,7 @@ export class TruepointAmplify extends BaseStack {
           jsonField: 'AMPLIFY_GITHUB_ACCESS_TOKEN',
         }),
       }),
+      autoBranchDeletion: true,
       buildSpec: codebuild.BuildSpec.fromObject({
         version: '1.0',
         frontend: {
@@ -36,7 +37,7 @@ export class TruepointAmplify extends BaseStack {
               commands: ['yarn install', 'cd shared', 'yarn build'],
             },
             build: {
-              commands: ['cd ../client/web', 'yarn build'],
+              commands: ['cd ../client/web', 'REACT_APP_NODE_ENV=$REACT_APP_NODE_ENV yarn build'],
             },
           },
           artifacts: {
@@ -46,7 +47,6 @@ export class TruepointAmplify extends BaseStack {
           cache: { paths: ['node_modules/**/*'] },
         },
       }),
-      autoBranchDeletion: true,
     });
 
     // Add Branch
@@ -60,7 +60,7 @@ export class TruepointAmplify extends BaseStack {
       description: 'truepoint web production branch',
       // 환경 변수는 빌드할 때 앱에 필요한 상수 값이 포함된 키/값 페어입니다.
       // https://docs.aws.amazon.com/amplify/latest/userguide/environment-variables.html
-      environmentVariables: { NODE_ENV: 'production' },
+      environmentVariables: { REACT_APP_NODE_ENV: 'production' },
     });
     domain.mapRoot(webBranch);
 
@@ -68,7 +68,7 @@ export class TruepointAmplify extends BaseStack {
     const testBranch = amplifyApp.addBranch('test', {
       autoBuild: true,
       description: 'truepoint web test branch',
-      environmentVariables: { NODE_ENV: 'test' },
+      environmentVariables: { REACT_APP_NODE_ENV: 'test' },
       basicAuth: amplify.BasicAuth.fromCredentials(
         'truepoint',
         cdk.SecretValue.secretsManager('Truepoint-AmplifyConsoleSecrets', {

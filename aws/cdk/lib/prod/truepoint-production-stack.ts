@@ -1,297 +1,89 @@
 /* eslint-disable no-new */
+/**
+ * Dev 환경의 Vpc, RDS DB 등을 배포.
+ * @author hwasurr
+ */
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
-import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as route53targets from '@aws-cdk/aws-route53-targets';
-import * as logs from '@aws-cdk/aws-logs';
-import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as rds from '@aws-cdk/aws-rds';
-
-import getSSMParams from '../utils/getParams';
+import * as logs from '@aws-cdk/aws-logs';
+import * as iam from '@aws-cdk/aws-iam';
+import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
+import { ListenerCondition } from '@aws-cdk/aws-elasticloadbalancingv2';
+import * as acm from '@aws-cdk/aws-certificatemanager';
+import * as route53 from '@aws-cdk/aws-route53';
+import * as targets from '@aws-cdk/aws-route53-targets';
+import BaseStack from '../class/BaseStack';
 
 // CONSTANTS
-const DOMAIN_NAME = 'mytruepoint.com';
-const BACKEND_SUBDOMAIN = 'api';
-const ID_PREFIX = 'Truepoint';
+const DOMAIN = 'mytruepoint.com';
+const ID_PREFIX = 'TruepointDev';
+const SSL_CERTIFICATE_ARN = 'arn:aws:acm:ap-northeast-2:576646866181:certificate/68f8f35a-bd5d-492b-8f58-c0152b60b71f';
+// DB
 const DATABASE_PORT = 3306;
-const BACKEND_PORT = 3000;
-const FRONTEND_PORT = 3001;
-const BACKEND_FAMILY_NAME = 'truepoint-sever';
-const FRONTEND_FAMILY_NAME = 'truepoint-client';
-const BACKEND_DOMAIN = `${BACKEND_SUBDOMAIN}.${DOMAIN_NAME}`;
-const FRONTEND_DOMAIN = DOMAIN_NAME;
+// API SERVER
+const API_DOMAIN = 'api.mytruepoint.com';
+const API_SERVER_PORT = 3000;
+const API_SERVER_NAME = 'truepoint-api';
 
-const ECS_CLUSTER_NAME = 'TruepointProduction';
-
-interface TruepointStackProps extends cdk.StackProps {
-  vpc: ec2.IVpc
-}
-export class TruepointStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: TruepointStackProps) {
+export class TruepointDevStack extends BaseStack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // *********************************************
     // ************** VPC and Subnets **************
     // *********************************************
-    const { vpc } = props!;
+    const vpc = new ec2.Vpc(this, `${ID_PREFIX}Vpc`, {
+      cidr: '11.0.0.0/24',
+      maxAzs: 4, // To use all Avaliability Zone
+      subnetConfiguration: [
+        {
+          subnetType: ec2.SubnetType.PUBLIC, // For internet-facing load balancer
+          name: 'Public for Dev',
+        },
+      ],
+    });
 
     // *********************************************
-    // ************* Security Groups ***************
+    // *********** RDS for Production  *************
     // *********************************************
 
-    // Public Load Balancer sec-grp
-    const loadBalancerSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}ALBSecGrp`, {
-      vpc,
-      securityGroupName: `${ID_PREFIX}PublicALBSecurityGroup`,
-      description: 'Allow Inbound traffics for truepoint public ALB.',
-      allowAllOutbound: false,
-    });
-    loadBalancerSecGrp.addIngressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.tcp(80),
-      'Allow Port 80 for HTTP listener of Public ALB',
-    );
-    loadBalancerSecGrp.addIngressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.tcp(443),
-      'Allow Port 443 for HTTPS listener of Public ALB',
-    );
-
-    // Backend sec-grp
-    const backendSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}BackendSecGrp`, {
-      vpc,
-      securityGroupName: `${ID_PREFIX}BackendSecurityGroup`,
-      description: 'Allow Inbound traffics for Backend app of Truepoint.',
-      allowAllOutbound: true,
-    });
-    backendSecGrp.addIngressRule(
-      loadBalancerSecGrp,
-      ec2.Port.tcp(BACKEND_PORT),
-      `Allow Port ${BACKEND_PORT} for traffics from the truepoint Public ALB`,
-    );
-
-    // Frontend sec-grp
-    const frontendSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}FrontendSecGrp`, {
-      vpc,
-      securityGroupName: `${ID_PREFIX}FrontendSecurityGroup`,
-      description: 'Allow Inbound traffics for Frontend app of Truepoint.',
-      allowAllOutbound: true,
-    });
-    frontendSecGrp.addIngressRule(
-      loadBalancerSecGrp,
-      ec2.Port.tcp(FRONTEND_PORT),
-      `Allow Port ${FRONTEND_PORT} for traffics from the truepoint Public ALB`,
-    );
-
-    // Database sec-grp
+    // 데이터베이스 보안그룹 생성 작업
     const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
       vpc,
       securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
-      description: 'Allow Inbound traffics for Database of Truepoint',
+      description: 'Allow traffics for Dev Database of Truepoint',
       allowAllOutbound: false,
     });
     databaseSecGrp.addEgressRule(
-      backendSecGrp,
+      ec2.Peer.anyIpv4(),
       ec2.Port.tcp(DATABASE_PORT),
       `Allow Port ${DATABASE_PORT} for Outbound traffics to the truepoint Backend`,
     );
     databaseSecGrp.addIngressRule(
-      backendSecGrp,
+      ec2.Peer.anyIpv4(),
       ec2.Port.tcp(DATABASE_PORT),
       `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`,
     );
 
-    // *********************************************
-    // *********** SSM Parameter Store *************
-    // *********************************************
-    const ssmParameters = getSSMParams(this);
-    console.error(ssmParameters); // eslint error를 임시적으로 삭제하기 위해 예비로 삽입한 코드. 삭제바람.
-
-    // *********************************************
-    // ******************* ECS *********************
-    // *********************************************
-
-    // Define ECS Cluster
-    const productionECSCluster = new ecs.Cluster(this, `${ID_PREFIX}productionECSCluster`, {
-      vpc, clusterName: ECS_CLUSTER_NAME,
-    });
-
-    // *********************************************
-    // Define task definition of Backend
-    const backendLogGroup = new logs.LogGroup(this, `${ID_PREFIX}BackendLogGroup`, {
-      logGroupName: `/ecs/${BACKEND_FAMILY_NAME}`, removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
-    const backendTaskDef = new ecs.FargateTaskDefinition(
-      this, `${ID_PREFIX}BackendTaskDef`, { family: BACKEND_FAMILY_NAME },
-    );
-    const backendContainer = backendTaskDef.addContainer(`${ID_PREFIX}BackendContainer`, {
-      image: ecs.ContainerImage.fromRegistry(`hwasurr/${BACKEND_FAMILY_NAME}`),
-      memoryLimitMiB: 512,
-      // secrets: {},
-      logging: new ecs.AwsLogDriver({ logGroup: backendLogGroup, streamPrefix: 'ecs' }),
-    });
-    backendContainer.addPortMappings({ containerPort: BACKEND_PORT });
-
-    // *********************************************
-    // Define task definition of Frontend
-    const frontendLogGroup = new logs.LogGroup(this, `${ID_PREFIX}FrontendLogGroup`, {
-      logGroupName: `/ecs/${FRONTEND_FAMILY_NAME}`, removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
-    const frontendTaskDef = new ecs.FargateTaskDefinition(
-      this, `${ID_PREFIX}FrontendTaskDef`, { family: FRONTEND_FAMILY_NAME },
-    );
-    const frontendContainer = frontendTaskDef.addContainer(`${ID_PREFIX}FrontendContainer`, {
-      image: ecs.ContainerImage.fromRegistry(`hwasurr/${FRONTEND_FAMILY_NAME}`),
-      memoryLimitMiB: 256,
-      logging: new ecs.AwsLogDriver({ logGroup: frontendLogGroup, streamPrefix: 'ecs' }),
-    });
-    frontendContainer.addPortMappings({ containerPort: FRONTEND_PORT });
-
-    // *********************************************
-    // Create ECS Service for Backend
-    const backendService = new ecs.FargateService(this, `${ID_PREFIX}BackendService`, {
-      cluster: productionECSCluster,
-      taskDefinition: backendTaskDef,
-      desiredCount: 1,
-      serviceName: `${ID_PREFIX}BackendService`,
-    });
-
-    // *********************************************
-    // Create ECS Service for Frontend
-    const frontendService = new ecs.FargateService(this, `${ID_PREFIX}FrontendService`, {
-      cluster: productionECSCluster,
-      taskDefinition: frontendTaskDef,
-      desiredCount: 1,
-      serviceName: `${ID_PREFIX}FrontendService`,
-    });
-
-    // *********************************************
-    // *********** Certificate manager *************
-    // *********************************************
-    // const sslCert = acm.Certificate.fromCertificateArn(
-    //   this, `${ID_PREFIX}DnsCertificates`,
-    //   process.env.AWS_SSL_CERTIFICATIE_ARN // 생성 필요.
-    // )
-
-    // *********************************************
-    // ******** Application Load Balancer **********
-    // *********************************************
-
-    // Define loadbalancer Target group
-    const backendTargetGroup = new elbv2.ApplicationTargetGroup(this, `${ID_PREFIX}BackendTargetGroup`, {
-      vpc,
-      protocol: elbv2.ApplicationProtocol.HTTP,
-      port: BACKEND_PORT,
-      targets: [backendService],
-      targetGroupName: `${ID_PREFIX}BackendTargetGroup`,
-      healthCheck: {
-        path: '/',
-        interval: cdk.Duration.seconds(30),
-      },
-    });
-    const frontendTargetGroup = new elbv2.ApplicationTargetGroup(this, `${ID_PREFIX}FrontendTargetGroup`, {
-      vpc,
-      protocol: elbv2.ApplicationProtocol.HTTP,
-      port: FRONTEND_PORT,
-      targets: [frontendService],
-      targetGroupName: `${ID_PREFIX}FrontendTargetGroup`,
-      healthCheck: {
-        path: '/',
-        interval: cdk.Duration.seconds(30),
-      },
-    });
-
-    // Create Load Balancer
-    const publicLoadBalancer = new elbv2.ApplicationLoadBalancer(this, `${ID_PREFIX}PublicLoadBalancer`, {
-      vpc,
-      internetFacing: true,
-      loadBalancerName: `${ID_PREFIX}Public`,
-      securityGroup: loadBalancerSecGrp,
-    });
-
-    // Define HTTP Listener
-    const HTTPListener = publicLoadBalancer.addListener(`${ID_PREFIX}HttpListener`, {
-      port: 80,
-      defaultTargetGroups: [frontendTargetGroup],
-    });
-    HTTPListener.addRedirectResponse(`${ID_PREFIX}80to443RedirectTarget`, {
-      priority: 1,
-      pathPattern: '/*',
-      statusCode: 'HTTP_301',
-      port: '443',
-      protocol: elbv2.Protocol.HTTPS,
-    });
-
-    // Define HTTPS Listener
-    const HTTPSListener = publicLoadBalancer.addListener(`${ID_PREFIX}HttpsListener`, {
-      port: 443,
-      // certificates: [sslCert],
-      sslPolicy: elbv2.SslPolicy.RECOMMENDED,
-      defaultTargetGroups: [frontendTargetGroup],
-    });
-    HTTPSListener.addTargetGroups(`${ID_PREFIX}BackendTargetGroups`, {
-      priority: 1,
-      targetGroups: [backendTargetGroup],
-      hostHeader: BACKEND_DOMAIN,
-    });
-    HTTPSListener.addTargetGroups(`${ID_PREFIX}FrontendTargetGroups`, {
-      priority: 2,
-      targetGroups: [frontendTargetGroup],
-      hostHeader: FRONTEND_DOMAIN,
-    });
-
-    // *********************************************
-    // ***************** Route53 *******************
-    // *********************************************
-    const HostedZone = new route53.PublicHostedZone(this, `${ID_PREFIX}HostedZone`, {
-      zoneName: DOMAIN_NAME,
-    });
-
-    new route53.ARecord(this, `${ID_PREFIX}FrontendARecord`, {
-      // recordName = hostedzone root domain name
-      zone: HostedZone,
-      target: route53.RecordTarget.fromAlias(
-        new route53targets.LoadBalancerTarget(publicLoadBalancer),
-      ),
-    });
-
-    new route53.ARecord(this, `${ID_PREFIX}BackendARecord`, {
-      zone: HostedZone,
-      recordName: BACKEND_SUBDOMAIN,
-      target: route53.RecordTarget.fromAlias(
-        new route53targets.LoadBalancerTarget(publicLoadBalancer),
-      ),
-    });
-
-    // *********************************************
-    // ******************* RDS *********************
-    // *********************************************
     const dbEngine = rds.DatabaseInstanceEngine.mysql({
       version: rds.MysqlEngineVersion.VER_8_0_17,
     });
-    const productionDBInstace = new rds.DatabaseInstance(this, `${ID_PREFIX}ProductionDBInstance`, {
+    new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
       engine: dbEngine,
-      masterUsername: 'truepoint',
-      databaseName: ID_PREFIX,
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.M5, ec2.InstanceSize.LARGE),
-      multiAz: true,
+      databaseName: ID_PREFIX,
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.LARGE),
+      vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
+      multiAz: false,
       allocatedStorage: 100,
       // Enable storage auto scailing option by specifying maximum allocated storage
       maxAllocatedStorage: 300, // GB
-      storageEncrypted: true,
-      cloudwatchLogsExports: [
-        'error', 'slowquery', 'general',
-      ],
-      backupRetention: cdk.Duration.days(7),
-      cloudwatchLogsRetention: logs.RetentionDays.ONE_MONTH,
       autoMinorVersionUpgrade: true,
-      // deletionProtection: true,
       securityGroups: [databaseSecGrp],
-      parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}ProductionDBParameterGroup`, {
+      parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
         engine: dbEngine,
         parameters: {
           time_zone: 'Asia/Seoul',
@@ -299,17 +91,171 @@ export class TruepointStack extends cdk.Stack {
           max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
         },
       }),
+      deletionProtection: false,
     });
 
-    // *********************************************
-    // ************* CloudWatch Alarm **************
-    // *********************************************
+    /** ********************************************
+    ************* Production ECS Cluster **************
+    ************************************************ */
+    // 클러스터 생성
+    const truepointCluster = new ecs.Cluster(this, `${ID_PREFIX}Cluster`, {
+      vpc, clusterName: ID_PREFIX,
+    });
 
-    // Alarm for DB High CPU
-    new cloudwatch.Alarm(this, `${ID_PREFIX}ProductionDBHighCPU`, {
-      metric: productionDBInstace.metricCPUUtilization(),
-      threshold: 90,
-      evaluationPeriods: 1,
+    // EcsTaskRole 생성
+    const truepointTaskRole = new iam.Role(this, 'ecsTaskExecutionRole', {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+    });
+    // 생성한 Role에 ECS Task 실행 기본 정책 추가
+    truepointTaskRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy'),
+    );
+    // SSM - ParameterStore 접근 권한 부여
+    truepointTaskRole.addToPolicy(
+      new iam.PolicyStatement({
+        resources: [`arn:aws:ssm:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:parameter/*`],
+        actions: ['ssm:GetParameters'],
+      }),
+    );
+
+    /** ********************************************
+    *************** API 서버 ECS task ****************
+    ************************************************ */
+
+    // API 서버 보안그룹 생성 작업
+    const apiSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}ApiSecGrp`, {
+      vpc, securityGroupName: 'Truepoint-Api-SecGrp', allowAllOutbound: true,
+    });
+    apiSecGrp.connections.allowFromAnyIpv4(ec2.Port.tcp(API_SERVER_PORT));
+
+    // API 서버 cloudwatch 로그 그룹
+    const apiLogGroup = new logs.LogGroup(this, `${ID_PREFIX}ApiLogGroup`, {
+      logGroupName: `/ecs/${API_SERVER_NAME}`, removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // API 서버 작업 정의(Task Definition)
+    const apiTaskDef = new ecs.FargateTaskDefinition(this, `${ID_PREFIX}ApiTaskDef`, {
+      family: API_SERVER_NAME, memoryLimitMiB: 512, cpu: 256, taskRole: truepointTaskRole,
+    });
+    const apiContainer = apiTaskDef.addContainer(`${ID_PREFIX}ApiContainer`, {
+      image: ecs.ContainerImage.fromRegistry(`hwasurr/${API_SERVER_NAME}`),
+      cpu: 256, // 해당 컨테이너의 최소 필요 cpu
+      memoryLimitMiB: 512, // 해당 컨테이너의 최소 필요 memory
+      logging: new ecs.AwsLogDriver({ logGroup: apiLogGroup, streamPrefix: '/ecs' }),
+      environment: { NODE_ENV: 'production' },
+      secrets: { // 필요 시크릿 값
+        // AWS credentials
+        AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_ACCESS_KEY_ID')),
+        AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_SECRET_ACCESS_KEY')),
+        BUCKET_NAME: ecs.Secret.fromSsmParameter(this.getStringParam(ID_PREFIX, 'TRUEPOINT_BUCKET_NAME')),
+
+        // Jwt secret
+        JWT_SECRET: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_JWT_SECRET')),
+
+        // IMPORT secret
+        IMP_KEY: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'IMP_KEY')),
+        IMP_SECRET: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'IMP_SECRET')),
+
+        // # Slack Secret
+        SLACK_ALARM_URL: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_SLACK_URL')),
+
+        // # Twitch Secrets
+        TWITCH_CLIENT_ID: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_TWITCH_CLIENT_ID')),
+        TWITCH_CLIENT_SECRET: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_TWITCH_CLIENT_SECRET')),
+
+        // # Google/Youtube Secrets
+        YOUTUBE_CLIENT_ID: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'YOUTUBE_CLIENT_ID')),
+        YOUTUBE_CLIENT_SECRET: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'YOUTUBE_CLIENT_SECRET')),
+
+        // # Afreeca Secrets
+        AFREECA_KEY: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'AFREECA_KEY')),
+        AFREECA_SECRET_KEY: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'AFREECA_SECRET_KEY')),
+      },
+    });
+    apiContainer.addPortMappings({ containerPort: API_SERVER_PORT });
+
+    // ECS cluster 내에 Api Service 생성
+    const apiService = new ecs.FargateService(this, `${ID_PREFIX}ApiService`, {
+      cluster: truepointCluster,
+      serviceName: `${API_SERVER_NAME}Service`,
+      taskDefinition: apiTaskDef,
+      assignPublicIp: true,
+      desiredCount: 1,
+      securityGroups: [apiSecGrp],
+    });
+
+    // ALB 타겟 그룹으로 생성
+    const apiTargetGroup = new elbv2.ApplicationTargetGroup(
+      this, `${ID_PREFIX}ApiTargetGroup`, {
+        vpc,
+        targetGroupName: `${API_SERVER_NAME}TargetGroup`,
+        port: API_SERVER_PORT,
+        protocol: elbv2.ApplicationProtocol.HTTP,
+        healthCheck: {
+          enabled: true,
+          path: '/health-check',
+          interval: cdk.Duration.minutes(1),
+        },
+        targets: [apiService],
+      },
+    );
+
+    // **********************************************
+    // ******************** ALB *********************
+    // **********************************************
+
+    // ALB 생성
+    const truepointALB = new elbv2.ApplicationLoadBalancer(this, `${ID_PREFIX}ALB`, {
+      vpc, internetFacing: true, loadBalancerName: `${ID_PREFIX}ALB`,
+    });
+    // If you do not provide any options for this method, it redirects HTTP port 80 to HTTPS port 443
+    truepointALB.addRedirect();
+
+    // // **********************************************
+    // // ALB - HTTPS **********************************
+
+    // HTTPS 리스너를 위해 SSL Certificates 생성
+    const sslCert = acm.Certificate.fromCertificateArn(
+      this, 'DnsCertificates', SSL_CERTIFICATE_ARN,
+    );
+
+    // ALB에 Https 리스너 추가
+    const truepointHttpsListener = truepointALB.addListener(`${ID_PREFIX}ALBHttpsListener`, {
+      port: 443,
+      certificates: [sslCert],
+      sslPolicy: elbv2.SslPolicy.RECOMMENDED,
+      defaultTargetGroups: [apiTargetGroup], // 기본 타겟 그룹은 프론트엔드.
+    });
+    truepointHttpsListener.connections.allowDefaultPortFromAnyIpv4('https ALB open to world');
+
+    // HTTPS 리스너에 API서버 타겟그룹 추가
+    truepointHttpsListener.addTargetGroups(`${ID_PREFIX}HTTPSApiTargetGroup`, {
+      priority: 1,
+      conditions: [
+        ListenerCondition.hostHeaders([`${API_DOMAIN}`]),
+      ],
+      targetGroups: [apiTargetGroup],
+    });
+
+    // ***********************************************
+    // Route53
+    // ***********************************************
+
+    // Find Route53 Hosted zone
+    const truepointHostzone = route53.HostedZone.fromHostedZoneAttributes(
+      this, `find${DOMAIN}Zone`, {
+        zoneName: DOMAIN,
+        hostedZoneId: 'Z00489301SPXI2OS9LJMO',
+      },
+    );
+
+    // Route53 로드밸런서 타겟 생성
+    new route53.ARecord(this, 'LoadbalancerARecord', {
+      zone: truepointHostzone,
+      recordName: `${API_DOMAIN}.`,
+      target: route53.RecordTarget.fromAlias(
+        new targets.LoadBalancerTarget(truepointALB),
+      ),
     });
   }
 }
