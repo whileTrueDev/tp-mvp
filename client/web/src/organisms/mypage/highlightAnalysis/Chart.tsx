@@ -53,6 +53,7 @@ export default function Chart({
     am4core.useTheme(am4themes_animated);
     const chart = am4core.create(`${chartType}chartdiv`, am4charts.XYChart);
     chart.data = data;
+    console.log(data);
 
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.minGridDistance = 60;
@@ -143,7 +144,7 @@ export default function Chart({
     return () => {
       chart.dispose();
     };
-  }, [highlight, pageSize, chartType, data, handleClick, handlePage, theme]);
+  }, []);
 
   return (
     <div id={`${chartType}chartdiv`} style={{ width: '100%', height: 350 }} />

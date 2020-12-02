@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Paper, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import MetricsTable from '../../shared/sub/MetricsTable';
@@ -90,6 +90,10 @@ export default function TruepointHighlight({
   const [pageSize, setPageSize] = React.useState(5);
   const [point, setPoint] = React.useState(initialPoint);
   const classes = styles();
+
+  useEffect(() => {
+    console.log(highlightData);
+  }, [highlightData]);
 
   const graphCSS = {
     grid: {

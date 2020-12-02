@@ -152,6 +152,20 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     return resultData;
   };
 
+  const forloop = (data: any) => {
+    const { highlight_points } = data;
+    const new_points = highlight_points.map((point: any) => ({
+      ...point,
+      start_date: `2020-12-01 ${point.start_date}`,
+      end_date: `2020-12-01 ${point.end_date}`,
+    }));
+    return {
+      ...data,
+      highlight_points: new_points,
+    };
+    // console.log(new_points);
+  };
+
   const handleExportClick = async () => {
     const id = '234175534';
     const year = String(selectedStream.fullDate.getFullYear());
@@ -200,7 +214,9 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     })
       .then((res) => {
         if (res.data) {
-          setHighlightData(res.data);
+          // console.log(res.data);
+
+          setHighlightData(forloop(res.data));
         }
       }).catch(() => {
         ShowSnack('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
@@ -403,7 +419,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
       </Grid>
-      <Loading clickOpen={isClicked} />
+      {/* <Loading clickOpen={isClicked} /> */}
       { !isClicked && highlightData && metricsData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
