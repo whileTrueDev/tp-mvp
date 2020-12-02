@@ -1,7 +1,10 @@
 /* eslint-disable no-new */
+/**
+ * Dev 환경의 Vpc, RDS DB 등을 배포.
+ * @author hwasurr
+ */
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
-import * as amplify from '@aws-cdk/aws-amplify';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
@@ -11,22 +14,18 @@ import { ListenerCondition } from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as targets from '@aws-cdk/aws-route53-targets';
-import * as codebuild from '@aws-cdk/aws-codebuild';
-import BaseStack from './class/BaseStack';
+import BaseStack from '../class/BaseStack';
 
 // CONSTANTS
-const DOMAIN = 'mytruepoint.com';
+const DOMAIN = 'test.mytruepoint.com';
 const ID_PREFIX = 'TruepointDev';
 const SSL_CERTIFICATE_ARN = 'arn:aws:acm:ap-northeast-2:576646866181:certificate/68f8f35a-bd5d-492b-8f58-c0152b60b71f';
 // DB
 const DATABASE_PORT = 3306;
 // API SERVER
-const API_HOST_HEADER = 'api';
+const API_DOMAIN = 'test-api.mytruepoint.com';
 const API_SERVER_PORT = 3000;
-const API_SERVER_NAME = 'truepoint-api';
-// FRONTEND WEB
-// const FRONT_WEB_PORT = 3001;
-// const FRONT_WEB_NAME = 'truepoint-web';
+const API_SERVER_NAME = 'test-truepoint-api';
 
 export class TruepointDevStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -47,7 +46,7 @@ export class TruepointDevStack extends BaseStack {
     });
 
     // *********************************************
-    // ******************* RDS *********************
+    // *********** RDS for Dev or Test *************
     // *********************************************
 
     // 데이터베이스 보안그룹 생성 작업
@@ -103,10 +102,8 @@ export class TruepointDevStack extends BaseStack {
       deletionProtection: false,
     });
 
-    // ALB https 리스너를 위해 ssl Certificates 를 가져옵니다.
-
     /** ********************************************
-    ************* Truepoint ECS Cluster **************
+    ************* Test ECS Cluster **************
     ************************************************ */
     // 클러스터 생성
     const truepointCluster = new ecs.Cluster(this, `${ID_PREFIX}Cluster`, {
@@ -153,6 +150,7 @@ export class TruepointDevStack extends BaseStack {
       cpu: 256, // 해당 컨테이너의 최소 필요 cpu
       memoryLimitMiB: 512, // 해당 컨테이너의 최소 필요 memory
       logging: new ecs.AwsLogDriver({ logGroup: apiLogGroup, streamPrefix: '/ecs' }),
+      environment: { NODE_ENV: 'test' },
       secrets: { // 필요 시크릿 값
         // AWS credentials
         AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_ACCESS_KEY_ID')),
@@ -242,7 +240,7 @@ export class TruepointDevStack extends BaseStack {
     truepointHttpsListener.addTargetGroups(`${ID_PREFIX}HTTPSApiTargetGroup`, {
       priority: 1,
       conditions: [
-        ListenerCondition.hostHeaders([`${API_HOST_HEADER}.${DOMAIN}`]),
+        ListenerCondition.hostHeaders([`${API_DOMAIN}`]),
       ],
       targetGroups: [apiTargetGroup],
     });
@@ -262,60 +260,10 @@ export class TruepointDevStack extends BaseStack {
     // Route53 로드밸런서 타겟 생성
     new route53.ARecord(this, 'LoadbalancerARecord', {
       zone: truepointHostzone,
-      recordName: `${API_HOST_HEADER}.${DOMAIN}.`,
+      recordName: `${API_DOMAIN}.`,
       target: route53.RecordTarget.fromAlias(
         new targets.LoadBalancerTarget(truepointALB),
       ),
     });
-
-    // *****************************************
-    // react 앱 배포를 위한 Amplify Console
-    // *****************************************
-    const REPOSITORY_OWNER = 'whileTrueDev';
-    const REPOSITORY_NAME = 'tp-mvp';
-    const amplifyApp = new amplify.App(this, `${ID_PREFIX}AmplifyApp`, {
-      sourceCodeProvider: new amplify.GitHubSourceCodeProvider({
-        owner: REPOSITORY_OWNER,
-        repository: REPOSITORY_NAME,
-        oauthToken: cdk.SecretValue.plainText(process.env.AMPLIFY_GITHUB_REPO_TOKEN!),
-      }),
-      buildSpec: codebuild.BuildSpec.fromObject({
-        version: '1.0',
-        frontend: {
-          phases: {
-            preBuild: {
-              commands: ['yarn install', 'cd shared', 'yarn build', 'cd ../client/web'],
-            },
-            build: {
-              commands: ['yarn build'],
-            },
-          },
-          artifacts: { baseDirectory: '/client/web/build', files: '**/*' },
-          cache: { paths: 'node_modules/**/*' },
-        },
-      }),
-      autoBranchDeletion: true,
-    });
-
-    // Add Branch
-    // master 로 변경 필요!!
-    // Add Domain
-    const domain = amplifyApp.addDomain(DOMAIN);
-
-    // master
-    const webBranch = amplifyApp.addBranch('hwasurr-infra');
-    domain.mapRoot(webBranch);
-
-    // test
-    const testBranch = amplifyApp.addBranch('test', {
-      basicAuth: amplify.BasicAuth.fromCredentials(
-        'dev',
-        cdk.SecretValue.plainText(process.env.AMPLIFY_TEST_PASSWORD!),
-      ),
-    });
-    domain.mapSubDomain(testBranch);
-
-    // SPA 설정
-    amplifyApp.addCustomRule(amplify.CustomRule.SINGLE_PAGE_APPLICATION_REDIRECT);
   }
 }

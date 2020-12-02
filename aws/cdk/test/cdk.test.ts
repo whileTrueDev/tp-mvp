@@ -1,13 +1,13 @@
 import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
-import * as Cdk from '../lib/truepoint-production-stack';
+import * as Cdk from '../lib/prod/truepoint-production-stack';
 
 test('Empty Stack', () => {
-    const app = new cdk.App();
-    // WHEN
-    const stack = new Cdk.TruepointStack(app, 'MyTestStack');
-    // THEN
-    expectCDK(stack).to(matchTemplate({
-      "Resources": {}
-    }, MatchStyle.EXACT))
+  const app = new cdk.App();
+  // WHEN
+  const stack = new Cdk.TruepointStack(app, 'MyTestStack');
+  // THEN
+  expectCDK(stack).to(matchTemplate({
+    Resources: {},
+  }, MatchStyle.EXACT));
 });
