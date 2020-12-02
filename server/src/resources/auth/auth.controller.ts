@@ -22,7 +22,7 @@ import { AfreecaPreLinker } from './strategies/afreeca.linker';
 import { TwitchLinkExceptionFilter } from '../../filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from '../../filters/youtube-link.filter';
 import { AfreecaLinkExceptionFilter } from '../../filters/afreeca-link.filter';
-import fronthost from '../../constants/fronthost';
+import getFrontHost from '../../utils/getFrontHost';
 
 @Controller('auth')
 export class AuthController {
@@ -165,7 +165,7 @@ export class AuthController {
     const { twitchId } = req.user as PlatformTwitchEntity;
     // settings뒤에 / 꼭 추가. amplify redirect 관련한 일종의 버그 있음.
     // https://github.com/aws-amplify/amplify-console/issues/97
-    res.redirect(`${fronthost}/mypage/my-office/settings/?id=${twitchId}&platform=twitch`);
+    res.redirect(`${getFrontHost()}/mypage/my-office/settings/?id=${twitchId}&platform=twitch`);
   }
 
   // *********** Youtube ******************
@@ -186,7 +186,7 @@ export class AuthController {
     const { youtubeId } = req.user as PlatformYoutubeEntity;
     // settings뒤에 / 꼭 추가. amplify redirect 관련한 일종의 버그 있음.
     // https://github.com/aws-amplify/amplify-console/issues/97
-    res.redirect(`${fronthost}/mypage/my-office/settings/?id=${youtubeId}&platform=youtube`);
+    res.redirect(`${getFrontHost()}/mypage/my-office/settings/?id=${youtubeId}&platform=youtube`);
   }
 
   // *********** Afreeca ******************
@@ -241,7 +241,7 @@ export class AuthController {
         // https://github.com/aws-amplify/amplify-console/issues/97
 
         // 실제 아프리카 유저 아이디를 들고올 수 있을 때, id, platform 쿼리스트링 추가
-        res.redirect(`${fronthost}/mypage/my-office/settings/`); // ?id=${afreecaId}&platform=afreeca
+        res.redirect(`${getFrontHost()}/mypage/my-office/settings/`); // ?id=${afreecaId}&platform=afreeca
       });
   }
 }

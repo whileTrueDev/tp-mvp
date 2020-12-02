@@ -4,9 +4,10 @@ import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import * as dotenv from 'dotenv';
 // import { TruepointStack } from '../lib/truepoint-production-stack';
-import { TruepointDevStack } from '../lib/truepoint-dev-stack';
-import { WhileTrueCollectorStack } from '../lib/truepoint-collectorDB-stack';
-import { WhileTrueTruepointVpcStack } from '../lib/vpc-stack';
+import { TruepointDevStack } from '../lib/dev-test/truepoint-dev-stack';
+import { WhileTrueCollectorStack } from '../lib/prod/truepoint-collectorDB-stack';
+import { WhileTrueTruepointVpcStack } from '../lib/prod/vpc-stack';
+import { TruepointAmplify } from '../lib/amplify/truepoint-amplify-stack';
 
 dotenv.config();
 
@@ -43,3 +44,8 @@ new WhileTrueCollectorStack(
 //   'TruepointProduction',
 //   { env, vpc: TrupointVpcStack.vpc }
 // );
+
+// **********************************
+// Truepoint Web deploy Stack - using Amplify Console
+// **********************************
+new TruepointAmplify(app, 'TruepointAmplify', { env });
