@@ -2,7 +2,7 @@ import {
   ArgumentsHost, Catch, ExceptionFilter,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import fronthost from '../constants/fronthost';
+import getFrontHost from '../utils/getFrontHost';
 
 @Catch()
 export class YoutubeLinkExceptionFilter implements ExceptionFilter {
@@ -13,7 +13,7 @@ export class YoutubeLinkExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     response.redirect(
-      `${fronthost}/mypage/my-office/settings?${request.url.split('?')[1]}`,
+      `${getFrontHost()}/mypage/my-office/settings?${request.url.split('?')[1]}`,
     );
   }
 }

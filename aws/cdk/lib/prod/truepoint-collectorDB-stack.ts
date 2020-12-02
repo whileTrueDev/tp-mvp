@@ -7,7 +7,7 @@ import * as cloudwatch from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
-import BaseStack from './class/BaseStack';
+import BaseStack from '../class/BaseStack';
 
 interface WhileTrueCollectorStackProps extends cdk.StackProps {
   vpc: ec2.IVpc
