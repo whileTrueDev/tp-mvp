@@ -10,6 +10,7 @@ import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSug
 import { ReplyGet } from '@truepoint/shared/dist/dto/featureSuggestion/replyGet.dto';
 import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
 import { ReplyPatch } from '@truepoint/shared/dist/dto/featureSuggestion/replyPatch.dto';
+
 import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
 import { FeatureSuggestionService } from './featureSuggestion.service';

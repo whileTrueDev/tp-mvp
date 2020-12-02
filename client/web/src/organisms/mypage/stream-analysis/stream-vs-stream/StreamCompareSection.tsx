@@ -120,7 +120,7 @@ export default function StreamCompareSection(
     <div className={classes.root}>
 
       {!(error?.isError) && (
-        <Loading clickOpen={loading} lodingTime={10000} />
+        <Loading clickOpen={loading} />
       )}
 
       <Grid container direction="column" spacing={2}>
@@ -169,7 +169,7 @@ export default function StreamCompareSection(
 
         {/* 달력 선택 */}
         <Grid item container direction="row">
-          <Grid container className={classes.bodyWrapper} style={{ width: 'auto' }}>
+          <Grid container className={classes.bodyWrapper} style={{ minWidth: '1000px' }}>
             <Grid item style={{ width: '310px' }}>
               <Typography className={classes.bodyTitle}>
                 <SelectDateIcon className={classes.selectIcon} />

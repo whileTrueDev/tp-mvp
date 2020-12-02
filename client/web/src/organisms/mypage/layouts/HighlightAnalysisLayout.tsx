@@ -6,10 +6,12 @@ import Card from '@material-ui/core/Card';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import classnames from 'classnames';
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
+import ClearIcon from '@material-ui/icons/Clear';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -264,8 +266,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         container
         direction="column"
       >
-        <Grid item xs={12} className={classes.root}>
-
+        <Grid item xs={12} className={classes.wraper}>
           <SectionTitle mainTitle="편집점 분석" />
           <Typography variant="body1" className={classes.sub}>
             방송을 선택하시면 편집점 분석을 시작합니다.
@@ -278,11 +279,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           direction="row"
           alignItems="center"
           justify="space-between"
+          className={classes.sideSpace}
         >
-          <Grid item xs={2} className={classes.title}>
+          <Grid item xs={3} className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={9} className={classes.card}>
+          <Grid item xs={9}>
             {selectedStream.fileId
               && (
                 <Card className={classes.card}>
@@ -293,6 +295,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                       finishAt: (selectedStream.finishAt),
                     })}
                   </Typography>
+
+                  <IconButton
+                    onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
+                  >
+                    <ClearIcon />
+                  </IconButton>
                 </Card>
               )}
           </Grid>
@@ -302,7 +310,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           item
           xs={12}
           container
-          className={classes.root}
+          className={classes.wraper}
           direction="column"
           justify="flex-start"
         >
@@ -336,7 +344,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         className={classes.root}
         justify="flex-end"
       >
-        <Grid item direction="column">
+        <Grid item direction="column" style={{ overflow: 'hiden' }}>
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
@@ -393,7 +401,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
       </Grid>
-      <Loading clickOpen={isClicked} lodingTime={20000} />
+      <Loading clickOpen={isClicked} />
       { !isClicked && highlightData && metricsData && (
         <>
           <TruepointHighlight highlightData={highlightData} />

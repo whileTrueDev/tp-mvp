@@ -139,10 +139,11 @@ export default function Footer(): JSX.Element {
 
         <Grid container>
           <Typography variant="caption" className={classes.addressTitle}>
-            <div>
+            {/* 제거 요청 2020. 11. 27 from walker */}
+            {/* <div>
               대표명
               <span className={classes.address}>강동기</span>
-            </div>
+            </div> */}
             <div>
               이메일
               <span className={classes.address}>truepointceo@gmail.com</span>

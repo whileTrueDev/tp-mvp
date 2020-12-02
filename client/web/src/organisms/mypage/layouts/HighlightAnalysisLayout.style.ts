@@ -1,7 +1,11 @@
 import { makeStyles } from '@material-ui/core';
 
 const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
-  root: { padding: theme.spacing(4) },
+  root: { padding: theme.spacing(5) },
+  wraper: { padding: theme.spacing(6) },
+  sideSpace: {
+    padding: `0px ${theme.spacing(6)}px`,
+  },
   sub: {
     fontSize: 22,
     color: theme.palette.text.secondary,
@@ -17,18 +21,21 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
   cardText: {
     fontSize: 15,
     margin: 8,
-    // color: theme.palette.text.secondary,
   },
   card: {
-    margin: `0px ${theme.spacing(4)}px`,
     textAlign: 'center',
     background: theme.palette.action.focus,
     borderRadius: 6,
+    width: 280,
+    display: 'inline-flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 700,
-    padding: `${theme.spacing(1)}px ${theme.spacing(4)}px`,
+    padding: `${theme.spacing(1)}px ${theme.spacing(0)}px`,
   },
   searchTitle: {
     marginTop: theme.spacing(2),

@@ -19,7 +19,7 @@ import useAxios from 'axios-hooks';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // date library
-// import moment from 'moment';
+import moment from 'moment';
 // attoms
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
@@ -34,9 +34,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 0,
     width: 0,
     border: '3px solid',
-    borderRadius: 4,
+    borderRadius: 5,
     borderColor: '#3a86ff',
-    right: '50%',
+    right: '44%',
     transform: 'translateX(1px)',
     top: '80%',
   },
@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
   },
 }));
+const reRequest = 3;
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
@@ -52,8 +53,8 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   } = props;
   const classes = useStyles();
   const auth = useAuthContext();
-  const [hasStreamDays, setHasStreamDays] = React.useState<number[]>([]);
-  const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>();
+  const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
+  const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
   const [
     {
@@ -82,17 +83,32 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     },
   });
 
+  /**
+   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
+   * @param originDate 현재 달력이 위치한 달
+   */
+  const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
+    if (originDate) {
+      const rangeStart = moment(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      const rangeEnd = moment(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      return [rangeStart, rangeEnd];
+    }
+
+    return [];
+  };
+
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
       userId: auth.user.userId,
-      startDate: currMonth ? currMonth.toISOString() : (new Date()).toISOString(),
+      startDate: handleSubtractCurrMonth(currMonth)[0],
+      endDate: handleSubtractCurrMonth(currMonth)[1],
     };
 
     excuteGetStreams({
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
+        result.data.map((streamInfo) => moment(new Date(streamInfo.startedAt)).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.message) {
@@ -105,11 +121,13 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     if (newDate) setClickedDate(newDate);
     const dayStreamList: DayStreamsInfo[] = [];
     try {
-      getStreamsData.forEach((stream: DayStreamsInfo) => {
-        if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
-          dayStreamList.push(stream);
-        }
-      });
+      if (getStreamsData) {
+        getStreamsData.forEach((stream: DayStreamsInfo) => {
+          if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
+            dayStreamList.push(stream);
+          }
+        });
+      }
     } catch {
       handleDayStreamList([]);
     }
@@ -117,24 +135,8 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   };
 
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
-    if (newMonth) {
+    if (newMonth && Math.abs(moment(newMonth).diff(moment(currMonth), 'month')) >= reRequest) {
       setCurrMonth(newMonth);
-      const params: SearchCalendarStreams = {
-        userId: auth.user.userId,
-        startDate: newMonth.toISOString(),
-      };
-
-      excuteGetStreams({
-        params,
-      }).then((result) => {
-        setHasStreamDays(
-          result.data.map((streamInfo) => (new Date(streamInfo.startedAt)).getDate()),
-        );
-      }).catch((err) => {
-        if (err.message) {
-          ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-        }
-      });
     }
   };
 
@@ -144,17 +146,17 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element,
   ) => {
-    if (date && hasStreamDays.includes(date.getDate()) && dayInCurrentMonth) {
+    if (date && hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
       if ((compareStream && (new Date(compareStream.startedAt)).getDate() === date.getDate())
       || (baseStream && (new Date(baseStream.startedAt)).getDate() === date.getDate())) {
         return (
           <div className={classnames({
-            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
+            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
           })}
           >
-            {React.cloneElement(dayComponent, { style: { backgroundColor: '#3a86ff', color: 'white' } })}
+            {React.cloneElement(dayComponent, { style: { backgroundColor: '#929ef8', color: 'white' } })}
             <div className={classnames({
-              [classes.hasStreamDayDot]: hasStreamDays.includes(date.getDate()),
+              [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
             })}
             />
           </div>
@@ -163,12 +165,12 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
 
       return (
         <div className={classnames({
-          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(date.getDate()),
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
         })}
         >
           {dayComponent}
           <div className={classnames({
-            [classes.hasStreamDayDot]: hasStreamDays.includes(date.getDate()),
+            [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
           })}
           />
         </div>

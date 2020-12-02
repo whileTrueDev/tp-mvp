@@ -28,7 +28,7 @@ def liveCreatorChecker():
 
     afreecaCreator  = AfreecaActiveStreams()
     liveCreator = afreecaCreator.getLiveCreator()
-    afreecaCreator.updateLiveCreator(nowliveCreator, 'turn-on')
+    afreecaCreator.updateLiveCreator(nowliveCreator, 'live-on')
     
     # 현재 방송중인 크리에이터 중 기존에 방송중이던 크리에이터들을 제외한 애들
     crawlTargets = list(set(nowliveCreator) - set(liveCreator))
