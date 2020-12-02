@@ -12,8 +12,14 @@ export class HighlightService {
     // const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
+      Key: 'highlight_json/234175534/2020/12/01/11100927_1110162750_20201201092750arinbbidol_highlight.json.json',
     };
+
+    // const getParams = {
+    //   Bucket: process.env.BUCKET_NAME, // your bucket name,
+    //   Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
+    // };
+
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
   }
@@ -22,7 +28,9 @@ export class HighlightService {
     // const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`,
+      // Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`,
+      Key: 'metrics_json/234175534/2020/12/01/11100927_1110162750_20201201092750arinbbidol.json.json',
+
     };
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
@@ -34,15 +42,17 @@ export class HighlightService {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${platform}/${name}/${year}/${month}`,
+      // Prefix: `highlight_json/${platform}/${name}/${year}/${month}`,
+      Prefix: 'highlight_json/234175534/2020/11',
     };
     const keyArray = [];
     await s3.listObjects(params).promise()
       .then((value) => {
         value.Contents.forEach((v) => {
-          const getKey = v.Key.split('/')[5];
+          const getKey = v.Key.split('/')[4];
           // 공백제거
-          if (v.Key.split('/')[5].length !== 0) {
+
+          if (v.Key.split('/')[4].length !== 0) {
             keyArray.push(Number(getKey));
           }
         });
@@ -57,16 +67,18 @@ export class HighlightService {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${platform}/${name}/${year}/${month}/${day}`,
+      // Prefix: `highlight_json/${platform}/${name}/${year}/${month}/${day}`,
+      Prefix: `highlight_json/${name}/${year}/${month}/${day}`,
     };
     const keyArray = [];
     const returnArray = [];
     await s3.listObjects(params).promise()
       .then((value) => {
-        value.Contents.forEach((v) => {
-          const getKey = v.Key.split('/')[6];
-          keyArray.push(getKey);
-        });
+        // value.Contents.forEach((v) => {
+        //     const getKey = v.Key.split('/')[5];
+        //     keyArray.push(getKey);
+        // });
+        keyArray.push(value.Contents[1].Key.split('/')[5]);
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
     filterEmpty.forEach((value) => {

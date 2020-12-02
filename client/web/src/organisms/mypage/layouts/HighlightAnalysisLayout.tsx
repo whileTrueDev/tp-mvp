@@ -219,6 +219,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     )
       .then((res) => {
         if (res.data) {
+          console.log(res.data);
           setMetricsData(getMetricsPoint(res.data));
         }
       }).catch(() => {
@@ -255,6 +256,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     '침디',
     '가장긴 문자열',
   ];
+
   const [analysisWord, setAnalysisWord] = React.useState<string>();
   const handleAnalysisWord = (targetWord: string) => {
     setAnalysisWord(targetWord);
