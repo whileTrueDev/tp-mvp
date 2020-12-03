@@ -154,6 +154,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
   const forloop = (data: any) => {
     const { highlight_points } = data;
+    /// fuck
     const new_points = highlight_points.map((point: any) => ({
       ...point,
       start_date: `2020-12-01 ${point.start_date}`,
