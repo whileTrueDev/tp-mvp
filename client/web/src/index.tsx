@@ -72,12 +72,10 @@ function Index(): JSX.Element {
   useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
 
   return (
-    <SnackbarProvider
-      maxSnack={1}
-      preventDuplicate
-    >
-      <ThemeProvider<TruepointTheme> theme={truepointTheme}>
-        <CssBaseline />
+    <ThemeProvider<TruepointTheme> theme={truepointTheme}>
+      <CssBaseline />
+
+      <SnackbarProvider maxSnack={1} preventDuplicate>
 
         {/* 로그인 여부 Context */}
         <AuthContext.Provider value={{
@@ -117,8 +115,8 @@ function Index(): JSX.Element {
           </BrowserRouter>
           {/* </SubscribeContext.Provider> */}
         </AuthContext.Provider>
-      </ThemeProvider>
-    </SnackbarProvider>
+      </SnackbarProvider>
+    </ThemeProvider>
   );
 }
 
