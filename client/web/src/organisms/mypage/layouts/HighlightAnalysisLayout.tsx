@@ -162,6 +162,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     const disgustHighlight = metric.disgust_points;
     const questionHighlight = metric.question_points;
 
+    console.log(funnyHighlight, surpriseHighlight, agreeHighlight);
+
     chatHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'chat_count');
       resultData.chat_points.push(eachData);
@@ -177,28 +179,30 @@ export default function HighlightAnalysisLayout(): JSX.Element {
      */
     funnyHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'funny_count');
-      resultData.smile_points.push(eachData);
+      resultData.funny_points.push(eachData);
     });
 
     surpriseHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'surprise_count');
-      resultData.smile_points.push(eachData);
+      resultData.surprise_points.push(eachData);
     });
 
     agreeHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'agree_count');
-      resultData.smile_points.push(eachData);
+      resultData.agree_points.push(eachData);
     });
 
     disgustHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'disgust_count');
-      resultData.smile_points.push(eachData);
+      resultData.disgust_points.push(eachData);
     });
 
     questionHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'question_count');
-      resultData.smile_points.push(eachData);
+      resultData.question_points.push(eachData);
     });
+
+    console.log('result \n', resultData);
 
     return resultData;
   };
