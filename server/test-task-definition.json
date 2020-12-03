@@ -1,6 +1,6 @@
 {
     "ipcMode": null,
-    "executionRoleArn": "arn:aws:iam::576646866181:role/TruepointDev-TruepointDevApiTaskDefExecutionRoleD8-XF4UEV42N5H8",
+    "executionRoleArn": "arn:aws:iam::576646866181:role/ecsTaskExecutionRole",
     "containerDefinitions": [
         {
             "dnsSearchDomains": [],
