@@ -2,7 +2,6 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import * as archiver from 'archiver';
-import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from 'constants';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -14,16 +13,22 @@ export class HighlightService {
 
     const getAllParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Prefix: 'highlight_json/234175534/2020/12/01',
+      Prefix: `highlight_json/234175534/${year}/${month}/${day}/`,
     };
     const getArray = [];
     const returnObject = { chat_points: '', highlight_points: '', smile_points: '' };
     await s3.listObjects(getAllParams).promise()
       .then((value) => {
         value.Contents.forEach((content) => {
-          getArray.push(content.Key);
+          const directoryId = content.Key.split('/')[5];
+          const unique_key = fileId.split('_')[0];
+          if (directoryId.length !== 0 && directoryId.includes(unique_key)) {
+            console.log(content.Key);
+            getArray.push(content.Key);
+          }
         });
       });
+
     await Promise.all(getArray.map(async (key, i) => {
       const getParams = {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
@@ -73,7 +78,7 @@ export class HighlightService {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
       // Prefix: `highlight_json/${platform}/${name}/${year}/${month}`,
-      Prefix: 'highlight_json/234175534/2020/12',
+      Prefix: `highlight_json/234175534/2020/${month}`,
     };
     const keyArray = [];
     await s3.listObjects(params).promise()
@@ -104,11 +109,12 @@ export class HighlightService {
     const returnArray = [];
     await s3.listObjects(params).promise()
       .then((value) => {
-        // value.Contents.forEach((v) => {
-        //     const getKey = v.Key.split('/')[5];
-        //     keyArray.push(getKey);
-        // });
-        keyArray.push(value.Contents[1].Key.split('/')[5]);
+        value.Contents.forEach((v) => {
+          const getKey = v.Key.split('/')[5];
+          if (getKey.includes('highlight')) {
+            keyArray.push(getKey);
+          }
+        });
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
     filterEmpty.forEach((value) => {

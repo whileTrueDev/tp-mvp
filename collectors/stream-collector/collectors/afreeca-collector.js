@@ -7,6 +7,7 @@ const getDateFormat = (_date1) => {
 
 // JOIN AfreecaTargetStreamers USING (creatorId)
 // AND endDate > DATE_SUB(NOW(), INTERVAL 1 DAY)
+// WHERE creatorId IN ${conditionQuery}) 
 const query = (conditionQuery) => `
 SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'afreeca' AS platform
 FROM 
@@ -19,7 +20,7 @@ SELECT
   startDate AS startedAt,
   ROUND(TIMESTAMPDIFF(MINUTE, startDate, endDate) / 60, 1) AS airTime
 FROM AfreecaStreams
-WHERE creatorId IN ${conditionQuery})   
+WHERE creatorId = 'arinbbidol'  
 AND needCollect = 1
 ) AS A
 LEFT JOIN AfreecaChats 
@@ -107,7 +108,7 @@ const loadStream = (streamData) => new Promise((resolve, reject) => {
 
   const conditionQuery = `${rawQuery.slice(0, -1)};`;
   const InsertQuery = `
-    INSERT INTO Streams_test
+    INSERT INTO Streams
     (streamId, platform, creatorId, userId, title, viewer, fan, startedAt, airTime, chatCount)
     VALUES ${conditionQuery};
     `;

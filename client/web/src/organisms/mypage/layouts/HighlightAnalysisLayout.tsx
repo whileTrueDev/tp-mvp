@@ -98,61 +98,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
   };
 
-  // Metrics 데이터 전처리 함수
-  // const getMetricsPoint = (metric: any): any => {
-  //   const originStartTime = new Date(metric.start_date);
-
-  //   function getDate(index: number) {
-  //     const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
-  //     const getYears = Time.getFullYear();
-  //     const getMonths = Time.getMonth();
-  //     const getDays = Time.getDay();
-  //     const getHours = Time.getHours();
-  //     const getMinutes = Time.getMinutes();
-  //     const getSeconds = Time.getSeconds();
-  //     const months = getMonths >= 10 ? String(getMonths) : `0${getMonths}`;
-  //     const days = getDays >= 10 ? String(getDays) : `0${getDays}`;
-  //     const hours = getHours >= 10 ? String(getHours) : `0${getHours}`;
-  //     const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
-  //     const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
-
-  //     return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
-  //   }
-
-  //   function insertPoints(target: number, countType: string) {
-  //     const time = getDate(target);
-  //     const returnDict = {
-  //       start_time: time,
-  //       end_time: time,
-  //       start_index: target,
-  //       end_index: target,
-  //       score: metric.time_line[target][countType],
-  //     };
-  //     return returnDict;
-  //   }
-
-  //   const resultData: {chat_points: PointType[]; smile_points: PointType[]} = {
-  //     chat_points: [],
-  //     smile_points: [],
-  //   };
-
-  //   const chatHighlight = metric.chat_points;
-  //   const smileHighlight = metric.smile_points;
-
-  //   chatHighlight.forEach((item: number) => {
-  //     const eachData = insertPoints(item, 'chat_count');
-  //     resultData.chat_points.push(eachData);
-  //   });
-
-  //   smileHighlight.forEach((item: number) => {
-  //     const eachData = insertPoints(item, 'smile_count');
-  //     resultData.smile_points.push(eachData);
-  //   });
-
-  //   return resultData;
-  // };
-
   function forloop(datas: any): any {
+    console.log(datas);
     const { highlight_points, chat_points, smile_points } = datas;
 
     const new_points = highlight_points.highlight_points.map((point: any) => ({
@@ -160,34 +107,40 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       start_date: `2020-12-01 ${point.start_date}`,
       end_date: `2020-12-01 ${point.end_date}`,
     }));
+
     const new_points_90 = highlight_points.highlight_points_90.map((point: any) => ({
       ...new_points[point],
     }));
+    // const new_points = highlight_points.map((point: any) => ({
+    //   ...point,
+    //   start_date: `2020-12-01 ${point.start_date}`,
+    //   end_date: `2020-12-01 ${point.end_date}`,
+    // }));
 
-
-  const forloop = (data: any) => {
-    const { highlight_points } = data;
-    /// fuck
-    const new_points = highlight_points.map((point: any) => ({
+    const new_chat_points = chat_points.highlight_points.map((point: any) => ({
       ...point,
       start_date: `2020-12-01 ${point.start_date}`,
       end_date: `2020-12-01 ${point.end_date}`,
     }));
+
     const new_chat_points_90 = chat_points.highlight_points_90.map((point: any) => ({
       ...new_chat_points[point],
     }));
-    const new_smile_points = smile_points.funny_points.map((point: any) => ({
+
+    const new_smile_points = smile_points.highlight_points.map((point: any) => ({
       ...point,
       start_date: `2020-12-01 ${point.start_date}`,
       end_date: `2020-12-01 ${point.end_date}`,
     }));
-    const new_smile_points_90 = smile_points.funny_points_90.map((point: any) => ({
+
+    const new_smile_points_90 = smile_points.highlight_points_90.map((point: any) => ({
       ...new_smile_points[point],
     }));
+
     return {
-      highlight_points: new_points_90,
-      chat_points: new_chat_points_90,
-      smile_points: new_smile_points_90,
+      highlight_points: new_points_90.length >= 10 ? new_points_90 : new_points,
+      chat_points: new_chat_points_90.length >= 10 ? new_chat_points_90 : new_chat_points,
+      smile_points: new_smile_points_90.length >= 10 ? new_smile_points_90 : new_smile_points,
     };
     // console.log(new_points);
   }
