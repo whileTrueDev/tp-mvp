@@ -23,7 +23,6 @@ export class HighlightService {
           const directoryId = content.Key.split('/')[5];
           const unique_key = fileId.split('_')[0];
           if (directoryId.length !== 0 && directoryId.includes(unique_key)) {
-            console.log(content.Key);
             getArray.push(content.Key);
           }
         });

@@ -99,7 +99,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   function forloop(datas: any): any {
-    console.log(datas);
     const { highlight_points, chat_points, smile_points } = datas;
 
     const new_points = highlight_points.highlight_points.map((point: any) => ({
