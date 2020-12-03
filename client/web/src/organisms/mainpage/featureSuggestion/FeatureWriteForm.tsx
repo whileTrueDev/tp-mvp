@@ -123,6 +123,7 @@ export default function FeatureWriteForm(): JSX.Element {
 
   React.useEffect(() => {
     if (param && param.id) {
+      setFeatureLock(Boolean(location.state[0].isLock));
       setFeatureSource({
         ...featureSource,
         title: location.state[0].title,
