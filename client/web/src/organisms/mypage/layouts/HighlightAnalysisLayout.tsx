@@ -9,7 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
@@ -21,7 +21,7 @@ import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 import dateExpression from '../../../utils/dateExpression';
-import SearchBox from '../highlightAnalysis/SearchBox';
+// import SearchBox from '../highlightAnalysis/SearchBox';
 
 interface StreamDate {
   fullDate: Date;
@@ -30,13 +30,13 @@ interface StreamDate {
   fileId: string;
 }
 
-interface PointType {
-  start_time: string;
-  end_time: string;
-  start_index: number;
-  end_index: number;
-  score: any;
-}
+// interface PointType {
+//   start_time: string;
+//   end_time: string;
+//   start_index: number;
+//   end_index: number;
+//   score: any;
+// }
 
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
@@ -241,22 +241,22 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       });
   };
 
-  const dummy: string[] = [
-    '나락',
-    '극락',
-    '굿',
-    '지렷다',
-    '레전드',
-    '노답',
-    '가능?',
-    '침디',
-    '가장긴 문자열',
-  ];
+  // const dummy: string[] = [
+  //   '나락',
+  //   '극락',
+  //   '굿',
+  //   '지렷다',
+  //   '레전드',
+  //   '노답',
+  //   '가능?',
+  //   '침디',
+  //   '가장긴 문자열',
+  // ];
 
-  const [analysisWord, setAnalysisWord] = React.useState<string>();
-  const handleAnalysisWord = (targetWord: string) => {
-    setAnalysisWord(targetWord);
-  };
+  // const [analysisWord, setAnalysisWord] = React.useState<string>();
+  // const handleAnalysisWord = (targetWord: string) => {
+  //   setAnalysisWord(targetWord);
+  // };
 
   return (
     <Paper className={classes.root}>
@@ -314,7 +314,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         >
           <Calendar handleDatePick={handleDatePick} />
         </Grid>
-
+        {/* 
         <Grid
           item
           xs
@@ -332,7 +332,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             handleAnalysisWord={handleAnalysisWord}
             analysisWord={analysisWord}
           />
-        </div>
+        </div> */}
       </Grid>
 
       <Grid
@@ -399,14 +399,14 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
       </Grid>
-      {/* <Loading clickOpen={isClicked} /> */}
+      <Loading clickOpen={isClicked} loadingType="medium" />
       {/* { !isClicked && highlightData && metricsData && ( */}
       { !isClicked && highlightData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
           <MetricsAccordian
             metricsData={highlightData}
-            analysisWord={analysisWord}
+            // analysisWord="편집점"
           />
         </>
       )}

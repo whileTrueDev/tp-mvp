@@ -143,7 +143,7 @@ export default function Chart({
     return () => {
       chart.dispose();
     };
-  }, []);
+  }, [chartType, data, handleClick, handlePage, highlight, pageSize, theme.palette]);
 
   return (
     <div id={`${chartType}chartdiv`} style={{ width: '100%', height: 350 }} />
