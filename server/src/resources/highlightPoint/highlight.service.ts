@@ -2,6 +2,7 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import * as archiver from 'archiver';
+import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from 'constants';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -10,18 +11,47 @@ const s3 = new AWS.S3();
 export class HighlightService {
   async getHighlightData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
-    const getParams = {
+
+    const getAllParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: 'highlight_json/234175534/2020/12/01/11100927_1110162750_20201201092750arinbbidol_highlight.json.json',
+      Prefix: 'highlight_json/234175534/2020/12/01',
     };
+    const getArray = [];
+    const returnObject = { chat_points: '', highlight_points: '', smile_points: '' };
+    await s3.listObjects(getAllParams).promise()
+      .then((value) => {
+        value.Contents.forEach((content) => {
+          getArray.push(content.Key);
+        });
+      });
+    await Promise.all(getArray.map(async (key, i) => {
+      const getParams = {
+        Bucket: process.env.BUCKET_NAME, // your bucket name,
+        Key: `${key}`,
+      };
+      await s3.getObject(getParams).promise()
+        .then((value: any) => {
+          if (i === 0) {
+            returnObject.chat_points = JSON.parse(value.Body.toString('utf-8'));
+          }
+          if (i === 1) {
+            returnObject.highlight_points = JSON.parse(value.Body.toString('utf-8'));
+          }
+          if (i === 2) {
+            returnObject.smile_points = JSON.parse(value.Body.toString('utf-8'));
+          }
+        }).catch((err) => {
+          console.error(err);
+        });
+    }));
+    return returnObject;
 
     // const getParams = {
     //   Bucket: process.env.BUCKET_NAME, // your bucket name,
     //   Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
     // };
 
-    const returnHighlight = await s3.getObject(getParams).promise();
-    return returnHighlight.Body.toString('utf-8');
+    // const returnHighlight = await s3.getObject(getParams).promise();
   }
 
   async getMetricsData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
@@ -43,7 +73,7 @@ export class HighlightService {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
       // Prefix: `highlight_json/${platform}/${name}/${year}/${month}`,
-      Prefix: 'highlight_json/234175534/2020/11',
+      Prefix: 'highlight_json/234175534/2020/12',
     };
     const keyArray = [];
     await s3.listObjects(params).promise()

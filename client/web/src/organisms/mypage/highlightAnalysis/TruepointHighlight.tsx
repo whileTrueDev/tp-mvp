@@ -92,7 +92,7 @@ export default function TruepointHighlight({
   const classes = styles();
 
   useEffect(() => {
-    console.log(highlightData);
+    // console.log(highlightData);
   }, [highlightData]);
 
   const graphCSS = {

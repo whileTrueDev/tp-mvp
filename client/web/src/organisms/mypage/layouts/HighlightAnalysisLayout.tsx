@@ -50,7 +50,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   const [highlightData, setHighlightData] = React.useState(null);
-  const [metricsData, setMetricsData] = React.useState(null);
+  // const [metricsData, setMetricsData] = React.useState(null);
   const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
   const [isChecked, setIsChecked] = React.useState({
@@ -74,9 +74,9 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   const [, getHighlightPoints] = useAxios(
     { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
   );
-  const [, getMetricsData] = useAxios(
-    { url: '/highlight/metrics', method: 'get' }, { manual: true },
-  );
+  // const [, getMetricsData] = useAxios(
+  //   { url: '/highlight/metrics', method: 'get' }, { manual: true },
+  // );
   const makeMonth = (month: number) => {
     if (month < 10) {
       const edit = `0${month}`;
@@ -99,58 +99,71 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   // Metrics 데이터 전처리 함수
-  const getMetricsPoint = (metric: any): any => {
-    const originStartTime = new Date(metric.start_date);
+  // const getMetricsPoint = (metric: any): any => {
+  //   const originStartTime = new Date(metric.start_date);
 
-    function getDate(index: number) {
-      const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
-      const getYears = Time.getFullYear();
-      const getMonths = Time.getMonth();
-      const getDays = Time.getDay();
-      const getHours = Time.getHours();
-      const getMinutes = Time.getMinutes();
-      const getSeconds = Time.getSeconds();
-      const months = getMonths >= 10 ? String(getMonths) : `0${getMonths}`;
-      const days = getDays >= 10 ? String(getDays) : `0${getDays}`;
-      const hours = getHours >= 10 ? String(getHours) : `0${getHours}`;
-      const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
-      const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
+  //   function getDate(index: number) {
+  //     const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
+  //     const getYears = Time.getFullYear();
+  //     const getMonths = Time.getMonth();
+  //     const getDays = Time.getDay();
+  //     const getHours = Time.getHours();
+  //     const getMinutes = Time.getMinutes();
+  //     const getSeconds = Time.getSeconds();
+  //     const months = getMonths >= 10 ? String(getMonths) : `0${getMonths}`;
+  //     const days = getDays >= 10 ? String(getDays) : `0${getDays}`;
+  //     const hours = getHours >= 10 ? String(getHours) : `0${getHours}`;
+  //     const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
+  //     const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
 
-      return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
-    }
+  //     return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
+  //   }
 
-    function insertPoints(target: number, countType: string) {
-      const time = getDate(target);
-      const returnDict = {
-        start_time: time,
-        end_time: time,
-        start_index: target,
-        end_index: target,
-        score: metric.time_line[target][countType],
-      };
-      return returnDict;
-    }
+  //   function insertPoints(target: number, countType: string) {
+  //     const time = getDate(target);
+  //     const returnDict = {
+  //       start_time: time,
+  //       end_time: time,
+  //       start_index: target,
+  //       end_index: target,
+  //       score: metric.time_line[target][countType],
+  //     };
+  //     return returnDict;
+  //   }
 
-    const resultData: {chat_points: PointType[]; smile_points: PointType[]} = {
-      chat_points: [],
-      smile_points: [],
-    };
+  //   const resultData: {chat_points: PointType[]; smile_points: PointType[]} = {
+  //     chat_points: [],
+  //     smile_points: [],
+  //   };
 
-    const chatHighlight = metric.chat_points;
-    const smileHighlight = metric.smile_points;
+  //   const chatHighlight = metric.chat_points;
+  //   const smileHighlight = metric.smile_points;
 
-    chatHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'chat_count');
-      resultData.chat_points.push(eachData);
-    });
+  //   chatHighlight.forEach((item: number) => {
+  //     const eachData = insertPoints(item, 'chat_count');
+  //     resultData.chat_points.push(eachData);
+  //   });
 
-    smileHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'smile_count');
-      resultData.smile_points.push(eachData);
-    });
+  //   smileHighlight.forEach((item: number) => {
+  //     const eachData = insertPoints(item, 'smile_count');
+  //     resultData.smile_points.push(eachData);
+  //   });
 
-    return resultData;
-  };
+  //   return resultData;
+  // };
+
+  function forloop(datas: any): any {
+    const { highlight_points, chat_points, smile_points } = datas;
+
+    const new_points = highlight_points.highlight_points.map((point: any) => ({
+      ...point,
+      start_date: `2020-12-01 ${point.start_date}`,
+      end_date: `2020-12-01 ${point.end_date}`,
+    }));
+    const new_points_90 = highlight_points.highlight_points_90.map((point: any) => ({
+      ...new_points[point],
+    }));
+
 
   const forloop = (data: any) => {
     const { highlight_points } = data;
@@ -160,12 +173,24 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       start_date: `2020-12-01 ${point.start_date}`,
       end_date: `2020-12-01 ${point.end_date}`,
     }));
+    const new_chat_points_90 = chat_points.highlight_points_90.map((point: any) => ({
+      ...new_chat_points[point],
+    }));
+    const new_smile_points = smile_points.funny_points.map((point: any) => ({
+      ...point,
+      start_date: `2020-12-01 ${point.start_date}`,
+      end_date: `2020-12-01 ${point.end_date}`,
+    }));
+    const new_smile_points_90 = smile_points.funny_points_90.map((point: any) => ({
+      ...new_smile_points[point],
+    }));
     return {
-      ...data,
-      highlight_points: new_points,
+      highlight_points: new_points_90,
+      chat_points: new_chat_points_90,
+      smile_points: new_smile_points_90,
     };
     // console.log(new_points);
-  };
+  }
 
   const handleExportClick = async () => {
     const id = '234175534';
@@ -215,34 +240,34 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     })
       .then((res) => {
         if (res.data) {
-          // console.log(res.data);
-
-          setHighlightData(forloop(res.data));
+          const final = forloop(res.data);
+          setHighlightData(final);
         }
-      }).catch(() => {
+      }).catch((err) => {
+        console.log(err);
         ShowSnack('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
 
-  const fetchMetricsData = async (
-    id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    setMetricsData(null);
-    getMetricsData(
-      {
-        params: {
-          id, year, month, day, fileId,
-        },
-      },
-    )
-      .then((res) => {
-        if (res.data) {
-          console.log(res.data);
-          setMetricsData(getMetricsPoint(res.data));
-        }
-      }).catch(() => {
-        ShowSnack('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-      });
-  };
+  // const fetchMetricsData = async (
+  //   id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
+  //   setMetricsData(null);
+  //   getMetricsData(
+  //     {
+  //       params: {
+  //         id, year, month, day, fileId,
+  //       },
+  //     },
+  //   )
+  //     .then((res) => {
+  //       if (res.data) {
+  //         console.log(res.data);
+  //         setMetricsData(getMetricsPoint(res.data));
+  //       }
+  //     }).catch(() => {
+  //       ShowSnack('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+  //     });
+  // };
 
   const handleAnalyze = (): void => {
     setIsClicked(true);
@@ -254,7 +279,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
     Promise.all([
       fetchHighlightData(id, year, month, day, file),
-      fetchMetricsData(id, year, month, day, file)])
+      // fetchMetricsData(id, year, month, day, file)
+    ])
       .then(() => {
         setIsClicked(false);
       }).catch(() => {
@@ -421,11 +447,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         </Grid>
       </Grid>
       {/* <Loading clickOpen={isClicked} /> */}
-      { !isClicked && highlightData && metricsData && (
+      {/* { !isClicked && highlightData && metricsData && ( */}
+      { !isClicked && highlightData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
           <MetricsAccordian
-            metricsData={metricsData}
+            metricsData={highlightData}
             analysisWord={analysisWord}
           />
         </>

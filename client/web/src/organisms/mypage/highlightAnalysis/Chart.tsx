@@ -17,21 +17,21 @@ const metricSetting: any = {
   smile: {
     name: '웃음 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   chat: {
     name: '채팅 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   highlight: {
     name: '트루포인트 편집점',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
@@ -53,7 +53,6 @@ export default function Chart({
     am4core.useTheme(am4themes_animated);
     const chart = am4core.create(`${chartType}chartdiv`, am4charts.XYChart);
     chart.data = data;
-    console.log(data);
 
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.minGridDistance = 60;
