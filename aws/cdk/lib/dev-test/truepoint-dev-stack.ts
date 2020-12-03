@@ -145,7 +145,7 @@ export class TruepointDevStack extends BaseStack {
     const apiTaskDef = new ecs.FargateTaskDefinition(this, `${ID_PREFIX}ApiTaskDef`, {
       family: API_SERVER_NAME, memoryLimitMiB: 512, cpu: 256, taskRole: truepointTaskRole,
     });
-    const apiContainer = apiTaskDef.addContainer(`${ID_PREFIX}ApiContainer`, {
+    const apiContainer = apiTaskDef.addContainer(`${API_SERVER_NAME}-container`, {
       image: ecs.ContainerImage.fromRegistry(`hwasurr/${API_SERVER_NAME}`),
       cpu: 256, // 해당 컨테이너의 최소 필요 cpu
       memoryLimitMiB: 512, // 해당 컨테이너의 최소 필요 memory
@@ -185,7 +185,7 @@ export class TruepointDevStack extends BaseStack {
     // ECS cluster 내에 Api Service 생성
     const apiService = new ecs.FargateService(this, `${ID_PREFIX}ApiService`, {
       cluster: truepointCluster,
-      serviceName: `${API_SERVER_NAME}Service`,
+      serviceName: `${API_SERVER_NAME}-service`,
       taskDefinition: apiTaskDef,
       assignPublicIp: true,
       desiredCount: 1,

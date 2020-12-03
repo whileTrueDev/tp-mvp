@@ -3,7 +3,7 @@ import Axios from 'axios';
 function getApiHost(): string {
   let apihost = '';
 
-  switch (process.env.NODE_ENV) {
+  switch (process.env.REACT_APP_NODE_ENV) {
     case 'test':
       apihost = 'https://test-api.mytruepoint.com';
       break;
