@@ -111,9 +111,7 @@ export class TruepointDevStack extends BaseStack {
     });
 
     // EcsTaskRole 생성
-    const truepointTaskRole = new iam.Role(this, 'ecsTaskExecutionRole', {
-      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
-    });
+    const truepointTaskRole = iam.Role.fromRoleArn(this, 'GetTaskExecutionRole', `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:role/ecsTaskExecutionRole`);
     // 생성한 Role에 ECS Task 실행 기본 정책 추가
     truepointTaskRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy'),

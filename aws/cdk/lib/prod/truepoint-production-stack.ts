@@ -16,9 +16,13 @@ import * as route53 from '@aws-cdk/aws-route53';
 import * as targets from '@aws-cdk/aws-route53-targets';
 import BaseStack from '../class/BaseStack';
 
+interface WhileTrueCollectorStackProps extends cdk.StackProps {
+  vpc: ec2.IVpc
+}
+
 // CONSTANTS
 const DOMAIN = 'mytruepoint.com';
-const ID_PREFIX = 'TruepointDev';
+const ID_PREFIX = 'TruepointProduction';
 const SSL_CERTIFICATE_ARN = 'arn:aws:acm:ap-northeast-2:576646866181:certificate/68f8f35a-bd5d-492b-8f58-c0152b60b71f';
 // DB
 const DATABASE_PORT = 3306;
@@ -27,10 +31,6 @@ const API_DOMAIN = 'api.mytruepoint.com';
 const API_SERVER_PORT = 3000;
 const API_SERVER_NAME = 'truepoint-api';
 
-interface WhileTrueCollectorStackProps extends cdk.StackProps {
-  vpc: ec2.IVpc
-}
-
 export class TruepointProductionStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
     super(scope, id, props);
@@ -38,14 +38,14 @@ export class TruepointProductionStack extends BaseStack {
     const { vpc } = props!;
 
     // *********************************************
-    // *********** RDS for Production  *************
+    // *********** RDS for Production *************
     // *********************************************
 
     // 데이터베이스 보안그룹 생성 작업
     const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
       vpc,
       securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
-      description: 'Allow traffics for Dev Database of Truepoint',
+      description: 'Allow traffics for Produciton Database of Truepoint',
       allowAllOutbound: false,
     });
     databaseSecGrp.addEgressRule(
@@ -60,14 +60,14 @@ export class TruepointProductionStack extends BaseStack {
     );
 
     const dbEngine = rds.DatabaseInstanceEngine.mysql({
-      version: rds.MysqlEngineVersion.VER_8_0_20,
+      version: rds.MysqlEngineVersion.VER_8_0_17,
     });
     new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
       engine: dbEngine,
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
       databaseName: ID_PREFIX,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.LARGE),
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM),
       vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
       multiAz: false,
       allocatedStorage: 100,
@@ -95,9 +95,7 @@ export class TruepointProductionStack extends BaseStack {
     });
 
     // EcsTaskRole 생성
-    const truepointTaskRole = new iam.Role(this, 'ecsTaskExecutionRole', {
-      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
-    });
+    const truepointTaskRole = iam.Role.fromRoleArn(this, 'GetTaskExecutionRole', `arn:aws:iam::${cdk.Aws.ACCOUNT_ID}:role/ecsTaskExecutionRole`);
     // 생성한 Role에 ECS Task 실행 기본 정책 추가
     truepointTaskRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy'),
@@ -129,7 +127,7 @@ export class TruepointProductionStack extends BaseStack {
     const apiTaskDef = new ecs.FargateTaskDefinition(this, `${ID_PREFIX}ApiTaskDef`, {
       family: API_SERVER_NAME, memoryLimitMiB: 512, cpu: 256, taskRole: truepointTaskRole,
     });
-    const apiContainer = apiTaskDef.addContainer(`${ID_PREFIX}ApiContainer`, {
+    const apiContainer = apiTaskDef.addContainer(`${API_SERVER_NAME}-container`, {
       image: ecs.ContainerImage.fromRegistry(`hwasurr/${API_SERVER_NAME}`),
       cpu: 256, // 해당 컨테이너의 최소 필요 cpu
       memoryLimitMiB: 512, // 해당 컨테이너의 최소 필요 memory
@@ -169,7 +167,7 @@ export class TruepointProductionStack extends BaseStack {
     // ECS cluster 내에 Api Service 생성
     const apiService = new ecs.FargateService(this, `${ID_PREFIX}ApiService`, {
       cluster: truepointCluster,
-      serviceName: `${API_SERVER_NAME}Service`,
+      serviceName: `${API_SERVER_NAME}-service`,
       taskDefinition: apiTaskDef,
       assignPublicIp: true,
       desiredCount: 1,

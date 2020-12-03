@@ -9,7 +9,7 @@
                 "logDriver": "awslogs",
                 "secretOptions": [],
                 "options": {
-                    "awslogs-group": "/ecs/test-truepoint-api",
+                    "awslogs-group": "/ecs/truepoint-api",
                     "awslogs-region": "ap-northeast-2",
                     "awslogs-stream-prefix": "/ecs"
                 }
@@ -28,7 +28,7 @@
             "environment": [
                 {
                     "name": "NODE_ENV",
-                    "value": "test"
+                    "value": "production"
                 }
             ],
             "resourceRequirements": null,
@@ -95,7 +95,7 @@
             "memoryReservation": null,
             "volumesFrom": [],
             "stopTimeout": null,
-            "image": "hwasurr/test-truepoint-api",
+            "image": "hwasurr/truepoint-api",
             "startTimeout": null,
             "firelensConfiguration": null,
             "dependsOn": null,
@@ -112,13 +112,12 @@
             "dockerLabels": {},
             "systemControls": [],
             "privileged": null,
-            "name": "test-truepoint-api-container"
+            "name": "truepoint-api-container"
         }
     ],
     "placementConstraints": [],
     "memory": "512",
-    "taskRoleArn": "arn:aws:iam::576646866181:role/TruepointDev-ecsTaskExecutionRole34F54B99-124VS87RXRVHM",
-    "family": "test-truepoint-api",
+    "family": "truepoint-api",
     "pidMode": null,
     "requiresCompatibilities": [
         "FARGATE"
