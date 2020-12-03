@@ -1,9 +1,7 @@
-import Axios from 'axios';
-
-function getApiHost(): string {
+export default function getApiHost(): string {
   let apihost = '';
 
-  switch (process.env.REACT_APP_NODE_ENV) {
+  switch (process.env.NODE_ENV) {
     case 'test':
       apihost = 'https://test-api.mytruepoint.com';
       break;
@@ -17,10 +15,3 @@ function getApiHost(): string {
   }
   return apihost;
 }
-
-const axios = Axios.create({
-  baseURL: getApiHost(),
-  withCredentials: true,
-});
-
-export default axios;

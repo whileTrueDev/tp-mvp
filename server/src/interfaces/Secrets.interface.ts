@@ -4,6 +4,7 @@ export interface TruepointDbSecret {
   port: number;
   host: string;
   username: string;
+  dbname: string;
 }
 
 export interface TruepointSecret {

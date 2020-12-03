@@ -2,7 +2,7 @@ import {
   ArgumentsHost, Catch, ExceptionFilter,
 } from '@nestjs/common';
 import { Response } from 'express';
-import fronthost from '../constants/fronthost';
+import getFrontHost from '../utils/getFrontHost';
 
 @Catch()
 export class AfreecaLinkExceptionFilter implements ExceptionFilter {
@@ -12,7 +12,7 @@ export class AfreecaLinkExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     response.redirect(
-      `${fronthost}/mypage/my-office/settings?error=${exception.message}`,
+      `${getFrontHost()}/mypage/my-office/settings?error=${exception.message}`,
     );
   }
 }
