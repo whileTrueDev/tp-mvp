@@ -1,12 +1,12 @@
 /* eslint-disable no-new */
 /**
- * Dev 환경의 Vpc, RDS DB 등을 배포.
+ * Produciton 환경의 Vpc, RDS DB 등을 배포.
  * @author hwasurr
  */
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
-import * as rds from '@aws-cdk/aws-rds';
+// import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
 import * as iam from '@aws-cdk/aws-iam';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
@@ -16,20 +16,20 @@ import * as route53 from '@aws-cdk/aws-route53';
 import * as targets from '@aws-cdk/aws-route53-targets';
 import BaseStack from '../class/BaseStack';
 
+interface WhileTrueCollectorStackProps extends cdk.StackProps {
+  vpc: ec2.IVpc
+}
+
 // CONSTANTS
 const DOMAIN = 'mytruepoint.com';
-const ID_PREFIX = 'TruepointDev';
+const ID_PREFIX = 'TruepointProduction';
 const SSL_CERTIFICATE_ARN = 'arn:aws:acm:ap-northeast-2:576646866181:certificate/68f8f35a-bd5d-492b-8f58-c0152b60b71f';
 // DB
-const DATABASE_PORT = 3306;
+// const DATABASE_PORT = 3306;
 // API SERVER
 const API_DOMAIN = 'api.mytruepoint.com';
 const API_SERVER_PORT = 3000;
 const API_SERVER_NAME = 'truepoint-api';
-
-interface WhileTrueCollectorStackProps extends cdk.StackProps {
-  vpc: ec2.IVpc
-}
 
 export class TruepointProductionStack extends BaseStack {
   constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
@@ -38,53 +38,53 @@ export class TruepointProductionStack extends BaseStack {
     const { vpc } = props!;
 
     // *********************************************
-    // *********** RDS for Production  *************
+    // *********** RDS for Production *************
     // *********************************************
 
     // 데이터베이스 보안그룹 생성 작업
-    const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
-      vpc,
-      securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
-      description: 'Allow traffics for Dev Database of Truepoint',
-      allowAllOutbound: false,
-    });
-    databaseSecGrp.addEgressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.tcp(DATABASE_PORT),
-      `Allow Port ${DATABASE_PORT} for Outbound traffics to the truepoint Backend`,
-    );
-    databaseSecGrp.addIngressRule(
-      ec2.Peer.anyIpv4(),
-      ec2.Port.tcp(DATABASE_PORT),
-      `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`,
-    );
+    // const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
+    //   vpc,
+    //   securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
+    //   description: 'Allow traffics for Produciton Database of Truepoint',
+    //   allowAllOutbound: false,
+    // });
+    // databaseSecGrp.addEgressRule(
+    //   ec2.Peer.anyIpv4(),
+    //   ec2.Port.tcp(DATABASE_PORT),
+    //   `Allow Port ${DATABASE_PORT} for Outbound traffics to the truepoint Backend`,
+    // );
+    // databaseSecGrp.addIngressRule(
+    //   ec2.Peer.anyIpv4(),
+    //   ec2.Port.tcp(DATABASE_PORT),
+    //   `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`,
+    // );
 
-    const dbEngine = rds.DatabaseInstanceEngine.mysql({
-      version: rds.MysqlEngineVersion.VER_8_0_20,
-    });
-    new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
-      vpc,
-      engine: dbEngine,
-      instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
-      databaseName: ID_PREFIX,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.LARGE),
-      vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
-      multiAz: false,
-      allocatedStorage: 100,
-      // Enable storage auto scailing option by specifying maximum allocated storage
-      maxAllocatedStorage: 300, // GB
-      autoMinorVersionUpgrade: true,
-      securityGroups: [databaseSecGrp],
-      parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
-        engine: dbEngine,
-        parameters: {
-          time_zone: 'Asia/Seoul',
-          wait_timeout: '180',
-          max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
-        },
-      }),
-      deletionProtection: false,
-    });
+    // const dbEngine = rds.DatabaseInstanceEngine.mysql({
+    //   version: rds.MysqlEngineVersion.VER_8_0_17,
+    // });
+    // new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
+    //   vpc,
+    //   engine: dbEngine,
+    //   instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
+    //   databaseName: ID_PREFIX,
+    //   instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM),
+    //   vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
+    //   multiAz: false,
+    //   allocatedStorage: 100,
+    //   // Enable storage auto scailing option by specifying maximum allocated storage
+    //   maxAllocatedStorage: 300, // GB
+    //   autoMinorVersionUpgrade: true,
+    //   securityGroups: [databaseSecGrp],
+    //   parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
+    //     engine: dbEngine,
+    //     parameters: {
+    //       time_zone: 'Asia/Seoul',
+    //       wait_timeout: '180',
+    //       max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
+    //     },
+    //   }),
+    //   deletionProtection: false,
+    // });
 
     /** ********************************************
     ************* Production ECS Cluster **************
@@ -129,7 +129,7 @@ export class TruepointProductionStack extends BaseStack {
     const apiTaskDef = new ecs.FargateTaskDefinition(this, `${ID_PREFIX}ApiTaskDef`, {
       family: API_SERVER_NAME, memoryLimitMiB: 512, cpu: 256, taskRole: truepointTaskRole,
     });
-    const apiContainer = apiTaskDef.addContainer(`${ID_PREFIX}ApiContainer`, {
+    const apiContainer = apiTaskDef.addContainer(`${API_SERVER_NAME}-container`, {
       image: ecs.ContainerImage.fromRegistry(`hwasurr/${API_SERVER_NAME}`),
       cpu: 256, // 해당 컨테이너의 최소 필요 cpu
       memoryLimitMiB: 512, // 해당 컨테이너의 최소 필요 memory
@@ -169,7 +169,7 @@ export class TruepointProductionStack extends BaseStack {
     // ECS cluster 내에 Api Service 생성
     const apiService = new ecs.FargateService(this, `${ID_PREFIX}ApiService`, {
       cluster: truepointCluster,
-      serviceName: `${API_SERVER_NAME}Service`,
+      serviceName: `${API_SERVER_NAME}-service`,
       taskDefinition: apiTaskDef,
       assignPublicIp: true,
       desiredCount: 1,
