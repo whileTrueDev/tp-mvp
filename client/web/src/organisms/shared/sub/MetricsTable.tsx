@@ -32,9 +32,9 @@ export function highlightTerm(rowData: any): string {
     return `${hours}:${minutes}:${seconds}`;
   }
 
-  const { start_time, end_time } = rowData;
-  const startTime = new Date(start_time);
-  const endTime = new Date(end_time);
+  const { start_date, end_date } = rowData;
+  const startTime = new Date(start_date);
+  const endTime = new Date(end_date);
   const addEndTime = new Date(endTime.setSeconds(endTime.getSeconds() + 30));
   const resultStartTime = getFormatDate(startTime);
   const resultEndTime = getFormatDate(addEndTime);
@@ -128,7 +128,7 @@ export default function MaterialTable({
                   </TableCell>
                   <TableCell style={{ padding: 10 }} align="center">
                     { type === '트루포인트 편집점'
-                      ? Math.round(eachRow.score * 100)
+                      ? Math.round(eachRow.score)
                       : eachRow.score}
                   </TableCell>
                 </TableRow>

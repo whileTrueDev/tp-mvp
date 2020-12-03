@@ -9,7 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
@@ -21,7 +21,7 @@ import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 import dateExpression from '../../../utils/dateExpression';
-import SearchBox from '../highlightAnalysis/SearchBox';
+// import SearchBox from '../highlightAnalysis/SearchBox';
 
 interface StreamDate {
   fullDate: Date;
@@ -30,13 +30,13 @@ interface StreamDate {
   fileId: string;
 }
 
-interface PointType {
-  start_time: string;
-  end_time: string;
-  start_index: number;
-  end_index: number;
-  score: any;
-}
+// interface PointType {
+//   start_time: string;
+//   end_time: string;
+//   start_index: number;
+//   end_index: number;
+//   score: any;
+// }
 
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
@@ -50,7 +50,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   const [highlightData, setHighlightData] = React.useState(null);
-  const [metricsData, setMetricsData] = React.useState(null);
+  // const [metricsData, setMetricsData] = React.useState(null);
   const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
   const [isChecked, setIsChecked] = React.useState({
@@ -74,9 +74,9 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   const [, getHighlightPoints] = useAxios(
     { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
   );
-  const [, getMetricsData] = useAxios(
-    { url: '/highlight/metrics', method: 'get' }, { manual: true },
-  );
+  // const [, getMetricsData] = useAxios(
+  //   { url: '/highlight/metrics', method: 'get' }, { manual: true },
+  // );
   const makeMonth = (month: number) => {
     if (month < 10) {
       const edit = `0${month}`;
@@ -98,59 +98,51 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
   };
 
-  // Metrics 데이터 전처리 함수
-  const getMetricsPoint = (metric: any): any => {
-    const originStartTime = new Date(metric.start_date);
+  function forloop(datas: any): any {
+    const { highlight_points, chat_points, smile_points } = datas;
 
-    function getDate(index: number) {
-      const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
-      const getYears = Time.getFullYear();
-      const getMonths = Time.getMonth();
-      const getDays = Time.getDay();
-      const getHours = Time.getHours();
-      const getMinutes = Time.getMinutes();
-      const getSeconds = Time.getSeconds();
-      const months = getMonths >= 10 ? String(getMonths) : `0${getMonths}`;
-      const days = getDays >= 10 ? String(getDays) : `0${getDays}`;
-      const hours = getHours >= 10 ? String(getHours) : `0${getHours}`;
-      const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
-      const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
+    const new_points = highlight_points.highlight_points.map((point: any) => ({
+      ...point,
+      start_date: `2020-12-01 ${point.start_date}`,
+      end_date: `2020-12-01 ${point.end_date}`,
+    }));
 
-      return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
-    }
+    const new_points_90 = highlight_points.highlight_points_90.map((point: any) => ({
+      ...new_points[point],
+    }));
+    // const new_points = highlight_points.map((point: any) => ({
+    //   ...point,
+    //   start_date: `2020-12-01 ${point.start_date}`,
+    //   end_date: `2020-12-01 ${point.end_date}`,
+    // }));
 
-    function insertPoints(target: number, countType: string) {
-      const time = getDate(target);
-      const returnDict = {
-        start_time: time,
-        end_time: time,
-        start_index: target,
-        end_index: target,
-        score: metric.time_line[target][countType],
-      };
-      return returnDict;
-    }
+    const new_chat_points = chat_points.highlight_points.map((point: any) => ({
+      ...point,
+      start_date: `2020-12-01 ${point.start_date}`,
+      end_date: `2020-12-01 ${point.end_date}`,
+    }));
 
-    const resultData: {chat_points: PointType[]; smile_points: PointType[]} = {
-      chat_points: [],
-      smile_points: [],
+    const new_chat_points_90 = chat_points.highlight_points_90.map((point: any) => ({
+      ...new_chat_points[point],
+    }));
+
+    const new_smile_points = smile_points.highlight_points.map((point: any) => ({
+      ...point,
+      start_date: `2020-12-01 ${point.start_date}`,
+      end_date: `2020-12-01 ${point.end_date}`,
+    }));
+
+    const new_smile_points_90 = smile_points.highlight_points_90.map((point: any) => ({
+      ...new_smile_points[point],
+    }));
+
+    return {
+      highlight_points: new_points_90.length >= 10 ? new_points_90 : new_points,
+      chat_points: new_chat_points_90.length >= 10 ? new_chat_points_90 : new_chat_points,
+      smile_points: new_smile_points_90.length >= 10 ? new_smile_points_90 : new_smile_points,
     };
-
-    const chatHighlight = metric.chat_points;
-    const smileHighlight = metric.smile_points;
-
-    chatHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'chat_count');
-      resultData.chat_points.push(eachData);
-    });
-
-    smileHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'smile_count');
-      resultData.smile_points.push(eachData);
-    });
-
-    return resultData;
-  };
+    // console.log(new_points);
+  }
 
   const handleExportClick = async () => {
     const id = '234175534';
@@ -200,31 +192,33 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     })
       .then((res) => {
         if (res.data) {
-          setHighlightData(res.data);
+          const final = forloop(res.data);
+          setHighlightData(final);
         }
-      }).catch(() => {
+      }).catch((err) => {
         ShowSnack('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
 
-  const fetchMetricsData = async (
-    id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    setMetricsData(null);
-    getMetricsData(
-      {
-        params: {
-          id, year, month, day, fileId,
-        },
-      },
-    )
-      .then((res) => {
-        if (res.data) {
-          setMetricsData(getMetricsPoint(res.data));
-        }
-      }).catch(() => {
-        ShowSnack('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-      });
-  };
+  // const fetchMetricsData = async (
+  //   id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
+  //   setMetricsData(null);
+  //   getMetricsData(
+  //     {
+  //       params: {
+  //         id, year, month, day, fileId,
+  //       },
+  //     },
+  //   )
+  //     .then((res) => {
+  //       if (res.data) {
+  //         console.log(res.data);
+  //         setMetricsData(getMetricsPoint(res.data));
+  //       }
+  //     }).catch(() => {
+  //       ShowSnack('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+  //     });
+  // };
 
   const handleAnalyze = (): void => {
     setIsClicked(true);
@@ -236,7 +230,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
     Promise.all([
       fetchHighlightData(id, year, month, day, file),
-      fetchMetricsData(id, year, month, day, file)])
+      // fetchMetricsData(id, year, month, day, file)
+    ])
       .then(() => {
         setIsClicked(false);
       }).catch(() => {
@@ -244,21 +239,22 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       });
   };
 
-  const dummy: string[] = [
-    '나락',
-    '극락',
-    '굿',
-    '지렷다',
-    '레전드',
-    '노답',
-    '가능?',
-    '침디',
-    '가장긴 문자열',
-  ];
-  const [analysisWord, setAnalysisWord] = React.useState<string>();
-  const handleAnalysisWord = (targetWord: string) => {
-    setAnalysisWord(targetWord);
-  };
+  // const dummy: string[] = [
+  //   '나락',
+  //   '극락',
+  //   '굿',
+  //   '지렷다',
+  //   '레전드',
+  //   '노답',
+  //   '가능?',
+  //   '침디',
+  //   '가장긴 문자열',
+  // ];
+
+  // const [analysisWord, setAnalysisWord] = React.useState<string>();
+  // const handleAnalysisWord = (targetWord: string) => {
+  //   setAnalysisWord(targetWord);
+  // };
 
   return (
     <Paper className={classes.root}>
@@ -316,7 +312,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         >
           <Calendar handleDatePick={handleDatePick} />
         </Grid>
-
+        {/* 
         <Grid
           item
           xs
@@ -334,7 +330,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             handleAnalysisWord={handleAnalysisWord}
             analysisWord={analysisWord}
           />
-        </div>
+        </div> */}
       </Grid>
 
       <Grid
@@ -401,13 +397,14 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
       </Grid>
-      <Loading clickOpen={isClicked} />
-      { !isClicked && highlightData && metricsData && (
+      <Loading clickOpen={isClicked} loadingType="medium" />
+      {/* { !isClicked && highlightData && metricsData && ( */}
+      { !isClicked && highlightData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
           <MetricsAccordian
-            metricsData={metricsData}
-            analysisWord={analysisWord}
+            metricsData={highlightData}
+            // analysisWord="편집점"
           />
         </>
       )}

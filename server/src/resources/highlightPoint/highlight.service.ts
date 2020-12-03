@@ -10,19 +10,61 @@ const s3 = new AWS.S3();
 export class HighlightService {
   async getHighlightData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
-    const getParams = {
+
+    const getAllParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
+      Prefix: `highlight_json/234175534/${year}/${month}/${day}/`,
     };
-    const returnHighlight = await s3.getObject(getParams).promise();
-    return returnHighlight.Body.toString('utf-8');
+    const getArray = [];
+    const returnObject = { chat_points: '', highlight_points: '', smile_points: '' };
+    await s3.listObjects(getAllParams).promise()
+      .then((value) => {
+        value.Contents.forEach((content) => {
+          const directoryId = content.Key.split('/')[5];
+          const unique_key = fileId.split('_')[0];
+          if (directoryId.length !== 0 && directoryId.includes(unique_key)) {
+            getArray.push(content.Key);
+          }
+        });
+      });
+
+    await Promise.all(getArray.map(async (key, i) => {
+      const getParams = {
+        Bucket: process.env.BUCKET_NAME, // your bucket name,
+        Key: `${key}`,
+      };
+      await s3.getObject(getParams).promise()
+        .then((value: any) => {
+          if (i === 0) {
+            returnObject.chat_points = JSON.parse(value.Body.toString('utf-8'));
+          }
+          if (i === 1) {
+            returnObject.highlight_points = JSON.parse(value.Body.toString('utf-8'));
+          }
+          if (i === 2) {
+            returnObject.smile_points = JSON.parse(value.Body.toString('utf-8'));
+          }
+        }).catch((err) => {
+          console.error(err);
+        });
+    }));
+    return returnObject;
+
+    // const getParams = {
+    //   Bucket: process.env.BUCKET_NAME, // your bucket name,
+    //   Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
+    // };
+
+    // const returnHighlight = await s3.getObject(getParams).promise();
   }
 
   async getMetricsData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`,
+      // Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`,
+      Key: 'metrics_json/234175534/2020/12/01/11100927_1110162750_20201201092750arinbbidol.json.json',
+
     };
     const returnHighlight = await s3.getObject(getParams).promise();
     return returnHighlight.Body.toString('utf-8');
@@ -34,15 +76,17 @@ export class HighlightService {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${platform}/${name}/${year}/${month}`,
+      // Prefix: `highlight_json/${platform}/${name}/${year}/${month}`,
+      Prefix: `highlight_json/234175534/2020/${month}`,
     };
     const keyArray = [];
     await s3.listObjects(params).promise()
       .then((value) => {
         value.Contents.forEach((v) => {
-          const getKey = v.Key.split('/')[5];
+          const getKey = v.Key.split('/')[4];
           // 공백제거
-          if (v.Key.split('/')[5].length !== 0) {
+
+          if (v.Key.split('/')[4].length !== 0) {
             keyArray.push(Number(getKey));
           }
         });
@@ -57,15 +101,18 @@ export class HighlightService {
     const params = {
       Bucket: process.env.BUCKET_NAME,
       Delimiter: '',
-      Prefix: `highlight_json/${platform}/${name}/${year}/${month}/${day}`,
+      // Prefix: `highlight_json/${platform}/${name}/${year}/${month}/${day}`,
+      Prefix: `highlight_json/${name}/${year}/${month}/${day}`,
     };
     const keyArray = [];
     const returnArray = [];
     await s3.listObjects(params).promise()
       .then((value) => {
         value.Contents.forEach((v) => {
-          const getKey = v.Key.split('/')[6];
-          keyArray.push(getKey);
+          const getKey = v.Key.split('/')[5];
+          if (getKey.includes('highlight')) {
+            keyArray.push(getKey);
+          }
         });
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');

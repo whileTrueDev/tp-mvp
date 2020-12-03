@@ -17,21 +17,21 @@ const metricSetting: any = {
   smile: {
     name: '웃음 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   chat: {
     name: '채팅 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   highlight: {
     name: '트루포인트 편집점',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
@@ -143,7 +143,7 @@ export default function Chart({
     return () => {
       chart.dispose();
     };
-  }, [highlight, pageSize, chartType, data, handleClick, handlePage, theme]);
+  }, [chartType, data, handleClick, handlePage, highlight, pageSize, theme.palette]);
 
   return (
     <div id={`${chartType}chartdiv`} style={{ width: '100%', height: 350 }} />

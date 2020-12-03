@@ -79,6 +79,7 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
   const [, getStreamList] = useAxios(
     { url: '/highlight/stream' }, { manual: true },
   );
+
   const fetchListData = useCallback(async (
     platform: 'youtube'|'afreeca'|'twitch',
     name: string, year: string, month: string): Promise<void> => {
@@ -178,9 +179,9 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
   });
 
   // 더미데이터 추후 수정 필요 - 임시 주석
-  // React.useEffect(() => {
-  //   fetchListData('234175534', '2020', '09');
-  // }, [fetchListData]);
+  React.useEffect(() => {
+    fetchListData('afreeca', '234175534', '2020', '12');
+  }, [fetchListData]);
 
   const renderDayInPicker = (
     date: MaterialUiPickersDate,
