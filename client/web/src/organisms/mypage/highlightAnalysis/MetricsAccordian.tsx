@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Accordion, AccordionSummary,
@@ -65,9 +65,7 @@ export default function MetricsAccordian(
   // const [page3, setPage3] = React.useState(0);
   // const [pageSize3, setPageSize3] = React.useState(5);
   // const [point3, setPoint3] = React.useState(initialPoint);
-  useEffect(() => {
-    console.log(metricsData);
-  }, [metricsData]);
+
   return (
     <Paper>
       <Accordion>
