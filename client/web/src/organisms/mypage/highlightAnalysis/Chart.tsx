@@ -28,7 +28,28 @@ const metricSetting: any = {
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
-  highlight: {
+  funny: {
+    name: '웃음 발생 수',
+    valueY: 'score',
+    dateX: 'start_time',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  agree: {
+    name: '채팅 발생 수',
+    valueY: 'score',
+    dateX: 'start_time',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  surprise: {
+    name: '채팅 발생 수',
+    valueY: 'score',
+    dateX: 'start_time',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  disgust: {
     name: '트루포인트 편집점',
     valueY: 'score',
     dateX: 'start_time',
@@ -81,6 +102,9 @@ export default function Chart({
 
     const setSeries = (metricsType: string, getChart: am4charts.XYChart): void => {
       const setting = metricSetting[metricsType];
+
+      console.log(setting);
+
       const valueAxis: any = getChart.yAxes.push(new am4charts.ValueAxis());
       if (chart.yAxes.indexOf(valueAxis) !== 0) {
         valueAxis.syncWithAxis = getChart.yAxes.getIndex(0);
