@@ -20,6 +20,7 @@ import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import DeleteUser from '../../../organisms/mypage/my-office/DeleteUser';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
+import getJosa from '../../../utils/getJosa';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -72,7 +73,7 @@ export default function Settings(): JSX.Element {
             const { platformUserName, userId } = data;
             // 연동하고자 하는 플랫폼계정이 다른 유저에게 연동되어 있는 경우
             setAlreadyLinkedWithOther(
-              `현재 연동하고자 하는 ${capitalize(params.platform)} 계정 "${platformUserName}" 은(는)
+              `현재 연동하고자 하는 ${capitalize(params.platform)} 계정 ${`"${platformUserName}"${getJosa(platformUserName, '은/는')}`}
               다른 유저 "${transformIdToAsterisk(userId, 1.8)}" 에게 연동되어있습니다.`,
             );
           }
