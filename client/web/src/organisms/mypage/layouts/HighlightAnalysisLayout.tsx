@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
+import Fade from '@material-ui/core/Fade';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -11,7 +12,12 @@ import IconButton from '@material-ui/core/IconButton';
 import { useSnackbar } from 'notistack';
 import classnames from 'classnames';
 import ClearIcon from '@material-ui/icons/Clear';
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+
 import Calendar from '../highlightAnalysis/Calendar';
+import Calendar2 from '../highlightAnalysis/Calendar2';
+import StreamList from '../highlightAnalysis/StreamList';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
@@ -22,6 +28,9 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 import dateExpression from '../../../utils/dateExpression';
 import SearchBox from '../highlightAnalysis/SearchBox';
+import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
+import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
+import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 
 interface StreamDate {
   fullDate: Date;
@@ -48,6 +57,44 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     finishAt: '',
     fileId: '',
   };
+
+  /**
+   * 일감 - 편집점 분석 달력 렌더링 방식 변경
+   */
+  const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
+  const handleClickedDate = (newDate: Date) => {
+    setClickedDate(newDate);
+  };
+
+  const [dayStreamsList, setDayStreamsList] = React.useState<StreamDataType[]>(
+    [],
+  );
+  const handleDayStreamList = (responseList: StreamDataType[]) => {
+    setDayStreamsList(responseList);
+  };
+
+  const [selectedStream2, setSelectedStream2] = React.useState<StreamDataType | null>(null);
+  const handleSeletedStreams2 = (
+    newStreams: StreamDataType | null,
+    base?: true,
+  ) => {
+    setSelectedStream2(newStreams);
+  };
+
+  const platformIcon = (stream: StreamDataType): JSX.Element => {
+    switch (stream.platform) {
+      case 'afreeca':
+        return <AfreecaIcon />;
+      case 'twitch':
+        return <TwitchIcon />;
+      case 'youtube':
+        return <YoutubeIcon />;
+      default:
+        return <div />;
+    }
+  };
+
+  /** ***************************************** */
 
   const [highlightData, setHighlightData] = React.useState(null);
   const [metricsData, setMetricsData] = React.useState(null);
@@ -281,27 +328,33 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           justify="space-between"
           className={classes.sideSpace}
         >
-          <Grid item xs={3} className={classes.title}>
+          <Grid item xs={2} className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={9}>
-            {selectedStream.fileId
+          <Grid item xs={10}>
+            {selectedStream2
               && (
-                <Card className={classes.card}>
-                  <Typography className={classes.cardText}>
-                    {dateExpression({
-                      compoName: 'highlight-calendar',
-                      createdAt: (selectedStream.startAt),
-                      finishAt: (selectedStream.finishAt),
-                    })}
-                  </Typography>
+                <Fade in={Boolean(selectedStream2)} style={{ transitionDelay: '200ms' }}>
+                  <Card className={classes.card}>
+                    <Typography className={classes.cardText}>
+                      {dateExpression({
+                        compoName: 'analysys-calender',
+                        createdAt: new Date(selectedStream2.startDate),
+                        streamAirtime: selectedStream2.airTime,
+                      })}
+                    </Typography>
 
-                  <IconButton
+                    {/* <IconButton
                     onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </Card>
+                  > */}
+                    <IconButton
+                      onClick={() => setSelectedStream2(null)}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Card>
+                </Fade>
+
               )}
           </Grid>
 
@@ -310,11 +363,29 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           item
           xs={12}
           container
-          className={classes.wraper}
-          direction="column"
+          className={classes.calendarWrapper}
+          direction="row"
           justify="flex-start"
+          spacing={2}
         >
-          <Calendar handleDatePick={handleDatePick} />
+          {/* <Calendar handleDatePick={handleDatePick} /> */}
+          <Grid item>
+            <Calendar2
+              clickedDate={clickedDate}
+              handleClickedDate={handleClickedDate}
+              handleDayStreamList={handleDayStreamList}
+            />
+          </Grid>
+
+          <Grid item xs style={{ marginLeft: 16 }}>
+            <StreamList
+              dayStreamsList={dayStreamsList}
+              selectedStream={selectedStream2}
+              handleSeletedStreams={handleSeletedStreams2}
+              platformIcon={platformIcon}
+            />
+          </Grid>
+
         </Grid>
 
         <Grid

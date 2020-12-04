@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryColumn, OneToOne, CreateDateColumn,
+  Entity, Column, PrimaryColumn, OneToOne,
 } from 'typeorm';
 import { StreamSummary } from '@truepoint/shared/dist/interfaces/StreamSummary.interface';
 import { StreamsEntity } from './streams.entity';
@@ -16,7 +16,7 @@ export class StreamSummaryEntity implements StreamSummary {
   @Column()
   smileCount: number;
 
-  @CreateDateColumn()
+  @Column('timestamp')
   createdAt: Date;
 
   // @OneToOne((type) => StreamsEntity, (streams) => streams.streamSummary)

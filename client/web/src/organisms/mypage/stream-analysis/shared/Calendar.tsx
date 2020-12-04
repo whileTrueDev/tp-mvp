@@ -82,7 +82,7 @@ function Calendar(props: CalendarProps): JSX.Element {
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(period[1]);
 
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>(
-    selectedStreams.map((stream) => moment(stream.startedAt).format('YYYY-MM-DD')),
+    selectedStreams.map((stream) => moment(stream.startDate).format('YYYY-MM-DD')),
   );
 
   const DATE_THEME = (others: Theme) => ({
@@ -105,7 +105,7 @@ function Calendar(props: CalendarProps): JSX.Element {
 
   React.useEffect(() => {
     setHasStreamDays(
-      selectedStreams.map((stream) => moment(stream.startedAt).format('YYYY-MM-DD')),
+      selectedStreams.map((stream) => moment(stream.startDate).format('YYYY-MM-DD')),
     );
   }, [selectedStreams]);
 

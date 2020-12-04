@@ -10,10 +10,13 @@ import ChatIcon from '@material-ui/icons/Chat';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 // shared interface
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+
 // interface
-import { StreamListProps } from './StreamCompareSectioninterface';
-import dateExpression from '../../../../utils/dateExpression';
+// import { StreamListProps } from './StreamCompareSectioninterface';
+import dateExpression from '../../../utils/dateExpression';
+import SelectVideoIcon from '../../../atoms/stream-analysis-icons/SelectVideoIcon';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -73,7 +76,32 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     justifyContent: 'flex-start',
   },
+  bodyTitle: {
+    color: theme.palette.text.secondary,
+    letterSpacing: 'normal',
+    textAlign: 'center',
+    lineHeight: 1.5,
+    fontSize: '17px',
+    fontFamily: 'AppleSDGothicNeo',
+    marginLeft: theme.spacing(6),
+    marginRight: theme.spacing(5),
+    display: 'flex',
+    marginBottom: theme.spacing(4),
+  },
+  selectIcon: {
+    fontSize: '28.5px', marginRight: theme.spacing(3),
+  },
 }));
+
+export interface StreamListProps {
+  dayStreamsList: (StreamDataType)[];
+  // baseStream: DayStreamsInfo|null;
+  // compareStream: DayStreamsInfo|null;
+  selectedStream: StreamDataType|null;
+  handleSeletedStreams: (newStreams: StreamDataType|null, base?: true | undefined) => void;
+  // handleFullMessage: (isSelectedListFull: boolean) => void;
+  platformIcon: (stream: StreamDataType) => JSX.Element;
+}
 
 const StyledToolTip = withStyles((theme) => ({
   arrow: {
@@ -87,8 +115,8 @@ const StyledToolTip = withStyles((theme) => ({
 
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
-    dayStreamsList, handleSeletedStreams, baseStream, compareStream,
-    handleFullMessage, platformIcon,
+    dayStreamsList, handleSeletedStreams, selectedStream,
+    platformIcon,
   } = props;
 
   const tooltipContents = (stream: StreamDataType): JSX.Element => (
@@ -150,59 +178,71 @@ export default function StreamList(props: StreamListProps): JSX.Element {
   const classes = useStyles();
 
   const handleListStreamClick = (stream: StreamDataType) => {
-    if (baseStream && compareStream) {
-      handleFullMessage(true);
-    } else if (baseStream && !compareStream) {
-      handleSeletedStreams(stream);
-    } else if (!baseStream && compareStream) {
-      handleSeletedStreams(stream, true);
-    } else {
-      handleSeletedStreams(stream, true);
-    }
+    // if (baseStream && compareStream) {
+    //   handleFullMessage(true);
+    // } else if (baseStream && !compareStream) {
+    //   handleSeletedStreams(stream);
+    // } else if (!baseStream && compareStream) {
+    //   handleSeletedStreams(stream, true);
+    // } else {
+    //   handleSeletedStreams(stream, true);
+    // }
+    handleSeletedStreams(stream, true);
   };
 
   const isSelectedListItem = (listStream: StreamDataType): boolean => {
-    if (baseStream || compareStream) {
-      return (listStream.streamId === baseStream?.streamId
-    || listStream.streamId === compareStream?.streamId);
-    }
+    // if (baseStream || compareStream) {
+    //   return (listStream.streamId === baseStream?.streamId
+    // || listStream.streamId === compareStream?.streamId);
+    // }
 
+    if (selectedStream) {
+      return listStream.streamId === selectedStream.streamId;
+    }
     return false;
   };
 
   return (
-    <List className={classes.listWrapper}>
-      {dayStreamsList && dayStreamsList.map((stream) => (
-        <StyledToolTip
-          arrow
-          placement="top"
-          title={tooltipContents(stream)}
-        >
-          <ListItem
-            key={stream.streamId}
-            button
-            selected={isSelectedListItem(stream)}
-            className={classes.listItem}
-            onClick={() => handleListStreamClick(stream)}
+    <div>
+      <Typography className={classes.bodyTitle}>
+        <SelectVideoIcon className={classes.selectIcon} />
+        방송 선택
+      </Typography>
+
+      <List className={classes.listWrapper}>
+        {dayStreamsList && dayStreamsList.map((stream) => (
+          <StyledToolTip
+            arrow
+            placement="top"
+            title={tooltipContents(stream)}
           >
-            <ListItemIcon>
-              {platformIcon(stream)}
-            </ListItemIcon>
-            <Typography className={classes.listItemText}>
-              {dateExpression({
-                compoName: 'analysys-calender',
-                createdAt: new Date(stream.startDate),
-                streamAirtime: stream.airTime,
-              })}
-            </Typography>
+            <ListItem
+              key={stream.streamId}
+              button
+              selected={isSelectedListItem(stream)}
+              className={classes.listItem}
+              onClick={() => handleListStreamClick(stream)}
+            >
+              <ListItemIcon>
+                {platformIcon(stream)}
+              </ListItemIcon>
+              <Typography className={classes.listItemText}>
+                {dateExpression({
+                  compoName: 'analysys-calender',
+                  createdAt: new Date(stream.startDate),
+                  streamAirtime: stream.airTime,
+                })}
+              </Typography>
 
-            <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
-              {stream.title.length > 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
-            </Typography>
+              <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
+                {stream.title.length > 20 ? `${stream.title.slice(0, 21)} ...` : stream.title}
+              </Typography>
 
-          </ListItem>
-        </StyledToolTip>
-      ))}
-    </List>
+            </ListItem>
+          </StyledToolTip>
+        ))}
+      </List>
+    </div>
+
   );
 }

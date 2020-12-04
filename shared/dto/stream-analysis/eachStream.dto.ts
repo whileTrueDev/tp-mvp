@@ -13,7 +13,10 @@ export class EachStream {
   smileCount;
 
   @IsString()
-  startedAt;
+  startDate;
+
+  // @IsString()
+  // startedAt;
 
   // @IsString()
   // platform;

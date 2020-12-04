@@ -14,6 +14,8 @@ import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalys
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+
 // Services
 import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
@@ -35,11 +37,26 @@ export class StreamAnalysisController {
   * 캘린더 방송 정보 표시
   * @param findDaysStreamRequest endDate 가 존재시 기간에 해당하는 정보를 , 이외 startDate 가 속한 달에 대한 정보 조회
   */
-  @Get('stream-list')
+  @Get('stream-list-before')
   @UseGuards(JwtAuthGuard)
   getDaysStreamList(@Query(new ValidationPipe())
-    findDaysStreamRequest: SearchCalendarStreams): Promise<DayStreamsInfo[]> {
+    findDaysStreamRequest: SearchCalendarStreams): Promise<StreamDataType[]> {
     return this.streamAnalysisService.findDayStreamList(
+      findDaysStreamRequest.userId,
+      findDaysStreamRequest.startDate,
+      findDaysStreamRequest.endDate,
+    );
+  }
+
+  /**
+  * 캘린더 포함하여 분석 완료된 방송 정보 리스트 조회
+  * @param findDaysStreamRequest endDate 가 존재시 기간에 해당하는 정보를 , 이외 startDate 가 속한 달에 대한 정보 조회
+  */
+ @Get('stream-list')
+ @UseGuards(JwtAuthGuard)
+  getCompleteStreamsList(@Query(new ValidationPipe())
+    findDaysStreamRequest: SearchCalendarStreams): Promise<StreamDataType[]> {
+    return this.streamAnalysisService.findDayStreamList2(
       findDaysStreamRequest.userId,
       findDaysStreamRequest.startDate,
       findDaysStreamRequest.endDate,
@@ -52,11 +69,11 @@ export class StreamAnalysisController {
   */
   @Get('streams')
   @UseGuards(JwtAuthGuard)
-  getStreamsInfo(
+ getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: SearchEachStream })) findInfoRequest: SearchStreamInfoByStreamId,
-  ): Promise<StreamAnalysisResType[]> {
-    return this.streamAnalysisService.SearchStreamInfoByStreamId(findInfoRequest);
-  }
+ ): Promise<StreamAnalysisResType[]> {
+   return this.streamAnalysisService.SearchStreamInfoByStreamId(findInfoRequest);
+ }
 
   /**
    * 기간 대 기간 분석
@@ -65,11 +82,13 @@ export class StreamAnalysisController {
    */
   @Post('periods')
   @UseGuards(JwtAuthGuard)
-  getPeriodsStreamsInfo(
+  async getPeriodsStreamsInfo(
   @Body('base', new ParseArrayPipe({ items: EachStream })) base: EachStream[],
   @Body('compare', new ParseArrayPipe({ items: EachStream })) compare: EachStream[],
   ): Promise<PeriodsAnalysisResType> {
-    return this.streamAnalysisService.findStreamInfoByPeriods([base, compare]);
+    const result = await this.streamAnalysisService.findStreamInfoByPeriods([base, compare]);
+    console.log(result.timeline);
+    return result;
   }
 
   /**

@@ -13,6 +13,11 @@ import DateFnsUtils from '@date-io/date-fns';
 import koLocale from 'date-fns/locale/ko';
 import Grid from '@material-ui/core/Grid';
 import { Theme } from '@material-ui/core/styles';
+import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
+import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+
+import moment from 'moment';
 import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
@@ -20,6 +25,7 @@ import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 import dateExpression from '../../../utils/dateExpression';
 import SelectDateIcon from '../../../atoms/stream-analysis-icons/SelectDateIcon';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 interface StreamData {
   getState: boolean;
@@ -57,12 +63,34 @@ const useStyles = makeStyles((theme) => ({
   platformIcon: {
     marginRight: theme.spacing(3),
   },
+  bodyTitle: {
+    color: theme.palette.text.secondary,
+    letterSpacing: 'normal',
+    textAlign: 'center',
+    lineHeight: 1.5,
+    fontSize: '17px',
+    fontFamily: 'AppleSDGothicNeo',
+    marginLeft: theme.spacing(6),
+    marginRight: theme.spacing(5),
+    display: 'flex',
+    marginBottom: theme.spacing(4),
+  },
+  selectIcon: {
+    fontSize: '28.5px', marginRight: theme.spacing(3),
+  },
 }));
 
 export interface StreamCalenderProps {
-  handleDatePick: (selectedDate: Date, startAt: string, finishAt: string, fileId: string) => void;
+  // handleDatePick: (selectedDate: Date, startAt: string, finishAt: string, fileId: string) => void;
+  clickedDate: Date;
+  handleClickedDate: (newDate: Date) => void;
+  handleDayStreamList: (responseList: (StreamDataType)[]) => void;
+  // dayStreamsList: DayStreamsInfo[];
 }
-function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
+function StreamCalendar2(props: StreamCalenderProps): JSX.Element {
+  /* 일감 - 편집점 분석 달력 렌더링 방식 변경 */
+  const { clickedDate, handleClickedDate, handleDayStreamList } = props;
+
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const getStreamData: StreamData[] = new Array<StreamData>();
@@ -177,11 +205,6 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
     },
   });
 
-  // 더미데이터 추후 수정 필요 - 임시 주석
-  // React.useEffect(() => {
-  //   fetchListData('234175534', '2020', '09');
-  // }, [fetchListData]);
-
   const renderDayInPicker = (
     date: MaterialUiPickersDate,
     selectedCalendarDate: MaterialUiPickersDate,
@@ -206,55 +229,178 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
     return dayComponent;
   };
 
-  const platformIcon = (stream: StreamData): JSX.Element => {
-    switch (stream.platform) {
-      case 'afreeca':
-        return (
-          <AfreecaIcon />
-        );
-      case 'twitch':
-        return (
-          <TwitchIcon />
-        );
-      case 'youtube':
-        return (
-          <YoutubeIcon />
-        );
-      default:
-        return <div />;
+  // 더미데이터 추후 수정 필요 - 임시 주석
+  // React.useEffect(() => {
+  //   fetchListData('234175534', '2020', '09');
+  // }, [fetchListData]);
+
+  /**
+   * 일감 - 편집점 분석 달력 렌더링 방식 변경
+   */
+  const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
+  const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
+  const auth = useAuthContext();
+
+  const reRequest = 3;
+  const [
+    {
+      data: getStreamsData,
+      loading: getStreamsLoading,
+      error: getStreamsError,
+    }, excuteGetStreams] = useAxios<StreamDataType[]>({
+      url: '/stream-analysis/stream-list',
+    }, { manual: true });
+
+  /**
+   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
+   * @param originDate 현재 달력이 위치한 달
+   */
+  const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
+    if (originDate) {
+      const rangeStart = moment(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      const rangeEnd = moment(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      return [rangeStart, rangeEnd];
+    }
+
+    return [];
+  };
+
+  React.useEffect(() => {
+    const params: SearchCalendarStreams = {
+      userId: auth.user.userId,
+      startDate: handleSubtractCurrMonth(currMonth)[0],
+      endDate: handleSubtractCurrMonth(currMonth)[1],
+    };
+
+    excuteGetStreams({
+      params,
+    }).then((result) => {
+      setHasStreamDays(
+        result.data.map((streamInfo) => moment(new Date(streamInfo.startDate)).format('YYYY-MM-DD')),
+      );
+    }).catch((err) => {
+      if (err.message) {
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+      }
+    });
+  }, [auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
+
+  const handleDayChange = (newDate: MaterialUiPickersDate) => {
+    if (newDate) handleClickedDate(newDate);
+    const dayStreamList: StreamDataType[] = [];
+    try {
+      if (getStreamsData) {
+        getStreamsData.forEach((stream: StreamDataType) => {
+          // if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
+          //   dayStreamList.push(stream);
+          // }
+          if (newDate
+            && moment(newDate).format('YYYY-MM-DD') === moment(stream.startDate).format('YYYY-MM-DD')) {
+            dayStreamList.push(stream);
+          }
+        });
+      }
+    } catch {
+      handleDayStreamList([]);
+    }
+    handleDayStreamList(dayStreamList);
+  };
+
+  const handleMonthChange2 = (newMonth: MaterialUiPickersDate) => {
+    if (newMonth && Math.abs(moment(newMonth).diff(moment(currMonth), 'month')) >= reRequest) {
+      setCurrMonth(newMonth);
     }
   };
+
+  const renderDayInPicker2 = (
+    date: MaterialUiPickersDate,
+    selectedDate2: MaterialUiPickersDate,
+    dayInCurrentMonth: boolean,
+    dayComponent: JSX.Element,
+  ) => {
+    if (date && hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
+      // if ((compareStream && (new Date(compareStream.startedAt)).getDate() === date.getDate())
+      // || (baseStream && (new Date(baseStream.startedAt)).getDate() === date.getDate())) {
+      //   return (
+      //     <div className={classnames({
+      //       [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+      //     })}
+      //     >
+      //       {React.cloneElement(dayComponent, { style: { backgroundColor: '#929ef8', color: 'white' } })}
+      //       <div className={classnames({
+      //         [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+      //       })}
+      //       />
+      //     </div>
+      //   );
+      // }
+
+      return (
+        <div className={classnames({
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+        })}
+        >
+          {dayComponent}
+          <div className={classnames({
+            [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+          })}
+          />
+        </div>
+      );
+    }
+
+    return dayComponent;
+  };
+
+  // const platformIcon = (stream: StreamData): JSX.Element => {
+  //   switch (stream.platform) {
+  //     case 'afreeca':
+  //       return (
+  //         <AfreecaIcon />
+  //       );
+  //     case 'twitch':
+  //       return (
+  //         <TwitchIcon />
+  //       );
+  //     case 'youtube':
+  //       return (
+  //         <YoutubeIcon />
+  //       );
+  //     default:
+  //       return <div />;
+  //   }
+  // };
 
   return (
     <div>
 
-      <Box className={classes.paper}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
-          <Typography variant="h6" style={{ marginLeft: '64px', display: 'inline-flex', marginBottom: 8 }}>
-            <SelectDateIcon style={{ marginRight: '8px' }} />
-            날짜선택
-          </Typography>
-          <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="center"
-          >
-            <Grid item style={{ overflowY: 'hidden' }}>
-              <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
-                <DatePicker
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  disableFuture
-                  onMonthChange={handleMonthChange}
-                  variant="static"
-                  openTo="date"
-                  disableToolbar
-                  renderDay={renderDayInPicker}
-                />
-              </ThemeProvider>
-            </Grid>
-            {isDate && !isDataLoading ? (
+      {/* <Box className={classes.paper}> */}
+      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={koLocale}>
+        <Typography className={classes.bodyTitle}>
+          <SelectDateIcon className={classes.selectIcon} />
+          날짜 선택
+        </Typography>
+        {/* <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+        > */}
+        <Grid item style={{ overflowY: 'hidden' }}>
+          <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
+            <DatePicker
+              value={clickedDate}
+              onChange={handleDayChange}
+              disableFuture
+              onMonthChange={handleMonthChange2}
+              variant="static"
+              openTo="date"
+              disableToolbar
+              renderDay={renderDayInPicker2}
+            />
+          </ThemeProvider>
+          {/* </Grid> */}
+          {/* {isDate && !isDataLoading ? (
               <Grid item>
                 <Grid
                   container
@@ -271,7 +417,7 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
                             }}
                             id={value.fileId}
                             onClick={() => {
-                              handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
+                              // handleDatePick(selectedDate, value.startAt, value.finishAt, value.fileId);
                             }}
                           >
                             <div className={classes.platformIcon}>
@@ -296,13 +442,13 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
                   날짜를 선택해주세요.
                 </Typography>
               </div>
-            )}
-          </Grid>
-        </MuiPickersUtilsProvider>
-      </Box>
+            )} */}
+        </Grid>
+      </MuiPickersUtilsProvider>
+      {/* </Box> */}
 
     </div>
   );
 }
 
-export default StreamCalendar;
+export default StreamCalendar2;
