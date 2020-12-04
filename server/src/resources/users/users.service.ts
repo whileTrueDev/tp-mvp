@@ -321,7 +321,7 @@ export class UsersService {
               message: 'linked-with-other',
               data: {
                 userId: alreadyLinkedTwitchId.userId,
-                platformUserName: (await this.twitchRepository.findOne(platformId)).twitchChannelName,
+                platformUserName: linkedInfo.twitchChannelName,
               },
             };
             throw new ForbiddenException(errMsg);
@@ -351,7 +351,7 @@ export class UsersService {
               message: 'linked-with-other',
               data: {
                 userId: alreadyLinkedYoutubeId.userId,
-                platformUserName: (await this.youtubeRepository.findOne(platformId)).youtubeTitle,
+                platformUserName: linkedInfo.youtubeTitle,
               },
             };
             throw new ForbiddenException(errMsg);
@@ -382,7 +382,7 @@ export class UsersService {
               message: 'linked-with-other',
               data: {
                 userId: alreadyLinkedAfreecaId.userId,
-                platformUserName: (await this.afreecaRepository.findOne(platformId)).afreecaStreamerName,
+                platformUserName: linkedInfo.afreecaStreamerName,
               },
             };
             throw new ForbiddenException(errMsg);
@@ -475,25 +475,33 @@ export class UsersService {
   }
 
   // ****************** 유튜브 *******************
-  // 트위치 연동 데이터 적재 ( PlatformTwitch 테이블 )
+  // 유튜부 연동 데이터 적재 ( PlatformYoutube 테이블 )
   async linkYoutube(data: PlatformYoutubeEntity): Promise<PlatformYoutubeEntity> {
     const alreadyLinked = await this.youtubeRepository.findOne({
       googleId: data.googleId, youtubeId: data.youtubeId,
     });
     if (alreadyLinked) {
       // 이미 해당 youtube 유저와 연동된 아이디가 있는 경우 "업데이트"
-
+      this.youtubeRepository.update([
+        'googleId', 'googleName', 'googleEmail',
+        'googleLogo', 'youtubeId', 'youtubeTitle', 'youtubeLogo',
+      ], data);
     }
     return this.youtubeRepository.save(data);
   }
 
-  // ****************** 유튜브 *******************
-  // 트위치 연동 데이터 적재 ( PlatformTwitch 테이블 )
+  // ****************** 아프리카 *******************
+  // 아프리카 연동 데이터 적재 ( PlatformAfreeca 테이블 )
   async linkAfreeca(data: PlatformAfreecaEntity): Promise<PlatformAfreecaEntity> {
     const alreadyLinked = await this.afreecaRepository.findOne(data.afreecaId);
     if (alreadyLinked) {
-      // 이미 해당 youtube 유저와 연동된 아이디가 있는 경우 "업데이트"
-
+      // 이미 해당 afreeca 유저와 연동된 아이디가 있는 경우 "업데이트"
+      this.afreecaRepository.update([
+        'afreecaId',
+        'refreshToken',
+        'afreecaStreamerName',
+        'logo',
+      ], data);
     }
     return this.afreecaRepository.save(data);
   }
