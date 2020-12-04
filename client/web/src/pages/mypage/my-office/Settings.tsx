@@ -1,22 +1,25 @@
 import useAxios from 'axios-hooks';
 import classnames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Button,
   capitalize,
   CircularProgress,
   makeStyles,
   Paper, Typography,
 } from '@material-ui/core';
-import { LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
+import { LinkPlatformError, LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { Alert } from '@material-ui/lab';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import ManagePlatformLink from '../../../organisms/mypage/my-office/ManagePlatformLink';
 import ManageUserProfile from '../../../organisms/mypage/my-office/ManageUserProfile';
 import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import DeleteUser from '../../../organisms/mypage/my-office/DeleteUser';
+import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -37,6 +40,8 @@ export default function Settings(): JSX.Element {
   // 유저 - 플랫폼 연동 정보 생성
   const location = useLocation();
 
+  // 연동하고자 하는 계정이 이미 다른 사람에게 연동된 경우 처리를 위한 스테이트
+  const [alreadyLinkedWithOther, setAlreadyLinkedWithOther] = useState('');
   // ******************************************
   // 연동 요청
   const [, linkToUserRequest] = useAxios<LinkPlatformRes>({
@@ -62,8 +67,16 @@ export default function Settings(): JSX.Element {
           }
         })
         .catch((err) => {
+          if (err && err.response && err.response.data.message === 'linked-with-other') {
+            const { data } = err.response.data as LinkPlatformError;
+            const { platformUserName, userId } = data;
+            // 연동하고자 하는 플랫폼계정이 다른 유저에게 연동되어 있는 경우
+            setAlreadyLinkedWithOther(
+              `현재 연동하고자 하는 ${capitalize(params.platform)} 계정 "${platformUserName}" 은(는)
+              다른 유저 "${transformIdToAsterisk(userId, 1.8)}" 에게 연동되어있습니다.`,
+            );
+          }
           ShowSnack('연동과정에서 오류가 발생했습니다. 문의바랍니다.', 'error', enqueueSnackbar);
-          console.error(err.response.data);
         });
     }
   }, [enqueueSnackbar, location.search, linkToUserRequest, doUserFetch]);
@@ -79,6 +92,34 @@ export default function Settings(): JSX.Element {
               플랫폼 연동을 통해 트루포인트를 바로 시작해보세요.
             </Typography>
           </div>
+          {!!alreadyLinkedWithOther && (
+            <Alert severity="error">
+              <Typography variant="body2">{alreadyLinkedWithOther}</Typography>
+              <Typography variant="body2">자신의 아프리카/트위치/유튜브 계정이 타인의 아이디에 연동되어 있는 경우 문의바랍니다.</Typography>
+              <Button
+                style={{ margin: 8 }}
+                onClick={() => {
+                  window.open('http://google.com'); // 카카오 문의로 연결 필요
+                }}
+                size="small"
+                color="primary"
+                variant="contained"
+              >
+                문의하기
+              </Button>
+              <Button
+                style={{ margin: 8 }}
+                onClick={() => {
+                  setAlreadyLinkedWithOther('');
+                }}
+                size="small"
+                color="primary"
+                variant="contained"
+              >
+                확인
+              </Button>
+            </Alert>
+          )}
           {!userDataRequest.loading ? (
             <ManagePlatformLink
               twitchId={userDataRequest.data?.twitchId}
