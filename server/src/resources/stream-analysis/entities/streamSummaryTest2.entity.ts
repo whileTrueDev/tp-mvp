@@ -1,5 +1,5 @@
 import {
-  Entity, Column, PrimaryColumn, CreateDateColumn,
+  Entity, Column, PrimaryColumn,
 } from 'typeorm';
 import { StreamSummaryTest2 } from '@truepoint/shared/dist/interfaces/StreamSummaryTest2.interface';
 
@@ -17,7 +17,7 @@ export class StreamSummaryTest2Entity implements StreamSummaryTest2 {
   @Column()
   smileCount: number;
 
-  @CreateDateColumn()
+  @Column('timestamp')
   createdAt: Date;
 
   constructor(partial: Partial<StreamSummaryTest2Entity>) {

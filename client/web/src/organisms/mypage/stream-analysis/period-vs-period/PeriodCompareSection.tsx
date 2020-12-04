@@ -148,8 +148,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           compare: correctCompareList,
         };
 
-        console.log(correctBaseList, correctCompareList);
-
         handleSubmit({
           category: selectedCategory,
           params: analysisParam,
