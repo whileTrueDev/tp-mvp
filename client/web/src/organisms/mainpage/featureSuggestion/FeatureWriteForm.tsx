@@ -3,7 +3,9 @@ import classnames from 'classnames';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Checkbox, FormControlLabel } from '@material-ui/core';
+import {
+  Typography, Checkbox, FormControlLabel, CircularProgress, Backdrop,
+} from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -32,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
   contents: { marginTop: theme.spacing(2) },
   writeForm: { marginTop: theme.spacing(8) },
   buttonSet: { textAlign: 'right' },
+  editor: { color: theme.palette.text.primary },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 export default function FeatureWriteForm(): JSX.Element {
@@ -68,7 +75,7 @@ export default function FeatureWriteForm(): JSX.Element {
     { url: '/feature-suggestion', method: 'post' }, { manual: true },
   );
   function handlePostSubmit() {
-    if (editorRef.current && editorRef.current.getInstance().getHtml()) {
+    if (editorRef.current && editorRef.current?.getInstance().getHtml()) {
       const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPostDto = {
         ...featureSource,
@@ -77,6 +84,7 @@ export default function FeatureWriteForm(): JSX.Element {
         isLock: featureLock, // 비밀글 여부
         content: contents,
       };
+
       postRequest({ data })
         .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
         .then(() => history.push('/feature-suggestion'))
@@ -174,6 +182,7 @@ export default function FeatureWriteForm(): JSX.Element {
       </div>
       {/* 기능 제안 내용 입력 */}
       <div className={classes.contents}>
+
         <Editor
           previewStyle="vertical"
           height="500px"
@@ -181,6 +190,9 @@ export default function FeatureWriteForm(): JSX.Element {
           initialValue={location.state && location.state.length > 0 ? location.state[0].content : ''}
           ref={editorRef}
         />
+        <Backdrop className={classes.backdrop} open={postLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
       <div className={classes.buttonSet}>
         <FormControlLabel

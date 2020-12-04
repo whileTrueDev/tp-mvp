@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
+import Markdown from 'react-markdown/with-html';
 import {
   Button, Paper, Typography, Chip,
 } from '@material-ui/core';
@@ -51,6 +52,8 @@ const useStyles = makeStyles((theme) => ({
   },
   pageButton: { width: '30%' },
   listButton: { width: '10%' },
+  editor: { color: theme.palette.text.primary },
+
 }));
 
 export interface FeatureDetailProps {
@@ -183,7 +186,15 @@ export default function FeatureDetail({
         <div className={classes.contentsText}>
           <div className={classes.markdown}>
             <Viewer initialValue={currentSuggestion.content} />
+
           </div>
+          {/* <Markdown
+            className={classes.markdown}
+            source={currentSuggestion.content}
+            escapeHtml={false}
+                // eslint-disable-next-line react/prop-types
+            renderers={{ code: ({ value }) => <Markdown source={value} /> }}
+          /> */}
         </div>
       </Paper>
 
