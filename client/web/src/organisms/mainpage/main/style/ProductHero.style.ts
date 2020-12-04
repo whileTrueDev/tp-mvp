@@ -32,7 +32,7 @@ const styles = makeStyles((theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 55,
     fontWeight: 900,
-    color: 'white',
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
     margin: 0,
     [theme.breakpoints.down('md')]: {
       wordBreak: 'keep-all',
@@ -49,21 +49,21 @@ const styles = makeStyles((theme) => ({
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 20,
     margin: 0,
-    color: 'white',
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
     [theme.breakpoints.down('md')]: {
       wordBreak: 'keep-all',
     },
   },
   button: {
     fontFamily: 'AppleSDGothicNeo',
-    color: 'white',
-    border: '1px solid white',
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    border: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
     borderRadius: 0,
     width: 150,
   },
   buttonLine: {
     animation: '$lineSpread 0.5s ease-in-out',
-    borderBottom: '1px solid white',
+    borderBottom: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
     width: '100%',
     [theme.breakpoints.down('md')]: {
       width: '100%',
