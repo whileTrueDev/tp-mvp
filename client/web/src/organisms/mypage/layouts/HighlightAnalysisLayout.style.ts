@@ -26,7 +26,7 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     textAlign: 'center',
     background: theme.palette.action.focus,
     borderRadius: 6,
-    width: 280,
+    width: '40vw',
     display: 'inline-flex',
     flexDirection: 'row',
     justifyContent: 'space-around',

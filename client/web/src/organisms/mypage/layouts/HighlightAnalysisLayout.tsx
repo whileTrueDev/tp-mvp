@@ -21,6 +21,7 @@ import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 import dateExpression from '../../../utils/dateExpression';
+import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 // import SearchBox from '../highlightAnalysis/SearchBox';
 
 interface StreamDate {
@@ -255,6 +256,24 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   // const handleAnalysisWord = (targetWord: string) => {
   //   setAnalysisWord(targetWord);
   // };
+  const videoName = (datas: any): JSX.Element => {
+    switch (datas.startAt) {
+      case '12030909':
+        return (
+          <div>기뉴다 롤 RCK 오타쿠를 만났습니다만..?</div>
+        );
+      case '12021836':
+        return (
+          <div>기뉴다vs이소룡 스타 지면 철구얼굴보기전까지 노방종</div>
+        );
+      case '12022111':
+        return (
+          <div>기뉴다 미르4 공성전?!! 비곡점령전 무사1위 항왕이 먹겠습니다.</div>
+        );
+      default:
+        return <div>기뉴다 스타 마이너즈 허유vs이소룡 탈퇴빵</div>;
+    }
+  };
 
   return (
     <Paper className={classes.root}>
@@ -284,6 +303,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             {selectedStream.fileId
               && (
                 <Card className={classes.card}>
+                  <AfreecaIcon />
                   <Typography className={classes.cardText}>
                     {dateExpression({
                       compoName: 'highlight-calendar',
@@ -291,6 +311,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                       finishAt: (selectedStream.finishAt),
                     })}
                   </Typography>
+                  {videoName(selectedStream)}
 
                   <IconButton
                     onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
