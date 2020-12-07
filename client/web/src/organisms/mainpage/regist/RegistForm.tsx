@@ -162,7 +162,6 @@ function PlatformRegistForm({
             <Grid
               container
               direction="column"
-              spacing={1}
               className={classes.form}
             >
               <Grid item xs={12}>
@@ -237,7 +236,7 @@ function PlatformRegistForm({
                   />
                 </Grid> */}
                 <Grid item>
-                  <Grid container direction="row" spacing={1}>
+                  <Grid container direction="row">
                     <Grid item>
                       <FormControl
                         className={classes.phoneField}
