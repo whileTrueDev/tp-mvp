@@ -4,55 +4,91 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
+type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'highlight'|'question'
+
 interface ChartProps {
   data: any;
-  chartType: string;
+  chartType: MetricsType;
   highlight?: any;
   handleClick: (a: any) => void;
   handlePage: any;
   pageSize: number;
 }
 
-const metricSetting: any = {
+interface eachInput {
+  name: string;
+  valueY: string;
+  dateX: string;
+  tooltipText: string;
+  tooltipColor: string;
+}
+
+interface Input {
+  smile: eachInput;
+  chat: eachInput;
+  funny: eachInput;
+  agree: eachInput;
+  surprise: eachInput;
+  disgust: eachInput;
+  // [key: string]: eachInput
+  highlight: eachInput;
+  question: eachInput;
+}
+
+const metricSetting: Input = {
   smile: {
     name: '웃음 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   chat: {
     name: '채팅 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   funny: {
-    name: '웃음 발생 수',
+    name: '즐거움 단어 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   agree: {
-    name: '채팅 발생 수',
+    name: '동의 단어 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  question: {
+    name: '의문 단어 발생 수',
+    valueY: 'score',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   surprise: {
-    name: '채팅 발생 수',
+    name: '놀람 단어 발생 수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
   disgust: {
-    name: '트루포인트 편집점',
+    name: '역겨움 단어 발생수',
     valueY: 'score',
-    dateX: 'start_time',
+    dateX: 'start_date',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  highlight: {
+    name: '역겨움 단어 발생수',
+    valueY: 'score',
+    dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
@@ -100,10 +136,10 @@ export default function Chart({
 
     chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
-    const setSeries = (metricsType: string, getChart: am4charts.XYChart): void => {
-      const setting = metricSetting[metricsType];
+    const setSeries = (metricsType: MetricsType, getChart: am4charts.XYChart): void => {
+      const setting: any = metricSetting[metricsType];
 
-      // console.log(setting);
+      // console.log('setting: ', Object.entries(setting), typeof setting);
 
       const valueAxis: any = getChart.yAxes.push(new am4charts.ValueAxis());
       if (chart.yAxes.indexOf(valueAxis) !== 0) {
@@ -116,7 +152,7 @@ export default function Chart({
       series.yAxis = valueAxis;
       series.dataFields.valueY = setting.valueY;
       series.dataFields.dateX = setting.dateX;
-      series.name = setting.name;
+      // series.name = setting.name;
       series.tooltipText = setting.tooltipText;
       series.strokeWidth = 2.5;
       series.tensionX = 0.8;

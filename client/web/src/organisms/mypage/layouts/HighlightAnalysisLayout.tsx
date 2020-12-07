@@ -34,6 +34,9 @@ import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 
+// dummy
+import { dummy } from './dummy';
+
 interface StreamDate {
   fullDate: Date;
   startAt: string;
@@ -98,7 +101,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
   /** ***************************************** */
 
-  const [highlightData, setHighlightData] = React.useState(null);
+  const [highlightData, setHighlightData] = React.useState<any>();
   const [metricsData, setMetricsData] = React.useState(null);
   const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
@@ -203,11 +206,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     /**
      * 카테고리별 하이라이트 metric data
      */
-    const funnyHighlight = metric.funny_points;
-    const surpriseHighlight = metric.surprise_points;
-    const agreeHighlight = metric.agree_points;
-    const disgustHighlight = metric.disgust_points;
-    const questionHighlight = metric.question_points;
+    // const funnyHighlight = metric.funny_points;
+    // const surpriseHighlight = metric.surprise_points;
+    // const agreeHighlight = metric.agree_points;
+    // const disgustHighlight = metric.disgust_points;
+    // const questionHighlight = metric.question_points;
 
     chatHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'chat_count');
@@ -222,30 +225,30 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     /**
      * 카테고리 별 metric data insert
      */
-    funnyHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'funny_count');
-      resultData.funny_points.push(eachData);
-    });
+    // funnyHighlight.forEach((item: number) => {
+    //   const eachData = insertPoints(item, 'funny_count');
+    //   resultData.funny_points.push(eachData);
+    // });
 
-    surpriseHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'surprise_count');
-      resultData.surprise_points.push(eachData);
-    });
+    // surpriseHighlight.forEach((item: number) => {
+    //   const eachData = insertPoints(item, 'surprise_count');
+    //   resultData.surprise_points.push(eachData);
+    // });
 
-    agreeHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'agree_count');
-      resultData.agree_points.push(eachData);
-    });
+    // agreeHighlight.forEach((item: number) => {
+    //   const eachData = insertPoints(item, 'agree_count');
+    //   resultData.agree_points.push(eachData);
+    // });
 
-    disgustHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'disgust_count');
-      resultData.disgust_points.push(eachData);
-    });
+    // disgustHighlight.forEach((item: number) => {
+    //   const eachData = insertPoints(item, 'disgust_count');
+    //   resultData.disgust_points.push(eachData);
+    // });
 
-    questionHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'question_count');
-      resultData.question_points.push(eachData);
-    });
+    // questionHighlight.forEach((item: number) => {
+    //   const eachData = insertPoints(item, 'question_count');
+    //   resultData.question_points.push(eachData);
+    // });
 
     return resultData;
   };
@@ -326,15 +329,16 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
   const handleAnalyze = (): void => {
     setIsClicked(true);
-    const id = '234175534';
-    const year = String(selectedStream.fullDate.getFullYear());
-    const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
-    const day = makeDay(selectedStream.fullDate.getDate());
-    const file = selectedStream.fileId;
-
+    // const id = '234175534';
+    // const year = String(selectedStream.fullDate.getFullYear());
+    // const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
+    // const day = makeDay(selectedStream.fullDate.getDate());
+    // const file = selectedStream.fileId;
     Promise.all([
-      fetchHighlightData(id, year, month, day, file),
-      fetchMetricsData(id, year, month, day, file)])
+      // fetchHighlightData(id, year, month, day, file),
+      // fetchMetricsData(id, year, month, day, file)])
+      setHighlightData(dummy),
+    ])
       .then(() => {
         setIsClicked(false);
       }).catch(() => {
@@ -506,11 +510,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         </Grid>
       </Grid>
       {/* <Loading clickOpen={isClicked} /> */}
-      { !isClicked && highlightData && metricsData && categoriesData && (
+      {/* { !isClicked && highlightData && metricsData && categoriesData && ( */}
+      { !isClicked && highlightData && categoriesData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
           <MetricsAccordian
-            metricsData={metricsData}
+            // metricsData={metricsData}
+            highlightData={highlightData}
             categories={categoriesData}
           />
         </>

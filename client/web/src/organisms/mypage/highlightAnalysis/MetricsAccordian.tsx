@@ -58,14 +58,17 @@ const styles = makeStyles((theme) => ({
 }));
 
 interface MetricsAccordianProps {
-  metricsData: any;
+  // highlightData: any;
   analysisWord?: string;
   categories: CategoryGetRequest[];
+  highlightData: any;
 }
+type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'question'
 
 export default function MetricsAccordian(
   {
-    metricsData,
+    // highlightData,
+    highlightData,
     analysisWord,
     categories,
   }: MetricsAccordianProps,
@@ -100,12 +103,12 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="채팅 편집점"
               iconSrc="/images/analyticsPage/logo_chat.svg"
-              pointNumber={metricsData.chat_points.length}
+              pointNumber={highlightData.chat_points.length}
             />
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
                 <Chart
-                  data={metricsData.chat_points}
+                  data={highlightData.chat_points}
                   chartType="chat"
                   highlight={point}
                   handleClick={setPoint}
@@ -115,7 +118,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={metricsData.chat_points}
+                  metrics={highlightData.chat_points}
                   handleClick={setPoint}
                   row={point}
                   page={page}
@@ -154,12 +157,12 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="웃음 편집점"
               iconSrc="/images/analyticsPage/logo_smile.svg"
-              pointNumber={metricsData.smile_points.length}
+              pointNumber={highlightData.smile_points.length}
             />
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
                 <Chart
-                  data={metricsData.smile_points}
+                  data={highlightData.smile_points}
                   chartType="smile"
                   highlight={point2}
                   handleClick={setPoint2}
@@ -169,7 +172,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={metricsData.smile_points}
+                  metrics={highlightData.smile_points}
                   handleClick={setPoint2}
                   row={point2}
                   page={page2}
@@ -208,7 +211,7 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="카테고리 편집점"
               iconSrc="/images/analyticsPage/logo_search.svg"
-              pointNumber={metricsData.smile_points.length}
+              pointNumber={highlightData.smile_points.length}
             />
             <div style={{
               display: 'inline-flex', flexDirection: 'row', alignItems: 'center', height: 80,
@@ -238,8 +241,8 @@ export default function MetricsAccordian(
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
                 <Chart
-                  data={metricsData[`${selectedCategory.category}_points`]}
-                  chartType={selectedCategory.category}
+                  data={highlightData[`${selectedCategory.category}_points`]}
+                  chartType={selectedCategory.category as MetricsType}
                   highlight={point3}
                   handleClick={setPoint3}
                   handlePage={setPage3}
@@ -248,7 +251,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={metricsData[`${selectedCategory.category}_points`]}
+                  metrics={highlightData[`${selectedCategory.category}_points`]}
                   handleClick={setPoint3}
                   row={point3}
                   page={page3}
