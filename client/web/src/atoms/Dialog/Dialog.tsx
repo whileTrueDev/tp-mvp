@@ -83,6 +83,7 @@ function CustomDialog({
     <Dialog
       onClose={onClose}
       TransitionComponent={Transition}
+      disableScrollLock
       open={open}
       {...rest}
     >
