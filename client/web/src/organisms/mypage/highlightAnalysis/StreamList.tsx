@@ -10,7 +10,6 @@ import ChatIcon from '@material-ui/icons/Chat';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 // shared interface
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 
 // interface

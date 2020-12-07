@@ -103,7 +103,7 @@ export default function Chart({
     const setSeries = (metricsType: string, getChart: am4charts.XYChart): void => {
       const setting = metricSetting[metricsType];
 
-      console.log(setting);
+      // console.log(setting);
 
       const valueAxis: any = getChart.yAxes.push(new am4charts.ValueAxis());
       if (chart.yAxes.indexOf(valueAxis) !== 0) {

@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Accordion, AccordionSummary,
-  AccordionDetails, Typography, Grid, ListItem, Button,
+  AccordionDetails, Typography, Grid, Button,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Paper from '@material-ui/core/Paper';
