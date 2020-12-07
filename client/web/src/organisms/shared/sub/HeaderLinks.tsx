@@ -23,7 +23,11 @@ import UserMenuPopover from './UserMenuPopover';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  icon: { width: 32, height: 32 },
+  icon: {
+    width: 32,
+    height: 32,
+    color: theme.palette.type === 'dark' ? theme.palette.background.paper : theme.palette.common.white,
+  },
 }));
 
 export interface Notification {
