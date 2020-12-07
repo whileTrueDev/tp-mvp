@@ -81,8 +81,6 @@ export default function MetricsAccordian(
   const [pageSize3, setPageSize3] = React.useState(5);
   const [point3, setPoint3] = React.useState(initialPoint);
 
-  console.log(metricsData);
-
   const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
 
   const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {

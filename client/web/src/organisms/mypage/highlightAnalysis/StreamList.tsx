@@ -178,24 +178,10 @@ export default function StreamList(props: StreamListProps): JSX.Element {
   const classes = useStyles();
 
   const handleListStreamClick = (stream: StreamDataType) => {
-    // if (baseStream && compareStream) {
-    //   handleFullMessage(true);
-    // } else if (baseStream && !compareStream) {
-    //   handleSeletedStreams(stream);
-    // } else if (!baseStream && compareStream) {
-    //   handleSeletedStreams(stream, true);
-    // } else {
-    //   handleSeletedStreams(stream, true);
-    // }
     handleSeletedStreams(stream, true);
   };
 
   const isSelectedListItem = (listStream: StreamDataType): boolean => {
-    // if (baseStream || compareStream) {
-    //   return (listStream.streamId === baseStream?.streamId
-    // || listStream.streamId === compareStream?.streamId);
-    // }
-
     if (selectedStream) {
       return listStream.streamId === selectedStream.streamId;
     }

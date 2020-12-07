@@ -1,6 +1,6 @@
 import {
   Controller, Get, ParseArrayPipe,
-  Query, UseGuards, Inject,
+  Query, UseGuards,
   Post, Body,
 } from '@nestjs/common';
 // shared dto , interfaces
@@ -13,11 +13,9 @@ import { SearchUserStatisticData } from '@truepoint/shared/dist/dto/stream-analy
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 
 // Services
-import { UsersService } from '../users/users.service';
 import { StreamAnalysisService } from './stream-analysis.service';
 // // pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
@@ -30,23 +28,7 @@ import { StreamsEntity } from './entities/streams.entity';
 export class StreamAnalysisController {
   constructor(
     private readonly streamAnalysisService: StreamAnalysisService,
-    @Inject(UsersService) private usersService: UsersService,
   ) {}
-
-  /**
-  * 캘린더 방송 정보 표시
-  * @param findDaysStreamRequest endDate 가 존재시 기간에 해당하는 정보를 , 이외 startDate 가 속한 달에 대한 정보 조회
-  */
-  @Get('stream-list-before')
-  @UseGuards(JwtAuthGuard)
-  getDaysStreamList(@Query(new ValidationPipe())
-    findDaysStreamRequest: SearchCalendarStreams): Promise<StreamDataType[]> {
-    return this.streamAnalysisService.findDayStreamList(
-      findDaysStreamRequest.userId,
-      findDaysStreamRequest.startDate,
-      findDaysStreamRequest.endDate,
-    );
-  }
 
   /**
   * 캘린더 포함하여 분석 완료된 방송 정보 리스트 조회
@@ -56,7 +38,7 @@ export class StreamAnalysisController {
  @UseGuards(JwtAuthGuard)
   getCompleteStreamsList(@Query(new ValidationPipe())
     findDaysStreamRequest: SearchCalendarStreams): Promise<StreamDataType[]> {
-    return this.streamAnalysisService.findDayStreamList2(
+    return this.streamAnalysisService.findDayStreamList(
       findDaysStreamRequest.userId,
       findDaysStreamRequest.startDate,
       findDaysStreamRequest.endDate,
@@ -87,7 +69,6 @@ export class StreamAnalysisController {
   @Body('compare', new ParseArrayPipe({ items: EachStream })) compare: EachStream[],
   ): Promise<PeriodsAnalysisResType> {
     const result = await this.streamAnalysisService.findStreamInfoByPeriods([base, compare]);
-    console.log(result.timeline);
     return result;
   }
 

@@ -56,7 +56,6 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
       method: 'POST',
     })
       .then((res) => {
-        console.log('timeline ', res.data.timeline);
         setTimeLine(res.data.timeline);
         setMetric(res.data.metrics);
         if (res.data.type) setType(res.data.type);

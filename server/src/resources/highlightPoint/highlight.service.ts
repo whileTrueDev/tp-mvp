@@ -10,30 +10,24 @@ const s3 = new AWS.S3();
 export class HighlightService {
   async getHighlightData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
-    console.log(id, year, month, day, fileId, 'get High\n\n');
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       // Key: `highlight_json/${id}/${year}/${month}/${day}/${fileId}`,
-      Key: 'highlight_json/arinbbidol/2020/12/2/2020-12-02 00:02:30_2020-12-02 06:59:30_20201201092750arinbbidol.json_highlight.json',
+      Key: 'highlight_json/arinbbidol/2020/12/2/12010927_12011627_20201201092750arinbbidol.json_highlight.json',
 
     };
-    console.log(getParams, 'get highlight_json\n\n');
     const returnHighlight = await s3.getObject(getParams).promise();
-    console.log(returnHighlight);
     return returnHighlight.Body.toString('utf-8');
   }
 
   async getMetricsData(id: string, year: string, month: string, day: string, fileId: string): Promise<any> {
     // const editFile = fileId.split('.')[0];
-    console.log(id, year, month, day, fileId, 'get Met\n\n');
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       // Key: `metrics_json/${id}/${year}/${month}/${day}/${fileId}`,
       Key: 'metrics_json/afreeca/arinbbidol/2020/12/2/11100927_11111651_20201201092750arinbbidol.json',
     };
-    console.log(getParams, 'get Met\n\n');
     const returnHighlight = await s3.getObject(getParams).promise();
-    console.log(returnHighlight);
     return returnHighlight.Body.toString('utf-8');
   }
 
@@ -58,8 +52,7 @@ export class HighlightService {
         });
       });
     const uniq = [...new Set(keyArray)];
-    // return uniq;
-    return ['2'];
+    return uniq;
   }
 
   async getStreamListForCalendarBtn(
@@ -76,16 +69,12 @@ export class HighlightService {
     await s3.listObjects(params).promise()
       .then((value) => {
         value.Contents.forEach((v) => {
-          console.log('KEY: \n', v.Key);
           const getKey = v.Key.split('/')[5];
           keyArray.push(getKey);
         });
       });
     const filterEmpty = keyArray.filter((item) => item !== null && item !== undefined && item !== '');
     filterEmpty.forEach((value) => {
-      console.log('----------\n');
-      console.log(value);
-      console.log('----------\n');
       const startAt = value.split('_')[0];
       const finishAt = value.split('_')[1];
       const fileId = value;

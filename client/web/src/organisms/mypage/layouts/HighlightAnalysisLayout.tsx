@@ -10,25 +10,26 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-import classnames from 'classnames';
+// import classnames from 'classnames';
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import ClearIcon from '@material-ui/icons/Clear';
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 
+// sub components
 import Calendar from '../highlightAnalysis/Calendar';
-import Calendar2 from '../highlightAnalysis/Calendar2';
 import StreamList from '../highlightAnalysis/StreamList';
-import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
-import Loading from '../../shared/sub/Loading';
+// shared and atoms
+import Button from '../../../atoms/Button/Button';
+// import Loading from '../../shared/sub/Loading';
 import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
+// date expression util
 import dateExpression from '../../../utils/dateExpression';
-import SearchBox from '../highlightAnalysis/SearchBox';
+// custom svg icons
 import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
@@ -197,7 +198,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       question_points: [],
     };
 
-    console.log('metric : ', metric);
     const chatHighlight = metric.chat_points;
     const smileHighlight = metric.smile_points;
     /**
@@ -208,8 +208,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     const agreeHighlight = metric.agree_points;
     const disgustHighlight = metric.disgust_points;
     const questionHighlight = metric.question_points;
-
-    console.log(funnyHighlight, surpriseHighlight, agreeHighlight);
 
     chatHighlight.forEach((item: number) => {
       const eachData = insertPoints(item, 'chat_count');
@@ -248,8 +246,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       const eachData = insertPoints(item, 'question_count');
       resultData.question_points.push(eachData);
     });
-
-    console.log('result \n', resultData);
 
     return resultData;
   };
@@ -425,9 +421,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           justify="flex-start"
           spacing={2}
         >
-          {/* <Calendar handleDatePick={handleDatePick} /> */}
           <Grid item>
-            <Calendar2
+            <Calendar
               clickedDate={clickedDate}
               handleClickedDate={handleClickedDate}
               handleDayStreamList={handleDayStreamList}
@@ -444,25 +439,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           </Grid>
 
         </Grid>
-
-        {/* <Grid
-          item
-          xs
-          className={classnames({
-            [classes.title]: true,
-            [classes.searchTitle]: true,
-          })}
-        >
-          선택된 카테고리
-        </Grid>
-
-        <div className={classes.searchBox}>
-          <SearchBox
-            words={categoriesData ? categoriesData.map((each) => each.categoryName) : []}
-            handleAnalysisWord={handleAnalysisWord}
-            analysisWord={analysisWord}
-          />
-        </div> */}
       </Grid>
 
       <Grid
@@ -476,7 +452,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
-              disabled={isClicked || Boolean(!selectedStream.fileId)}
+              disabled={isClicked || Boolean(!selectedStream2)}
             >
               분석하기
             </Button>

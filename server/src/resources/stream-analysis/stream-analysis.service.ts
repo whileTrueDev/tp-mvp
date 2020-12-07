@@ -103,64 +103,12 @@ export class StreamAnalysisService {
   ) {}
 
   /**
-  * 유저아이디에 대해 기간 혹은 시작 날짜가 속한 달의 방송 정보를 조회
-  * @param userId 유저아이디
-  * @param startDate 검색 시작 날짜
-  * @param endDate 검색 종료 날짜
-  */
-  async findDayStreamList(
-    userId: string,
-    startDate: string, endDate?: string,
-  ): Promise<StreamDataType[]> {
-    if (!endDate) {
-      // ex) 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
-
-      const momentStart = moment(startDate).format('YYYY-MM-01 00:00:00');
-      const momentEnd = moment(startDate).endOf('month').format('YYYY-MM-DD HH:mm:ss');
-
-      const DayStreamData: StreamDataType[] = await this.streamsTest2Repository
-        .createQueryBuilder('streams')
-        .innerJoin(
-          StreamSummaryEntity,
-          'streamSummary',
-          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
-        )
-        .select(['streams.*, streamSummary.smileCount as smileCount'])
-        .where('streams.userId = :id', { id: userId })
-        .andWhere('streams.startDate >= :startDate', { startDate: momentStart })
-        .andWhere('streams.startDate < :endDate', { endDate: momentEnd })
-        .execute();
-
-      return DayStreamData;
-    }
-
-    const momentStart = moment(startDate).format('YYYY-MM-DD HH:mm:ss');
-    const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
-
-    const TermStreamsData: StreamDataType[] = await this.streamsTest2Repository
-      .createQueryBuilder('streams')
-      .innerJoin(
-        StreamSummaryEntity,
-        'streamSummary',
-        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
-      )
-      .select(['streams.*, streamSummary.smileCount as smileCount'])
-      .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startDate >= :startDate', { startDate: momentStart })
-      .andWhere('streams.startDate < :endDate', { endDate: momentEnd })
-      .orderBy('streams.startDate', 'ASC')
-      .execute();
-
-    return TermStreamsData;
-  }
-
-  /**
    * 입력 받은 기간 내 분석이 끝난 방송 정보 리스트 조회 함수
    * @param userId 로그인 한 유저 아이디 (요청자)
    * @param startDate 시작 날짜
    * @param endDate 종료 날짜
    */
-  async findDayStreamList2(
+  async findDayStreamList(
     userId: string,
     startDate: string, endDate: string,
   ): Promise<StreamDataType[]> {
