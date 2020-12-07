@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography, makeStyles } from '@material-ui/core';
+import shortid from 'shortid';
 import Card from '../../../atoms/Card/Card';
 
 interface ContentType {
@@ -69,7 +70,7 @@ export default function MypageHero(
   return (
     <section className={classes.heroWraper}>
       {textSource.eachCardContent.map((content, index) => (
-        <Card className={cardType(index)}>
+        <Card className={cardType(index)} key={shortid.generate()}>
           <Typography className={classes.fonts} variant="body1">
             {content.cardHeader}
           </Typography>
@@ -77,11 +78,11 @@ export default function MypageHero(
             <img src={content.cardIcon} width="15%" alt="cardIcon" />
           </div>
           {content.cardTitle.split('\n').map((title: string) => (
-            <Typography variant="h4" className={classes.fonts}>{title}</Typography>
+            <Typography key={shortid.generate()} variant="h4" className={classes.fonts}>{title}</Typography>
           ))}
           <div className={classes.textWraper}>
             {content.cardText.split('\n').map((text) => (
-              <Typography className={classes.fonts} variant="body2">
+              <Typography key={shortid.generate()} className={classes.fonts} variant="body2">
                 {text}
               </Typography>
             ))}

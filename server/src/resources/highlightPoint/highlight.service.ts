@@ -13,7 +13,8 @@ export class HighlightService {
 
     const getAllParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
-      Prefix: `highlight_json/234175534/${year}/${month}/${day}/`,
+      Prefix: 'highlight_json/afreeca/arinbbidol/',
+      // highlight_json/ 뒤에 플랫폼/크리에이터 네임 필요함..
     };
     const getArray = [];
     const returnObject = { chat_points: '', highlight_points: '', smile_points: '' };

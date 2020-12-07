@@ -31,14 +31,6 @@ interface StreamDate {
   fileId: string;
 }
 
-// interface PointType {
-//   start_time: string;
-//   end_time: string;
-//   start_index: number;
-//   end_index: number;
-//   score: any;
-// }
-
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -51,7 +43,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   };
 
   const [highlightData, setHighlightData] = React.useState(null);
-  // const [metricsData, setMetricsData] = React.useState(null);
   const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
   const [isChecked, setIsChecked] = React.useState({
@@ -67,6 +58,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       startAt,
       finishAt,
       fileId,
+      // => 내가 바꿔줘야함
     });
   };
   const [, doExport] = useAxios(
@@ -75,9 +67,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   const [, getHighlightPoints] = useAxios(
     { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
   );
-  // const [, getMetricsData] = useAxios(
-  //   { url: '/highlight/metrics', method: 'get' }, { manual: true },
-  // );
+
   const makeMonth = (month: number) => {
     if (month < 10) {
       const edit = `0${month}`;
@@ -111,11 +101,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     const new_points_90 = highlight_points.highlight_points_90.map((point: any) => ({
       ...new_points[point],
     }));
-    // const new_points = highlight_points.map((point: any) => ({
-    //   ...point,
-    //   start_date: `2020-12-01 ${point.start_date}`,
-    //   end_date: `2020-12-01 ${point.end_date}`,
-    // }));
 
     const new_chat_points = chat_points.highlight_points.map((point: any) => ({
       ...point,
@@ -201,26 +186,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       });
   };
 
-  // const fetchMetricsData = async (
-  //   id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-  //   setMetricsData(null);
-  //   getMetricsData(
-  //     {
-  //       params: {
-  //         id, year, month, day, fileId,
-  //       },
-  //     },
-  //   )
-  //     .then((res) => {
-  //       if (res.data) {
-  //         console.log(res.data);
-  //         setMetricsData(getMetricsPoint(res.data));
-  //       }
-  //     }).catch(() => {
-  //       ShowSnack('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-  //     });
-  // };
-
   const handleAnalyze = (): void => {
     setIsClicked(true);
     const id = '234175534';
@@ -228,51 +193,19 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
     const day = makeDay(selectedStream.fullDate.getDate());
     const file = selectedStream.fileId;
+    console.log(`----년도 ${year}`);
+    console.log(`----년월 ${month}`);
+    console.log(`----일자 ${day}`);
+    console.log(`----파일 ${file}`);
 
     Promise.all([
       fetchHighlightData(id, year, month, day, file),
-      // fetchMetricsData(id, year, month, day, file)
     ])
       .then(() => {
         setIsClicked(false);
       }).catch(() => {
         ShowSnack('데이터를 불러오지 못했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
-  };
-
-  // const dummy: string[] = [
-  //   '나락',
-  //   '극락',
-  //   '굿',
-  //   '지렷다',
-  //   '레전드',
-  //   '노답',
-  //   '가능?',
-  //   '침디',
-  //   '가장긴 문자열',
-  // ];
-
-  // const [analysisWord, setAnalysisWord] = React.useState<string>();
-  // const handleAnalysisWord = (targetWord: string) => {
-  //   setAnalysisWord(targetWord);
-  // };
-  const videoName = (datas: any): JSX.Element => {
-    switch (datas.startAt) {
-      case '12030909':
-        return (
-          <div>기뉴다 롤 RCK 오타쿠를 만났습니다만..?</div>
-        );
-      case '12021836':
-        return (
-          <div>기뉴다vs이소룡 스타 지면 철구얼굴보기전까지 노방종</div>
-        );
-      case '12022111':
-        return (
-          <div>기뉴다 미르4 공성전?!! 비곡점령전 무사1위 항왕이 먹겠습니다.</div>
-        );
-      default:
-        return <div>기뉴다 스타 마이너즈 허유vs이소룡 탈퇴빵</div>;
-    }
   };
 
   return (
@@ -311,7 +244,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                       finishAt: (selectedStream.finishAt),
                     })}
                   </Typography>
-                  {videoName(selectedStream)}
 
                   <IconButton
                     onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
@@ -333,25 +265,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         >
           <Calendar handleDatePick={handleDatePick} />
         </Grid>
-        {/* 
-        <Grid
-          item
-          xs
-          className={classnames({
-            [classes.title]: true,
-            [classes.searchTitle]: true,
-          })}
-        >
-          분석할 검색값 입력
-        </Grid>
-
-        <div className={classes.searchBox}>
-          <SearchBox
-            words={dummy}
-            handleAnalysisWord={handleAnalysisWord}
-            analysisWord={analysisWord}
-          />
-        </div> */}
       </Grid>
 
       <Grid
@@ -361,7 +274,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         className={classes.root}
         justify="flex-end"
       >
-        <Grid item direction="column" style={{ overflow: 'hiden' }}>
+        <Grid item container direction="column" style={{ overflow: 'hiden' }}>
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
@@ -419,13 +332,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         </Grid>
       </Grid>
       <Loading clickOpen={isClicked} loadingType="medium" />
-      {/* { !isClicked && highlightData && metricsData && ( */}
       { !isClicked && highlightData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
           <MetricsAccordian
             metricsData={highlightData}
-            // analysisWord="편집점"
           />
         </>
       )}

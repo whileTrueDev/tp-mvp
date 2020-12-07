@@ -111,6 +111,7 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
       .then((res) => {
         if (res.data.length !== 0) {
           setStreamData(res.data);
+          console.log(res.data);
         } else {
           setStreamData([{
             getState: false, startAt: '', finishAt: '', fileId: '', platform: 'afreeca',
@@ -229,25 +230,6 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
     }
   };
 
-  const videoName = (datas: any): JSX.Element => {
-    switch (datas.startAt) {
-      case '12030909':
-        return (
-          <div className={classes.videoTitle}>기뉴다 롤 RCK 오타쿠를 만났습니다만..?</div>
-        );
-      case '12021836':
-        return (
-          <div className={classes.videoTitle}>기뉴다vs이소룡 스타 지면 철구얼굴보기전까지 노방종</div>
-        );
-      case '12022111':
-        return (
-          <div className={classes.videoTitle}>기뉴다 미르4 공성전?!! 비곡점령전 무사1위 항왕이 먹겠습니다.</div>
-        );
-      default:
-        return <div className={classes.videoTitle}>기뉴다 스타 마이너즈 허유vs이소룡 탈퇴빵</div>;
-    }
-  };
-
   return (
     <div>
 
@@ -305,7 +287,6 @@ function StreamCalendar({ handleDatePick }: StreamCalenderProps): JSX.Element {
                               createdAt: (value.startAt),
                               finishAt: (value.finishAt),
                             })}
-                            {videoName(value)}
                           </Button>
                         </Grid>
                       ) : null
