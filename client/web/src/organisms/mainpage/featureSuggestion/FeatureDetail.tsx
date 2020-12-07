@@ -65,11 +65,11 @@ export interface FeatureDetailProps {
   selectedSuggestionId: string;
   onBackClick: () => void;
   onOtherFeatureClick: (num: number) => void;
-  refetch: () => void;
+  featureListRefetch: () => void;
 }
 export default function FeatureDetail({
   data, onBackClick, selectedSuggestionId,
-  onOtherFeatureClick, refetch,
+  onOtherFeatureClick, featureListRefetch,
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
@@ -117,6 +117,7 @@ export default function FeatureDetail({
     deleteRequest({ data: { id: selectedSuggestionId } })
       .then(() => {
         ShowSnack('올바르게 삭제되었습니다.', 'success', enqueueSnackbar);
+        featureListRefetch();
         history.push('/feature-suggestion');
       })
       .catch(() => {
@@ -253,7 +254,7 @@ export default function FeatureDetail({
       {currentFeatureData.author.userId === authContext.user.userId && (
         <FeatureReplyInput
           currentSuggestion={currentFeatureData}
-          refetch={refetch}
+          refetch={featureListRefetch}
           avatarLogo={currentFeatureData.author.profileImage || ''}
         />
       )}
@@ -275,7 +276,7 @@ export default function FeatureDetail({
               content={reply.content}
               createdAt={reply.createdAt}
               replyId={reply.replyId}
-              refetch={refetch}
+              refetch={featureListRefetch}
             />
           ))}
       </div>

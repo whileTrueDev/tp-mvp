@@ -111,7 +111,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
                     ? row.category === selectedCategory : row))}
                 onOtherFeatureClick={handleFeatureClick}
                 onBackClick={handleResetFeatureSelect}
-                refetch={featureListRefetch}
+                featureListRefetch={featureListRefetch}
               />
             </div>
           )}
