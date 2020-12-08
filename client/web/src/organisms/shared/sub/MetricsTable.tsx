@@ -15,7 +15,7 @@ const styles = makeStyles((theme) => ({
   },
   selectedRow: {
     height: 30,
-    background: `linear-gradient(to right, ${theme.palette.success.light}, ${theme.palette.success.main})`,
+    background: `linear-gradient(to right, ${theme.palette.error.light}, ${theme.palette.error.main})`,
   },
 }));
 

@@ -29,10 +29,13 @@ const rawTheme: ThemeOptions = {
       main: blueGrey[400],
       dark: blueGrey[600],
     },
+    // 레드 계열 색상
+    error: {
+      light: '#F0A9B3',
+      main: '#FF3E7A',
+    },
     // 초록 계열 색상
     // success: { },
-    // // 레드 계열 색상
-    // error : { },
     // // 주황 계열 색상
     // warn : { },
     // }

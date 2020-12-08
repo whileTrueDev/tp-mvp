@@ -42,23 +42,6 @@ const styles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-  rank: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: 50,
-    fontFamily: 'AppleSDGothicNeo',
-    fontSize: 30,
-    fontWeight: 700,
-    textAlign: 'center',
-    color: theme.palette.success.main,
-    '&>span': {
-      color: 'black',
-      fontSize: 20,
-    },
-  },
 }));
 
 interface MetricsAccordianProps {

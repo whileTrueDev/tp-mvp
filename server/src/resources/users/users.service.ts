@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
 import {
-  Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException,
+  Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException, ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
-import { LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
+import { LinkPlatformError, LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
@@ -306,11 +306,29 @@ export class UsersService {
     // platformTwitch, platformYoutube, platformAfreeca 등을 체크한 후 있으면 그 때 넣도록 처리.
     switch (platform) {
       case 'twitch': {
-        // 이미 적재된 경우 다시 적재하지 않음.
-        if (targetUser.twitchId === platformId) return 'already-linked';
+        // 연동platform 정보 가져오기
         const linkedInfo = await this.twitchRepository.findOne(platformId);
-        if (linkedInfo) targetUser[`${platform}Id`] = platformId;
-        else {
+
+        // 이미 나에게 연동된 경우 다시 반복하지 않음.
+        if (targetUser.twitchId === platformId) return 'already-linked';
+
+        if (linkedInfo) {
+          // 해당 Platform 아이디가 이미 다른 유저에게 연동된 Platform 계정인지 확인하여 이미 연동된 계정이 있는 경우 에러 처리
+          const alreadyLinkedTwitchId = await this.usersRepository.findOne({ twitchId: platformId });
+          if (alreadyLinkedTwitchId) {
+            // 해당 TwitchId 계정이 이미 다른 유저에게 연동된 TwitchId 계정.
+            const errMsg: LinkPlatformError = {
+              message: 'linked-with-other',
+              data: {
+                userId: alreadyLinkedTwitchId.userId,
+                platformUserName: linkedInfo.twitchChannelName,
+              },
+            };
+            throw new ForbiddenException(errMsg);
+          }
+          // 실제 연동 가능 -> 연동 처리
+          targetUser[`${platform}Id`] = platformId;
+        } else {
           throw new InternalServerErrorException(
             'An error occurred during linking platform: there is no platform information',
           );
@@ -318,11 +336,30 @@ export class UsersService {
         break;
       }
       case 'youtube': {
-        // 이미 적재된 경우 다시 적재하지 않음.
-        if (targetUser.youtubeId === platformId) return 'already-linked';
+        // 연동platform 정보 가져오기
         const linkedInfo = await this.youtubeRepository.findOne(platformId);
-        if (linkedInfo) targetUser[`${platform}Id`] = platformId;
-        else {
+
+        // 이미 나에게 연동된 경우 다시 반복하지 않음.
+        if (targetUser.youtubeId === platformId) return 'already-linked';
+
+        // 해당 Platform 아이디가 이미 다른 유저에게 연동된 Platform 계정인지 확인
+        if (linkedInfo) {
+          const alreadyLinkedYoutubeId = await this.usersRepository.findOne({ youtubeId: platformId });
+          if (alreadyLinkedYoutubeId) {
+            // 해당 Youtube 계정이 이미 다른 유저에게 연동된 Youtube 계정.
+            const errMsg: LinkPlatformError = {
+              message: 'linked-with-other',
+              data: {
+                userId: alreadyLinkedYoutubeId.userId,
+                platformUserName: linkedInfo.youtubeTitle,
+              },
+            };
+            throw new ForbiddenException(errMsg);
+          }
+
+          // 실제 연동 가능 -> 연동 처리
+          targetUser[`${platform}Id`] = platformId;
+        } else {
           throw new InternalServerErrorException(
             'An error occurred during linking platform: there is no platform information',
           );
@@ -330,16 +367,35 @@ export class UsersService {
         break;
       }
       case 'afreeca': {
-        // 이미 적재된 경우 다시 적재하지 않음.
-        if (targetUser.afreecaId === platformId) return 'already-linked';
+        // 연동platform 정보 가져오기
         const linkedInfo = await this.afreecaRepository.findOne(platformId);
-        if (linkedInfo) targetUser[`${platform}Id`] = platformId;
-        else {
+
+        // 이미 나에게 연동된 경우 다시 반복하지 않음.
+        if (targetUser.afreecaId === platformId) return 'already-linked';
+
+        // 해당 Platform 아이디가 이미 다른 유저에게 연동된 Platform 계정인지 확인
+        if (linkedInfo) {
+          const alreadyLinkedAfreecaId = await this.usersRepository.findOne({ afreecaId: platformId });
+          if (alreadyLinkedAfreecaId) {
+            // 해당 Youtube 계정이 이미 다른 유저에게 연동된 Youtube 계정.
+            const errMsg: LinkPlatformError = {
+              message: 'linked-with-other',
+              data: {
+                userId: alreadyLinkedAfreecaId.userId,
+                platformUserName: linkedInfo.afreecaStreamerName,
+              },
+            };
+            throw new ForbiddenException(errMsg);
+          }
+
+          // 실제 연동 가능 -> 연동 처리
+          targetUser[`${platform}Id`] = platformId;
+          break;
+        } else {
           throw new InternalServerErrorException(
             'An error occurred during linking platform: there is no platform information',
           );
         }
-        break;
       }
       default: throw new BadRequestException('platform must be one of "twitch" | "afreeca" | "youtube"');
     }
@@ -419,25 +475,33 @@ export class UsersService {
   }
 
   // ****************** 유튜브 *******************
-  // 트위치 연동 데이터 적재 ( PlatformTwitch 테이블 )
+  // 유튜부 연동 데이터 적재 ( PlatformYoutube 테이블 )
   async linkYoutube(data: PlatformYoutubeEntity): Promise<PlatformYoutubeEntity> {
     const alreadyLinked = await this.youtubeRepository.findOne({
       googleId: data.googleId, youtubeId: data.youtubeId,
     });
     if (alreadyLinked) {
       // 이미 해당 youtube 유저와 연동된 아이디가 있는 경우 "업데이트"
-
+      this.youtubeRepository.update([
+        'googleId', 'googleName', 'googleEmail',
+        'googleLogo', 'youtubeId', 'youtubeTitle', 'youtubeLogo',
+      ], data);
     }
     return this.youtubeRepository.save(data);
   }
 
-  // ****************** 유튜브 *******************
-  // 트위치 연동 데이터 적재 ( PlatformTwitch 테이블 )
+  // ****************** 아프리카 *******************
+  // 아프리카 연동 데이터 적재 ( PlatformAfreeca 테이블 )
   async linkAfreeca(data: PlatformAfreecaEntity): Promise<PlatformAfreecaEntity> {
     const alreadyLinked = await this.afreecaRepository.findOne(data.afreecaId);
     if (alreadyLinked) {
-      // 이미 해당 youtube 유저와 연동된 아이디가 있는 경우 "업데이트"
-
+      // 이미 해당 afreeca 유저와 연동된 아이디가 있는 경우 "업데이트"
+      this.afreecaRepository.update([
+        'afreecaId',
+        'refreshToken',
+        'afreecaStreamerName',
+        'logo',
+      ], data);
     }
     return this.afreecaRepository.save(data);
   }
