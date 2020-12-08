@@ -58,6 +58,11 @@ export class UsersController {
     return this.usersService.findOneProfileImage(req.user.userId);
   }
 
+  /**
+   * 연동된 플랫폼 닉네임/채널명을 열람 GET 컨트롤러
+   * @param req user 정보를 포함한 리퀘스트 객체
+   * @param userId 연동된 플랫폼 닉네임/채널명을 열람하고자 하는 유저 아이디
+   */
   @Get('platform-names')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
