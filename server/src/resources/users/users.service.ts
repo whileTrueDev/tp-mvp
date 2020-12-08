@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import {
-  Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException, ForbiddenException,
+  Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException,
+  ForbiddenException, Inject, forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -8,6 +9,8 @@ import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { LinkPlatformError, LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
+import Axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
@@ -17,11 +20,16 @@ import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
 import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/targetStreamers.entity';
+import { TwitchProfileResponse } from '../auth/interfaces/twitchProfile.interface';
+import { AfreecaLinker } from '../auth/strategies/afreeca.linker';
 
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
   constructor(
+    private readonly configService: ConfigService,
+    @Inject(forwardRef(() => AfreecaLinker))
+    private readonly afreecaLinker: AfreecaLinker,
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(UserTokenEntity)
@@ -513,6 +521,10 @@ export class UsersService {
 
   // ****************** 트위치 *******************
   // 트위치 연동 데이터 적재 ( PlatformTwitch 테이블 )
+  /**
+   * 트위치 연동 정보를 DB에 삽입합니다. 이미 연동 정보가 존재하면 업데이트합니다.
+   * @param {PlatformTwitchEntity} data 트위치 연동 정보 Entity
+   */
   async linkTwitch(data: PlatformTwitchEntity): Promise<PlatformTwitchEntity> {
     const alreadyLinked = await this.twitchRepository.findOne(data.twitchId);
     if (alreadyLinked) {
@@ -527,6 +539,10 @@ export class UsersService {
 
   // ****************** 유튜브 *******************
   // 유튜부 연동 데이터 적재 ( PlatformYoutube 테이블 )
+  /**
+   * 유튜브 연동 정보를 DB에 삽입합니다. 이미 연동 정보가 존재하면 업데이트합니다.
+   * @param {PlatformYoutubeEntity} data 유튜브 연동 정보 Entity
+   */
   async linkYoutube(data: PlatformYoutubeEntity): Promise<PlatformYoutubeEntity> {
     const alreadyLinked = await this.youtubeRepository.findOne({
       googleId: data.googleId, youtubeId: data.youtubeId,
@@ -544,6 +560,10 @@ export class UsersService {
 
   // ****************** 아프리카 *******************
   // 아프리카 연동 데이터 적재 ( PlatformAfreeca 테이블 )
+  /**
+   * 아프리카 연동 정보를 DB에 삽입합니다. 이미 연동 정보가 존재하면 업데이트합니다.
+   * @param {PlatformAfreecaEntity} data 아프리카 연동 정보 Entity
+   */
   async linkAfreeca(data: PlatformAfreecaEntity): Promise<PlatformAfreecaEntity> {
     const alreadyLinked = await this.afreecaRepository.findOne(data.afreecaId);
     if (alreadyLinked) {
@@ -557,5 +577,120 @@ export class UsersService {
       return data;
     }
     return this.afreecaRepository.save(data);
+  }
+
+  // *********************************************************
+  // ****************** 연동된 유저정보를 최신화 *******************
+  /**
+   * 트위치 연동 유저정보를 최신화합니다.
+   * @param {string} twitchId 연동 정보를 최신화 하고자 하는 트위치 고유 ID
+   */
+  public async refreshTwitchInfo(twitchId: string): Promise<PlatformTwitchEntity> {
+    const twitchInfo = await this.twitchRepository.findOne(twitchId);
+
+    // Get access token
+    const res = await Axios.post([
+      'https://id.twitch.tv/oauth2/token?grant_type=refresh_token',
+      `&refresh_token=${twitchInfo.refreshToken}`,
+      `&client_id=${this.configService.get<string>('TWITCH_CLIENT_ID')}`,
+      `&client_secret=${this.configService.get<string>('TWITCH_CLIENT_SECRET')}`,
+    ].join(''));
+    const { access_token: accessToken, refresh_token: refreshToken } = res.data;
+
+    // Get User profile data
+    const userProfileRes = await Axios.get<TwitchProfileResponse>(
+      'https://api.twitch.tv/helix/users', {
+        headers: {
+          'Client-ID': this.configService.get<string>('TWITCH_CLIENT_ID'),
+          Accept: 'application/vnd.twitchtv.v5+json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+    const { data } = userProfileRes.data;
+    const profile = data[0];
+
+    // Update twitch profile
+    return this.linkTwitch({
+      twitchId: profile.id,
+      twitchChannelName: profile.display_name,
+      twitchStreamerName: profile.login,
+      logo: profile.profile_image_url,
+      refreshToken,
+    });
+  }
+
+  /**
+   * 유튜브 연동 유저정보를 최신화합니다.
+   * @param {string} youtubeId 연동 정보를 최신화 하고자 하는 유튜브 고유 ID
+   */
+  public async refreshYoutubeInfo(youtubeId: string): Promise<PlatformYoutubeEntity> {
+    const youtubeInfo = await this.youtubeRepository.findOne(youtubeId);
+
+    // Get access token
+    const res = await Axios.post([
+      'https://accounts.google.com/o/oauth2/token',
+      '?grant_type=refresh_token',
+      `&refresh_token=${youtubeInfo.refreshToken}`,
+      `&client_id=${this.configService.get<string>('YOUTUBE_CLIENT_ID')}`,
+      `&client_secret=${this.configService.get<string>('YOUTUBE_CLIENT_SECRET')}`,
+    ].join(''));
+    const { access_token: accessToken } = res.data;
+
+    // Get Google user profile data
+    const googleProfileRes = await Axios.get(
+      'https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
+    const newGoogleInfo = googleProfileRes.data;
+
+    // Get Youtube user profile data
+    const newYoutubeProfileRes = await Axios.get(
+      'https://www.googleapis.com/youtube/v3/channels', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: { part: 'snippet,id', mine: true },
+      },
+    );
+
+    const newYoutubeChannelInfo = newYoutubeProfileRes.data.items[0];
+    return this.linkYoutube({
+      refreshToken: youtubeInfo.refreshToken,
+      googleId: newGoogleInfo.sub,
+      googleEmail: newGoogleInfo.email,
+      googleLogo: newGoogleInfo.picture.replace('/s96-', '/s{size}-'),
+      googleName: newGoogleInfo.name,
+      youtubeId: newYoutubeChannelInfo.id,
+      youtubeTitle: newYoutubeChannelInfo.snippet.title,
+      youtubeLogo: newYoutubeChannelInfo.snippet.thumbnails.default.url.replace('=s88-', '=s{size}-'),
+      youtubePublishedAt: newYoutubeChannelInfo.snippet.publishedAt,
+    });
+  }
+
+  /**
+   * 아프리카 연동 유저정보를 최신화합니다.
+   * @param {string} afreecaId 연동 정보를 최신화 하고자 하는 아프리카 고유 ID
+   */
+  public async refreshAfreecaInfo(afreecaId: string): Promise<any> {
+    const afreecaInfo = await this.afreecaRepository.findOne(afreecaId);
+
+    // Get access token - 토큰 리프레시
+    const {
+      // accessToken,
+      refreshToken,
+    } = await this.afreecaLinker.refresh(afreecaInfo.refreshToken);
+
+    // ***************************************************
+    // Get Afreeca user profile data
+    // 2020.12.08 아직 아프리카 openAPI에서 profile을 제공하지 않아 진행할 수 없음..
+    // const newProfile = {}; // Profile 요청으로 받아온 데이터라고 가정
+    // accessToken 사용
+
+    // 업데이트
+    return this.linkAfreeca({
+      afreecaId: afreecaInfo.afreecaId, // 아프리카로부터 받아온 최신 newProfile 에서 참조하는 것으로 수정.
+      afreecaStreamerName: afreecaInfo.afreecaStreamerName, // 아프리카로부터 받아온 최신 newProfile 에서 참조하는 것으로 수정.
+      refreshToken,
+    });
   }
 }

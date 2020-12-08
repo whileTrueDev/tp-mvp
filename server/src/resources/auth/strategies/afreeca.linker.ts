@@ -1,10 +1,12 @@
 import Axios from 'axios';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  forwardRef, Inject, Injectable, InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
 
 @Injectable()
-export class AfreecaPreLinker {
+export class AfreecaLinker {
   private readonly AFREECA_AUTH_URL = 'https://openapi.afreecatv.com/auth/code';
 
   private readonly AFREECA_TOKEN_URL = 'https://openapi.afreecatv.com/auth/token';
@@ -15,6 +17,7 @@ export class AfreecaPreLinker {
 
   constructor(
     private readonly configService: ConfigService,
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
   ) {
     this.AFREECA_KEY = configService.get<string>('AFREECA_KEY');
@@ -61,6 +64,28 @@ export class AfreecaPreLinker {
     } catch (e) {
       console.error('An Error occurred during getting refreshtoken from afreecatv', e.message);
       throw new InternalServerErrorException('An Error occurred during getting refreshtoken from afreecatv');
+    }
+  }
+
+  /**
+   * 리프레시토큰을 통해 새로 갱신한 액세스 토큰을 받아와 반환하는 메소드
+   * @param refreshToken 리프레시 토큰
+   */
+  async refresh(refreshToken: string): Promise<{
+    accessToken: string; refreshToken: string;
+  }> {
+    try {
+      const response = await Axios.post(this.AFREECA_TOKEN_URL, {
+        grant_type: 'refresh_token',
+        client_id: this.AFREECA_KEY,
+        client_secret: this.AFREECA_SECRET_KEY,
+        refresh_token: refreshToken,
+      });
+      const { access_token: newAccessToken, refresh_token: newRefreshToken } = response.data;
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch (e) {
+      console.error('An Error occurred during refreshing afreecatv access token', e.message);
+      throw new InternalServerErrorException('An Error occurred during refreshing afreecatv access token');
     }
   }
 

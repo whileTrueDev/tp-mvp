@@ -18,7 +18,7 @@ import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
 import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
-import { AfreecaPreLinker } from './strategies/afreeca.linker';
+import { AfreecaLinker } from './strategies/afreeca.linker';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
 import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
@@ -29,7 +29,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
-    private readonly afreecaLinker: AfreecaPreLinker,
+    private readonly afreecaLinker: AfreecaLinker,
   ) {}
 
   @Post('logout')
@@ -51,9 +51,18 @@ export class AuthController {
     @Request() req: express.Request,
     @Res() res: express.Response,
   ): Promise<void> {
+    const user = req.user as UserLoginPayload;
     const {
       accessToken, refreshToken,
-    } = await this.authService.login(req.user as UserLoginPayload, stayLogedIn);
+    } = await this.authService.login(user, stayLogedIn);
+
+    // *************************************
+    // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
+
+    // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
+    // if (user.afreecaId) this.usersService.refreshTwitchInfo(user.twitchId);
+    if (user.twitchId) this.usersService.refreshAfreecaInfo(user.afreecaId);
+    if (user.youtubeId) this.usersService.refreshYoutubeInfo(user.youtubeId);
 
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
