@@ -184,7 +184,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     <Grid className={classes.root}>
       <Grid item>
         {!(error?.isError) && (
-          <Loading clickOpen={loading} lodingTime={10000} />
+          <Loading clickOpen={loading} />
         )}
 
         <Grid container direction="column">

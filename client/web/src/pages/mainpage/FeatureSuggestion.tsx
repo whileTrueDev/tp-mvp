@@ -2,7 +2,9 @@ import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Chip } from '@material-ui/core';
+import {
+  Typography, Chip, CircularProgress, Paper,
+} from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
@@ -33,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     alignContent: 'flex-end',
+  },
+  detailLoading: {
+    height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column',
   },
   tableContainer: { marginTop: theme.spacing(1) },
 }));
@@ -88,6 +93,11 @@ export default function FeatureSuggestionPage(): JSX.Element {
           <Typography variant="h4">기능제안</Typography>
 
           {/* 기능제안 개별 보기 */}
+          {selectedSuggestionId && loading && (
+            <Paper elevation={0} className={classes.detailLoading}>
+              <CircularProgress />
+            </Paper>
+          )}
           {selectedSuggestionId && !loading && data && (
             <div className={classes.contents}>
               <FeatureDetail

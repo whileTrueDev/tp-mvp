@@ -1,0 +1,130 @@
+{
+    "ipcMode": null,
+    "executionRoleArn": "arn:aws:iam::576646866181:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "dnsSearchDomains": [],
+            "environmentFiles": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "secretOptions": [],
+                "options": {
+                    "awslogs-group": "/ecs/test-truepoint-api",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "/ecs"
+                }
+            },
+            "entryPoint": [],
+            "portMappings": [
+                {
+                    "hostPort": 3000,
+                    "protocol": "tcp",
+                    "containerPort": 3000
+                }
+            ],
+            "command": [],
+            "linuxParameters": null,
+            "cpu": 256,
+            "environment": [
+                {
+                    "name": "NODE_ENV",
+                    "value": "test"
+                }
+            ],
+            "resourceRequirements": null,
+            "ulimits": [],
+            "dnsServers": [],
+            "mountPoints": [],
+            "workingDirectory": null,
+            "secrets": [
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_ACCESS_KEY_ID",
+                    "name": "AWS_ACCESS_KEY_ID"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_SECRET_ACCESS_KEY",
+                    "name": "AWS_SECRET_ACCESS_KEY"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_BUCKET_NAME",
+                    "name": "BUCKET_NAME"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_JWT_SECRET",
+                    "name": "JWT_SECRET"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/IMP_KEY",
+                    "name": "IMP_KEY"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/IMP_SECRET",
+                    "name": "IMP_SECRET"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_SLACK_URL",
+                    "name": "SLACK_ALARM_URL"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_TWITCH_CLIENT_ID",
+                    "name": "TWITCH_CLIENT_ID"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/TRUEPOINT_TWITCH_CLIENT_SECRET",
+                    "name": "TWITCH_CLIENT_SECRET"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/YOUTUBE_CLIENT_ID",
+                    "name": "YOUTUBE_CLIENT_ID"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/YOUTUBE_CLIENT_SECRET",
+                    "name": "YOUTUBE_CLIENT_SECRET"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/AFREECA_KEY",
+                    "name": "AFREECA_KEY"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/AFREECA_SECRET_KEY",
+                    "name": "AFREECA_SECRET_KEY"
+                }
+            ],
+            "dockerSecurityOptions": [],
+            "memory": 512,
+            "memoryReservation": null,
+            "volumesFrom": [],
+            "stopTimeout": null,
+            "image": "hwasurr/test-truepoint-api",
+            "startTimeout": null,
+            "firelensConfiguration": null,
+            "dependsOn": null,
+            "disableNetworking": null,
+            "interactive": null,
+            "healthCheck": null,
+            "essential": true,
+            "links": [],
+            "hostname": null,
+            "extraHosts": [],
+            "pseudoTerminal": null,
+            "user": null,
+            "readonlyRootFilesystem": null,
+            "dockerLabels": {},
+            "systemControls": [],
+            "privileged": null,
+            "name": "test-truepoint-api-container"
+        }
+    ],
+    "placementConstraints": [],
+    "memory": "512",
+    "family": "test-truepoint-api",
+    "pidMode": null,
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "networkMode": "awsvpc",
+    "cpu": "256",
+    "inferenceAccelerators": null,
+    "proxyConfiguration": null,
+    "volumes": []
+}

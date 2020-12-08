@@ -41,23 +41,6 @@ const styles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
-  rank: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: 50,
-    fontFamily: 'AppleSDGothicNeo',
-    fontSize: 30,
-    fontWeight: 700,
-    textAlign: 'center',
-    color: theme.palette.success.main,
-    '&>span': {
-      color: 'black',
-      fontSize: 20,
-    },
-  },
   detailWraper: {
     display: 'flex',
     flexDirection: 'column',
@@ -75,7 +58,7 @@ const styles = makeStyles((theme) => ({
     margin: '10px 0px 0px 0px',
     fontFamily: 'AppleSDGothicNeo',
     fontSize: 12,
-    borderLeft: `3px solid ${theme.palette.success.main}`,
+    borderLeft: `3px solid ${theme.palette.error.main}`,
     backgroundColor: '#EBECEE',
     paddingLeft: 10,
   },
@@ -93,7 +76,6 @@ export const initialPoint = {
   start_index: '',
   end_index: '',
   score: '',
-  rank: '',
   index: -1,
 };
 

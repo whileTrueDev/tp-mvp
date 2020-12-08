@@ -266,8 +266,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         container
         direction="column"
       >
-        <Grid item xs={12} className={classes.root}>
-
+        <Grid item xs={12} className={classes.wraper}>
           <SectionTitle mainTitle="편집점 분석" />
           <Typography variant="body1" className={classes.sub}>
             방송을 선택하시면 편집점 분석을 시작합니다.
@@ -280,8 +279,9 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           direction="row"
           alignItems="center"
           justify="space-between"
+          className={classes.sideSpace}
         >
-          <Grid item xs={2} className={classes.title}>
+          <Grid item xs={3} className={classes.title}>
             선택된 방송
           </Grid>
           <Grid item xs={9}>
@@ -310,7 +310,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           item
           xs={12}
           container
-          className={classes.root}
+          className={classes.wraper}
           direction="column"
           justify="flex-start"
         >
@@ -401,7 +401,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
       </Grid>
-      <Loading clickOpen={isClicked} lodingTime={20000} />
+      <Loading clickOpen={isClicked} />
       { !isClicked && highlightData && metricsData && (
         <>
           <TruepointHighlight highlightData={highlightData} />

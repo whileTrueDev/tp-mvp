@@ -207,7 +207,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           && (
           <Loading
             clickOpen={loading}
-            lodingTime={10000}
           />
           )}
 

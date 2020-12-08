@@ -100,17 +100,6 @@ export default function DeleteUser(): JSX.Element {
               <Typography
                 className={classnames(classes.bold, classes.bottomSpace)}
               >
-                트루포인트를 탈퇴하면 다음 기능을 누릴수 없습니다.
-              </Typography>
-              <Typography>1. 데이터 기반 방송별 지표 비교 분석</Typography>
-              <Typography>2. 데이터 기반 하이라이트 편집점 분석</Typography>
-              <Typography>3. 데이터 기반 시청자의 민심 및 평판에 대한 분석</Typography>
-            </div>
-
-            <div className={classes.center}>
-              <Typography
-                className={classnames(classes.bold, classes.bottomSpace)}
-              >
                 트루포인트는 지속적으로 기능을 개선하기 위해 노력합니다.
               </Typography>
               <Typography>1. 데이터 기반 유튜브 채널 분석</Typography>
