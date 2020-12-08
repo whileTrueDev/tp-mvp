@@ -2,8 +2,8 @@ import React from 'react';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  Typography, Popper, Box, Grid, Divider, Button,
-  Dialog, DialogContent, DialogTitle,
+  Typography, Grid, Divider, Button,
+  Dialog, DialogContent,
 } from '@material-ui/core';
 // shared sub components
 import Calendar from './Calendar';
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    minHeight: '200px',
+    minHeight: '250px',
   },
   calendarWrapper: {
     display: 'flex',
@@ -86,8 +86,14 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
       // }}
       open={open}
       onClose={handleClose}
-      // fullWidth
       maxWidth="lg"
+      PaperProps={{
+        style: {
+          borderRadius: 16,
+          // borderColor: '#707070',
+          // border: '1px solid',
+        },
+      }}
     >
       <DialogContent
         className={classes.box}
@@ -108,10 +114,11 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
+          marginTop: 16,
         }}
         >
           <Typography className={classes.boxTitle}>
-            제외할 방송 선택
+            날짜별 방송 목록
           </Typography>
         </Grid>
 
@@ -124,7 +131,10 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
             selectedStreams={selectedStreams}
           />
           {/* 클릭된 날짜의 방송 리스트 */}
-          <div style={{ marginLeft: '16px', marginRight: '16px', width: '100%' }}>
+          <div style={{
+            marginLeft: '16px', marginRight: '16px', width: '100%', height: 250,
+          }}
+          >
             <PeriodStreamsList
               selectedStreams={selectedStreams}
               selectedDate={selectedDate}
@@ -138,7 +148,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
         <Grid className={classes.listWrapper}>
           <Divider className={classes.divider} />
           <Typography className={classes.boxTitle}>
-            기간 내 모든 방송
+            기간 내 모든 방송 목록
           </Typography>
 
           {/* 모든 방송 리스트 */}
@@ -148,17 +158,17 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
           />
         </Grid>
 
-        <Grid className={classes.listWrapper}>
+        {/* <Grid className={classes.listWrapper}>
           <Divider className={classes.divider} />
           <Typography className={classes.boxTitle}>
             제외 된 방송
           </Typography>
-          {/* 제외된 방송 리스트 */}
+
           <PeriodStreamsList
             handleStreamList={handleStreamList}
             selectedStreams={selectedStreams.filter((streamItem) => streamItem.isRemoved === true)}
           />
-        </Grid>
+        </Grid> */}
 
         <Button
           variant="contained"

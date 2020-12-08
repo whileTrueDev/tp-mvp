@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
     padding: 0,
-    maxHeight: '200px',
+    maxHeight: '250px',
     overflow: 'auto',
   },
   listItem: {
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'flex-start',
     marginTop: theme.spacing(1),
     width: '100%',
-    height: 'auto',
+    height: 50,
     backgroundColor: theme.palette.primary.light,
     padding: '0px',
     borderRadius: '4px',
@@ -45,9 +45,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   removedListItem: {
-    marginTop: '3px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: theme.spacing(1),
     width: '100%',
-    height: '48px',
+    height: 50,
     backgroundColor: theme.palette.background.paper,
     padding: '0px',
     borderRadius: '4px',
@@ -77,13 +80,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     '&:hover,select': {
       color: theme.palette.error,
     },
+    marginRight: 2,
   },
   addButton: {
     backgroundColor: '#3a86ff',
     color: theme.palette.primary.contrastText,
-    marginRight: theme.spacing(4),
+    marginRight: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     '&:hover,select': {
-      color: theme.palette.primary.dark,
+      transform: 'scale(1.05)',
+      boxShadow: theme.shadows[10],
     },
   },
   noMaxWidth: {
@@ -207,27 +213,28 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
   );
 
   const listItem = (stream: StreamsListItem, removed: boolean) => (
-    <ListItem
-      key={stream.streamId}
-      button
-      className={classnames({
-        [classes.listItem]: !removed,
-        [classes.removedListItem]: removed,
-      })}
+    <StyledToolTip
+      arrow
+      placement="top"
+      title={tooltipContents(stream)}
+      classes={{ tooltip: classes.noMaxWidth }}
     >
-      <StyledToolTip
-        arrow
-        placement="top"
-        title={tooltipContents(stream)}
-        classes={{ tooltip: classes.noMaxWidth }}
+      <ListItem
+        key={stream.streamId}
+        button
+        className={classnames({
+          [classes.listItem]: !removed,
+          [classes.removedListItem]: removed,
+        })}
       >
 
         {removed ? (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Button
               variant="contained"
               className={classes.addButton}
               onClick={() => handleStreamList(stream, false)}
+              color="primary"
             >
               재등록
             </Button>
@@ -277,9 +284,8 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           </div>
         )}
 
-      </StyledToolTip>
-
-    </ListItem>
+      </ListItem>
+    </StyledToolTip>
   );
 
   return (
