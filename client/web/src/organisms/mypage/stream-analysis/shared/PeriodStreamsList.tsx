@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
     padding: 0,
-    maxHeight: '250px',
+    // maxHeight: '250px',
     overflow: 'auto',
   },
   listItem: {

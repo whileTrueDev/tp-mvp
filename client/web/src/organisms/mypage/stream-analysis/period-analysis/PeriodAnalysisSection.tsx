@@ -35,7 +35,7 @@ import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import PeriodSelectDialog from '../shared/PeriodSelectDialog';
+import PeriodSelectDialog from '../shared/PeriodSelectDialog2';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
