@@ -22,8 +22,6 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // date library
 import moment from 'moment';
-// attoms
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
 import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
@@ -58,13 +56,12 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
+
   const [
     {
       data: getStreamsData,
-      loading: getStreamsLoading,
-      error: getStreamsError,
     }, excuteGetStreams] = useAxios<StreamDataType[]>({
-      url: '/stream-analysis/stream-list',
+      url: '/broadcast-info',
     }, { manual: true });
 
   const DATE_THEME = (others: Theme) => ({
@@ -193,8 +190,6 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
             justify="center"
             alignItems="center"
           >
-            {(getStreamsLoading || getStreamsError)
-            && <CenterLoading />}
             <Grid item>
               <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
                 <DatePicker

@@ -19,7 +19,7 @@ import { roles } from './roles/app.roles';
 import { SlackModule } from './resources/slack/slack.module';
 import { NoticeModule } from './resources/notice/notice.module';
 import { HealthCheckModule } from './resources/health-check/healthcheck.module';
-
+import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -38,6 +38,7 @@ import { HealthCheckModule } from './resources/health-check/healthcheck.module';
     NoticeModule,
     CategoryModule,
     HealthCheckModule,
+    BroadcastInfoModule,
   ],
 })
 export class AppModule { }
