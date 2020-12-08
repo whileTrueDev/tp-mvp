@@ -74,9 +74,10 @@ export default function FeatureWriteForm(): JSX.Element {
   const [{ loading: postLoading }, postRequest] = useAxios(
     { url: '/feature-suggestion', method: 'post' }, { manual: true },
   );
+
   function handlePostSubmit() {
     if (editorRef.current && editorRef.current?.getInstance().getHtml()) {
-      const contents = editorRef.current.getInstance().getHtml();
+      const contents = editorRef.current?.getInstance().getHtml();
       const data: FeatureSuggestionPostDto = {
         ...featureSource,
         userId: authContext.user.userId,
@@ -99,9 +100,10 @@ export default function FeatureWriteForm(): JSX.Element {
   const [{ loading: patchLoading }, editPatchRequest] = useAxios(
     { url: '/feature-suggestion', method: 'patch' }, { manual: true },
   );
+
   function handlePatchSubmit(targetSuggestionId: string | number) {
     if (editorRef.current && editorRef.current.getInstance().getHtml()) {
-      const contents = editorRef.current.getInstance().getHtml();
+      const contents = editorRef.current?.getInstance().getHtml();
       const data: FeatureSuggestionPatchDto = {
         ...featureSource,
         suggestionId: Number(targetSuggestionId),
@@ -190,7 +192,7 @@ export default function FeatureWriteForm(): JSX.Element {
           initialValue={location.state && location.state.length > 0 ? location.state[0].content : ''}
           ref={editorRef}
         />
-        <Backdrop className={classes.backdrop} open={postLoading}>
+        <Backdrop className={classes.backdrop} open={postLoading || patchLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
       </div>
