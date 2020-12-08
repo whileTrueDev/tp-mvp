@@ -186,15 +186,8 @@ export default function FeatureDetail({
         <div className={classes.contentsText}>
           <div className={classes.markdown}>
             <Viewer initialValue={currentSuggestion.content} />
-
           </div>
-          {/* <Markdown
-            className={classes.markdown}
-            source={currentSuggestion.content}
-            escapeHtml={false}
-                // eslint-disable-next-line react/prop-types
-            renderers={{ code: ({ value }) => <Markdown source={value} /> }}
-          /> */}
+
         </div>
       </Paper>
 

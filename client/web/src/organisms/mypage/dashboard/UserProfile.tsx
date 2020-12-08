@@ -8,6 +8,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import useAxios from 'axios-hooks';
+import DashboardDialog from '../../mainpage/shared/DashboardDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -33,6 +34,8 @@ export default function UserProfile(): JSX.Element {
     refetch();
   }, [refetch]);
 
+  const [reason, onClose] = React.useState('backdropClicked');
+  const [open, setOpen] = React.useState(true);
   return (
     <Paper className={classes.container}>
       {/* 로딩중 */}
@@ -40,61 +43,73 @@ export default function UserProfile(): JSX.Element {
       <div className={classes.loading}><CircularProgress /></div>
       )}
 
-      {!profileRequestObject.loading && profileRequestObject.data && (
-        <>
-          <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
-
-          <div>
-            {/* 이름 */}
-            <div className={classes.flexBox}>
-              <Typography variant="h4" style={{ fontWeight: 'bold' }}>
-                {`${profileRequestObject.data.nickName || profileRequestObject.data.userId} 님`}
-              </Typography>
-
-              {/* 연동된 플랫폼 목록 */}
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/afreecaLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
-              />
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/twitchLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
-              />
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/youtubeLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
-              />
-
-            </div>
+      {!profileRequestObject.loading
+      && profileRequestObject.data
+       && (profileRequestObject.data.afreecaId
+        || profileRequestObject.data.youtubeId
+        || profileRequestObject.data.twitchId)
+        ? (
+          <>
+            <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
 
             <div>
-              {/* 이메일 */}
-              <Typography className={classes.text}>{profileRequestObject.data.mail}</Typography>
-
-              {/* 요금제 */}
+              {/* 이름 */}
               <div className={classes.flexBox}>
-                <Typography className={classnames(classes.text, classes.bold)} variant="body1">요금제</Typography>
-                <Chip label="클로즈베타 테스터" size="small" color="primary" className={classnames(classes.userTier)} />
+                <Typography variant="h4" style={{ fontWeight: 'bold' }}>
+                  {`${profileRequestObject.data.nickName || profileRequestObject.data.userId} 님`}
+                </Typography>
+
+                {/* 연동된 플랫폼 목록 */}
+                <img
+                  className={classes.platformLogo}
+                  src="/images/logo/afreecaLogo.png"
+                  alt=""
+                  draggable={false}
+                  style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
+                />
+                <img
+                  className={classes.platformLogo}
+                  src="/images/logo/twitchLogo.png"
+                  alt=""
+                  draggable={false}
+                  style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
+                />
+                <img
+                  className={classes.platformLogo}
+                  src="/images/logo/youtubeLogo.png"
+                  alt=""
+                  draggable={false}
+                  style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
+                />
+
               </div>
 
-              {/* 클로즈베타 처리 - 잠시 제거 */}
-              {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
+              <div>
+                {/* 이메일 */}
+                <Typography className={classes.text}>{profileRequestObject.data.mail}</Typography>
+
+                {/* 요금제 */}
+                <div className={classes.flexBox}>
+                  <Typography className={classnames(classes.text, classes.bold)} variant="body1">요금제</Typography>
+                  <Chip label="클로즈베타 테스터" size="small" color="primary" className={classnames(classes.userTier)} />
+                </div>
+
+                {/* 클로즈베타 처리 - 잠시 제거 */}
+                {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
                   업그레이드
                   <ArrowForwardIosIcon fontSize="inherit" />
                 </Typography> */}
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        ) : (
+          <DashboardDialog
+            onClose={onClose}
+            open={open}
+            setOpen={setOpen}
+            reason={reason}
+          />
+        )}
     </Paper>
   );
 }
