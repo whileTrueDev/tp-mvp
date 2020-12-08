@@ -97,6 +97,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   chip: {
     marginRight: theme.spacing(4),
   },
+  chipLable: {
+    marginBottom: 4, marginLeft: 4,
+  },
   tooltip: {
     height: 'auto',
     padding: theme.spacing(1),
@@ -163,7 +166,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
       <div className={classes.tooltipChipWrapper}>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 4 }}>
+          <Typography variant="caption" className={classes.chipLable}>
             평균 시청자수
           </Typography>
           <Chip
@@ -175,7 +178,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 4 }}>
+          <Typography variant="caption" className={classes.chipLable}>
             평균 채팅수
           </Typography>
           <Chip
@@ -187,7 +190,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4 }}>
+          <Typography variant="caption" className={classes.chipLable}>
             평균 웃음 발생 수
           </Typography>
           <Chip
