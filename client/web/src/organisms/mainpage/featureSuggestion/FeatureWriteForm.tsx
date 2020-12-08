@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   contents: { marginTop: theme.spacing(2) },
   writeForm: { marginTop: theme.spacing(8) },
   buttonSet: { textAlign: 'right' },
-  editor: { color: theme.palette.text.primary },
+  editor: { color: theme.palette.common.white },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
