@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   chip: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(4),
   },
   tooltip: {
     height: 'auto',
@@ -104,8 +104,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
 
       <div className={classes.tooltipChipWrapper}>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 8 }}>
-            시청자수
+          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 4 }}>
+            평균 시청자수
           </Typography>
           <Chip
             icon={<PersonAddIcon />}
@@ -116,8 +116,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 12 }}>
-            채팅수
+          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 4 }}>
+            평균 채팅수
           </Typography>
           <Chip
             icon={<ChatIcon />}
@@ -129,7 +129,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
         </div>
         <div className={classes.chipWapper}>
           <Typography variant="caption" style={{ marginBottom: 4 }}>
-            웃음 발생 수
+            평균 웃음 발생 수
           </Typography>
           <Chip
             icon={<EmojiEmotionsIcon />}
