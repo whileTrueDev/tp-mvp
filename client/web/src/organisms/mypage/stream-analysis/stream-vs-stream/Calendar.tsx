@@ -12,7 +12,9 @@ import koLocale from 'date-fns/locale/ko';
 import { useSnackbar } from 'notistack';
 // shared dtos , interfaces
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+// import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+
 // axios
 import useAxios from 'axios-hooks';
 // styles
@@ -61,7 +63,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       data: getStreamsData,
       loading: getStreamsLoading,
       error: getStreamsError,
-    }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
+    }, excuteGetStreams] = useAxios<StreamDataType[]>({
       url: '/stream-analysis/stream-list',
     }, { manual: true });
 
@@ -108,7 +110,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => moment(new Date(streamInfo.startedAt)).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => moment(new Date(streamInfo.startDate)).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.message) {
@@ -119,11 +121,12 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);
-    const dayStreamList: DayStreamsInfo[] = [];
+    const dayStreamList: StreamDataType[] = [];
     try {
       if (getStreamsData) {
-        getStreamsData.forEach((stream: DayStreamsInfo) => {
-          if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
+        getStreamsData.forEach((stream: StreamDataType) => {
+          if (newDate
+            && moment(newDate).format('YYYY-MM-DD') === moment(stream.startDate).format('YYYY-MM-DD')) {
             dayStreamList.push(stream);
           }
         });
@@ -147,8 +150,8 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     dayComponent: JSX.Element,
   ) => {
     if (date && hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
-      if ((compareStream && (new Date(compareStream.startedAt)).getDate() === date.getDate())
-      || (baseStream && (new Date(baseStream.startedAt)).getDate() === date.getDate())) {
+      if ((compareStream && (new Date(compareStream.startDate)).getDate() === date.getDate())
+      || (baseStream && (new Date(baseStream.startDate)).getDate() === date.getDate())) {
         return (
           <div className={classnames({
             [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),

@@ -35,12 +35,11 @@ export class HighlightController {
   }
 
   @Get('/highlight-points')
-  getHighlightData(@Query('id') id: string,
-    @Query('year') year: string,
-    @Query('month') month: string,
-    @Query('day') day: string, @Query('fileId') fileId: string): Promise<any> {
-    if (id) {
-      return this.highlightService.getHighlightData(id, year, month, day, fileId);
+  getHighlightData(@Query('streamId') streamId: string,
+  @Query('platform') platform: string,
+  @Query('creatorId') creatorId: string): Promise<any> {
+    if (streamId) {
+      return this.highlightService.getHighlightData(streamId, platform, creatorId);
     }
     throw new HttpException('id is required!!', HttpStatus.BAD_REQUEST);
   }

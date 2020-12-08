@@ -11,7 +11,7 @@ import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
 // shared dto and interface
-// import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+// import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // atom svg icons
 import ChatIcon from '@material-ui/icons/Chat';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -236,7 +236,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
               {/* 날짜 표현 컴포넌트로 변경 */}
 
               {dateExpression({
-                createdAt: new Date(stream.startedAt),
+                createdAt: new Date(stream.startDate),
                 compoName: 'analysys-calender',
                 streamAirtime: stream.airTime,
               })}
@@ -263,7 +263,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
             <Typography className={classes.removedListItemText}>
               {dateExpression({
-                createdAt: new Date(stream.startedAt),
+                createdAt: new Date(stream.startDate),
                 compoName: 'analysys-calender',
                 streamAirtime: stream.airTime,
               })}
@@ -286,7 +286,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     <List className={classes.listWrapper}>
       {selectedDate && selectedStreams
         && selectedStreams
-          .filter((stream) => moment(stream.startedAt).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
+          .filter((stream) => moment(stream.startDate).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
           .map((stream) => listItem(stream, stream.isRemoved))}
       {!selectedDate && selectedStreams && selectedStreams
         .map((stream) => listItem(stream, stream.isRemoved))}

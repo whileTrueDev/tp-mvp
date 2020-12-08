@@ -11,6 +11,7 @@ import { InquiryModule } from './resources/inquiry/inquiry.module';
 import { TypeOrmConfigService } from './config/database.config';
 import { NotificationModule } from './resources/notification/notification.module';
 import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
+import { CategoryModule } from './resources/category/category.module';
 
 import loadConfig from './config/loadConfig';
 
@@ -35,6 +36,7 @@ import { HealthCheckModule } from './resources/health-check/healthcheck.module';
     InquiryModule,
     SlackModule,
     NoticeModule,
+    CategoryModule,
     HealthCheckModule,
   ],
 })

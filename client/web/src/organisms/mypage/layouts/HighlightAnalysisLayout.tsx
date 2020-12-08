@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
+import Fade from '@material-ui/core/Fade';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -10,203 +11,188 @@ import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 // import classnames from 'classnames';
+import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import ClearIcon from '@material-ui/icons/Clear';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+
+// sub components
 import Calendar from '../highlightAnalysis/Calendar';
-import Button from '../../../atoms/Button/Button';
+import StreamList from '../highlightAnalysis/StreamList';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
-import Loading from '../../shared/sub/Loading';
+// shared and atoms
+import Button from '../../../atoms/Button/Button';
+// import Loading from '../../shared/sub/Loading';
 import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
+// date expression util
 import dateExpression from '../../../utils/dateExpression';
+// custom svg icons
+import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
+import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
-// import SearchBox from '../highlightAnalysis/SearchBox';
-
-interface StreamDate {
-  fullDate: Date;
-  startAt: string;
-  finishAt: string;
-  fileId: string;
-}
+import Loading from '../../shared/sub/Loading';
 
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  const data: StreamDate = {
-    fullDate: new Date(),
-    startAt: '',
-    finishAt: '',
-    fileId: '',
+  const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
+  const handleClickedDate = (newDate: Date) => {
+    setClickedDate(newDate);
+  };
+
+  // 캘린더의 해당 날짜의 방송 데이터들
+  const [dayStreamsList, setDayStreamsList] = React.useState<StreamDataType[]>([]);
+
+  const handleDayStreamList = (responseList: StreamDataType[]) => {
+    setDayStreamsList(responseList);
+  };
+
+  // 캘린더 선택 후 여러 방송 데이터들 중에 분석할 방송의 데이터 선택
+  const [selectedStream, setSelectedStream] = React.useState<StreamDataType | null>(null);
+
+  const handleSeletedStreams2 = (
+    newStreams: StreamDataType | null,
+    base?: true,
+  ) => {
+    setSelectedStream(newStreams);
+  };
+
+  const platformIcon = (stream: StreamDataType): JSX.Element => {
+    switch (stream.platform) {
+      case 'afreeca':
+        return <AfreecaIcon />;
+      case 'twitch':
+        return <TwitchIcon />;
+      case 'youtube':
+        return <YoutubeIcon />;
+      default:
+        return <div />;
+    }
   };
 
   const [highlightData, setHighlightData] = React.useState(null);
-  const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
   const [isChecked, setIsChecked] = React.useState({
     srtCheckBox: true,
     csvCheckBox: true,
     txtCheckBox: true,
   });
-  // const [downloadUrl, setDownloadUrl] = React.useState<string>('');
-  const handleDatePick = (fullDate: Date, startAt: string, finishAt: string, fileId: string) => {
-    // const streamId = fileId.split('_')[2].split('.')[0];
-    setSelectedStream({
-      fullDate,
-      startAt,
-      finishAt,
-      fileId,
-      // => 내가 바꿔줘야함
-    });
-  };
-  const [, doExport] = useAxios(
-    { url: '/highlight/export', method: 'get' }, { manual: true },
-  );
+
+  // 편집점 내보내기 부분 지우지 마세요
+  // const [, doExport] = useAxios(
+  //   { url: '/highlight/export', method: 'get' }, { manual: true },
+  // );
+
   const [, getHighlightPoints] = useAxios(
     { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
   );
 
-  const makeMonth = (month: number) => {
-    if (month < 10) {
-      const edit = `0${month}`;
-      return edit;
-    }
-    const returnMonth = String(month);
-    return returnMonth;
-  };
+  // 편집점 내보내기 부분 지우지 마세요
+  // const makeMonth = (month: number) => {
+  //   if (month < 10) {
+  //     const edit = `0${month}`;
+  //     return edit;
+  //   }
+  //   const returnMonth = String(month);
+  //   return returnMonth;
+  // };
 
-  const makeDay = (day: number) => {
-    if (day < 10) {
-      const edit = `0${day}`;
-      return edit;
-    }
-    const returnDay = String(day);
-    return returnDay;
-  };
+  // const makeDay = (day: number) => {
+  //   if (day < 10) {
+  //     const edit = `0${day}`;
+  //     return edit;
+  //   }
+  //   const returnDay = String(day);
+  //   return returnDay;
+  // };
+
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
   };
 
-  function forloop(datas: any): any {
-    const { highlight_points, chat_points, smile_points } = datas;
+  // 편집점 내보내기 부분 지우지 마세요
+  // const handleExportClick = async () => {
+  //   const id = '234175534';
+  //   const year = String(selectedStream.fullDate.getFullYear());
+  //   const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
+  //   const day = makeDay(selectedStream.fullDate.getDate());
+  //   const streamId = selectedStream.fileId.split('_')[1].split('.')[0];
+  //   const srt = isChecked.srtCheckBox ? 1 : 0;
+  //   const csv = isChecked.csvCheckBox ? 1 : 0;
+  //   const txt = isChecked.txtCheckBox ? 1 : 0;
 
-    const new_points = highlight_points.highlight_points.map((point: any) => ({
-      ...point,
-      start_date: `2020-12-01 ${point.start_date}`,
-      end_date: `2020-12-01 ${point.end_date}`,
-    }));
+  //   // function str2bytes(str: any) {
+  //   //   const bytes = new Uint8Array(str.length);
+  //   //   for (let i = 0; i < str.length; i += 1) {
+  //   //     bytes[i] = str.charCodeAt(i);
+  //   //   }
+  //   //   return bytes;
+  //   // }
+  //   doExport({
+  //     params: {
+  //       id, year, month, day, streamId, srt, txt, csv,
+  //     },
+  //   })
+  //     .then((res) => {
+  //       // console.log(res.data);
+  //       const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
+  //       // const filename = res.headers;
+  //       const link = document.createElement('a');
+  //       link.href = url;
+  //       link.setAttribute('download', 'test.zip');
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       // setDownloadUrl(url);
+  //     }).catch((err) => {
+  //       console.error(err);
+  //       ShowSnack('지금은 다운로드 할 수 없습니다.', 'error', enqueueSnackbar);
+  //     });
+  // };
 
-    const new_points_90 = highlight_points.highlight_points_90.map((point: any) => ({
-      ...new_points[point],
-    }));
-
-    const new_chat_points = chat_points.highlight_points.map((point: any) => ({
-      ...point,
-      start_date: `2020-12-01 ${point.start_date}`,
-      end_date: `2020-12-01 ${point.end_date}`,
-    }));
-
-    const new_chat_points_90 = chat_points.highlight_points_90.map((point: any) => ({
-      ...new_chat_points[point],
-    }));
-
-    const new_smile_points = smile_points.highlight_points.map((point: any) => ({
-      ...point,
-      start_date: `2020-12-01 ${point.start_date}`,
-      end_date: `2020-12-01 ${point.end_date}`,
-    }));
-
-    const new_smile_points_90 = smile_points.highlight_points_90.map((point: any) => ({
-      ...new_smile_points[point],
-    }));
-
-    return {
-      highlight_points: new_points_90.length >= 10 ? new_points_90 : new_points,
-      chat_points: new_chat_points_90.length >= 10 ? new_chat_points_90 : new_chat_points,
-      smile_points: new_smile_points_90.length >= 10 ? new_smile_points_90 : new_smile_points,
-    };
-    // console.log(new_points);
-  }
-
-  const handleExportClick = async () => {
-    const id = '234175534';
-    const year = String(selectedStream.fullDate.getFullYear());
-    const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
-    const day = makeDay(selectedStream.fullDate.getDate());
-    const streamId = selectedStream.fileId.split('_')[1].split('.')[0];
-    const srt = isChecked.srtCheckBox ? 1 : 0;
-    const csv = isChecked.csvCheckBox ? 1 : 0;
-    const txt = isChecked.txtCheckBox ? 1 : 0;
-
-    // function str2bytes(str: any) {
-    //   const bytes = new Uint8Array(str.length);
-    //   for (let i = 0; i < str.length; i += 1) {
-    //     bytes[i] = str.charCodeAt(i);
-    //   }
-    //   return bytes;
-    // }
-    doExport({
-      params: {
-        id, year, month, day, streamId, srt, txt, csv,
-      },
-    })
-      .then((res) => {
-        // console.log(res.data);
-        const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
-        // const filename = res.headers;
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'test.zip');
-        document.body.appendChild(link);
-        link.click();
-        // setDownloadUrl(url);
-      }).catch((err) => {
-        console.error(err);
-        ShowSnack('지금은 다운로드 할 수 없습니다.', 'error', enqueueSnackbar);
-      });
-  };
-  const fetchHighlightData = async (
-    id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    // 134859149/2020/08/01/09161816_09162001_39667416302.json
+  // S3로부터 선택된 방송의 하이라이트 데이터 패칭
+  const fetchHighlightData = async (streamId: string, platform: string, creatorId: string): Promise<void> => {
     setHighlightData(null);
     getHighlightPoints({
       params: {
-        id, year, month, day, fileId,
+        streamId,
+        platform,
+        creatorId,
       },
     })
-      .then((res) => {
+      .then((res: any) => {
         if (res.data) {
-          const final = forloop(res.data);
-          setHighlightData(final);
+          setHighlightData(res.data);
         }
       }).catch((err) => {
         ShowSnack('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
 
+  // [분석하기] 버튼 클릭시 실행 함수
   const handleAnalyze = (): void => {
     setIsClicked(true);
-    const id = '234175534';
-    const year = String(selectedStream.fullDate.getFullYear());
-    const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
-    const day = makeDay(selectedStream.fullDate.getDate());
-    const file = selectedStream.fileId;
-    console.log(`----년도 ${year}`);
-    console.log(`----년월 ${month}`);
-    console.log(`----일자 ${day}`);
-    console.log(`----파일 ${file}`);
+    if (selectedStream) {
+      const { streamId, platform, creatorId } = selectedStream;
 
-    Promise.all([
-      fetchHighlightData(id, year, month, day, file),
-    ])
-      .then(() => {
-        setIsClicked(false);
-      }).catch(() => {
-        ShowSnack('데이터를 불러오지 못했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-      });
+      Promise.all([fetchHighlightData(streamId, platform, creatorId)])
+        .then(() => {
+          setIsClicked(false);
+        }).catch(() => {
+          ShowSnack('데이터를 불러오지 못했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+        });
+    } else {
+      ShowSnack('하이라이트 포인트를 분석할 방송을 선택해주세요.', 'error', enqueueSnackbar);
+    }
   };
+
+  // 카테고리 리스트 요청
+  const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
+    url: '/category',
+  });
 
   return (
     <Paper className={classes.root}>
@@ -229,28 +215,28 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           justify="space-between"
           className={classes.sideSpace}
         >
-          <Grid item xs={3} className={classes.title}>
+          <Grid item xs={2} className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={9}>
-            {selectedStream.fileId
+          <Grid item xs={10}>
+            {selectedStream
               && (
-                <Card className={classes.card}>
-                  <AfreecaIcon />
-                  <Typography className={classes.cardText}>
-                    {dateExpression({
-                      compoName: 'highlight-calendar',
-                      createdAt: (selectedStream.startAt),
-                      finishAt: (selectedStream.finishAt),
-                    })}
-                  </Typography>
-
-                  <IconButton
-                    onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </Card>
+                <Fade in={Boolean(selectedStream)} style={{ transitionDelay: '200ms' }}>
+                  <Card className={classes.card}>
+                    <Typography className={classes.cardText}>
+                      {dateExpression({
+                        compoName: 'analysys-calender',
+                        createdAt: new Date(selectedStream.startDate),
+                        streamAirtime: selectedStream.airTime,
+                      })}
+                    </Typography>
+                    <IconButton
+                      onClick={() => setSelectedStream(null)}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Card>
+                </Fade>
               )}
           </Grid>
 
@@ -259,11 +245,28 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           item
           xs={12}
           container
-          className={classes.wraper}
-          direction="column"
+          className={classes.calendarWrapper}
+          direction="row"
           justify="flex-start"
+          spacing={2}
         >
-          <Calendar handleDatePick={handleDatePick} />
+          <Grid item>
+            <Calendar
+              clickedDate={clickedDate}
+              handleClickedDate={handleClickedDate}
+              handleDayStreamList={handleDayStreamList}
+            />
+          </Grid>
+
+          <Grid item xs style={{ marginLeft: 16 }}>
+            <StreamList
+              dayStreamsList={dayStreamsList}
+              selectedStream={selectedStream}
+              handleSeletedStreams={handleSeletedStreams2}
+              platformIcon={platformIcon}
+            />
+          </Grid>
+
         </Grid>
       </Grid>
 
@@ -278,7 +281,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}
-              disabled={isClicked || Boolean(!selectedStream.fileId)}
+              disabled={isClicked || Boolean(!selectedStream)}
             >
               분석하기
             </Button>
@@ -321,10 +324,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               )}
               label="csv"
             />
-            <Button
-              onClick={handleExportClick}
-              disabled={isClicked || Boolean(!selectedStream.fileId)}
-            >
+            <Button>
               편집점 내보내기
             </Button>
           </div>
@@ -332,11 +332,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         </Grid>
       </Grid>
       <Loading clickOpen={isClicked} loadingType="medium" />
-      { !isClicked && highlightData && (
+      { !isClicked && highlightData && categoriesData && (
         <>
           <TruepointHighlight highlightData={highlightData} />
           <MetricsAccordian
-            metricsData={highlightData}
+            highlightData={highlightData}
+            categories={categoriesData}
           />
         </>
       )}

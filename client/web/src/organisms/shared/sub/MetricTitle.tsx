@@ -61,7 +61,6 @@ export default function MetricTitle({
   mainTitle, subTitle, iconSrc, pointNumber,
 }: MetricTitleProps): JSX.Element {
   const classes = styles();
-
   return (
     <Grid item>
       { mainTitle && (

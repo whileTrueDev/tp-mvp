@@ -4,16 +4,38 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
+type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'highlight'|'question'
+
 interface ChartProps {
   data: any;
-  chartType: string;
+  chartType: MetricsType;
   highlight?: any;
   handleClick: (a: any) => void;
   handlePage: any;
   pageSize: number;
 }
 
-const metricSetting: any = {
+interface eachInput {
+  name: string;
+  valueY: string;
+  dateX: string;
+  tooltipText: string;
+  tooltipColor: string;
+}
+
+interface Input {
+  smile: eachInput;
+  chat: eachInput;
+  funny: eachInput;
+  agree: eachInput;
+  surprise: eachInput;
+  disgust: eachInput;
+  // [key: string]: eachInput
+  highlight: eachInput;
+  question: eachInput;
+}
+
+const metricSetting: Input = {
   smile: {
     name: '웃음 발생 수',
     valueY: 'score',
@@ -28,8 +50,43 @@ const metricSetting: any = {
     tooltipText: '[bold]{score}[/]',
     tooltipColor: '#ff3e7a',
   },
+  funny: {
+    name: '즐거움 단어 발생 수',
+    valueY: 'score',
+    dateX: 'start_date',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  agree: {
+    name: '동의 단어 발생 수',
+    valueY: 'score',
+    dateX: 'start_date',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  question: {
+    name: '의문 단어 발생 수',
+    valueY: 'score',
+    dateX: 'start_date',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  surprise: {
+    name: '놀람 단어 발생 수',
+    valueY: 'score',
+    dateX: 'start_date',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
+  disgust: {
+    name: '역겨움 단어 발생수',
+    valueY: 'score',
+    dateX: 'start_date',
+    tooltipText: '[bold]{score}[/]',
+    tooltipColor: '#ff3e7a',
+  },
   highlight: {
-    name: '트루포인트 편집점',
+    name: '역겨움 단어 발생수',
     valueY: 'score',
     dateX: 'start_date',
     tooltipText: '[bold]{score}[/]',
@@ -79,8 +136,8 @@ export default function Chart({
 
     chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd HH:mm:ss';
 
-    const setSeries = (metricsType: string, getChart: am4charts.XYChart): void => {
-      const setting = metricSetting[metricsType];
+    const setSeries = (metricsType: MetricsType, getChart: am4charts.XYChart): void => {
+      const setting: any = metricSetting[metricsType];
       const valueAxis: any = getChart.yAxes.push(new am4charts.ValueAxis());
       if (chart.yAxes.indexOf(valueAxis) !== 0) {
         valueAxis.syncWithAxis = getChart.yAxes.getIndex(0);
@@ -92,7 +149,7 @@ export default function Chart({
       series.yAxis = valueAxis;
       series.dataFields.valueY = setting.valueY;
       series.dataFields.dateX = setting.dateX;
-      series.name = setting.name;
+      // series.name = setting.name;
       series.tooltipText = setting.tooltipText;
       series.strokeWidth = 2.5;
       series.tensionX = 0.8;
@@ -131,11 +188,11 @@ export default function Chart({
         series2.stroke = am4core.color(setting.tooltipColor);
         const bullet2 = series2.bullets.push(new am4charts.CircleBullet());
         bullet2.circle.strokeWidth = 6;
+        bullet2.moveTo({ x: 50, y: 50 }, undefined, undefined, true);
         bullet2.circle.radius = 12;
         bullet2.circle.fill = am4core.color(setting.tooltipColor);
       }
     };
-
     setSeries(chartType, chart);
 
     chartRef.current = chart;
@@ -143,7 +200,7 @@ export default function Chart({
     return () => {
       chart.dispose();
     };
-  }, [chartType, data, handleClick, handlePage, highlight, pageSize, theme.palette]);
+  });
 
   return (
     <div id={`${chartType}chartdiv`} style={{ width: '100%', height: 350 }} />

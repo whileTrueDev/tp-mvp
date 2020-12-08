@@ -2,7 +2,17 @@ import { makeStyles } from '@material-ui/core';
 
 const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
   root: { padding: theme.spacing(5) },
-  wraper: { padding: theme.spacing(6) },
+  wraper: { padding: theme.spacing(4) },
+  calendarWrapper: {
+    padding: theme.spacing(2),
+    borderRadius: '12px',
+    // hegith: '292px',
+    border: `solid 1px ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+    margin: theme.spacing(4),
+    marginTop: theme.spacing(1),
+    maxWidth: '80%',
+  },
   sideSpace: {
     padding: `0px ${theme.spacing(6)}px`,
   },
@@ -19,8 +29,9 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   cardText: {
-    fontSize: 15,
+    fontSize: 16,
     margin: 8,
+    marginLeft: theme.spacing(2),
   },
   card: {
     textAlign: 'center',
@@ -31,6 +42,10 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
+    '&:hover': {
+      transform: 'scale(1.03)',
+      boxShadow: theme.shadows[5],
+    },
   },
   title: {
     fontSize: 24,

@@ -12,7 +12,9 @@ import * as dotenv from 'dotenv';
 import moment from 'moment';
 
 // shared dto , interfaces
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+// import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
@@ -28,10 +30,13 @@ import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface'
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+import { StreamsTest2Entity } from './entities/streamsTest2.entity';
+import { StreamSummaryTest2Entity } from './entities/streamSummaryTest2.entity';
 
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
+const compeleteAnalysisFlag = 0;
 
 const calculateStreamData = (streamData: StreamsInfo[]) => {
   const template = [
@@ -91,55 +96,38 @@ export class StreamAnalysisService {
       private readonly streamsRepository: Repository<StreamsEntity>,
     @InjectRepository(StreamSummaryEntity)
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
+      @InjectRepository(StreamsTest2Entity)
+      private readonly streamsTest2Repository: Repository<StreamsTest2Entity>,
+    @InjectRepository(StreamSummaryTest2Entity)
+      private readonly streamSummaryTest2Repository: Repository<StreamSummaryTest2Entity>,
   ) {}
 
   /**
-  * 유저아이디에 대해 기간 혹은 시작 날짜가 속한 달의 방송 정보를 조회
-  * @param userId 유저아이디
-  * @param startDate 검색 시작 날짜
-  * @param endDate 검색 종료 날짜
-  */
+   * 입력 받은 기간 내 분석이 끝난 방송 정보 리스트 조회 함수
+   * @param userId 로그인 한 유저 아이디 (요청자)
+   * @param startDate 시작 날짜
+   * @param endDate 종료 날짜
+   */
   async findDayStreamList(
     userId: string,
-    startDate: string, endDate?: string,
-  ): Promise<DayStreamsInfo[]> {
-    if (!endDate) {
-      // ex) 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
-
-      const momentStart = moment(startDate).format('YYYY-MM-01 00:00:00');
-      const momentEnd = moment(startDate).endOf('month').format('YYYY-MM-DD HH:mm:ss');
-
-      const DayStreamData: DayStreamsInfo[] = await this.streamsRepository
-        .createQueryBuilder('streams')
-        .innerJoin(
-          StreamSummaryEntity,
-          'streamSummary',
-          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
-        )
-        .select(['streams.*, streamSummary.smileCount as smileCount'])
-        .where('streams.userId = :id', { id: userId })
-        .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
-        .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
-        .execute();
-
-      return DayStreamData;
-    }
-
+    startDate: string, endDate: string,
+  ): Promise<StreamDataType[]> {
     const momentStart = moment(startDate).format('YYYY-MM-DD HH:mm:ss');
     const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
 
-    const TermStreamsData: DayStreamsInfo[] = await this.streamsRepository
+    const TermStreamsData: StreamDataType[] = await this.streamsTest2Repository
       .createQueryBuilder('streams')
       .innerJoin(
-        StreamSummaryEntity,
+        StreamSummaryTest2Entity,
         'streamSummary',
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
       .select(['streams.*, streamSummary.smileCount as smileCount'])
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
-      .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
-      .orderBy('streams.startedAt', 'ASC')
+      .andWhere('streams.needAnalysis = :compeleteAnalysisFlag', { compeleteAnalysisFlag })
+      .andWhere('streams.startDate >= :startDate', { startDate: momentStart })
+      .andWhere('streams.startDate < :endDate', { endDate: momentEnd })
+      .orderBy('streams.startDate', 'ASC')
       .execute();
 
     return TermStreamsData;
@@ -151,10 +139,10 @@ export class StreamAnalysisService {
    */
   async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
-      const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
+      const streamInfoBase: StreamsInfo[] = await this.streamSummaryTest2Repository
         .createQueryBuilder('streamSummary')
         .innerJoin(
-          StreamsEntity,
+          StreamsTest2Entity,
           'streams',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
@@ -167,10 +155,10 @@ export class StreamAnalysisService {
         });
 
       if (streams[1]) {
-        const streamInfoCompare: StreamsInfo[] = await this.streamSummaryRepository
+        const streamInfoCompare: StreamsInfo[] = await this.streamSummaryTest2Repository
           .createQueryBuilder('streamSummary')
           .innerJoin(
-            StreamsEntity,
+            StreamsTest2Entity,
             'streams',
             'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
           )
@@ -202,8 +190,8 @@ export class StreamAnalysisService {
     }
 
     /* 1. 기준 기간 타임라인, 비교 기간 타임라인 startedAt 기준 오름차순 정렬 */
-    timeline[0].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
-    timeline[1].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
+    timeline[0].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
+    timeline[1].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
 
     /* 2. 각 타임라인 같은 날짜에 대한 데이터는 평균으로 병합 */
     const result: EachStream[][] = [[], []];
@@ -213,13 +201,13 @@ export class StreamAnalysisService {
         prev2[1] + curr2.smileCount,
         prev2[2] + curr2.viewer,
         prev2[3],
-      ], [0, 0, 0, temp.arr[0].startedAt]);
+      ], [0, 0, 0, temp.arr[0].startDate]);
 
       result[periodIndex].push({
         viewer: Math.round(tempResult[0] / temp.arr.length),
         chatCount: Math.round(tempResult[1] / temp.arr.length),
         smileCount: Math.round(tempResult[2] / temp.arr.length),
-        startedAt: moment(tempResult[3]).format('YYYY-MM-DD'),
+        startDate: moment(tempResult[3]).format('YYYY-MM-DD'),
         isRemoved: false,
       });
     }
@@ -241,10 +229,10 @@ export class StreamAnalysisService {
         } else {
           /* 전후 비교 및 temp 삽입 */
           const prev = timeline[periodIndex][index - 1];
-          if (moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+          if (moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
             temp.arr.push(curr);
             temp.count += 1;
-          } else if (!moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+          } else if (!moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
             merge(temp, periodIndex);
 
             temp.arr = []; temp.count = 0;
@@ -291,7 +279,7 @@ export class StreamAnalysisService {
     const streams = await this.streamsRepository
       .createQueryBuilder('streams')
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt > DATE_SUB(NOW(), INTERVAL 10 DAY)')
+      .andWhere('streams.startDate > DATE_SUB(NOW(), INTERVAL 10 DAY)')
       .getMany()
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
