@@ -244,11 +244,14 @@ export class AuthController {
     } = await this.afreecaLinker.getTokens(afreecaAuthorizationCode as string);
 
     // link with truepoint user
+    // by hwasurr, 2020.12.08 아직 아프리카 open API에서는 유저 프로필을 제공하지 않아 실제 유저 아이디를 조회할 수 없음 -> 향후 업데이트 필요.
+    // 현재는 트루포인트 userID를 넣는다.
     await this.afreecaLinker.link(refreshToken, userId)
       .then(() => {
         // settings뒤에 / 꼭 추가. amplify redirect 관련한 일종의 버그 있음.
         // https://github.com/aws-amplify/amplify-console/issues/97
 
+        // by hwasurr, 2020.12.08 아직 아프리카 open API에서는 유저 프로필을 제공하지 않아 실제 유저 아이디를 조회할 수 없음 -> 향후 업데이트 필요.
         // 실제 아프리카 유저 아이디를 들고올 수 있을 때, id, platform 쿼리스트링 추가
         res.redirect(`${getFrontHost()}/mypage/my-office/settings/`); // ?id=${afreecaId}&platform=afreeca
       })

@@ -421,11 +421,12 @@ export class UsersService {
           targetUser[`${platform}Id`] = platformId;
           // ************************************************
           // CollectorDB target Streamer에 추가
-          this.afreecaTargetStreamersRepository.save({
-            creatorId: linkedInfo.afreecaId,
-            creatorName: linkedInfo.afreecaStreamerName,
-            refreshToken: linkedInfo.refreshToken,
-          });
+          // by hwasurr 2020. 12. 08 아직 Afreeca openAPI 에서는 ProfileData를 제공하지 않기 때문에 주석처리. 향후 업데이트 필요
+          // this.afreecaTargetStreamersRepository.save({
+          //   creatorId: linkedInfo.afreecaId,
+          //   creatorName: linkedInfo.afreecaStreamerName,
+          //   refreshToken: linkedInfo.refreshToken,
+          // });
           break;
         } else {
           throw new InternalServerErrorException(

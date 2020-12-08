@@ -92,7 +92,7 @@ export class AfreecaLinker {
   /**
    * 트루포인트 유저 ID, 리프레시 토큰을 받아 TP-Afreeca연동 정보를 남기는 메소드
    * 현재 (2020.11.12) 아프리카 연동 유저의 Profile을 받지 못하므로, 연동 AfreecaId를 TP-userId로 둔다.
-   * userProfile을 받을 수 있는 상황이 되면 해당 유저의 ID를 연동 Afreeca 아이디로 두도록 변경하여야 한다.
+   * userProfile을 받을 수 있는 상황이 되면 해당 유저의 ID를 연동 Afreeca 아이디로 두도록 변경하여야 한다. by hwasurr
    * @param refreshToken 해당 유저의 리프레시 토큰
    * @param userId 해당 유저 Truepoint ID
    */
