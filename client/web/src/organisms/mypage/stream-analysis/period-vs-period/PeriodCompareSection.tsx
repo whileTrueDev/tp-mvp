@@ -13,6 +13,7 @@ import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysi
 // notistack snackbar
 import { useSnackbar } from 'notistack';
 // styles
+import useDialog from '../../../../utils/hooks/useDialog';
 import usePeriodCompareStyles from './PeriodCompareSection.style';
 // attoms
 import Loading from '../../../shared/sub/Loading';
@@ -51,6 +52,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   const compareAnchorEl = useAnchorEl();
   const baseTargetRef = React.useRef<HTMLDivElement | null>(null);
   const compareTargetRef = React.useRef<HTMLDivElement | null>(null);
+
+  const baseDialog = useDialog();
+  const compareDialog = useDialog();
 
   const [baseStreamsList, setBaseStreamsList] = React.useState<StreamsListItem[]>([]);
   const [compareStreamsList, setCompareStreamsList] = React.useState<StreamsListItem[]>([]);
@@ -253,6 +257,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
               targetRef={baseTargetRef}
               handleAnchorOpenWithRef={baseAnchorEl.handleAnchorOpenWithRef}
               handleAnchorClose={baseAnchorEl.handleAnchorClose}
+              dialogOpen={baseDialog.open}
+              handleDialogOpen={baseDialog.handleOpen}
+              handleDialogClose={baseDialog.handleClose}
             />
           </div>
         </Grid>
@@ -291,6 +298,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
               targetRef={compareTargetRef}
               handleAnchorOpenWithRef={compareAnchorEl.handleAnchorOpenWithRef}
               handleAnchorClose={compareAnchorEl.handleAnchorClose}
+              dialogOpen={compareDialog.open}
+              handleDialogOpen={compareDialog.handleOpen}
+              handleDialogClose={compareDialog.handleClose}
             />
           </div>
         </Grid>

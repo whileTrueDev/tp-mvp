@@ -15,6 +15,7 @@ import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysi
 import { useSnackbar } from 'notistack';
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
+import useDialog from '../../../../utils/hooks/useDialog';
 
 // interface
 import {
@@ -34,6 +35,7 @@ import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
@@ -56,6 +58,8 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     anchorEl, handleAnchorClose, handleAnchorOpenWithRef,
   } = useAnchorEl();
   const targetRef = React.useRef<HTMLDivElement | null>(null);
+
+  const { open, handleClose, handleOpen } = useDialog();
 
   const handleStreamList = (targetItem: StreamsListItem, isRemoved?: boolean) => {
     setTermStreamsList(termStreamsList.map((item) => {
@@ -215,6 +219,9 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
               targetRef={targetRef}
               handleAnchorOpenWithRef={handleAnchorOpenWithRef}
               handleAnchorClose={handleAnchorClose}
+              dialogOpen={open}
+              handleDialogClose={handleClose}
+              handleDialogOpen={handleOpen}
             />
           </div>
 
@@ -256,6 +263,18 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           </Button>
         </Grid>
       </Grid>
+
+      {termStreamsList && period[0] && period[1] && (
+      <PeriodSelectDialog
+        open={open}
+        handleClose={handleClose}
+        period={period}
+        selectedStreams={termStreamsList}
+        base
+        handleStreamList={handleStreamList}
+      />
+      )}
+
     </Grid>
   );
 }

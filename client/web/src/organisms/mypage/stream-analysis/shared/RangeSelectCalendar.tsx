@@ -99,6 +99,7 @@ const reRequest = 3;
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
     period, handlePeriod, base, targetRef, anchorEl, handleAnchorOpenWithRef, handleAnchorClose,
+    dialogOpen, handleDialogOpen, handleDialogClose,
   } = props;
   const classes = useStyles();
   // const subscribe = React.useContext(SubscribeContext);
@@ -404,7 +405,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
               if (anchorEl) {
                 handleAnchorClose();
               } else if (period[0] && period[1]) {
-                handleAnchorOpenWithRef(targetRef);
+                // handleAnchorOpenWithRef(targetRef);
+                handleDialogOpen();
+                console.log('open');
               } else {
                 ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
               }

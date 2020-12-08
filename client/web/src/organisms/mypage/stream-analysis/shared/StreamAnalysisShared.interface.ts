@@ -44,6 +44,9 @@ export interface RangeSelectCaledarProps {
   anchorEl: HTMLElement | null;
   handleAnchorOpenWithRef: (ref: React.MutableRefObject<HTMLDivElement | null>) => void;
   handleAnchorClose: () => void;
+  dialogOpen: boolean;
+  handleDialogOpen: () => void;
+  handleDialogClose: () => void;
 }
 
 export interface PeriodStreamsListProps {
@@ -66,6 +69,15 @@ export interface PeriodSelectPopperProps {
   selectedStreams: StreamsListItem[];
   handleAnchorClose: () => void;
   handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
+}
+
+export interface PeriodSelectDialogProps {
+  period: Date[];
+  base?: true;
+  selectedStreams: StreamsListItem[];
+  open: boolean;
+  handleClose: () => void;
+  handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void;
 }
 
 export interface PeriodCompareSubmitInterface {
