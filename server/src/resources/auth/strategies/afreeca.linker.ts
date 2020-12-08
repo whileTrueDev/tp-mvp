@@ -59,7 +59,7 @@ export class AfreecaPreLinker {
       }
       return { refreshToken, accessToken };
     } catch (e) {
-      console.error(e);
+      console.error('An Error occurred during getting refreshtoken from afreecatv', e.message);
       throw new InternalServerErrorException('An Error occurred during getting refreshtoken from afreecatv');
     }
   }
@@ -72,14 +72,9 @@ export class AfreecaPreLinker {
    * @param userId 해당 유저 Truepoint ID
    */
   async link(refreshToken: string, userId: string): Promise<void> {
-    try {
-      await this.usersService.linkAfreeca({
-        refreshToken, afreecaId: userId,
-      });
-      await this.usersService.linkUserToPlatform(userId, 'afreeca', userId);
-    } catch (e) {
-      console.error(e);
-      throw new InternalServerErrorException('An Error occurred during inserting afreecatv link data');
-    }
+    await this.usersService.linkAfreeca({
+      refreshToken, afreecaId: userId,
+    });
+    await this.usersService.linkUserToPlatform(userId, 'afreeca', userId);
   }
 }

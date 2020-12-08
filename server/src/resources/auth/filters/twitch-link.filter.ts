@@ -2,10 +2,10 @@ import {
   ArgumentsHost, Catch, ExceptionFilter,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import getFrontHost from '../utils/getFrontHost';
+import getFrontHost from '../../../utils/getFrontHost';
 
 @Catch()
-export class YoutubeLinkExceptionFilter implements ExceptionFilter {
+export class TwitchLinkExceptionFilter implements ExceptionFilter {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   catch(exception: any, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();

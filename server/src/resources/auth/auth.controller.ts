@@ -19,9 +19,9 @@ import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity'
 import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
 import { AfreecaPreLinker } from './strategies/afreeca.linker';
-import { TwitchLinkExceptionFilter } from '../../filters/twitch-link.filter';
-import { YoutubeLinkExceptionFilter } from '../../filters/youtube-link.filter';
-import { AfreecaLinkExceptionFilter } from '../../filters/afreeca-link.filter';
+import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
+import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
+import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import getFrontHost from '../../utils/getFrontHost';
 
 @Controller('auth')
@@ -235,13 +235,16 @@ export class AuthController {
     } = await this.afreecaLinker.getTokens(afreecaAuthorizationCode as string);
 
     // link with truepoint user
-    this.afreecaLinker.link(refreshToken, userId)
+    await this.afreecaLinker.link(refreshToken, userId)
       .then(() => {
         // settings뒤에 / 꼭 추가. amplify redirect 관련한 일종의 버그 있음.
         // https://github.com/aws-amplify/amplify-console/issues/97
 
         // 실제 아프리카 유저 아이디를 들고올 수 있을 때, id, platform 쿼리스트링 추가
         res.redirect(`${getFrontHost()}/mypage/my-office/settings/`); // ?id=${afreecaId}&platform=afreeca
+      })
+      .catch((err) => {
+        throw new Error(`${err.message}&platform=afreeca`);
       });
   }
 }
