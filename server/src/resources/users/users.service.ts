@@ -14,9 +14,13 @@ import { SubscribeEntity } from './entities/subscribe.entity';
 import { PlatformTwitchEntity } from './entities/platformTwitch.entity';
 import { PlatformAfreecaEntity } from './entities/platformAfreeca.entity';
 import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
+import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
+import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
+import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/targetStreamers.entity';
 
 @Injectable()
 export class UsersService {
+  // eslint-disable-next-line max-params
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
@@ -30,6 +34,12 @@ export class UsersService {
     private readonly afreecaRepository: Repository<PlatformAfreecaEntity>,
     @InjectRepository(PlatformYoutubeEntity)
     private readonly youtubeRepository: Repository<PlatformYoutubeEntity>,
+    @InjectRepository(TwitchTargetStreamersEntity, 'WhileTrueCollectorDB')
+    private readonly twitchTargetStreamersRepository: Repository<TwitchTargetStreamersEntity>,
+    @InjectRepository(AfreecaTargetStreamersEntity, 'WhileTrueCollectorDB')
+    private readonly afreecaTargetStreamersRepository: Repository<AfreecaTargetStreamersEntity>,
+    @InjectRepository(YoutubeTargetStreamersEntity, 'WhileTrueCollectorDB')
+    private readonly youtubeTargetStreamersRepository: Repository<YoutubeTargetStreamersEntity>,
   ) {}
 
   private resizeingYoutubeLogo(youtubeLogoString: string): string {
@@ -309,8 +319,16 @@ export class UsersService {
         // 이미 적재된 경우 다시 적재하지 않음.
         if (targetUser.twitchId === platformId) return 'already-linked';
         const linkedInfo = await this.twitchRepository.findOne(platformId);
-        if (linkedInfo) targetUser[`${platform}Id`] = platformId;
-        else {
+        if (linkedInfo) {
+          targetUser[`${platform}Id`] = platformId;
+          // ************************************************
+          // CollectorDB target Streamer에 추가
+          this.twitchTargetStreamersRepository.save({
+            streamerId: linkedInfo.twitchId,
+            streamerName: linkedInfo.twitchChannelName,
+            streamerChannelName: linkedInfo.twitchStreamerName,
+          });
+        } else {
           throw new InternalServerErrorException(
             'An error occurred during linking platform: there is no platform information',
           );
@@ -321,8 +339,16 @@ export class UsersService {
         // 이미 적재된 경우 다시 적재하지 않음.
         if (targetUser.youtubeId === platformId) return 'already-linked';
         const linkedInfo = await this.youtubeRepository.findOne(platformId);
-        if (linkedInfo) targetUser[`${platform}Id`] = platformId;
-        else {
+        if (linkedInfo) {
+          targetUser[`${platform}Id`] = platformId;
+          // ************************************************
+          // CollectorDB target Streamer에 추가
+          await this.youtubeTargetStreamersRepository.save({
+            channelId: linkedInfo.youtubeId,
+            channelName: linkedInfo.youtubeTitle,
+            refresh_token: linkedInfo.refreshToken,
+          });
+        } else {
           throw new InternalServerErrorException(
             'An error occurred during linking platform: there is no platform information',
           );
@@ -333,8 +359,16 @@ export class UsersService {
         // 이미 적재된 경우 다시 적재하지 않음.
         if (targetUser.afreecaId === platformId) return 'already-linked';
         const linkedInfo = await this.afreecaRepository.findOne(platformId);
-        if (linkedInfo) targetUser[`${platform}Id`] = platformId;
-        else {
+        if (linkedInfo) {
+          targetUser[`${platform}Id`] = platformId;
+          // ************************************************
+          // CollectorDB target Streamer에 추가
+          this.afreecaTargetStreamersRepository.save({
+            creatorId: linkedInfo.afreecaId,
+            creatorName: linkedInfo.afreecaStreamerName,
+            refreshToken: linkedInfo.refreshToken,
+          });
+        } else {
           throw new InternalServerErrorException(
             'An error occurred during linking platform: there is no platform information',
           );
@@ -380,25 +414,48 @@ export class UsersService {
   ): Promise<number> {
     const targetUser = await this.usersRepository.findOne(userId);
     let targetPlatformLogo: string;
+    let targetPlatformNickname: string;
     // 아프리카의 경우 아직 채널/유저 프로필사진 데이터를 가져올 수 없다.
-    // if (platform === 'afreeca') {
-    //   const afreeca = await this.twitchRepository.findOne(targetUser.afreecaId);
-    //   targetPlatformLogo = afreeca.logo;
-    // }
+    if (platform === 'afreeca') {
+      // ************************************************
+      // CollectorDB Target Streamer에서 제거
+      const targetUserOnCollector = await this.afreecaTargetStreamersRepository.findOne(targetUser.afreecaId);
+      if (targetUserOnCollector) this.afreecaTargetStreamersRepository.remove(targetUserOnCollector);
+
+      // 선택된 로고 + 닉네임 제거
+      const afreeca = await this.afreecaRepository.findOne(targetUser.afreecaId);
+      targetPlatformLogo = afreeca.logo;
+      targetPlatformNickname = afreeca.afreecaStreamerName;
+    }
     if (platform === 'twitch') {
+      // ************************************************
+      // CollectorDB Target Streamer에서 제거
+      const targetUserOnCollector = await this.twitchTargetStreamersRepository.findOne(targetUser.twitchId);
+      if (targetUserOnCollector) this.twitchTargetStreamersRepository.remove(targetUserOnCollector);
+
+      // 선택된 로고 + 닉네임 제거
       const twitch = await this.twitchRepository.findOne(targetUser.twitchId);
       targetPlatformLogo = twitch.logo;
+      targetPlatformNickname = twitch.twitchChannelName;
     }
     if (platform === 'youtube') {
+      // ************************************************
+      // CollectorDB Target Streamer에서 제거
+      const targetUserOnCollector = await this.youtubeTargetStreamersRepository.findOne(targetUser.youtubeId);
+      if (targetUserOnCollector) this.youtubeTargetStreamersRepository.remove(targetUserOnCollector);
+
+      // 선택된 로고 + 닉네임 제거
       const youtube = await this.youtubeRepository.findOne(targetUser.youtubeId);
       targetPlatformLogo = this.resizeingYoutubeLogo(youtube.youtubeLogo);
+      targetPlatformNickname = youtube.youtubeTitle;
     }
 
-    // 플랫폼 연결 정보 삭제 및 대표 프로필 사진이 해당 플랫폼의 프로필사진인 경우 함께 삭제
+    // 플랫폼 연결 정보 삭제 및 대표 프로필 사진|닉네임이 해당 플랫폼의 프로필사진|닉네임인 경우 함께 삭제
     const result = await this.usersRepository.update(
       userId, {
         [`${platform}Id`]: undefined,
         profileImage: targetPlatformLogo === targetUser.profileImage ? undefined : targetUser.profileImage,
+        nickName: targetPlatformNickname === targetUser.nickName ? undefined : targetUser.nickName,
       },
     );
     return result.affected;
@@ -426,7 +483,11 @@ export class UsersService {
     });
     if (alreadyLinked) {
       // 이미 해당 youtube 유저와 연동된 아이디가 있는 경우 "업데이트"
-
+      this.youtubeRepository.update([
+        'googleName', 'googleEmail', 'googleLogo',
+        'youtubeTitle', 'youtubeLogo', 'refreshToken',
+      ], data);
+      return data;
     }
     return this.youtubeRepository.save(data);
   }
@@ -436,8 +497,11 @@ export class UsersService {
   async linkAfreeca(data: PlatformAfreecaEntity): Promise<PlatformAfreecaEntity> {
     const alreadyLinked = await this.afreecaRepository.findOne(data.afreecaId);
     if (alreadyLinked) {
-      // 이미 해당 youtube 유저와 연동된 아이디가 있는 경우 "업데이트"
-
+      // 이미 해당 afreeca 유저와 연동된 아이디가 있는 경우 "업데이트"
+      this.youtubeRepository.update([
+        'afreecaStreamerName', 'logo', 'refreshToken',
+      ], data);
+      return data;
     }
     return this.afreecaRepository.save(data);
   }

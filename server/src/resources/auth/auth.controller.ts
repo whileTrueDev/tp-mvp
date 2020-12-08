@@ -142,7 +142,7 @@ export class AuthController {
     const result = await this.usersService.disconnectLink(userId, platform);
 
     // 링크 정보 (PlatformTwitch, PlatformYoutube PlatformAfreeca) 삭제
-    // const result2 = await this.usersService.deleteLinkUserPlatform(userId, platform);
+    await this.usersService.deleteLinkUserPlatform(userId, platform);
 
     return result;
   }

@@ -10,17 +10,26 @@ import { PlatformTwitchEntity } from './entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
+import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
+import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/targetStreamers.entity';
+import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([
-    PlatformAfreecaEntity,
-    PlatformTwitchEntity,
-    PlatformYoutubeEntity,
-    UserEntity,
-    UserTokenEntity,
-    SubscribeEntity,
-  ]),
-  forwardRef(() => AuthModule), // Resolve circular dependencies between Modules
+  imports: [
+    TypeOrmModule.forFeature([
+      PlatformAfreecaEntity,
+      PlatformTwitchEntity,
+      PlatformYoutubeEntity,
+      UserEntity,
+      UserTokenEntity,
+      SubscribeEntity,
+    ]),
+    TypeOrmModule.forFeature([
+      AfreecaTargetStreamersEntity,
+      YoutubeTargetStreamersEntity,
+      TwitchTargetStreamersEntity,
+    ], 'WhileTrueCollectorDB'), // collectorDB Entity 연결
+    forwardRef(() => AuthModule), // Resolve circular dependencies between Modules
   ],
   providers: [
     UsersService,
