@@ -15,7 +15,7 @@ import koLocale from 'date-fns/locale/ko';
 // axios
 import useAxios from 'axios-hooks';
 // styles
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // shared dtos , interfaces
 import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
@@ -28,81 +28,15 @@ import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // interfaces
 import { RangeSelectCaledarProps } from './StreamAnalysisShared.interface';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    display: 'flex',
-    flex: 0,
-    padding: theme.spacing(2),
-    justifyContent: 'center',
-    alignItem: 'center',
-    width: '340px',
-    backgroundColor: theme.palette.background.paper,
-    margin: 0,
-  },
-  leftCircleBase: {
-    width: '50%',
-    backgroundColor: '#d7e7ff',
-  },
-  leftCircleCompare: {
-    width: '50%',
-    backgroundColor: '#d3d19d',
-  },
-  rigthCircleBase: {
-    background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
-  },
-  rigthCircleCompare: {
-    background: `linear-gradient(to left,#d3d19d 50%, ${theme.palette.background.paper} 50%)`,
-  },
-  rangeDayBase: {
-    backgroundColor: '#d7e7ff',
-  },
-  rangeDayCompare: {
-    backgroundColor: '#d3d19d',
-  },
-  selectedDayBase: {
-    backgroundColor: '#3a86ff',
-  },
-  selectedDayCompare: {
-    backgroundColor: '#d3d19d',
-  },
-  hasStreamDayDotContainer: {
-    position: 'relative',
-  },
-  hasStreamDayDotBase: {
-    position: 'absolute',
-    height: 0,
-    width: 0,
-    border: '3px solid',
-    borderRadius: 5,
-    borderColor: '#3a86ff',
-    right: '44%',
-    transform: 'translateX(1px)',
-    top: '80%',
-    backGroundColor: '#3a86ff',
-  },
-  hasStreamDayDotCompare: {
-    position: 'absolute',
-    height: 0,
-    width: 0,
-    border: '3px solid',
-    borderRadius: 5,
-    borderColor: '#b1ae71',
-    right: '44%',
-    transform: 'translateX(1px)',
-    top: '80%',
-    backGroundColor: '#b1ae71',
-  },
-}));
+import useAllCalendarStyles from './RangeSelectCalendar.style';
 
 const reRequest = 3;
-
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
     period, handlePeriod, base,
     handleDialogOpen, removeFunc,
   } = props;
-  const classes = useStyles();
+  const classes = useAllCalendarStyles();
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
