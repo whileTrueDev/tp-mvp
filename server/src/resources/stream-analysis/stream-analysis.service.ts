@@ -27,8 +27,6 @@ import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface'
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
-import { StreamsTest2Entity } from './entities/streamsTest2.entity';
-import { StreamSummaryTest2Entity } from './entities/streamSummaryTest2.entity';
 
 // aws s3
 dotenv.config();
@@ -92,10 +90,6 @@ export class StreamAnalysisService {
       private readonly streamsRepository: Repository<StreamsEntity>,
     @InjectRepository(StreamSummaryEntity)
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
-      @InjectRepository(StreamsTest2Entity)
-      private readonly streamsTest2Repository: Repository<StreamsTest2Entity>,
-    @InjectRepository(StreamSummaryTest2Entity)
-      private readonly streamSummaryTest2Repository: Repository<StreamSummaryTest2Entity>,
   ) {}
 
   /**
@@ -104,10 +98,10 @@ export class StreamAnalysisService {
    */
   async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
-      const streamInfoBase: StreamsInfo[] = await this.streamSummaryTest2Repository
+      const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
         .innerJoin(
-          StreamsTest2Entity,
+          StreamsEntity,
           'streams',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
@@ -120,10 +114,10 @@ export class StreamAnalysisService {
         });
 
       if (streams[1]) {
-        const streamInfoCompare: StreamsInfo[] = await this.streamSummaryTest2Repository
+        const streamInfoCompare: StreamsInfo[] = await this.streamSummaryRepository
           .createQueryBuilder('streamSummary')
           .innerJoin(
-            StreamsTest2Entity,
+            StreamsEntity,
             'streams',
             'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
           )
