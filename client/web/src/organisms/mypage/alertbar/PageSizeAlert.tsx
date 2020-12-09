@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Alert } from '@material-ui/lab';
 import { Typography, useMediaQuery } from '@material-ui/core';
+import { COMMON_APP_BAR_HEIGHT } from '../../../assets/constants';
 
 export interface PageSizeAlertProps {
   open?: boolean;
@@ -24,7 +25,7 @@ export default function PageSizeAlert({
         severity="info"
         variant="filled"
         style={{
-          borderRadius: 0, position: 'fixed', zIndex: 2000, width: '100%', top: 80,
+          borderRadius: 0, position: 'fixed', zIndex: 2000, width: '100%', top: COMMON_APP_BAR_HEIGHT - 20,
         }}
       >
         <Typography variant="body1">

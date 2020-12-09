@@ -4,10 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   mypageWrapper: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(2),
-    paddingLeft: theme.spacing(8),
-    paddingRight: theme.spacing(8),
+    padding: `${theme.spacing(4)}px ${theme.spacing(5)}px`,
   },
 }));
 

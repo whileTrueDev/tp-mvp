@@ -18,9 +18,9 @@ const rawTheme: ThemeOptions = {
       contrastText: '#fff',
     },
     secondary: {
-      light: lighten('#79e2e0', 0.5),
+      light: lighten('#79e2e0', 0.2),
       main: '#79e2e0',
-      dark: darken('#79e2e0', 0.2),
+      dark: darken('#79e2e0', 0.1),
       contrastText: '#fff',
     },
     // 파랑 계열 색상
