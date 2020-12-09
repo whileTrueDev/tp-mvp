@@ -111,7 +111,7 @@ export default function MainDialog(props: DialogProps): JSX.Element {
       setOpen(true);
     },
     500);
-  }, []);
+  }, [setOpen]);
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
