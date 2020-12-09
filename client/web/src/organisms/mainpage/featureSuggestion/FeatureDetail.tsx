@@ -10,8 +10,6 @@ import {
 } from '@material-ui/icons';
 import { Link, useHistory } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-// import Divider from '@material-ui/core/Divider';
-// import Card from '../../../atoms/Card/Card';
 import { Viewer } from '@toast-ui/react-editor';
 import LockIcon from '@material-ui/icons/Lock';
 import { useSnackbar } from 'notistack';
@@ -56,8 +54,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-flex',
     marginLeft: '8px',
   },
-  pageButton: { width: '30%' },
-  listButton: { width: '10%' },
+  pageButton: { width: '300px' },
+  listButton: { width: '100px' },
+  editor: { color: theme.palette.text.primary },
+
 }));
 
 export interface FeatureDetailProps {
@@ -228,24 +228,22 @@ export default function FeatureDetail({
         )}
         {!loading && featureDetailData && (
           <div className={classes.contentsText}>
-            <div className={classes.markdown}>
-              {/* 비밀글 + 자신이 작성한 글이 아닌 경우 비밀글 처리 */}
-              {featureDetailData.isLock && featureDetailData.author.userId !== authContext.user.userId ? (
-                <div className={classes.secretText}>
-                  <Typography>비밀글의 경우 본인만 확인할 수 있습니다.</Typography>
-                  <Button
-                    className={classes.listButton}
-                    size="large"
-                    variant="outlined"
-                    onClick={onBackClick}
-                  >
-                    목록
-                  </Button>
-                </div>
-              ) : ( // 비밀글이 아닌경우 또는 비밀글 + 자신이 작성한 글인 경우 Viewer 렌더링
-                <Viewer initialValue={featureDetailData.content} />
-              )}
-            </div>
+            {/* 비밀글 + 자신이 작성한 글이 아닌 경우 비밀글 처리 */}
+            {featureDetailData.isLock && featureDetailData.author.userId !== authContext.user.userId ? (
+              <div className={classes.secretText}>
+                <Typography>비밀글의 경우 본인만 확인할 수 있습니다.</Typography>
+                <Button
+                  className={classes.listButton}
+                  size="large"
+                  variant="outlined"
+                  onClick={onBackClick}
+                >
+                  목록
+                </Button>
+              </div>
+            ) : ( // 비밀글이 아닌경우 또는 비밀글 + 자신이 작성한 글인 경우 Viewer 렌더링
+              <Viewer initialValue={featureDetailData.content} />
+            )}
           </div>
         )}
       </Paper>

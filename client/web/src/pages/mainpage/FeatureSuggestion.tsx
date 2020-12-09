@@ -162,6 +162,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
               handlePage={setPage}
               handlePageSize={setPageSize}
             />
+
           </div>
         </div>
       </section>
