@@ -13,6 +13,7 @@ import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysi
 // notistack snackbar
 import { useSnackbar } from 'notistack';
 // styles
+import classnames from 'classnames';
 import useDialog from '../../../../utils/hooks/useDialog';
 import usePeriodCompareStyles from './PeriodCompareSection.style';
 // attoms
@@ -244,7 +245,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           />
 
           {/*  기간 선택 부 - 기간 선택 달력 + popper open 로직 */}
-          <div style={{ marginTop: '16px' }}>
+          <div className={classes.calendarWrapper}>
             <RangeSelectCalendar
               handlePeriod={handlePeriod}
               period={basePeriod}
@@ -256,16 +257,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           </div>
         </Grid>
 
-        <Typography
-          color="textSecondary"
-          style={{
-            fontFamily: 'AppleSDGothicNeo',
-            fontSize: '30px',
-            fontWeight: 'bold',
-            paddingTop: '40px',
-            marginRight: '32px',
-          }}
-        >
+        <Typography color="textSecondary" className={classes.vsText}>
           VS
         </Typography>
 
@@ -281,7 +273,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           />
 
           {/*  기간 선택 부 - 기간 선택 달력 + popper open 로직 */}
-          <div style={{ marginTop: '16px' }}>
+          <div className={classes.calendarWrapper}>
             <RangeSelectCalendar
               handlePeriod={handlePeriod}
               period={comparePeriod}
@@ -293,7 +285,12 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         </Grid>
       </div>
 
-      <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
+      <Typography
+        className={classnames({
+          [classes.mainBody]: true,
+          [classes.categoryTitle]: true,
+        })}
+      >
         확인할 데이터 선택
       </Typography>
 

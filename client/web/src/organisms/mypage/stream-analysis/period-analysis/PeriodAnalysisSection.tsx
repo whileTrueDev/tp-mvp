@@ -13,9 +13,9 @@ import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analys
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // styles
 import { useSnackbar } from 'notistack';
+import classnames from 'classnames';
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
-
 // interface
 import {
   PeriodAnalysisProps,
@@ -202,7 +202,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           />
 
           {/*  기간 선택 부 - 기간 선택 달력 + dialog open 로직 */}
-          <div style={{ marginTop: '16px' }}>
+          <div className={classes.calendarWrapper}>
             <RangeSelectCalendar
               handlePeriod={handlePeriod}
               period={period}
@@ -217,7 +217,12 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       </Grid>
 
       <Grid item>
-        <Typography className={classes.mainBody} style={{ marginTop: '70px', fontWeight: 'bold' }}>
+        <Typography
+          className={classnames({
+            [classes.mainBody]: true,
+            [classes.categoryTitle]: true,
+          })}
+        >
           확인할 데이터 선택
         </Typography>
         {/* 분석 항목 선택 체크박스 그룹 */}

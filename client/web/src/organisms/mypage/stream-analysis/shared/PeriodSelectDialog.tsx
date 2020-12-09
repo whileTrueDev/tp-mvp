@@ -5,11 +5,11 @@ import {
   Typography, Grid, Divider, Button,
   Dialog, DialogContent,
 } from '@material-ui/core';
+import classnames from 'classnames';
 
 // shared sub components
 import RangeSelectCalendar from './RangeSelectCalendar';
 import PeriodStreamsList from './PeriodStreamsList';
-
 // interfaces
 import { PeriodSelectDialogProps } from './StreamAnalysisShared.interface';
 
@@ -26,6 +26,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  dialogBody: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    width: '100%',
+  },
+  leftSection: { width: 600 },
+  rightSection: { width: 650, height: 770 },
   boxTitle: {
     fontFamily: 'AppleSDGothicNeo',
     fontWeight: 'bold',
@@ -49,7 +58,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    width: '100%',
   },
   calendar: { display: 'flex', justifyContent: 'center' },
   divider: {
@@ -84,19 +92,9 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
         },
       }}
     >
-      <DialogContent
-        className={classes.box}
-      >
-        <Grid
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 16,
-            width: '100%',
-          }}
-        >
-          <Grid className={classes.calendarWrapper} style={{ width: 600 }}>
+      <DialogContent className={classes.box}>
+        <Grid className={classes.dialogBody}>
+          <Grid className={classnames(classes.calendarWrapper, classes.leftSection)}>
             <Typography className={classes.boxTitle} style={{ marginBottom: 16 }}>
               기간 재선택
             </Typography>
@@ -131,7 +129,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
             flexItem
           />
 
-          <Grid className={classes.listWrapper} style={{ width: 650, height: 770 }}>
+          <Grid className={classnames(classes.listWrapper, classes.rightSection)}>
             <Typography className={classes.boxTitle}>
               기간 내 모든 방송 목록
             </Typography>
