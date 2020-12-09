@@ -58,7 +58,9 @@ const useStyles = makeStyles((theme) => createStyles({
     },
   },
   link: {
-    color: 'white', marginLeft: theme.spacing(2), marginRight: theme.spacing(4),
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(4),
   },
   linkText: { fontWeight: 'bold' },
   logo: {

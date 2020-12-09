@@ -165,9 +165,7 @@ function PlatformRegistForm({
               className={classes.form}
             >
               <Grid item xs={12}>
-                <FormControl
-                  error={Boolean(state.id)}
-                >
+                <FormControl error={Boolean(state.id)}>
                   <InputLabel shrink>ID</InputLabel>
                   <Input
                     required
@@ -372,7 +370,7 @@ function PlatformRegistForm({
                     type="submit"
                     value="submit"
                   >
-                    다음
+                    가입하기
                   </Button>
                 </div>
               </Grid>
