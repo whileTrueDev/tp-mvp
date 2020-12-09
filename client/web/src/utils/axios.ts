@@ -1,7 +1,8 @@
 import Axios from 'axios';
+import { getApiHost } from './getApiHost';
 
 const axios = Axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://api.mytruepoint.com' : 'http://localhost:3000',
+  baseURL: getApiHost(),
   withCredentials: true,
 });
 

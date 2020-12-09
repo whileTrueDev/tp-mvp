@@ -132,7 +132,10 @@ export default function FeatureWriteForm(): JSX.Element {
   };
 
   React.useEffect(() => {
-    if (param && param.id) {
+    if (param && param.id) { // 글 수정하기 작업시
+      // 비밀글 여부를 기존 글의 비밀글 여부로 변경
+      setFeatureLock(Boolean(location.state[0].isLock));
+      // 글 제목, 카테고리를 기존 글의 그것으로 변경
       setFeatureSource({
         ...featureSource,
         title: location.state[0].title,

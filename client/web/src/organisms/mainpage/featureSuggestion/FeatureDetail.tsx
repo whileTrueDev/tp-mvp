@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 300 },
+  secretText: {
+    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: 300,
+  },
   buttonSet: {
     padding: `${theme.spacing(4)}px 0px ${theme.spacing(2)}px`,
     display: 'flex',
@@ -111,17 +114,10 @@ export default function FeatureDetail({
     }
   };
 
-  const rejectPage = (): JSX.Element => {
-    ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
-    window.location.replace('/feature-suggestion');
-    return (
-      <div />
-    );
-  };
-
-  const suggestionDetail = (): JSX.Element => (
+  return (
     <div>
       <Paper component="article" ref={paperRef}>
+        {/* 제목 섹션 */}
         <div className={classes.title}>
           <div>
             <Typography component="div" variant="h6" className={classes.titleText}>
@@ -183,9 +179,26 @@ export default function FeatureDetail({
             </Button>
           </div>
         )}
+
+        {/* 내용 섹션 */}
         <div className={classes.contentsText}>
           <div className={classes.markdown}>
-            <Viewer initialValue={currentSuggestion.content} />
+            {/* 비밀글 + 자신이 작성한 글이 아닌 경우 비밀글 처리 */}
+            {currentSuggestion.isLock && currentSuggestion.author.userId !== authContext.user.userId ? (
+              <div className={classes.secretText}>
+                <Typography>비밀글의 경우 본인만 확인할 수 있습니다.</Typography>
+                <Button
+                  className={classes.listButton}
+                  size="large"
+                  variant="outlined"
+                  onClick={onBackClick}
+                >
+                  목록
+                </Button>
+              </div>
+            ) : ( // 비밀글이 아닌경우 또는 비밀글 + 자신이 작성한 글인 경우 Viewer 렌더링
+              <Viewer initialValue={currentSuggestion.content} />
+            )}
           </div>
 
         </div>
@@ -281,28 +294,6 @@ export default function FeatureDetail({
           <KeyboardArrowRight />
         </Button>
       </div>
-    </div>
-  );
-
-  return (
-    <div>
-      {currentSuggestion.isLock ? (
-        <div>
-          {currentSuggestion.author.userId !== authContext.user.userId ? (
-            <div>
-              {rejectPage()}
-            </div>
-          ) : (
-            <div>
-              {suggestionDetail()}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div>
-          {suggestionDetail()}
-        </div>
-      )}
     </div>
   );
 }

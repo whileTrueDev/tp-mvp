@@ -29,25 +29,25 @@ const styles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.light,
     '&:hover': {
       cursor: 'pointer',
-      background: theme.palette.success.main,
+      background: theme.palette.error.main,
     },
   },
   middle: {
     backgroundColor: '#7E8CF7',
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: theme.palette.success.main,
+      backgroundColor: theme.palette.error.main,
     },
   },
   high: {
     backgroundColor: '#495DF9',
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: theme.palette.success.main,
+      backgroundColor: theme.palette.error.main,
     },
   },
   clickedPoint: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: theme.palette.error.main,
   },
   timelineTitle: {
     paddingLeft: 30,
