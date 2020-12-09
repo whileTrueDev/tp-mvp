@@ -5,9 +5,11 @@ import {
   Typography, Grid, Divider, Button,
   Dialog, DialogContent,
 } from '@material-ui/core';
+
 // shared sub components
-import Calendar from './Calendar';
+import RangeSelectCalendar from './RangeSelectCalendar';
 import PeriodStreamsList from './PeriodStreamsList';
+
 // interfaces
 import { PeriodSelectDialogProps } from './StreamAnalysisShared.interface';
 
@@ -17,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     zIndex: 900, // 마이페이지 내부 컴포넌트 < popper < 마이페이지 상단 네비바 && 최상단 네비바
   },
   box: {
-    width: '800px',
+    width: '100%',
     minHeight: '855px',
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(4),
@@ -31,6 +33,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
     marginBottom: theme.spacing(4),
   },
+  allStreamListWrapper: {
+    width: '100%',
+    height: 276,
+    marginTop: 24,
+    marginRight: 16,
+  },
   listWrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -39,14 +47,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   calendarWrapper: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'flex-start',
-    marginTop: theme.spacing(2),
     width: '100%',
   },
+  calendar: { display: 'flex', justifyContent: 'center' },
   divider: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(4),
+    marginRight: theme.spacing(4),
+    marginLeft: theme.spacing(4),
   },
   completeButton: {
     alignSelf: 'flex-end',
@@ -58,21 +66,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.Element {
   const {
-    period, base, selectedStreams, handleStreamList,
-    open, handleClose,
+    period, base, selectedStreams, open,
+    handleStreamList, handleClose,
+    handlePeriod,
   } = props;
   const classes = useStyles();
 
-  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date(
-    (period[0].getTime() + period[1].getTime()) / 2,
-  ));
-
-  const handleSelectedDate = (newDate: Date) => {
-    setSelectedDate(newDate);
-  };
-
   return (
-
     <Dialog
       open={open}
       onClose={handleClose}
@@ -80,7 +80,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
       fullWidth
       PaperProps={{
         style: {
-          borderRadius: 16,
+          borderRadius: 4,
         },
       }}
     >
@@ -93,64 +93,59 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
             flexDirection: 'row',
             justifyContent: 'space-between',
             marginTop: 16,
+            width: '100%',
           }}
         >
-          <Typography className={classes.boxTitle}>
-            날짜별 방송 목록
-          </Typography>
-        </Grid>
+          <Grid className={classes.calendarWrapper} style={{ width: 600 }}>
+            <Typography className={classes.boxTitle} style={{ marginBottom: 16 }}>
+              기간 재선택
+            </Typography>
 
-        <Grid className={classes.calendarWrapper}>
-          <Calendar
-            period={period}
-            base={base}
-            handleSelectedDate={handleSelectedDate}
-            currDate={selectedDate}
-            selectedStreams={selectedStreams}
+            <div className={classes.calendar}>
+              <RangeSelectCalendar
+                period={period}
+                handlePeriod={handlePeriod}
+                handleDialogClose={handleClose}
+                base={base}
+              />
+            </div>
+
+            <Divider />
+            {/* 클릭된 날짜의 방송 리스트 */}
+            <div className={classes.allStreamListWrapper}>
+              <Typography className={classes.boxTitle}>
+                제외 된 방송
+              </Typography>
+
+              <PeriodStreamsList
+                small
+                handleStreamList={handleStreamList}
+                selectedStreams={selectedStreams.filter((streamItem) => streamItem.isRemoved === true)}
+              />
+            </div>
+
+          </Grid>
+          <Divider
+            className={classes.divider}
+            orientation="vertical"
+            flexItem
           />
-          {/* 클릭된 날짜의 방송 리스트 */}
-          <div style={{
-            marginLeft: '16px', marginRight: '16px', width: '100%', height: 250,
-          }}
-          >
+
+          <Grid className={classes.listWrapper} style={{ width: 650, height: 770 }}>
+            <Typography className={classes.boxTitle}>
+              기간 내 모든 방송 목록
+            </Typography>
+
+            {/* 모든 방송 리스트 */}
             <PeriodStreamsList
               selectedStreams={selectedStreams}
-              selectedDate={selectedDate}
               handleStreamList={handleStreamList}
-              small
             />
-          </div>
-
+          </Grid>
         </Grid>
-
-        <Grid className={classes.listWrapper}>
-          <Divider className={classes.divider} />
-          <Typography className={classes.boxTitle}>
-            기간 내 모든 방송 목록
-          </Typography>
-
-          {/* 모든 방송 리스트 */}
-          <PeriodStreamsList
-            selectedStreams={selectedStreams}
-            handleStreamList={handleStreamList}
-          />
-        </Grid>
-
-        {/* <Grid className={classes.listWrapper}>
-          <Divider className={classes.divider} />
-          <Typography className={classes.boxTitle}>
-            제외 된 방송
-          </Typography>
-
-          <PeriodStreamsList
-            handleStreamList={handleStreamList}
-            selectedStreams={selectedStreams.filter((streamItem) => streamItem.isRemoved === true)}
-          />
-        </Grid> */}
 
         <Button
           variant="contained"
-            // onClick={handleAnchorClose}
           onClick={handleClose}
           className={classes.completeButton}
         >

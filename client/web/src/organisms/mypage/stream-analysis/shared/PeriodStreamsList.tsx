@@ -3,7 +3,7 @@ import moment from 'moment';
 // material-ui core components
 import {
   Typography, List, ListItem, IconButton, ListItemIcon, Button,
-  Tooltip, Chip, Avatar,
+  Tooltip, Chip,
 } from '@material-ui/core';
 import classnames from 'classnames';
 //  styles
@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: 0,
     // maxHeight: '250px',
     overflow: 'auto',
+    height: 'inherit',
   },
   listItem: {
     display: 'flex',
@@ -78,8 +79,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: theme.palette.error,
+      color: 'red',
+      transform: 'scale(1.1)',
     },
+    fontWeight: 'bold',
     marginRight: 2,
   },
   addButton: {
@@ -109,7 +112,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: 400,
   },
   tooltipIconWrapper: {
-    display: 'inline-flex', marginRight: '8px', paddingTop: '4px', flexDirection: 'row',
+    display: 'inline-flex',
+    marginRight: '8px',
+    // paddingTop: '8px',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   tooltipChipWrapper: {
     display: 'flex',
@@ -122,12 +129,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const StyledToolTip = withStyles((theme) => ({
-  arrow: {
-    fontSize: '22px',
-  },
   tooltip: {
     maxWidth: 'none',
     padding: theme.spacing(2),
+    color: theme.palette.text.primary,
+    fontWeight: 'bold',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
   },
 }))(Tooltip);
 
@@ -160,9 +168,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     <div className={classes.tooltip}>
       <Typography variant="h6">
         <div className={classes.tooltipIconWrapper}>
-          <Avatar style={{ marginBottom: '8px' }}>
-            {platformIcon(stream)}
-          </Avatar>
+          {platformIcon(stream)}
         </div>
         {stream.title}
       </Typography>
@@ -214,13 +220,13 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
   const listItem = (stream: StreamsListItem, removed: boolean) => (
     <StyledToolTip
-      arrow
+      // arrow
       placement="top"
       title={tooltipContents(stream)}
       classes={{ tooltip: classes.noMaxWidth }}
     >
       <ListItem
-        key={stream.streamId}
+        key={stream.streamId + stream.platform}
         button
         className={classnames({
           [classes.listItem]: !removed,
@@ -254,6 +260,12 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
               {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
             </Typography>
             )}
+
+            {small && (
+            <Typography className={classes.listItemText}>
+              {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
+            </Typography>
+            )}
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -276,9 +288,16 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
               })}
             </Typography>
 
+            {/* normal 옵션인 경우 */}
             {!small && (
             <Typography className={classes.listItemText}>
               {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+            </Typography>
+            )}
+            {/* small 옵션인 경우 */}
+            {small && (
+            <Typography className={classes.listItemText}>
+              {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
             </Typography>
             )}
           </div>
@@ -290,11 +309,11 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
 
   return (
     <List className={classes.listWrapper}>
-      {selectedDate && selectedStreams
+      {selectedDate && selectedStreams.length > 0
         && selectedStreams
           .filter((stream) => moment(stream.startedAt).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
           .map((stream) => listItem(stream, stream.isRemoved))}
-      {!selectedDate && selectedStreams && selectedStreams
+      {!selectedDate && selectedStreams.length > 0 && selectedStreams
         .map((stream) => listItem(stream, stream.isRemoved))}
     </List>
   );

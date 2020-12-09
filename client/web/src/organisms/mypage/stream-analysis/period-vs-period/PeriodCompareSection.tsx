@@ -20,13 +20,12 @@ import Loading from '../../../shared/sub/Loading';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
 // interfaces
 import { PeriodCompareProps, StreamsListItem } from '../shared/StreamAnalysisShared.interface';
-import useAnchorEl from '../../../../utils/hooks/useAnchorEl';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // sub shared components
 import PeriodSelectBox from '../shared/PeriodSelectBox';
-import PeriodSelectPopper from '../shared/PeriodSelectPopper';
 import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
+import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 // componentShared
 import SectionTitle from '../../../shared/sub/SectionTitles';
 // attoms snackbar
@@ -48,14 +47,12 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
 
   const { enqueueSnackbar } = useSnackbar();
   const auth = useAuthContext();
-  const baseAnchorEl = useAnchorEl();
-  const compareAnchorEl = useAnchorEl();
-  const baseTargetRef = React.useRef<HTMLDivElement | null>(null);
-  const compareTargetRef = React.useRef<HTMLDivElement | null>(null);
 
+  /* 다이얼로그 */
   const baseDialog = useDialog();
   const compareDialog = useDialog();
 
+  /* 선택된 기간내 방송 목록 state */
   const [baseStreamsList, setBaseStreamsList] = React.useState<StreamsListItem[]>([]);
   const [compareStreamsList, setCompareStreamsList] = React.useState<StreamsListItem[]>([]);
 
@@ -237,7 +234,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       >
         <Grid container direction="column" style={{ width: 'auto', marginRight: '32px' }}>
           <PeriodSelectBox
-            targetRef={baseTargetRef}
             period={basePeriod}
             TitleIcon={SelectVideoIcon}
             iconProps={{
@@ -252,14 +248,10 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
             <RangeSelectCalendar
               handlePeriod={handlePeriod}
               period={basePeriod}
-              base
-              anchorEl={baseAnchorEl.anchorEl}
-              targetRef={baseTargetRef}
-              handleAnchorOpenWithRef={baseAnchorEl.handleAnchorOpenWithRef}
-              handleAnchorClose={baseAnchorEl.handleAnchorClose}
-              dialogOpen={baseDialog.open}
               handleDialogOpen={baseDialog.handleOpen}
               handleDialogClose={baseDialog.handleClose}
+              base
+              removeFunc
             />
           </div>
         </Grid>
@@ -279,7 +271,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
 
         <Grid container direction="column" style={{ width: 'auto' }}>
           <PeriodSelectBox
-            targetRef={compareTargetRef}
             period={comparePeriod}
             TitleIcon={SelectVideoIcon}
             iconProps={{
@@ -294,38 +285,13 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
             <RangeSelectCalendar
               handlePeriod={handlePeriod}
               period={comparePeriod}
-              anchorEl={compareAnchorEl.anchorEl}
-              targetRef={compareTargetRef}
-              handleAnchorOpenWithRef={compareAnchorEl.handleAnchorOpenWithRef}
-              handleAnchorClose={compareAnchorEl.handleAnchorClose}
-              dialogOpen={compareDialog.open}
               handleDialogOpen={compareDialog.handleOpen}
               handleDialogClose={compareDialog.handleClose}
+              removeFunc
             />
           </div>
         </Grid>
       </div>
-
-      {baseAnchorEl.anchorEl && (
-      <PeriodSelectPopper
-        anchorEl={baseAnchorEl.anchorEl}
-        period={basePeriod}
-        handleAnchorClose={baseAnchorEl.handleAnchorClose}
-        selectedStreams={baseStreamsList}
-        base
-        handleStreamList={handleBaseStreamList}
-      />
-      )}
-
-      {compareAnchorEl.anchorEl && (
-      <PeriodSelectPopper
-        anchorEl={compareAnchorEl.anchorEl}
-        period={comparePeriod}
-        handleAnchorClose={compareAnchorEl.handleAnchorClose}
-        selectedStreams={compareStreamsList}
-        handleStreamList={handleCompareStreamList}
-      />
-      )}
 
       <Typography className={classes.mainBody} style={{ marginTop: '120px' }}>
         확인할 데이터 선택
@@ -354,6 +320,28 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         </Button>
       </Grid>
 
+      {baseStreamsList && basePeriod[0] && basePeriod[1] && (
+      <PeriodSelectDialog
+        open={baseDialog.open}
+        period={basePeriod}
+        selectedStreams={baseStreamsList}
+        handleStreamList={handleBaseStreamList}
+        handleClose={baseDialog.handleClose}
+        handlePeriod={handlePeriod}
+        base
+      />
+      )}
+
+      {compareStreamsList && comparePeriod[0] && comparePeriod[1] && (
+      <PeriodSelectDialog
+        open={compareDialog.open}
+        period={comparePeriod}
+        selectedStreams={compareStreamsList}
+        handleStreamList={handleCompareStreamList}
+        handleClose={compareDialog.handleClose}
+        handlePeriod={handlePeriod}
+      />
+      )}
     </div>
   );
 }
