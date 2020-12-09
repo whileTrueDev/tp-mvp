@@ -8,7 +8,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import useAxios from 'axios-hooks';
-import DashboardDialog from './DashboardDialog';
+import MainDialog from './MainDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -105,7 +105,7 @@ export default function UserProfile(): JSX.Element {
             </div>
           </>
         ) : (
-          <DashboardDialog
+          <MainDialog
             onClose={onClose}
             open={open}
             setOpen={setOpen}

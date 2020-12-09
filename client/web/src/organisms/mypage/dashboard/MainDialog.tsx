@@ -92,7 +92,7 @@ interface DialogProps{
   setOpen: (v: boolean) => void;
 }
 
-export default function DashboardDialog(props: DialogProps): JSX.Element {
+export default function MainDialog(props: DialogProps): JSX.Element {
   const classes = useStyles();
   const {
     onClose, setOpen,
