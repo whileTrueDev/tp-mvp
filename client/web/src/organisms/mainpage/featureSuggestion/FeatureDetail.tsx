@@ -50,8 +50,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-flex',
     marginLeft: '8px',
   },
-  pageButton: { width: '30%' },
-  listButton: { width: '10%' },
+  pageButton: { width: '300px' },
+  listButton: { width: '100px' },
   editor: { color: theme.palette.text.primary },
 
 }));
