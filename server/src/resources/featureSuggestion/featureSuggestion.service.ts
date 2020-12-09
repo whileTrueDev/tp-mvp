@@ -17,12 +17,34 @@ export class FeatureSuggestionService {
   ) {}
 
   /**
+   * 기능제안 개별 글 조회 메소드
+   * @param id 조회할 기능 제안 글번호
+   */
+  public async findOne(id: string): Promise<FeatureSuggestionEntity> {
+    return this.FeatureSuggestionRepository.findOne(id, {
+      relations: ['author', 'replies', 'replies.author'],
+    });
+  }
+
+  /**
    * 기능 제안 리스트 조회 메소드
    */
   public async findAll(): Promise<FeatureSuggestionEntity[]> {
     return this.FeatureSuggestionRepository.find({
       order: { createdAt: 'DESC' },
       relations: ['author', 'replies', 'replies.author'],
+    });
+  }
+
+  /**
+   * 기능제안 순수 목록 조회 메소드.
+   * 내용은 포함하지 않습니다.
+   */
+  public async findAllList(): Promise<FeatureSuggestionEntity[]> {
+    return this.FeatureSuggestionRepository.find({
+      order: { createdAt: 'DESC' },
+      select: ['author', 'category', 'createdAt', 'isLock', 'title', 'suggestionId', 'state'],
+      relations: ['author', 'replies'],
     });
   }
 

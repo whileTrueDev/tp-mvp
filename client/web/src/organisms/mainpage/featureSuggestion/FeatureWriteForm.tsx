@@ -117,7 +117,7 @@ export default function FeatureWriteForm(): JSX.Element {
         .then((res) => {
           if (res.data) {
             ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar);
-            history.push('/feature-suggestion');
+            history.push(`/feature-suggestion/read/${targetSuggestionId}`);
           }
         })
         .catch(() => ShowSnack('기능제안 수정 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));

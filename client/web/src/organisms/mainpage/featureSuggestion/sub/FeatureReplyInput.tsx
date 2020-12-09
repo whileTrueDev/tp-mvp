@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface FeatureReplyInputProps {
-  currentSuggestion: FeatureSuggestion;
+  currentSuggestion: Omit<FeatureSuggestion, 'content' | 'replies'>;
   refetch: () => void;
   avatarLogo?: string;
 }
