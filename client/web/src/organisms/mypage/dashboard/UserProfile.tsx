@@ -8,7 +8,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import useAxios from 'axios-hooks';
-import DashboardDialog from '../../mainpage/shared/DashboardDialog';
+import DashboardDialog from './DashboardDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -30,12 +30,14 @@ export default function UserProfile(): JSX.Element {
   const [profileRequestObject, refetch] = useAxios<User>({
     url: 'users', method: 'GET',
   });
+
+  const [reason, onClose] = React.useState('backdropClicked');
+  const [open, setOpen] = React.useState(false);
+
   useEffect(() => {
     refetch();
   }, [refetch]);
 
-  const [reason, onClose] = React.useState('backdropClicked');
-  const [open, setOpen] = React.useState(true);
   return (
     <Paper className={classes.container}>
       {/* 로딩중 */}
