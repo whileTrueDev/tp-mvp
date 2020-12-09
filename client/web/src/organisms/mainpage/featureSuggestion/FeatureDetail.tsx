@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
-import Markdown from 'react-markdown/with-html';
 import {
   Button, Paper, Typography, Chip,
 } from '@material-ui/core';
@@ -10,8 +9,6 @@ import {
 } from '@material-ui/icons';
 import { Link } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-// import Divider from '@material-ui/core/Divider';
-// import Card from '../../../atoms/Card/Card';
 import { Viewer } from '@toast-ui/react-editor';
 import LockIcon from '@material-ui/icons/Lock';
 import { useSnackbar } from 'notistack';
