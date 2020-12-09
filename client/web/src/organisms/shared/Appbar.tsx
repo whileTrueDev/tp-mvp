@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import {
-  createStyles, makeStyles, lighten, darken,
+  createStyles, makeStyles,
 } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
