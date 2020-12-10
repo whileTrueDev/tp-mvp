@@ -2,15 +2,13 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card';
 import useAxios from 'axios-hooks';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import classnames from 'classnames';
-import ClearIcon from '@material-ui/icons/Clear';
+import { Chip } from '@material-ui/core';
 import Calendar from '../highlightAnalysis/Calendar';
 import Button from '../../../atoms/Button/Button';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -262,13 +260,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
   return (
     <Paper className={classes.root}>
-      <Grid
-        container
-        direction="column"
-      >
+      <Grid container direction="column">
         <Grid item xs={12} className={classes.wraper}>
           <SectionTitle mainTitle="편집점 분석" />
-          <Typography variant="body1" className={classes.sub}>
+          <Typography variant="body2" color="textSecondary">
             방송을 선택하시면 편집점 분석을 시작합니다.
           </Typography>
         </Grid>
@@ -279,62 +274,41 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           direction="row"
           alignItems="center"
           justify="space-between"
-          className={classes.sideSpace}
-        >
-          <Grid item xs={3} className={classes.title}>
-            선택된 방송
-          </Grid>
-          <Grid item xs={9}>
-            {selectedStream.fileId
-              && (
-                <Card className={classes.card}>
-                  <Typography className={classes.cardText}>
-                    {dateExpression({
-                      compoName: 'highlight-calendar',
-                      createdAt: (selectedStream.startAt),
-                      finishAt: (selectedStream.finishAt),
-                    })}
-                  </Typography>
-
-                  <IconButton
-                    onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </Card>
-              )}
-          </Grid>
-
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          container
           className={classes.wraper}
-          direction="column"
-          justify="flex-start"
         >
+          <div className={classes.title}>
+            <Typography variant="body1" className={classes.titleText}>선택된 방송 &gt;</Typography>
+            {selectedStream.fileId
+            && (
+              <Chip
+                label={dateExpression({
+                  compoName: 'highlight-calendar',
+                  createdAt: (selectedStream.startAt),
+                  finishAt: (selectedStream.finishAt),
+                })}
+                className={classes.chip}
+                color="primary"
+                onDelete={() => setSelectedStream({ ...selectedStream, fileId: '' })}
+              />
+            )}
+          </div>
+        </Grid>
+
+        <Grid item xs={12} className={classes.wraper}>
           <Calendar handleDatePick={handleDatePick} />
         </Grid>
 
-        <Grid
-          item
-          xs
-          className={classnames({
-            [classes.title]: true,
-            [classes.searchTitle]: true,
-          })}
-        >
-          분석할 검색값 입력
+        <Grid item xs className={classnames(classes.wraper, classes.searchTitle)}>
+          <Typography variant="body1" className={classes.titleText}>분석할 검색값 입력</Typography>
         </Grid>
 
-        <div className={classes.searchBox}>
+        <Grid item xs className={classnames(classes.wraper, classes.searchTitle)}>
           <SearchBox
             words={dummy}
             handleAnalysisWord={handleAnalysisWord}
             analysisWord={analysisWord}
           />
-        </div>
+        </Grid>
       </Grid>
 
       <Grid
@@ -344,7 +318,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         className={classes.root}
         justify="flex-end"
       >
-        <Grid item direction="column" style={{ overflow: 'hiden' }}>
+        <Grid item style={{ overflow: 'hiden' }}>
           <div className={classes.analysisButton}>
             <Button
               onClick={handleAnalyze}

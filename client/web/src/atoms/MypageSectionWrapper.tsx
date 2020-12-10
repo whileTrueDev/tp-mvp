@@ -4,16 +4,19 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   mypageWrapper: {
-    padding: `${theme.spacing(4)}px ${theme.spacing(5)}px`,
+    padding: `${theme.spacing(4)}px ${theme.spacing(5)}px ${theme.spacing(0)}`,
   },
+  last: { padding: theme.spacing(4) },
 }));
 
 export interface MypageWrapperProps extends React.HTMLAttributes<HTMLDivElement>{
   color?: string;
   children: React.ReactNode;
+  last?: boolean;
 }
 export default function MypageSectionWrapper({
   color = 'parent',
+  last = false,
   children,
   style,
   className,
@@ -22,7 +25,7 @@ export default function MypageSectionWrapper({
   const classes = useStyles();
   return (
     <section
-      className={classnames(classes.mypageWrapper, className)}
+      className={classnames(classes.mypageWrapper, className, { [classes.last]: last })}
       {...props}
       style={{ backgroundColor: color, ...style }}
     >

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 // material - ui core
-import { Grid, Paper } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@material-ui/core';
 // shared dtos
 import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
@@ -22,6 +22,7 @@ import MypageHero from '../../../organisms/shared/sub/MypageHero';
 import textSource from '../../../organisms/shared/source/MypageHeroText';
 // layout style
 import useStreamAnalysisStyles from './streamAnalysisLayout.style';
+import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
 
 export interface PeriodsRequestParams {
   userId: string;
@@ -83,7 +84,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
       <MypageSectionWrapper>
         {/* Analysis Section */}
         <Grid container direction="column" style={{ minHeight: '1500px' }}>
-          <Paper elevation={0} className={classes.analysisSectionPaper}>
+          <Paper className={classes.analysisSectionPaper}>
             <PeriodCompareSection
               loading={loading}
               error={error ? { isError: true, helperText: '분석과정에서 문제가 발생했습니다.' } : undefined}
@@ -93,8 +94,13 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
 
           {/* Graph Section */}
           {open && (
-          <Paper elevation={0} className={classes.graphSectionPaper}>
-            <Grid item container direction="column" spacing={8} style={{ marginTop: '16px' }}>
+          <Paper className={classes.graphSectionPaper}>
+            {/* 따로 organisms 컴포넌트로 만들어야 할 것 같습니다! by @hwasurr 2020.12.10 레이아웃 수정 작업중 코멘트 */}
+            <Grid item container direction="column" spacing={8} style={{ padding: 32 }}>
+              <Grid item xs={12}>
+                <SectionTitle mainTitle="기간 비교 분석 그래프" />
+                <Typography variant="body2">선택한 기준 기간과 비교 기간의 분석 그래프입니다.</Typography>
+              </Grid>
               <Grid item container direction="row">
                 <Grid item xs={6}>
                   {timeLineData && (
@@ -117,16 +123,15 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
                   )}
                 </Grid>
               </Grid>
-              <Grid item>
-                {metricOpen && metricData && (
-                <StreamMetrics
-                  open={metricOpen}
-                  metricData={metricData}
-                  type={type}
-                />
-                )}
-              </Grid>
             </Grid>
+
+            {metricOpen && metricData && (
+            <StreamMetrics
+              open={metricOpen}
+              metricData={metricData}
+              type={type}
+            />
+            )}
           </Paper>
           )}
         </Grid>
