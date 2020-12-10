@@ -52,64 +52,66 @@ export default function UserProfile(): JSX.Element {
 
       {!profileRequestObject.loading
       && profileRequestObject.data
-       && (profileRequestObject.data.afreecaId
-        || profileRequestObject.data.youtubeId
-        || profileRequestObject.data.twitchId)
-        ? (
-          <>
-            <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
+      && (
+      <>
+        <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
 
-            <div>
-              {/* 이름 */}
-              <div className={classes.flexBox}>
-                <Typography variant="h4" style={{ fontWeight: 'bold' }}>
-                  {`${profileRequestObject.data.nickName || profileRequestObject.data.userId} 님`}
-                </Typography>
+        <div>
+          {/* 이름 */}
+          <div className={classes.flexBox}>
+            <Typography variant="h4" style={{ fontWeight: 'bold' }}>
+              {`${profileRequestObject.data.nickName || profileRequestObject.data.userId} 님`}
+            </Typography>
 
-                {/* 연동된 플랫폼 목록 */}
-                <img
-                  className={classes.platformLogo}
-                  src="/images/logo/afreecaLogo.png"
-                  alt=""
-                  draggable={false}
-                  style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
-                />
-                <img
-                  className={classes.platformLogo}
-                  src="/images/logo/twitchLogo.png"
-                  alt=""
-                  draggable={false}
-                  style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
-                />
-                <img
-                  className={classes.platformLogo}
-                  src="/images/logo/youtubeLogo.png"
-                  alt=""
-                  draggable={false}
-                  style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
-                />
+            {/* 연동된 플랫폼 목록 */}
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/afreecaLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
+            />
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/twitchLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
+            />
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/youtubeLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
+            />
 
-              </div>
+          </div>
 
-              <div>
-                {/* 이메일 */}
-                <Typography className={classes.text}>{profileRequestObject.data.mail}</Typography>
+          <div>
+            {/* 이메일 */}
+            <Typography className={classes.text}>{profileRequestObject.data.mail}</Typography>
 
-                {/* 요금제 */}
-                <div className={classes.flexBox}>
-                  <Typography className={classnames(classes.text, classes.bold)} variant="body1">요금제</Typography>
-                  <Chip label="클로즈베타 테스터" size="small" color="primary" className={classnames(classes.userTier)} />
-                </div>
+            {/* 요금제 */}
+            <div className={classes.flexBox}>
+              <Typography className={classnames(classes.text, classes.bold)} variant="body1">요금제</Typography>
+              <Chip label="클로즈베타 테스터" size="small" color="primary" className={classnames(classes.userTier)} />
+            </div>
 
-                {/* 클로즈베타 처리 - 잠시 제거 */}
-                {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
+            {/* 클로즈베타 처리 - 잠시 제거 */}
+            {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
                   업그레이드
                   <ArrowForwardIosIcon fontSize="inherit" />
                 </Typography> */}
-              </div>
-            </div>
-          </>
-        ) : (
+          </div>
+        </div>
+      </>
+      ) }
+      {
+        (!profileRequestObject.data?.afreecaId
+          || !profileRequestObject.data?.youtubeId
+          || !profileRequestObject.data?.twitchId)
+        && (
           <MainDialog
             open={open}
             state={state}
@@ -117,7 +119,8 @@ export default function UserProfile(): JSX.Element {
             handleOpen={handleOpen}
             handleClose={handleClose}
           />
-        )}
+        )
+      }
     </Paper>
   );
 }

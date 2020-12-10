@@ -18,6 +18,9 @@ import { useHistory } from 'react-router-dom';
 */
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    zIndex: 500,
+  },
   upper: {
     display: 'flex',
     height: 230,
@@ -121,7 +124,7 @@ export default function MainDialog(props: DialogProps): JSX.Element {
   });
 
   return (
-    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+    <Dialog onClose={handleClose} className={classes.root} open={open}>
       <List disablePadding>
         <ListItem autoFocus className={classes.upper}>
           <Grid container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
