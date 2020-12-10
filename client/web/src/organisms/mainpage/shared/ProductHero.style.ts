@@ -9,6 +9,9 @@ const styles = makeStyles((theme) => ({
     minWidth: MYPAGE_MAIN_MIN_WIDTH,
   },
   wraper: {
+    width: 968,
+    padding: 0,
+    margin: '0 auto',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -16,7 +19,7 @@ const styles = makeStyles((theme) => ({
     height: 'inherit',
   },
   main: {
-    margin: '20px 0px 20px 0px',
+    // margin: '20px 0px 20px 0px',
   },
   mainExcept: {
     margin: '20px 0px 20px 0px',
