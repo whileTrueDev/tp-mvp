@@ -87,6 +87,11 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  position: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
 }));
 interface DialogProps{
@@ -127,7 +132,7 @@ export default function MainDialog(props: DialogProps): JSX.Element {
     <Dialog onClose={handleClose} className={classes.root} open={open}>
       <List disablePadding>
         <ListItem autoFocus className={classes.upper}>
-          <Grid container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Grid container className={classes.position}>
             <Grid item>
               <img src="/images/mypageDashboard/dashboardImage.png" alt="dashboardImage" />
             </Grid>
@@ -135,7 +140,7 @@ export default function MainDialog(props: DialogProps): JSX.Element {
         </ListItem>
 
         <ListItem autoFocus className={classes.middle1}>
-          <Grid container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Grid container className={classes.position}>
             <Grid item>
               <Typography variant="h5" className={classes.blueFont}>
                 지금 방송 채널을 연동
@@ -155,7 +160,7 @@ export default function MainDialog(props: DialogProps): JSX.Element {
           </Grid>
         </ListItem>
         <ListItem autoFocus className={classes.middle2}>
-          <Grid container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Grid container className={classes.position}>
             <Grid item>
               <Typography variant="subtitle1" className={classes.defalutFont}>
                 트루포인트 기능을 정상적으로 사용하기 위해서
@@ -169,7 +174,7 @@ export default function MainDialog(props: DialogProps): JSX.Element {
           </Grid>
         </ListItem>
         <ListItem autoFocus className={classes.low}>
-          <Grid container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Grid container className={classes.position}>
             <Grid item style={{ paddingBottom: 20 }}>
               <Button variant="contained" onClick={handleClick} className={classes.moveButton}>채널 연동 하러가기</Button>
             </Grid>
