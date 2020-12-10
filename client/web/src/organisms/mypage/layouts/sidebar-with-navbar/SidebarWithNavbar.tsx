@@ -13,7 +13,7 @@ import {
   ChevronLeft, ExpandLess, ExpandMore, Menu,
 } from '@material-ui/icons';
 // import routes from '../routes';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { COMMON_APP_BAR_HEIGHT, SIDE_BAR_WIDTH } from '../../../../assets/constants';
 import { MypageRoute } from '../../../../pages/mypage/routes';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
@@ -93,6 +93,7 @@ export default function SidebarWithNavbar({
 }: SidebarWithNavbarProps): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
+  const history = useHistory();
 
   // 현재 활성화된 탭을 구하는 함수
   function isActiveRoute(pagePath: string): boolean {
@@ -107,13 +108,19 @@ export default function SidebarWithNavbar({
       setNestOpen((prev) => prev.filter((p) => p !== route));
     } else setNestOpen((prev) => prev.concat(route));
   }
+  function resetNestList() {
+    setNestOpen([]);
+  }
 
   // ******************************************
   // Sidebar 내부 컨텐츠
   const drawerContents = (
     <div>
       <div className={classes.toolbar}>
-        <IconButton onClick={handleClose}>
+        <IconButton onClick={() => {
+          handleClose(); resetNestList();
+        }}
+        >
           <ChevronLeft />
         </IconButton>
       </div>
@@ -122,31 +129,18 @@ export default function SidebarWithNavbar({
       <List component="nav" aria-labelledby="nested-list-subheader">
         {routes.map((route) => (
           <div key={route.layout + route.path}>
-            {!route.subRoutes ? ( // 하위 탭이 없는 경우
-              <ListItem
-                selected={isActiveRoute(route.path)}
-                button
-                component={Link}
-                to={route.layout + route.path}
-              >
-                {route.icon && (
-                  <ListItemIcon style={{ marginLeft: 8 }}>
-                    <route.icon className={classnames({ [classes.selected]: isActiveRoute(route.path) })} />
-                  </ListItemIcon>
-                )}
-                <ListItemText
-                  primary={route.name}
-                  classes={{
-                    primary: classnames({ [classes.selected]: isActiveRoute(route.path) }),
-                  }}
-                />
-              </ListItem>
-            ) : ( // 하위탭이 있는 경우
+            {route.subRoutes ? ( // 하위탭이 있는 경우
               <div>
                 <ListItem
                   button
                   selected={isActiveRoute(route.path)}
-                  onClick={() => handleToggle(route.layout + route.path)}
+                  onClick={() => {
+                    if (!open) {
+                      history.push(route.subRoutes![0].layout + route.subRoutes![0].path);
+                      handleOpen();
+                    }
+                    handleToggle(route.layout + route.path);
+                  }}
                 >
                   {route.icon && (
                     <ListItemIcon style={{ marginLeft: 8 }}>
@@ -162,6 +156,7 @@ export default function SidebarWithNavbar({
                   {nestOpenList?.includes(route.layout + route.path) ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
                 {/* 하위 탭 */}
+                {open && (
                 <Collapse in={!!nestOpenList?.includes(route.layout + route.path)} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     {route.subRoutes.map((subRoute) => (
@@ -191,7 +186,27 @@ export default function SidebarWithNavbar({
                     ))}
                   </List>
                 </Collapse>
+                )}
               </div>
+            ) : ( // 하위 탭이 없는 경우
+              <ListItem
+                selected={isActiveRoute(route.path)}
+                button
+                component={Link}
+                to={route.layout + route.path}
+              >
+                {route.icon && (
+                  <ListItemIcon style={{ marginLeft: 8 }}>
+                    <route.icon className={classnames({ [classes.selected]: isActiveRoute(route.path) })} />
+                  </ListItemIcon>
+                )}
+                <ListItemText
+                  primary={route.name}
+                  classes={{
+                    primary: classnames({ [classes.selected]: isActiveRoute(route.path) }),
+                  }}
+                />
+              </ListItem>
             )}
           </div>
         ))}
