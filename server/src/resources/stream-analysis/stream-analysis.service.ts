@@ -256,11 +256,15 @@ export class StreamAnalysisService {
     const calculatedArray: S3StreamData[] = [];
     const dataArray: S3StreamData[] = [];
 
-    /* input param 을 통해 S3 키 배열 생성 함수 정의 */
+    /**
+     * input param 을 통해 S3 키 배열 생성 함수 정의input param 을 통해 S3 키 배열 생성 함수 정의
+     * @param stream 
+     * SPRINT #3.3 S3 경로 변경에 따라 수정해야 할 부분
+     * /metric_json/<platform>/<creatorId>/<streamId>.json
+     */
     const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
-      const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
       const { platform } = stream;
-      const path = `metrics_json/${platform}/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
+      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}.json`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
