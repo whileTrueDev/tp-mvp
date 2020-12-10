@@ -12,7 +12,7 @@ export class TwitchTargetStreamersEntity {
   streamerName: string;
 
   @Column({ length: 100 })
-  streamChannelName: string;
+  streamerChannelName: string;
 
   @CreateDateColumn()
   createdAt: Date;
