@@ -2,7 +2,7 @@ import React from 'react';
 // material - ui core components
 import {
   Typography, List, ListItem, ListItemIcon,
-  Tooltip, Avatar, Chip,
+  Tooltip, Chip,
 } from '@material-ui/core';
 // material - ui styles
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
@@ -79,12 +79,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const StyledToolTip = withStyles((theme) => ({
-  arrow: {
-    fontSize: '22px',
-  },
   tooltip: {
     maxWidth: 'none',
     padding: theme.spacing(2),
+    color: theme.palette.text.primary,
+    fontWeight: 'bold',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
   },
 }))(Tooltip);
 
@@ -98,9 +99,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     <div className={classes.tooltip}>
       <Typography variant="h6">
         <div className={classes.tooltipIconWrapper}>
-          <Avatar style={{ marginBottom: '8px' }}>
-            {platformIcon(stream)}
-          </Avatar>
+          {platformIcon(stream)}
         </div>
         {stream.title}
       </Typography>
@@ -177,7 +176,6 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     <List className={classes.listWrapper}>
       {dayStreamsList && dayStreamsList.map((stream) => (
         <StyledToolTip
-          arrow
           placement="top"
           title={tooltipContents(stream)}
         >
@@ -200,7 +198,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
             </Typography>
 
             <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
-              {stream.title.length > 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+              {stream.title.length > 30 ? `${stream.title.slice(0, 30)} ...` : stream.title}
             </Typography>
 
           </ListItem>
