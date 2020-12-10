@@ -4,12 +4,11 @@ import { TypeOrmConfigService } from '../../config/database.config';
 import { BroadcastInfoService } from './broadcast-info.service';
 import { BroadcastInfoController } from './broadcast-info.controller';
 
-import { StreamsTest2Entity } from './entities/streamsTest2.entity';
-import { StreamSummaryTest2Entity } from './entities/streamSummaryTest2.entity';
-
+import { StreamsEntity } from './entities/streams.entity';
+import { StreamSummaryEntity } from './entities/streamSummary.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([StreamsTest2Entity, StreamSummaryTest2Entity]),
+    TypeOrmModule.forFeature([StreamsEntity, StreamSummaryEntity]),
     TypeOrmConfigService,
   ],
   controllers: [BroadcastInfoController],

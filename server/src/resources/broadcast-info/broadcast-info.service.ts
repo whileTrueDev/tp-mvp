@@ -8,14 +8,14 @@ import { Repository } from 'typeorm';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 
 // database entities
-import { StreamsTest2Entity } from './entities/streamsTest2.entity';
-import { StreamSummaryTest2Entity } from './entities/streamSummaryTest2.entity';
+import { StreamsEntity } from './entities/streams.entity';
+import { StreamSummaryEntity } from './entities/streamSummary.entity';
 
 Injectable();
 export class BroadcastInfoService {
   constructor(
-    @InjectRepository(StreamsTest2Entity)
-      private readonly streamsTest2Repository: Repository<StreamsTest2Entity>,
+    @InjectRepository(StreamsEntity)
+      private readonly streamsTest2Repository: Repository<StreamsEntity>,
   ) {}
 
   /**
@@ -35,7 +35,7 @@ export class BroadcastInfoService {
     const TermStreamsData: StreamDataType[] = await this.streamsTest2Repository
       .createQueryBuilder('streams')
       .innerJoin(
-        StreamSummaryTest2Entity,
+        StreamSummaryEntity,
         'streamSummary',
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
