@@ -143,6 +143,7 @@ function HeaderLinks(): JSX.Element {
         onClose={handleAnchorClose}
       />
       )}
+      {UserMenuAnchorEl && !profile.loading && profile.data && (
       <UserMenuPopover
         avatarSrc={(!profile.loading && profile.data && profile.data.profileImage)
           ? profile.data.profileImage : ''}
@@ -150,6 +151,7 @@ function HeaderLinks(): JSX.Element {
         anchorEl={UserMenuAnchorEl}
         onClose={handleClose}
       />
+      )}
     </Grid>
   );
 }

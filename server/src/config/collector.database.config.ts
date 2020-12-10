@@ -4,13 +4,14 @@ import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DbSecret } from '../interfaces/Secrets.interface';
 
 @Injectable()
-export class TypeOrmConfigService implements TypeOrmOptionsFactory {
+export class CollectorTypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private readonly configService: ConfigService) { }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    const database = this.configService.get<DbSecret>('database');
+    const database = this.configService.get<DbSecret>('WhileTrueCollectorDB');
 
     return {
+      name: 'WhileTrueCollectorDB',
       type: database.engine,
       host: database.host,
       port: database.port,
@@ -18,8 +19,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       password: database.password,
       database: database.dbname,
       timezone: 'Asia/Seoul',
-      synchronize: true,
-      entities: [`${__dirname}/../resources/**/*.entity{.ts,.js}`],
+      entities: [`${__dirname}/../collector-entities/**/*.entity{.ts,.js}`],
     };
   }
 }

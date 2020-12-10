@@ -71,7 +71,7 @@ export class AuthService {
     // 로그인 상태 유지에 따라 다른 유지기간의 refresh token 발급
     const refreshToken = this.createRefreshToken(user.userId, stayLogedIn);
     // refresh token 적재
-    this.usersService.saveRefreshToken({
+    await this.usersService.saveRefreshToken({
       userId: user.userId, refreshToken,
     });
     return { accessToken, refreshToken };

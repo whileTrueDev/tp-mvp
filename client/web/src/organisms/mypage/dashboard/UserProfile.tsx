@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import {
   Avatar, Chip, CircularProgress, Paper, Typography,
@@ -8,6 +8,8 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import useAxios from 'axios-hooks';
+import useDialog from '../../../utils/hooks/useDialog';
+import MainDialog from './MainDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,6 +31,14 @@ export default function UserProfile(): JSX.Element {
   const [profileRequestObject, refetch] = useAxios<User>({
     url: 'users', method: 'GET',
   });
+
+  const { open, handleOpen, handleClose } = useDialog();
+  const [state, checkFirtst] = useState<boolean>(false);
+
+  function handleState() {
+    checkFirtst(true);
+  }
+
   useEffect(() => {
     refetch();
   }, [refetch]);
@@ -40,9 +50,11 @@ export default function UserProfile(): JSX.Element {
       <div className={classes.loading}><CircularProgress /></div>
       )}
 
-      {!profileRequestObject.loading && profileRequestObject.data && (
-        <>
-          <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
+      {!profileRequestObject.loading
+      && profileRequestObject.data
+      && (
+      <>
+        <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
 
           <div>
             {/* 연동된 플랫폼 목록 */}
@@ -89,14 +101,26 @@ export default function UserProfile(): JSX.Element {
                 <Chip label="클로즈베타 테스터" size="small" color="primary" className={classes.userTier} />
               </div>
 
-              {/* 클로즈베타 처리 - 잠시 제거 */}
-              {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
+            {/* 클로즈베타 처리 - 잠시 제거 */}
+            {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
                   업그레이드
                   <ArrowForwardIosIcon fontSize="inherit" />
                 </Typography> */}
-            </div>
           </div>
-        </>
+        </div>
+      </>
+      )}
+      {(!profileRequestObject.data?.afreecaId
+        || !profileRequestObject.data?.youtubeId
+        || !profileRequestObject.data?.twitchId)
+      && (
+        <MainDialog
+          open={open}
+          state={state}
+          handleState={handleState}
+          handleOpen={handleOpen}
+          handleClose={handleClose}
+        />
       )}
     </Paper>
   );

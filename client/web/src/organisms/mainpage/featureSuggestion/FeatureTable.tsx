@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 export interface FeatureTableProps {
   isLoading: boolean;
-  metrics: FeatureSuggestion[];
+  metrics: Omit<FeatureSuggestion, 'content' | 'replies'>[];
   page: number;
   pageSize: number;
   handlePage: any;
@@ -70,7 +70,7 @@ export default function FeatureTable({
 
   return (
     <>
-      <Table<FeatureSuggestion>
+      <Table<Omit<FeatureSuggestion, 'content' | 'replies'>>
         columns={[
           {
             width: '50px',

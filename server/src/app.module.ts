@@ -9,6 +9,7 @@ import { HighlightModule } from './resources/highlightPoint/hightlight.module';
 import { FeatureModule } from './resources/featureSuggestion/featureSuggestion.module';
 import { InquiryModule } from './resources/inquiry/inquiry.module';
 import { TypeOrmConfigService } from './config/database.config';
+import { CollectorTypeOrmConfigService } from './config/collector.database.config';
 import { NotificationModule } from './resources/notification/notification.module';
 import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
 
@@ -24,6 +25,10 @@ import { HealthCheckModule } from './resources/health-check/healthcheck.module';
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
+    }),
+    TypeOrmModule.forRootAsync({
+      name: 'WhileTrueCollectorDB',
+      useClass: CollectorTypeOrmConfigService,
     }),
     AccessControlModule.forRoles(roles),
     AuthModule,

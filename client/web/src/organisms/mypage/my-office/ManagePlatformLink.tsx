@@ -41,6 +41,10 @@ export default function ManagePlatformLink({
   const { enqueueSnackbar } = useSnackbar();
 
   // *******************************
+  // 연동 해제 확인 다이얼로그
+  const confirmDialog = useDialog();
+
+  // *******************************
   // 연동 "제거" 요청
   const [, linkDeleteRequest] = useAxios({
     method: 'DELETE', url: '/auth/link',
@@ -53,7 +57,10 @@ export default function ManagePlatformLink({
         userDataRefetch();
         ShowSnack(`${capitalize(platform)} 연동 해제 되었습니다.`, 'success', enqueueSnackbar);
       })
-      .catch(() => ShowSnack(`${capitalize(platform)} 연동 해제중 오류가 발생했습니다. 문의바랍니다.`, 'error', enqueueSnackbar));
+      .catch(() => {
+        confirmDialog.handleClose();
+        ShowSnack(`${capitalize(platform)} 연동 해제중 오류가 발생했습니다. 문의바랍니다.`, 'error', enqueueSnackbar);
+      });
   }
 
   // *******************************
@@ -63,10 +70,6 @@ export default function ManagePlatformLink({
     if (platform === 'afreeca') params += `?__userId=${auth.user.userId}`;
     window.location.href = `${getApiHost()}/auth/${params}`;
   }
-
-  // *******************************
-  // 연동 해제 확인 다이얼로그
-  const confirmDialog = useDialog();
 
   // 선택된 플랫폼 정보 스테이트
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | undefined>();
