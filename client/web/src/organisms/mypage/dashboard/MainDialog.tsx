@@ -7,7 +7,7 @@ import Dialog from '@material-ui/core/Dialog';
 import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 import { Grid, Paper } from '@material-ui/core';
-
+import { useHistory } from 'react-router-dom';
 /* 
   - component 이름 : DashboardDialog
   - component 기능 : 
@@ -29,16 +29,17 @@ const useStyles = makeStyles((theme) => ({
     height: 230,
     paddingTop: 30,
     width: 400,
-    backgroundColor: '#929ef8',
+    backgroundColor: theme.palette.primary.main,
   },
   middle1: {
     height: 120,
+    paddingTop: 20,
     width: 400,
     align: 'center',
     backgroundColor: theme.palette.common.white,
   },
   middle2: {
-    height: 50,
+    height: 80,
     width: 400,
     paddingTop: 20,
     align: 'center',
@@ -54,13 +55,13 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
   blueFont: {
-    color: '#4b5ac7',
+    color: theme.palette.primary.dark,
     fontWeight: 'bold',
   },
   moveButton: {
     borderRadius: 0,
-    backgroundColor: '#4b5ac7',
-    borderColor: '#4b5ac7',
+    backgroundColor: theme.palette.primary.dark,
+    borderColor: theme.palette.primary.dark,
     width: 350,
     height: 70,
     color: theme.palette.common.white,
@@ -68,15 +69,22 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 20,
     fontWeight: 'bold',
     '&:hover': {
-      backgroundColor: '#4b5ac7',
-      borderColor: '#4b5ac7',
+      backgroundColor: theme.palette.primary.dark,
+      borderColor: theme.palette.primary.dark,
       boxShadow: 'none',
     },
 
   },
+  buttonPaper: {
+    borderStyle: 'solid',
+    color: theme.palette.grey[700],
+    backgroundColor: theme.palette.common.white,
+    borderRadius: 0,
+    borderWidth: 'thin',
+  },
   shutdownButton: {
     borderRadius: 0,
-    color: '#878787',
+    color: theme.palette.grey[700],
     width: 350,
     height: 70,
     fontSize: 20,
@@ -85,33 +93,31 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 interface DialogProps{
-
   open: boolean;
-  reason: string;
-  onClose: (reason: string) => void;
-  setOpen: (v: boolean) => void;
+  handleOpen: () => void;
+  handleClose: () => void;
 }
 
 export default function MainDialog(props: DialogProps): JSX.Element {
   const classes = useStyles();
   const {
-    onClose, setOpen,
-    reason, open,
+    handleOpen,
+    handleClose,
+    open,
   } = props;
 
-  const handleClose = () => {
-    setOpen(false);
-    onClose(reason);
-  };
+  const history = useHistory();
+
   const handleClick = () => {
-    window.location.href = '/mypage/my-office/settings';
+    history.push('/mypage/my-office/settings');
   };
+
   React.useEffect(() => {
     setTimeout(() => {
-      setOpen(true);
+      handleOpen();
     },
     500);
-  }, [setOpen]);
+  }, []);
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
@@ -166,13 +172,7 @@ export default function MainDialog(props: DialogProps): JSX.Element {
             <Grid item>
               <Paper
                 elevation={0}
-                style={{
-                  borderStyle: 'solid',
-                  color: '#878787',
-                  backgroundColor: '#ffff',
-                  borderRadius: 0,
-                  borderWidth: 'thin',
-                }}
+                className={classes.buttonPaper}
               >
                 <Button variant="outlined" onClick={handleClose} className={classes.shutdownButton}>연동하지 않고 사용하기</Button>
               </Paper>

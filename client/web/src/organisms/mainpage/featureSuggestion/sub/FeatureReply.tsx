@@ -51,7 +51,8 @@ export default function FeatureReply({
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
-        <Avatar src={avatarLogo} variant="square" className={classes.avatar} />
+        {/* 본인이 아닌 경우 프로필사진 기본 사진 처리 */}
+        <Avatar src={auth.user.userId === author ? avatarLogo : ''} variant="square" className={classes.avatar} />
         <div>
           <div className={classes.titleSection}>
             <Typography variant="body2" className={classes.title}>

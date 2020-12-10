@@ -8,6 +8,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import useAxios from 'axios-hooks';
+import useDialog from '../../../utils/hooks/useDialog';
 import MainDialog from './MainDialog';
 
 const useStyles = makeStyles((theme) => ({
@@ -31,8 +32,7 @@ export default function UserProfile(): JSX.Element {
     url: 'users', method: 'GET',
   });
 
-  const [reason, onClose] = React.useState('backdropClicked');
-  const [open, setOpen] = React.useState(false);
+  const { open, handleOpen, handleClose } = useDialog();
 
   useEffect(() => {
     refetch();
@@ -106,10 +106,9 @@ export default function UserProfile(): JSX.Element {
           </>
         ) : (
           <MainDialog
-            onClose={onClose}
             open={open}
-            setOpen={setOpen}
-            reason={reason}
+            handleOpen={handleOpen}
+            handleClose={handleClose}
           />
         )}
     </Paper>
