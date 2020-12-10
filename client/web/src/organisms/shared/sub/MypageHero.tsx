@@ -45,6 +45,9 @@ const style = makeStyles((theme) => ({
     top: theme.spacing(1),
     right: theme.spacing(1),
     margin: theme.spacing(1),
+    [theme.breakpoints.up('xl')]: {
+      position: 'static',
+    },
   },
   textWraper: { marginTop: theme.spacing(1) },
 }));
@@ -69,12 +72,12 @@ export default function MypageHero(
     <section className={classes.heroWraper}>
       {textSource.eachCardContent.map((content, index) => (
         <Card className={cardType(index)} key={content.cardText}>
-          <div className={classes.image}>
-            <img src={content.cardIcon} height={35} alt="cardIcon" draggable={false} />
-          </div>
           <Typography className={classnames(classes.fonts, classes.bold)} variant="body2">
             {content.cardHeader}
           </Typography>
+          <div className={classes.image}>
+            <img src={content.cardIcon} height={35} alt="cardIcon" draggable={false} />
+          </div>
           {content.cardTitle.split('\n').map((title: string) => (
             <Typography key={title} variant="h6" className={classnames(classes.fonts, classes.bold)}>{title}</Typography>
           ))}
