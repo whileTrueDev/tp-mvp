@@ -13,7 +13,7 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     height: '51.1px',
     borderRadius: '6px',
     backgroundColor: theme.palette.primary.dark,
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: '24px',
     marginTop: theme.spacing(3),
     marginRight: theme.spacing(10),

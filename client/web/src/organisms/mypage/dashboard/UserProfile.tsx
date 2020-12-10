@@ -110,17 +110,19 @@ export default function UserProfile(): JSX.Element {
         </div>
       </>
       )}
-      {(!profileRequestObject.data?.afreecaId
-        || !profileRequestObject.data?.youtubeId
-        || !profileRequestObject.data?.twitchId)
-      && (
-        <MainDialog
-          open={open}
-          state={state}
-          handleState={handleState}
-          handleOpen={handleOpen}
-          handleClose={handleClose}
-        />
+      {/* 아프리카 / 트위치 / 유튜브 중 아이디가 한개도 없는 경우 */}
+      {!profileRequestObject.loading && profileRequestObject.data
+      && !(profileRequestObject.data.afreecaId
+          || profileRequestObject.data.youtubeId
+          || profileRequestObject.data.twitchId
+      ) && (
+      <MainDialog
+        open={open}
+        state={state}
+        handleState={handleState}
+        handleOpen={handleOpen}
+        handleClose={handleClose}
+      />
       )}
     </Paper>
   );

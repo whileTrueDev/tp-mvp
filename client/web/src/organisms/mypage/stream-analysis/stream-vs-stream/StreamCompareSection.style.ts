@@ -18,7 +18,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
     lineHeight: 1.5,
     fontSize: '17px',
-    fontFamily: 'AppleSDGothicNeo',
+
     marginLeft: theme.spacing(6),
     marginRight: theme.spacing(5),
     display: 'flex',
@@ -29,7 +29,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     height: '51.1px',
     borderRadius: '6px',
     backgroundColor: theme.palette.primary.dark,
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: '24px',
     marginTop: theme.spacing(3),
     marginRight: theme.spacing(10),

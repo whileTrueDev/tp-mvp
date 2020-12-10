@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '22px',
-    fontFamily: 'AppleSDGothicNeo',
+
     display: 'flex',
     alignItems: 'center',
     fontWeight: 'bold',

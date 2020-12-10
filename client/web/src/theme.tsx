@@ -41,7 +41,19 @@ const rawTheme: ThemeOptions = {
     // }
   },
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "AppleSDGothicNeo", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      'AppleSDGothicNeoR',
+      '"Noto Sans KR"',
+      '"Roboto"',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    fontSize: 14,
+    htmlFontSize: 16,
   },
 };
 

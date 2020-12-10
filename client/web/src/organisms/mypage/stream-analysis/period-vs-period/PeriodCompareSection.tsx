@@ -244,7 +244,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         <Typography
           color="textSecondary"
           style={{
-            fontFamily: 'AppleSDGothicNeo',
+
             fontSize: '30px',
             fontWeight: 'bold',
             paddingTop: '40px',

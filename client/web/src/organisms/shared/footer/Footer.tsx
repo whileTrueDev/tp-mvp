@@ -46,7 +46,7 @@ const styles = makeStyles((theme) => ({
     fontWeight: 300,
   },
   addressTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontWeight: 'bold',
     marginTop: 5,
     marginBottom: 5,
@@ -56,7 +56,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   addressLocation: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontWeight: 300,
     fontSize: '15px',
   },
@@ -88,7 +88,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   corp: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontWeight: 300,
     marginTop: '15px',
     '& strong': {

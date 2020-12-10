@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   boxTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontWeight: 'bold',
     fontSize: '23px',
     color: theme.palette.text.secondary,

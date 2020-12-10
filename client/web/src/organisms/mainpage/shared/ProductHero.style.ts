@@ -28,20 +28,20 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   mainTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 60,
     fontWeight: 900,
     color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
     margin: 0,
   },
   mainContent: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 20,
     margin: 0,
     color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
   },
   button: {
-    fontFamily: 'AppleSDGothicNeo',
+
     color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
     border: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
     borderRadius: 0,

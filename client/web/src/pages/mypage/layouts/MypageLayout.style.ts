@@ -33,6 +33,7 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
   contents: {
     maxWidth: MYPAGE_MAIN_MAX_WIDTH,
     height: '100%',
+    // margin: '0 auto',
   },
 }));
 
