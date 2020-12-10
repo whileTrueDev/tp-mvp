@@ -19,11 +19,6 @@ import { useHistory } from 'react-router-dom';
 */
 
 const useStyles = makeStyles((theme) => ({
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
-  },
-
   upper: {
     display: 'flex',
     height: 230,
