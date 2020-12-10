@@ -249,7 +249,13 @@ export default function FeatureDetail({
       </Paper>
 
       {/* 댓글 작성하기 */}
-      {}
+      {currentFeatureData.author.userId === authContext.user.userId && (
+        <FeatureReplyInput
+          currentSuggestion={currentFeatureData}
+          refetch={featureListRefetch}
+          avatarLogo={currentFeatureData.author.profileImage || ''}
+        />
+      )}
       {/* 댓글 리스트 섹션 */}
       {loading && (
       <div className={classes.loadingWrapper} style={{ marginTop: 16 }}>
