@@ -20,7 +20,7 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'google') {
       scope: [
         'email', 'profile',
         'https://www.googleapis.com/auth/youtube', // 유튜브 계정 관리 및 보기
-        // 'https://www.googleapis.com/auth/yt-analytics.readonly',
+        // 'https://www.googleapis.com/auth/yt-analytics.readonly', // 유튜브 통계 및 분석 보기
       ],
       callbackURL: `${getApiHost()}/auth/youtube/callback`,
     });
