@@ -13,6 +13,7 @@ import { SubscribeEntity } from './entities/subscribe.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
 import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/targetStreamers.entity';
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
+import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/tar
     ]),
     TypeOrmModule.forFeature([
       AfreecaTargetStreamersEntity,
+      AfreecaActiveStreamsEntity,
       YoutubeTargetStreamersEntity,
       TwitchTargetStreamersEntity,
     ], 'WhileTrueCollectorDB'), // collectorDB Entity 연결

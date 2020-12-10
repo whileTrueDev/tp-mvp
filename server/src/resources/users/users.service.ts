@@ -22,6 +22,7 @@ import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/t
 import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/targetStreamers.entity';
 import { TwitchProfileResponse } from '../auth/interfaces/twitchProfile.interface';
 import { AfreecaLinker } from '../auth/strategies/afreeca.linker';
+import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 
 @Injectable()
 export class UsersService {
@@ -46,6 +47,8 @@ export class UsersService {
     private readonly twitchTargetStreamersRepository: Repository<TwitchTargetStreamersEntity>,
     @InjectRepository(AfreecaTargetStreamersEntity, 'WhileTrueCollectorDB')
     private readonly afreecaTargetStreamersRepository: Repository<AfreecaTargetStreamersEntity>,
+    @InjectRepository(AfreecaActiveStreamsEntity, 'WhileTrueCollectorDB')
+    private readonly afreecaActiveStreamsRepository: Repository<AfreecaActiveStreamsEntity>,
     @InjectRepository(YoutubeTargetStreamersEntity, 'WhileTrueCollectorDB')
     private readonly youtubeTargetStreamersRepository: Repository<YoutubeTargetStreamersEntity>,
   ) {}
@@ -422,11 +425,17 @@ export class UsersService {
           // ************************************************
           // CollectorDB target Streamer에 추가
           // by hwasurr 2020. 12. 08 아직 Afreeca openAPI 에서는 ProfileData를 제공하지 않기 때문에 주석처리. 향후 업데이트 필요
-          // this.afreecaTargetStreamersRepository.save({
-          //   creatorId: linkedInfo.afreecaId,
-          //   creatorName: linkedInfo.afreecaStreamerName,
-          //   refreshToken: linkedInfo.refreshToken,
-          // });
+          this.afreecaTargetStreamersRepository.save({
+            creatorId: linkedInfo.afreecaId,
+            creatorName: linkedInfo.afreecaStreamerName ? linkedInfo.afreecaStreamerName : '아프리카Profile제공X-업데이트 필요',
+            refreshToken: linkedInfo.refreshToken,
+          });
+          // CollectorDB active Streams 에 추가
+          // by hwasurr 2020. 12. 10 아직 Afreeca openAPI 에서는 ProfileData를 제공하지 않기 때문에 주석처리. 향후 업데이트 필요
+          this.afreecaActiveStreamsRepository.save({
+            creatorId: linkedInfo.afreecaId,
+            creatorName: linkedInfo.afreecaStreamerName ? linkedInfo.afreecaStreamerName : '아프리카Profile제공X-업데이트 필요',
+          });
           break;
         } else {
           throw new InternalServerErrorException(
@@ -441,25 +450,31 @@ export class UsersService {
 
   /**
    * 연결된 플랫폼 정보(twitch, youtube, afreeca 고유 ID 데이터)를 삭제하는 메소드 
-   * @param {string} userId 연결된 플랫폼 정보를 삭제할 트루포인트 유저 아이디 문자열
+   * @param {string} userId 삭제할 타겟의 플랫폼 고유 아이디
    * @param {string} platform 삭제할 연결된 플랫폼 문자열
    */
   async deleteLinkUserPlatform(
-    userId: string, platform: string,
-  ): Promise<number> {
-    let result: number;
-    const targetUser = await this.usersRepository.findOne(userId);
+    deleteTargetId: string, platform: string,
+  ): Promise<number | PlatformTwitchEntity | PlatformAfreecaEntity | PlatformYoutubeEntity> {
     if (platform === 'twitch') {
-      result = (await this.twitchRepository.delete(targetUser.twitchId)).affected;
+      const target = await this.twitchRepository.findOne(deleteTargetId);
+      if (target) {
+        return this.twitchRepository.remove(target);
+      }
     }
     if (platform === 'afreeca') {
-      result = (await this.afreecaRepository.delete(targetUser.afreecaId)).affected;
+      const target = await this.afreecaRepository.findOne(deleteTargetId);
+      if (target) {
+        return this.afreecaRepository.remove(target);
+      }
     }
     if (platform === 'youtube') {
-      result = (await this.youtubeRepository.delete(targetUser.youtubeId)).affected;
+      const target = await this.youtubeRepository.findOne(deleteTargetId);
+      if (target) {
+        return this.youtubeRepository.remove(target);
+      }
     }
-
-    return result;
+    return 1;
   }
 
   /**
@@ -470,16 +485,24 @@ export class UsersService {
    */
   async disconnectLink(
     userId: string, platform: string,
-  ): Promise<number> {
+  ): Promise<string> {
     const targetUser = await this.usersRepository.findOne(userId);
+    let deletedPlatformId: string;
     let targetPlatformLogo: string;
     let targetPlatformNickname: string;
     // 아프리카의 경우 아직 채널/유저 프로필사진 데이터를 가져올 수 없다.
     if (platform === 'afreeca') {
+      deletedPlatformId = targetUser.afreecaId;
       // ************************************************
       // CollectorDB Target Streamer에서 제거
       const targetUserOnCollector = await this.afreecaTargetStreamersRepository.findOne(targetUser.afreecaId);
       if (targetUserOnCollector) this.afreecaTargetStreamersRepository.remove(targetUserOnCollector);
+
+      // CollectorDB ActiveStreams 에서 제거
+      const targetActiveStreamOnCollector = await this.afreecaActiveStreamsRepository.findOne({
+        creatorId: targetUser.afreecaId,
+      });
+      if (targetActiveStreamOnCollector) this.afreecaActiveStreamsRepository.remove(targetActiveStreamOnCollector);
 
       // 선택된 로고 + 닉네임 제거
       const afreeca = await this.afreecaRepository.findOne(targetUser.afreecaId);
@@ -487,6 +510,7 @@ export class UsersService {
       targetPlatformNickname = afreeca.afreecaStreamerName;
     }
     if (platform === 'twitch') {
+      deletedPlatformId = targetUser.twitchId;
       // ************************************************
       // CollectorDB Target Streamer에서 제거
       const targetUserOnCollector = await this.twitchTargetStreamersRepository.findOne(targetUser.twitchId);
@@ -498,6 +522,7 @@ export class UsersService {
       targetPlatformNickname = twitch.twitchChannelName;
     }
     if (platform === 'youtube') {
+      deletedPlatformId = targetUser.youtubeId;
       // ************************************************
       // CollectorDB Target Streamer에서 제거
       const targetUserOnCollector = await this.youtubeTargetStreamersRepository.findOne(targetUser.youtubeId);
@@ -510,14 +535,14 @@ export class UsersService {
     }
 
     // 플랫폼 연결 정보 삭제 및 대표 프로필 사진|닉네임이 해당 플랫폼의 프로필사진|닉네임인 경우 함께 삭제
-    const result = await this.usersRepository.update(
+    await this.usersRepository.update(
       userId, {
         [`${platform}Id`]: undefined,
         profileImage: targetPlatformLogo === targetUser.profileImage ? undefined : targetUser.profileImage,
         nickName: targetPlatformNickname === targetUser.nickName ? undefined : targetUser.nickName,
       },
     );
-    return result.affected;
+    return deletedPlatformId;
   }
 
   // ****************** 트위치 *******************
@@ -570,10 +595,7 @@ export class UsersService {
     if (alreadyLinked) {
       // 이미 해당 afreeca 유저와 연동된 아이디가 있는 경우 "업데이트"
       this.afreecaRepository.update([
-        'afreecaId',
-        'refreshToken',
-        'afreecaStreamerName',
-        'logo',
+        'afreecaId', 'refreshToken', 'afreecaStreamerName', 'logo',
       ], data);
       return data;
     }

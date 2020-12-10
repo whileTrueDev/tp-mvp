@@ -146,14 +146,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async deletePlatformLink(
     @Req() req: LogedInExpressRequest, @Body('platform') platform: string,
-  ): Promise<number> {
+  ): Promise<string> {
     const { userId } = req.user;
-    const result = await this.usersService.disconnectLink(userId, platform);
+    const deletedPlatformId = await this.usersService.disconnectLink(userId, platform);
 
     // 링크 정보 (PlatformTwitch, PlatformYoutube PlatformAfreeca) 삭제
-    await this.usersService.deleteLinkUserPlatform(userId, platform);
+    await this.usersService.deleteLinkUserPlatform(deletedPlatformId, platform);
 
-    return result;
+    return deletedPlatformId;
   }
 
   // *********** Twitch ******************
