@@ -90,6 +90,8 @@ interface DialogProps{
   open: boolean;
   handleOpen: () => void;
   handleClose: () => void;
+  state: boolean;
+  handleState: () => void;
 }
 
 export default function MainDialog(props: DialogProps): JSX.Element {
@@ -97,7 +99,9 @@ export default function MainDialog(props: DialogProps): JSX.Element {
   const {
     handleOpen,
     handleClose,
+    handleState,
     open,
+    state,
   } = props;
 
   const history = useHistory();
@@ -107,11 +111,14 @@ export default function MainDialog(props: DialogProps): JSX.Element {
   };
 
   React.useEffect(() => {
-    setTimeout(() => {
-      handleOpen();
-    },
-    500);
-  }, []);
+    if (!state) {
+      setTimeout(() => {
+        handleOpen();
+        handleState();
+      },
+      500);
+    }
+  });
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>

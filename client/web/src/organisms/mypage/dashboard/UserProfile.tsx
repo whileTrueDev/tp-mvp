@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import {
   Avatar, Chip, CircularProgress, Paper, Typography,
@@ -33,6 +33,11 @@ export default function UserProfile(): JSX.Element {
   });
 
   const { open, handleOpen, handleClose } = useDialog();
+  const [state, checkFirtst] = useState<boolean>(false);
+
+  function handleState() {
+    checkFirtst(true);
+  }
 
   useEffect(() => {
     refetch();
@@ -107,6 +112,8 @@ export default function UserProfile(): JSX.Element {
         ) : (
           <MainDialog
             open={open}
+            state={state}
+            handleState={handleState}
             handleOpen={handleOpen}
             handleClose={handleClose}
           />
