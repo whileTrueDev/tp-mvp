@@ -10,8 +10,6 @@ import classnames from 'classnames';
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
-// shared dto and interface
-// import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 // atom svg icons
 import ChatIcon from '@material-ui/icons/Chat';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -31,6 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflow: 'auto',
     height: 'inherit',
   },
+  listItemContainer: { display: 'flex', flexDirection: 'row', alignItems: 'center' },
   listItem: {
     display: 'flex',
     flexDirection: 'row',
@@ -219,92 +218,106 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
   );
 
   const listItem = (stream: StreamsListItem, removed: boolean) => (
-    <StyledToolTip
-      // arrow
-      placement="top"
-      title={tooltipContents(stream)}
-      classes={{ tooltip: classes.noMaxWidth }}
+
+    <ListItem
+      key={stream.streamId + stream.platform}
+      button
+      className={classnames({
+        [classes.listItem]: !removed,
+        [classes.removedListItem]: removed,
+      })}
     >
-      <ListItem
-        key={stream.streamId + stream.platform}
-        button
-        className={classnames({
-          [classes.listItem]: !removed,
-          [classes.removedListItem]: removed,
-        })}
-      >
 
-        {removed ? (
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <Button
-              variant="contained"
-              className={classes.addButton}
-              onClick={() => handleStreamList(stream, false)}
-              color="primary"
-            >
-              재등록
-            </Button>
+      {removed ? (
+        <div className={classes.listItemContainer}>
+          <Button
+            variant="contained"
+            className={classes.addButton}
+            onClick={() => handleStreamList(stream, false)}
+            color="primary"
+          >
+            재등록
+          </Button>
 
-            <Typography className={classes.listItemText}>
-              {/* 날짜 표현 컴포넌트로 변경 */}
+          <StyledToolTip
+            placement="top"
+            title={tooltipContents(stream)}
+            classes={{ tooltip: classes.noMaxWidth }}
+          >
+            <div className={classes.listItemContainer}>
+              <Typography className={classes.listItemText}>
+                {/* 날짜 표현 컴포넌트로 변경 */}
 
-              {dateExpression({
-                createdAt: new Date(stream.startedAt),
-                compoName: 'analysys-calender',
-                streamAirtime: stream.airTime,
-              })}
-            </Typography>
+                {dateExpression({
+                  createdAt: new Date(stream.startedAt),
+                  compoName: 'analysys-calender',
+                  streamAirtime: stream.airTime,
+                })}
+              </Typography>
 
-            {!small && (
-            <Typography className={classes.listItemText}>
-              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
-            </Typography>
-            )}
+              {!small && (
+                <Typography className={classes.listItemText}>
+                  {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+                </Typography>
+              )}
 
-            {small && (
-            <Typography className={classes.listItemText}>
-              {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
-            </Typography>
-            )}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <IconButton
-              className={classes.closeIcon}
-              onClick={() => handleStreamList(stream)}
-            >
-              <ClearOutlinedIcon />
-            </IconButton>
+              {small && (
+                <Typography className={classes.listItemText}>
+                  {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
+                </Typography>
+              )}
 
-            <ListItemIcon>
-              {platformIcon(stream)}
-            </ListItemIcon>
+            </div>
 
-            <Typography className={classes.removedListItemText}>
-              {dateExpression({
-                createdAt: new Date(stream.startedAt),
-                compoName: 'analysys-calender',
-                streamAirtime: stream.airTime,
-              })}
-            </Typography>
+          </StyledToolTip>
+        </div>
+      ) : (
+        <div className={classes.listItemContainer}>
+          <IconButton
+            className={classes.closeIcon}
+            onClick={() => handleStreamList(stream)}
+          >
+            <ClearOutlinedIcon />
+          </IconButton>
 
-            {/* normal 옵션인 경우 */}
-            {!small && (
-            <Typography className={classes.listItemText}>
-              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
-            </Typography>
-            )}
-            {/* small 옵션인 경우 */}
-            {small && (
-            <Typography className={classes.listItemText}>
-              {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
-            </Typography>
-            )}
-          </div>
-        )}
+          <ListItemIcon>
+            {platformIcon(stream)}
+          </ListItemIcon>
 
-      </ListItem>
-    </StyledToolTip>
+          <StyledToolTip
+            placement="top"
+            title={tooltipContents(stream)}
+            classes={{ tooltip: classes.noMaxWidth }}
+          >
+            <div className={classes.listItemContainer}>
+              <Typography className={classes.removedListItemText}>
+                {dateExpression({
+                  createdAt: new Date(stream.startedAt),
+                  compoName: 'analysys-calender',
+                  streamAirtime: stream.airTime,
+                })}
+              </Typography>
+
+              {/* normal 옵션인 경우 */}
+              {!small && (
+              <Typography className={classes.listItemText}>
+                {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+              </Typography>
+              )}
+              {/* small 옵션인 경우 */}
+              {small && (
+              <Typography className={classes.listItemText}>
+                {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
+              </Typography>
+              )}
+            </div>
+
+          </StyledToolTip>
+        </div>
+      )}
+
+    </ListItem>
+
   );
 
   return (
