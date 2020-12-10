@@ -56,50 +56,50 @@ export default function UserProfile(): JSX.Element {
       <>
         <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
 
+        <div>
+          {/* 연동된 플랫폼 목록 */}
+          <div className={classes.flexBox}>
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/afreecaLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
+            />
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/twitchLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
+            />
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/youtubeLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
+            />
+          </div>
+          {/* 이름 */}
+          <div className={classes.flexBox}>
+            <Typography variant="h4" className={classes.bold}>
+              {`${profileRequestObject.data.nickName || profileRequestObject.data.userId}`}
+              <Typography className={classes.bold} component="span" variant="h6">&nbsp;님</Typography>
+            </Typography>
+          </div>
+
           <div>
-            {/* 연동된 플랫폼 목록 */}
-            <div className={classes.flexBox}>
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/afreecaLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
-              />
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/twitchLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
-              />
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/youtubeLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
-              />
-            </div>
-            {/* 이름 */}
-            <div className={classes.flexBox}>
-              <Typography variant="h4" className={classes.bold}>
-                {`${profileRequestObject.data.nickName || profileRequestObject.data.userId}`}
-                <Typography className={classes.bold} component="span" variant="h6">&nbsp;님</Typography>
-              </Typography>
-            </div>
-
-            <div>
-              {/* 이메일 */}
-              {profileRequestObject.data.mail && (
+            {/* 이메일 */}
+            {profileRequestObject.data.mail && (
               <Typography>{profileRequestObject.data.mail}</Typography>
-              )}
+            )}
 
-              {/* 요금제 */}
-              <div className={classnames(classes.flexBox, classes.secondSection)}>
-                <Typography className={classes.bold} variant="body1">요금제</Typography>
-                <Chip label="클로즈베타 테스터" size="small" color="primary" className={classes.userTier} />
-              </div>
+            {/* 요금제 */}
+            <div className={classnames(classes.flexBox, classes.secondSection)}>
+              <Typography className={classes.bold} variant="body1">요금제</Typography>
+              <Chip label="클로즈베타 테스터" size="small" color="primary" className={classes.userTier} />
+            </div>
 
             {/* 클로즈베타 처리 - 잠시 제거 */}
             {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
