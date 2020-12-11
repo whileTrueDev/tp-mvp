@@ -200,7 +200,7 @@ export default function AppBar(): JSX.Element {
                 <Button
                   component={Link}
                   to="/mypage/main"
-                  className={classnames(classes.link, { [classes.selected]: isActiveRoute('/mypage/main') })}
+                  className={classnames(classes.link, { [classes.selected]: isActiveRoute('/mypage') })}
                 >
                   <Typography className={classes.linkText}>마이페이지</Typography>
                 </Button>
