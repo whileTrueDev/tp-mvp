@@ -197,7 +197,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
             * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
           </Typography>
 
-          <Typography className={classes.mainBody}>
+          <Typography className={classes.mainBody} style={{ fontWeight: 'bold' }}>
             추세 분석을 위한 기간 설정
           </Typography>
 
