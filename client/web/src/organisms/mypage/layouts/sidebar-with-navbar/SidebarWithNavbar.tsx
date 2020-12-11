@@ -37,9 +37,9 @@ const useStyles = makeStyles((theme) => createStyles({
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
-  titleWrapper: { marginLeft: theme.spacing(2) },
+  titleWrapper: { marginLeft: theme.spacing(2), [theme.breakpoints.down('xs')]: { marginLeft: 0 } },
   title: { textDecoration: 'underline' },
-  menuButton: { marginRight: theme.spacing(4) },
+  menuButton: { marginRight: theme.spacing(4), [theme.breakpoints.down('xs')]: { marginRight: theme.spacing(2) } },
   hide: { display: 'none' },
   // **************************************
   // Drawer
@@ -273,7 +273,7 @@ export default function SidebarWithNavbar({
       </Hidden>
 
       {/* 모바일 사이드바 */}
-      {/* <Hidden smUp implementation="css">
+      <Hidden smUp>
         <Drawer
           container={window !== undefined ? () => window.document.body : undefined}
           variant="temporary"
@@ -284,7 +284,7 @@ export default function SidebarWithNavbar({
         >
           {drawerContents}
         </Drawer>
-      </Hidden> */}
+      </Hidden>
     </>
   );
 }
