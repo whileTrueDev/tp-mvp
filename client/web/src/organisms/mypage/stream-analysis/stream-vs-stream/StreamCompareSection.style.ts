@@ -7,10 +7,10 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     hegith: '292px',
     border: `solid 1px ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
-    paddingTop: '22.5px',
-    paddingBottom: '18.5px',
-    paddingRight: '0px',
-    marginRight: '42px',
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(3),
+    paddingRight: 0,
+    marginRight: theme.spacing(5),
   },
   bodyTitle: {
     color: theme.palette.text.secondary,
@@ -40,7 +40,7 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
   },
   alert: {
     borderRadius: '5px',
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(0),
     paddingTop: theme.spacing(1),
   },
   calendarAndListWrapper: {

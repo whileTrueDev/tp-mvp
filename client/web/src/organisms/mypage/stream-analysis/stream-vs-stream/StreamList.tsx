@@ -2,7 +2,7 @@ import React from 'react';
 // material - ui core components
 import {
   Typography, List, ListItem, ListItemIcon,
-  Tooltip, Avatar, Chip,
+  Tooltip, Chip,
 } from '@material-ui/core';
 // material - ui styles
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
@@ -55,7 +55,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   chip: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(4),
+  },
+  chipLable: {
+    marginBottom: 4, marginLeft: 4,
   },
   tooltip: {
     height: 'auto',
@@ -76,12 +79,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const StyledToolTip = withStyles((theme) => ({
-  arrow: {
-    fontSize: '22px',
-  },
   tooltip: {
     maxWidth: 'none',
     padding: theme.spacing(2),
+    color: theme.palette.text.primary,
+    fontWeight: 'bold',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
   },
 }))(Tooltip);
 
@@ -95,17 +99,15 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     <div className={classes.tooltip}>
       <Typography variant="h6">
         <div className={classes.tooltipIconWrapper}>
-          <Avatar style={{ marginBottom: '8px' }}>
-            {platformIcon(stream)}
-          </Avatar>
+          {platformIcon(stream)}
         </div>
         {stream.title}
       </Typography>
 
       <div className={classes.tooltipChipWrapper}>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 8 }}>
-            시청자수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 시청자수
           </Typography>
           <Chip
             icon={<PersonAddIcon />}
@@ -116,8 +118,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 12 }}>
-            채팅수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 채팅수
           </Typography>
           <Chip
             icon={<ChatIcon />}
@@ -128,8 +130,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4 }}>
-            웃음 발생 수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 웃음 발생 수
           </Typography>
           <Chip
             icon={<EmojiEmotionsIcon />}
@@ -174,7 +176,6 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     <List className={classes.listWrapper}>
       {dayStreamsList && dayStreamsList.map((stream) => (
         <StyledToolTip
-          arrow
           placement="top"
           title={tooltipContents(stream)}
         >
@@ -197,7 +198,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
             </Typography>
 
             <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
-              {stream.title.length > 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+              {stream.title.length > 30 ? `${stream.title.slice(0, 30)} ...` : stream.title}
             </Typography>
 
           </ListItem>

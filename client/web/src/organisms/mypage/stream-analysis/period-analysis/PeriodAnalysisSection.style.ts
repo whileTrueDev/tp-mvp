@@ -7,6 +7,8 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     marginTop: theme.spacing(2),
     fontWeight: 'bold',
   },
+  calendarWrapper: { marginTop: theme.spacing(2) },
+  categoryTitle: { marginTop: theme.spacing(10), fontWeight: 'bold' },
   anlaysisButton: {
     width: '136.2px',
     height: '51.1px',
