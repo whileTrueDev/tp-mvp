@@ -26,7 +26,6 @@ const options = {
   colors: ['#4b5ac7', '#929ef8'],
   enableTooltip: true,
   deterministic: false,
-  fontFamily: 'impact',
   fontSizes: sizeNum,
   fontStyle: 'normal',
   fontWeight: 'normal',

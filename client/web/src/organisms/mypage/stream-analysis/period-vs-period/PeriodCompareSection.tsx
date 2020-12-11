@@ -205,42 +205,26 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   return (
     <div className={classes.root}>
 
-      {!(error?.isError)
-          && (
-          <Loading
-            clickOpen={loading}
-          />
-          )}
+      {!(error && error.isError) && (<Loading clickOpen={loading} />)}
 
       <SectionTitle mainTitle="기간대 기간 분석" />
-      <Typography className={classes.infoText}>
+      <Typography color="textSecondary" variant="body2">
+        비교할 기간을 선택하면 기간 VS 기간의 방송에 대한 분석을 시작합니다.
+      </Typography>
+      <Typography color="textSecondary" variant="body2">
         * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
       </Typography>
-      <Typography className={classes.mainBody} style={{ fontWeight: 500 }}>
-        기간별 분석을 위한 기간을 설정해 주세요.
-      </Typography>
 
-      <Typography
-        className={classes.mainBody}
-        style={{ marginTop: '80px' }}
-      >
+      <Typography className={classes.mainBody}>
         기간 선택
       </Typography>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-        }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
         <Grid container direction="column" style={{ width: 'auto', marginRight: '32px' }}>
           <PeriodSelectBox
             period={basePeriod}
             TitleIcon={SelectVideoIcon}
-            iconProps={{
-              color: '#3a86ff',
-              paddingTop: '5px',
-            }}
+            iconProps={{ color: '#3a86ff', paddingTop: '5px' }}
             titleMessage="기준 기간 선택"
           />
 

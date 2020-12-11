@@ -180,17 +180,21 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   return (
     <Grid className={classes.root}>
       <Grid item>
-        {!(error?.isError) && (
+        {!(error && error.isError) && (
           <Loading clickOpen={loading} />
         )}
 
         <Grid container direction="column">
 
           <SectionTitle mainTitle="기간 추세 분석" />
-          <Typography className={classes.infoText}>
+          <Typography color="textSecondary" variant="body2">
+            특정 기간을 선택하면 해당 기간 내의 방송에 대한 분석을 시작합니다.
+          </Typography>
+          <Typography color="textSecondary" variant="body2">
             * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
           </Typography>
-          <Typography className={classes.mainBody}>
+
+          <Typography className={classes.mainBody} style={{ fontWeight: 'bold' }}>
             추세 분석을 위한 기간 설정
           </Typography>
 

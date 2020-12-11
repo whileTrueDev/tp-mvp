@@ -147,6 +147,8 @@ function HeaderLinks(): JSX.Element {
       <UserMenuPopover
         avatarSrc={(!profile.loading && profile.data && profile.data.profileImage)
           ? profile.data.profileImage : ''}
+        nickName={!profile.loading && profile.data && profile.data.nickName}
+        email={!profile.loading && profile.data && profile.data.mail}
         open={UserMenuOpen}
         anchorEl={UserMenuAnchorEl}
         onClose={handleClose}

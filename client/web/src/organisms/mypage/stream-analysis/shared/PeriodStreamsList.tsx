@@ -56,10 +56,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: '4px',
   },
   selectedListItem: {
-    fontFamily: 'AppleSDGothicNeo',
+
   },
   listItemText: {
-    fontFamily: 'AppleSDGothicNeo',
+
     color: theme.palette.text.secondary,
     textAlign: 'left',
     lineHeight: '2.06',
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(4),
   },
   removedListItemText: {
-    fontFamily: 'AppleSDGothicNeo',
+
     color: theme.palette.text.secondary,
     textAlign: 'left',
     lineHeight: '2.06',

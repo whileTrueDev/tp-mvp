@@ -7,15 +7,15 @@ import UserMetricsSection from '../../organisms/mypage/dashboard/UserMetricsSect
 export default function Dashboard(): JSX.Element {
   return (
     <>
-      <MypageSectionWrapper style={{ minHeight: 300 }}>
+      <MypageSectionWrapper>
         <UserProfile />
       </MypageSectionWrapper>
 
-      <MypageSectionWrapper style={{ paddingTop: 0 }}>
+      <MypageSectionWrapper>
         <UserMetricsSection />
       </MypageSectionWrapper>
 
-      <MypageSectionWrapper style={{ paddingTop: 0 }}>
+      <MypageSectionWrapper>
         <SimpleNoticeTable />
       </MypageSectionWrapper>
     </>

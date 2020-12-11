@@ -35,7 +35,9 @@ import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 export default function StreamCompareSection(
   props: StreamCompareSectionPropInterface,
 ): JSX.Element {
-  const { handleSubmit, loading, error } = props;
+  const {
+    handleSubmit, loading, error,
+  } = props;
   const subscribe = React.useContext(SubscribeContext);
   const classes = useStreamHeroStyles();
   const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>(
@@ -119,14 +121,14 @@ export default function StreamCompareSection(
   return (
     <div className={classes.root}>
 
-      {!(error?.isError) && (
+      {!(error && error.isError) && (
         <Loading clickOpen={loading} />
       )}
 
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <SectionTitle mainTitle="방송별 비교" />
-          <Typography className={classes.mainBody}>
+          <Typography variant="body2" color="textSecondary">
             두 방송을 선택하시면 방송 비교 분석을 시작합니다.
           </Typography>
         </Grid>

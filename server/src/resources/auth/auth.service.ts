@@ -30,7 +30,7 @@ export class AuthService {
   private createRefreshToken(userId: string, stayLogedIn: boolean): string {
     // refresh token은 자동로그인 동의시 14일, 자동로그인 미동의시 30분의 유효기간을 가진다.
     return this.jwtService.sign({ userId, refreshSelf: stayLogedIn }, {
-      expiresIn: stayLogedIn ? '14d' : '30m',
+      expiresIn: stayLogedIn ? '14d' : '60m',
     });
   }
 

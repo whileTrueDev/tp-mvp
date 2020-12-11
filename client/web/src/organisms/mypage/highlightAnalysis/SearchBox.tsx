@@ -27,17 +27,13 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(4),
     width: searchBoxWidth,
   },
-  arrowIcon: {
-    marginRight: theme.spacing(4),
-    fontWeight: 'bold',
-    fontSize: '80px',
-  },
+  arrowIcon: { marginRight: theme.spacing(4) },
   analysisWordWrapper: {
     display: 'flex',
     flexDirection: 'row',
   },
   analysisCaption: { paddingTop: theme.spacing(3), marginLeft: theme.spacing(3) },
-  quotesImg: { width: '22px', height: '22px' },
+  quotesImg: { width: theme.typography.body1.fontSize, height: theme.typography.body1.fontSize },
   analysisWord: { margin: theme.spacing(2) },
   popper: {
     display: 'flex',
@@ -157,20 +153,18 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
           className={classes.textField}
         />
 
-        <TrendingFlatIcon className={classes.arrowIcon} color="primary" />
+        <TrendingFlatIcon className={classes.arrowIcon} fontSize="large" color="primary" />
 
         {analysisWord ? (
           <Typography
-            variant="h4"
+            variant="body1"
             color="textSecondary"
             className={classes.analysisWordWrapper}
           >
             <img src="/images/analyticsPage/quotesLeft.png" alt="left qut" className={classes.quotesImg} />
-            <div className={classes.analysisWord}>
-              {`${analysisWord} `}
-            </div>
+            <div className={classes.analysisWord}>{`${analysisWord} `}</div>
             <img src="/images/analyticsPage/quotesRight.png" alt="right qut" className={classes.quotesImg} />
-            <Typography variant="h6" color="textSecondary" className={classes.analysisCaption} component="span">
+            <Typography variant="body1" color="textSecondary" className={classes.analysisCaption} component="span">
               단어에 대해 분석을 시작 합니다.
             </Typography>
           </Typography>

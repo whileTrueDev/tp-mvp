@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Tooltip } from '@material-ui/core';
+import kakaoChattingURL from '../../constants/kakao';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -8,30 +9,27 @@ const useStyles = makeStyles((theme) => ({
     position: 'fixed',
     bottom: 50,
     zIndex: 200,
-    [theme.breakpoints.down('sm')]: {
-      right: 0,
-      bottom: 0,
-    },
   },
   kakaoImg: {
     width: 50,
     height: 50,
     [theme.breakpoints.down('sm')]: {
-      width: 40,
-      height: 40,
+      width: 40, height: 40,
     },
   },
 }));
 
 function moveToTalk() {
-  window.open('https://www.google.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+  window.open(kakaoChattingURL, '_blank');
 }
 
 function KakaoTalk(): JSX.Element {
   const classes = useStyles();
   return (
     <Button className={classes.root} onClick={moveToTalk}>
-      <img src="/images/favicon/kakaoIcon.png" alt="kakao" className={classes.kakaoImg} />
+      <Tooltip title="카카오톡 채팅 문의하기" placement="top">
+        <img src="/images/favicon/kakaoIcon.png" alt="" className={classes.kakaoImg} />
+      </Tooltip>
     </Button>
   );
 }
