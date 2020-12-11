@@ -10,12 +10,10 @@ export interface UserMetrics {
   title: string;
 
   viewer: number;
-
   fan: number;
-
-  startedAt: string; // date string
-
+  startDate: Date;
+  endDate: Date;
   airTime: number;
-
   chatCount: number;
+  needAnalysis: boolean;
 }

@@ -214,7 +214,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       // loading: getStreamsLoading,
       // error: getStreamsError,
     }, excuteGetStreams] = useAxios<StreamDataType[]>({
-      url: '/stream-analysis/stream-list',
+      url: '/broadcast-info',
     }, { manual: true });
 
   /**

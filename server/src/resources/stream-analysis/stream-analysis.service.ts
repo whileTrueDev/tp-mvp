@@ -12,9 +12,6 @@ import * as dotenv from 'dotenv';
 import moment from 'moment';
 
 // shared dto , interfaces
-// import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
-import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
@@ -30,13 +27,10 @@ import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface'
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
-import { StreamsTest2Entity } from './entities/streamsTest2.entity';
-import { StreamSummaryTest2Entity } from './entities/streamSummaryTest2.entity';
 
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
-const compeleteAnalysisFlag = 0;
 
 const calculateStreamData = (streamData: StreamsInfo[]) => {
   const template = [
@@ -96,42 +90,7 @@ export class StreamAnalysisService {
       private readonly streamsRepository: Repository<StreamsEntity>,
     @InjectRepository(StreamSummaryEntity)
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
-      @InjectRepository(StreamsTest2Entity)
-      private readonly streamsTest2Repository: Repository<StreamsTest2Entity>,
-    @InjectRepository(StreamSummaryTest2Entity)
-      private readonly streamSummaryTest2Repository: Repository<StreamSummaryTest2Entity>,
   ) {}
-
-  /**
-   * 입력 받은 기간 내 분석이 끝난 방송 정보 리스트 조회 함수
-   * @param userId 로그인 한 유저 아이디 (요청자)
-   * @param startDate 시작 날짜
-   * @param endDate 종료 날짜
-   */
-  async findDayStreamList(
-    userId: string,
-    startDate: string, endDate: string,
-  ): Promise<StreamDataType[]> {
-    const momentStart = moment(startDate).format('YYYY-MM-DD HH:mm:ss');
-    const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
-
-    const TermStreamsData: StreamDataType[] = await this.streamsTest2Repository
-      .createQueryBuilder('streams')
-      .innerJoin(
-        StreamSummaryTest2Entity,
-        'streamSummary',
-        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
-      )
-      .select(['streams.*, streamSummary.smileCount as smileCount'])
-      .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.needAnalysis = :compeleteAnalysisFlag', { compeleteAnalysisFlag })
-      .andWhere('streams.startDate >= :startDate', { startDate: momentStart })
-      .andWhere('streams.startDate < :endDate', { endDate: momentEnd })
-      .orderBy('streams.startDate', 'ASC')
-      .execute();
-
-    return TermStreamsData;
-  }
 
   /**
    * 두 방송에 대한 정보를 조회하고 분석 결과를 생성
@@ -139,10 +98,10 @@ export class StreamAnalysisService {
    */
   async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
-      const streamInfoBase: StreamsInfo[] = await this.streamSummaryTest2Repository
+      const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
         .innerJoin(
-          StreamsTest2Entity,
+          StreamsEntity,
           'streams',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
@@ -155,10 +114,10 @@ export class StreamAnalysisService {
         });
 
       if (streams[1]) {
-        const streamInfoCompare: StreamsInfo[] = await this.streamSummaryTest2Repository
+        const streamInfoCompare: StreamsInfo[] = await this.streamSummaryRepository
           .createQueryBuilder('streamSummary')
           .innerJoin(
-            StreamsTest2Entity,
+            StreamsEntity,
             'streams',
             'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
           )
@@ -297,11 +256,15 @@ export class StreamAnalysisService {
     const calculatedArray: S3StreamData[] = [];
     const dataArray: S3StreamData[] = [];
 
-    /* input param 을 통해 S3 키 배열 생성 함수 정의 */
+    /**
+     * input param 을 통해 S3 키 배열 생성 함수 정의input param 을 통해 S3 키 배열 생성 함수 정의
+     * @param stream 
+     * SPRINT #3.3 S3 경로 변경에 따라 수정해야 할 부분
+     * /metric_json/<platform>/<creatorId>/<streamId>.json
+     */
     const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
-      const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
       const { platform } = stream;
-      const path = `metrics_json/${platform}/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
+      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}.json`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
