@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import {
   Avatar, Chip, CircularProgress, Paper, Typography,
