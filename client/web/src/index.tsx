@@ -61,6 +61,7 @@ function Index(): JSX.Element {
 
   // *******************************************
   // axios-hooks configuration
+  // 토큰 자동 새로고침을 위한 인터셉터 설정
   axios.interceptors.response.use(
     onResponseFulfilled,
     makeResponseRejectedHandler(handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd),
