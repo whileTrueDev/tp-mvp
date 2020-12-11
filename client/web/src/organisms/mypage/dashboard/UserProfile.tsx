@@ -33,11 +33,6 @@ export default function UserProfile(): JSX.Element {
   });
 
   const { open, handleOpen, handleClose } = useDialog();
-  const [state, checkFirtst] = useState<boolean>(false);
-
-  function handleState() {
-    checkFirtst(true);
-  }
 
   useEffect(() => {
     refetch();
@@ -118,8 +113,6 @@ export default function UserProfile(): JSX.Element {
       ) && (
       <MainDialog
         open={open}
-        state={state}
-        handleState={handleState}
         handleOpen={handleOpen}
         handleClose={handleClose}
       />

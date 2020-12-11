@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
@@ -98,8 +98,6 @@ interface DialogProps{
   open: boolean;
   handleOpen: () => void;
   handleClose: () => void;
-  state: boolean;
-  handleState: () => void;
 }
 
 export default function MainDialog(props: DialogProps): JSX.Element {
@@ -107,24 +105,25 @@ export default function MainDialog(props: DialogProps): JSX.Element {
   const {
     handleOpen,
     handleClose,
-    handleState,
     open,
-    state,
   } = props;
 
   const history = useHistory();
 
+  const [isFirst, checkIsFirtst] = useState<boolean>(false);
+  function handleIsFirstChange() {
+    checkIsFirtst(true);
+  }
+
+  // 채널 연동하러 가기 클릭
   const handleClick = () => {
     history.push('/mypage/my-office/settings');
   };
 
   React.useEffect(() => {
-    if (!state) {
-      setTimeout(() => {
-        handleOpen();
-        handleState();
-      },
-      500);
+    if (!isFirst) {
+      handleOpen();
+      handleIsFirstChange();
     }
   });
 
