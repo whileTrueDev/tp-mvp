@@ -161,6 +161,7 @@ export default function TruepointHighlight({
                   * */
                 }}
                 style={{ color: 'white', marginLeft: 20 }}
+                disabled
               >
                 편집점 내보내기
               </Button>

@@ -297,6 +297,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                   onChange={handleCheckbox}
                   name="srtCheckBox"
                   color="primary"
+                  disabled
                 />
               )}
               label="srt"
@@ -308,6 +309,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                   onChange={handleCheckbox}
                   name="txtCheckBox"
                   color="primary"
+                  disabled
                 />
               )}
               label="txt"
@@ -320,11 +322,12 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                   onChange={handleCheckbox}
                   name="csvCheckBox"
                   color="primary"
+                  disabled
                 />
               )}
               label="csv"
             />
-            <Button>
+            <Button disabled>
               편집점 내보내기
             </Button>
           </div>
