@@ -81,24 +81,29 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   newSeries.connect = false;
   newSeries.hidden = true; // 기본 그래프 설정.
 
-  // ****************************** chat count series ***************************
-  const viewerSeries = chart.series.push(new am4charts.LineSeries());
-  const viewerAxis = chart.yAxes.push(new am4charts.ValueAxis());
-  viewerAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
-  viewerSeries.yAxis = viewerAxis;
-  viewerSeries.dataFields.valueY = 'viewer';
-  viewerSeries.dataFields.dateX = 'date';
-  viewerSeries.stroke = am4core.color(graphColor.viewer); // red
-  if (viewerSeries.tooltip) {
-    viewerSeries.tooltip.getFillFromObject = false;
-    viewerSeries.tooltip.background.fill = am4core.color(graphColor.viewer);
-  }
+  // ****************************** avg viewer count series ***************************
+  /**
+   * 평균 시청자수 타임라인 레이블 임시 제거
+   * S3 metrics json 타임라인에 viewer 프로퍼티가 추가 될 때 까지
+   */
+
+  // const viewerSeries = chart.series.push(new am4charts.LineSeries());
+  // const viewerAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  // viewerAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
+  // viewerSeries.yAxis = viewerAxis;
+  // viewerSeries.dataFields.valueY = 'viewer';
+  // viewerSeries.dataFields.dateX = 'date';
+  // viewerSeries.stroke = am4core.color(graphColor.viewer); // red
+  // if (viewerSeries.tooltip) {
+  //   viewerSeries.tooltip.getFillFromObject = false;
+  //   viewerSeries.tooltip.background.fill = am4core.color(graphColor.viewer);
+  // }
   // viewerSeries.tooltip.label.fill = am4core.color(graphColor.viewer);
-  viewerSeries.name = '평균 시청자 수';
-  viewerSeries.strokeWidth = 2.5;
-  viewerSeries.tensionX = 0.8;
-  viewerSeries.tooltipText = '평균 시청자 수: [bold]{viewer}[/]';
-  viewerSeries.hidden = true; // 기본 그래프 설정.
+  // viewerSeries.name = '평균 시청자 수';
+  // viewerSeries.strokeWidth = 2.5;
+  // viewerSeries.tensionX = 0.8;
+  // viewerSeries.tooltipText = '평균 시청자 수: [bold]{viewer}[/]';
+  // viewerSeries.hidden = true; // 기본 그래프 설정.
 
   // ****************************** cursor ***************************
   // Make a panning cursor

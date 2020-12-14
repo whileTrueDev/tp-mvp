@@ -4,11 +4,14 @@ import { MYPAGE_MAIN_MIN_WIDTH } from '../../../assets/constants';
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 600,
+    height: 280,
     background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
     minWidth: MYPAGE_MAIN_MIN_WIDTH,
   },
   wraper: {
+    width: 968,
+    padding: 0,
+    margin: '0 auto',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -16,7 +19,7 @@ const styles = makeStyles((theme) => ({
     height: 'inherit',
   },
   main: {
-    margin: '20px 0px 20px 0px',
+    // margin: '20px 0px 20px 0px',
   },
   mainExcept: {
     margin: '20px 0px 20px 0px',
@@ -25,28 +28,28 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   mainTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 60,
     fontWeight: 900,
-    color: 'white',
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
     margin: 0,
   },
   mainContent: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 20,
     margin: 0,
-    color: 'white',
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
   },
   button: {
-    fontFamily: 'AppleSDGothicNeo',
-    color: 'white',
-    border: '1px solid white',
+
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    border: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
     borderRadius: 0,
     width: 150,
   },
   buttonLine: {
     animation: '$lineSpread 1.2s ease-in-out',
-    borderBottom: '1px solid white',
+    borderBottom: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
     width: 500,
   },
   logoEffect: {

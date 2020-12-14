@@ -15,7 +15,7 @@ import koLocale from 'date-fns/locale/ko';
 // axios
 import useAxios from 'axios-hooks';
 // styles
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // shared dtos , interfaces
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
@@ -28,95 +28,43 @@ import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // interfaces
 import { RangeSelectCaledarProps } from './StreamAnalysisShared.interface';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    display: 'flex',
-    flex: 0,
-    padding: theme.spacing(2),
-    justifyContent: 'center',
-    alignItem: 'center',
-    width: '340px',
-    backgroundColor: theme.palette.background.paper,
-  },
-  leftCircleBase: {
-    width: '50%',
-    backgroundColor: '#d7e7ff',
-  },
-  leftCircleCompare: {
-    width: '50%',
-    backgroundColor: '#d3d19d',
-  },
-  rigthCircleBase: {
-    background: `linear-gradient(to left,#d7e7ff 50%, ${theme.palette.background.paper} 50%)`,
-  },
-  rigthCircleCompare: {
-    background: `linear-gradient(to left,#d3d19d 50%, ${theme.palette.background.paper} 50%)`,
-  },
-  rangeDayBase: {
-    backgroundColor: '#d7e7ff',
-  },
-  rangeDayCompare: {
-    backgroundColor: '#d3d19d',
-  },
-  selectedDayBase: {
-    backgroundColor: '#3a86ff',
-  },
-  selectedDayCompare: {
-    backgroundColor: '#d3d19d',
-  },
-  hasStreamDayDotContainer: {
-    position: 'relative',
-  },
-  hasStreamDayDotBase: {
-    position: 'absolute',
-    height: 0,
-    width: 0,
-    border: '3px solid',
-    borderRadius: 5,
-    borderColor: '#3a86ff',
-    right: '44%',
-    transform: 'translateX(1px)',
-    top: '80%',
-    backGroundColor: '#3a86ff',
-  },
-  hasStreamDayDotCompare: {
-    position: 'absolute',
-    height: 0,
-    width: 0,
-    border: '3px solid',
-    borderRadius: 5,
-    borderColor: '#b1ae71',
-    right: '44%',
-    transform: 'translateX(1px)',
-    top: '80%',
-    backGroundColor: '#b1ae71',
-  },
-}));
+import useAllCalendarStyles from './RangeSelectCalendar.style';
 
 const reRequest = 3;
-
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base, targetRef, anchorEl, handleAnchorOpenWithRef, handleAnchorClose,
+    period, handlePeriod, base,
+    handleDialogOpen, removeFunc,
   } = props;
-  const classes = useStyles();
+  const classes = useAllCalendarStyles();
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
+
+  /* 달력 선택 관련 state */
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
 
+  /* 방송이 존재하는 날짜 date string 배열 */
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
 
+  /**
+   * date picker 오버라이딩 theme
+   * @param others truepoint theme context
+   */
   const DATE_THEME = (others: Theme) => ({
     ...others,
     overrides: {
       MuiPickersDay: {
         daySelected: {
-          backgroundColor: base ? '#3a86ff' : '#b1ae71',
+          backgroundColor: base ? '#d7e7ff' : '#d3d19d',
+          // backgroundColor: base ? '#3a86ff' : '#b1ae71',
+          '&:hover,select': {
+            backgroundColor: base ? '#d7e7ff' : '#d3d19d',
+            // backgroundColor: base ? '#3a86ff' : '#b1ae71',
+          },
         },
       },
       MuiPickersCalendar: {
@@ -169,9 +117,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   }, [auth.user, excuteGetStreams, enqueueSnackbar, currMonth]);
 
   React.useEffect(() => {
-    if (period.length > 1) {
+    if (period.length > 1 && period[0] && period[1]) {
       setPoint1(period[0]);
       setPoint2(period[1]);
+
+      /* 기간이 변경 되었을 경우 해당 기간의 중간날짜로 달력 포커싱 */
+      const avgDate = (period[0].getTime() + period[1].getTime()) / 2;
+      setCurrDate(new Date(avgDate));
     }
   }, [period]);
 
@@ -181,6 +133,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   //   setPoint2(null);
   // }, [auth.user]);
 
+  /**
+   * 13일 15시 = start => 13일 00시 00분, 13일 15시 = end => 13일 23시 59분
+   * @param prevDate 선택된 날짜 (달력의 날짜 YYYY-MM-DDT15:00:00)
+   * @param start 기간의 시작인지 여부
+   */
   const timeFormatter = (prevDate: MaterialUiPickersDate, start?: true | undefined): Date => {
     if (start && prevDate) {
       const formattedStartDate = new Date(prevDate);
@@ -219,6 +176,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       } else {
         handlePeriod(timeFormatter(newDate), timeFormatter(point1, true), base);
       }
+
+      // const avgDate = (point1.getTime() + newDate.getTime()) / 2;
+      // setCurrDate(new Date(avgDate));
     } else if (point1 !== null && point2 !== null) {
       setPoint1(null); setPoint2(null);
       setPoint1(newDate);
@@ -371,7 +331,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       <Box
         borderRadius={16}
         borderColor="#707070"
-        border={1}
+        border={removeFunc ? 1 : 'none'}
         className={classes.container}
       >
         <Grid container direction="column">
@@ -388,30 +348,28 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
                 disableToolbar
               />
             </ThemeProvider>
-
           </Grid>
 
-          <Chip
-            icon={<FormatListBulletedIcon style={{ color: 'white' }} />}
-            label="제외할 방송 선택"
-            clickable
-            style={{
-              width: '175px',
-              alignSelf: 'flex-end',
-              color: 'white',
-              backgroundColor: '#aaaaaa',
-            }}
-            onClick={(e): void => {
-              if (anchorEl) {
-                handleAnchorClose();
-              } else if (period[0] && period[1]) {
-                handleAnchorOpenWithRef(targetRef);
-              } else {
-                ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
-              }
-            }}
-          />
-
+          {removeFunc && (
+            <Chip
+              icon={<FormatListBulletedIcon style={{ color: 'white' }} />}
+              label="제외할 방송 선택"
+              clickable
+              style={{
+                width: '175px',
+                alignSelf: 'flex-end',
+                color: 'white',
+                backgroundColor: '#aaaaaa',
+              }}
+              onClick={() => {
+                if (period[0] && period[1] && handleDialogOpen) {
+                  handleDialogOpen();
+                } else {
+                  ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
+                }
+              }}
+            />
+          )}
         </Grid>
 
       </Box>

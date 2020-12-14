@@ -2,17 +2,15 @@ import React, {
   useEffect, useLayoutEffect, useRef, useState,
 } from 'react';
 import { Switch, Route } from 'react-router-dom';
-// material-ui components layout
 import routes from '../routes';
 // css
 import useLayoutStyles from './MypageLayout.style';
 // organisms
-import Navbar from '../../../organisms/mypage/layouts/navbar/Navbar';
-import Sidebar from '../../../organisms/mypage/layouts/sidebar/Sidebar';
 import AppBar from '../../../organisms/shared/Appbar';
 import PageSizeAlert from '../../../organisms/mypage/alertbar/PageSizeAlert';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import MypageLoading from './MypageLoading';
+import SidebarWithNavbar from '../../../organisms/mypage/layouts/sidebar-with-navbar/SidebarWithNavbar';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
@@ -39,8 +37,8 @@ const UserDashboard = (): JSX.Element => {
    */
   const auth = useAuthContext();
   const [loadingOpen, setLoadingOpen] = useState(!(!auth.loginLoading && auth.user.userId));
-  const maxTimeout = 2 * 1000; // 2초
   useLayoutEffect(() => {
+    const maxTimeout = 2 * 1000; // 2초
     if (!(!auth.loginLoading && auth.user.userId)) {
       setLoadingOpen(true);
     }
@@ -52,8 +50,18 @@ const UserDashboard = (): JSX.Element => {
       else window.location.href = '/login';
     }, maxTimeout);
     return () => clearTimeout(timer);
-  }, [maxTimeout, auth.accessToken, auth.loginLoading, auth.user.userId]);
+  }, [auth.accessToken, auth.loginLoading, auth.user.userId]);
   // *************************************************
+
+  // *************************************************
+  // 사이드바 오픈 스테이트
+  const [open, setOpen] = React.useState(true);
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
     <>
@@ -69,20 +77,16 @@ const UserDashboard = (): JSX.Element => {
 
       <div className={classes.wrapper}>
         {/* 마이페이지 상단 네비바 */}
-        <nav className={classes.appbarWrapper}>
-          <Navbar routes={routes} />
-        </nav>
+        <SidebarWithNavbar
+          routes={routes.filter((route) => !route.noTab)}
+          open={open}
+          handleOpen={handleDrawerOpen}
+          handleClose={handleDrawerClose}
+        />
 
-        {/* 메인패널과 사이드바를 포함한 영역 */}
-        <div className={classes.conatiner}>
-
-          {/* 마이페이지 좌측 사이드바 */}
-          <aside className={classes.sidebarWrapper}>
-            <Sidebar routes={routes.filter((r) => !r.noTab)} />
-          </aside>
-
-          {/* 마이페이지 메인 패널 */}
-          <main ref={mainPanel} className={classes.mainPanel}>
+        {/* 마이페이지 메인 패널 */}
+        <main ref={mainPanel} className={classes.mainPanel}>
+          <div className={classes.contents}>
             {(loadingOpen) ? (<MypageLoading />) : (
               <Switch>
                 {routes.map((route) => (
@@ -105,8 +109,8 @@ const UserDashboard = (): JSX.Element => {
                 ))}
               </Switch>
             )}
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
     </>
   );

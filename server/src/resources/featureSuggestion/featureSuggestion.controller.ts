@@ -24,11 +24,26 @@ export class FeatureSuggestionController {
   ) { }
 
   /**
-   * 기능제안 리스트 조회 라우터
+   * 기능제안 개별 글 조회 라우터
+   * @param id (optional) 조회할 개별글 번호. 파라미터 추가하지 않을 시 모든 글 목록을 반환합니다.
    */
   @Get()
-  async findAll(): Promise<FeatureSuggestionEntity[]> {
+  async findOne(
+    @Query('id') id: string,
+  ): Promise<FeatureSuggestionEntity | FeatureSuggestionEntity[]> {
+    if (id) {
+      return this.featureSuggestionService.findOne(id);
+    }
     return this.featureSuggestionService.findAll();
+  }
+
+  /**
+   * 기능제안 목록 조회 라우터 ( 글의 내용 / 댓글 내용은 포함하지 않는 순수 목록만 반환)
+   */
+  @Get('list')
+  async findAllList(): Promise<FeatureSuggestionEntity[]> {
+    console.error('hi from feature-suggestion / list');
+    return this.featureSuggestionService.findAllList();
   }
 
   /**

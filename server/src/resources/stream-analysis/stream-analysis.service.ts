@@ -262,7 +262,7 @@ export class StreamAnalysisService {
      * SPRINT #3.3 S3 경로 변경에 따라 수정해야 할 부분
      * /metric_json/<platform>/<creatorId>/<streamId>.json
      */
-    const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
+    const keyFunc = (stream: any) => new Promise<void>((resolveKeys, reject) => {
       const { platform } = stream;
       const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}.json`;
       const params = {
@@ -412,6 +412,13 @@ export class StreamAnalysisService {
       }
     });
 
+    const calculateAvgViewCount = (originArray: SearchEachS3StreamData[]) => {
+      if (originArray.length >= 1) {
+        return originArray.reduce((sum, element) => sum + element.viewer, 0) / originArray.length;
+      }
+      return 0;
+    };
+
     /* 리턴 데이터 포맷 설정 함수 정의 */
     const organizeData = () => new Promise<OrganizedData>(
       (resolveOrganize, rejectOrganize) => {
@@ -436,8 +443,11 @@ export class StreamAnalysisService {
               });
             });
             if (index === calculatedArray.length - 1) {
-              organizeArray.view_count = 1000; // 평균 시청자수 계산 로직 작성후 추후 추가
+              /**
+               * 평균 채팅 발생수, 시청자수 계산 로직
+               */
               organizeArray.chat_count = Math.round(organizeArray.chat_count / organizeArray.value.length);
+              organizeArray.view_count = calculateAvgViewCount(s3Request);
 
               resolveOrganize(organizeArray);
             }

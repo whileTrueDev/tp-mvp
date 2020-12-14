@@ -54,7 +54,7 @@ export default function StreamAnalysis(): JSX.Element {
       <MypageSectionWrapper>
         <Grid container direction="column">
           {/* Analysis Section */}
-          <Paper elevation={0} className={classes.analysisSectionPaper}>
+          <Paper className={classes.analysisSectionPaper}>
             <StreamCompareSection
               handleSubmit={handleSubmit}
               loading={loading}
@@ -66,7 +66,7 @@ export default function StreamAnalysis(): JSX.Element {
 
           {/* Graph Section */}
           {open && (
-            <Paper elevation={0} className={classes.graphSectionPaper}>
+            <Paper className={classes.graphSectionPaper}>
               <StreamMetrics open={open} metricData={data} />
             </Paper>
           )}

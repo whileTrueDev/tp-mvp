@@ -13,15 +13,12 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { CheckBoxGroupProps } from './StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    marginTop: theme.spacing(4),
-  },
   formGroup: {
     flexDirection: 'row',
     justifyContent: 'left',
   },
   formLabel: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: '20px',
     fontWeight: 600,
     lineHeight: 1,
@@ -29,13 +26,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     color: theme.palette.text.secondary,
     marginRight: theme.spacing(7),
   },
-  checkBox: {
-    color: '#3b86ff',
-  },
-  checkBoxIcons: {
-    fontSize: '30px',
-    color: '#3b86ff',
-  },
+  checkBoxIcons: { color: '#3b86ff' },
 }));
 
 export default function CheckBoxGroup(
@@ -47,7 +38,7 @@ export default function CheckBoxGroup(
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div>
       <FormControl component="fieldset">
         <FormGroup className={classes.formGroup}>
           <FormControlLabel
@@ -58,7 +49,6 @@ export default function CheckBoxGroup(
                 name="viewer"
                 checkedIcon={<CheckBoxIcon className={classes.checkBoxIcons} />}
                 icon={<CheckBoxOutlineBlankIcon className={classes.checkBoxIcons} />}
-                className={classes.checkBox}
               />
             )}
             label={(
@@ -76,7 +66,6 @@ export default function CheckBoxGroup(
                 size="medium"
                 checkedIcon={<CheckBoxIcon className={classes.checkBoxIcons} />}
                 icon={<CheckBoxOutlineBlankIcon className={classes.checkBoxIcons} />}
-                className={classes.checkBox}
               />
             )}
             style={{ fontSize: '30px' }}
@@ -94,7 +83,6 @@ export default function CheckBoxGroup(
                 name="smile"
                 checkedIcon={<CheckBoxIcon className={classes.checkBoxIcons} />}
                 icon={<CheckBoxOutlineBlankIcon className={classes.checkBoxIcons} />}
-                className={classes.checkBox}
               />
             )}
             label={(

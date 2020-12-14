@@ -2,7 +2,9 @@ import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Chip } from '@material-ui/core';
+import {
+  Typography, Chip, CircularProgress, Paper,
+} from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
@@ -34,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-end',
     alignContent: 'flex-end',
   },
+  detailLoading: {
+    height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column',
+  },
   tableContainer: { marginTop: theme.spacing(1) },
 }));
 
@@ -50,7 +55,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
   }
 
   function handleFeatureClick(num: number): void {
-    window.location.replace(`/feature-suggestion/read/${num}`);
+    history.push(`/feature-suggestion/read/${num}`);
   }
   function handleWriteClick(): void {
     history.push('/feature-suggestion/write');
@@ -61,15 +66,17 @@ export default function FeatureSuggestionPage(): JSX.Element {
     setSelectedCategory('전체');
   }
 
+  // ******************************************************************
   // 데이터 요청
-  const [{ loading, data }, featureRefetch] = useAxios<FeatureSuggestion[]>({
-    url: '/feature-suggestion', method: 'GET',
+  const [{ loading, data: featureListData }, featureListRefetch] = useAxios<Omit<FeatureSuggestion, 'content' | 'replies'>[]>({
+    url: '/feature-suggestion/list', method: 'GET',
   });
 
+  // ******************************************************************
   // 기능제아 데이터 요청 (글쓰기 -> 목록으로 돌아와도 새로운 기능제안을 재 요청하지 않는 현상을 수정하기 위해.)
   useEffect(() => {
-    featureRefetch();
-  }, [featureRefetch]);
+    featureListRefetch();
+  }, [featureListRefetch]);
 
   // 페이지네이션
   const [page, setPage] = React.useState(0);
@@ -88,18 +95,23 @@ export default function FeatureSuggestionPage(): JSX.Element {
           <Typography variant="h4">기능제안</Typography>
 
           {/* 기능제안 개별 보기 */}
-          {selectedSuggestionId && !loading && data && (
+          {selectedSuggestionId && loading && (
+            <Paper elevation={0} className={classes.detailLoading}>
+              <CircularProgress />
+            </Paper>
+          )}
+          {selectedSuggestionId && !loading && featureListData && (
             <div className={classes.contents}>
               <FeatureDetail
                 selectedSuggestionId={selectedSuggestionId}
-                data={data
+                data={featureListData
                   .sort((row1, row2) => new Date(row2.createdAt).getTime()
                     - new Date(row1.createdAt).getTime())
                   .filter((row) => (selectedCategory !== '전체'
                     ? row.category === selectedCategory : row))}
                 onOtherFeatureClick={handleFeatureClick}
                 onBackClick={handleResetFeatureSelect}
-                refetch={featureRefetch}
+                featureListRefetch={featureListRefetch}
               />
             </div>
           )}
@@ -108,9 +120,9 @@ export default function FeatureSuggestionPage(): JSX.Element {
           {!selectedSuggestionId && (
           <div className={classes.contents}>
             <FilterCategoryButtonGroup
-              categories={!loading && data
+              categories={!loading && featureListData
                 ? Array
-                  .from(new Set(data.map((d) => d.category)))
+                  .from(new Set(featureListData.map((d) => d.category)))
                   .sort()
                 : []}
               onChange={handleCategorySelect}
@@ -137,8 +149,8 @@ export default function FeatureSuggestionPage(): JSX.Element {
           <div className={classes.tableContainer}>
             <FeatureTable
               isLoading={loading}
-              metrics={!loading && data
-                ? data
+              metrics={!loading && featureListData
+                ? featureListData
                   .sort((row1, row2) => new Date(row2.createdAt).getTime()
                           - new Date(row1.createdAt).getTime())
                   .filter((row) => (selectedCategory !== '전체'
@@ -150,6 +162,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
               handlePage={setPage}
               handlePageSize={setPageSize}
             />
+
           </div>
         </div>
       </section>

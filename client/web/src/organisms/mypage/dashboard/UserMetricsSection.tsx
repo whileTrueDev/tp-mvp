@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   columnFlexBox: {
     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
   },
-  cardBase: { minHeight: 120 },
+  cardBase: { minHeight: 135 },
   card: {
     cursor: 'pointer',
     transition: '0.1s linear all',
@@ -192,6 +192,7 @@ export default function UserMetricsSection(): JSX.Element {
               <Card
                 key={card.name}
                 className={classnames({
+                  [classes.cardBase]: true,
                   [classes.card]: selectedCard !== card.name,
                   [classes.selected]: selectedCard === card.name,
                 })}

@@ -8,9 +8,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Paper from '@material-ui/core/Paper';
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import shortid from 'shortid';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import MetricTitle from '../../shared/sub/MetricTitle';
 import MetricsTable from '../../shared/sub/MetricsTable';
+import HighlightExport from '../../shared/sub/HighlightExport';
 import { initialPoint } from './TruepointHighlight';
+import ScorePicker from './ScorePicker';
 import Chart from './Chart';
 
 const styles = makeStyles((theme) => ({
@@ -22,7 +25,7 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     fontSize: 20,
-    fontFamily: 'AppleSDGothicNeo',
+
     fontWeight: 600,
   },
   contentRight: {
@@ -45,22 +48,27 @@ const styles = makeStyles((theme) => ({
   },
   selectedCategoryButton: {
     boxShadow: theme.shadows[0],
-    backgroundColor: theme.palette.action.selected,
+    backgroundColor: theme.palette.primary.main,
   },
   categoryButton: {
     boxShadow: theme.shadows[3],
     backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.secondary,
     '&:hover': {
       transform: 'scale(1.04)',
       boxShadow: theme.shadows[5],
     },
   },
-  selectedButtonTitle: { fontWeight: 'bold' },
+  selectedButtonTitle: {
+    color: theme.palette.primary.contrastText,
+    fontWeight: 'bold',
+  },
 }));
 
 interface MetricsAccordianProps {
   categories: CategoryGetRequest[];
   highlightData: any;
+  selectedStream: StreamDataType|null;
 }
 type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'question'
 
@@ -68,6 +76,7 @@ export default function MetricsAccordian(
   {
     highlightData,
     categories,
+    selectedStream,
   }: MetricsAccordianProps,
 ): JSX.Element {
   const classes = styles();
@@ -80,6 +89,25 @@ export default function MetricsAccordian(
   const [page3, setPage3] = React.useState(0);
   const [pageSize3, setPageSize3] = React.useState(5);
   const [point3, setPoint3] = React.useState(initialPoint);
+
+  const [chatPicked90, setChatPicked90] = React.useState(true);
+  const [smilePicked90, setSmilePicked90] = React.useState(true);
+  const [categoryPicked90, setCategoryPicked90] = React.useState(true);
+
+  // 상위 10% 편집점 데이터
+  const chatHightlight90 = highlightData.chat_points_90.map((atPoint: any) => ({
+    ...highlightData.chat_points[atPoint],
+  }));
+  const smileHightlight90 = highlightData.smile_points_90.map((atPoint: any) => ({
+    ...highlightData.smile_points[atPoint],
+  }));
+
+  function selectCategory90(selected: string): any {
+    const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any) => ({
+      ...highlightData[`${selected}_points`][atPoint],
+    }));
+    return categoryHightlight90;
+  }
 
   const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
 
@@ -101,12 +129,13 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="채팅 편집점"
               iconSrc="/images/analyticsPage/logo_chat.svg"
-              pointNumber={highlightData.chat_points.length}
+              pointNumber={chatPicked90 ? highlightData.chat_points_90.length : highlightData.chat_points.length}
             />
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
+                <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
                 <Chart
-                  data={highlightData.chat_points}
+                  data={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
                   chartType="chat"
                   highlight={point}
                   handleClick={setPoint}
@@ -116,7 +145,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={highlightData.chat_points}
+                  metrics={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
                   handleClick={setPoint}
                   row={point}
                   page={page}
@@ -126,17 +155,10 @@ export default function MetricsAccordian(
                   type="채팅 기반 편집점"
                 />
                 <div className={classes.buttonWraper}>
-                  <Button
-                    onClick={() => {
-                      /**
-                      * @hwasurr 2020.10.13 eslint error 처리 도중 처리
-                      * 빈 화살표 함수 => 이후 처리 바람
-                      * */
-                    }}
-                    style={{ color: 'white' }}
-                  >
-                    편집점 내보내기
-                  </Button>
+                  <HighlightExport
+                    selectedStream={selectedStream}
+                    exportCategory="chat"
+                  />
                 </div>
               </Grid>
             </Grid>
@@ -155,12 +177,13 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="웃음 편집점"
               iconSrc="/images/analyticsPage/logo_smile.svg"
-              pointNumber={highlightData.smile_points.length}
+              pointNumber={smilePicked90 ? highlightData.smile_points_90.length : highlightData.smile_points.length}
             />
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
+                <ScorePicker picked90={smilePicked90} setPicked90={setSmilePicked90} />
                 <Chart
-                  data={highlightData.smile_points}
+                  data={smilePicked90 ? smileHightlight90 : highlightData.smile_points}
                   chartType="smile"
                   highlight={point2}
                   handleClick={setPoint2}
@@ -170,7 +193,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={highlightData.smile_points}
+                  metrics={smilePicked90 ? smileHightlight90 : highlightData.smile_points}
                   handleClick={setPoint2}
                   row={point2}
                   page={page2}
@@ -180,17 +203,10 @@ export default function MetricsAccordian(
                   type="웃음 발생 수 기반 편집점"
                 />
                 <div className={classes.buttonWraper}>
-                  <Button
-                    onClick={() => {
-                      /**
-                      * @hwasurr 2020.10.13 eslint error 처리 도중 처리
-                      * 빈 화살표 함수 => 이후 처리 바람
-                      * */
-                    }}
-                    style={{ color: 'white' }}
-                  >
-                    편집점 내보내기
-                  </Button>
+                  <HighlightExport
+                    selectedStream={selectedStream}
+                    exportCategory="smile"
+                  />
                 </div>
               </Grid>
             </Grid>
@@ -209,7 +225,11 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="카테고리 편집점"
               iconSrc="/images/analyticsPage/logo_search.svg"
-              pointNumber={highlightData[`${selectedCategory.category}_points`].length}
+              pointNumber={
+                categoryPicked90
+                  ? highlightData[`${selectedCategory.category}_points_90`].length
+                  : highlightData[`${selectedCategory.category}_points`].length
+}
             />
             <div style={{
               display: 'inline-flex', flexDirection: 'row', alignItems: 'center', height: 80,
@@ -227,8 +247,6 @@ export default function MetricsAccordian(
                   key={shortid.generate()}
                 >
                   <Typography
-                    variant="body1"
-                    color="textSecondary"
                     className={category.categoryId === selectedCategory.categoryId
                       ? classes.selectedButtonTitle : undefined}
                   >
@@ -237,10 +255,13 @@ export default function MetricsAccordian(
                 </Button>
               ))}
             </div>
+            <ScorePicker picked90={categoryPicked90} setPicked90={setCategoryPicked90} />
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
                 <Chart
-                  data={highlightData[`${selectedCategory.category}_points`]}
+                  data={categoryPicked90
+                    ? selectCategory90(selectedCategory.category)
+                    : highlightData[`${selectedCategory.category}_points`]}
                   chartType={selectedCategory.category as MetricsType}
                   highlight={point3}
                   handleClick={setPoint3}
@@ -250,7 +271,9 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={highlightData[`${selectedCategory.category}_points`]}
+                  metrics={categoryPicked90
+                    ? selectCategory90(selectedCategory.category)
+                    : highlightData[`${selectedCategory.category}_points`]}
                   handleClick={setPoint3}
                   row={point3}
                   page={page3}
@@ -260,18 +283,10 @@ export default function MetricsAccordian(
                   type="카테고리 기반 편집점"
                 />
                 <div className={classes.buttonWraper}>
-                  <Button
-                    onClick={() => {
-                      /**
-                       * @hwasurr 2020.10.13 eslint error 처리 도중 처리
-                       * 빈 화살표 함수 => 이후 처리 바람
-                       * */
-                    }}
-                    style={{ color: 'white' }}
-                    disabled
-                  >
-                    편집점 내보내기
-                  </Button>
+                  <HighlightExport
+                    selectedStream={selectedStream}
+                    exportCategory={selectedCategory.category}
+                  />
                 </div>
               </Grid>
             </Grid>

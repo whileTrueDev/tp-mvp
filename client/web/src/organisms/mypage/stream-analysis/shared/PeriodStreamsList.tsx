@@ -3,15 +3,13 @@ import moment from 'moment';
 // material-ui core components
 import {
   Typography, List, ListItem, IconButton, ListItemIcon, Button,
-  Tooltip, Chip, Avatar,
+  Tooltip, Chip,
 } from '@material-ui/core';
 import classnames from 'classnames';
 //  styles
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 // material-ui icons
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
-// shared dto and interface
-// import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // atom svg icons
 import ChatIcon from '@material-ui/icons/Chat';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
@@ -27,16 +25,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
     padding: 0,
-    maxHeight: '200px',
+    // maxHeight: '250px',
     overflow: 'auto',
+    height: 'inherit',
   },
+  listItemContainer: { display: 'flex', flexDirection: 'row', alignItems: 'center' },
   listItem: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginTop: theme.spacing(1),
     width: '100%',
-    height: 'auto',
+    height: 50,
     backgroundColor: theme.palette.primary.light,
     padding: '0px',
     borderRadius: '4px',
@@ -45,18 +45,21 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   removedListItem: {
-    marginTop: '3px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: theme.spacing(1),
     width: '100%',
-    height: '48px',
+    height: 50,
     backgroundColor: theme.palette.background.paper,
     padding: '0px',
     borderRadius: '4px',
   },
   selectedListItem: {
-    fontFamily: 'AppleSDGothicNeo',
+
   },
   listItemText: {
-    fontFamily: 'AppleSDGothicNeo',
+
     color: theme.palette.text.secondary,
     textAlign: 'left',
     lineHeight: '2.06',
@@ -65,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(4),
   },
   removedListItemText: {
-    fontFamily: 'AppleSDGothicNeo',
+
     color: theme.palette.text.secondary,
     textAlign: 'left',
     lineHeight: '2.06',
@@ -75,15 +78,20 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: theme.palette.error,
+      color: 'red',
+      transform: 'scale(1.1)',
     },
+    fontWeight: 'bold',
+    marginRight: 2,
   },
   addButton: {
     backgroundColor: '#3a86ff',
     color: theme.palette.primary.contrastText,
-    marginRight: theme.spacing(4),
+    marginRight: theme.spacing(3),
+    marginLeft: theme.spacing(1),
     '&:hover,select': {
-      color: theme.palette.primary.dark,
+      transform: 'scale(1.05)',
+      boxShadow: theme.shadows[10],
     },
   },
   noMaxWidth: {
@@ -95,7 +103,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   chip: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(4),
+  },
+  chipLable: {
+    marginBottom: 4, marginLeft: 4,
   },
   tooltip: {
     height: 'auto',
@@ -103,7 +114,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     maxWidth: 400,
   },
   tooltipIconWrapper: {
-    display: 'inline-flex', marginRight: '8px', paddingTop: '4px', flexDirection: 'row',
+    display: 'inline-flex',
+    marginRight: '8px',
+    // paddingTop: '8px',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
   },
   tooltipChipWrapper: {
     display: 'flex',
@@ -116,12 +131,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const StyledToolTip = withStyles((theme) => ({
-  arrow: {
-    fontSize: '22px',
-  },
   tooltip: {
     maxWidth: 'none',
     padding: theme.spacing(2),
+    color: theme.palette.text.primary,
+    fontWeight: 'bold',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
   },
 }))(Tooltip);
 
@@ -154,17 +170,15 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     <div className={classes.tooltip}>
       <Typography variant="h6">
         <div className={classes.tooltipIconWrapper}>
-          <Avatar style={{ marginBottom: '8px' }}>
-            {platformIcon(stream)}
-          </Avatar>
+          {platformIcon(stream)}
         </div>
         {stream.title}
       </Typography>
 
       <div className={classes.tooltipChipWrapper}>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 8 }}>
-            시청자수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 시청자수
           </Typography>
           <Chip
             icon={<PersonAddIcon />}
@@ -175,8 +189,8 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 12 }}>
-            채팅수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 채팅수
           </Typography>
           <Chip
             icon={<ChatIcon />}
@@ -187,8 +201,8 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4 }}>
-            웃음 발생 수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 웃음 발생 수
           </Typography>
           <Chip
             icon={<EmojiEmotionsIcon />}
@@ -207,88 +221,115 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
   );
 
   const listItem = (stream: StreamsListItem, removed: boolean) => (
+
     <ListItem
-      key={stream.streamId}
+      key={stream.streamId + stream.platform}
       button
       className={classnames({
         [classes.listItem]: !removed,
         [classes.removedListItem]: removed,
       })}
     >
-      <StyledToolTip
-        arrow
-        placement="top"
-        title={tooltipContents(stream)}
-        classes={{ tooltip: classes.noMaxWidth }}
-      >
 
-        {removed ? (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Button
-              variant="contained"
-              className={classes.addButton}
-              onClick={() => handleStreamList(stream, false)}
-            >
-              재등록
-            </Button>
+      {removed ? (
+        <div className={classes.listItemContainer}>
+          <Button
+            variant="contained"
+            className={classes.addButton}
+            onClick={() => handleStreamList(stream, false)}
+            color="primary"
+          >
+            재등록
+          </Button>
 
-            <Typography className={classes.listItemText}>
-              {/* 날짜 표현 컴포넌트로 변경 */}
+          <StyledToolTip
+            placement="top"
+            title={tooltipContents(stream)}
+            classes={{ tooltip: classes.noMaxWidth }}
+          >
+            <div className={classes.listItemContainer}>
+              <Typography className={classes.listItemText}>
+                {/* 날짜 표현 컴포넌트로 변경 */}
 
-              {dateExpression({
-                createdAt: new Date(stream.startDate),
-                compoName: 'analysys-calender',
-                streamAirtime: stream.airTime,
-              })}
-            </Typography>
+                {dateExpression({
+                  createdAt: new Date(stream.startDate),
+                  compoName: 'analysys-calender',
+                  streamAirtime: stream.airTime,
+                })}
+              </Typography>
 
-            {!small && (
-            <Typography className={classes.listItemText}>
-              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
-            </Typography>
-            )}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <IconButton
-              className={classes.closeIcon}
-              onClick={() => handleStreamList(stream)}
-            >
-              <ClearOutlinedIcon />
-            </IconButton>
+              {!small && (
+                <Typography className={classes.listItemText}>
+                  {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+                </Typography>
+              )}
 
-            <ListItemIcon>
-              {platformIcon(stream)}
-            </ListItemIcon>
+              {small && (
+                <Typography className={classes.listItemText}>
+                  {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
+                </Typography>
+              )}
 
-            <Typography className={classes.removedListItemText}>
-              {dateExpression({
-                createdAt: new Date(stream.startDate),
-                compoName: 'analysys-calender',
-                streamAirtime: stream.airTime,
-              })}
-            </Typography>
+            </div>
 
-            {!small && (
-            <Typography className={classes.listItemText}>
-              {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
-            </Typography>
-            )}
-          </div>
-        )}
+          </StyledToolTip>
+        </div>
+      ) : (
+        <div className={classes.listItemContainer}>
+          <IconButton
+            className={classes.closeIcon}
+            onClick={() => handleStreamList(stream)}
+          >
+            <ClearOutlinedIcon />
+          </IconButton>
 
-      </StyledToolTip>
+          <ListItemIcon>
+            {platformIcon(stream)}
+          </ListItemIcon>
+
+          <StyledToolTip
+            placement="top"
+            title={tooltipContents(stream)}
+            classes={{ tooltip: classes.noMaxWidth }}
+          >
+            <div className={classes.listItemContainer}>
+              <Typography className={classes.removedListItemText}>
+                {dateExpression({
+                  createdAt: new Date(stream.startDate),
+                  compoName: 'analysys-calender',
+                  streamAirtime: stream.airTime,
+                })}
+              </Typography>
+
+              {/* normal 옵션인 경우 */}
+              {!small && (
+              <Typography className={classes.listItemText}>
+                {stream.title.length >= 15 ? `${stream.title.slice(0, 15)} ...` : stream.title}
+              </Typography>
+              )}
+              {/* small 옵션인 경우 */}
+              {small && (
+              <Typography className={classes.listItemText}>
+                {stream.title.length >= 7 ? `${stream.title.slice(0, 8)} ...` : stream.title}
+              </Typography>
+              )}
+            </div>
+
+          </StyledToolTip>
+        </div>
+      )}
 
     </ListItem>
+
   );
 
   return (
     <List className={classes.listWrapper}>
-      {selectedDate && selectedStreams
+      {selectedDate && selectedStreams.length > 0
         && selectedStreams
           .filter((stream) => moment(stream.startDate).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
           .map((stream) => listItem(stream, stream.isRemoved))}
-      {!selectedDate && selectedStreams && selectedStreams
+      {!selectedDate && selectedStreams.length > 0 && selectedStreams
         .map((stream) => listItem(stream, stream.isRemoved))}
     </List>
   );

@@ -9,7 +9,7 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TwitchStrategy } from './strategies/twitch.strategy';
 import { YoutubeStrategy } from './strategies/youtube.strategy';
-import { AfreecaPreLinker } from './strategies/afreeca.linker';
+import { AfreecaLinker } from './strategies/afreeca.linker';
 
 @Module({
   imports: [
@@ -21,9 +21,9 @@ import { AfreecaPreLinker } from './strategies/afreeca.linker';
   ],
   providers: [
     AuthService, LocalStrategy,
-    JwtStrategy, TwitchStrategy, YoutubeStrategy, AfreecaPreLinker,
+    JwtStrategy, TwitchStrategy, YoutubeStrategy, AfreecaLinker,
   ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, AfreecaLinker],
 })
 export class AuthModule {}

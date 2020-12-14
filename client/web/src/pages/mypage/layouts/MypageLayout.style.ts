@@ -1,6 +1,6 @@
 import { Theme, makeStyles } from '@material-ui/core/styles';
 import {
-  COMMON_APP_BAR_HEIGHT, MYPAGE_APP_BAR_HEIGHT,
+  MYPAGE_APP_BAR_HEIGHT,
   MYPAGE_MAIN_MAX_WIDTH, MYPAGE_MAIN_MIN_HEIGHT,
   MYPAGE_MAIN_MIN_WIDTH, SIDE_BAR_WIDTH,
 } from '../../../assets/constants';
@@ -8,17 +8,10 @@ import {
 const useLayoutStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     position: 'sticky',
-    minHeight: `calc(100vh - ${COMMON_APP_BAR_HEIGHT}px)`,
-    background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-  },
-  conatiner: {
-    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
-    minWidth: MYPAGE_MAIN_MIN_WIDTH,
-    minHeight: MYPAGE_MAIN_MIN_HEIGHT,
-    margin: '0 auto',
     display: 'flex',
-    boxShadow: theme.shadows[4],
-    backgroundColor: theme.palette.background.default,
+    minHeight: MYPAGE_MAIN_MIN_HEIGHT,
+    minWidth: MYPAGE_MAIN_MIN_WIDTH,
+    background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   sidebarWrapper: {
     position: 'fixed',
@@ -28,23 +21,19 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     borderRight: `1px solid ${theme.palette.divider}`,
     overflow: 'hidden',
-    '&:hover': {
-      overflowY: 'auto',
-    },
+    '&:hover': { overflowY: 'auto' },
     zIndex: theme.zIndex.drawer,
   },
-  appbarWrapper: {
-    height: MYPAGE_APP_BAR_HEIGHT,
-    width: '100%',
-    position: 'fixed',
-    zIndex: 9999,
-  },
   mainPanel: {
-    marginLeft: 230,
     marginTop: MYPAGE_APP_BAR_HEIGHT,
-    width: '100%',
+    flexGrow: 1,
     overflow: 'auto',
     backgroundColor: theme.palette.background.default,
+  },
+  contents: {
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    height: '100%',
+    // margin: '0 auto',
   },
 }));
 
