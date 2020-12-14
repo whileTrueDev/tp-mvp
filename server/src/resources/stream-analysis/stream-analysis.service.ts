@@ -301,7 +301,7 @@ export class StreamAnalysisService {
     const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
       const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
       const { platform } = stream;
-      const path = `metrics_json/${platform}/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
+      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
