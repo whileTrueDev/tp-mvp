@@ -8,7 +8,7 @@ import {
 // axios
 import useAxios from 'axios-hooks';
 // shared dto and interface
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // styles
@@ -88,10 +88,9 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   };
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [,
-    excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-      url: '/stream-analysis/stream-list',
-    }, { manual: true });
+  const [, excuteGetStreams] = useAxios<StreamDataType[]>({
+    url: '/broadcast-info',
+  }, { manual: true });
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
@@ -157,9 +156,10 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       .filter((stream) => !stream.isRemoved)
       .map((dayStreamInfo) => ({
         creatorId: dayStreamInfo.creatorId,
-        startedAt: (new Date(dayStreamInfo.startedAt)).toISOString(),
+        startedAt: (new Date(dayStreamInfo.startDate)).toISOString(),
         streamId: dayStreamInfo.streamId,
         platform: dayStreamInfo.platform,
+        viewer: dayStreamInfo.viewer,
       }));
 
     const selectedCategory: string[] = Object

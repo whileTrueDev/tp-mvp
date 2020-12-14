@@ -7,7 +7,7 @@ import {
 import useAxios from 'axios-hooks';
 // import moment from 'moment';
 // shared dtos , interfaces
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // notistack snackbar
@@ -58,8 +58,8 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   const [compareStreamsList, setCompareStreamsList] = React.useState<StreamsListItem[]>([]);
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-    url: '/stream-analysis/stream-list',
+  const [, excuteGetStreams] = useAxios<StreamDataType[]>({
+    url: '/broadcast-info',
   }, { manual: true });
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,14 +130,14 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         .filter((stream) => !stream.isRemoved)
         .map((activeStream) => ({
           ...activeStream,
-          startedAt: (new Date(activeStream.startedAt)).toISOString(),
+          startDate: (new Date(activeStream.startDate)).toISOString(),
         }));
 
       const correctCompareList = compareStreamsList
         .filter((stream) => !stream.isRemoved)
         .map((activeStream) => ({
           ...activeStream,
-          startedAt: (new Date(activeStream.startedAt)).toISOString(),
+          startDate: (new Date(activeStream.startDate)).toISOString(),
         }));
 
       if (correctBaseList.length < 1) {

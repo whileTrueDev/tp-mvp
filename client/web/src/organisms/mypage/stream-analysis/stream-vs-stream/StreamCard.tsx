@@ -111,7 +111,7 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
               {/* 날짜표현 컴포넌트로 변경 */}
               {dateExpression({
                 compoName: 'analysys-calender',
-                createdAt: new Date(stream.startedAt),
+                createdAt: new Date(stream.startDate),
                 streamAirtime: stream.airTime,
               })}
               {' '}

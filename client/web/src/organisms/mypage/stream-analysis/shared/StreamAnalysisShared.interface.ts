@@ -8,7 +8,8 @@ export interface FatalError {
 
 export interface StreamsListItem {
   streamId: string;
-  startedAt: Date;
+  startDate: Date;
+  endDate: Date;
   creatorId: string;
   title: string;
   platform: 'afreeca'|'youtube'|'twitch';

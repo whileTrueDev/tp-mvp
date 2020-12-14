@@ -18,7 +18,7 @@ import useAxios from 'axios-hooks';
 import { Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // shared dtos , interfaces
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // icon
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
@@ -77,11 +77,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     },
   });
 
-  /**
-   * 달력 정보 요청부
-   */
-  const [, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-    url: '/stream-analysis/stream-list',
+  /* 기간 내 존재 모든 방송 리스트 요청 */
+  const [, excuteGetStreams] = useAxios<StreamDataType[]>({
+    url: '/broadcast-info',
   }, { manual: true });
 
   /**
@@ -109,7 +107,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => moment(new Date(streamInfo.startedAt)).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => moment(new Date(streamInfo.startDate)).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.response) {

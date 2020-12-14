@@ -101,7 +101,7 @@ export default function HighlightGraph({
           <polyline points="0,0 15,10 0,20" />
         </svg>
         <div className={design.grid}>
-          {data.highlight_points.map((point: any, index: number) => (
+          {data.map((point: any, index: number) => (
             <div
               onKeyDown={() => {
                 /**

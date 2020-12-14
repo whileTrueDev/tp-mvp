@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 // shared dtos , interfaces
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 // custom svg icon
 import { useSnackbar } from 'notistack';
@@ -40,26 +40,26 @@ export default function StreamCompareSection(
   } = props;
   const subscribe = React.useContext(SubscribeContext);
   const classes = useStreamHeroStyles();
-  const [dayStreamsList, setDayStreamsList] = React.useState<DayStreamsInfo[]>(
+  const [dayStreamsList, setDayStreamsList] = React.useState<StreamDataType[]>(
     [],
   );
   const { enqueueSnackbar } = useSnackbar();
   const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
-  const [baseStream, setBaseStream] = React.useState<DayStreamsInfo | null>(
+  const [baseStream, setBaseStream] = React.useState<StreamDataType | null>(
     null,
   );
   const [
     compareStream,
     setCompareStream,
-  ] = React.useState<DayStreamsInfo | null>(null);
+  ] = React.useState<StreamDataType | null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
 
-  const handleDayStreamList = (responseList: DayStreamsInfo[]) => {
+  const handleDayStreamList = (responseList: StreamDataType[]) => {
     setDayStreamsList(responseList);
   };
 
   const handleSeletedStreams = (
-    newStreams: DayStreamsInfo | null,
+    newStreams: StreamDataType | null,
     base?: true,
   ) => {
     if (base) {
@@ -105,7 +105,7 @@ export default function StreamCompareSection(
     if (!compareStream || !baseStream) handleFullMessage(false);
   }, [compareStream, baseStream]);
 
-  const platformIcon = (stream: DayStreamsInfo): JSX.Element => {
+  const platformIcon = (stream: StreamDataType): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':
         return <AfreecaIcon />;

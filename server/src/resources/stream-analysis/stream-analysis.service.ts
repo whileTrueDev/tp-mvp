@@ -12,7 +12,6 @@ import * as dotenv from 'dotenv';
 import moment from 'moment';
 
 // shared dto , interfaces
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
@@ -94,58 +93,6 @@ export class StreamAnalysisService {
   ) {}
 
   /**
-  * 유저아이디에 대해 기간 혹은 시작 날짜가 속한 달의 방송 정보를 조회
-  * @param userId 유저아이디
-  * @param startDate 검색 시작 날짜
-  * @param endDate 검색 종료 날짜
-  */
-  async findDayStreamList(
-    userId: string,
-    startDate: string, endDate?: string,
-  ): Promise<DayStreamsInfo[]> {
-    if (!endDate) {
-      // ex) 2020-09-20 -> 2020-09-01 00:00 ~ 2020-09-30 23:59
-
-      const momentStart = moment(startDate).format('YYYY-MM-01 00:00:00');
-      const momentEnd = moment(startDate).endOf('month').format('YYYY-MM-DD HH:mm:ss');
-
-      const DayStreamData: DayStreamsInfo[] = await this.streamsRepository
-        .createQueryBuilder('streams')
-        .innerJoin(
-          StreamSummaryEntity,
-          'streamSummary',
-          'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
-        )
-        .select(['streams.*, streamSummary.smileCount as smileCount'])
-        .where('streams.userId = :id', { id: userId })
-        .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
-        .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
-        .execute();
-
-      return DayStreamData;
-    }
-
-    const momentStart = moment(startDate).format('YYYY-MM-DD HH:mm:ss');
-    const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
-
-    const TermStreamsData: DayStreamsInfo[] = await this.streamsRepository
-      .createQueryBuilder('streams')
-      .innerJoin(
-        StreamSummaryEntity,
-        'streamSummary',
-        'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
-      )
-      .select(['streams.*, streamSummary.smileCount as smileCount'])
-      .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt >= :startDate', { startDate: momentStart })
-      .andWhere('streams.startedAt < :endDate', { endDate: momentEnd })
-      .orderBy('streams.startedAt', 'ASC')
-      .execute();
-
-    return TermStreamsData;
-  }
-
-  /**
    * 두 방송에 대한 정보를 조회하고 분석 결과를 생성
    * @param streams [방송1, 방송2]
    */
@@ -202,8 +149,8 @@ export class StreamAnalysisService {
     }
 
     /* 1. 기준 기간 타임라인, 비교 기간 타임라인 startedAt 기준 오름차순 정렬 */
-    timeline[0].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
-    timeline[1].sort((a, b) => (moment(a.startedAt).isBefore(moment(b.startedAt)) ? -1 : 1));
+    timeline[0].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
+    timeline[1].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
 
     /* 2. 각 타임라인 같은 날짜에 대한 데이터는 평균으로 병합 */
     const result: EachStream[][] = [[], []];
@@ -213,13 +160,13 @@ export class StreamAnalysisService {
         prev2[1] + curr2.smileCount,
         prev2[2] + curr2.viewer,
         prev2[3],
-      ], [0, 0, 0, temp.arr[0].startedAt]);
+      ], [0, 0, 0, temp.arr[0].startDate]);
 
       result[periodIndex].push({
         viewer: Math.round(tempResult[0] / temp.arr.length),
         chatCount: Math.round(tempResult[1] / temp.arr.length),
         smileCount: Math.round(tempResult[2] / temp.arr.length),
-        startedAt: moment(tempResult[3]).format('YYYY-MM-DD'),
+        startDate: moment(tempResult[3]).format('YYYY-MM-DD'),
         isRemoved: false,
       });
     }
@@ -241,10 +188,10 @@ export class StreamAnalysisService {
         } else {
           /* 전후 비교 및 temp 삽입 */
           const prev = timeline[periodIndex][index - 1];
-          if (moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+          if (moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
             temp.arr.push(curr);
             temp.count += 1;
-          } else if (!moment(curr.startedAt).isSame(moment(prev.startedAt), 'days')) {
+          } else if (!moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
             merge(temp, periodIndex);
 
             temp.arr = []; temp.count = 0;
@@ -291,7 +238,7 @@ export class StreamAnalysisService {
     const streams = await this.streamsRepository
       .createQueryBuilder('streams')
       .where('streams.userId = :id', { id: userId })
-      .andWhere('streams.startedAt > DATE_SUB(NOW(), INTERVAL 10 DAY)')
+      .andWhere('streams.startDate > DATE_SUB(NOW(), INTERVAL 10 DAY)')
       .getMany()
       .catch((err) => {
         throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
@@ -309,11 +256,15 @@ export class StreamAnalysisService {
     const calculatedArray: S3StreamData[] = [];
     const dataArray: S3StreamData[] = [];
 
-    /* input param 을 통해 S3 키 배열 생성 함수 정의 */
-    const keyFunc = (stream: any) => new Promise((resolveKeys, reject) => {
-      const datePath = moment(stream.startedAt).format('YYYY-MM-DD').split('-');
+    /**
+     * input param 을 통해 S3 키 배열 생성 함수 정의input param 을 통해 S3 키 배열 생성 함수 정의
+     * @param stream 
+     * SPRINT #3.3 S3 경로 변경에 따라 수정해야 할 부분
+     * /metric_json/<platform>/<creatorId>/<streamId>.json
+     */
+    const keyFunc = (stream: any) => new Promise<void>((resolveKeys, reject) => {
       const { platform } = stream;
-      const path = `metrics_json/${platform}/${stream.creatorId}/${datePath[0]}/${datePath[1]}/${datePath[2]}/${stream.streamId}`;
+      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}.json`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
@@ -461,6 +412,13 @@ export class StreamAnalysisService {
       }
     });
 
+    const calculateAvgViewCount = (originArray: SearchEachS3StreamData[]) => {
+      if (originArray.length >= 1) {
+        return originArray.reduce((sum, element) => sum + element.viewer, 0) / originArray.length;
+      }
+      return 0;
+    };
+
     /* 리턴 데이터 포맷 설정 함수 정의 */
     const organizeData = () => new Promise<OrganizedData>(
       (resolveOrganize, rejectOrganize) => {
@@ -485,8 +443,11 @@ export class StreamAnalysisService {
               });
             });
             if (index === calculatedArray.length - 1) {
-              organizeArray.view_count = 1000; // 평균 시청자수 계산 로직 작성후 추후 추가
+              /**
+               * 평균 채팅 발생수, 시청자수 계산 로직
+               */
               organizeArray.chat_count = Math.round(organizeArray.chat_count / organizeArray.value.length);
+              organizeArray.view_count = calculateAvgViewCount(s3Request);
 
               resolveOrganize(organizeArray);
             }

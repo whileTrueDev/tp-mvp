@@ -2,7 +2,7 @@ import React from 'react';
 // material - ui core components
 import {
   Typography, List, ListItem, ListItemIcon,
-  Tooltip, Chip,
+  Tooltip, Avatar, Chip,
 } from '@material-ui/core';
 // material - ui styles
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
@@ -11,9 +11,10 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 // shared interface
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-// interface
-import { StreamListProps } from './StreamCompareSectioninterface';
-import dateExpression from '../../../../utils/dateExpression';
+
+import shortid from 'shortid';
+import dateExpression from '../../../utils/dateExpression';
+import SelectVideoIcon from '../../../atoms/stream-analysis-icons/SelectVideoIcon';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.light,
   },
   listItemText: {
-
+    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.primary,
     textAlign: 'left',
     lineHeight: '2.06',
@@ -55,10 +56,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   chip: {
-    marginRight: theme.spacing(4),
-  },
-  chipLable: {
-    marginBottom: 4, marginLeft: 4,
+    marginRight: theme.spacing(2),
   },
   tooltip: {
     height: 'auto',
@@ -76,38 +74,61 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     justifyContent: 'flex-start',
   },
+  bodyTitle: {
+    color: theme.palette.text.secondary,
+    letterSpacing: 'normal',
+    textAlign: 'center',
+    lineHeight: 1.5,
+    fontSize: '17px',
+    fontFamily: 'AppleSDGothicNeo',
+    marginLeft: theme.spacing(6),
+    marginRight: theme.spacing(5),
+    display: 'flex',
+    marginBottom: theme.spacing(4),
+  },
+  selectIcon: {
+    fontSize: '28.5px', marginRight: theme.spacing(3),
+  },
 }));
 
+export interface StreamListProps {
+  dayStreamsList: (StreamDataType)[];
+  selectedStream: StreamDataType|null;
+  handleSeletedStreams: (newStreams: StreamDataType|null, base?: true | undefined) => void;
+  platformIcon: (stream: StreamDataType) => JSX.Element;
+}
+
 const StyledToolTip = withStyles((theme) => ({
+  arrow: {
+    fontSize: '22px',
+  },
   tooltip: {
     maxWidth: 'none',
     padding: theme.spacing(2),
-    color: theme.palette.text.primary,
-    fontWeight: 'bold',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[5],
   },
 }))(Tooltip);
 
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
-    dayStreamsList, handleSeletedStreams, baseStream, compareStream,
-    handleFullMessage, platformIcon,
+    dayStreamsList, handleSeletedStreams, selectedStream,
+    platformIcon,
   } = props;
 
   const tooltipContents = (stream: StreamDataType): JSX.Element => (
     <div className={classes.tooltip}>
       <Typography variant="h6">
         <div className={classes.tooltipIconWrapper}>
-          {platformIcon(stream)}
+          <Avatar style={{ marginBottom: '8px' }}>
+            {platformIcon(stream)}
+          </Avatar>
         </div>
         {stream.title}
       </Typography>
 
       <div className={classes.tooltipChipWrapper}>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" className={classes.chipLable}>
-            평균 시청자수
+          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 8 }}>
+            시청자수
           </Typography>
           <Chip
             icon={<PersonAddIcon />}
@@ -118,8 +139,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" className={classes.chipLable}>
-            평균 채팅수
+          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 12 }}>
+            채팅수
           </Typography>
           <Chip
             icon={<ChatIcon />}
@@ -130,8 +151,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" className={classes.chipLable}>
-            평균 웃음 발생 수
+          <Typography variant="caption" style={{ marginBottom: 4 }}>
+            웃음 발생 수
           </Typography>
           <Chip
             icon={<EmojiEmotionsIcon />}
@@ -152,58 +173,57 @@ export default function StreamList(props: StreamListProps): JSX.Element {
   const classes = useStyles();
 
   const handleListStreamClick = (stream: StreamDataType) => {
-    if (baseStream && compareStream) {
-      handleFullMessage(true);
-    } else if (baseStream && !compareStream) {
-      handleSeletedStreams(stream);
-    } else if (!baseStream && compareStream) {
-      handleSeletedStreams(stream, true);
-    } else {
-      handleSeletedStreams(stream, true);
-    }
+    handleSeletedStreams(stream, true);
   };
 
   const isSelectedListItem = (listStream: StreamDataType): boolean => {
-    if (baseStream || compareStream) {
-      return (listStream.streamId === baseStream?.streamId
-    || listStream.streamId === compareStream?.streamId);
+    if (selectedStream) {
+      return listStream.streamId === selectedStream.streamId;
     }
-
     return false;
   };
 
   return (
-    <List className={classes.listWrapper}>
-      {dayStreamsList && dayStreamsList.map((stream) => (
-        <StyledToolTip
-          placement="top"
-          title={tooltipContents(stream)}
-        >
-          <ListItem
-            key={stream.streamId}
-            button
-            selected={isSelectedListItem(stream)}
-            className={classes.listItem}
-            onClick={() => handleListStreamClick(stream)}
+    <div>
+      <Typography className={classes.bodyTitle}>
+        <SelectVideoIcon className={classes.selectIcon} />
+        방송 선택
+      </Typography>
+
+      <List className={classes.listWrapper}>
+        {dayStreamsList && dayStreamsList.map((stream) => (
+          <StyledToolTip
+            arrow
+            placement="top"
+            title={tooltipContents(stream)}
+            key={shortid.generate()}
           >
-            <ListItemIcon>
-              {platformIcon(stream)}
-            </ListItemIcon>
-            <Typography className={classes.listItemText}>
-              {dateExpression({
-                compoName: 'analysys-calender',
-                createdAt: new Date(stream.startDate),
-                streamAirtime: stream.airTime,
-              })}
-            </Typography>
+            <ListItem
+              key={stream.streamId}
+              button
+              selected={isSelectedListItem(stream)}
+              className={classes.listItem}
+              onClick={() => handleListStreamClick(stream)}
+            >
+              <ListItemIcon>
+                {platformIcon(stream)}
+              </ListItemIcon>
+              <Typography className={classes.listItemText}>
+                {dateExpression({
+                  compoName: 'analysys-calender',
+                  createdAt: new Date(stream.startDate),
+                  streamAirtime: stream.airTime,
+                })}
+              </Typography>
+              <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
+                {stream.title.length > 20 ? `${stream.title.slice(0, 21)} ...` : stream.title}
+              </Typography>
 
-            <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
-              {stream.title.length > 30 ? `${stream.title.slice(0, 30)} ...` : stream.title}
-            </Typography>
+            </ListItem>
+          </StyledToolTip>
+        ))}
+      </List>
+    </div>
 
-          </ListItem>
-        </StyledToolTip>
-      ))}
-    </List>
   );
 }

@@ -252,7 +252,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
                 {/* 날짜 표현 컴포넌트로 변경 */}
 
                 {dateExpression({
-                  createdAt: new Date(stream.startedAt),
+                  createdAt: new Date(stream.startDate),
                   compoName: 'analysys-calender',
                   streamAirtime: stream.airTime,
                 })}
@@ -295,7 +295,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
             <div className={classes.listItemContainer}>
               <Typography className={classes.removedListItemText}>
                 {dateExpression({
-                  createdAt: new Date(stream.startedAt),
+                  createdAt: new Date(stream.startDate),
                   compoName: 'analysys-calender',
                   streamAirtime: stream.airTime,
                 })}
@@ -327,7 +327,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     <List className={classes.listWrapper}>
       {selectedDate && selectedStreams.length > 0
         && selectedStreams
-          .filter((stream) => moment(stream.startedAt).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
+          .filter((stream) => moment(stream.startDate).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
           .map((stream) => listItem(stream, stream.isRemoved))}
       {!selectedDate && selectedStreams.length > 0 && selectedStreams
         .map((stream) => listItem(stream, stream.isRemoved))}
