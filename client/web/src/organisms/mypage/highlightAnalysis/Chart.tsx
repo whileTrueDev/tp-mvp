@@ -149,7 +149,7 @@ export default function Chart({
       series.yAxis = valueAxis;
       series.dataFields.valueY = setting.valueY;
       series.dataFields.dateX = setting.dateX;
-      // series.name = setting.name;
+      series.name = setting.name;
       series.tooltipText = setting.tooltipText;
       series.strokeWidth = 2.5;
       series.tensionX = 0.8;

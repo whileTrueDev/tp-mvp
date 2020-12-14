@@ -3,14 +3,12 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Fade from '@material-ui/core/Fade';
 import useAxios from 'axios-hooks';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-// import classnames from 'classnames';
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import ClearIcon from '@material-ui/icons/Clear';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
@@ -23,8 +21,6 @@ import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
 // shared and atoms
 import Button from '../../../atoms/Button/Button';
-// import Loading from '../../shared/sub/Loading';
-import HelperPopOver from '../../shared/HelperPopOver';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
 // date expression util
@@ -76,82 +72,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
   const [highlightData, setHighlightData] = React.useState(null);
   const [isClicked, setIsClicked] = React.useState(false);
-  const [isChecked, setIsChecked] = React.useState({
-    srtCheckBox: true,
-    csvCheckBox: true,
-    txtCheckBox: true,
-  });
 
-  // 편집점 내보내기 부분 지우지 마세요
-  // const [, doExport] = useAxios(
-  //   { url: '/highlight/export', method: 'get' }, { manual: true },
-  // );
-
+  // 하이라이트 구간 요청
   const [, getHighlightPoints] = useAxios(
     { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
   );
-
-  // 편집점 내보내기 부분 지우지 마세요
-  // const makeMonth = (month: number) => {
-  //   if (month < 10) {
-  //     const edit = `0${month}`;
-  //     return edit;
-  //   }
-  //   const returnMonth = String(month);
-  //   return returnMonth;
-  // };
-
-  // const makeDay = (day: number) => {
-  //   if (day < 10) {
-  //     const edit = `0${day}`;
-  //     return edit;
-  //   }
-  //   const returnDay = String(day);
-  //   return returnDay;
-  // };
-
-  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
-  };
-
-  // 편집점 내보내기 부분 지우지 마세요
-  // const handleExportClick = async () => {
-  //   const id = '234175534';
-  //   const year = String(selectedStream.fullDate.getFullYear());
-  //   const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
-  //   const day = makeDay(selectedStream.fullDate.getDate());
-  //   const streamId = selectedStream.fileId.split('_')[1].split('.')[0];
-  //   const srt = isChecked.srtCheckBox ? 1 : 0;
-  //   const csv = isChecked.csvCheckBox ? 1 : 0;
-  //   const txt = isChecked.txtCheckBox ? 1 : 0;
-
-  //   // function str2bytes(str: any) {
-  //   //   const bytes = new Uint8Array(str.length);
-  //   //   for (let i = 0; i < str.length; i += 1) {
-  //   //     bytes[i] = str.charCodeAt(i);
-  //   //   }
-  //   //   return bytes;
-  //   // }
-  //   doExport({
-  //     params: {
-  //       id, year, month, day, streamId, srt, txt, csv,
-  //     },
-  //   })
-  //     .then((res) => {
-  //       // console.log(res.data);
-  //       const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
-  //       // const filename = res.headers;
-  //       const link = document.createElement('a');
-  //       link.href = url;
-  //       link.setAttribute('download', 'test.zip');
-  //       document.body.appendChild(link);
-  //       link.click();
-  //       // setDownloadUrl(url);
-  //     }).catch((err) => {
-  //       console.error(err);
-  //       ShowSnack('지금은 다운로드 할 수 없습니다.', 'error', enqueueSnackbar);
-  //     });
-  // };
 
   // S3로부터 선택된 방송의 하이라이트 데이터 패칭
   const fetchHighlightData = async (streamId: string, platform: string, creatorId: string): Promise<void> => {
@@ -168,7 +93,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           setHighlightData(res.data);
         }
       }).catch((err) => {
-        ShowSnack('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+        ShowSnack('highlight: 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
 
@@ -207,29 +132,36 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           </Typography>
         </Grid>
         <Grid
-          item
-          xs={12}
           container
           direction="row"
           alignItems="center"
           justify="space-between"
           className={classes.sideSpace}
         >
-          <Grid item xs={2} className={classes.title}>
+          <Grid item xs={12} sm={3} md={3} className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={12} sm={9} md={9}>
             {selectedStream
               && (
                 <Fade in={Boolean(selectedStream)} style={{ transitionDelay: '200ms' }}>
                   <Card className={classes.card}>
-                    <Typography className={classes.cardText}>
-                      {dateExpression({
-                        compoName: 'analysys-calender',
-                        createdAt: new Date(selectedStream.startDate),
-                        streamAirtime: selectedStream.airTime,
-                      })}
-                    </Typography>
+                    <div />
+                    <div className={classes.cardInner}>
+                      <ListItemIcon>
+                        {platformIcon(selectedStream)}
+                      </ListItemIcon>
+                      <Typography className={classes.cardText} display="inline">
+                        {dateExpression({
+                          compoName: 'analysys-calender',
+                          createdAt: new Date(selectedStream.startDate),
+                          streamAirtime: selectedStream.airTime,
+                        })}
+                      </Typography>
+                      <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
+                        {selectedStream.title.length > 20 ? `${selectedStream.title.slice(0, 21)} ...` : selectedStream.title}
+                      </Typography>
+                    </div>
                     <IconButton
                       onClick={() => setSelectedStream(null)}
                     >
@@ -242,13 +174,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
         </Grid>
         <Grid
-          item
-          xs={12}
           container
           className={classes.calendarWrapper}
           direction="row"
           justify="flex-start"
-          spacing={2}
         >
           <Grid item>
             <Calendar
@@ -258,7 +187,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             />
           </Grid>
 
-          <Grid item xs style={{ marginLeft: 16 }}>
+          <Grid item style={{ marginLeft: 16 }}>
             <StreamList
               dayStreamsList={dayStreamsList}
               selectedStream={selectedStream}
@@ -277,8 +206,8 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         className={classes.root}
         justify="flex-end"
       >
-        <Grid item container direction="column" style={{ overflow: 'hiden' }}>
-          <div className={classes.analysisButton}>
+        <Grid container direction="row" justify="center">
+          <div>
             <Button
               onClick={handleAnalyze}
               disabled={isClicked || Boolean(!selectedStream)}
@@ -286,56 +215,18 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               분석하기
             </Button>
           </div>
-          <div className={classes.helperPopOver}>
-            <HelperPopOver />
-          </div>
-          <div>
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  checked={isChecked.srtCheckBox}
-                  onChange={handleCheckbox}
-                  name="srtCheckBox"
-                  color="primary"
-                />
-              )}
-              label="srt"
-            />
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  checked={isChecked.txtCheckBox}
-                  onChange={handleCheckbox}
-                  name="txtCheckBox"
-                  color="primary"
-                />
-              )}
-              label="txt"
-            />
-
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  checked={isChecked.csvCheckBox}
-                  onChange={handleCheckbox}
-                  name="csvCheckBox"
-                  color="primary"
-                />
-              )}
-              label="csv"
-            />
-            <Button>
-              편집점 내보내기
-            </Button>
-          </div>
 
         </Grid>
       </Grid>
-      <Loading clickOpen={isClicked} loadingType="medium" />
+      <Loading clickOpen={isClicked} />
       { !isClicked && highlightData && categoriesData && (
         <>
-          <TruepointHighlight highlightData={highlightData} />
+          <TruepointHighlight
+            selectedStream={selectedStream}
+            highlightData={highlightData}
+          />
           <MetricsAccordian
+            selectedStream={selectedStream}
             highlightData={highlightData}
             categories={categoriesData}
           />
