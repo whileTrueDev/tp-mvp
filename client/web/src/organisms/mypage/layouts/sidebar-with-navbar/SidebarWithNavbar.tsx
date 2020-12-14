@@ -149,9 +149,6 @@ export default function SidebarWithNavbar({
                   )}
                   <ListItemText
                     primary={route.name}
-                    primaryTypographyProps={{
-                      variant: 'body1', style: { fontWeight: 600 },
-                    }}
                     classes={{
                       primary: classnames({ [classes.selected]: isActiveRoute(route.path) }),
                     }}
