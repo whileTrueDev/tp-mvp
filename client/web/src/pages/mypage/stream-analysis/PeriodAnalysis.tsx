@@ -59,7 +59,7 @@ export default function PeriodAnalysis(): JSX.Element {
 
       <MypageSectionWrapper>
         <Grid container direction="column" style={{ minHeight: '1500px' }}>
-          <Paper elevation={0} className={classes.analysisSectionPaper}>
+          <Paper className={classes.analysisSectionPaper}>
             {/* Analysis Section */}
             <PeriodAnalysisSection
               error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
@@ -71,7 +71,7 @@ export default function PeriodAnalysis(): JSX.Element {
           {/* Graph Section */}
           {open && data
          && (
-           <Paper elevation={0} className={classes.graphSectionPaper}>
+           <Paper className={classes.graphSectionPaper}>
              <PeriodGraph data={data} loading={loading} selectedMetric={selectedMetric} />
            </Paper>
          )}

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { TruepointDbSecret } from '../interfaces/Secrets.interface';
+import { DbSecret } from '../interfaces/Secrets.interface';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private readonly configService: ConfigService) { }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    const database = this.configService.get<TruepointDbSecret>('database');
+    const database = this.configService.get<DbSecret>('database');
 
     return {
       type: database.engine,
@@ -19,7 +19,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: database.dbname,
       timezone: 'Asia/Seoul',
       synchronize: true,
-      autoLoadEntities: true,
+      entities: [`${__dirname}/../resources/**/*.entity{.ts,.js}`],
     };
   }
 }

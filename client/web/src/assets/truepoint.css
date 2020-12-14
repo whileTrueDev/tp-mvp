@@ -1,20 +1,5 @@
 /* 글로벌 css 파일 */
 @font-face {
-  font-family: "NotoSansKR-Black";
-  src: url(./fonts/NotoSansKR-Black.otf) format("truetype");
-}
-
-@font-face {
-  font-family: "NotoSansKR-Regular";
-  src: url(./fonts/NotoSansKR-Regular.otf) format("truetype");
-}
-
-@font-face {
-  font-family: "AppleSDGothicNeoB";
-  src: url(./fonts/AppleSDGothicNeoB.ttf) format("truetype");
-}
-
-@font-face {
   font-family: "AppleSDGothicNeoH";
   src: url(./fonts/AppleSDGothicNeoH.ttf) format("truetype");
 }
@@ -29,6 +14,30 @@
   src: url(./fonts/AppleSDGothicNeoUL.ttf) format("truetype");
 }
 
+@font-face {
+  font-family: "AppleSDGothicNeoEB";
+  src: url(./fonts/AppleSDGothicNeoEB.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AppleSDGothicNeoL";
+  src: url(./fonts/AppleSDGothicNeoL.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AppleSDGothicNeoR";
+  src: url(./fonts/AppleSDGothicNeoR.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AppleSDGothicNeoSB";
+  src: url(./fonts/AppleSDGothicNeoSB.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AppleSDGothicNeoT";
+  src: url(./fonts/AppleSDGothicNeoT.ttf) format("truetype");
+}
 html * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

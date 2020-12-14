@@ -1,4 +1,4 @@
-export interface TruepointDbSecret {
+export interface DbSecret {
   password: string;
   engine: 'mysql' | 'mariadb';
   port: number;
@@ -7,6 +7,10 @@ export interface TruepointDbSecret {
   dbname: string;
 }
 
-export interface TruepointSecret {
-  database: TruepointDbSecret;
+export interface TruepointDbSecret {
+  database: DbSecret;
+}
+
+export interface CollectorDbSecret {
+  WhileTrueCollectorDB: DbSecret;
 }

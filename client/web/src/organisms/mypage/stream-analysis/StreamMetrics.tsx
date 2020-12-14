@@ -11,9 +11,7 @@ import MetricIcons from '../../../atoms/Graph-icons/MetricIcons';
 import SectionTitle from '../../shared/sub/SectionTitles';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(6),
-  },
+  root: { padding: theme.spacing(4) },
   center: {
     display: 'flex',
     justifyContent: 'center',

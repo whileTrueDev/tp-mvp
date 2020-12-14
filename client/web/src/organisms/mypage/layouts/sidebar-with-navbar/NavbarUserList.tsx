@@ -144,11 +144,11 @@ export default function NavbarUserList(): JSX.Element {
 
   return (
     <div className={classes.userListWrapper}>
-      <Typography variant="h4" className={classes.title}>
-        {auth.user.userId}
-      </Typography>
-      <Typography variant="h4">
-        님
+      <Typography variant="h6">
+        <span className={classes.title}>
+          {auth.user.userId}
+        </span>
+        <span>님</span>
       </Typography>
       {/* 툴팁 및 유저 리스트 -> CBT 주석 처리 */}
       {/* <StyledToolTip

@@ -16,7 +16,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   title: {
-    fontFamily: 'AppleSDGothicNeo',
+
     marginTop: '20px',
     marginBottom: '30px',
     fontWeight: 600,
@@ -26,7 +26,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   subTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     wordBreak: 'keep-all',
     [theme.breakpoints.down('sm')]: {
       fontSize: '20px',
@@ -88,13 +88,13 @@ const styles = makeStyles((theme) => ({
     color: 'white',
     height: '50px',
     fontSize: '20px',
-    fontFamily: 'AppleSDGothicNeo',
+
     [theme.breakpoints.down('xs')]: {
       width: '150px',
     },
   },
   detailTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontWeight: 600,
     color: theme.palette.primary.main,
     [theme.breakpoints.down('sm')]: {

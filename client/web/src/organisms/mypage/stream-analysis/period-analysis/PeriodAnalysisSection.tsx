@@ -13,9 +13,9 @@ import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analys
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // styles
 import { useSnackbar } from 'notistack';
+import classnames from 'classnames';
 import usePeriodAnalysisHeroStyle from './PeriodAnalysisSection.style';
 import SelectDateIcon from '../../../../atoms/stream-analysis-icons/SelectDateIcon';
-
 // interface
 import {
   PeriodAnalysisProps,
@@ -26,14 +26,15 @@ import Loading from '../../../shared/sub/Loading';
 // context
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // hooks
-import useAnchorEl from '../../../../utils/hooks/useAnchorEl';
+import useDialog from '../../../../utils/hooks/useDialog';
+
 // sub shared components
 import PeriodSelectBox from '../shared/PeriodSelectBox';
-import PeriodSelectPopper from '../shared/PeriodSelectPopper';
 import RangeSelectCalendar from '../shared/RangeSelectCalendar';
 import CheckBoxGroup from '../shared/CheckBoxGroup';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
@@ -52,10 +53,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-  const {
-    anchorEl, handleAnchorClose, handleAnchorOpenWithRef,
-  } = useAnchorEl();
-  const targetRef = React.useRef<HTMLDivElement | null>(null);
+  const { open, handleClose, handleOpen } = useDialog();
 
   const handleStreamList = (targetItem: StreamsListItem, isRemoved?: boolean) => {
     setTermStreamsList(termStreamsList.map((item) => {
@@ -169,7 +167,6 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
     if (termStreamsList.length < 1) {
-      /* 일감 - Alert 수정 하기 에서 수정 */
       ShowSnack('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요.', 'error', enqueueSnackbar);
     } else {
       handleSubmit({
@@ -183,56 +180,53 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   return (
     <Grid className={classes.root}>
       <Grid item>
-        {!(error?.isError) && (
+        {!(error && error.isError) && (
           <Loading clickOpen={loading} />
         )}
 
         <Grid container direction="column">
 
           <SectionTitle mainTitle="기간 추세 분석" />
-          <Typography className={classes.infoText}>
+          <Typography color="textSecondary" variant="body2">
+            특정 기간을 선택하면 해당 기간 내의 방송에 대한 분석을 시작합니다.
+          </Typography>
+          <Typography color="textSecondary" variant="body2">
             * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
           </Typography>
-          <Typography className={classes.mainBody}>
+
+          <Typography className={classes.mainBody} style={{ fontWeight: 'bold' }}>
             추세 분석을 위한 기간 설정
           </Typography>
 
           <PeriodSelectBox
-            targetRef={targetRef}
             period={period}
             TitleIcon={SelectDateIcon}
             iconProps={{ fontSize: '28px' }}
             titleMessage="기간 선택"
           />
 
-          {/*  기간 선택 부 - 기간 선택 달력 + popper open 로직 */}
-          <div style={{ marginTop: '16px' }}>
+          {/*  기간 선택 부 - 기간 선택 달력 + dialog open 로직 */}
+          <div className={classes.calendarWrapper}>
             <RangeSelectCalendar
               handlePeriod={handlePeriod}
               period={period}
+              handleDialogClose={handleClose}
+              handleDialogOpen={handleOpen}
               base
-              anchorEl={anchorEl}
-              targetRef={targetRef}
-              handleAnchorOpenWithRef={handleAnchorOpenWithRef}
-              handleAnchorClose={handleAnchorClose}
+              removeFunc
             />
           </div>
 
         </Grid>
       </Grid>
 
-      {anchorEl && (
-      <PeriodSelectPopper
-        anchorEl={anchorEl}
-        period={period}
-        handleAnchorClose={handleAnchorClose}
-        selectedStreams={termStreamsList}
-        base
-        handleStreamList={handleStreamList}
-      />
-      )}
       <Grid item>
-        <Typography className={classes.mainBody} style={{ marginTop: '70px', fontWeight: 'bold' }}>
+        <Typography
+          className={classnames({
+            [classes.mainBody]: true,
+            [classes.categoryTitle]: true,
+          })}
+        >
           확인할 데이터 선택
         </Typography>
         {/* 분석 항목 선택 체크박스 그룹 */}
@@ -256,6 +250,19 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           </Button>
         </Grid>
       </Grid>
+
+      {termStreamsList && period[0] && period[1] && (
+      <PeriodSelectDialog
+        open={open}
+        period={period}
+        selectedStreams={termStreamsList}
+        handleStreamList={handleStreamList}
+        handleClose={handleClose}
+        handlePeriod={handlePeriod}
+        base
+      />
+      )}
+
     </Grid>
   );
 }

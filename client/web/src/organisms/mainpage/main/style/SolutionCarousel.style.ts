@@ -9,13 +9,13 @@ const styles = makeStyles((theme) => ({
     },
   },
   mainSubTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 20,
     fontWeight: 600,
     padding: '30px 0px 5px 0px',
   },
   mainTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 25,
     fontWeight: 700,
     padding: '5px 0px 30px 0px',
@@ -63,7 +63,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   dot: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 12,
     margin: 0,
   },

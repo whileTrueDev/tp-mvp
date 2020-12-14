@@ -24,12 +24,12 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   animatedTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     height: '400px',
     width: '500px',
   },
   animatedTitleMedium: {
-    fontFamily: 'AppleSDGothicNeo',
+
     height: '400px',
     width: '500px',
   },
@@ -121,7 +121,7 @@ const styles = makeStyles((theme) => ({
     paddingTop: 10,
     marginTop: -10,
     '&>ul>li': {
-      fontFamily: 'AppleSDGothicNeo',
+
       fontSize: 36,
       fontWeight: 800,
       height: 45,

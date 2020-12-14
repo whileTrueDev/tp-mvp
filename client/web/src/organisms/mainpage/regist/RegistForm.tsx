@@ -162,13 +162,10 @@ function PlatformRegistForm({
             <Grid
               container
               direction="column"
-              spacing={1}
               className={classes.form}
             >
               <Grid item xs={12}>
-                <FormControl
-                  error={Boolean(state.id)}
-                >
+                <FormControl error={Boolean(state.id)}>
                   <InputLabel shrink>ID</InputLabel>
                   <Input
                     required
@@ -237,7 +234,7 @@ function PlatformRegistForm({
                   />
                 </Grid> */}
                 <Grid item>
-                  <Grid container direction="row" spacing={1}>
+                  <Grid container direction="row">
                     <Grid item>
                       <FormControl
                         className={classes.phoneField}
@@ -373,7 +370,7 @@ function PlatformRegistForm({
                     type="submit"
                     value="submit"
                   >
-                    다음
+                    가입하기
                   </Button>
                 </div>
               </Grid>

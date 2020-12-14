@@ -22,7 +22,7 @@ const styles = makeStyles((theme) => ({
   contentSub: {
     textAlign: 'center',
     width: 500,
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 18,
     padding: theme.spacing(2),
     backgroundColor: theme.palette.action.focus,
@@ -35,7 +35,7 @@ const styles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
   point: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 24,
     fontWeight: 700,
     margin: `0px ${theme.spacing(1)}px`,

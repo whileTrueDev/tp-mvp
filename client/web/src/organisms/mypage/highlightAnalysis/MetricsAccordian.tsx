@@ -25,7 +25,7 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     fontSize: 20,
-    fontFamily: 'AppleSDGothicNeo',
+
     fontWeight: 600,
   },
   contentRight: {

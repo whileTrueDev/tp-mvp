@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
   phoneField: {
     [theme.breakpoints.down('xs')]: {
-      minWidth: '200px',
+      minWidth: '180px',
       marginRight: 0,
     },
     [theme.breakpoints.up('sm')]: {

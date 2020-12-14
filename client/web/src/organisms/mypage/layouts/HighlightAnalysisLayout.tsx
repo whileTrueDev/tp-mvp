@@ -2,18 +2,16 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Fade from '@material-ui/core/Fade';
 import useAxios from 'axios-hooks';
-import IconButton from '@material-ui/core/IconButton';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
-import ClearIcon from '@material-ui/icons/Clear';
-import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-
-// sub components
+import Fade from '@material-ui/core/Fade';
+import Card from '@material-ui/core/Card';
+import { IconButton } from '@material-ui/core';
+import { Clear } from '@material-ui/icons';
 import Calendar from '../highlightAnalysis/Calendar';
 import StreamList from '../highlightAnalysis/StreamList';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -121,13 +119,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
 
   return (
     <Paper className={classes.root}>
-      <Grid
-        container
-        direction="column"
-      >
+      <Grid container direction="column">
         <Grid item xs={12} className={classes.wraper}>
           <SectionTitle mainTitle="편집점 분석" />
-          <Typography variant="body1" className={classes.sub}>
+          <Typography variant="body2" color="textSecondary">
             방송을 선택하시면 편집점 분석을 시작합니다.
           </Typography>
         </Grid>
@@ -136,7 +131,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           direction="row"
           alignItems="center"
           justify="space-between"
-          className={classes.sideSpace}
+          className={classes.wraper}
         >
           <Grid item xs={12} sm={3} md={3} className={classes.title}>
             선택된 방송
@@ -165,7 +160,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                     <IconButton
                       onClick={() => setSelectedStream(null)}
                     >
-                      <ClearIcon />
+                      <Clear />
                     </IconButton>
                   </Card>
                 </Fade>

@@ -23,7 +23,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   mainTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     marginTop: 20,
     fontSize: 30,
     fontWeight: 500,
@@ -34,7 +34,7 @@ const styles = makeStyles((theme) => ({
     wordBreak: 'keep-all',
   },
   mainContent: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 20,
     margin: `${theme.spacing(3)}px 0px ${theme.spacing(5)}px 0px`,
     [theme.breakpoints.down('xs')]: {

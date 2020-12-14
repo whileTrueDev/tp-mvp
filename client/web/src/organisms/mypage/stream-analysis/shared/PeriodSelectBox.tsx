@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     textAlign: 'left',
     lineHeight: 1.5,
     fontSize: '22px',
-    fontFamily: 'AppleSDGothicNeo',
+
     display: 'flex',
     alignItems: 'center',
     fontWeight: 'bold',
@@ -73,13 +73,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Element {
   const {
-    targetRef, period, TitleIcon, iconProps, titleMessage,
+    period, TitleIcon, iconProps, titleMessage,
   } = props;
   const classes = useStyles();
   const now = new Date();
 
   return (
-    <div ref={targetRef}>
+    <div>
       <Box
         className={classnames({
           [classes.box]: true,

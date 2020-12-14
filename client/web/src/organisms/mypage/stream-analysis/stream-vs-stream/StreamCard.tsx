@@ -65,12 +65,12 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
             <div className={classes.title}>
               <VideocamIcon className={base ? classes.baseBeforeIcon : classes.compareBeforeIcon} fontSize="large" />
               <Typography variant="h6" color="textSecondary" className={classes.titleText}>
-                {base ? '' : '비교 방송'}
+                {base ? '기준 방송' : '비교 방송'}
               </Typography>
             </div>
           </div>
           <div className={classes.contents}>
-            <Typography variant="h6" color="textSecondary" style={{ textDecoration: 'underline' }}>
+            <Typography variant="body1" color="textSecondary" style={{ textDecoration: 'underline' }}>
               목록에서 방송을 선택하세요.
             </Typography>
           </div>
