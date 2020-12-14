@@ -215,7 +215,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
               분석하기
             </Button>
           </div>
-
         </Grid>
       </Grid>
       <Loading clickOpen={isClicked} />

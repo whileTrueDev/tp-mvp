@@ -57,7 +57,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
   const [, excuteGetStreams] = useAxios<StreamDataType[]>({
-    url: '/stream-analysis/stream-list',
+    url: '/broadcast-info',
   }, { manual: true });
 
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {

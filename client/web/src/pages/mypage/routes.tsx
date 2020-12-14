@@ -16,8 +16,8 @@ import StreamAnalysisIcon from '../../atoms/sidebar-icons/StreamAnalysisIcon';
 import Dashboard from './Dashboard';
 import HighlightAnalysis from './highlight-analysis/HighlightAnalysis';
 import StreamAnalysis from './stream-analysis/StreamAnalysis';
-// import PeriodAnalysis from './stream-analysis/PeriodAnalysis';
-// import PeriodVsPeriodAnalysis from './stream-analysis/PeriodVsPeriodAnalysis';
+import PeriodAnalysis from './stream-analysis/PeriodAnalysis';
+import PeriodVsPeriodAnalysis from './stream-analysis/PeriodVsPeriodAnalysis';
 /**
    * CBT 에서 사용되지 않는 탭이므로 주석처리
    * 2020 11 13
@@ -71,18 +71,18 @@ const dashboardRoutes: MypageRoute[] = [
         layout: '/mypage/stream-analysis',
         component: StreamAnalysis, // 해당 페이지 컴포넌트를 여기에
       },
-      // {
-      //   path: '/period',
-      //   name: '기간 추세 분석',
-      //   layout: '/mypage/stream-analysis',
-      //   component: PeriodAnalysis, // 해당 페이지 컴포넌트를 여기에
-      // },
-      // {
-      //   path: '/term-to-term',
-      //   name: '기간 대 기간 분석',
-      //   layout: '/mypage/stream-analysis',
-      //   component: PeriodVsPeriodAnalysis, // 해당 페이지 컴포넌트를 여기에
-      // },
+      {
+        path: '/period',
+        name: '기간 추세 분석',
+        layout: '/mypage/stream-analysis',
+        component: PeriodAnalysis, // 해당 페이지 컴포넌트를 여기에
+      },
+      {
+        path: '/term-to-term',
+        name: '기간 대 기간 분석',
+        layout: '/mypage/stream-analysis',
+        component: PeriodVsPeriodAnalysis, // 해당 페이지 컴포넌트를 여기에
+      },
     ],
   },
   /**

@@ -81,7 +81,7 @@ export default function UserMetricsSection(): JSX.Element {
     if (d.length > 0) {
       const sortedData = d.sort((
         a, b,
-      ) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+      ) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
       const fanDelta = sortedData[sortedData.length - 1].fan - sortedData[0].fan;
 
       let count = 0;

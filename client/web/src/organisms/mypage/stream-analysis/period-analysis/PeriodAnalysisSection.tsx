@@ -90,10 +90,9 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   };
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [,
-    excuteGetStreams] = useAxios<StreamDataType[]>({
-      url: '/stream-analysis/stream-list',
-    }, { manual: true });
+  const [, excuteGetStreams] = useAxios<StreamDataType[]>({
+    url: '/broadcast-info',
+  }, { manual: true });
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
@@ -162,6 +161,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         startedAt: (new Date(dayStreamInfo.startDate)).toISOString(),
         streamId: dayStreamInfo.streamId,
         platform: dayStreamInfo.platform,
+        viewer: dayStreamInfo.viewer,
       }));
 
     const selectedCategory: string[] = Object
