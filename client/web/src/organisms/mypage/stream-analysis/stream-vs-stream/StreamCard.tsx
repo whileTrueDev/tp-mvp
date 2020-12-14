@@ -99,15 +99,15 @@ export default function StreamCard(props: StreamCardProps): JSX.Element {
           <div className={classes.contents}>
             {stream.title.length > TITLE_STR_LIMIT
               ? (
-                <Typography variant="h6" color="textSecondary">
+                <Typography variant="body1" color="textSecondary">
                   {`${stream.title.slice(0, TITLE_STR_LIMIT - 3)}...`}
                 </Typography>
               ) : (
-                <Typography variant="h6" color="textSecondary">
+                <Typography variant="body1" color="textSecondary">
                   {stream.title}
                 </Typography>
               )}
-            <Typography variant="body1" color="textSecondary">
+            <Typography variant="body2" color="textSecondary">
               {/* 날짜표현 컴포넌트로 변경 */}
               {dateExpression({
                 compoName: 'analysys-calender',
