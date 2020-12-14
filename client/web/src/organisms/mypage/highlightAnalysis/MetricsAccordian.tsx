@@ -268,6 +268,7 @@ export default function MetricsAccordian(
                        * */
                     }}
                     style={{ color: 'white' }}
+                    disabled
                   >
                     편집점 내보내기
                   </Button>
