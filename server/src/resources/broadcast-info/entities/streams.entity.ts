@@ -1,10 +1,10 @@
 import {
   Entity, Column, PrimaryColumn,
 } from 'typeorm';
-import { StreamsTest2 } from '@truepoint/shared/dist/interfaces/StreamsTest2.interface';
+import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
 
 @Entity({ name: 'Streams_test_2' })
-export class StreamsTest2Entity implements StreamsTest2 {
+export class StreamsEntity implements Stream {
   @PrimaryColumn()
   streamId: string;
 
@@ -41,7 +41,7 @@ export class StreamsTest2Entity implements StreamsTest2 {
   @Column()
   needAnalysis: boolean;
 
-  constructor(partial: Partial<StreamsTest2Entity>) {
+  constructor(partial: Partial<StreamsEntity>) {
     Object.assign(this, partial);
   }
 }

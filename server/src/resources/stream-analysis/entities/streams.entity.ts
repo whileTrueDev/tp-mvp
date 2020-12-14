@@ -1,12 +1,10 @@
 import {
-  Entity, Column, PrimaryColumn, OneToOne,
+  Entity, Column, PrimaryColumn,
 } from 'typeorm';
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
-import { StreamSummaryEntity } from './streamSummary.entity';
 
-@Entity({ name: 'Streams' })
+@Entity({ name: 'Streams_test_2' })
 export class StreamsEntity implements Stream {
-  @OneToOne((type) => StreamSummaryEntity, (StreamSummary) => StreamSummary.streamId)
   @PrimaryColumn()
   streamId: string;
 
@@ -29,7 +27,10 @@ export class StreamsEntity implements Stream {
   fan: number;
 
   @Column('timestamp')
-  startedAt: Date;
+  startDate: Date;
+
+  @Column('timestamp')
+  endDate: Date;
 
   @Column()
   airTime: number;
@@ -37,8 +38,8 @@ export class StreamsEntity implements Stream {
   @Column()
   chatCount: number;
 
-  // @OneToOne((type) => StreamSummaryEntity, (streamSummary) => streamSummary.streams)
-  // streamSummary: StreamSummaryEntity
+  @Column()
+  needAnalysis: boolean;
 
   constructor(partial: Partial<StreamsEntity>) {
     Object.assign(this, partial);

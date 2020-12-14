@@ -10,12 +10,10 @@ export interface Stream {
   title: string;
 
   viewer: number;
-
   fan: number;
-
-  startedAt: Date;
-
+  startDate: Date;
+  endDate: Date;
   airTime: number;
-
   chatCount: number;
+  needAnalysis: boolean;
 }

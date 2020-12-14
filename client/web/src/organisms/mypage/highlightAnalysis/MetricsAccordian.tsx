@@ -59,7 +59,6 @@ const styles = makeStyles((theme) => ({
 }));
 
 interface MetricsAccordianProps {
-  analysisWord?: string;
   categories: CategoryGetRequest[];
   highlightData: any;
 }
