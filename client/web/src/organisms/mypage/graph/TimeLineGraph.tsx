@@ -27,9 +27,9 @@ export default function TimeLineGraph({ data, selectedMetric }: {
         case 'chat':
           chart.series.values[1].show();
           break;
-        // case 'viewer':
-        //   chart.series.values[2].show();
-        //   break;
+        case 'viewer':
+          chart.series.values[2].show();
+          break;
         default:
       }
     });

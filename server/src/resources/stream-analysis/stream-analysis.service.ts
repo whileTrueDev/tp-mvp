@@ -272,7 +272,7 @@ export class StreamAnalysisService {
      */
     const keyFunc = (stream: any) => new Promise<void>((resolveKeys, reject) => {
       const { platform } = stream;
-      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}.json`;
+      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
@@ -356,6 +356,7 @@ export class StreamAnalysisService {
         for (i = gapStartIndex; i < gapStartIndex + gapSize; i += 1) {
           nextStreamTimeline[j].chat_count += currStream.time_line[i].chat_count;
           nextStreamTimeline[j].smile_count += currStream.time_line[i].smile_count;
+          nextStreamTimeline[j].viewer_count += currStream.time_line[i].viewer_count;
           j += 1;
         }
 
@@ -447,6 +448,7 @@ export class StreamAnalysisService {
               organizeArray.value.push({
                 smile_count: timeline.smile_count,
                 chat_count: timeline.chat_count,
+                viewer_count: timeline.viewer_count,
                 date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss'),
               });
             });
