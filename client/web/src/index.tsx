@@ -1,5 +1,5 @@
 import 'moment/locale/ko';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import {
   BrowserRouter, Switch, Route,
@@ -32,7 +32,6 @@ import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
 import useAutoLogin from './utils/hooks/useAutoLogin';
-import useScrollTop from './utils/hooks/useScrollTop';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 import './assets/truepoint.css';
