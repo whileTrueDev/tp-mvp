@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const mysql = require('mysql');
 
 const collectorPool = mysql.createPool({
