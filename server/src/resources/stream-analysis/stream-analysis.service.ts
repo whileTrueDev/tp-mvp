@@ -182,20 +182,27 @@ export class StreamAnalysisService {
           /* 첫번쨰 타임라인은 무조건 temp 에 삽입 */
           temp.count += 1;
           temp.arr.push(curr);
-        } else if (temp.count > 0 && index === eachTimeline.length - 1) {
-          /* 마지막 타임라인 일 떄 temp 가 존재 한다면 해당 temp 병합 */
-          merge(temp, periodIndex);
+          if (eachTimeline.length === 1) {
+            /* 타임라인 길이가 1인 경우는 바로 병합 (결과 생성) */
+            merge(temp, periodIndex);
+          }
         } else {
           /* 전후 비교 및 temp 삽입 */
           const prev = timeline[periodIndex][index - 1];
           if (moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
+            /* 같은 날짜일 경우 temp에 방송 정보값 임시 저장 */
             temp.arr.push(curr);
             temp.count += 1;
           } else if (!moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
+            /* 다른 날짜일 경우 temp 병합 후 temp 초기화 */
             merge(temp, periodIndex);
-
             temp.arr = []; temp.count = 0;
             temp.arr.push(curr); temp.count += 1;
+          }
+
+          if (index === eachTimeline.length - 1) {
+            /* 타임라인의 마지막 방송 정보일 경우 위의 판단 유무와 상관없이 바로 병합 */
+            merge(temp, periodIndex);
           }
         }
 
@@ -215,6 +222,7 @@ export class StreamAnalysisService {
           smileCount: Math.round(sums[2] / timeline[index].length),
         }));
 
+      // console.log(result);
       periodsResolve({
         timeline: [...result],
         type: 'periods',
@@ -414,7 +422,7 @@ export class StreamAnalysisService {
 
     const calculateAvgViewCount = (originArray: SearchEachS3StreamData[]) => {
       if (originArray.length >= 1) {
-        return originArray.reduce((sum, element) => sum + element.viewer, 0) / originArray.length;
+        return Math.round(originArray.reduce((sum, element) => sum + element.viewer, 0) / originArray.length);
       }
       return 0;
     };
