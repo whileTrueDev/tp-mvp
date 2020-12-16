@@ -10,8 +10,7 @@ import {
   MenuItem, Button, Hidden,
 } from '@material-ui/core';
 import {
-  Dashboard, MoreVert, ListAltOutlined,
-  BeenhereOutlined,
+  Dashboard, MoreVert,
 } from '@material-ui/icons';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';

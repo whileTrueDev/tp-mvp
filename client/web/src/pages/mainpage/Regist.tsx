@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Stepper from '../../organisms/mainpage/regist/Stepper';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login(): JSX.Element {
   const classes = useStyles();
-
+  useScrollTop();
   return (
     <section className={classes.container}>
       {/* 왼쪽 빈 공간 */}

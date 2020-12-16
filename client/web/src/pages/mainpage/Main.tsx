@@ -11,6 +11,7 @@ import Appbar from '../../organisms/shared/Appbar';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 
 export default function Main(): JSX.Element {
+  // 시작시 화면 최상단으로 고정
   useScrollTop();
   return (
     <div>

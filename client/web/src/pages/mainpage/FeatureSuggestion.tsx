@@ -82,6 +82,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
   // 페이지네이션
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(8);
+  // 시작시 화면 최상단으로 고정
   useScrollTop();
   return (
     <div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import LoginForm from '../../organisms/mainpage/login/LoginForm';
 import LoginFooter from '../../organisms/shared/FooterShort';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login(): JSX.Element {
   const classes = useStyles();
+  useScrollTop();
   return (
     <section className={classes.container}>
       <section

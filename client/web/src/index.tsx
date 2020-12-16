@@ -74,7 +74,7 @@ function Index(): JSX.Element {
 
   // *******************************************
   // 화면 렌더링시 최상단 으로 고정
-  useScrollTop();
+  // useScrollTop();
   return (
 
     <ThemeProvider<TruepointTheme> theme={truepointTheme}>

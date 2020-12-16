@@ -10,6 +10,7 @@ import NoticeTable from '../../organisms/mainpage/notice/NoticeTable';
 import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import Footer from '../../organisms/shared/footer/Footer';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
@@ -51,7 +52,8 @@ export default function Notice(): JSX.Element {
     history.push('/notice');
     setSelectedCategory('전체'); // 목록으로 돌아온 경우 카테고리 선택 "전체"로 변경
   }
-
+  // 시작시 화면 최상단으로 고정
+  useScrollTop();
   return (
     <main>
       <Appbar />
