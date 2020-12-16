@@ -66,4 +66,5 @@ WORKDIR /truepoint/server
 
 ## application 실행
 EXPOSE 3000
-CMD ["NODE_ENV=test", "yarn", "start:prod"]
+ENV NODE_ENV test
+CMD ["yarn", "start:prod"]
