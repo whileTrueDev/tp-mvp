@@ -39,6 +39,7 @@ async function bootstrap() {
     credentials: true,
   });
 
+  console.log(`server listen on ${process.env.NODE_ENV || 'development'} mode: `);
   await app.listen(3000);
 }
 bootstrap();

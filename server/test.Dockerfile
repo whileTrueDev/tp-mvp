@@ -24,6 +24,9 @@ COPY yarn.lock .
 # monorepo 내부 패키지 (shared) 를 포함한 모든 디펜던시 설치
 RUN yarn install --pure-lockfile --non-interactive
 
+## 테스트 환경변수 설정
+ENV NODE_ENV test
+
 ## Build shared 패키지
 WORKDIR /tp-mvp-server/shared
 RUN yarn build
@@ -63,4 +66,4 @@ WORKDIR /truepoint/server
 
 ## application 실행
 EXPOSE 3000
-CMD ["yarn", "start:prod"]
+CMD ["NODE_ENV=test", "yarn", "start:prod"]
