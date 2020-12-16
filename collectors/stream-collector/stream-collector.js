@@ -9,5 +9,3 @@ scheduler.scheduleJob('*/5 * * * *', ()=>{
     console.log(`stream-collector end | ${new Date().toLocaleString()}`);
   });
 })
-
-// docker run --init --cap-add=SYS_ADMIN --name youtube-crawler -d -v /etc/localtime:/etc/localtime:ro --env-file ./.env youtube-crawler:2.1
