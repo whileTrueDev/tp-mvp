@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,6 +22,7 @@ import FeatureReply from './sub/FeatureReply';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import CustomDialog from '../../../atoms/Dialog/Dialog';
 import useDialog from '../../../utils/hooks/useDialog';
+import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -102,14 +103,14 @@ export default function FeatureDetail({
   // Next Feature
   const nextFeature = data[currentIndex + 1];
 
-  // 스크롤 상단으로
-  const paperRef = useRef<HTMLDivElement>();
-  useEffect(() => {
-    if (paperRef.current) {
-      window.scrollTo(0, paperRef.current.scrollHeight + 100);
-    }
-  });
-
+  // // 스크롤 상단으로
+  // const paperRef = useRef<HTMLDivElement>();
+  // useEffect(() => {
+  //   if (paperRef.current) {
+  //     // window.scrollTo(0, paperRef.current.scrollHeight + 100);
+  //     window.scrollTo(0, 0);
+  //   }
+  // });
   const confirmDialog = useDialog();
   // ******************************************************************
   // 삭제
@@ -153,10 +154,9 @@ export default function FeatureDetail({
       </Paper>
     );
   }
-
   return (
     <div>
-      <Paper component="article" ref={paperRef}>
+      <Paper component="article">
         {/* 제목 섹션 */}
         <div className={classes.title}>
           <div>

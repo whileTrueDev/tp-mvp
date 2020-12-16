@@ -8,8 +8,10 @@ import SolutionCarousel from '../../organisms/mainpage/main/solutionCarousel/Sol
 import Inquiry from '../../organisms/mainpage/main/inquiry/Inquiry';
 import Footer from '../../organisms/shared/footer/Footer';
 import Appbar from '../../organisms/shared/Appbar';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 export default function Main(): JSX.Element {
+  useScrollTop();
   return (
     <div>
       <Appbar />

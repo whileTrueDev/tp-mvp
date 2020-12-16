@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FeatureWriteForm from '../../organisms/mainpage/featureSuggestion/FeatureWriteForm';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import AppBar from '../../organisms/shared/Appbar';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FeatureSuggestionWrite(): JSX.Element {
   const classes = useStyles();
+  useScrollTop();
   return (
     <div>
       <AppBar />

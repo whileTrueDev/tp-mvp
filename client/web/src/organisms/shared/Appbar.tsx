@@ -138,24 +138,6 @@ export default function AppBar(): JSX.Element {
           <Typography>마이페이지</Typography>
         </MenuItem>
       )}
-      <MenuItem
-        className={classnames(classes.menuItem, classes.mobileText)}
-        component={Link}
-        to="/notice"
-        button
-      >
-        <ListAltOutlined className={classes.mobileIcon} />
-        <Typography>공지사항</Typography>
-      </MenuItem>
-      <MenuItem
-        className={classnames(classes.menuItem, classes.mobileText)}
-        component={Link}
-        to="/feature-suggestion"
-        button
-      >
-        <BeenhereOutlined className={classes.mobileIcon} />
-        <Typography>기능제안</Typography>
-      </MenuItem>
 
       {authContext.user.userId ? (
         <MenuItem className={classes.menuItem}>

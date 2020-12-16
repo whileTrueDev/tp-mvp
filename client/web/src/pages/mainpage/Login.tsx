@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login(): JSX.Element {
   const classes = useStyles();
-
   return (
     <section className={classes.container}>
       <section

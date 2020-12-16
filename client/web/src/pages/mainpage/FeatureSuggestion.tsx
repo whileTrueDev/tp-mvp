@@ -15,6 +15,7 @@ import Button from '../../atoms/Button/Button';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import useAuthContext from '../../utils/hooks/useAuthContext';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -81,7 +82,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
   // 페이지네이션
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(8);
-
+  useScrollTop();
   return (
     <div>
       <Appbar />
@@ -118,17 +119,17 @@ export default function FeatureSuggestionPage(): JSX.Element {
 
           {/* 기능제안 카테고리 목록 필터링 */}
           {!selectedSuggestionId && (
-          <div className={classes.contents}>
-            <FilterCategoryButtonGroup
-              categories={!loading && featureListData
-                ? Array
-                  .from(new Set(featureListData.map((d) => d.category)))
-                  .sort()
-                : []}
-              onChange={handleCategorySelect}
-              selected={selectedCategory}
-            />
-          </div>
+            <div className={classes.contents}>
+              <FilterCategoryButtonGroup
+                categories={!loading && featureListData
+                  ? Array
+                    .from(new Set(featureListData.map((d) => d.category)))
+                    .sort()
+                  : []}
+                onChange={handleCategorySelect}
+                selected={selectedCategory}
+              />
+            </div>
           )}
 
           {/* 기능제안 글 목록 */}
@@ -167,6 +168,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
         </div>
       </section>
       <Footer />
+
     </div>
   );
 }

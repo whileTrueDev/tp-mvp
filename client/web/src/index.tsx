@@ -1,5 +1,5 @@
 import 'moment/locale/ko';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import {
   BrowserRouter, Switch, Route,
@@ -32,6 +32,7 @@ import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
 import useAutoLogin from './utils/hooks/useAutoLogin';
+import useScrollTop from './utils/hooks/useScrollTop';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 import './assets/truepoint.css';
@@ -51,7 +52,6 @@ function Index(): JSX.Element {
     user, accessToken, handleLogout, handleLogin,
     loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
   } = useLogin();
-
   /* subscribe 목록의 유저 전환 컨택스트 - CBT 주석 및 추후 User 와 병합 */
   // const {
   //   currUser,
@@ -72,7 +72,11 @@ function Index(): JSX.Element {
   // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
   useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
 
+  // *******************************************
+  // 화면 렌더링시 최상단 으로 고정
+  useScrollTop();
   return (
+
     <ThemeProvider<TruepointTheme> theme={truepointTheme}>
       <CssBaseline />
 
@@ -83,6 +87,7 @@ function Index(): JSX.Element {
           user, accessToken, handleLogin, handleLogout, loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
         }}
         >
+
           <KakaoTalk />
           {/* 페이지 컴포넌트 */}
           {/* <SubscribeContext.Provider value={{
@@ -95,7 +100,9 @@ function Index(): JSX.Element {
             error,
           }}
           > */}
+
           <BrowserRouter>
+
             <Switch>
               <Route exact path="/" component={Main} />
               <Route exact path="/signup" component={Regist} />
