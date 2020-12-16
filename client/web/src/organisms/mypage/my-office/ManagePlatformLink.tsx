@@ -106,7 +106,9 @@ export default function ManagePlatformLink({
         </div>
       </div>
 
-      <div className={classes.container}>
+      {/* 아프리카TV 연동 기능 임시 제거 (CBT 포함X - @Dan, @Robert, 2020.12.16) */}
+      {/* WARNING!!!!!!! 제거하면 안됩니다 */}
+      {/* <div className={classes.container}>
         <div className={classes.label}>
           <Avatar src="/images/logo/afreecaLogo.png" className={classes.avatar} />
           <Typography>아프리카 TV</Typography>
@@ -131,7 +133,7 @@ export default function ManagePlatformLink({
             </Button>
           )}
         </div>
-      </div>
+      </div> */}
 
       <div className={classes.container}>
         <div className={classes.label}>
