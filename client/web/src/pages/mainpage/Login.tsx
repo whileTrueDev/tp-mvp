@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.down('sm')]: {
       width: '100%',
+      padding: 0,
     },
   },
 }));
