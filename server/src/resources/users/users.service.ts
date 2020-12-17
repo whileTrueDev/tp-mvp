@@ -586,7 +586,6 @@ export class UsersService {
         'googleLogo', 'youtubeId', 'youtubeTitle', 'youtubeLogo',
       ], data);
     }
-    return data;
     return this.youtubeRepository.save(data);
   }
 
