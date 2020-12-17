@@ -68,7 +68,7 @@ export default function FeatureWriteForm(): JSX.Element {
     { url: '/feature-suggestion', method: 'post' }, { manual: true },
   );
   function handlePostSubmit() {
-    if (editorRef.current && editorRef.current.getInstance().getHtml()) {
+    if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
       const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPostDto = {
         ...featureSource,
@@ -92,7 +92,7 @@ export default function FeatureWriteForm(): JSX.Element {
     { url: '/feature-suggestion', method: 'patch' }, { manual: true },
   );
   function handlePatchSubmit(targetSuggestionId: string | number) {
-    if (editorRef.current && editorRef.current.getInstance().getHtml()) {
+    if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
       const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPatchDto = {
         ...featureSource,
