@@ -1,9 +1,8 @@
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
-import useTheme from '@material-ui/core/styles/useTheme';
+// import useTheme from '@material-ui/core/styles/useTheme';
 import graphColor from './Color';
-
 // import { timelineGraphInterface } from './graphsInterface';
 
 const metricSetting: any = {
