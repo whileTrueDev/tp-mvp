@@ -5,6 +5,7 @@ import {
   AccordionDetails, Typography, Grid, Button,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import PriorityHigh from '@material-ui/icons/PriorityHigh';
 import Paper from '@material-ui/core/Paper';
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import shortid from 'shortid';
@@ -62,6 +63,13 @@ const styles = makeStyles((theme) => ({
   selectedButtonTitle: {
     color: theme.palette.primary.contrastText,
     fontWeight: 'bold',
+  },
+  timeDescription: {
+    marginLeft: theme.spacing(2),
+    fontWeight: 'bold',
+  },
+  mark: {
+    fontSize: '17px',
   },
 }));
 
@@ -132,8 +140,15 @@ export default function MetricsAccordian(
               pointNumber={chatPicked90 ? highlightData.chat_points_90.length : highlightData.chat_points.length}
             />
             <Grid container direction="column" justify="center">
-              <Grid item md={12}>
+              <Grid container direction="row" justify="space-between" alignItems="center">
+                <Typography className={classes.timeDescription} variant="body1">
+                  {' '}
+                  <PriorityHigh className={classes.mark} />
+                  그래프 시간은 방송 플레이 타임 기준입니다
+                </Typography>
                 <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
+              </Grid>
+              <Grid item md={12}>
                 <Chart
                   data={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
                   chartType="chat"
@@ -180,8 +195,15 @@ export default function MetricsAccordian(
               pointNumber={smilePicked90 ? highlightData.smile_points_90.length : highlightData.smile_points.length}
             />
             <Grid container direction="column" justify="center">
+              <Grid container direction="row" justify="space-between" alignItems="center">
+                <Typography className={classes.timeDescription} variant="body1">
+                  {' '}
+                  <PriorityHigh className={classes.mark} />
+                  그래프 시간은 방송 플레이 타임 기준입니다
+                </Typography>
+                <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
+              </Grid>
               <Grid item md={12}>
-                <ScorePicker picked90={smilePicked90} setPicked90={setSmilePicked90} />
                 <Chart
                   data={smilePicked90 ? smileHightlight90 : highlightData.smile_points}
                   chartType="smile"
@@ -255,7 +277,14 @@ export default function MetricsAccordian(
                 </Button>
               ))}
             </div>
-            <ScorePicker picked90={categoryPicked90} setPicked90={setCategoryPicked90} />
+            <Grid container direction="row" justify="space-between" alignItems="center">
+              <Typography className={classes.timeDescription} variant="body1">
+                {' '}
+                <PriorityHigh className={classes.mark} />
+                그래프 시간은 방송 플레이 타임 기준입니다
+              </Typography>
+              <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
+            </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
                 <Chart

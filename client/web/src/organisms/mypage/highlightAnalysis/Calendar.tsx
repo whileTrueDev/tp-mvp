@@ -70,11 +70,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface StreamCalenderProps {
-  // handleDatePick: (selectedDate: Date, startAt: string, finishAt: string, fileId: string) => void;
   clickedDate: Date;
   handleClickedDate: (newDate: Date) => void;
   handleDayStreamList: (responseList: (StreamDataType)[]) => void;
-  // dayStreamsList: DayStreamsInfo[];
 }
 function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   /* 일감 - 편집점 분석 달력 렌더링 방식 변경 */
@@ -82,101 +80,6 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
 
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  // const getStreamData: StreamData[] = new Array<StreamData>();
-  // const [streamDays, setStreamDays] = React.useState<number[]>([]);
-  // const [streamData, setStreamData] = React.useState<StreamData[]>(getStreamData);
-  // const [selectedDate, setSelectedDate] = React.useState<MaterialUiPickersDate>(new Date());
-  // // const [isLoading, setIsLoading] = React.useState(true);
-  // const [isDataLoading, setDataIsLoading] = React.useState(true);
-  // const [, setSelectedDay] = React.useState(0);
-  // const [isDate, setIsDate] = React.useState(false);
-  // const [, getHighlightList] = useAxios(
-  //   { url: '/highlight/list' }, { manual: true },
-  // );
-  // const [, getStreamList] = useAxios(
-  //   { url: '/highlight/stream' }, { manual: true },
-  // );
-
-  // const fetchListData = useCallback(async (
-  //   platform: 'youtube'|'afreeca'|'twitch',
-  //   name: string, year: string, month: string): Promise<void> => {
-  //   getHighlightList({
-  //     params: {
-  //       platform, name, year, month,
-  //     },
-  //   }).then((res) => {
-  //     if (res.data) {
-  //       setStreamDays(res.data);
-  //       // setIsLoading(false);
-  //     }
-  //   }).catch(() => {
-  //     ShowSnack('오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-  //   });
-  // }, [getHighlightList, enqueueSnackbar]);
-
-  // const fetchStreamData = async (
-  //   platform: 'youtube'|'afreeca'|'twitch', name: string, year: string, month: string, day: string): Promise<void> => {
-  //   // 달력-> 날짜 선택시 해당 일의 방송을 로드
-  //   getStreamList({
-  //     params: {
-  //       platform, name, year, month, day,
-  //     },
-  //   })
-  //     .then((res) => {
-  //       if (res.data.length !== 0) {
-  //         setStreamData(res.data);
-  //         console.log(res.data);
-  //       } else {
-  //         setStreamData([{
-  //           getState: false, startAt: '', finishAt: '', fileId: '', platform: 'afreeca',
-  //         }]);
-  //       }
-  //     }).catch(() => {
-  //       ShowSnack('해당 날짜의 방송목록을 불러오지 못했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-  //     });
-  // };
-
-  // const makeMonth = (month: number) => {
-  //   if (month < 10) {
-  //     const edit = `0${month}`;
-  //     return edit;
-  //   }
-  //   const returnMonth = String(month);
-  //   return returnMonth;
-  // };
-
-  // const makeDay = (day: number) => {
-  //   if (day < 10) {
-  //     const edit = `0${day}`;
-  //     return edit;
-  //   }
-  //   const returnDay = String(day);
-  //   return returnDay;
-  // };
-
-  // const handleMonthChange = async (date: Date | null): Promise<void> => new Promise((resolve) => {
-  //   if (date) {
-  //     const year = String(date.getFullYear());
-  //     const month = date.getMonth() + 1;
-  //     const editMonth = makeMonth(month);
-  //     fetchListData('afreeca', '234175534', year, editMonth);
-  //     resolve();
-  //   }
-  // });
-
-  // const handleDateChange = async (date: Date | null): Promise<void> => new Promise((resolve) => {
-  //   if (date) {
-  //     const year = String(date.getFullYear());
-  //     const month = makeDay(date.getMonth() + 1);
-  //     const day = makeDay(date.getDate());
-  //     fetchStreamData('afreeca', '234175534', year, month, day);
-  //     setSelectedDay(Number(day));
-  //     setSelectedDate(date);
-  //     setIsDate(true);
-  //     setDataIsLoading(false);
-  //   }
-  //   resolve();
-  // });
 
   const DATE_THEME = (others: Theme) => ({
     ...others,
@@ -196,13 +99,6 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
     },
   });
 
-  // 더미데이터 추후 수정 필요 - 임시 주석
-  // React.useEffect(() => {
-  //   fetchListData('afreeca', '234175534', '2020', '12');
-  // }, [fetchListData]);
-  /**
-   * 일감 - 편집점 분석 달력 렌더링 방식 변경
-   */
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const auth = useAuthContext();
@@ -211,8 +107,6 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   const [
     {
       data: getStreamsData,
-      // loading: getStreamsLoading,
-      // error: getStreamsError,
     }, excuteGetStreams] = useAxios<StreamDataType[]>({
       url: '/broadcast-info',
     }, { manual: true });
