@@ -44,6 +44,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
   },
 }));
+/**
+ * 캘린더 달력 정보 재요청 할 개월수 전 후 단위  
+ * 3 -> 위치한 달 전 3개월, 후 3개월 총 6개월
+ */
 const reRequest = 3;
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {

@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
     padding: 0,
-    // maxHeight: '250px',
     overflow: 'auto',
     height: 'inherit',
   },
@@ -115,8 +114,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   tooltipIconWrapper: {
     display: 'inline-flex',
-    marginRight: '8px',
-    // paddingTop: '8px',
+    marginRight: theme.spacing(1),
     flexDirection: 'row',
     alignItems: 'flex-end',
   },
