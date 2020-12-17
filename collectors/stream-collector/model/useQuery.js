@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // DB 커넥션 가져오기.
 const {collectorPool, truepointPool} = require('./connectionPool');
 

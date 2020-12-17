@@ -76,8 +76,8 @@ export default function FeatureWriteForm(): JSX.Element {
   );
 
   function handlePostSubmit() {
-    if (editorRef.current && editorRef.current?.getInstance().getHtml()) {
-      const contents = editorRef.current?.getInstance().getHtml();
+    if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
+      const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPostDto = {
         ...featureSource,
         userId: authContext.user.userId,
@@ -90,8 +90,10 @@ export default function FeatureWriteForm(): JSX.Element {
         .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
         .then(() => history.push('/feature-suggestion'))
         .catch((err) => ShowSnack('기능제안 등록 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
-    } else {
+    } else if (!(editorRef.current && editorRef.current.getInstance().getHtml())) {
       ShowSnack('내용을 입력해주세요!!', 'warning', enqueueSnackbar);
+    } else {
+      ShowSnack('제목을 입력해주세요!!', 'warning', enqueueSnackbar);
     }
   }
 
@@ -102,8 +104,8 @@ export default function FeatureWriteForm(): JSX.Element {
   );
 
   function handlePatchSubmit(targetSuggestionId: string | number) {
-    if (editorRef.current && editorRef.current.getInstance().getHtml()) {
-      const contents = editorRef.current?.getInstance().getHtml();
+    if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
+      const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPatchDto = {
         ...featureSource,
         suggestionId: Number(targetSuggestionId),
@@ -121,8 +123,10 @@ export default function FeatureWriteForm(): JSX.Element {
           }
         })
         .catch(() => ShowSnack('기능제안 수정 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
-    } else {
+    } else if (!(editorRef.current && editorRef.current.getInstance().getHtml())) {
       ShowSnack('내용을 입력해주세요!!', 'warning', enqueueSnackbar);
+    } else {
+      ShowSnack('제목을 입력해주세요!!', 'warning', enqueueSnackbar);
     }
   }
 

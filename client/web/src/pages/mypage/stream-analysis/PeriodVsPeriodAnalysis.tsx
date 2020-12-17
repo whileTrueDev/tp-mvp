@@ -23,6 +23,7 @@ import textSource from '../../../organisms/shared/source/MypageHeroText';
 // layout style
 import useStreamAnalysisStyles from './streamAnalysisLayout.style';
 import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
+import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 export interface PeriodsRequestParams {
   userId: string;
@@ -74,6 +75,8 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   //   setOpen(false);
   // }, [subscribe.currUser]);
 
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
   return (
     <>
       <MypageSectionWrapper>

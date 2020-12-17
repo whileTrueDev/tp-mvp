@@ -506,8 +506,10 @@ export class UsersService {
 
       // 선택된 로고 + 닉네임 제거
       const afreeca = await this.afreecaRepository.findOne(targetUser.afreecaId);
-      targetPlatformLogo = afreeca.logo;
-      targetPlatformNickname = afreeca.afreecaStreamerName;
+      if (afreeca) {
+        targetPlatformLogo = afreeca.logo;
+        targetPlatformNickname = afreeca.afreecaStreamerName;
+      }
     }
     if (platform === 'twitch') {
       deletedPlatformId = targetUser.twitchId;
@@ -518,8 +520,10 @@ export class UsersService {
 
       // 선택된 로고 + 닉네임 제거
       const twitch = await this.twitchRepository.findOne(targetUser.twitchId);
-      targetPlatformLogo = twitch.logo;
-      targetPlatformNickname = twitch.twitchChannelName;
+      if (twitch) {
+        targetPlatformLogo = twitch.logo;
+        targetPlatformNickname = twitch.twitchChannelName;
+      }
     }
     if (platform === 'youtube') {
       deletedPlatformId = targetUser.youtubeId;
@@ -530,8 +534,10 @@ export class UsersService {
 
       // 선택된 로고 + 닉네임 제거
       const youtube = await this.youtubeRepository.findOne(targetUser.youtubeId);
-      targetPlatformLogo = this.resizeingYoutubeLogo(youtube.youtubeLogo);
-      targetPlatformNickname = youtube.youtubeTitle;
+      if (youtube) {
+        targetPlatformLogo = this.resizeingYoutubeLogo(youtube.youtubeLogo);
+        targetPlatformNickname = youtube.youtubeTitle;
+      }
     }
 
     // 플랫폼 연결 정보 삭제 및 대표 프로필 사진|닉네임이 해당 플랫폼의 프로필사진|닉네임인 경우 함께 삭제

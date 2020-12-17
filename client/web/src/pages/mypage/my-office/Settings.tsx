@@ -22,6 +22,7 @@ import DeleteUser from '../../../organisms/mypage/my-office/DeleteUser';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import getJosa from '../../../utils/getJosa';
 import PlatformLinkErrorAlert from '../../../organisms/mypage/my-office/PlatformLinkErrorAlert';
+import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -94,6 +95,8 @@ export default function Settings(): JSX.Element {
     }
   }, [enqueueSnackbar, location.search, linkToUserRequest, doUserFetch]);
 
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
   return (
     <>
       <MypageSectionWrapper>
@@ -103,6 +106,9 @@ export default function Settings(): JSX.Element {
             <SectionTitle mainTitle="플랫폼 연동 관리" />
             <Typography variant="body2" color="textSecondary">
               플랫폼 연동을 통해 트루포인트를 바로 시작해보세요.
+            </Typography>
+            <Typography variant="caption" color="textSecondary">
+              아프리카TV의 경우 아직 연동 기능을 제공하지 않습니다. 아프리카TV 방송 데이터를 연동하고싶으신 분은 우측 아래 버튼으로 카카오톡 문의부탁드립니다.
             </Typography>
           </div>
           {!!alreadyLinkedWithOther && (

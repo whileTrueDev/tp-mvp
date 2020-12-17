@@ -1,13 +1,14 @@
+/* eslint-disable */
 const useQuery = require('../model/useQuery');
+const USER_TABLE = process.env.USER_TARGET_TABLE;
+const STREAM_TABLE = process.env.STREAM_TARGET_TABLE;
+
 
 const getDateFormat = (_date1) => {
   const Date_1 = _date1 instanceof Date ? _date1 : new Date(_date1);
   return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`;
 };
 
-// JOIN AfreecaTargetStreamers USING (creatorId)
-// AND endDate > DATE_SUB(NOW(), INTERVAL 1 DAY)
-// WHERE creatorId IN ${conditionQuery}) 
 const query = (conditionQuery) => `
 SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'afreeca' AS platform
 FROM 
@@ -16,26 +17,26 @@ SELECT
   creatorId,
   videoId AS streamId,
   videoTitle AS title,
-  bookmark AS fan,
-  startDate AS startedAt,
+  REPLACE(bookmark,',','') AS fan,
+  startDate,
+  endDate,
   ROUND(TIMESTAMPDIFF(MINUTE, startDate, endDate) / 60, 1) AS airTime
 FROM AfreecaStreams
-WHERE creatorId = 'arinbbidol'  
+WHERE creatorId IN ${conditionQuery})  
+AND endDate > DATE_SUB(NOW(), INTERVAL 7 DAY)
 AND needCollect = 1
 ) AS A
-LEFT JOIN AfreecaChats 
+LEFT JOIN AfreecaChats  
 ON A.streamId = AfreecaChats.videoId
 GROUP BY streamId
 `;
-// AND endDate > DATE_SUB(NOW(), INTERVAL 1 DAY)
-// 1. 트루포인트 DB에서 계약된 youtubeId, userId를 모두 들고온다.
-// 2. youtubeId : userId로 map을 만든다.
+
 const getCreators = () => new Promise((resolve, reject) => {
   // 모든 user table에 twitchId 에 대해서 unique key를 걸어줌으로써 1:1 대응으로 바뀐다.
   const creatorListQuery = `
   SELECT userId, afreecaId
-  FROM UserTest
-  RIGHT JOIN PlatformAfreeca USING (afreecaId)
+  FROM ${USER_TABLE}
+  JOIN PlatformAfreecaTest USING (afreecaId)
   `;
   useQuery('tp', creatorListQuery, [])
     .then((row) => {
@@ -83,6 +84,7 @@ const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) =
     })
     .catch((error) => {
       reject({
+        type: true,
         func: 'getStreamData',
         error,
       });
@@ -103,13 +105,13 @@ const loadStream = (streamData) => new Promise((resolve, reject) => {
 
   const rawQuery = streamData.reduce((str,
     {
-      streamId, platform, creatorId, userId, title, viewer, fan, startedAt, airTime, chatCount,
-    }) => `${str}('${streamId}', '${platform}', '${creatorId}', '${userId}', '${title}', '${viewer}', '${fan}', '${getDateFormat(startedAt)}', '${airTime}', '${chatCount}'),`, '');
+      streamId, platform, creatorId, userId, title, viewer, fan, startDate, endDate, airTime, chatCount,
+    }) => `${str}('${streamId}', '${platform}', '${creatorId}', '${userId}', '${title}', '${viewer}', '${fan}', '${getDateFormat(startDate)}', '${getDateFormat(endDate)}', '${airTime}', '${chatCount}'),`, '');
 
   const conditionQuery = `${rawQuery.slice(0, -1)};`;
   const InsertQuery = `
-    INSERT INTO Streams
-    (streamId, platform, creatorId, userId, title, viewer, fan, startedAt, airTime, chatCount)
+    INSERT INTO ${STREAM_TABLE}
+    (streamId, platform, creatorId, userId, title, viewer, fan, startDate, endDate, airTime, chatCount)
     VALUES ${conditionQuery};
     `;
 
@@ -157,7 +159,7 @@ const updateState = (streamData) => new Promise((resolve, reject) => {
     });
 });
 
-const main = () => new Promise((resolve, reject) => {
+const main = () => new Promise((resolve) => {
   getCreators()
     .then((streamData) => getStreamData(streamData))
     .then((streamData) => Promise.all([

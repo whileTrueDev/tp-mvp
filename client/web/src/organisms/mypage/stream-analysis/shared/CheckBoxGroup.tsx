@@ -18,7 +18,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     justifyContent: 'left',
   },
   formLabel: {
-
     fontSize: '20px',
     fontWeight: 600,
     lineHeight: 1,
