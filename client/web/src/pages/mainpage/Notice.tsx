@@ -52,7 +52,8 @@ export default function Notice(): JSX.Element {
     history.push('/notice');
     setSelectedCategory('전체'); // 목록으로 돌아온 경우 카테고리 선택 "전체"로 변경
   }
-  // 시작시 화면 최상단으로 고정
+
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
   useScrollTop();
   return (
     <main>
