@@ -156,12 +156,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                       <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
                         {selectedStream.title.length > 20 ? `${selectedStream.title.slice(0, 21)} ...` : selectedStream.title}
                       </Typography>
+                      <IconButton
+                        onClick={() => setSelectedStream(null)}
+                      >
+                        <Clear />
+                      </IconButton>
                     </div>
-                    <IconButton
-                      onClick={() => setSelectedStream(null)}
-                    >
-                      <Clear />
-                    </IconButton>
+                    <div />
                   </Card>
                 </Fade>
               )}
