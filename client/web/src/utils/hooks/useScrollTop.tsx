@@ -9,5 +9,5 @@ export default function useScrollTop(): void {
       setTimeout(() => window.scrollTo(0, 0), 10);
       setPrevPath(currentPath);
     }
-  });
+  }, [currentPath, prevPath]);
 }
