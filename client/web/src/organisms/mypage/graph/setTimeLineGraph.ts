@@ -22,13 +22,21 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   chart.paddingLeft = 5;
 
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+  dateAxis.groupCount = 400;
+  // dateAxis.groupInterval = { timeUnit: 'day', count: 1 };
+  dateAxis.groupData = true;
+  dateAxis.groupIntervals.setAll([
+    { timeUnit: 'minute', count: 1 },
+    { timeUnit: 'hour', count: 1 },
+    { timeUnit: 'day', count: 10 },
+  ]);
+
   dateAxis.skipEmptyPeriods = true;
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd HH:mm:ss';
   dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
   dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
   dateAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   // dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
-  // dateAxis.groupData = true;
 
   // ****************************** smile count series ***************************
   const valueAxis: any = chart.yAxes.push(new am4charts.ValueAxis());
