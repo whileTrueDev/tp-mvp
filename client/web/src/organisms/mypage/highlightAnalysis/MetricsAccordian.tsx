@@ -5,7 +5,6 @@ import {
   AccordionDetails, Typography, Grid, Button,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import PriorityHigh from '@material-ui/icons/PriorityHigh';
 import Paper from '@material-ui/core/Paper';
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import shortid from 'shortid';
@@ -104,7 +103,6 @@ export default function MetricsAccordian(
   const [chatPicked90, setChatPicked90] = React.useState(true);
   const [smilePicked90, setSmilePicked90] = React.useState(true);
   const [categoryPicked90, setCategoryPicked90] = React.useState(true);
-
   // 상위 10% 편집점 데이터
   const chatHightlight90 = highlightData.chat_points_90.map((atPoint: any) => ({
     ...highlightData.chat_points[atPoint],
@@ -212,7 +210,7 @@ export default function MetricsAccordian(
                   </span>
                   입니다
                 </Typography>
-                <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
+                <ScorePicker picked90={smilePicked90} setPicked90={setSmilePicked90} />
               </Grid>
               <Grid item md={12}>
                 <Chart
@@ -298,7 +296,7 @@ export default function MetricsAccordian(
                 </span>
                 입니다
               </Typography>
-              <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
+              <ScorePicker picked90={categoryPicked90} setPicked90={setCategoryPicked90} />
             </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
