@@ -3,7 +3,7 @@ import {
 } from 'typeorm';
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
 
-@Entity({ name: 'Streams_test_2' })
+@Entity({ name: 'Streams' })
 export class StreamsEntity implements Stream {
   @PrimaryColumn()
   streamId: string;
@@ -20,25 +20,25 @@ export class StreamsEntity implements Stream {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ type: 'mediumint', default: 0 })
   viewer: number;
 
-  @Column()
+  @Column({ type: 'mediumint', default: 0 })
   fan: number;
 
-  @Column('timestamp')
+  @Column({ type: 'timestamp' })
   startDate: Date;
 
-  @Column('timestamp')
+  @Column({ type: 'timestamp' })
   endDate: Date;
 
-  @Column()
+  @Column({ type: 'float' })
   airTime: number;
 
-  @Column()
+  @Column({ type: 'mediumint', default: 0 })
   chatCount: number;
 
-  @Column()
+  @Column({ type: 'boolean', default: 1 })
   needAnalysis: boolean;
 
   constructor(partial: Partial<StreamsEntity>) {

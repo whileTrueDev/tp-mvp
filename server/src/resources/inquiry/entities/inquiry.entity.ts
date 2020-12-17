@@ -3,7 +3,7 @@ import {
   Entity, Column, CreateDateColumn, PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'Inquiry' })
+@Entity({ name: 'InquiryTest' })
 export class InquiryEntity implements Inquiry {
   // For Exclude Decorator
   constructor(partial: Partial<InquiryEntity>) {
@@ -28,6 +28,6 @@ export class InquiryEntity implements Inquiry {
   @Column({ comment: '개인정보 제공 동의, 0=미동의,1=동의' })
   privacyAgreement: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt?: Date;
 }

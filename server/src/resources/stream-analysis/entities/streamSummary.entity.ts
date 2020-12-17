@@ -1,9 +1,9 @@
 import {
-  Entity, Column, PrimaryColumn,
+  Entity, Column, PrimaryColumn, CreateDateColumn,
 } from 'typeorm';
 import { StreamSummary } from '@truepoint/shared/dist/interfaces/StreamSummary.interface';
 
-@Entity({ name: 'StreamSummaryTest2' })
+@Entity({ name: 'StreamSummaryTest' })
 export class StreamSummaryEntity implements StreamSummary {
   @PrimaryColumn()
   streamId: string;
@@ -11,13 +11,10 @@ export class StreamSummaryEntity implements StreamSummary {
   @PrimaryColumn()
   platform: string;
 
-  @Column()
-  creatorId: string;
-
-  @Column()
+  @Column({ type: 'mediumint', default: 0 })
   smileCount: number;
 
-  @Column('timestamp')
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   constructor(partial: Partial<StreamSummaryEntity>) {

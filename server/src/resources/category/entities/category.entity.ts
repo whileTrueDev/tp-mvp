@@ -3,9 +3,9 @@ import {
 } from 'typeorm';
 import { Category } from '@truepoint/shared/dist/interfaces/Category.interface';
 
-@Entity({ name: 'Category' })
+@Entity({ name: 'CategoryTest' })
 export class CategoryEntity implements Category {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'smallint' })
   categoryId: number;
 
   @Column()

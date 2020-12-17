@@ -6,7 +6,7 @@ import {
 
 import { UserEntity } from '../../users/entities/user.entity';
 
-@Entity({ name: 'Notification' })
+@Entity({ name: 'NotificationTest' })
 export class NotificationEntity implements Notification {
   @PrimaryGeneratedColumn()
   index: number;
@@ -26,7 +26,7 @@ export class NotificationEntity implements Notification {
   @Column({ type: 'boolean', default: 0 })
   readState: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @ManyToOne((type) => UserEntity, (user) => user.notification)

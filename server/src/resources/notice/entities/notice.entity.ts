@@ -3,7 +3,7 @@ import {
   Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('Notice')
+@Entity('NoticeTest')
 export class NoticeEntity implements Notice {
   @PrimaryGeneratedColumn()
   id: number;
@@ -32,7 +32,7 @@ export class NoticeEntity implements Notice {
   @Column({ comment: '중요 공지 플래그', type: 'boolean', default: 0 })
   isImportant: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   constructor(partial: Partial<NoticeEntity>) {

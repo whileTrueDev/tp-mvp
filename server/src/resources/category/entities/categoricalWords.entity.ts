@@ -4,9 +4,9 @@ import {
 import { CategoricalWords } from '@truepoint/shared/dist/interfaces/CategoricalWords.interface';
 import { CategoryEntity } from './category.entity';
 
-@Entity({ name: 'CategoricalWords' })
+@Entity({ name: 'CategoricalWordsTest' })
 export class CategoricalWordsEntity implements CategoricalWords {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'smallint' })
   wordId: number;
 
   @JoinColumn()
@@ -16,7 +16,7 @@ export class CategoricalWordsEntity implements CategoricalWords {
   @Column()
   word: string;
 
-  @Column()
+  @Column({ type: 'float' })
   weight: number;
 
   constructor(partial: Partial<CategoricalWordsEntity>) {

@@ -4,7 +4,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@Entity({ name: 'Subscribe' })
+@Entity({ name: 'SubscribeTest2' })
 export class SubscribeEntity implements Subscribe {
   @PrimaryGeneratedColumn()
   index: number
@@ -16,9 +16,9 @@ export class SubscribeEntity implements Subscribe {
   @Column({ length: 20 })
   targetUserId: string;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   startAt: Date;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   endAt: Date;
 }
