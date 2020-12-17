@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +10,7 @@ import NoticeTable from '../../organisms/mainpage/notice/NoticeTable';
 import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import Footer from '../../organisms/shared/footer/Footer';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
@@ -52,6 +53,12 @@ export default function Notice(): JSX.Element {
     setSelectedCategory('전체'); // 목록으로 돌아온 경우 카테고리 선택 "전체"로 변경
   }
 
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
+  useEffect(() => {
+    // 선택된 공지사항 Id 변경시 스크롤 최상단으로
+    window.scrollTo(0, 0);
+  }, [selectedNoticeId]);
   return (
     <main>
       <Appbar />

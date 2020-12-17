@@ -18,6 +18,7 @@ import MypageHero from '../../../organisms/shared/sub/MypageHero';
 import textSource from '../../../organisms/shared/source/MypageHeroText';
 // layout style
 import useStreamAnalysisStyles from './streamAnalysisLayout.style';
+import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 export default function StreamAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
@@ -43,7 +44,8 @@ export default function StreamAnalysis(): JSX.Element {
   React.useEffect(() => {
     setOpen(false);
   }, [subscribe.currUser]);
-
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
   return (
     <>
       <MypageSectionWrapper>
