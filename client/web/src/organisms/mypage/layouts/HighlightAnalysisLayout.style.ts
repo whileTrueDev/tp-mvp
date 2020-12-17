@@ -2,15 +2,17 @@ import { makeStyles } from '@material-ui/core';
 
 const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
   root: { padding: theme.spacing(4) },
-  wraper: { padding: `0 ${theme.spacing(2)}px` },
+  wraper: {
+    margin: `0 ${theme.spacing(2)}px`,
+    width: '90%',
+  },
   calendarWrapper: {
     padding: theme.spacing(2),
     borderRadius: '12px',
-    // hegith: '292px',
     border: `solid 1px ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
-    margin: theme.spacing(4),
-    width: '80%',
+    margin: theme.spacing(2),
+    width: '90%',
   },
   sideSpace: {
     margin: `0px ${theme.spacing(4)}px`,
@@ -30,6 +32,7 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     lineHeight: '2.06',
     fontSize: '16px',
     fontWeight: 500,
+    marginRight: theme.spacing(2),
   },
   checkedStreamFont: {
     fontSize: 22,
@@ -64,18 +67,14 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   title: {
+    fontSize: 22,
     display: 'flex',
     alignItems: 'center',
-    padding: `${theme.spacing(1)}px ${theme.spacing(0)}px`,
+    fontWeight: 700,
+    padding: `${theme.spacing(3)}px ${theme.spacing(0)}px`,
+    width: 310,
+    marginRight: theme.spacing(4),
   },
-  titleText: { fontWeight: 'bold', lineHeight: theme.typography.h6.lineHeight },
-  chip: {
-    marginLeft: theme.spacing(1), marginRight: theme.spacing(1),
-  },
-  searchBox: { margin: theme.spacing(4) },
-  searchTitle: { marginTop: theme.spacing(2) },
-  analysisButton: { textAlign: 'right', paddingBottom: theme.spacing(2) },
-  helperPopOver: { textAlign: 'right' },
 }));
 
 export default useHighlightAnalysisLayoutStyles;

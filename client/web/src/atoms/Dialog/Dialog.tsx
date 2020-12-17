@@ -103,9 +103,6 @@ function CustomDialog({
       {callback
         && (
           <DialogActions>
-            <Button onClick={onClose} color="primary">
-              취소
-            </Button>
             <Button onClick={callback} color="primary" autoFocus>
               확인
             </Button>
