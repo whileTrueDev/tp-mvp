@@ -40,6 +40,8 @@ export default function HighlightExport(
   };
 
   let exportFileName = '트루포인트 편집점';
+  let helperPopoverFlag = false;
+
   switch (exportCategory) {
     case 'chat':
       exportFileName = '채팅수 기반 편집점';
@@ -63,6 +65,7 @@ export default function HighlightExport(
       exportFileName = '의문이 드는 카테고리 편집점';
       break;
     default:
+      helperPopoverFlag = true;
       break;
   }
 
@@ -97,9 +100,11 @@ export default function HighlightExport(
 
   return (
     <div>
-      <div className={classes.helperPopOver}>
-        <HelperPopOver />
-      </div>
+      {helperPopoverFlag && (
+        <div className={classes.helperPopOver}>
+          <HelperPopOver />
+        </div>
+      )}
       <div>
         <FormControlLabel
           control={(

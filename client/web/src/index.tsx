@@ -22,6 +22,7 @@ import Mypage from './pages/mypage/layouts/MypageLayout';
 import KakaoTalk from './organisms/shared/KakaoTalkButton';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
+import InfoCBT from './pages/mainpage/InfoCBT';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
@@ -104,6 +105,7 @@ function Index(): JSX.Element {
 
             <Switch>
               <Route exact path="/" component={Main} />
+              <Route exact path="/infoCBT" component={InfoCBT} />
               <Route exact path="/signup" component={Regist} />
               <Route exact path="/signup/completed" component={Regist} />
               <Route exact path="/login" component={Login} />

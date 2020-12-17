@@ -2,7 +2,6 @@ import React from 'react';
 import { Paper, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-import { Link } from 'react-router-dom';
 import MetricsTable from '../../shared/sub/MetricsTable';
 import MetricTitle from '../../shared/sub/MetricTitle';
 import Button from '../../../atoms/Button/Button';
@@ -164,11 +163,9 @@ export default function TruepointHighlight({
               />
               <Button
                 className={classes.button}
-                link={Link}
-                to="/notice/1"
+                onClick={() => window.open('https://drive.google.com/file/d/16OfhD-tPMURm2DOXGqEJdywg5JOLfJKs/view?usp=sharing', '_blank')}
               >
                 편집점 알아보기
-                {/* 여기 클릭 이벤트에 공지사항 - 편집점 이용 안내에 대한 페이지로 이동 시킬 예정 */}
               </Button>
             </div>
           </Grid>
