@@ -72,12 +72,12 @@ export default function InfoCBT(): JSX.Element {
   return (
     <div className={classes.topRoot}>
       <Appbar />
-      <ProductHero />
+      <ProductHero pageIn="cbtInfo" />
       <Container className={classes.root}>
 
         <div className={classes.videoWrapper}>
           <iframe
-            src="https://www.youtube.com/embed/7y9TYQaTGy8"
+            src="https://www.youtube.com/embed/ANBakGw49hI"
             title="CbtInfoVideo"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
