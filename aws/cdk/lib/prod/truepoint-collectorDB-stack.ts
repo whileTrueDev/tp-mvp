@@ -61,7 +61,7 @@ export class WhileTrueCollectorStack extends BaseStack {
     const collectorDBInstace = new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
       engine: dbEngine,
-      // masterUsername: 'whiletrue',
+      credentials: { username: 'whiletrue' },
       instanceIdentifier: `${ID_PREFIX}RDS-${dbEngine.engineType}`,
       databaseName: ID_PREFIX,
       // *********************************************
@@ -168,7 +168,7 @@ export class WhileTrueCollectorStack extends BaseStack {
     );
     const twitchtvChatsTaskDef = new ecs.FargateTaskDefinition(
       this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}TaskDef`,
-      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME, cpu: 512, memoryLimitMiB: 1024 },
+      { family: TWITCH_CHAT_COLLECTOR_FAMILY_NAME, cpu: 1024, memoryLimitMiB: 2048 },
     );
     twitchtvChatsTaskDef.addContainer(
       `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Container`, {
