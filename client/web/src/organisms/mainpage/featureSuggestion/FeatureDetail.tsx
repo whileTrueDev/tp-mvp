@@ -273,7 +273,6 @@ export default function FeatureDetail({
           ))}
       </div>
       )}
-
       {/* 이전글, 목록, 다음글 버튼셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button
