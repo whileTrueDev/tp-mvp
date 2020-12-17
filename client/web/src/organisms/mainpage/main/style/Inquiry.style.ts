@@ -16,7 +16,6 @@ const styles = makeStyles((theme) => ({
     },
   },
   title: {
-
     marginTop: '20px',
     marginBottom: '30px',
     fontWeight: 600,
@@ -26,7 +25,6 @@ const styles = makeStyles((theme) => ({
     },
   },
   subTitle: {
-
     wordBreak: 'keep-all',
     [theme.breakpoints.down('sm')]: {
       fontSize: '20px',
@@ -88,9 +86,11 @@ const styles = makeStyles((theme) => ({
     color: 'white',
     height: '50px',
     fontSize: '20px',
-
     [theme.breakpoints.down('xs')]: {
       width: '150px',
+    },
+    '&:hover': {
+      backgroundColor: theme.palette.primary.light,
     },
   },
   detailTitle: {

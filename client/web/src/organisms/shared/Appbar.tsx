@@ -10,7 +10,7 @@ import {
   MenuItem, Button, Hidden,
 } from '@material-ui/core';
 import {
-  Dashboard, MoreVert,
+  Dashboard, MoreVert, ListAltOutlined,
 } from '@material-ui/icons';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';
@@ -137,6 +137,15 @@ export default function AppBar(): JSX.Element {
           <Typography>마이페이지</Typography>
         </MenuItem>
       )}
+      <MenuItem
+        className={classnames(classes.menuItem, classes.mobileText)}
+        component={Link}
+        to="/infoCBT"
+        button
+      >
+        <ListAltOutlined className={classes.mobileIcon} />
+        <Typography>CBT신청</Typography>
+      </MenuItem>
 
       {authContext.user.userId ? (
         <MenuItem className={classes.menuItem}>
@@ -199,6 +208,13 @@ export default function AppBar(): JSX.Element {
                   className={classnames(classes.link, { [classes.selected]: isActiveRoute('/feature-suggestion') })}
                 >
                   <Typography className={classes.linkText}>기능제안</Typography>
+                </Button>
+                <Button
+                  component={Link}
+                  to="/infoCBT"
+                  className={classnames(classes.link, { [classes.selected]: isActiveRoute('/feature-suggestion') })}
+                >
+                  <Typography className={classes.linkText}>CBT신청</Typography>
                 </Button>
               </div>
             </div>
