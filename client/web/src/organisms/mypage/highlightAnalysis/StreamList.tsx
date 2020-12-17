@@ -18,8 +18,7 @@ import SelectVideoIcon from '../../../atoms/stream-analysis-icons/SelectVideoIco
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
-    width: '100%',
-    padding: '0px',
+    width: '100vh',
     maxHeight: '292px',
     overflow: 'auto',
   },

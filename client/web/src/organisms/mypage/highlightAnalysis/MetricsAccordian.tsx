@@ -68,6 +68,9 @@ const styles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     fontWeight: 'bold',
   },
+  timeDescriptionHighlight: {
+    color: theme.palette.warning.main,
+  },
   mark: {
     fontSize: '17px',
   },
@@ -143,8 +146,12 @@ export default function MetricsAccordian(
               <Grid container direction="row" justify="space-between" alignItems="center">
                 <Typography className={classes.timeDescription} variant="body1">
                   {' '}
-                  <PriorityHigh className={classes.mark} />
-                  그래프 시간은 방송 플레이 타임 기준입니다
+                  ※ 그래프 시간은
+                  {' '}
+                  <span className={classes.timeDescriptionHighlight}>
+                    방송 플레이 타임 기준
+                  </span>
+                  입니다
                 </Typography>
                 <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
               </Grid>
@@ -198,8 +205,12 @@ export default function MetricsAccordian(
               <Grid container direction="row" justify="space-between" alignItems="center">
                 <Typography className={classes.timeDescription} variant="body1">
                   {' '}
-                  <PriorityHigh className={classes.mark} />
-                  그래프 시간은 방송 플레이 타임 기준입니다
+                  ※ 그래프 시간은
+                  {' '}
+                  <span className={classes.timeDescriptionHighlight}>
+                    방송 플레이 타임 기준
+                  </span>
+                  입니다
                 </Typography>
                 <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
               </Grid>
@@ -280,8 +291,12 @@ export default function MetricsAccordian(
             <Grid container direction="row" justify="space-between" alignItems="center">
               <Typography className={classes.timeDescription} variant="body1">
                 {' '}
-                <PriorityHigh className={classes.mark} />
-                그래프 시간은 방송 플레이 타임 기준입니다
+                ※ 그래프 시간은
+                {' '}
+                <span className={classes.timeDescriptionHighlight}>
+                  방송 플레이 타임 기준
+                </span>
+                입니다
               </Typography>
               <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
             </Grid>
