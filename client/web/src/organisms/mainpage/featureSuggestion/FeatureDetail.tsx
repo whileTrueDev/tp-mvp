@@ -22,7 +22,6 @@ import FeatureReply from './sub/FeatureReply';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import CustomDialog from '../../../atoms/Dialog/Dialog';
 import useDialog from '../../../utils/hooks/useDialog';
-import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
