@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
   box: {
     padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
-    minWidth: 500,
+    minWidth: 320,
     maxWidth: 1000,
     border: `1px solid ${theme.palette.divider}`,
   },

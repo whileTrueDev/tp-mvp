@@ -12,7 +12,7 @@ import { LinkPlatformError, LinkPlatformRes } from '@truepoint/shared/dist/res/L
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import { Alert } from '@material-ui/lab';
+import { Refresh } from '@material-ui/icons';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import ManagePlatformLink from '../../../organisms/mypage/my-office/ManagePlatformLink';
 import ManageUserProfile from '../../../organisms/mypage/my-office/ManageUserProfile';
@@ -21,6 +21,7 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import DeleteUser from '../../../organisms/mypage/my-office/DeleteUser';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import getJosa from '../../../utils/getJosa';
+import PlatformLinkErrorAlert from '../../../organisms/mypage/my-office/PlatformLinkErrorAlert';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -105,32 +106,12 @@ export default function Settings(): JSX.Element {
             </Typography>
           </div>
           {!!alreadyLinkedWithOther && (
-            <Alert severity="error">
-              <Typography variant="body2">{alreadyLinkedWithOther}</Typography>
-              <Typography variant="body2">자신의 아프리카/트위치/유튜브 계정이 타인의 아이디에 잘못 연동되어 있는 경우 문의바랍니다.</Typography>
-              <Button
-                style={{ margin: 8 }}
-                onClick={() => {
-                  window.open('http://google.com'); // 카카오 문의로 연결 필요
-                }}
-                size="small"
-                color="primary"
-                variant="contained"
-              >
-                문의하기
-              </Button>
-              <Button
-                style={{ margin: 8 }}
-                onClick={() => {
-                  setAlreadyLinkedWithOther('');
-                }}
-                size="small"
-                color="primary"
-                variant="contained"
-              >
-                확인
-              </Button>
-            </Alert>
+            <PlatformLinkErrorAlert
+              text={alreadyLinkedWithOther}
+              onConfirmClick={() => {
+                setAlreadyLinkedWithOther('');
+              }}
+            />
           )}
           {!userDataRequest.loading ? (
             <ManagePlatformLink
@@ -149,11 +130,21 @@ export default function Settings(): JSX.Element {
           </div>
           {!userDataRequest.loading ? (
             <>
+              <div className={classes.content}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={() => {
+                    doUserFetch();
+                  }}
+                >
+                  <Refresh fontSize="small" />
+                  새로고침
+                </Button>
+              </div>
               {userDataRequest.data && (
-              <ManageUserProfile
-                userProfileData={userDataRequest.data}
-                doUserFetch={doUserFetch}
-              />
+                <ManageUserProfile userProfileData={userDataRequest.data} doUserFetch={doUserFetch} />
               )}
             </>
           ) : (<CircularProgress />)}

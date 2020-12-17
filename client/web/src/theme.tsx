@@ -18,9 +18,9 @@ const rawTheme: ThemeOptions = {
       contrastText: '#fff',
     },
     secondary: {
-      light: lighten('#79e2e0', 0.5),
+      light: lighten('#79e2e0', 0.2),
       main: '#79e2e0',
-      dark: darken('#79e2e0', 0.2),
+      dark: darken('#79e2e0', 0.1),
       contrastText: '#fff',
     },
     // 파랑 계열 색상
@@ -41,7 +41,19 @@ const rawTheme: ThemeOptions = {
     // }
   },
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "AppleSDGothicNeo", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      'AppleSDGothicNeoR',
+      '"Noto Sans KR"',
+      '"Roboto"',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    fontSize: 14,
+    htmlFontSize: 16,
   },
 };
 

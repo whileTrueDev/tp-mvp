@@ -29,7 +29,7 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   mainTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 55,
     fontWeight: 900,
     color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
@@ -46,7 +46,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   mainContent: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 20,
     margin: 0,
     color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
@@ -55,7 +55,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   button: {
-    fontFamily: 'AppleSDGothicNeo',
+
     color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
     border: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
     borderRadius: 0,

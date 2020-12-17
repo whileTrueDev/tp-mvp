@@ -95,7 +95,7 @@ function RegistStepper(): JSX.Element {
     <div>
       <Grid container direction="column">
         <Grid item className={classes.center}>
-          { theme.palette.type === 'light' ? <TruepointLogo width={300} /> : <TruepointLogoLight width={300} /> }
+          { theme.palette.type === 'light' ? <TruepointLogo width={280} /> : <TruepointLogoLight width={280} /> }
         </Grid>
         <Grid item>
           {activeStep === 0 && (

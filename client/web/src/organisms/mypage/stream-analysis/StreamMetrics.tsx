@@ -11,9 +11,7 @@ import MetricIcons from '../../../atoms/Graph-icons/MetricIcons';
 import SectionTitle from '../../shared/sub/SectionTitles';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(6),
-  },
+  root: { padding: theme.spacing(4) },
   center: {
     display: 'flex',
     justifyContent: 'center',
@@ -87,10 +85,10 @@ export default function StreamAnalysis(
                           <Grid container direction="row" justify="center" spacing={1}>
                             <Grid item>
                               <Typography className={classes.main}>
-                                1번
+                                기준
                                 {' '}
                                 {type ? '기간' : '방송' }
-                                이 2번
+                                이 비교
                                 {' '}
                                 {type ? '기간' : '방송' }
                                 보다
@@ -114,7 +112,7 @@ export default function StreamAnalysis(
                           <Grid container direction="row" justify="center" spacing={2}>
                             <Grid item>
                               <Typography className={classes.main}>
-                                1번
+                                기준
                                 {' '}
                                 {type ? '기간' : '방송' }
                               </Typography>
@@ -132,7 +130,7 @@ export default function StreamAnalysis(
                             </Grid>
                             <Grid item>
                               <Typography className={classes.main}>
-                                2번
+                                비교
                                 {' '}
                                 {type ? '기간' : '방송' }
                               </Typography>

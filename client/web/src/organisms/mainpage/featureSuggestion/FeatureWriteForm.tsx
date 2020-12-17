@@ -3,7 +3,9 @@ import classnames from 'classnames';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Checkbox, FormControlLabel } from '@material-ui/core';
+import {
+  Typography, Checkbox, FormControlLabel, CircularProgress, Backdrop,
+} from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -32,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
   contents: { marginTop: theme.spacing(2) },
   writeForm: { marginTop: theme.spacing(8) },
   buttonSet: { textAlign: 'right' },
+  editor: { color: theme.palette.common.white },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 export default function FeatureWriteForm(): JSX.Element {
@@ -67,6 +74,7 @@ export default function FeatureWriteForm(): JSX.Element {
   const [{ loading: postLoading }, postRequest] = useAxios(
     { url: '/feature-suggestion', method: 'post' }, { manual: true },
   );
+
   function handlePostSubmit() {
     if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
       const contents = editorRef.current.getInstance().getHtml();
@@ -77,6 +85,7 @@ export default function FeatureWriteForm(): JSX.Element {
         isLock: featureLock, // 비밀글 여부
         content: contents,
       };
+
       postRequest({ data })
         .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
         .then(() => history.push('/feature-suggestion'))
@@ -93,6 +102,7 @@ export default function FeatureWriteForm(): JSX.Element {
   const [{ loading: patchLoading }, editPatchRequest] = useAxios(
     { url: '/feature-suggestion', method: 'patch' }, { manual: true },
   );
+
   function handlePatchSubmit(targetSuggestionId: string | number) {
     if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
       const contents = editorRef.current.getInstance().getHtml();
@@ -109,7 +119,7 @@ export default function FeatureWriteForm(): JSX.Element {
         .then((res) => {
           if (res.data) {
             ShowSnack('기능제안이 수정 되었습니다.', 'success', enqueueSnackbar);
-            history.push('/feature-suggestion');
+            history.push(`/feature-suggestion/read/${targetSuggestionId}`);
           }
         })
         .catch(() => ShowSnack('기능제안 수정 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
@@ -181,6 +191,7 @@ export default function FeatureWriteForm(): JSX.Element {
       </div>
       {/* 기능 제안 내용 입력 */}
       <div className={classes.contents}>
+
         <Editor
           previewStyle="vertical"
           height="500px"
@@ -188,6 +199,9 @@ export default function FeatureWriteForm(): JSX.Element {
           initialValue={location.state && location.state.length > 0 ? location.state[0].content : ''}
           ref={editorRef}
         />
+        <Backdrop className={classes.backdrop} open={postLoading || patchLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
       <div className={classes.buttonSet}>
         <FormControlLabel

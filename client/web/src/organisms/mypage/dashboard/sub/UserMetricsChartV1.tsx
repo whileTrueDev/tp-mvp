@@ -9,7 +9,7 @@ am4core.useTheme(am4themesAnimated);
 
 function getAvgGroupByDate(datalist: UserMetrics[]) {
   const reduced = datalist
-    .map((d) => ({ ...d, startedDate: d.startedAt.split(' ')[0] }))
+    .map((d) => ({ ...d, startedDate: d.startDate.toISOString().split('T')[0] }))
     .reduce((m: any, d) => {
       const n = m;
       const key = d.startedDate;
@@ -75,13 +75,13 @@ export default function UserMetricsChart({
 
       const afreecaData = x.data
         .filter((d) => d.platform === 'afreeca')
-        .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
       const twitchData = x.data
         .filter((d) => d.platform === 'twitch')
-        .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
       const youtubeData = x.data
         .filter((d) => d.platform === 'youtube')
-        .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
       const afreecaTrendData = getAvgGroupByDate(afreecaData);
       const twitchTrendData = getAvgGroupByDate(twitchData);
@@ -107,7 +107,7 @@ export default function UserMetricsChart({
       if (afreecaData.length > 0) {
         const afreecaLine = x.series.push(new am4charts.LineSeries());
         afreecaLine.data = afreecaData;
-        afreecaLine.dataFields.dateX = 'startedAt';
+        afreecaLine.dataFields.dateX = 'startDate';
         afreecaLine.dataFields.valueY = valueField;
         afreecaLine.strokeOpacity = 0;
         if (afreecaLine.tooltip) {
@@ -130,7 +130,7 @@ export default function UserMetricsChart({
 
         const afreecaTrendLine = x.series.push(new am4charts.LineSeries());
         afreecaTrendLine.data = afreecaTrendData;
-        afreecaTrendLine.dataFields.dateX = 'startedAt';
+        afreecaTrendLine.dataFields.dateX = 'startDate';
         afreecaTrendLine.dataFields.valueY = valueField;
         afreecaTrendLine.fill = am4core.color('#1f66de');
         afreecaTrendLine.strokeWidth = 10;
@@ -144,7 +144,7 @@ export default function UserMetricsChart({
       if (twitchData.length > 0) {
         const twitchLine = x.series.push(new am4charts.LineSeries());
         twitchLine.data = twitchData;
-        twitchLine.dataFields.dateX = 'startedAt';
+        twitchLine.dataFields.dateX = 'startDate';
         twitchLine.dataFields.valueY = valueField;
         twitchLine.strokeOpacity = 0;
         if (twitchLine.tooltip) {
@@ -167,7 +167,7 @@ export default function UserMetricsChart({
 
         const twitchTrendLine = x.series.push(new am4charts.LineSeries());
         twitchTrendLine.data = twitchTrendData;
-        twitchTrendLine.dataFields.dateX = 'startedAt';
+        twitchTrendLine.dataFields.dateX = 'startDate';
         twitchTrendLine.dataFields.valueY = valueField;
         twitchTrendLine.fill = am4core.color('#772CE8');
         twitchTrendLine.strokeWidth = 10;
@@ -181,7 +181,7 @@ export default function UserMetricsChart({
       if (youtubeData.length > 0) {
         const youtubeLine = x.series.push(new am4charts.LineSeries());
         youtubeLine.data = youtubeData;
-        youtubeLine.dataFields.dateX = 'startedAt';
+        youtubeLine.dataFields.dateX = 'startDate';
         youtubeLine.dataFields.valueY = valueField;
         youtubeLine.strokeOpacity = 0;
         if (youtubeLine.tooltip) {
@@ -204,7 +204,7 @@ export default function UserMetricsChart({
 
         const youtubeTrendLine = x.series.push(new am4charts.LineSeries());
         youtubeTrendLine.data = youtubeTrendData;
-        youtubeTrendLine.dataFields.dateX = 'startedAt';
+        youtubeTrendLine.dataFields.dateX = 'startDate';
         youtubeTrendLine.dataFields.valueY = valueField;
         youtubeTrendLine.fill = am4core.color('#CC0000');
         youtubeTrendLine.stroke = am4core.color('#d81b60');

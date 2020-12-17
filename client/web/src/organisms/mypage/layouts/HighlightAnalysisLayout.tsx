@@ -2,339 +2,196 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card';
 import useAxios from 'axios-hooks';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-import classnames from 'classnames';
-import ClearIcon from '@material-ui/icons/Clear';
+import Fade from '@material-ui/core/Fade';
+import Card from '@material-ui/core/Card';
+import { IconButton } from '@material-ui/core';
+import { Clear } from '@material-ui/icons';
 import Calendar from '../highlightAnalysis/Calendar';
-import Button from '../../../atoms/Button/Button';
+import StreamList from '../highlightAnalysis/StreamList';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
 import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
-import Loading from '../../shared/sub/Loading';
-import HelperPopOver from '../../shared/HelperPopOver';
+// shared and atoms
+import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SectionTitle from '../../shared/sub/SectionTitles';
+// date expression util
 import dateExpression from '../../../utils/dateExpression';
-import SearchBox from '../highlightAnalysis/SearchBox';
-
-interface StreamDate {
-  fullDate: Date;
-  startAt: string;
-  finishAt: string;
-  fileId: string;
-}
-
-interface PointType {
-  start_time: string;
-  end_time: string;
-  start_index: number;
-  end_index: number;
-  score: any;
-}
+// custom svg icons
+import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
+import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
+import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
+import Loading from '../../shared/sub/Loading';
 
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  const data: StreamDate = {
-    fullDate: new Date(),
-    startAt: '',
-    finishAt: '',
-    fileId: '',
+  const [clickedDate, setClickedDate] = React.useState<Date>(new Date());
+  const handleClickedDate = (newDate: Date) => {
+    setClickedDate(newDate);
+  };
+
+  // 캘린더의 해당 날짜의 방송 데이터들
+  const [dayStreamsList, setDayStreamsList] = React.useState<StreamDataType[]>([]);
+
+  const handleDayStreamList = (responseList: StreamDataType[]) => {
+    setDayStreamsList(responseList);
+  };
+
+  // 캘린더 선택 후 여러 방송 데이터들 중에 분석할 방송의 데이터 선택
+  const [selectedStream, setSelectedStream] = React.useState<StreamDataType | null>(null);
+
+  const handleSeletedStreams2 = (
+    newStreams: StreamDataType | null,
+    base?: true,
+  ) => {
+    setSelectedStream(newStreams);
+  };
+
+  const platformIcon = (stream: StreamDataType): JSX.Element => {
+    switch (stream.platform) {
+      case 'afreeca':
+        return <AfreecaIcon />;
+      case 'twitch':
+        return <TwitchIcon />;
+      case 'youtube':
+        return <YoutubeIcon />;
+      default:
+        return <div />;
+    }
   };
 
   const [highlightData, setHighlightData] = React.useState(null);
-  const [metricsData, setMetricsData] = React.useState(null);
-  const [selectedStream, setSelectedStream] = React.useState<StreamDate>(data);
   const [isClicked, setIsClicked] = React.useState(false);
-  const [isChecked, setIsChecked] = React.useState({
-    srtCheckBox: true,
-    csvCheckBox: true,
-    txtCheckBox: true,
-  });
-  // const [downloadUrl, setDownloadUrl] = React.useState<string>('');
-  const handleDatePick = (fullDate: Date, startAt: string, finishAt: string, fileId: string) => {
-    // const streamId = fileId.split('_')[2].split('.')[0];
-    setSelectedStream({
-      fullDate,
-      startAt,
-      finishAt,
-      fileId,
-    });
-  };
-  const [, doExport] = useAxios(
-    { url: '/highlight/export', method: 'get' }, { manual: true },
-  );
+
+  // 하이라이트 구간 요청
   const [, getHighlightPoints] = useAxios(
     { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
   );
-  const [, getMetricsData] = useAxios(
-    { url: '/highlight/metrics', method: 'get' }, { manual: true },
-  );
-  const makeMonth = (month: number) => {
-    if (month < 10) {
-      const edit = `0${month}`;
-      return edit;
-    }
-    const returnMonth = String(month);
-    return returnMonth;
-  };
 
-  const makeDay = (day: number) => {
-    if (day < 10) {
-      const edit = `0${day}`;
-      return edit;
-    }
-    const returnDay = String(day);
-    return returnDay;
-  };
-  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
-  };
-
-  // Metrics 데이터 전처리 함수
-  const getMetricsPoint = (metric: any): any => {
-    const originStartTime = new Date(metric.start_date);
-
-    function getDate(index: number) {
-      const Time = new Date(originStartTime.setSeconds(originStartTime.getSeconds() + 30 * index));
-      const getYears = Time.getFullYear();
-      const getMonths = Time.getMonth();
-      const getDays = Time.getDay();
-      const getHours = Time.getHours();
-      const getMinutes = Time.getMinutes();
-      const getSeconds = Time.getSeconds();
-      const months = getMonths >= 10 ? String(getMonths) : `0${getMonths}`;
-      const days = getDays >= 10 ? String(getDays) : `0${getDays}`;
-      const hours = getHours >= 10 ? String(getHours) : `0${getHours}`;
-      const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
-      const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
-
-      return `${getYears}-${months}-${days} ${hours}:${minutes}:${seconds}`;
-    }
-
-    function insertPoints(target: number, countType: string) {
-      const time = getDate(target);
-      const returnDict = {
-        start_time: time,
-        end_time: time,
-        start_index: target,
-        end_index: target,
-        score: metric.time_line[target][countType],
-      };
-      return returnDict;
-    }
-
-    const resultData: {chat_points: PointType[]; smile_points: PointType[]} = {
-      chat_points: [],
-      smile_points: [],
-    };
-
-    const chatHighlight = metric.chat_points;
-    const smileHighlight = metric.smile_points;
-
-    chatHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'chat_count');
-      resultData.chat_points.push(eachData);
-    });
-
-    smileHighlight.forEach((item: number) => {
-      const eachData = insertPoints(item, 'smile_count');
-      resultData.smile_points.push(eachData);
-    });
-
-    return resultData;
-  };
-
-  const handleExportClick = async () => {
-    const id = '234175534';
-    const year = String(selectedStream.fullDate.getFullYear());
-    const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
-    const day = makeDay(selectedStream.fullDate.getDate());
-    const streamId = selectedStream.fileId.split('_')[1].split('.')[0];
-    const srt = isChecked.srtCheckBox ? 1 : 0;
-    const csv = isChecked.csvCheckBox ? 1 : 0;
-    const txt = isChecked.txtCheckBox ? 1 : 0;
-
-    // function str2bytes(str: any) {
-    //   const bytes = new Uint8Array(str.length);
-    //   for (let i = 0; i < str.length; i += 1) {
-    //     bytes[i] = str.charCodeAt(i);
-    //   }
-    //   return bytes;
-    // }
-    doExport({
-      params: {
-        id, year, month, day, streamId, srt, txt, csv,
-      },
-    })
-      .then((res) => {
-        // console.log(res.data);
-        const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
-        // const filename = res.headers;
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'test.zip');
-        document.body.appendChild(link);
-        link.click();
-        // setDownloadUrl(url);
-      }).catch((err) => {
-        console.error(err);
-        ShowSnack('지금은 다운로드 할 수 없습니다.', 'error', enqueueSnackbar);
-      });
-  };
-  const fetchHighlightData = async (
-    id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    // 134859149/2020/08/01/09161816_09162001_39667416302.json
+  // S3로부터 선택된 방송의 하이라이트 데이터 패칭
+  const fetchHighlightData = async (streamId: string, platform: string, creatorId: string): Promise<void> => {
     setHighlightData(null);
     getHighlightPoints({
       params: {
-        id, year, month, day, fileId,
+        streamId,
+        platform,
+        creatorId,
       },
     })
-      .then((res) => {
+      .then((res: any) => {
         if (res.data) {
           setHighlightData(res.data);
         }
-      }).catch(() => {
-        ShowSnack('highlight :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+      }).catch((err) => {
+        ShowSnack('highlight: 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
 
-  const fetchMetricsData = async (
-    id: string, year: string, month: string, day: string, fileId: string): Promise<void> => {
-    setMetricsData(null);
-    getMetricsData(
-      {
-        params: {
-          id, year, month, day, fileId,
-        },
-      },
-    )
-      .then((res) => {
-        if (res.data) {
-          setMetricsData(getMetricsPoint(res.data));
-        }
-      }).catch(() => {
-        ShowSnack('metrics :오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-      });
-  };
-
+  // [분석하기] 버튼 클릭시 실행 함수
   const handleAnalyze = (): void => {
     setIsClicked(true);
-    const id = '234175534';
-    const year = String(selectedStream.fullDate.getFullYear());
-    const month = makeMonth(selectedStream.fullDate.getMonth() + 1);
-    const day = makeDay(selectedStream.fullDate.getDate());
-    const file = selectedStream.fileId;
+    if (selectedStream) {
+      const { streamId, platform, creatorId } = selectedStream;
 
-    Promise.all([
-      fetchHighlightData(id, year, month, day, file),
-      fetchMetricsData(id, year, month, day, file)])
-      .then(() => {
-        setIsClicked(false);
-      }).catch(() => {
-        ShowSnack('데이터를 불러오지 못했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-      });
+      Promise.all([fetchHighlightData(streamId, platform, creatorId)])
+        .then(() => {
+          setIsClicked(false);
+        }).catch(() => {
+          ShowSnack('데이터를 불러오지 못했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+        });
+    } else {
+      ShowSnack('하이라이트 포인트를 분석할 방송을 선택해주세요.', 'error', enqueueSnackbar);
+    }
   };
 
-  const dummy: string[] = [
-    '나락',
-    '극락',
-    '굿',
-    '지렷다',
-    '레전드',
-    '노답',
-    '가능?',
-    '침디',
-    '가장긴 문자열',
-  ];
-  const [analysisWord, setAnalysisWord] = React.useState<string>();
-  const handleAnalysisWord = (targetWord: string) => {
-    setAnalysisWord(targetWord);
-  };
+  // 카테고리 리스트 요청
+  const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
+    url: '/category',
+  });
 
   return (
     <Paper className={classes.root}>
-      <Grid
-        container
-        direction="column"
-      >
+      <Grid container direction="column">
         <Grid item xs={12} className={classes.wraper}>
           <SectionTitle mainTitle="편집점 분석" />
-          <Typography variant="body1" className={classes.sub}>
+          <Typography variant="body2" color="textSecondary">
             방송을 선택하시면 편집점 분석을 시작합니다.
           </Typography>
         </Grid>
         <Grid
-          item
-          xs={12}
           container
           direction="row"
           alignItems="center"
           justify="space-between"
-          className={classes.sideSpace}
+          className={classes.wraper}
         >
-          <Grid item xs={3} className={classes.title}>
+          <Grid item xs={12} sm={3} md={3} className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={9}>
-            {selectedStream.fileId
+          <Grid item xs={12} sm={9} md={9}>
+            {selectedStream
               && (
-                <Card className={classes.card}>
-                  <Typography className={classes.cardText}>
-                    {dateExpression({
-                      compoName: 'highlight-calendar',
-                      createdAt: (selectedStream.startAt),
-                      finishAt: (selectedStream.finishAt),
-                    })}
-                  </Typography>
-
-                  <IconButton
-                    onClick={() => setSelectedStream({ ...selectedStream, fileId: '' })}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </Card>
+                <Fade in={Boolean(selectedStream)} style={{ transitionDelay: '200ms' }}>
+                  <Card className={classes.card}>
+                    <div />
+                    <div className={classes.cardInner}>
+                      <ListItemIcon>
+                        {platformIcon(selectedStream)}
+                      </ListItemIcon>
+                      <Typography className={classes.cardText} display="inline">
+                        {dateExpression({
+                          compoName: 'analysys-calender',
+                          createdAt: new Date(selectedStream.startDate),
+                          streamAirtime: selectedStream.airTime,
+                        })}
+                      </Typography>
+                      <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
+                        {selectedStream.title.length > 20 ? `${selectedStream.title.slice(0, 21)} ...` : selectedStream.title}
+                      </Typography>
+                    </div>
+                    <IconButton
+                      onClick={() => setSelectedStream(null)}
+                    >
+                      <Clear />
+                    </IconButton>
+                  </Card>
+                </Fade>
               )}
           </Grid>
 
         </Grid>
         <Grid
-          item
-          xs={12}
           container
-          className={classes.wraper}
-          direction="column"
+          className={classes.calendarWrapper}
+          direction="row"
           justify="flex-start"
         >
-          <Calendar handleDatePick={handleDatePick} />
-        </Grid>
+          <Grid item>
+            <Calendar
+              clickedDate={clickedDate}
+              handleClickedDate={handleClickedDate}
+              handleDayStreamList={handleDayStreamList}
+            />
+          </Grid>
 
-        <Grid
-          item
-          xs
-          className={classnames({
-            [classes.title]: true,
-            [classes.searchTitle]: true,
-          })}
-        >
-          분석할 검색값 입력
-        </Grid>
+          <Grid item style={{ marginLeft: 16 }}>
+            <StreamList
+              dayStreamsList={dayStreamsList}
+              selectedStream={selectedStream}
+              handleSeletedStreams={handleSeletedStreams2}
+              platformIcon={platformIcon}
+            />
+          </Grid>
 
-        <div className={classes.searchBox}>
-          <SearchBox
-            words={dummy}
-            handleAnalysisWord={handleAnalysisWord}
-            analysisWord={analysisWord}
-          />
-        </div>
+        </Grid>
       </Grid>
 
       <Grid
@@ -344,70 +201,28 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         className={classes.root}
         justify="flex-end"
       >
-        <Grid item direction="column" style={{ overflow: 'hiden' }}>
-          <div className={classes.analysisButton}>
+        <Grid container direction="row" justify="center">
+          <div>
             <Button
               onClick={handleAnalyze}
-              disabled={isClicked || Boolean(!selectedStream.fileId)}
+              disabled={isClicked || Boolean(!selectedStream)}
             >
               분석하기
             </Button>
           </div>
-          <div className={classes.helperPopOver}>
-            <HelperPopOver />
-          </div>
-          <div>
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  checked={isChecked.srtCheckBox}
-                  onChange={handleCheckbox}
-                  name="srtCheckBox"
-                  color="primary"
-                />
-              )}
-              label="srt"
-            />
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  checked={isChecked.txtCheckBox}
-                  onChange={handleCheckbox}
-                  name="txtCheckBox"
-                  color="primary"
-                />
-              )}
-              label="txt"
-            />
-
-            <FormControlLabel
-              control={(
-                <Checkbox
-                  checked={isChecked.csvCheckBox}
-                  onChange={handleCheckbox}
-                  name="csvCheckBox"
-                  color="primary"
-                />
-              )}
-              label="csv"
-            />
-            <Button
-              onClick={handleExportClick}
-              disabled={isClicked || Boolean(!selectedStream.fileId)}
-            >
-              편집점 내보내기
-            </Button>
-          </div>
-
         </Grid>
       </Grid>
       <Loading clickOpen={isClicked} />
-      { !isClicked && highlightData && metricsData && (
+      { !isClicked && highlightData && categoriesData && (
         <>
-          <TruepointHighlight highlightData={highlightData} />
+          <TruepointHighlight
+            selectedStream={selectedStream}
+            highlightData={highlightData}
+          />
           <MetricsAccordian
-            metricsData={metricsData}
-            analysisWord={analysisWord}
+            selectedStream={selectedStream}
+            highlightData={highlightData}
+            categories={categoriesData}
           />
         </>
       )}

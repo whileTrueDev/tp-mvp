@@ -1,6 +1,6 @@
 /* eslint-disable no-new */
 /**
- * Produciton 환경의 Vpc, RDS DB 등을 배포.
+ * Dev 환경의 Vpc, RDS DB 등을 배포.
  * @author hwasurr
  */
 import * as cdk from '@aws-cdk/core';

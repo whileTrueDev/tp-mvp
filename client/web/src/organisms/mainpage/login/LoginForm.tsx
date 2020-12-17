@@ -107,7 +107,7 @@ export default function LoginForm(): JSX.Element {
         className={classnames(classes.formWidth, classes.alignCenter)}
       >
         <div>
-          { theme.palette.type === 'light' ? <TruepointLogo width={300} /> : <TruepointLogoLight width={300} /> }
+          { theme.palette.type === 'light' ? <TruepointLogo width={280} /> : <TruepointLogoLight width={280} /> }
         </div>
         <Grid
           container

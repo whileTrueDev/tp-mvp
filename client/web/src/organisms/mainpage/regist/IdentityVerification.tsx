@@ -99,7 +99,7 @@ function IndentityVerification({
       <Typography variant="h5">본인인증</Typography>
       <Typography variant="h6">회원가입을 위해 본인인증을 실시합니다.</Typography>
       <div className={classes.content}>
-        <Typography align="right">본인인증 시 제공되는 정보는 해당 인증기관에서 직접 수집하며,</Typography>
+        <Typography align="left">본인인증 시 제공되는 정보는 해당 인증기관에서 직접 수집하며,</Typography>
         <Typography align="left">인증 이외의 용도로 이용 또는 저장하지 않습니다.</Typography>
       </div>
       <div className={classnames(classes.center, classes.content)}>
