@@ -88,10 +88,6 @@ const styles = makeStyles((theme) => ({
     color: 'white',
     height: '50px',
     fontSize: '20px',
-    '&:hover': {
-      backgroundColor: theme.palette.primary.main,
-      boxShadow: 'none',
-    },
 
     [theme.breakpoints.down('xs')]: {
       width: '150px',
