@@ -91,7 +91,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           setHighlightData(res.data);
         }
       }).catch((err) => {
-        ShowSnack('highlight: 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+        ShowSnack('분석 도중 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
 
