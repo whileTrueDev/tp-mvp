@@ -136,9 +136,9 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           <Grid item className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item>
+          <Grid item xs={12}>
             {selectedStream
-              && (
+              ? (
                 <Fade in={Boolean(selectedStream)} style={{ transitionDelay: '200ms' }}>
                   <Card className={classes.card}>
                     <div />
@@ -165,7 +165,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                     <div />
                   </Card>
                 </Fade>
-              )}
+              ) : (<Grid item xs={12} style={{ height: '5vh' }} />)}
           </Grid>
 
         </Grid>
