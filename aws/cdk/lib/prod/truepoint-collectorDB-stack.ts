@@ -61,7 +61,6 @@ export class WhileTrueCollectorStack extends BaseStack {
     const collectorDBInstace = new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
       engine: dbEngine,
-      credentials: { username: 'whiletrue' },
       instanceIdentifier: `${ID_PREFIX}RDS-${dbEngine.engineType}`,
       databaseName: ID_PREFIX,
       // *********************************************
