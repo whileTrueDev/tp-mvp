@@ -10,7 +10,7 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     border: `solid 1px ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
     margin: theme.spacing(4),
-    width: '95%',
+    width: '97%',
   },
   sideSpace: {
     margin: `0px ${theme.spacing(4)}px`,
