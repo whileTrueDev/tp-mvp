@@ -79,8 +79,8 @@ export default function LoginForm(): JSX.Element {
         },
       }).then((res) => {
         if (res && res.data) {
-          authContext.handleLogin(res.data.access_token);
-          history.push('/mypage/main');
+          authContext.handleLogin(res.data.access_token)
+            .then(() => history.push('/mypage/main'));
         } else {
           // 올바르지 못한 요청 ( 없는 아이디인 경우 또는 비밀번호가 틀린경우)
           helperText.handleOpen();
