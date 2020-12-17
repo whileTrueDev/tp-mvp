@@ -7,6 +7,8 @@ import {
 import {
   MuiPickersUtilsProvider, DatePicker,
 } from '@material-ui/pickers';
+import useTheme from '@material-ui/core/styles/useTheme';
+
 import moment from 'moment';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
@@ -40,6 +42,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   /* 달력 선택 관련 state */
   const [currDate, setCurrDate] = React.useState<MaterialUiPickersDate>();
@@ -202,7 +205,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: 'white' } })}
+        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: theme.palette.common.white } })}
     </div>
   );
 
@@ -213,7 +216,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     })}
     >
       {React.cloneElement(dayComponent,
-        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: 'white' } })}
+        { style: { backgroundColor: base ? '#3a86ff' : '#b1ae71', color: theme.palette.common.white } })}
     </div>
   );
 
@@ -352,13 +355,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
           {removeFunc && (
             <Chip
-              icon={<FormatListBulletedIcon style={{ color: 'white' }} />}
+              icon={<FormatListBulletedIcon style={{ color: theme.palette.common.white }} />}
               label="제외할 방송 선택"
               clickable
               style={{
                 width: '175px',
                 alignSelf: 'flex-end',
-                color: 'white',
+                color: theme.palette.common.white,
                 backgroundColor: '#aaaaaa',
               }}
               onClick={() => {

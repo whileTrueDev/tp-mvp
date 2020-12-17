@@ -39,6 +39,8 @@ jobs:
 
       - name: Build, tag, and push image to Docker Hub
         uses: elgohr/Publish-Docker-Github-Action@2.14
+        env:
+          NODE_ENV: production
         with:
           dockerfile: server/Dockerfile
           name: ${{ secrets.DOCKER_USERNAME }}/truepoint-api

@@ -14,7 +14,6 @@ import { useSnackbar } from 'notistack';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-
 // axios
 import useAxios from 'axios-hooks';
 // styles
@@ -23,6 +22,7 @@ import classnames from 'classnames';
 // date library
 import moment from 'moment';
 // interface
+import useTheme from '@material-ui/core/styles/useTheme';
 import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // attoms snackbar
@@ -44,6 +44,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
   },
 }));
+/**
+ * 캘린더 달력 정보 재요청 할 개월수 전 후 단위  
+ * 3 -> 위치한 달 전 3개월, 후 3개월 총 6개월
+ */
 const reRequest = 3;
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
@@ -56,6 +60,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   const [
     {
@@ -156,7 +161,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
             [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
           })}
           >
-            {React.cloneElement(dayComponent, { style: { backgroundColor: '#d7e7ff', color: 'white' } })}
+            {React.cloneElement(dayComponent, { style: { backgroundColor: '#d7e7ff', color: theme.palette.common.white } })}
             <div className={classnames({
               [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
             })}
