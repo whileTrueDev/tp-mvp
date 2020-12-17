@@ -256,12 +256,6 @@ export default function FeatureDetail({
           avatarLogo={currentFeatureData.author.profileImage || ''}
         />
       )}
-      {/* 댓글 리스트 섹션 */}
-      {loading && (
-      <div className={classes.loadingWrapper} style={{ marginTop: 16 }}>
-        <CircularProgress />
-      </div>
-      )}
       {!loading && featureDetailData && (
       <div style={{ marginTop: 16 }}>
         {featureDetailData.replies && featureDetailData.replies
