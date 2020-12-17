@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
     width: '100%',
     padding: 0,
-    // maxHeight: '250px',
     overflow: 'auto',
     height: 'inherit',
   },
@@ -38,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     height: 50,
     backgroundColor: theme.palette.primary.light,
-    padding: '0px',
+    padding: theme.spacing(0),
     borderRadius: '4px',
     '&:hover,select': {
       backgroundColor: theme.palette.primary.main,
@@ -78,7 +77,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: 'red',
+      // color: 'red',
+      color: theme.palette.error.main,
       transform: 'scale(1.1)',
     },
     fontWeight: 'bold',
@@ -115,8 +115,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   tooltipIconWrapper: {
     display: 'inline-flex',
-    marginRight: '8px',
-    // paddingTop: '8px',
+    marginRight: theme.spacing(1),
     flexDirection: 'row',
     alignItems: 'flex-end',
   },

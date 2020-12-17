@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
-  contentsText: { padding: theme.spacing(4), minHeight: 300 },
+  contentsText: { padding: theme.spacing(4), minHeight: 300, backgroundColor: theme.palette.common.white },
   loadingWrapper: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
   secretText: {
     display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: 300,
