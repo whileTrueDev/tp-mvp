@@ -27,14 +27,20 @@ export interface FeatureReplyInputProps {
 export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.Element {
   const classes = useStyles();
   const { currentSuggestion, refetch, avatarLogo } = props;
+  const [lengthState, setLengthState] = React.useState(false);
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-
   const [, postReply] = useAxios<FeatureSuggestionReply>({
     method: 'POST',
     url: '/feature-suggestion/reply',
   }, { manual: true });
-
+  const lengthCheck = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.value.length === 255) {
+      setLengthState(true);
+    } else {
+      setLengthState(false);
+    }
+  };
   // 기능제안 댓글 작성을 위한 input text ref
   const replyText = useRef<HTMLInputElement>(null);
 
@@ -60,11 +66,17 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
     <div className={classes.container}>
       <Avatar src={avatarLogo} variant="square" className={classes.avatar} />
       <TextField
+        error={lengthState}
         placeholder="댓글 추가..."
         fullWidth
         multiline
         rowsMax={5}
         inputRef={replyText}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          lengthCheck(e);
+        }}
+        inputProps={{ maxLength: 255 }}
+        helperText="댓글은 최대 255자까지 작성 가능합니다."
       />
       <Button
         className={classes.button}

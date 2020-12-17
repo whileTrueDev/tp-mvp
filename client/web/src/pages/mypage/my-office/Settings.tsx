@@ -104,6 +104,9 @@ export default function Settings(): JSX.Element {
             <Typography variant="body2" color="textSecondary">
               플랫폼 연동을 통해 트루포인트를 바로 시작해보세요.
             </Typography>
+            <Typography variant="caption" color="textSecondary">
+              아프리카TV의 경우 아직 연동 기능을 제공하지 않습니다. 아프리카TV 방송 데이터를 연동하고싶으신 분은 우측 아래 버튼으로 카카오톡 문의부탁드립니다.
+            </Typography>
           </div>
           {!!alreadyLinkedWithOther && (
             <PlatformLinkErrorAlert

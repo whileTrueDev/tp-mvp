@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
-  contentsText: { padding: theme.spacing(4), minHeight: 300 },
+  contentsText: { padding: theme.spacing(4), minHeight: 300, backgroundColor: theme.palette.common.white },
   loadingWrapper: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
   secretText: {
     display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: 300,
@@ -256,12 +256,6 @@ export default function FeatureDetail({
           avatarLogo={currentFeatureData.author.profileImage || ''}
         />
       )}
-      {/* 댓글 리스트 섹션 */}
-      {loading && (
-      <div className={classes.loadingWrapper} style={{ marginTop: 16 }}>
-        <CircularProgress />
-      </div>
-      )}
       {!loading && featureDetailData && (
       <div style={{ marginTop: 16 }}>
         {featureDetailData.replies && featureDetailData.replies
@@ -279,7 +273,6 @@ export default function FeatureDetail({
           ))}
       </div>
       )}
-
       {/* 이전글, 목록, 다음글 버튼셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button

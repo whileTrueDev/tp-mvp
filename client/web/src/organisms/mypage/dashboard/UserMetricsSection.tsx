@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme) => ({
   cardBase: { minHeight: 135 },
   card: {
     cursor: 'pointer',
-    transition: '0.1s linear all',
+    transition: theme.transitions.create(['transform', 'boxShadow'], {
+      duration: theme.transitions.duration.standard,
+    }),
     '&:hover': {
       transform: 'scale(1.05)',
       boxShadow: theme.shadows[10],
@@ -38,6 +40,13 @@ const useStyles = makeStyles((theme) => ({
   helper: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
+  },
+  filter: { textAlign: 'center' },
+  platformIconButton: {
+    '&:hover': { transform: 'scale(1.2)' },
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.standard,
+    }),
   },
 }));
 
@@ -126,12 +135,15 @@ export default function UserMetricsSection(): JSX.Element {
           <Typography variant="h6" style={{ fontWeight: 'bold' }}>
             {preprocessedData.find((d) => d.name === selectedCard)?.nameKr}
           </Typography>
-          <div>
-            {!loading && data && Array
+          {!loading && data && (
+          <div className={classes.filter}>
+            <Typography>방송사별 필터링</Typography>
+            {Array
               .from(new Set(data.map((d) => d.platform)))
               .map((platform) => (
                 <IconButton
                   key={platform}
+                  className={classes.platformIconButton}
                   onClick={() => {
                     handlePlatformSelect(platform);
                   }}
@@ -146,6 +158,7 @@ export default function UserMetricsSection(): JSX.Element {
                 </IconButton>
               ))}
           </div>
+          )}
         </Grid>
         {/* 차트 */}
         <Grid item xs={12}>
