@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -55,6 +55,10 @@ export default function Notice(): JSX.Element {
 
   // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
   useScrollTop();
+  useEffect(() => {
+    // 선택된 공지사항 Id 변경시 스크롤 최상단으로
+    window.scrollTo(0, 0);
+  }, [selectedNoticeId]);
   return (
     <main>
       <Appbar />
