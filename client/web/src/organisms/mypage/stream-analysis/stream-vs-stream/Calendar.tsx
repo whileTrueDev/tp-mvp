@@ -14,7 +14,6 @@ import { useSnackbar } from 'notistack';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-
 // axios
 import useAxios from 'axios-hooks';
 // styles
@@ -23,6 +22,7 @@ import classnames from 'classnames';
 // date library
 import moment from 'moment';
 // interface
+import useTheme from '@material-ui/core/styles/useTheme';
 import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // attoms snackbar
@@ -60,6 +60,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
 
   const [
     {
@@ -160,7 +161,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
             [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
           })}
           >
-            {React.cloneElement(dayComponent, { style: { backgroundColor: '#d7e7ff', color: 'white' } })}
+            {React.cloneElement(dayComponent, { style: { backgroundColor: '#d7e7ff', color: theme.palette.common.white } })}
             <div className={classnames({
               [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
             })}

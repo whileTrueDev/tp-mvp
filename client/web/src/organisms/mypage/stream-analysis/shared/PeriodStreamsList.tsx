@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     height: 50,
     backgroundColor: theme.palette.primary.light,
-    padding: '0px',
+    padding: theme.spacing(0),
     borderRadius: '4px',
     '&:hover,select': {
       backgroundColor: theme.palette.primary.main,
@@ -77,7 +77,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   closeIcon: {
     '&:hover,select': {
-      color: 'red',
+      // color: 'red',
+      color: theme.palette.error.main,
       transform: 'scale(1.1)',
     },
     fontWeight: 'bold',
