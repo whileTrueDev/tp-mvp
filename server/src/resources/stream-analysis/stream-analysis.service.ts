@@ -444,7 +444,6 @@ export class StreamAnalysisService {
           calculatedArray.forEach((s3Data, index) => {
             s3Data.time_line.forEach((timeline, timelineIndex) => {
               organizeArray.chat_count += timeline.chat_count;
-
               organizeArray.value.push({
                 smile_count: timeline.smile_count,
                 chat_count: timeline.chat_count,
