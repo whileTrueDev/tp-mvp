@@ -142,6 +142,7 @@ export default function HighlightExport(
         />
         <Button
           onClick={handleExportClick}
+          disabled={!(isChecked.srtCheckBox || isChecked.csvCheckBox || isChecked.txtCheckBox)}
         >
           편집점 내보내기
         </Button>
