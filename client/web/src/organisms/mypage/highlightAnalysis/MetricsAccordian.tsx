@@ -25,7 +25,6 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     fontSize: 20,
-
     fontWeight: 600,
   },
   contentRight: {
@@ -74,14 +73,12 @@ const styles = makeStyles((theme) => ({
     fontSize: '17px',
   },
 }));
-
 interface MetricsAccordianProps {
   categories: CategoryGetRequest[];
   highlightData: any;
   selectedStream: StreamDataType|null;
 }
 type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'question'
-
 export default function MetricsAccordian(
   {
     highlightData,
@@ -99,7 +96,6 @@ export default function MetricsAccordian(
   const [page3, setPage3] = React.useState(0);
   const [pageSize3, setPageSize3] = React.useState(5);
   const [point3, setPoint3] = React.useState(initialPoint);
-
   const [chatPicked90, setChatPicked90] = React.useState(true);
   const [smilePicked90, setSmilePicked90] = React.useState(true);
   const [categoryPicked90, setCategoryPicked90] = React.useState(true);
@@ -110,21 +106,17 @@ export default function MetricsAccordian(
   const smileHightlight90 = highlightData.funny_points_90.map((atPoint: any) => ({
     ...highlightData.funny_points[atPoint],
   }));
-
   function selectCategory90(selected: string): any {
     const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any) => ({
       ...highlightData[`${selected}_points`][atPoint],
     }));
     return categoryHightlight90;
   }
-
   const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
-
   const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {
     setSelectedCategory(clickedCategory);
     setPoint3(initialPoint);
   };
-
   return (
     <Paper>
       <Accordion>
@@ -186,7 +178,6 @@ export default function MetricsAccordian(
         </AccordionDetails>
       </Accordion>
       <Accordion>
-
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
         >
@@ -244,7 +235,6 @@ export default function MetricsAccordian(
           </Grid>
         </AccordionDetails>
       </Accordion>
-
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -335,7 +325,6 @@ export default function MetricsAccordian(
           </Grid>
         </AccordionDetails>
       </Accordion>
-
     </Paper>
   );
 }
