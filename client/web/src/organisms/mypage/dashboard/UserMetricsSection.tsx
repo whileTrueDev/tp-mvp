@@ -137,7 +137,7 @@ export default function UserMetricsSection(): JSX.Element {
           </Typography>
           {!loading && data && (
           <div className={classes.filter}>
-            <Typography>방송사별 필터링</Typography>
+            {data.length > 0 && (<Typography>방송사별 필터링</Typography>)}
             {Array
               .from(new Set(data.map((d) => d.platform)))
               .map((platform) => (

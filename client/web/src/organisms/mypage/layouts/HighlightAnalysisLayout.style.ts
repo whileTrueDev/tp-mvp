@@ -11,7 +11,7 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     borderRadius: '12px',
     border: `solid 1px ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
-    margin: theme.spacing(4),
+    margin: theme.spacing(2),
     width: '97%',
   },
   sideSpace: {
@@ -26,12 +26,7 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     padding: 30,
   },
   listItemText: {
-    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.primary,
-    textAlign: 'left',
-    lineHeight: '2.06',
-    fontSize: '16px',
-    fontWeight: 500,
     marginRight: theme.spacing(2),
   },
   checkedStreamFont: {
@@ -39,11 +34,7 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     fontweight: 'bold',
     color: theme.palette.text.secondary,
   },
-  cardText: {
-    fontSize: 16,
-    margin: 8,
-    marginLeft: theme.spacing(2),
-  },
+  cardText: { marginLeft: theme.spacing(2) },
   card: {
     textAlign: 'center',
     background: theme.palette.action.focus,
@@ -75,6 +66,13 @@ const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
     width: 310,
     marginRight: theme.spacing(4),
   },
+  chip: {
+    display: 'flex', alignItems: 'center',
+  },
+  selectedStreamTitle: {
+    fontWeight: 'bold', marginRight: theme.spacing(1), lineHeight: 2,
+  },
+  selectedStream: { marginTop: theme.spacing(2), display: 'flex', alignItems: 'center' },
 }));
 
 export default useHighlightAnalysisLayoutStyles;

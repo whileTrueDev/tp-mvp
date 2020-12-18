@@ -8,10 +8,7 @@ import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-import Fade from '@material-ui/core/Fade';
-import Card from '@material-ui/core/Card';
-import { IconButton } from '@material-ui/core';
-import { Clear } from '@material-ui/icons';
+import { Chip } from '@material-ui/core';
 import Calendar from '../highlightAnalysis/Calendar';
 import StreamList from '../highlightAnalysis/StreamList';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -133,39 +130,31 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           justify="flex-start"
           className={classes.wraper}
         >
-          <Grid item className={classes.title}>
-            선택된 방송
-          </Grid>
-          <Grid item xs={12}>
-            {selectedStream
-              ? (
-                <Fade in={Boolean(selectedStream)} style={{ transitionDelay: '200ms' }}>
-                  <Card className={classes.card}>
-                    <div />
-                    <div className={classes.cardInner}>
-                      <ListItemIcon>
-                        {platformIcon(selectedStream)}
-                      </ListItemIcon>
-                      <Typography className={classes.cardText} display="inline">
-                        {dateExpression({
-                          compoName: 'analysys-calender',
-                          createdAt: new Date(selectedStream.startDate),
-                          streamAirtime: selectedStream.airTime,
-                        })}
-                      </Typography>
-                      <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
-                        {selectedStream.title.length > 20 ? `${selectedStream.title.slice(0, 21)} ...` : selectedStream.title}
-                      </Typography>
-                      <IconButton
-                        onClick={() => setSelectedStream(null)}
-                      >
-                        <Clear />
-                      </IconButton>
-                    </div>
-                    <div />
-                  </Card>
-                </Fade>
-              ) : (<Grid item xs={12} style={{ height: '5vh' }} />)}
+          <Grid item xs={12} className={classes.selectedStream}>
+            <Typography className={classes.selectedStreamTitle}>선택된 방송 &gt;</Typography>
+            {selectedStream && (
+            <Chip
+              size="medium"
+              onDelete={() => setSelectedStream(null)}
+              label={(
+                <div className={classes.chip}>
+                  <ListItemIcon>
+                    {platformIcon(selectedStream)}
+                  </ListItemIcon>
+                  <Typography className={classes.cardText}>
+                    {dateExpression({
+                      compoName: 'analysys-calender',
+                      createdAt: new Date(selectedStream.startDate),
+                      streamAirtime: selectedStream.airTime,
+                    })}
+                  </Typography>
+                  <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
+                    {selectedStream.title.length > 20 ? `${selectedStream.title.slice(0, 21)} ...` : selectedStream.title}
+                  </Typography>
+                </div>
+              )}
+            />
+            )}
           </Grid>
 
         </Grid>
