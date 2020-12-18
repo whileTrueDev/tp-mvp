@@ -157,8 +157,8 @@ export class StreamAnalysisService {
     function merge(temp: Temp, periodIndex: number): void {
       const tempResult = temp.arr.reduce((prev2, curr2) => [
         prev2[0] + curr2.viewer,
-        prev2[1] + curr2.smileCount,
-        prev2[2] + curr2.chatCount,
+        prev2[1] + curr2.chatCount,
+        prev2[2] + curr2.smileCount,
         prev2[3],
       ], [0, 0, 0, temp.arr[0].startDate]);
 

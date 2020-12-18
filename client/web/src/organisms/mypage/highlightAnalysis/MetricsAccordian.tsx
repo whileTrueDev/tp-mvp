@@ -107,8 +107,8 @@ export default function MetricsAccordian(
   const chatHightlight90 = highlightData.chat_points_90.map((atPoint: any) => ({
     ...highlightData.chat_points[atPoint],
   }));
-  const smileHightlight90 = highlightData.smile_points_90.map((atPoint: any) => ({
-    ...highlightData.smile_points[atPoint],
+  const smileHightlight90 = highlightData.funny_points_90.map((atPoint: any) => ({
+    ...highlightData.funny_points[atPoint],
   }));
 
   function selectCategory90(selected: string): any {
@@ -197,7 +197,7 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="웃음 편집점"
               iconSrc="/images/analyticsPage/logo_smile.svg"
-              pointNumber={smilePicked90 ? highlightData.smile_points_90.length : highlightData.smile_points.length}
+              pointNumber={smilePicked90 ? highlightData.funny_points_90.length : highlightData.funny_points.length}
             />
             <Grid container direction="column" justify="center">
               <Grid container direction="row" justify="space-between" alignItems="center">
@@ -214,7 +214,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12}>
                 <Chart
-                  data={smilePicked90 ? smileHightlight90 : highlightData.smile_points}
+                  data={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
                   chartType="smile"
                   highlight={point2}
                   handleClick={setPoint2}
@@ -224,7 +224,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={smilePicked90 ? smileHightlight90 : highlightData.smile_points}
+                  metrics={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
                   handleClick={setPoint2}
                   row={point2}
                   page={page2}
