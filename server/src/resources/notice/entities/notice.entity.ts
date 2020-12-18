@@ -3,7 +3,7 @@ import {
   Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('NoticeTest')
+@Entity('Notice')
 export class NoticeEntity implements Notice {
   @PrimaryGeneratedColumn()
   id: number;

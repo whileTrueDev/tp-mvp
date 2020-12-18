@@ -3,7 +3,7 @@ import {
 } from 'typeorm';
 import { Category } from '@truepoint/shared/dist/interfaces/Category.interface';
 
-@Entity({ name: 'CategoryTest' })
+@Entity({ name: 'Category' })
 export class CategoryEntity implements Category {
   @PrimaryGeneratedColumn({ type: 'smallint' })
   categoryId: number;

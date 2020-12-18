@@ -4,7 +4,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from './user.entity';
 
-@Entity({ name: 'SubscribeTest2' })
+@Entity({ name: 'SubscribeTest' })
 export class SubscribeEntity implements Subscribe {
   @PrimaryGeneratedColumn()
   index: number
