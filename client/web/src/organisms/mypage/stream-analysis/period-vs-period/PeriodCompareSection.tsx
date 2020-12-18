@@ -140,9 +140,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           startDate: (new Date(activeStream.startDate)).toISOString(),
         }));
 
-      if (correctBaseList.length < 1) {
+      if (correctBaseList.length === 0) {
         ShowSnack('기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
-      } else if (correctCompareList.length < 1) {
+      } else if (correctCompareList.length === 0) {
         ShowSnack('비교 기간 내 선택된 방송이 없습니다. 비교 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
       } else {
         const analysisParam: SearchStreamInfoByPeriods = {

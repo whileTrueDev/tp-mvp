@@ -166,7 +166,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       .entries(checkStateGroup)
       .filter((pair) => pair[1]).map((pair) => pair[0]);
 
-    if (termStreamsList.length < 1) {
+    if (requestParams.length === 0) {
       ShowSnack('기간내에 분석 가능한 방송이 없습니다. 기간을 다시 설정해 주세요.', 'error', enqueueSnackbar);
     } else {
       handleSubmit({
