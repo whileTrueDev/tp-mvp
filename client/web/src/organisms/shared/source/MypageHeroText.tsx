@@ -22,7 +22,7 @@ const textSource = {
         cardIcon: '/images/analyticsPage/magnify.png',
         cardText: `\0
         감정 카테고리별 하이라이트 분석을 진행해보세요!
-        특정 감정의 반응이 많은 지점을 찾을수 있어요.`,
+        특정 감정의 반응이 많은 지점을 찾을 수 있어요.`,
       },
     ],
   },

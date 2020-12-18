@@ -7,6 +7,7 @@ import source from '../others/source/InfoCBT';
 import Footer from '../../organisms/shared/footer/Footer';
 import CBTInquiry from '../../organisms/shared/sub/CBTInquiry';
 import ProductHero from '../../organisms/mainpage/main/productHero/ProductHero';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const styles = makeStyles((theme) => ({
   topRoot: {
@@ -69,6 +70,8 @@ const styles = makeStyles((theme) => ({
 export default function InfoCBT(): JSX.Element {
   const classes = styles();
 
+  // pathname 변경시 화면 위로 보내는 훅
+  useScrollTop();
   return (
     <div className={classes.topRoot}>
       <Appbar />
