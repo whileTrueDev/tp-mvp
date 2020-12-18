@@ -130,13 +130,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           container
           direction="row"
           alignItems="center"
-          justify="space-between"
+          justify="flex-start"
           className={classes.wraper}
         >
-          <Grid item xs={12} sm={3} md={3} className={classes.title}>
+          <Grid item className={classes.title}>
             선택된 방송
           </Grid>
-          <Grid item xs={12} sm={9} md={9}>
+          <Grid item>
             {selectedStream
               && (
                 <Fade in={Boolean(selectedStream)} style={{ transitionDelay: '200ms' }}>

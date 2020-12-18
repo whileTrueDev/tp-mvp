@@ -36,7 +36,7 @@ const UserDashboard = (): JSX.Element => {
    * 토큰리프레시 로딩 컴포넌트 Open을 위한 작업
    */
   const auth = useAuthContext();
-  const [loadingOpen, setLoadingOpen] = useState(!(!auth.loginLoading && auth.user.userId));
+  const [loadingOpen, setLoadingOpen] = useState(auth.loginLoading === true || !auth.user.userId);
   useLayoutEffect(() => {
     const maxTimeout = 2 * 1000; // 2초
     if (!(!auth.loginLoading && auth.user.userId)) {
@@ -46,7 +46,7 @@ const UserDashboard = (): JSX.Element => {
     const timer = setTimeout(() => {
       // 로딩이 끝났고, 유저 ID가 있는 경우(토큰이 있는 경우)
       if (!auth.loginLoading && auth.user.userId && auth.accessToken) setLoadingOpen(false);
-      // 최대 타임아웃 이후에도 로딩이 끝나지 않았거나 토큰이 없는 경우 
+      // 최대 타임아웃 이후에도 로딩이 끝나지 않았거나 액세스 토큰이 없는 경우 
       else window.location.href = '/login';
     }, maxTimeout);
     return () => clearTimeout(timer);

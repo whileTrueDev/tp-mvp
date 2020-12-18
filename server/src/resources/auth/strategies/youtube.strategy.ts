@@ -62,7 +62,8 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'google') {
           youtubeTitle: youtubeChannelInfo.snippet.title,
           youtubeLogo: youtubeChannelInfo.snippet.thumbnails.default.url.replace('=s88-', '=s{size}-'),
           youtubePublishedAt: youtubeChannelInfo.snippet.publishedAt,
-        }).then((result) => done(null, result));
+        }).then((result) => done(null, result))
+          .catch((err) => done(err));
       })
       .catch((err) => {
         console.error('error occurred during getting youtube channel data');

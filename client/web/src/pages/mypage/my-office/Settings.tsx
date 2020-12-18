@@ -22,6 +22,7 @@ import DeleteUser from '../../../organisms/mypage/my-office/DeleteUser';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import getJosa from '../../../utils/getJosa';
 import PlatformLinkErrorAlert from '../../../organisms/mypage/my-office/PlatformLinkErrorAlert';
+import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -94,6 +95,8 @@ export default function Settings(): JSX.Element {
     }
   }, [enqueueSnackbar, location.search, linkToUserRequest, doUserFetch]);
 
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
   return (
     <>
       <MypageSectionWrapper>

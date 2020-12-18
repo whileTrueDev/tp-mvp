@@ -60,8 +60,8 @@ export class AuthController {
     // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
 
     // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
-    // if (user.afreecaId) this.usersService.refreshTwitchInfo(user.twitchId);
-    if (user.twitchId) this.usersService.refreshAfreecaInfo(user.afreecaId);
+    // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
+    if (user.twitchId) this.usersService.refreshTwitchInfo(user.twitchId);
     if (user.youtubeId) this.usersService.refreshYoutubeInfo(user.youtubeId);
 
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.

@@ -11,7 +11,7 @@ export interface LoginRequestUserInfo {
 export interface AuthContextValue {
   user: LoginUser;
   accessToken?: string;
-  handleLogin: (accessToken: string) => void;
+  handleLogin: (accessToken: string) => Promise<void>;
   handleLogout: () => void;
   loginLoading: boolean;
   handleLoginLoadingStart: () => void;
@@ -25,7 +25,7 @@ const AuthContext = React.createContext<AuthContextValue>({
   user: defaultUserValue,
   accessToken: '',
   /* eslint-disable @typescript-eslint/no-empty-function */
-  handleLogin: () => {},
+  handleLogin: async () => {},
   handleLogout: () => {},
   loginLoading: false,
   handleLoginLoadingStart: () => {},
@@ -38,7 +38,7 @@ export function useLogin(): AuthContextValue {
   const [loginLoading, setLoginLoading] = React.useState<boolean>(false);
   const [accessTokenState, setAccessToken] = React.useState<string>();
 
-  function handleLogin(accessToken: string): void {
+  async function handleLogin(accessToken: string): Promise<void> {
     setAccessToken(accessToken);
     const u = jwtDecode<LoginUser>(accessToken);
     setUser(u);

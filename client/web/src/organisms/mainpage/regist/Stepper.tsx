@@ -22,7 +22,7 @@ function RegistStepper(): JSX.Element {
   const classes = useStyles();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
-  const [activeStep, setStep] = useState(3);
+  const [activeStep, setStep] = useState(0);
   const [marketingAgreement, setAgreement] = useState(false);
   const [state, dispatch] = useReducer(myReducer, initialState);
   const [certificationInfo, setCertificationInfo] = useState({});
@@ -95,7 +95,7 @@ function RegistStepper(): JSX.Element {
     <div>
       <Grid container direction="column">
         <Grid item className={classes.center}>
-          { theme.palette.type === 'light' ? <TruepointLogo width={280} /> : <TruepointLogoLight width={280} /> }
+          { theme.palette.type === 'light' ? <TruepointLogo /> : <TruepointLogoLight /> }
         </Grid>
         <Grid item>
           {activeStep === 0 && (

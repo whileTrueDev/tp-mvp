@@ -8,6 +8,7 @@ import { UsersModule } from './resources/users/users.module';
 import { HighlightModule } from './resources/highlightPoint/hightlight.module';
 import { FeatureModule } from './resources/featureSuggestion/featureSuggestion.module';
 import { InquiryModule } from './resources/inquiry/inquiry.module';
+import { CbtInquiryModule } from './resources/cbtinquiry/cbtinquiry.module';
 import { TypeOrmConfigService } from './config/database.config';
 import { CollectorTypeOrmConfigService } from './config/collector.database.config';
 import { NotificationModule } from './resources/notification/notification.module';
@@ -39,6 +40,7 @@ import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.m
     StreamAnalysisModule,
     FeatureModule,
     InquiryModule,
+    CbtInquiryModule,
     SlackModule,
     NoticeModule,
     CategoryModule,
