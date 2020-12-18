@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import {
-  Container, Grid, Typography, Button,
+  Container, Grid, Typography, Button, useTheme,
 } from '@material-ui/core';
 
 const styles = makeStyles((theme) => ({
@@ -99,6 +99,7 @@ const styles = makeStyles((theme) => ({
 
 export default function Footer(): JSX.Element {
   const classes = styles();
+  const theme = useTheme();
 
   return (
     <Container>
@@ -111,8 +112,12 @@ export default function Footer(): JSX.Element {
           className={classes.iconsWrapper}
         >
           <Grid item md={6} sm={6} xs={12} className={classes.icons}>
-            <a href="https://mytruepoint.com" className={classes.icon}>
-              <img src="./images/logo/truepointLogo.png" id="logo" alt="TruePointLogo" width={40} height={40} />
+            <a href="/" className={classes.icon}>
+              {theme.palette.type === 'dark' ? (
+                <img src="/images/logo/new_tp_logo_raw.png" id="logo" alt="" width={35} height={35} />
+              ) : (
+                <img src="/images/logo/new_tp_logo_raw.png" id="logo" alt="" width={35} height={35} />
+              )}
             </a>
             <Typography className={classes.name} variant="body2">
               TruePoint

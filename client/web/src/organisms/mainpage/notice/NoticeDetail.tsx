@@ -65,7 +65,7 @@ export default function NoticeDetail({
         {/* 공지사항 제목 및 메타데이터 */}
         <div className={classes.title}>
           <Typography variant="h6" className={classes.titleText}>
-            {currentNotice?.title}
+            {currentNotice && currentNotice.title}
           </Typography>
           <Typography color="textSecondary" component="div">
             <Typography>

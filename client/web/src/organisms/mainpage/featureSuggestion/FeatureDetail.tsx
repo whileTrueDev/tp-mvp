@@ -30,7 +30,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderBottom: `1px solid ${theme.palette.divider}`,
+    borderBottom: '1px solid rgba(0, 0, 0, 0.23)',
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
   contentsText: { padding: theme.spacing(4), minHeight: 300, backgroundColor: theme.palette.common.white },
@@ -45,10 +47,15 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   editDeleteButtonSet: {
+    backgroundColor: theme.palette.common.white,
     padding: theme.spacing(1),
     textAlign: 'right',
   },
-  editDeleteButton: { borderRadius: 0 },
+  editDeleteButton: {
+    borderRadius: 0,
+    color: theme.palette.common.black,
+    borderColor: 'rgba(0, 0, 0, 0.23)',
+  },
   lockIcon: {
     verticalAlign: 'middle',
     display: 'inline-flex',
@@ -57,7 +64,6 @@ const useStyles = makeStyles((theme) => ({
   pageButton: { width: '300px' },
   listButton: { width: '100px' },
   editor: { color: theme.palette.text.primary },
-
 }));
 
 export interface FeatureDetailProps {
@@ -128,9 +134,9 @@ export default function FeatureDetail({
   // 기능제안 상태 Chip 렌더링을 위해
   const progressTab = (value: number) => {
     switch (value) {
-      case 1: return (<Chip color="secondary" label="개발 확정" />);
-      case 2: return (<Chip color="primary" label="개발보류" />);
-      default: return (<Chip variant="outlined" label="미확인" />);
+      case 1: return (<Chip style={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.23)' }} color="secondary" label="개발 확정" />);
+      case 2: return (<Chip style={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.23)' }} color="primary" label="개발보류" />);
+      default: return (<Chip style={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.23)' }} variant="outlined" label="미확인" />);
     }
   };
 
@@ -153,6 +159,7 @@ export default function FeatureDetail({
       </Paper>
     );
   }
+
   return (
     <div>
       <Paper component="article">
@@ -171,7 +178,7 @@ export default function FeatureDetail({
               />
               )}
             </Typography>
-            <Typography variant="body1" color="textSecondary">
+            <Typography variant="body1" color="textSecondary" style={{ color: '#0000008a' }}>
               {currentFeatureData.author.userId && (
                 <span>
                   {authContext.user.userId === currentFeatureData.author.userId
@@ -181,7 +188,7 @@ export default function FeatureDetail({
               )}
             </Typography>
           </div>
-          <Typography color="textSecondary" component="div">
+          <Typography color="textSecondary" component="div" style={{ color: '#0000008a' }}>
             <Typography>
               {currentFeatureData.category}
             </Typography>
