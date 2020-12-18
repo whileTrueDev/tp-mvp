@@ -213,7 +213,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
                 })}
               </Typography>
               <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
-                {stream.title.length > 40 ? `${stream.title.slice(0, 41)} ...` : stream.title}
+                {stream.title.length > 25 ? `${stream.title.slice(0, 25)} ...` : stream.title}
               </Typography>
 
             </ListItem>
