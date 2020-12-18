@@ -27,7 +27,7 @@ export default function HighlightExport(
   const [isChecked, setIsChecked] = React.useState({
     srtCheckBox: true,
     csvCheckBox: true,
-    txtCheckBox: true,
+    // txtCheckBox: true,
   });
 
   // 편집점 내보내기 요청
@@ -75,11 +75,12 @@ export default function HighlightExport(
       const { streamId, platform, creatorId } = selectedStream;
       const srt = isChecked.srtCheckBox ? 1 : 0;
       const csv = isChecked.csvCheckBox ? 1 : 0;
-      const txt = isChecked.txtCheckBox ? 1 : 0;
+      // const txt = isChecked.txtCheckBox ? 1 : 0;
 
       doExport({
         params: {
-          creatorId, platform, streamId, exportCategory, srt, txt, csv,
+          creatorId, platform, streamId, exportCategory, srt, csv,
+          // txt
         },
       })
         .then((res) => {
@@ -117,7 +118,7 @@ export default function HighlightExport(
           )}
           label="srt"
         />
-        <FormControlLabel
+        {/* <FormControlLabel
           control={(
             <Checkbox
               checked={isChecked.txtCheckBox}
@@ -126,8 +127,8 @@ export default function HighlightExport(
               color="primary"
             />
           )}
-          label="csv"
-        />
+          label="txt"
+        /> */}
 
         <FormControlLabel
           control={(
@@ -138,11 +139,11 @@ export default function HighlightExport(
               color="primary"
             />
           )}
-          label="txt"
+          label="csv"
         />
         <Button
           onClick={handleExportClick}
-          disabled={!(isChecked.srtCheckBox || isChecked.csvCheckBox || isChecked.txtCheckBox)}
+          disabled={!(isChecked.srtCheckBox || isChecked.csvCheckBox)} // isChecked.txtCheckBox
         >
           편집점 내보내기
         </Button>
