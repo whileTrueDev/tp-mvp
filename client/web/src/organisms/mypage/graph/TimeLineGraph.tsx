@@ -12,10 +12,6 @@ export default function TimeLineGraph({ data, selectedMetric }: {
   const theme = useTheme<TruepointTheme>();
   const chartRef = useRef<any>(null);
 
-  /**
-   *  평균 시청자 수 레이블 임시 주석
-   *  S3 metrics json 타임라인에 viewr 프로퍼티 추가 되기 전까지
-   */
   useLayoutEffect(() => {
     // Create chart instance
     const chart = setGraphComponent(data, theme);

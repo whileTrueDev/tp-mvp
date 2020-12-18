@@ -39,7 +39,6 @@ export default function PeriodAnalysis(): JSX.Element {
     })
       .then((res) => {
         setData(res.data);
-        console.log(res.data.value);
         setOpen(true);
       })
       .catch(() => {
