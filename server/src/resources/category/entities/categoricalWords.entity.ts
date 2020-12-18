@@ -4,7 +4,7 @@ import {
 import { CategoricalWords } from '@truepoint/shared/dist/interfaces/CategoricalWords.interface';
 import { CategoryEntity } from './category.entity';
 
-@Entity({ name: 'CategoricalWords' })
+@Entity({ name: 'CategoricalWordsTest' })
 export class CategoricalWordsEntity implements CategoricalWords {
   @PrimaryGeneratedColumn()
   wordId: number;

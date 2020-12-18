@@ -18,7 +18,6 @@ import SelectVideoIcon from '../../../atoms/stream-analysis-icons/SelectVideoIco
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
-    width: '100vh',
     maxHeight: '292px',
     overflow: 'auto',
   },
@@ -39,7 +38,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.light,
   },
   listItemText: {
-    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.primary,
     textAlign: 'left',
     lineHeight: '2.06',
@@ -82,7 +80,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
     lineHeight: 1.5,
     fontSize: '17px',
-    fontFamily: 'AppleSDGothicNeo',
     marginLeft: theme.spacing(6),
     marginRight: theme.spacing(5),
     display: 'flex',
@@ -216,7 +213,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
                 })}
               </Typography>
               <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
-                {stream.title.length > 20 ? `${stream.title.slice(0, 21)} ...` : stream.title}
+                {stream.title.length > 40 ? `${stream.title.slice(0, 41)} ...` : stream.title}
               </Typography>
 
             </ListItem>
