@@ -51,7 +51,9 @@ export default class TwitchBot {
       },
       // Called when Message is received
       onMessageHandler: (channel, userstate, msg, self): void => {
-        if (self) { return; } // Ignore messages from the bot
+        if (self) {
+          return;
+        } // Ignore messages from the bot
 
         const data = {
           streamerId: userstate['room-id'],
