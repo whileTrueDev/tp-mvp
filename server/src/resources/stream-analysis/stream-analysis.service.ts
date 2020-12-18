@@ -156,9 +156,9 @@ export class StreamAnalysisService {
     const result: EachStream[][] = [[], []];
     function merge(temp: Temp, periodIndex: number): void {
       const tempResult = temp.arr.reduce((prev2, curr2) => [
-        prev2[0] + curr2.chatCount,
+        prev2[0] + curr2.viewer,
         prev2[1] + curr2.smileCount,
-        prev2[2] + curr2.viewer,
+        prev2[2] + curr2.chatCount,
         prev2[3],
       ], [0, 0, 0, temp.arr[0].startDate]);
 
@@ -182,20 +182,27 @@ export class StreamAnalysisService {
           /* 첫번쨰 타임라인은 무조건 temp 에 삽입 */
           temp.count += 1;
           temp.arr.push(curr);
-        } else if (temp.count > 0 && index === eachTimeline.length - 1) {
-          /* 마지막 타임라인 일 떄 temp 가 존재 한다면 해당 temp 병합 */
-          merge(temp, periodIndex);
+          if (eachTimeline.length === 1) {
+            /* 타임라인 길이가 1인 경우는 바로 병합 (결과 생성) */
+            merge(temp, periodIndex);
+          }
         } else {
           /* 전후 비교 및 temp 삽입 */
           const prev = timeline[periodIndex][index - 1];
           if (moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
+            /* 같은 날짜일 경우 temp에 방송 정보값 임시 저장 */
             temp.arr.push(curr);
             temp.count += 1;
           } else if (!moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
+            /* 다른 날짜일 경우 temp 병합 후 temp 초기화 */
             merge(temp, periodIndex);
-
             temp.arr = []; temp.count = 0;
             temp.arr.push(curr); temp.count += 1;
+          }
+
+          if (index === eachTimeline.length - 1) {
+            /* 타임라인의 마지막 방송 정보일 경우 위의 판단 유무와 상관없이 바로 병합 */
+            merge(temp, periodIndex);
           }
         }
 
@@ -215,6 +222,7 @@ export class StreamAnalysisService {
           smileCount: Math.round(sums[2] / timeline[index].length),
         }));
 
+      // console.log(result);
       periodsResolve({
         timeline: [...result],
         type: 'periods',
@@ -264,7 +272,7 @@ export class StreamAnalysisService {
      */
     const keyFunc = (stream: any) => new Promise<void>((resolveKeys, reject) => {
       const { platform } = stream;
-      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}.json`;
+      const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
@@ -348,6 +356,7 @@ export class StreamAnalysisService {
         for (i = gapStartIndex; i < gapStartIndex + gapSize; i += 1) {
           nextStreamTimeline[j].chat_count += currStream.time_line[i].chat_count;
           nextStreamTimeline[j].smile_count += currStream.time_line[i].smile_count;
+          nextStreamTimeline[j].viewer_count += currStream.time_line[i].viewer_count;
           j += 1;
         }
 
@@ -414,7 +423,7 @@ export class StreamAnalysisService {
 
     const calculateAvgViewCount = (originArray: SearchEachS3StreamData[]) => {
       if (originArray.length >= 1) {
-        return originArray.reduce((sum, element) => sum + element.viewer, 0) / originArray.length;
+        return Math.round(originArray.reduce((sum, element) => sum + element.viewer, 0) / originArray.length);
       }
       return 0;
     };
@@ -435,10 +444,10 @@ export class StreamAnalysisService {
           calculatedArray.forEach((s3Data, index) => {
             s3Data.time_line.forEach((timeline, timelineIndex) => {
               organizeArray.chat_count += timeline.chat_count;
-
               organizeArray.value.push({
                 smile_count: timeline.smile_count,
                 chat_count: timeline.chat_count,
+                viewer_count: timeline.viewer_count,
                 date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss'),
               });
             });

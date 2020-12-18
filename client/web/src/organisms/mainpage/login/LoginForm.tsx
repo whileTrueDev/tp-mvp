@@ -18,11 +18,8 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
-  formWidth: { width: '100%' },
-  inputWidth: {
-    width: '100%',
-    minWidth: 300,
-  },
+  formWidth: { width: '100%', maxWidth: 290 },
+  inputWidth: { minWidth: 280 },
   alignCenter: { textAlign: 'center' },
   button: {
     width: 170,
@@ -30,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 8,
     margin: theme.spacing(1),
   },
+  checkbox: { marginLeft: theme.spacing(1) },
   buttonset: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -81,8 +79,8 @@ export default function LoginForm(): JSX.Element {
         },
       }).then((res) => {
         if (res && res.data) {
-          authContext.handleLogin(res.data.access_token);
-          history.push('/mypage/main');
+          authContext.handleLogin(res.data.access_token)
+            .then(() => history.push('/mypage/main'));
         } else {
           // 올바르지 못한 요청 ( 없는 아이디인 경우 또는 비밀번호가 틀린경우)
           helperText.handleOpen();
@@ -115,7 +113,7 @@ export default function LoginForm(): JSX.Element {
           justify="center"
           alignItems="center"
           className={classes.formWidth}
-          spacing={1}
+          // spacing={1}
         >
           <Grid item xs={12}>
             <TextField
@@ -148,6 +146,7 @@ export default function LoginForm(): JSX.Element {
               className={classes.alignLeft}
             >
               <FormControlLabel
+                // className={classes.checkbox}
                 control={(
                   <Checkbox
                     icon={<CheckCircleIcon />}

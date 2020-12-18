@@ -22,6 +22,7 @@ import Mypage from './pages/mypage/layouts/MypageLayout';
 import KakaoTalk from './organisms/shared/KakaoTalkButton';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
+import InfoCBT from './pages/mainpage/InfoCBT';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
@@ -51,7 +52,6 @@ function Index(): JSX.Element {
     user, accessToken, handleLogout, handleLogin,
     loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
   } = useLogin();
-
   /* subscribe 목록의 유저 전환 컨택스트 - CBT 주석 및 추후 User 와 병합 */
   // const {
   //   currUser,
@@ -72,7 +72,11 @@ function Index(): JSX.Element {
   // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
   useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
 
+  // *******************************************
+  // 화면 렌더링시 최상단 으로 고정
+  // useScrollTop();
   return (
+
     <ThemeProvider<TruepointTheme> theme={truepointTheme}>
       <CssBaseline />
 
@@ -83,6 +87,7 @@ function Index(): JSX.Element {
           user, accessToken, handleLogin, handleLogout, loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
         }}
         >
+
           <KakaoTalk />
           {/* 페이지 컴포넌트 */}
           {/* <SubscribeContext.Provider value={{
@@ -95,9 +100,12 @@ function Index(): JSX.Element {
             error,
           }}
           > */}
+
           <BrowserRouter>
+
             <Switch>
               <Route exact path="/" component={Main} />
+              <Route exact path="/infoCBT" component={InfoCBT} />
               <Route exact path="/signup" component={Regist} />
               <Route exact path="/signup/completed" component={Regist} />
               <Route exact path="/login" component={Login} />

@@ -9,7 +9,6 @@ import {
   Drawer, Hidden, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Toolbar, Typography,
 } from '@material-ui/core';
 import {
-  ArrowForwardIos,
   ChevronLeft, ExpandLess, ExpandMore, Menu,
 } from '@material-ui/icons';
 // import routes from '../routes';
@@ -76,6 +75,7 @@ const useStyles = makeStyles((theme) => createStyles({
     ...theme.mixins.toolbar,
   },
   nested: { paddingLeft: theme.spacing(4) },
+  inset: { marginLeft: theme.spacing(5) },
   selected: { color: theme.palette.text.primary, fontWeight: 'bold' },
 }));
 
@@ -143,7 +143,7 @@ export default function SidebarWithNavbar({
                   }}
                 >
                   {route.icon && (
-                    <ListItemIcon style={{ marginLeft: 8 }}>
+                    <ListItemIcon>
                       <route.icon className={classnames({ [classes.selected]: isActiveRoute(route.path) })} />
                     </ListItemIcon>
                   )}
@@ -168,15 +168,8 @@ export default function SidebarWithNavbar({
                         component={Link}
                         to={subRoute.layout + subRoute.path}
                       >
-                        <ListItemIcon>
-                          <ArrowForwardIos
-                            fontSize="small"
-                            className={classnames({
-                              [classes.selected]: isActiveRoute(subRoute.path),
-                            })}
-                          />
-                        </ListItemIcon>
                         <ListItemText
+                          className={classes.inset}
                           primary={subRoute.name}
                           classes={{
                             primary: classnames({ [classes.selected]: isActiveRoute(subRoute.path) }),
@@ -196,7 +189,7 @@ export default function SidebarWithNavbar({
                 to={route.layout + route.path}
               >
                 {route.icon && (
-                  <ListItemIcon style={{ marginLeft: 8 }}>
+                  <ListItemIcon>
                     <route.icon className={classnames({ [classes.selected]: isActiveRoute(route.path) })} />
                   </ListItemIcon>
                 )}

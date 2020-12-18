@@ -31,13 +31,13 @@ export default function useAutoLogin(
           }
         })
         .catch((err) => {
+          handleLoginLoadingEnd();
           // 로그인 로딩 end
           if (err.response && err.response.status === 400) {
             // refresh token이 유효하지 않은 경우. (시간이 지난 리프레시 토큰)
             if (window.location.pathname !== '/') {
               window.location.href = '/';
             }
-            handleLoginLoadingEnd();
             return Promise.reject(err);
           }
           return Promise.reject(err);

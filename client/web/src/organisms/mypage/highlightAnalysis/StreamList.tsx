@@ -2,7 +2,7 @@ import React from 'react';
 // material - ui core components
 import {
   Typography, List, ListItem, ListItemIcon,
-  Tooltip, Avatar, Chip,
+  Tooltip, Chip,
 } from '@material-ui/core';
 // material - ui styles
 import { makeStyles, Theme, withStyles } from '@material-ui/core/styles';
@@ -18,8 +18,6 @@ import SelectVideoIcon from '../../../atoms/stream-analysis-icons/SelectVideoIco
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
-    width: '100%',
-    padding: '0px',
     maxHeight: '292px',
     overflow: 'auto',
   },
@@ -40,7 +38,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.light,
   },
   listItemText: {
-    fontFamily: 'AppleSDGothicNeo',
     color: theme.palette.text.primary,
     textAlign: 'left',
     lineHeight: '2.06',
@@ -56,7 +53,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
   },
   chip: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(4),
+  },
+  chipLable: {
+    marginBottom: 4, marginLeft: 4,
   },
   tooltip: {
     height: 'auto',
@@ -80,7 +80,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
     lineHeight: 1.5,
     fontSize: '17px',
-    fontFamily: 'AppleSDGothicNeo',
     marginLeft: theme.spacing(6),
     marginRight: theme.spacing(5),
     display: 'flex',
@@ -99,12 +98,13 @@ export interface StreamListProps {
 }
 
 const StyledToolTip = withStyles((theme) => ({
-  arrow: {
-    fontSize: '22px',
-  },
   tooltip: {
     maxWidth: 'none',
     padding: theme.spacing(2),
+    color: theme.palette.text.primary,
+    fontWeight: 'bold',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: theme.shadows[5],
   },
 }))(Tooltip);
 
@@ -118,17 +118,15 @@ export default function StreamList(props: StreamListProps): JSX.Element {
     <div className={classes.tooltip}>
       <Typography variant="h6">
         <div className={classes.tooltipIconWrapper}>
-          <Avatar style={{ marginBottom: '8px' }}>
-            {platformIcon(stream)}
-          </Avatar>
+          {platformIcon(stream)}
         </div>
         {stream.title}
       </Typography>
 
       <div className={classes.tooltipChipWrapper}>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 8 }}>
-            시청자수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 시청자수
           </Typography>
           <Chip
             icon={<PersonAddIcon />}
@@ -139,8 +137,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4, marginLeft: 12 }}>
-            채팅수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 채팅수
           </Typography>
           <Chip
             icon={<ChatIcon />}
@@ -151,8 +149,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
           />
         </div>
         <div className={classes.chipWapper}>
-          <Typography variant="caption" style={{ marginBottom: 4 }}>
-            웃음 발생 수
+          <Typography variant="caption" className={classes.chipLable}>
+            평균 웃음 발생 수
           </Typography>
           <Chip
             icon={<EmojiEmotionsIcon />}
@@ -193,7 +191,6 @@ export default function StreamList(props: StreamListProps): JSX.Element {
       <List className={classes.listWrapper}>
         {dayStreamsList && dayStreamsList.map((stream) => (
           <StyledToolTip
-            arrow
             placement="top"
             title={tooltipContents(stream)}
             key={shortid.generate()}
@@ -216,7 +213,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
                 })}
               </Typography>
               <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>
-                {stream.title.length > 20 ? `${stream.title.slice(0, 21)} ...` : stream.title}
+                {stream.title.length > 40 ? `${stream.title.slice(0, 41)} ...` : stream.title}
               </Typography>
 
             </ListItem>

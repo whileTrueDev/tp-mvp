@@ -3,6 +3,7 @@ import { makeStyles, Grid } from '@material-ui/core';
 import shortid from 'shortid';
 import terms from './source/Term';
 import AppBar from '../../organisms/shared/Appbar';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +51,7 @@ interface Terms {
 
 export default function PrivacyPolicy(): JSX.Element {
   const classes = useStyles();
+  useScrollTop();
   return (
     <div>
       <AppBar />

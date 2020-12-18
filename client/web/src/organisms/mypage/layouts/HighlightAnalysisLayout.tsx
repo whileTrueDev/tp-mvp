@@ -8,10 +8,7 @@ import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
-import Fade from '@material-ui/core/Fade';
-import Card from '@material-ui/core/Card';
-import { IconButton } from '@material-ui/core';
-import { Clear } from '@material-ui/icons';
+import { Chip } from '@material-ui/core';
 import Calendar from '../highlightAnalysis/Calendar';
 import StreamList from '../highlightAnalysis/StreamList';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
@@ -91,7 +88,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           setHighlightData(res.data);
         }
       }).catch((err) => {
-        ShowSnack('highlight: 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+        ShowSnack('분석 도중 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
       });
   };
 
@@ -130,41 +127,34 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           container
           direction="row"
           alignItems="center"
-          justify="space-between"
+          justify="flex-start"
           className={classes.wraper}
         >
-          <Grid item xs={12} sm={3} md={3} className={classes.title}>
-            선택된 방송
-          </Grid>
-          <Grid item xs={12} sm={9} md={9}>
-            {selectedStream
-              && (
-                <Fade in={Boolean(selectedStream)} style={{ transitionDelay: '200ms' }}>
-                  <Card className={classes.card}>
-                    <div />
-                    <div className={classes.cardInner}>
-                      <ListItemIcon>
-                        {platformIcon(selectedStream)}
-                      </ListItemIcon>
-                      <Typography className={classes.cardText} display="inline">
-                        {dateExpression({
-                          compoName: 'analysys-calender',
-                          createdAt: new Date(selectedStream.startDate),
-                          streamAirtime: selectedStream.airTime,
-                        })}
-                      </Typography>
-                      <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
-                        {selectedStream.title.length > 20 ? `${selectedStream.title.slice(0, 21)} ...` : selectedStream.title}
-                      </Typography>
-                    </div>
-                    <IconButton
-                      onClick={() => setSelectedStream(null)}
-                    >
-                      <Clear />
-                    </IconButton>
-                  </Card>
-                </Fade>
+          <Grid item xs={12} className={classes.selectedStream}>
+            <Typography className={classes.selectedStreamTitle}>선택된 방송 &gt;</Typography>
+            {selectedStream && (
+            <Chip
+              size="medium"
+              onDelete={() => setSelectedStream(null)}
+              label={(
+                <div className={classes.chip}>
+                  <ListItemIcon>
+                    {platformIcon(selectedStream)}
+                  </ListItemIcon>
+                  <Typography className={classes.cardText}>
+                    {dateExpression({
+                      compoName: 'analysys-calender',
+                      createdAt: new Date(selectedStream.startDate),
+                      streamAirtime: selectedStream.airTime,
+                    })}
+                  </Typography>
+                  <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
+                    {selectedStream.title.length > 20 ? `${selectedStream.title.slice(0, 21)} ...` : selectedStream.title}
+                  </Typography>
+                </div>
               )}
+            />
+            )}
           </Grid>
 
         </Grid>
@@ -172,25 +162,22 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           container
           className={classes.calendarWrapper}
           direction="row"
-          justify="flex-start"
         >
-          <Grid item>
-            <Calendar
-              clickedDate={clickedDate}
-              handleClickedDate={handleClickedDate}
-              handleDayStreamList={handleDayStreamList}
-            />
-          </Grid>
-
-          <Grid item style={{ marginLeft: 16 }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ marginRight: 32 }}>
+              <Calendar
+                clickedDate={clickedDate}
+                handleClickedDate={handleClickedDate}
+                handleDayStreamList={handleDayStreamList}
+              />
+            </div>
             <StreamList
               dayStreamsList={dayStreamsList}
               selectedStream={selectedStream}
               handleSeletedStreams={handleSeletedStreams2}
               platformIcon={platformIcon}
             />
-          </Grid>
-
+          </div>
         </Grid>
       </Grid>
 

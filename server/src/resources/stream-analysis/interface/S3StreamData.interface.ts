@@ -1,6 +1,7 @@
 export interface TimeLine{
   smile_count: number;
   chat_count: number;
+  viewer_count: number;
 }
 
 export interface S3StreamData {
@@ -13,6 +14,7 @@ export interface S3StreamData {
 export interface CombinedTimeLine {
   smile_count: number;
   chat_count: number;
+  viewer_count: number;
   date: string;
 }
 
