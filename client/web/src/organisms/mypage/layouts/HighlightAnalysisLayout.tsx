@@ -182,7 +182,7 @@ export default function HighlightAnalysisLayout(): JSX.Element {
             />
           </Grid>
 
-          <Grid item style={{ marginLeft: 16 }}>
+          <Grid item xs style={{ marginLeft: 16 }}>
             <StreamList
               dayStreamsList={dayStreamsList}
               selectedStream={selectedStream}

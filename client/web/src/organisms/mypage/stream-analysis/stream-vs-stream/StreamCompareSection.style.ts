@@ -18,7 +18,6 @@ const useStreamSectionStyles = makeStyles((theme: Theme) => ({
     textAlign: 'center',
     lineHeight: 1.5,
     fontSize: '17px',
-
     marginLeft: theme.spacing(6),
     marginRight: theme.spacing(5),
     display: 'flex',
