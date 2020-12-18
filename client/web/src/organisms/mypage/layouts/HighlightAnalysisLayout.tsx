@@ -162,25 +162,22 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           container
           className={classes.calendarWrapper}
           direction="row"
-          justify="flex-start"
         >
-          <Grid item>
-            <Calendar
-              clickedDate={clickedDate}
-              handleClickedDate={handleClickedDate}
-              handleDayStreamList={handleDayStreamList}
-            />
-          </Grid>
-
-          <Grid item xs style={{ marginLeft: 16 }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ marginRight: 32 }}>
+              <Calendar
+                clickedDate={clickedDate}
+                handleClickedDate={handleClickedDate}
+                handleDayStreamList={handleDayStreamList}
+              />
+            </div>
             <StreamList
               dayStreamsList={dayStreamsList}
               selectedStream={selectedStream}
               handleSeletedStreams={handleSeletedStreams2}
               platformIcon={platformIcon}
             />
-          </Grid>
-
+          </div>
         </Grid>
       </Grid>
 
