@@ -7,7 +7,7 @@ import {
   Typography, Button, Paper, IconButton,
 } from '@material-ui/core';
 import {
-  ArrowDownward, ArrowUpward, TrendingDown, TrendingUp,
+  ArrowDownward, ArrowUpward,
 } from '@material-ui/icons';
 import { UserMetrics } from '../../../interfaces/UserMetrics';
 import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
