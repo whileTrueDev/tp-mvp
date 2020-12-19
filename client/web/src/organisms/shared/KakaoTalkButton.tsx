@@ -6,8 +6,11 @@ import kakaoChattingURL from '../../constants/kakao';
 const useStyles = makeStyles((theme) => ({
   root: {
     right: 50,
-    position: 'fixed',
     bottom: 50,
+    [theme.breakpoints.down('sm')]: {
+      right: 10, bottom: 10,
+    },
+    position: 'fixed',
     zIndex: 200,
   },
   kakaoImg: {
