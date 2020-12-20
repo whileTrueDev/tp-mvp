@@ -47,11 +47,11 @@ export default function FeatureReply({
       })
       .catch(() => ShowSnack('댓글 작성중 오류가 발생했습니다. 문의부탁드립니다.', 'error', enqueueSnackbar));
   }
-
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
-        <Avatar src={avatarLogo} variant="square" className={classes.avatar} />
+        {/* 본인이 아닌 경우 프로필사진 기본 사진 처리 */}
+        <Avatar src={auth.user.userId === author || author === 'Truepoint' ? avatarLogo : ''} variant="square" className={classes.avatar} />
         <div>
           <div className={classes.titleSection}>
             <Typography variant="body2" className={classes.title}>

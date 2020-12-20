@@ -26,7 +26,7 @@ export class NotificationEntity implements Notification {
   @Column({ type: 'boolean', default: 0 })
   readState: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   @ManyToOne((type) => UserEntity, (user) => user.notification)

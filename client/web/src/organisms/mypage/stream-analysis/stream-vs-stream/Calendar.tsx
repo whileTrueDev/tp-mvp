@@ -12,7 +12,8 @@ import koLocale from 'date-fns/locale/ko';
 import { useSnackbar } from 'notistack';
 // shared dtos , interfaces
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+// import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // axios
 import useAxios from 'axios-hooks';
 // styles
@@ -20,9 +21,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // date library
 import moment from 'moment';
-// attoms
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 // interface
+import useTheme from '@material-ui/core/styles/useTheme';
 import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // attoms snackbar
@@ -44,6 +44,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
   },
 }));
+/**
+ * 캘린더 달력 정보 재요청 할 개월수 전 후 단위  
+ * 3 -> 위치한 달 전 3개월, 후 3개월 총 6개월
+ */
 const reRequest = 3;
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
@@ -56,13 +60,13 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
+  const theme = useTheme();
+
   const [
     {
       data: getStreamsData,
-      loading: getStreamsLoading,
-      error: getStreamsError,
-    }, excuteGetStreams] = useAxios<DayStreamsInfo[]>({
-      url: '/stream-analysis/stream-list',
+    }, excuteGetStreams] = useAxios<StreamDataType[]>({
+      url: '/broadcast-info',
     }, { manual: true });
 
   const DATE_THEME = (others: Theme) => ({
@@ -108,7 +112,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => moment(new Date(streamInfo.startedAt)).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => moment(new Date(streamInfo.startDate)).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.message) {
@@ -119,11 +123,12 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);
-    const dayStreamList: DayStreamsInfo[] = [];
+    const dayStreamList: StreamDataType[] = [];
     try {
       if (getStreamsData) {
-        getStreamsData.forEach((stream: DayStreamsInfo) => {
-          if (newDate && newDate.getDate() === (new Date(stream.startedAt)).getDate()) {
+        getStreamsData.forEach((stream: StreamDataType) => {
+          if (newDate
+            && moment(newDate).format('YYYY-MM-DD') === moment(stream.startDate).format('YYYY-MM-DD')) {
             dayStreamList.push(stream);
           }
         });
@@ -147,14 +152,16 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     dayComponent: JSX.Element,
   ) => {
     if (date && hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
-      if ((compareStream && (new Date(compareStream.startedAt)).getDate() === date.getDate())
-      || (baseStream && (new Date(baseStream.startedAt)).getDate() === date.getDate())) {
+      if ((compareStream && moment(new Date(compareStream.startDate)).format('YYYY-MM-DD')
+      === moment(date).format('YYYY-MM-DD'))
+      || (baseStream && moment(new Date(baseStream.startDate)).format('YYYY-MM-DD')
+      === moment(date).format('YYYY-MM-DD'))) {
         return (
           <div className={classnames({
             [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
           })}
           >
-            {React.cloneElement(dayComponent, { style: { backgroundColor: '#929ef8', color: 'white' } })}
+            {React.cloneElement(dayComponent, { style: { backgroundColor: '#d7e7ff', color: theme.palette.common.white } })}
             <div className={classnames({
               [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
             })}
@@ -190,8 +197,6 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
             justify="center"
             alignItems="center"
           >
-            {(getStreamsLoading || getStreamsError)
-            && <CenterLoading />}
             <Grid item>
               <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
                 <DatePicker

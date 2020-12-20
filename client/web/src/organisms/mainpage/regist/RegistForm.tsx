@@ -88,7 +88,7 @@ function PlatformRegistForm({
   function checkDuplicateID(): void {
     const { idValue } = state;
     if (state.id || idValue === '') {
-      ShowSnack('ID을 올바르게 입력해주세요.', 'warning', enqueueSnackbar);
+      ShowSnack('ID를 올바르게 입력해주세요.', 'warning', enqueueSnackbar);
     } else {
       getRequest({
         params: { userId: idValue },
@@ -162,13 +162,10 @@ function PlatformRegistForm({
             <Grid
               container
               direction="column"
-              spacing={1}
               className={classes.form}
             >
               <Grid item xs={12}>
-                <FormControl
-                  error={Boolean(state.id)}
-                >
+                <FormControl error={Boolean(state.id)}>
                   <InputLabel shrink>ID</InputLabel>
                   <Input
                     required
@@ -237,7 +234,7 @@ function PlatformRegistForm({
                   />
                 </Grid> */}
                 <Grid item>
-                  <Grid container direction="row" spacing={1}>
+                  <Grid container direction="row">
                     <Grid item>
                       <FormControl
                         className={classes.phoneField}
@@ -303,11 +300,11 @@ function PlatformRegistForm({
                 <Grid item>
                   <TextField
                     required
-                    label="EMAIL ID"
+                    label="EMAIL"
                     value={state.email}
                     className={classes.textField}
                     onChange={handleChange('email')}
-                    helperText="EMAIL ID을 입력하세요."
+                    helperText="EMAIL을 입력하세요."
                     margin="normal"
                     id="email"
                     InputLabelProps={{
@@ -373,7 +370,7 @@ function PlatformRegistForm({
                     type="submit"
                     value="submit"
                   >
-                    다음
+                    가입하기
                   </Button>
                 </div>
               </Grid>

@@ -1,4 +1,4 @@
-import { DayStreamsInfo } from '@truepoint/shared/dist/interfaces/DayStreamsInfo.interface';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
 
 export interface FatalError {
@@ -12,26 +12,26 @@ export interface StreamCompareSectionPropInterface {
 }
 
 export interface StreamListProps {
-  dayStreamsList: (DayStreamsInfo)[];
-  baseStream: DayStreamsInfo|null;
-  compareStream: DayStreamsInfo|null;
-  handleSeletedStreams: (newStreams: DayStreamsInfo|null, base?: true | undefined) => void;
+  dayStreamsList: (StreamDataType)[];
+  baseStream: StreamDataType|null;
+  compareStream: StreamDataType|null;
+  handleSeletedStreams: (newStreams: StreamDataType|null, base?: true | undefined) => void;
   handleFullMessage: (isSelectedListFull: boolean) => void;
-  platformIcon: (stream: DayStreamsInfo) => JSX.Element;
+  platformIcon: (stream: StreamDataType) => JSX.Element;
 }
 
 export interface StreamCardProps {
-  stream: DayStreamsInfo | null;
+  stream: StreamDataType | null;
   base? : true|null;
-  platformIcon: (stream: DayStreamsInfo) => JSX.Element;
-  handleSeletedStreams: (newStreams: DayStreamsInfo|null, base?: true | undefined) => void
+  platformIcon: (stream: StreamDataType) => JSX.Element;
+  handleSeletedStreams: (newStreams: StreamDataType|null, base?: true | undefined) => void
 }
 
 export interface StreamCalendarProps {
-  handleDayStreamList: (responseList: (DayStreamsInfo)[]) => void;
+  handleDayStreamList: (responseList: (StreamDataType)[]) => void;
   clickedDate: Date;
-  baseStream: DayStreamsInfo|null;
-  compareStream: DayStreamsInfo|null;
+  baseStream: StreamDataType|null;
+  compareStream: StreamDataType|null;
   setClickedDate: React.Dispatch<React.SetStateAction<Date>>;
 }
 

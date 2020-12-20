@@ -1,5 +1,5 @@
 import {
-  IsString, IsDateString, IsOptional,
+  IsString, IsDateString,
   Length,
 } from 'class-validator';
 
@@ -15,6 +15,5 @@ export class SearchCalendarStreams {
   startDate: string;
 
   @IsDateString()
-  @IsOptional()
-  endDate?: string;
+  endDate: string;
 }

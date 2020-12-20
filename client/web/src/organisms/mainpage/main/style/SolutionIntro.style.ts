@@ -6,7 +6,7 @@ const styles = makeStyles((theme) => ({
     margin: `${theme.spacing(15)}px 0px ${theme.spacing(4)}px 0px`,
   },
   mainTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 40,
     fontWeight: 700,
     margin: '30px 0px 30px 0px',
@@ -41,7 +41,7 @@ const styles = makeStyles((theme) => ({
     wordBreak: 'keep-all',
   },
   eachTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 30,
     fontWeight: 700,
     [theme.breakpoints.down('sm')]: {
@@ -52,7 +52,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   eachContent: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 25,
     margin: `${theme.spacing(1)}px 0px`,
     [theme.breakpoints.down('sm')]: {
@@ -114,7 +114,7 @@ const styles = makeStyles((theme) => ({
   },
   accent: {
     color: theme.palette.primary.light,
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 27,
     fontWeight: 700,
     textAlign: 'center',
@@ -135,7 +135,7 @@ const styles = makeStyles((theme) => ({
     },
   },
   finishComment: {
-    fontFamily: 'AppleSDGothicNeo',
+
     fontSize: 40,
     fontWeight: 800,
     textAlign: 'center',

@@ -24,12 +24,12 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   animatedTitle: {
-    fontFamily: 'AppleSDGothicNeo',
+
     height: '400px',
     width: '500px',
   },
   animatedTitleMedium: {
-    fontFamily: 'AppleSDGothicNeo',
+
     height: '400px',
     width: '500px',
   },
@@ -121,7 +121,7 @@ const styles = makeStyles((theme) => ({
     paddingTop: 10,
     marginTop: -10,
     '&>ul>li': {
-      fontFamily: 'AppleSDGothicNeo',
+
       fontSize: 36,
       fontWeight: 800,
       height: 45,
@@ -144,12 +144,12 @@ const styles = makeStyles((theme) => ({
     '71%, 99.99%': { marginTop: 0, visibility: 'visible' },
   },
   loadingShortLogo: {
-    animation: '$bound 1s ease-in-out forwards',
+    animation: '$bound 2s ease-in-out infinite forwards',
   },
   '@keyframes bound': {
-    '0%, 50%, 80%, 100%': { transform: 'translateY(0)' },
-    '40%': { transform: 'translateY(-10px)' },
-    '60%': { transform: 'translateY(-5px)' },
+    '0%, 60%, 75%, 90%, 100%': { transform: 'translateY(0)' },
+    '70%': { transform: 'translateY(-10px)' },
+    '80%': { transform: 'translateY(-5px)' },
   },
   shortWraper: {
     display: 'flex',
@@ -168,15 +168,15 @@ interface LoadingComponentProps {
 
 export default function LoadingComponent({
   clickOpen,
-  loadingType = 'long',
+  loadingType = 'short',
 }: LoadingComponentProps): JSX.Element {
   const classes = styles();
   const [open, setOpen] = React.useState(false);
 
-  let loadingTime = 10000;
+  let loadingTime = 2000;
   switch (loadingType) {
-    case 'short':
-      loadingTime = 2000;
+    case 'long':
+      loadingTime = 10000;
       break;
     case 'medium':
       loadingTime = 5000;
@@ -186,11 +186,14 @@ export default function LoadingComponent({
   }
 
   React.useEffect(() => {
+    const firstTime = new Date().getTime();
     if (clickOpen) {
       setOpen(true);
+      const secondTime = new Date().getTime();
+      const betweenTime = secondTime - firstTime;
       setTimeout(() => {
         setOpen(false);
-      }, loadingTime);
+      }, betweenTime > 2000 ? betweenTime : loadingTime);
     }
   }, [clickOpen, loadingTime]);
 

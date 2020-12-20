@@ -1,6 +1,7 @@
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
+// import useTheme from '@material-ui/core/styles/useTheme';
 import graphColor from './Color';
 // import { timelineGraphInterface } from './graphsInterface';
 
@@ -44,14 +45,15 @@ const setSeries = (
     const series: any = chart.series.push(new am4charts.LineSeries());
     series.yAxis = valueAxis;
     series.dataFields.valueY = setting.valueY;
-    series.dataFields.dateX = 'startedAt';
+    series.dataFields.dateX = 'startDate';
     series.name = setting.name;
     series.tooltipText = `${setting.tooltipText}${setting.unit}`;
-    series.strokeWidth = 2.5;
+    series.strokeWidth = 2;
     series.tensionX = 0.8;
     series.tooltip.getFillFromObject = false;
-    series.stroke = setting.color; // red
     series.tooltip.background.fill = setting.color;
+    series.fill = setting.color;
+    series.stroke = setting.color;
     // Drop-shaped tooltips
     series.tooltip.background.cornerRadius = 20;
     series.tooltip.background.strokeOpacity = 0;
@@ -75,7 +77,6 @@ export default function setComponent(data: any[],
   chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd';
   chart.paddingRight = 15;
   chart.paddingLeft = 5;
-
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.skipEmptyPeriods = true;
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd';

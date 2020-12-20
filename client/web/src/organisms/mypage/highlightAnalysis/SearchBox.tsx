@@ -27,17 +27,13 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(4),
     width: searchBoxWidth,
   },
-  arrowIcon: {
-    marginRight: theme.spacing(4),
-    fontWeight: 'bold',
-    fontSize: '80px',
-  },
+  arrowIcon: { marginRight: theme.spacing(4) },
   analysisWordWrapper: {
     display: 'flex',
     flexDirection: 'row',
   },
   analysisCaption: { paddingTop: theme.spacing(3), marginLeft: theme.spacing(3) },
-  quotesImg: { width: '22px', height: '22px' },
+  quotesImg: { width: theme.typography.body1.fontSize, height: theme.typography.body1.fontSize },
   analysisWord: { margin: theme.spacing(2) },
   popper: {
     display: 'flex',
@@ -77,7 +73,7 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
   } = props;
 
   const {
-    value, handleChange, setValue,
+    value, handleChange, setValue, handleReset,
   } = useEventTargetValue(); // text input
 
   const {
@@ -103,6 +99,8 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
     /* 자모 전부 포함되는 단어 리스트를
        가중치 합이 가장 큰 단어를 기준으로 내림차순 정렬
     */
+    if (includedWords.length === 0) ShowSnack('카테고리 목록에 존재하는 단어만 분석 할 수 있습니다. 다시 선택해주세요', 'error', enqueueSnackbar);
+
     return includedWords.sort((a, b) => targetString.split('').reduce((acc, curr, index) => {
       if (spreadKorean(a).indexOf(targetString.split('')[0]) > spreadKorean(b).indexOf(targetString.split('')[0])) {
         return acc + (longestLength - index);
@@ -131,10 +129,14 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
       else if (filterKoeranSpread(value)[selectedIndex]) {
         handleAnalysisWord(filterKoeranSpread(value)[selectedIndex]);
         setValue(filterKoeranSpread(value)[selectedIndex]);
-      } else ShowSnack('단어 목록에 존재하는 단어만 분석 할 수 있습니다. 다시 선택해주세요', 'info', enqueueSnackbar);
+      } else ShowSnack('카테고리 목록에 존재하는 단어만 분석 할 수 있습니다. 다시 선택해주세요', 'info', enqueueSnackbar);
       handleAnchorClose();
     }
   };
+
+  React.useEffect(() => {
+    if (!value && analysisWord) setValue(analysisWord);
+  }, [analysisWord, setValue, value]);
 
   return (
     <ClickAwayListener onClickAway={handleAnchorClose}>
@@ -142,9 +144,16 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
 
         <TextField
           variant="outlined"
-          label="검색값"
+          label="카테고리"
           color="primary"
-          onClick={() => handleAnchorOpenWithRef(targetRef)}
+          onClick={() => {
+            if (value.length > 1) {
+              handleReset();
+              handleAnalysisWord('');
+              setSelectedIndex(0);
+            }
+            handleAnchorOpenWithRef(targetRef);
+          }}
           value={value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             handleChange(e);
@@ -157,27 +166,25 @@ export default function SearchBox(props: SearchBoxProps): JSX.Element {
           className={classes.textField}
         />
 
-        <TrendingFlatIcon className={classes.arrowIcon} color="primary" />
+        <TrendingFlatIcon className={classes.arrowIcon} fontSize="large" color="primary" />
 
         {analysisWord ? (
           <Typography
-            variant="h4"
+            variant="body1"
             color="textSecondary"
             className={classes.analysisWordWrapper}
           >
             <img src="/images/analyticsPage/quotesLeft.png" alt="left qut" className={classes.quotesImg} />
-            <div className={classes.analysisWord}>
-              {`${analysisWord} `}
-            </div>
+            <div className={classes.analysisWord}>{`${analysisWord} `}</div>
             <img src="/images/analyticsPage/quotesRight.png" alt="right qut" className={classes.quotesImg} />
-            <Typography variant="h6" color="textSecondary" className={classes.analysisCaption} component="span">
-              단어에 대해 분석을 시작 합니다.
+            <Typography variant="body1" color="textSecondary" className={classes.analysisCaption} component="span">
+              카테고리에 대해 분석을 시작 합니다.
             </Typography>
           </Typography>
         ) : (
           <Alert severity="info">
             <Typography variant="body1" className={classes.analysisWordWrapper}>
-              검색값 분석을 위해 단어를 선택해 주세요
+              분석을 위해 카테고리를 선택해 주세요
             </Typography>
           </Alert>
         )}

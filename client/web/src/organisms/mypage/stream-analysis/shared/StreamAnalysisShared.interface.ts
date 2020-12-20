@@ -8,7 +8,8 @@ export interface FatalError {
 
 export interface StreamsListItem {
   streamId: string;
-  startedAt: Date;
+  startDate: Date;
+  endDate: Date;
   creatorId: string;
   title: string;
   platform: 'afreeca'|'youtube'|'twitch';
@@ -21,7 +22,6 @@ export interface StreamsListItem {
 
 export interface CalendarProps {
   period: Date[];
-  // handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
   handleSelectedDate: (newDate: Date) => void;
   currDate: Date;
@@ -29,23 +29,28 @@ export interface CalendarProps {
 }
 
 export interface PeriodSelectBoxProps {
-  targetRef: React.MutableRefObject<HTMLDivElement | null>;
   period: Date[];
   TitleIcon: (props: SvgIconProps) => JSX.Element;
   iconProps: any;
   titleMessage: string;
 }
-
 export interface RangeSelectCaledarProps {
   period: Date[];
-  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
   base?: true;
-  targetRef: React.MutableRefObject<HTMLDivElement | null>;
-  anchorEl: HTMLElement | null;
-  handleAnchorOpenWithRef: (ref: React.MutableRefObject<HTMLDivElement | null>) => void;
-  handleAnchorClose: () => void;
+  removeFunc?: true;
+  handleDialogOpen?: () => void;
+  handleDialogClose: () => void;
+  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
 }
-
+export interface PeriodSelectDialogProps {
+  period: Date[];
+  base?: true;
+  selectedStreams: StreamsListItem[];
+  open: boolean;
+  handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
+  handleClose: () => void;
+  handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void;
+}
 export interface PeriodStreamsListProps {
   selectedStreams: (StreamsListItem)[];
   handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void

@@ -54,8 +54,8 @@ export default function UserMetricsChart({
     categoryAxis.renderer.minGridDistance = 60;
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.dataItems.template.text = '';
-    categoryAxis.adapter.add('tooltipText', () => `${new Date(categoryAxis.tooltipDataItem.dataContext.startedAt).toLocaleDateString()}
-    ${new Date(categoryAxis.tooltipDataItem.dataContext.startedAt).toLocaleTimeString()}`);
+    categoryAxis.adapter.add('tooltipText', () => `${new Date(categoryAxis.tooltipDataItem.dataContext.startDate).toLocaleDateString()}
+    ${new Date(categoryAxis.tooltipDataItem.dataContext.startDate).toLocaleTimeString()}`);
     if (categoryAxis.tooltip) {
       categoryAxis.tooltip.background.opacity = 1;
     }
@@ -63,7 +63,6 @@ export default function UserMetricsChart({
     if (valueAxis.tooltip) {
       valueAxis.tooltip.disabled = true;
     }
-    valueAxis.min = 0;
 
     function createLineSeries(field, color) {
       const lineSeries = chart.series.push(new am4charts.LineSeries());
@@ -124,7 +123,7 @@ export default function UserMetricsChart({
         // (providerName + "_" + itemName) and store realName
         if (providerData[itemName] instanceof Array) {
           providerData[itemName]
-            .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
+            .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
             .forEach((item, index) => {
               const alreadyPushedIndex = tempArray.findIndex((d) => date === d.date);
               if (alreadyPushedIndex > -1) {
@@ -132,7 +131,7 @@ export default function UserMetricsChart({
                 if (!tempArray[alreadyPushedIndex][itemName]) {
                   tempArray[alreadyPushedIndex] = {
                     ...tempArray[alreadyPushedIndex],
-                    realName: new Date(item.startedAt).toLocaleTimeString(),
+                    realName: new Date(item.startDate).toLocaleTimeString(),
                     [itemName]: item.value,
                     title: item.title,
                   };
@@ -140,21 +139,21 @@ export default function UserMetricsChart({
                   // 그 안에 해당 플랫폼 데이터가 있는 경우
                   tempArray.push({
                     category: `${date}_${index}`,
-                    realName: new Date(item.startedAt).toLocaleTimeString(),
+                    realName: new Date(item.startDate).toLocaleTimeString(),
                     [itemName]: item.value,
                     title: item.title,
                     date,
-                    startedAt: item.startedAt,
+                    startDate: item.startDate,
                   });
                 }
               } else {
                 tempArray.push({
                   category: `${date}_${index}`,
-                  realName: new Date(item.startedAt).toLocaleTimeString(),
+                  realName: new Date(item.startDate).toLocaleTimeString(),
                   [itemName]: item.value,
                   title: item.title,
                   date,
-                  startedAt: item.startedAt,
+                  startDate: item.startDate,
                 });
               }
             });
@@ -171,11 +170,11 @@ export default function UserMetricsChart({
             count += 1;
             tempArray.push({
               category: `${date}_${0}`,
-              realName: new Date(providerData[itemName].startedAt).toLocaleTimeString(),
+              realName: new Date(providerData[itemName].startDate).toLocaleTimeString(),
               [itemName]: providerData[itemName].value,
               title: providerData[itemName].title,
               date,
-              startedAt: providerData[itemName].startedAt,
+              startDate: providerData[itemName].startDate,
             });
           }
         }
@@ -211,7 +210,7 @@ export default function UserMetricsChart({
     });
 
     chart.data = chartData
-      .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+      .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
     // last tick
     const range = categoryAxis.axisRanges.create();

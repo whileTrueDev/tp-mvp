@@ -5,7 +5,7 @@ import {
 import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionEntity } from './featureSuggestion.entity';
 
-@Entity({ name: 'FeatureSuggestionReplyTest2' })
+@Entity({ name: 'FeatureSuggestionReply' })
 export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @PrimaryGeneratedColumn()
   replyId: number;
@@ -21,7 +21,7 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @ManyToOne((type) => UserEntity, (user) => user.userId)
   author: UserEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   constructor(partial: Partial<FeatureSuggestionReplyEntity>) {

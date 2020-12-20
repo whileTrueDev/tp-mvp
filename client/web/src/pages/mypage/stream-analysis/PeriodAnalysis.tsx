@@ -19,6 +19,8 @@ import MypageHero from '../../../organisms/shared/sub/MypageHero';
 import textSource from '../../../organisms/shared/source/MypageHeroText';
 // layout style
 import useStreamAnalysisStyles from './streamAnalysisLayout.style';
+// hook
+import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 export default function PeriodAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
@@ -50,6 +52,8 @@ export default function PeriodAnalysis(): JSX.Element {
     setOpen(false);
   }, [subscribe.currUser]);
 
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
   return (
     <>
       <MypageSectionWrapper>
@@ -59,7 +63,7 @@ export default function PeriodAnalysis(): JSX.Element {
 
       <MypageSectionWrapper>
         <Grid container direction="column" style={{ minHeight: '1500px' }}>
-          <Paper elevation={0} className={classes.analysisSectionPaper}>
+          <Paper className={classes.analysisSectionPaper}>
             {/* Analysis Section */}
             <PeriodAnalysisSection
               error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
@@ -71,7 +75,7 @@ export default function PeriodAnalysis(): JSX.Element {
           {/* Graph Section */}
           {open && data
          && (
-           <Paper elevation={0} className={classes.graphSectionPaper}>
+           <Paper className={classes.graphSectionPaper}>
              <PeriodGraph data={data} loading={loading} selectedMetric={selectedMetric} />
            </Paper>
          )}

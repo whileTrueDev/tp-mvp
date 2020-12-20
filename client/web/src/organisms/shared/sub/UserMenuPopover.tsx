@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   menulist: {
     padding: `${theme.spacing(1)}px ${0}px`,
@@ -40,13 +41,17 @@ const useStyles = makeStyles((theme) => ({
 export interface UserMenuPopperProps extends Omit<PopoverProps, 'children'> {
   anchorEl: HTMLElement | null;
   avatarSrc?: string
+  nickName?: string;
+  email?: string;
 }
 export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element {
   const classes = useStyles();
   const theme = useTheme<TruepointTheme>();
   const history = useHistory();
   const {
-    open, anchorEl, onClose, avatarSrc, ...prop
+    open, anchorEl, onClose, avatarSrc,
+    nickName, email,
+    ...prop
   } = props;
 
   const authContext = useAuthContext();
@@ -72,8 +77,10 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
         <div className={classes.description}>
           <Avatar src={avatarSrc} />
           <div className={classes.descriptionDetail}>
-            <Typography variant="h6">{authContext.user.userName}</Typography>
-            <Typography variant="body2" component="span">{authContext.user.userId}</Typography>
+            <Typography variant="h6">
+              {`${authContext.user.userId} ${nickName ? `(${nickName})` : ''}`}
+            </Typography>
+            <Typography variant="body2" component="span">{email}</Typography>
           </div>
         </div>
         <Divider />

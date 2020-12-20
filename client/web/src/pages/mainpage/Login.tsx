@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import LoginForm from '../../organisms/mainpage/login/LoginForm';
 import LoginFooter from '../../organisms/shared/FooterShort';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -33,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.down('sm')]: {
       width: '100%',
+      padding: 0,
     },
   },
 }));
@@ -40,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Login(): JSX.Element {
   const classes = useStyles();
 
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
   return (
     <section className={classes.container}>
       <section

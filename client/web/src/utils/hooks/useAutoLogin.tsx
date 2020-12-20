@@ -23,24 +23,21 @@ export default function useAutoLogin(
             // 로그인 로딩 start
             handleLoginLoadingEnd();
 
-            // console.log('refreshed!...');
             // login, signup, find-id, find-pw인 경우 메인페이지로 이동
-            if (['/login', '/signup', 'find-id', 'find-pw']
+            if (['/login', '/signup', 'find-id', 'find-pw', '/signup/completed']
               .includes(window.location.pathname)) {
               window.location.href = '/';
             }
           }
         })
         .catch((err) => {
-          // 로그인 로딩 end
           handleLoginLoadingEnd();
-          if (err.status === 400
-               || (err.response && err.response.status === 400)) {
+          // 로그인 로딩 end
+          if (err.response && err.response.status === 400) {
+            // refresh token이 유효하지 않은 경우. (시간이 지난 리프레시 토큰)
             if (window.location.pathname !== '/') {
               window.location.href = '/';
             }
-          } else {
-            // console.log(err.response);
             return Promise.reject(err);
           }
           return Promise.reject(err);

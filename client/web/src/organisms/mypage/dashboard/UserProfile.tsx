@@ -8,19 +8,21 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import useAxios from 'axios-hooks';
+import useDialog from '../../../utils/hooks/useDialog';
+import MainDialog from './MainDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    height: '100%', padding: theme.spacing(4), display: 'flex', alignItems: 'center',
+    padding: theme.spacing(2), display: 'flex', alignItems: 'center',
   },
   loading: {
-    height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center',
+    display: 'flex', justifyContent: 'center', alignItems: 'center',
   },
-  avatar: { width: 150, height: 150, margin: theme.spacing(4) },
-  platformLogo: { width: 30, height: 30, margin: '0px 4px' },
+  avatar: { width: theme.spacing(14), height: theme.spacing(14), margin: theme.spacing(4) },
+  platformLogo: { width: 30, height: 30, marginRight: theme.spacing(1) },
   flexBox: { display: 'flex', alignItems: 'center' },
-  userTier: { marginLeft: theme.spacing(2), marginTop: theme.spacing(1) },
-  text: { paddingTop: theme.spacing(1) },
+  userTier: { marginLeft: theme.spacing(2) },
+  secondSection: { marginTop: theme.spacing(1) },
   bold: { fontWeight: 'bold' },
 }));
 
@@ -29,6 +31,9 @@ export default function UserProfile(): JSX.Element {
   const [profileRequestObject, refetch] = useAxios<User>({
     url: 'users', method: 'GET',
   });
+
+  const { open, handleOpen, handleClose } = useDialog();
+
   useEffect(() => {
     refetch();
   }, [refetch]);
@@ -40,60 +45,77 @@ export default function UserProfile(): JSX.Element {
       <div className={classes.loading}><CircularProgress /></div>
       )}
 
-      {!profileRequestObject.loading && profileRequestObject.data && (
-        <>
-          <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
+      {!profileRequestObject.loading
+      && profileRequestObject.data
+      && (
+      <>
+        <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
+
+        <div>
+          {/* 연동된 플랫폼 목록 */}
+          <div className={classes.flexBox}>
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/afreecaLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
+            />
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/twitchLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
+            />
+            <img
+              className={classes.platformLogo}
+              src="/images/logo/youtubeLogo.png"
+              alt=""
+              draggable={false}
+              style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
+            />
+          </div>
+          {/* 이름 */}
+          <div className={classes.flexBox}>
+            <Typography variant="h4" className={classes.bold}>
+              {`${profileRequestObject.data.nickName || profileRequestObject.data.userId}`}
+              <Typography className={classes.bold} component="span" variant="h6">&nbsp;님</Typography>
+            </Typography>
+          </div>
 
           <div>
-            {/* 이름 */}
-            <div className={classes.flexBox}>
-              <Typography variant="h4" style={{ fontWeight: 'bold' }}>
-                {`${profileRequestObject.data.nickName || profileRequestObject.data.userId} 님`}
-              </Typography>
+            {/* 이메일 */}
+            {profileRequestObject.data.mail && (
+              <Typography>{profileRequestObject.data.mail}</Typography>
+            )}
 
-              {/* 연동된 플랫폼 목록 */}
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/afreecaLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
-              />
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/twitchLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
-              />
-              <img
-                className={classes.platformLogo}
-                src="/images/logo/youtubeLogo.png"
-                alt=""
-                draggable={false}
-                style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
-              />
-
+            {/* 요금제 */}
+            <div className={classnames(classes.flexBox, classes.secondSection)}>
+              <Typography className={classes.bold} variant="body1">요금제</Typography>
+              <Chip label="클로즈베타 테스터" size="small" color="primary" className={classes.userTier} />
             </div>
 
-            <div>
-              {/* 이메일 */}
-              <Typography className={classes.text}>{profileRequestObject.data.mail}</Typography>
-
-              {/* 요금제 */}
-              <div className={classes.flexBox}>
-                <Typography className={classnames(classes.text, classes.bold)} variant="body1">요금제</Typography>
-                <Chip label="클로즈베타 테스터" size="small" color="primary" className={classnames(classes.userTier)} />
-              </div>
-
-              {/* 클로즈베타 처리 - 잠시 제거 */}
-              {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
+            {/* 클로즈베타 처리 - 잠시 제거 */}
+            {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
                   업그레이드
                   <ArrowForwardIosIcon fontSize="inherit" />
                 </Typography> */}
-            </div>
           </div>
-        </>
+        </div>
+      </>
+      )}
+      {/* 아프리카 / 트위치 / 유튜브 중 아이디가 한개도 없는 경우 */}
+      {!profileRequestObject.loading && profileRequestObject.data
+      && !(profileRequestObject.data.afreecaId
+          || profileRequestObject.data.youtubeId
+          || profileRequestObject.data.twitchId
+      ) && (
+      <MainDialog
+        open={open}
+        handleOpen={handleOpen}
+        handleClose={handleClose}
+      />
       )}
     </Paper>
   );

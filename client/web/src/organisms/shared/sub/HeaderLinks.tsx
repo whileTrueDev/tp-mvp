@@ -23,7 +23,11 @@ import UserMenuPopover from './UserMenuPopover';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  icon: { width: 32, height: 32 },
+  icon: {
+    width: 32,
+    height: 32,
+    color: theme.palette.type === 'dark' ? theme.palette.background.paper : theme.palette.common.white,
+  },
 }));
 
 export interface Notification {
@@ -139,13 +143,17 @@ function HeaderLinks(): JSX.Element {
         onClose={handleAnchorClose}
       />
       )}
+      {UserMenuAnchorEl && !profile.loading && profile.data && (
       <UserMenuPopover
         avatarSrc={(!profile.loading && profile.data && profile.data.profileImage)
           ? profile.data.profileImage : ''}
+        nickName={!profile.loading && profile.data && profile.data.nickName}
+        email={!profile.loading && profile.data && profile.data.mail}
         open={UserMenuOpen}
         anchorEl={UserMenuAnchorEl}
         onClose={handleClose}
       />
+      )}
     </Grid>
   );
 }

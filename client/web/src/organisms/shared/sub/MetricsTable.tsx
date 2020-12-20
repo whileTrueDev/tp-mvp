@@ -4,6 +4,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
+import classNames from 'classnames';
 import Table from '../../../atoms/Table/MaterialTable';
 
 const styles = makeStyles((theme) => ({
@@ -32,9 +33,9 @@ export function highlightTerm(rowData: any): string {
     return `${hours}:${minutes}:${seconds}`;
   }
 
-  const { start_time, end_time } = rowData;
-  const startTime = new Date(start_time);
-  const endTime = new Date(end_time);
+  const { start_date, end_date } = rowData;
+  const startTime = new Date(start_date);
+  const endTime = new Date(end_date);
   const addEndTime = new Date(endTime.setSeconds(endTime.getSeconds() + 30));
   const resultStartTime = getFormatDate(startTime);
   const resultEndTime = getFormatDate(addEndTime);
@@ -44,12 +45,6 @@ export function highlightTerm(rowData: any): string {
 
 // @hwasurr - 10.13 eslint 버그 수정중 disalbe함. 이후 row ,arr 타입 올바르게 작성해주십시오.
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function rank(row: any, arr: any): number | null {
-  const sorted = arr.sort((a: any, b: any) => (b.score - a.score));
-  const ranking = sorted.indexOf(row);
-  if (ranking > -1) return ranking + 1;
-  return null;
-}
 
 interface TableProps {
   metrics: any;
@@ -75,6 +70,14 @@ export default function MaterialTable({
   const classes = styles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
 
+  // 테이블에 데이터가 주입전 렌더링 되어 오류 뜨는 현상 해결위해
+  function getCheck(a: any, b: any): boolean {
+    if (Object.prototype.hasOwnProperty.call(a, 'tableData')) {
+      if (a.tableData.id === b.index) return true;
+    }
+    return false;
+  }
+
   return (
     <>
       <Table
@@ -89,6 +92,7 @@ export default function MaterialTable({
           },
         ]}
         data={metrics || []}
+        isLoading={!metrics}
         components={{
           Pagination: (props) => (
             <TablePagination
@@ -104,11 +108,7 @@ export default function MaterialTable({
               ).map((eachRow: any) => (
                 <TableRow
                   key={shortid.generate()}
-                  className={
-                    eachRow.tableData.id === row.index
-                      ? classes.selectedRow
-                      : classes.row
-                  }
+                  className={classNames({ [classes.row]: true, [classes.selectedRow]: getCheck(eachRow, row) })}
                   onClick={() => {
                     if (handleClick) {
                       handleClick({
@@ -117,7 +117,6 @@ export default function MaterialTable({
                         start_index: eachRow.start_index,
                         end_index: eachRow.end_index,
                         score: eachRow.score,
-                        rank: rank(eachRow, [...metrics]),
                         index: eachRow.tableData.id,
                       });
                     }
@@ -128,7 +127,7 @@ export default function MaterialTable({
                   </TableCell>
                   <TableCell style={{ padding: 10 }} align="center">
                     { type === '트루포인트 편집점'
-                      ? Math.round(eachRow.score * 100)
+                      ? Math.round(eachRow.score)
                       : eachRow.score}
                   </TableCell>
                 </TableRow>

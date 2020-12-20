@@ -19,10 +19,10 @@ export default function TimeLineGraph({ data, selectedMetric }: {
       switch (element) {
         case 'smile':
           chart.series.values[0].show();
-          return;
+          break;
         case 'chat':
           chart.series.values[1].show();
-          return;
+          break;
         case 'viewer':
           chart.series.values[2].show();
           break;

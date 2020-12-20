@@ -20,8 +20,10 @@ export default function Index({ name, comeData }:
     const chart = am4core.create(`chartdiv_${name}`, am4charts.XYChart);
     chart.paddingRight = 18;
     chart.paddingLeft = 0;
-
     chart.data = comeData;
+    // chart root grid stroke styles
+    chart.stroke = am4core.color(theme.palette.text.secondary);
+    chart.strokeWidth = 0.15;
 
     // Create axes
     const categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
@@ -35,8 +37,9 @@ export default function Index({ name, comeData }:
     const valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
     valueAxis.min = -100;
     valueAxis.max = 100;
-    valueAxis.renderer.grid.template.disabled = true;
     valueAxis.renderer.labels.template.disabled = false;
+    valueAxis.renderer.grid.template.disabled = true;
+
     valueAxis.renderer.ticks.template.disabled = true;
     valueAxis.renderer.labels.template.adapter.add('text', (text) => `${Math.abs(Number(text))}%`);
     valueAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);

@@ -39,6 +39,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  // eslint-disable-next-line no-console
+  console.log(`Running Evironment: ${process.env.NODE_ENV || 'development'}`);
   await app.listen(3000);
 }
 bootstrap();

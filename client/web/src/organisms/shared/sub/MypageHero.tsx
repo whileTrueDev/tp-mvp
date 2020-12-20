@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import React from 'react';
 import { Typography, makeStyles } from '@material-ui/core';
 import Card from '../../../atoms/Card/Card';
@@ -15,39 +16,40 @@ interface MypageHeroProps {
 
 const style = makeStyles((theme) => ({
   heroWraper: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  paper: {
-    backgroundColor: theme.palette.grey[400],
+    display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
   },
   leftCard: {
+    boxShadow: theme.shadows[0],
     margin: `0px ${theme.spacing(3)}px 0px 0px`,
     padding: theme.spacing(3),
     backgroundColor: theme.palette.primary.light,
   },
   middleCard: {
+    boxShadow: theme.shadows[0],
     margin: `0px ${theme.spacing(3)}px`,
     padding: theme.spacing(3),
     backgroundColor: theme.palette.primary.dark,
   },
   rightCard: {
+    boxShadow: theme.shadows[0],
     margin: `0px 0px 0px ${theme.spacing(3)}px`,
     padding: theme.spacing(3),
     backgroundColor: '#d3d19d',
   },
+  bold: { fontWeight: 'bold' },
   fonts: {
-    fontWeight: 'bold',
     color: theme.palette.common.white,
   },
   image: {
-    marginTop: theme.spacing(1),
+    position: 'absolute',
+    top: theme.spacing(1),
+    right: theme.spacing(1),
     margin: theme.spacing(1),
+    [theme.breakpoints.up('xl')]: {
+      position: 'static',
+    },
   },
-  textWraper: {
-    marginTop: theme.spacing(2),
-  },
+  textWraper: { marginTop: theme.spacing(1) },
 }));
 
 export default function MypageHero(
@@ -69,19 +71,19 @@ export default function MypageHero(
   return (
     <section className={classes.heroWraper}>
       {textSource.eachCardContent.map((content, index) => (
-        <Card className={cardType(index)}>
-          <Typography className={classes.fonts} variant="body1">
+        <Card className={cardType(index)} key={content.cardText}>
+          <Typography className={classnames(classes.fonts, classes.bold)} variant="body2">
             {content.cardHeader}
           </Typography>
           <div className={classes.image}>
-            <img src={content.cardIcon} width="15%" alt="cardIcon" />
+            <img src={content.cardIcon} height={35} alt="cardIcon" draggable={false} />
           </div>
           {content.cardTitle.split('\n').map((title: string) => (
-            <Typography variant="h4" className={classes.fonts}>{title}</Typography>
+            <Typography key={title} variant="h6" className={classnames(classes.fonts, classes.bold)}>{title}</Typography>
           ))}
           <div className={classes.textWraper}>
             {content.cardText.split('\n').map((text) => (
-              <Typography className={classes.fonts} variant="body2">
+              <Typography key={text} className={classes.fonts} variant="body2" color="textSecondary">
                 {text}
               </Typography>
             ))}

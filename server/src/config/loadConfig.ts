@@ -5,7 +5,7 @@
 
 // Load the AWS SDK
 import AWS from 'aws-sdk';
-import { TruepointSecret, TruepointDbSecret } from '../interfaces/Secrets.interface';
+import { TruepointDbSecret, DbSecret, CollectorDbSecret } from '../interfaces/Secrets.interface';
 
 const region = 'ap-northeast-2';
 AWS.config.update({
@@ -20,17 +20,15 @@ const client = new AWS.SecretsManager({ region });
 // See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
 // We rethrow the exception by default.
 
-async function getDbSecrets(): Promise<TruepointDbSecret> {
-  let secret: TruepointDbSecret;
+/**
+ * Truepoint 앱 DB Secret 정보를 가져오는 함수.
+ */
+async function getDbSecrets(secretsName: string): Promise<DbSecret> {
+  let secret: DbSecret;
   try {
     const list = await client.listSecrets().promise();
     const target = list.SecretList.find(
-      (x) => x.Name.includes(
-        process.env.NODE_ENV === 'production'
-          // ? 'TruepointProductionDB' // production 환경( 정확히는, production RDS DB) 이 준비되었을 때.
-          ? 'TruepointDevDB'
-          : 'TruepointDevDB',
-      ),
+      (x) => x.Name.includes(secretsName),
     );
 
     const dbSecretData = await client
@@ -71,10 +69,20 @@ async function getDbSecrets(): Promise<TruepointDbSecret> {
 }
 
 // config service
-export default async (): Promise<TruepointSecret> => {
-  const dbSecrets = await getDbSecrets();
+export default async (): Promise<TruepointDbSecret | CollectorDbSecret> => {
+  const truepointDbName = process.env.NODE_ENV === 'production'
+    ? 'TruepointProductionDB' // production 환경( 정확히는, production RDS DB) 이 준비되었을 때.
+    : 'TruepointDevDB';
+
+  // Truepoint App DB Secrets
+  const dbSecrets = await getDbSecrets(truepointDbName);
+
+  // Collector DB Secrets
+  const collectorDbName = 'WhileTrueCollectorDB';
+  const collectorDbSecerts = await getDbSecrets(collectorDbName);
 
   return {
     database: { ...dbSecrets },
+    WhileTrueCollectorDB: { ...collectorDbSecerts },
   };
 };

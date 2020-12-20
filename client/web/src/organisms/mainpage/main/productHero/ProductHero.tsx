@@ -1,14 +1,24 @@
 import React from 'react';
 import { Container, Button, Grid } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import shortid from 'shortid';
 import styles from '../style/ProductHero.style';
 import source from '../source/textsource';
-import Dialog from '../../../../atoms/Dialog/Dialog';
-import useDialog from '../../../../utils/hooks/useDialog';
+// CBT 이후 추가될 내용
+// import Dialog from '../../../../atoms/Dialog/Dialog';
+// import useDialog from '../../../../utils/hooks/useDialog';
 
-export default function ProductHero(): JSX.Element {
+interface ProductHeroProps {
+  pageIn: string
+}
+
+export default function ProductHero(
+  { pageIn }: ProductHeroProps,
+): JSX.Element {
   const classes = styles();
-  const { open, handleClose, handleOpen } = useDialog();
+
+  // CBT 이후 추가될 내용
+  // const { open, handleClose, handleOpen } = useDialog();
   return (
     <div className={classes.root}>
       <Container>
@@ -25,8 +35,12 @@ export default function ProductHero(): JSX.Element {
               ))}
             </div>
             <div className={classes.mainExcept}>
-              <Button className={classes.button} onClick={handleOpen}>
-                자세히 보기
+              <Button
+                className={classes.button}
+                component={Link}
+                to={pageIn === 'main' ? '/infoCBT' : '/'}
+              >
+                {pageIn === 'main' ? 'CBT신청하기' : '홈페이지로 이동' }
               </Button>
               <div className={classes.buttonLine} />
             </div>
@@ -37,7 +51,8 @@ export default function ProductHero(): JSX.Element {
           </Grid>
         </Grid>
       </Container>
-      <Dialog
+      {/* CBT 이후 추가될 내용 */}
+      {/* <Dialog
         open={open}
         onClose={handleClose}
         maxWidth="md"
@@ -45,7 +60,7 @@ export default function ProductHero(): JSX.Element {
         <div>
           자세히보기 다이얼로그 내용, 자세히보기 다이얼로그 내용,자세히보기 다이얼로그 내용,자세히보기 다이얼로그 내용
         </div>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import LoginFooter from '../../organisms/shared/FooterShort';
 import FindIdForm from '../../organisms/mainpage/login/FindIdForm';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FindId(): JSX.Element {
   const classes = useStyles();
-
+  useScrollTop();
   return (
     <section className={classes.container}>
       <section

@@ -3,7 +3,7 @@ import {
   Entity, Column, CreateDateColumn, UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'PlatformAfreecaTest' })
+@Entity({ name: 'PlatformAfreeca' })
 export class PlatformAfreecaEntity implements PlatformAfreeca {
   @Column({ primary: true })
   afreecaId!: string;
@@ -17,9 +17,9 @@ export class PlatformAfreecaEntity implements PlatformAfreeca {
   @Column({ nullable: true })
   logo?: string;
 
-  @CreateDateColumn({ comment: '첫 연동 날짜' })
+  @CreateDateColumn({ type: 'timestamp', comment: '첫 연동 날짜' })
   createdAt?: Date;
 
-  @UpdateDateColumn({ comment: '연동 정보 최신화 날짜' })
+  @UpdateDateColumn({ type: 'timestamp', comment: '연동 정보 최신화 날짜' })
   updatedAt?: Date;
 }

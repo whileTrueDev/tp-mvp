@@ -20,7 +20,7 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'google') {
       scope: [
         'email', 'profile',
         'https://www.googleapis.com/auth/youtube', // 유튜브 계정 관리 및 보기
-        // 'https://www.googleapis.com/auth/yt-analytics.readonly',
+        // 'https://www.googleapis.com/auth/yt-analytics.readonly', // 유튜브 통계 및 분석 보기
       ],
       callbackURL: `${getApiHost()}/auth/youtube/callback`,
     });
@@ -62,7 +62,8 @@ export class YoutubeStrategy extends PassportStrategy(Strategy, 'google') {
           youtubeTitle: youtubeChannelInfo.snippet.title,
           youtubeLogo: youtubeChannelInfo.snippet.thumbnails.default.url.replace('=s88-', '=s{size}-'),
           youtubePublishedAt: youtubeChannelInfo.snippet.publishedAt,
-        }).then((result) => done(null, result));
+        }).then((result) => done(null, result))
+          .catch((err) => done(err));
       })
       .catch((err) => {
         console.error('error occurred during getting youtube channel data');

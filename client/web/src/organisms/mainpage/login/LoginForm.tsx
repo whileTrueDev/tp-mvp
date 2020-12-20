@@ -15,21 +15,20 @@ import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
 
 import useDialog from '../../../utils/hooks/useDialog';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import kakaoChattingURL from '../../../constants/kakao';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
-  formWidth: { width: '100%' },
-  inputWidth: {
-    width: '100%',
-    minWidth: 300,
-  },
+  formWidth: { width: '100%', maxWidth: 290 },
+  inputWidth: { minWidth: 280 },
   alignCenter: { textAlign: 'center' },
   button: {
     width: 170,
     boxShadow: 'none',
-    padding: 8,
+    padding: theme.spacing(1),
     margin: theme.spacing(1),
   },
+  checkbox: { marginLeft: theme.spacing(1) },
   buttonset: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -81,8 +80,8 @@ export default function LoginForm(): JSX.Element {
         },
       }).then((res) => {
         if (res && res.data) {
-          authContext.handleLogin(res.data.access_token);
-          history.push('/mypage/main');
+          authContext.handleLogin(res.data.access_token)
+            .then(() => history.push('/mypage/main'));
         } else {
           // 올바르지 못한 요청 ( 없는 아이디인 경우 또는 비밀번호가 틀린경우)
           helperText.handleOpen();
@@ -107,7 +106,7 @@ export default function LoginForm(): JSX.Element {
         className={classnames(classes.formWidth, classes.alignCenter)}
       >
         <div>
-          { theme.palette.type === 'light' ? <TruepointLogo width={350} /> : <TruepointLogoLight width={350} /> }
+          { theme.palette.type === 'light' ? <TruepointLogo width={280} /> : <TruepointLogoLight width={280} /> }
         </div>
         <Grid
           container
@@ -115,7 +114,7 @@ export default function LoginForm(): JSX.Element {
           justify="center"
           alignItems="center"
           className={classes.formWidth}
-          spacing={1}
+          // spacing={1}
         >
           <Grid item xs={12}>
             <TextField
@@ -148,6 +147,7 @@ export default function LoginForm(): JSX.Element {
               className={classes.alignLeft}
             >
               <FormControlLabel
+                // className={classes.checkbox}
                 control={(
                   <Checkbox
                     icon={<CheckCircleIcon />}
@@ -167,21 +167,26 @@ export default function LoginForm(): JSX.Element {
               variant="contained"
               color="primary"
               className={classes.button}
+              fullWidth
               style={{ color: theme.palette.common.white }}
               type="submit"
             >
               로그인
             </Button>
+            {/* ********************************************** */}
+            {/* CBT에서는 회원가입을 통해 진행하지 않으므로 CBT 신청으로 변경 - by @hwasurr 2020.12.19  */}
             <Button
               variant="outlined"
               color="primary"
               className={classes.button}
               style={{ color: theme.palette.text.primary }}
               component={Link}
-              to="/signup"
+              to="/infoCBT" // CBT 이후 "/signup" 으로 변경 필요.
             >
-              회원가입
+              CBT신청
+              {/* "회원가입" 으로 변경 필요 */}
             </Button>
+            {/* ********************************************** */}
           </Grid>
         </Grid>
 
@@ -192,12 +197,23 @@ export default function LoginForm(): JSX.Element {
             text={helperTextValue}
           />
         )}
-
-        <div className={classnames(classes.upperSpace, classes.alignCenter)}>
+        {/* ********************************************** */}
+        {/* CBT에서는 회원가입을 진행하지 않으므로 현재 구현된 방식의
+            아이디/비번 찾기 기능을 사용할 수 없다.
+            따라서, 카카오톡 문의하는 버튼으로 변경
+            CBT 이후 아디/비번 찾기로 다시 돌려야합니다. by @hwasurr 2020.12.19 */}
+        {/* <div className={classnames(classes.upperSpace, classes.alignCenter)}>
           <Button component={Link} to="/find-id">아이디 찾기</Button>
           |
           <Button component={Link} to="/find-pw">비밀번호 찾기</Button>
-        </div>
+        </div> */}
+        <Button onClick={() => {
+          window.open(kakaoChattingURL, '_blank');
+        }}
+        >
+          계정 관련 문의하기
+        </Button>
+        {/* ********************************************** */}
       </form>
     </>
   );

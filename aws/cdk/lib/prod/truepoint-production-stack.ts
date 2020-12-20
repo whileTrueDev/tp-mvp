@@ -1,12 +1,12 @@
 /* eslint-disable no-new */
 /**
- * Produciton 환경의 Vpc, RDS DB 등을 배포.
+ * Dev 환경의 Vpc, RDS DB 등을 배포.
  * @author hwasurr
  */
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
-// import * as rds from '@aws-cdk/aws-rds';
+import * as rds from '@aws-cdk/aws-rds';
 import * as logs from '@aws-cdk/aws-logs';
 import * as iam from '@aws-cdk/aws-iam';
 import * as elbv2 from '@aws-cdk/aws-elasticloadbalancingv2';
@@ -25,7 +25,7 @@ const DOMAIN = 'mytruepoint.com';
 const ID_PREFIX = 'TruepointProduction';
 const SSL_CERTIFICATE_ARN = 'arn:aws:acm:ap-northeast-2:576646866181:certificate/68f8f35a-bd5d-492b-8f58-c0152b60b71f';
 // DB
-// const DATABASE_PORT = 3306;
+const DATABASE_PORT = 3306;
 // API SERVER
 const API_DOMAIN = 'api.mytruepoint.com';
 const API_SERVER_PORT = 3000;
@@ -42,49 +42,50 @@ export class TruepointProductionStack extends BaseStack {
     // *********************************************
 
     // 데이터베이스 보안그룹 생성 작업
-    // const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
-    //   vpc,
-    //   securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
-    //   description: 'Allow traffics for Produciton Database of Truepoint',
-    //   allowAllOutbound: false,
-    // });
-    // databaseSecGrp.addEgressRule(
-    //   ec2.Peer.anyIpv4(),
-    //   ec2.Port.tcp(DATABASE_PORT),
-    //   `Allow Port ${DATABASE_PORT} for Outbound traffics to the truepoint Backend`,
-    // );
-    // databaseSecGrp.addIngressRule(
-    //   ec2.Peer.anyIpv4(),
-    //   ec2.Port.tcp(DATABASE_PORT),
-    //   `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`,
-    // );
+    const databaseSecGrp = new ec2.SecurityGroup(this, `${ID_PREFIX}DatabaseSecGrp`, {
+      vpc,
+      securityGroupName: `${ID_PREFIX}DatabaseSecurityGroup`,
+      description: 'Allow traffics for Produciton Database of Truepoint',
+      allowAllOutbound: false,
+    });
+    databaseSecGrp.addEgressRule(
+      ec2.Peer.anyIpv4(),
+      ec2.Port.tcp(DATABASE_PORT),
+      `Allow Port ${DATABASE_PORT} for Outbound traffics to the truepoint Backend`,
+    );
+    databaseSecGrp.addIngressRule(
+      ec2.Peer.anyIpv4(),
+      ec2.Port.tcp(DATABASE_PORT),
+      `Allow Port ${DATABASE_PORT} for Inobund traffics from the truepoint Backend`,
+    );
 
-    // const dbEngine = rds.DatabaseInstanceEngine.mysql({
-    //   version: rds.MysqlEngineVersion.VER_8_0_17,
-    // });
-    // new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
-    //   vpc,
-    //   engine: dbEngine,
-    //   instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
-    //   databaseName: ID_PREFIX,
-    //   instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM),
-    //   vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
-    //   multiAz: false,
-    //   allocatedStorage: 100,
-    //   // Enable storage auto scailing option by specifying maximum allocated storage
-    //   maxAllocatedStorage: 300, // GB
-    //   autoMinorVersionUpgrade: true,
-    //   securityGroups: [databaseSecGrp],
-    //   parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
-    //     engine: dbEngine,
-    //     parameters: {
-    //       time_zone: 'Asia/Seoul',
-    //       wait_timeout: '180',
-    //       max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
-    //     },
-    //   }),
-    //   deletionProtection: false,
-    // });
+    const dbEngine = rds.DatabaseInstanceEngine.mysql({
+      version: rds.MysqlEngineVersion.VER_8_0_20,
+    });
+    new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
+      vpc,
+      engine: dbEngine,
+      instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
+      databaseName: ID_PREFIX,
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM),
+      vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
+      multiAz: true,
+      allocatedStorage: 100,
+      // Enable storage auto scailing option by specifying maximum allocated storage
+      maxAllocatedStorage: 300, // GB
+      autoMinorVersionUpgrade: true,
+      securityGroups: [databaseSecGrp],
+      enablePerformanceInsights: true,
+      parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
+        engine: dbEngine,
+        parameters: {
+          time_zone: 'Asia/Seoul',
+          wait_timeout: '180',
+          max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
+        },
+      }),
+      deletionProtection: true,
+    });
 
     /** ********************************************
     ************* Production ECS Cluster **************
@@ -101,7 +102,7 @@ export class TruepointProductionStack extends BaseStack {
       iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy'),
     );
     // SSM - ParameterStore 접근 권한 부여
-    truepointTaskRole.addToPolicy(
+    truepointTaskRole.addToPrincipalPolicy(
       new iam.PolicyStatement({
         resources: [`arn:aws:ssm:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:parameter/*`],
         actions: ['ssm:GetParameters'],

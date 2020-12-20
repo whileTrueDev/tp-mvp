@@ -16,9 +16,9 @@ export class SubscribeEntity implements Subscribe {
   @Column({ length: 20 })
   targetUserId: string;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   startAt: Date;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   endAt: Date;
 }

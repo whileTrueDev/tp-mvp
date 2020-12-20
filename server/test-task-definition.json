@@ -117,7 +117,6 @@
     ],
     "placementConstraints": [],
     "memory": "512",
-    "taskRoleArn": "arn:aws:iam::576646866181:role/TruepointDev-ecsTaskExecutionRole34F54B99-124VS87RXRVHM",
     "family": "test-truepoint-api",
     "pidMode": null,
     "requiresCompatibilities": [

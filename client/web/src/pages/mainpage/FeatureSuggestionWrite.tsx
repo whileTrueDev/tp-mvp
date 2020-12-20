@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FeatureWriteForm from '../../organisms/mainpage/featureSuggestion/FeatureWriteForm';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import AppBar from '../../organisms/shared/Appbar';
+import useScrollTop from '../../utils/hooks/useScrollTop';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -19,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FeatureSuggestionWrite(): JSX.Element {
   const classes = useStyles();
+
+  // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
+  useScrollTop();
   return (
     <div>
       <AppBar />
