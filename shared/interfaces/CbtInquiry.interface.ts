@@ -7,6 +7,8 @@ export class CbtInquiry {
 
   creatorName!: string;
 
+  email!: string;
+
   platform!: string;
 
   phoneNum!: string;
