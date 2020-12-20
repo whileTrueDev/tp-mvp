@@ -6,7 +6,7 @@ import {
 import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionReplyEntity } from './featureSuggestionReply.entity';
 
-@Entity({ name: 'FeatureSuggestionTest2' })
+@Entity({ name: 'FeatureSuggestion' })
 export class FeatureSuggestionEntity implements FeatureSuggestion {
   @PrimaryGeneratedColumn()
   suggestionId: number;
@@ -24,16 +24,18 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @ManyToOne((type) => UserEntity, (user) => user.userId)
   author: UserEntity;
 
-  @Column({ type: 'tinyint', default: 0, comment: '기능제안 상태 플래그 0=미확인, 1=승인, 2=보류' })
+  @Column({
+    type: 'tinyint', default: 0, comment: '기능제안 상태 플래그 0=미확인, 1=승인, 2=보류',
+  })
   state: number;
 
-  @Column({ type: 'smallint', default: 0 })
+  @Column({ type: 'smallint', unsigned: true, default: 0 })
   like: number;
 
   @Column({ comment: '비밀글 여부 0=비밀글X, 1=비밀글O', default: false })
   isLock: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
   // 기능제안 답장. 관계설정
