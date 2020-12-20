@@ -3,7 +3,7 @@ import {
   Entity, Column, CreateDateColumn, PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'InquiryTest' })
+@Entity({ name: 'Inquiry' })
 export class InquiryEntity implements Inquiry {
   // For Exclude Decorator
   constructor(partial: Partial<InquiryEntity>) {

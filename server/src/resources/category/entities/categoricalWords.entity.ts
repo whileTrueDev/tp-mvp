@@ -3,7 +3,7 @@ import {
 } from 'typeorm';
 import { CategoricalWords } from '@truepoint/shared/dist/interfaces/CategoricalWords.interface';
 
-@Entity({ name: 'CategoricalWordsTest2' })
+@Entity({ name: 'CategoricalWords' })
 export class CategoricalWordsEntity implements CategoricalWords {
   @PrimaryGeneratedColumn()
   wordId: number;

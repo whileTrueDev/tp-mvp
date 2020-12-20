@@ -6,7 +6,7 @@ import {
 
 import { UserEntity } from '../../users/entities/user.entity';
 
-@Entity({ name: 'NotificationTest' })
+@Entity({ name: 'Notification' })
 export class NotificationEntity implements Notification {
   @PrimaryGeneratedColumn()
   index: number;
