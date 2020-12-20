@@ -8,7 +8,6 @@ const getDateFormat = (_date1) => {
   return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`;
 };
 
-// JOIN YoutubeTargetStreamers USING (channelId)  
 const query = (conditionQuery) => `
 SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'youtube' AS platform
 FROM 
@@ -17,9 +16,10 @@ SELECT
   channelId AS creatorId, 
   videoId AS streamId, 
   YoutubeStreams.channelName, 
-  startDate AS startedAt, 
+  startDate, 
   videoTitle as title, 
   subscriberCount AS fan, 
+  endDate,
   ROUND(TIMESTAMPDIFF(MINUTE, startDate, endDate) / 60, 1) AS airTime
 FROM YoutubeStreams
 WHERE channelId IN ${conditionQuery})   
@@ -38,7 +38,7 @@ const getCreators = () => new Promise((resolve, reject) => {
   const creatorListQuery = `
   SELECT userId, youtubeId
   FROM ${USER_TABLE}
-  RIGHT JOIN PlatformYoutube USING (youtubeId)
+  RIGHT JOIN PlatformYoutubeTest USING (youtubeId)
   `;
   useQuery('tp', creatorListQuery, [])
     .then((row) => {
@@ -62,6 +62,11 @@ const getCreators = () => new Promise((resolve, reject) => {
 // 4. 2번 map을 통해서 streamData에 대해 userId를 대응시킨다.
 const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) => {
   const conditionQuery = creators.reduce((str, element, index) => `${index == 0 ? `(${str}` : `${str},`}'${element.youtubeId}'`, '');
+  
+  if(conditionQuery === ''){
+    resolve([]);
+    return;
+  }
 
   useQuery('collect', query(conditionQuery), [])
     .then((inrow) => {
@@ -96,15 +101,17 @@ const loadStream = (streamData) => new Promise((resolve, reject) => {
     return;
   }
 
+  console.log(streamData);
   const rawQuery = streamData.reduce((str,
     {
-      streamId, platform, creatorId, userId, title, viewer, fan, startedAt, airTime, chatCount,
-    }) => `${str}('${streamId}', '${platform}', '${creatorId}', '${userId}', '${title}', '${viewer}', '${fan}', '${getDateFormat(startedAt)}', '${airTime}', '${chatCount}'),`, '');
-
+      streamId, platform, creatorId, userId, title, viewer, fan, startDate, endDate, airTime, chatCount,
+    }) => `${str}('${streamId}', '${platform}', '${creatorId}', '${userId}', '${title}', '${viewer}', '${fan}', '${getDateFormat(startDate)}', '${getDateFormat(endDate)}', '${parseInt(airTime)}', '${chatCount}'),`, '');
+  
   const conditionQuery = `${rawQuery.slice(0, -1)};`;
+  
   const InsertQuery = `
     INSERT INTO ${STREAM_TABLE}
-    (streamId, platform, creatorId, userId, title, viewer, fan, startedAt, airTime, chatCount)
+    (streamId, platform, creatorId, userId, title, viewer, fan, startDate, endDate, airTime, chatCount)
     VALUES ${conditionQuery};
     `;
 
