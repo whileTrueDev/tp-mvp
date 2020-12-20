@@ -52,6 +52,8 @@ const setSeries = (
     series.tensionX = 0.8;
     series.tooltip.getFillFromObject = false;
     series.tooltip.background.fill = setting.color;
+    series.fill = setting.color;
+    series.stroke = setting.color;
     // Drop-shaped tooltips
     series.tooltip.background.cornerRadius = 20;
     series.tooltip.background.strokeOpacity = 0;
