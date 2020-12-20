@@ -242,7 +242,7 @@ export default function MetricsAccordian(
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}
-                    exportCategory="smile"
+                    exportCategory="funny"
                   />
                 </div>
               </Grid>
