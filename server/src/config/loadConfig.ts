@@ -71,8 +71,7 @@ async function getDbSecrets(secretsName: string): Promise<DbSecret> {
 // config service
 export default async (): Promise<TruepointDbSecret | CollectorDbSecret> => {
   const truepointDbName = process.env.NODE_ENV === 'production'
-  // ? 'TruepointProductionDB' // production 환경( 정확히는, production RDS DB) 이 준비되었을 때.
-    ? 'TruepointDevDB'
+    ? 'TruepointProductionDB' // production 환경( 정확히는, production RDS DB) 이 준비되었을 때.
     : 'TruepointDevDB';
 
   // Truepoint App DB Secrets
