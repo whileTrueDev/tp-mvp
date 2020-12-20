@@ -8,7 +8,6 @@ const getDateFormat = (_date1) => {
   return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`;
 };
 
-// JOIN YoutubeTargetStreamers USING (channelId)  
 const query = (conditionQuery) => `
 SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'youtube' AS platform
 FROM 

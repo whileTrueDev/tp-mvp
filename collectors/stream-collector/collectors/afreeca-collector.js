@@ -9,7 +9,7 @@ const getDateFormat = (_date1) => {
   return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`;
 };
 
-// AND endDate > DATE_SUB(NOW(), INTERVAL 7 DAY) 
+// 
 const query = (conditionQuery) => `
 SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'afreeca' AS platform
 FROM 
@@ -24,6 +24,7 @@ SELECT
   ROUND(TIMESTAMPDIFF(MINUTE, startDate, endDate) / 60, 1) AS airTime
 FROM AfreecaStreams
 WHERE creatorId IN ${conditionQuery})  
+AND endDate > DATE_SUB(NOW(), INTERVAL 7 DAY) 
 AND needCollect = 1
 ) AS A
 LEFT JOIN AfreecaChats  

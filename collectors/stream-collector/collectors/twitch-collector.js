@@ -8,7 +8,6 @@ const getDateFormat = (_date1) => {
   return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`;
 };
 
-// AND endedAt > DATE_SUB(NOW(), INTERVAL 1 DAY)
 const query = (conditionQuery) => `
 SELECT B.* , COUNT(*) AS chatCount
 FROM 
