@@ -28,6 +28,9 @@ export class CbtInquiryEntity implements CbtInquiry {
   @Column({ comment: 'CBT 신청자의 연락처' })
   phoneNum!: string;
 
+  @Column({ comment: 'CBT 신청자의 이메일' })
+  email!: string;
+
   @Column('mediumtext', { comment: '기타문의 내용' })
   content!: string;
 
