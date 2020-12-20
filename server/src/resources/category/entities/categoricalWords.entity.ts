@@ -1,22 +1,20 @@
 import {
-  Entity, Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn,
+  Entity, Column, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CategoricalWords } from '@truepoint/shared/dist/interfaces/CategoricalWords.interface';
-import { CategoryEntity } from './category.entity';
 
 @Entity({ name: 'CategoricalWordsTest' })
 export class CategoricalWordsEntity implements CategoricalWords {
   @PrimaryGeneratedColumn()
   wordId: number;
 
-  @JoinColumn()
-  @ManyToOne((type) => CategoryEntity, (category) => category.categoryId)
+  @Column({ type: 'smallint' })
   categoryId: number;
 
   @Column()
   word: string;
 
-  @Column()
+  @Column({ type: 'float' })
   weight: number;
 
   constructor(partial: Partial<CategoricalWordsEntity>) {
