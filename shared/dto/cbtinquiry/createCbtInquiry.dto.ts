@@ -1,4 +1,4 @@
-import { IsString, IsBoolean } from 'class-validator';
+import { IsString, IsBoolean, IsEmail } from 'class-validator';
 
 export class CreateCbtInquiryDto {
   @IsString()
@@ -9,6 +9,9 @@ export class CreateCbtInquiryDto {
 
   @IsString()
   creatorName: string
+
+  @IsEmail()
+  email: string
 
   @IsString()
   platform: string

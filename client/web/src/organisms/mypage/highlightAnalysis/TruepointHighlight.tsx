@@ -9,6 +9,7 @@ import HighlightGraph from './HighlightGraph';
 import Chart from './Chart';
 import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
+import HelperPopOver from '../../shared/HelperPopOver';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -74,7 +75,17 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.common.white,
     margin: `.3125rem 0px .3125rem ${theme.spacing(2)}px`,
   },
+  helperPopOver: { textAlign: 'right' },
 }));
+
+export interface InitialPoint {
+  startTime: string
+  endTime: string
+  start_index: string
+  end_index: string
+  score: string
+  index: number
+}
 
 export const initialPoint = {
   startTime: '',
@@ -118,14 +129,20 @@ export default function TruepointHighlight({
     <Paper className={classes.root}>
       <Grid item className={classes.wraper}>
         <MetricTitle
-          mainTitle="편짐점 분석 대시보드"
+          mainTitle="편집점 분석 대시보드"
           subTitle="트루포인트의 편집점"
           iconSrc="/images/logo/truepointLogo.png"
           pointNumber={picked90 ? highlightData.highlight_points_90.length : highlightData.highlight_points.length}
         />
         <Grid container direction="column" justify="center">
           <Grid item md={12}>
-            <ScorePicker picked90={picked90} setPicked90={setPicked90} />
+            <ScorePicker
+              picked90={picked90}
+              setPicked90={setPicked90}
+              setPage={setPage}
+              setPageSize={setPageSize}
+              setPoint={setPoint}
+            />
             <Chart
               data={picked90 ? hightlight90 : highlightData.highlight_points}
               chartType="highlight"
@@ -161,12 +178,18 @@ export default function TruepointHighlight({
                 selectedStream={selectedStream}
                 exportCategory="highlight"
               />
-              <Button
-                className={classes.button}
-                onClick={() => window.open('https://drive.google.com/file/d/16OfhD-tPMURm2DOXGqEJdywg5JOLfJKs/view?usp=sharing', '_blank')}
-              >
-                편집점 알아보기
-              </Button>
+              <div>
+                <div className={classes.helperPopOver}>
+                  <HelperPopOver />
+                </div>
+                <Button
+                  className={classes.button}
+                  onClick={() => window.open('https://s3.us-west-2.amazonaws.com/secure.notion-static.com/95dfa0a1-0544-44f5-85dc-dd6347e31c70/_.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20201220%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20201220T093134Z&X-Amz-Expires=86400&X-Amz-Signature=d4747573ebaa3dbb0bef509e7457c6853aa3b3d36f05759fd93cc5f7a67f17b7&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22_.pdf%22', '_blank')}
+                >
+                  편집점 알아보기
+                </Button>
+              </div>
+
             </div>
           </Grid>
         </Grid>

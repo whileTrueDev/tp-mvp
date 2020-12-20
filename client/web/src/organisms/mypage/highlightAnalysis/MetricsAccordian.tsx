@@ -78,7 +78,7 @@ interface MetricsAccordianProps {
   highlightData: any;
   selectedStream: StreamDataType|null;
 }
-type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'question'
+type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
 export default function MetricsAccordian(
   {
     highlightData,
@@ -107,15 +107,18 @@ export default function MetricsAccordian(
     ...highlightData.funny_points[atPoint],
   }));
   function selectCategory90(selected: string): any {
-    const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any) => ({
-      ...highlightData[`${selected}_points`][atPoint],
+    const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any, index: number) => ({
+      ...highlightData[`${selected}_points`][atPoint], tableData: { id: index },
     }));
     return categoryHightlight90;
   }
+
   const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
   const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {
     setSelectedCategory(clickedCategory);
     setPoint3(initialPoint);
+    setPage3(0);
+    setPageSize3(5);
   };
   return (
     <Paper>
@@ -143,7 +146,13 @@ export default function MetricsAccordian(
                   </span>
                   입니다
                 </Typography>
-                <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
+                <ScorePicker
+                  picked90={chatPicked90}
+                  setPicked90={setChatPicked90}
+                  setPage={setPage}
+                  setPageSize={setPageSize}
+                  setPoint={setPoint}
+                />
               </Grid>
               <Grid item md={12}>
                 <Chart
@@ -201,7 +210,13 @@ export default function MetricsAccordian(
                   </span>
                   입니다
                 </Typography>
-                <ScorePicker picked90={smilePicked90} setPicked90={setSmilePicked90} />
+                <ScorePicker
+                  picked90={smilePicked90}
+                  setPicked90={setSmilePicked90}
+                  setPage2={setPage2}
+                  setPageSize2={setPageSize2}
+                  setPoint2={setPoint2}
+                />
               </Grid>
               <Grid item md={12}>
                 <Chart
@@ -286,7 +301,13 @@ export default function MetricsAccordian(
                 </span>
                 입니다
               </Typography>
-              <ScorePicker picked90={categoryPicked90} setPicked90={setCategoryPicked90} />
+              <ScorePicker
+                picked90={categoryPicked90}
+                setPicked90={setCategoryPicked90}
+                setPage3={setPage3}
+                setPageSize3={setPageSize3}
+                setPoint3={setPoint3}
+              />
             </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>

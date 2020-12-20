@@ -166,6 +166,7 @@ export default function Chart({
       bullet.circle.strokeWidth = 2;
       bullet.circle.radius = 4;
       bullet.circle.fill = am4core.color('#7E8CF7');
+      bullet.circle.cursorOptions.overStyle = [{ property: 'cursor', value: 'pointer' }];
       bullet.disabled = false;
       bullet.events.on('hit', (ev: any) => {
         const point = ev.target.dataItem.dataContext;
@@ -187,9 +188,8 @@ export default function Chart({
         series2.data = [data[highlight.index]];
         series2.stroke = am4core.color(setting.tooltipColor);
         const bullet2 = series2.bullets.push(new am4charts.CircleBullet());
-        bullet2.circle.strokeWidth = 6;
-        bullet2.moveTo({ x: 50, y: 50 }, undefined, undefined, true);
-        bullet2.circle.radius = 12;
+        bullet2.circle.strokeWidth = 4;
+        bullet2.circle.radius = 9;
         bullet2.circle.fill = am4core.color(setting.tooltipColor);
       }
     };

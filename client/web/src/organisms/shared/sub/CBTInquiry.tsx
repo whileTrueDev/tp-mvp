@@ -13,7 +13,7 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing(18),
+    marginTop: theme.spacing(6),
     marginBottom: theme.spacing(6),
     [theme.breakpoints.down('md')]: {
       marginTop: theme.spacing(14),
@@ -138,6 +138,7 @@ const initialContent = {
   privacyAgreement: false,
   phoneNum: '',
   idForTest: '',
+  email: '',
 };
 
 const InquiryResult: any = {};
@@ -247,7 +248,7 @@ export default function CBTInquiry(): JSX.Element {
                     className={classes.datailContent}
                     classes={{ focused: classes.inputStyle }}
                     autoComplete="off"
-                    placeholder="유튜브, 아프리카tv, 트위치"
+                    placeholder="유튜브, 아프리카tv, 트위치 세개 중 중복선택"
                     disableUnderline
                     onChange={onChange}
                     required
@@ -270,7 +271,24 @@ export default function CBTInquiry(): JSX.Element {
                     name="creatorName"
                   />
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} className={classes.detailWrap} style={{ marginTop: 16 }}>
+                <Grid item xs={12} sm={12} md={6} className={classes.detailWrap} style={{ marginTop: 16 }}>
+                  <Typography className={classes.detailTitle}>
+                    이메일
+                    <Typography variant="caption" color="error">(필수)</Typography>
+                  </Typography>
+                  <Input
+                    className={classes.datailContent}
+                    classes={{ focused: classes.inputStyle }}
+                    type="email"
+                    placeholder="테스터용 ID/PW를 전송받으실 이메일"
+                    autoComplete="off"
+                    disableUnderline
+                    onChange={onChange}
+                    required
+                    name="email"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6} className={classes.detailWrap} style={{ marginTop: 16 }}>
                   <Typography className={classes.detailTitle}>
                     연락처
                     <Typography variant="caption" color="error">(필수)</Typography>
@@ -279,7 +297,7 @@ export default function CBTInquiry(): JSX.Element {
                     className={classes.datailContent}
                     classes={{ focused: classes.inputStyle }}
                     type="tel"
-                    placeholder="이메일, 전화번호 등 테스터용 ID/PW를 전송받으실 연락처를 입력해주세요"
+                    placeholder="테스터용 ID/PW를 전송받으실 연락처"
                     autoComplete="off"
                     disableUnderline
                     onChange={onChange}

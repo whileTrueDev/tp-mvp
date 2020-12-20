@@ -1,17 +1,11 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import useAxios from 'axios-hooks';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { useSnackbar } from 'notistack';
-import HelperPopOver from '../HelperPopOver';
 import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-
-const useStyle = makeStyles(() => ({
-  helperPopOver: { textAlign: 'right' },
-}));
 
 interface HighlightExportProps {
   selectedStream: StreamDataType | null,
@@ -21,13 +15,12 @@ interface HighlightExportProps {
 export default function HighlightExport(
   { selectedStream, exportCategory }: HighlightExportProps,
 ): JSX.Element {
-  const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
 
   const [isChecked, setIsChecked] = React.useState({
     srtCheckBox: true,
     csvCheckBox: true,
-    txtCheckBox: true,
+    // txtCheckBox: true,
   });
 
   // 편집점 내보내기 요청
@@ -40,32 +33,27 @@ export default function HighlightExport(
   };
 
   let exportFileName = '트루포인트 편집점';
-  let helperPopoverFlag = false;
 
   switch (exportCategory) {
     case 'chat':
-      exportFileName = '채팅수 기반 편집점';
-      break;
-    case 'smile':
-      exportFileName = '웃음수 기반 편집점';
+      exportFileName = '[채팅수] 기반 편집점';
       break;
     case 'funny':
-      exportFileName = '웃긴 카테고리 편집점';
+      exportFileName = '[웃음수] 기반 편집점';
       break;
     case 'agree':
-      exportFileName = '모두가 인정한 카테고리 편집점';
+      exportFileName = '[모두가 인정한] 카테고리 편집점';
       break;
     case 'disgust':
-      exportFileName = '역겨운 카테고리 편집점';
+      exportFileName = '[역겨운] 카테고리 편집점';
       break;
     case 'surprise':
-      exportFileName = '놀라운 카테고리 편집점';
+      exportFileName = '[놀라운] 카테고리 편집점';
       break;
     case 'question':
-      exportFileName = '의문이 드는 카테고리 편집점';
+      exportFileName = '[의문이 드는] 카테고리 편집점';
       break;
     default:
-      helperPopoverFlag = true;
       break;
   }
 
@@ -75,11 +63,12 @@ export default function HighlightExport(
       const { streamId, platform, creatorId } = selectedStream;
       const srt = isChecked.srtCheckBox ? 1 : 0;
       const csv = isChecked.csvCheckBox ? 1 : 0;
-      const txt = isChecked.txtCheckBox ? 1 : 0;
+      // const txt = isChecked.txtCheckBox ? 1 : 0;
 
       doExport({
         params: {
-          creatorId, platform, streamId, exportCategory, srt, txt, csv,
+          creatorId, platform, streamId, exportCategory, srt, csv,
+          // txt
         },
       })
         .then((res) => {
@@ -100,11 +89,6 @@ export default function HighlightExport(
 
   return (
     <div>
-      {helperPopoverFlag && (
-        <div className={classes.helperPopOver}>
-          <HelperPopOver />
-        </div>
-      )}
       <div>
         <FormControlLabel
           control={(
@@ -117,7 +101,7 @@ export default function HighlightExport(
           )}
           label="srt"
         />
-        <FormControlLabel
+        {/* <FormControlLabel
           control={(
             <Checkbox
               checked={isChecked.txtCheckBox}
@@ -126,8 +110,8 @@ export default function HighlightExport(
               color="primary"
             />
           )}
-          label="csv"
-        />
+          label="txt"
+        /> */}
 
         <FormControlLabel
           control={(
@@ -138,11 +122,11 @@ export default function HighlightExport(
               color="primary"
             />
           )}
-          label="txt"
+          label="csv"
         />
         <Button
           onClick={handleExportClick}
-          disabled={!(isChecked.srtCheckBox || isChecked.csvCheckBox || isChecked.txtCheckBox)}
+          disabled={!(isChecked.srtCheckBox || isChecked.csvCheckBox)} // isChecked.txtCheckBox
         >
           편집점 내보내기
         </Button>

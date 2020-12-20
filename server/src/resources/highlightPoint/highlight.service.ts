@@ -20,11 +20,12 @@ export class HighlightService {
 
   async getZipFile(
     creatorId: string, platform: 'afreeca'|'youtube'|'twitch', streamId: string,
-    exportCategory: string, srt: number, csv: number, txt: number,
+    exportCategory: string, srt: number, csv: number,
+    // , txt: number,
   ): Promise<any> {
     const boolCsv = Boolean(Number(csv));
     const boolSrt = Boolean(Number(srt));
-    const boolTxt = Boolean(Number(txt));
+    // const boolTxt = Boolean(Number(txt));
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Prefix: `export_files/${platform}/${creatorId}/${streamId}/${exportCategory}`,
@@ -43,13 +44,13 @@ export class HighlightService {
         }
       });
     }
-    if (!boolTxt) {
-      getArray.forEach((value, index) => {
-        if (value.indexOf('txt') !== -1) {
-          getArray.splice(index, 1);
-        }
-      });
-    }
+    // if (!boolTxt) {
+    //   getArray.forEach((value, index) => {
+    //     if (value.indexOf('txt') !== -1) {
+    //       getArray.splice(index, 1);
+    //     }
+    //   });
+    // }
     if (!boolCsv) {
       getArray.forEach((value, index) => {
         if (value.indexOf('csv') !== -1) {
