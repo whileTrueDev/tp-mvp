@@ -1,3 +1,4 @@
+/* eslint-disable */
 const axios = require('axios');
 const { doConnectionQuery } = require('../model/doQuery');
 const pool = require('../model/connectionPool');

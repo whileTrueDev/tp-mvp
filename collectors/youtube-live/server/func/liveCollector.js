@@ -1,3 +1,4 @@
+/* eslint-disable */
 const liveMessageCollector = require('./liveMessageCollector');
 const loadMessage = require('./loadMessage');
 const pool = require('../model/connectionPool');

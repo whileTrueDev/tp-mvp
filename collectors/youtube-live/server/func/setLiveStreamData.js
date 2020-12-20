@@ -1,3 +1,4 @@
+/* eslint-disable */
 // 최신화가 필요한 videoId List에 대해서 API 요청을 통해 activeLiveChatId를 추가한다.
 // Input format  : [ { channelId, videoId } ... ]
 // Output format : [ { channelId, videoId, activeLiveChatId, viewer } ... ]

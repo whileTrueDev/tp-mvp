@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { google } = require('googleapis');
 const doQuery = require('../model/calculatorQuery');
 

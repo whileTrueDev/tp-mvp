@@ -1,3 +1,4 @@
+/* eslint-disable */
 // 현재 DB의 video(10분 전 라이브였던)와 현재 video(현재 라이브인)를 비교 및 동기화.
 // 함수의 return은 API를 통해 최신화가 필요한 videoId List를 반환한다.
 // Input format  : [ { channelId, videoId } ... ]

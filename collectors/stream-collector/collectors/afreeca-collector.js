@@ -1,3 +1,4 @@
+/* eslint-disable */
 const useQuery = require('../model/useQuery');
 
 const USER_TABLE = process.env.USER_TARGET_TABLE;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const axios = require('axios');
 // <두번째 전략>
 // 3. header의 access token을 추가함으로서 livebroadcasts(my broadcasts)의 ID를 가져온다.

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { doConnectionQuery } = require('../model/doQuery');
 
 // 현재 수집된 모든 chat에 대해서 저장하기.
