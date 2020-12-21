@@ -14,6 +14,15 @@ export interface metricInterface {
   value: metricGraphInterface[]
 }
 
+export interface ViewerTimeLines {
+  viewer: number;
+  startDate: string;
+}
+
+export interface CompareTimeLines {
+  viewers: ViewerTimeLines[][];
+}
+
 export interface timelineGraphInterface {
   smileCount: number,
   chatCount: number,

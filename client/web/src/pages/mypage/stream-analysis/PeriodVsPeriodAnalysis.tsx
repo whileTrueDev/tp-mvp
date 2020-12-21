@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 // material - ui core
-import { Grid, Paper, Typography } from '@material-ui/core';
+import {
+  Grid, Paper, Typography, Button,
+} from '@material-ui/core';
 // shared dtos
 import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
@@ -16,6 +18,8 @@ import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // organisms
 import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
 import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
+import CompareTimeLineGraph from '../../../organisms/mypage/graph/CompareTimeLineGraph';
+
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import MypageHero from '../../../organisms/shared/sub/MypageHero';
@@ -24,6 +28,7 @@ import textSource from '../../../organisms/shared/source/MypageHeroText';
 import useStreamAnalysisStyles from './streamAnalysisLayout.style';
 import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
 import useScrollTop from '../../../utils/hooks/useScrollTop';
+import { timelineGraphInterface, CompareTimeLines, ViewerTimeLines } from '../../../organisms/mypage/graph/graphsInterface';
 
 export interface PeriodsRequestParams {
   userId: string;
@@ -32,6 +37,10 @@ export interface PeriodsRequestParams {
   compareStartAt: string;
   compareEndAt: string;
 }
+
+export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
+
+const compareMetrics: CompareMetric[] = ['viewer', 'smileCount', 'chatCount'];
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
@@ -46,6 +55,88 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
     '/stream-analysis/periods', { manual: true },
   );
   const { enqueueSnackbar } = useSnackbar();
+
+  const [selectedCompareMetric, setSelectedCompareMetric] = React.useState<CompareMetric>(
+    compareMetrics[0],
+  );
+
+  const handleSelectCompareMetric = (newMetric: CompareMetric) => setSelectedCompareMetric(newMetric);
+
+  // viewer: any;
+  // chatCount: any;
+  // smileCount: any;
+
+  // startDate: any;
+  // isRemoved: any;
+  const makeCompareData = (originData: EachStream[][], metric: CompareMetric) => {
+    const baseData = originData[0];
+    const compareData = originData[1];
+
+    const viewerTimeLine: {
+      baseValue?: number;
+      baseDate?: string;
+      compareValue?: number;
+      compareDate?: string;
+    }[] = [];
+
+    const chatCountTimeLine: {
+      baseValue?: number;
+      baseDate?: string;
+      compareValue?: number;
+      compareDate?: string;
+    }[] = [];
+
+    const smileCountTimeLine: {
+      baseValue?: number;
+      baseDate?: string;
+      compareValue?: number;
+      compareDate?: string;
+    }[] = [];
+
+    baseData.forEach((eachBase) => {
+      viewerTimeLine.push({
+        baseValue: eachBase.viewer,
+        baseDate: eachBase.startDate,
+      });
+      chatCountTimeLine.push({
+        baseValue: eachBase.chatCount,
+        baseDate: eachBase.startDate,
+      });
+      smileCountTimeLine.push({
+        baseValue: eachBase.smileCount,
+        baseDate: eachBase.startDate,
+      });
+    });
+
+    compareData.forEach((eachCompare) => {
+      viewerTimeLine.push({
+        compareValue: eachCompare.viewer,
+        compareDate: eachCompare.startDate,
+      });
+      chatCountTimeLine.push({
+        compareValue: eachCompare.chatCount,
+        compareDate: eachCompare.startDate,
+      });
+      smileCountTimeLine.push({
+        compareValue: eachCompare.smileCount,
+        compareDate: eachCompare.startDate,
+      });
+    });
+
+    const result = {
+      viewer: viewerTimeLine,
+      chatCount: chatCountTimeLine,
+      smileCount: smileCountTimeLine,
+    };
+
+    return result[metric];
+  };
+
+  /**
+   * 분석 요청 함수
+   * @param category
+   * @param params
+   */
   const handleSubmit = ({
     category, params,
   }: {category: string[]; params: SearchStreamInfoByPeriods}) => {
@@ -60,6 +151,8 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
       .then((res) => {
         setTimeLine(res.data.timeline);
         setMetric(res.data.metrics);
+        // console.log(res.data.timeline);
+        // makeCompareData(res.data.timeline);
         if (res.data.type) setType(res.data.type);
         setOpen(true);
         setTimeout(() => {
@@ -71,6 +164,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
       });
   };
 
+  /* 구독 관련 기능 - CBT 주석 사항 */
   // React.useEffect(() => {
   //   setOpen(false);
   // }, [subscribe.currUser]);
@@ -105,37 +199,25 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
                 <Typography variant="body2">선택한 기준 기간과 비교 기간의 분석 그래프입니다.</Typography>
               </Grid>
               <Grid item container direction="row">
-                <Grid item xs={6}>
+                <Grid item xs={12}>
+                  {compareMetrics.map((eachMetric) => (
+                    <Button
+                      onClick={() => {
+                        handleSelectCompareMetric(eachMetric);
+                      }}
+                    >
+                      {eachMetric}
+                    </Button>
+                  ))}
                   {timeLineData && (
-                  <LinearGraph
-                    data={timeLineData[0]}
-                    name="period1"
-                    opposite={0}
-                    selectedMetric={selectedMetric}
-                  />
-                  )}
-                </Grid>
-                <Grid item xs={6}>
-                  {timeLineData && (
-                  <LinearGraph
-                    data={timeLineData[1]}
-                    name="period2"
-                    opposite={1}
-                    selectedMetric={selectedMetric}
+                  <CompareTimeLineGraph
+                    selectedMetric={['base', 'compare']}
+                    data={makeCompareData(timeLineData, selectedCompareMetric)}
                   />
                   )}
                 </Grid>
               </Grid>
-
-              {/* <Grid item xs={12}>
-                  {timeLineData && (
-                    <LinearGraph
-                      data={timeLineData}
-                    />
-                  )}
-              </Grid> */}
             </Grid>
-
             {metricOpen && metricData && (
             <StreamMetrics
               open={metricOpen}
