@@ -1,6 +1,8 @@
 on:
   push:
     branches: [test]
+    paths:
+      - "server/**"
 
 name: Test deploy to AWS ECS - "server"
 
