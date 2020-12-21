@@ -1,6 +1,7 @@
 /* eslint-disable */
 require('dotenv').config();
 const scheduler = require('node-schedule');
+
 scheduler.scheduleJob('*/5 * * * *', ()=>{
   require('./collectors/afreeca-collector')()
   .then(require('./collectors/twitch-collector'))

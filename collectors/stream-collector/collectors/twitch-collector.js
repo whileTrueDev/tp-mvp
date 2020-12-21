@@ -8,7 +8,6 @@ const getDateFormat = (_date1) => {
   return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`;
 };
 
-// AND endedAt > DATE_SUB(NOW(), INTERVAL 1 DAY)
 const query = (conditionQuery) => `
 SELECT B.* , COUNT(*) AS chatCount
 FROM 
@@ -78,6 +77,12 @@ const getCreators = () => new Promise((resolve, reject) => {
 // 4. 2번 map을 통해서 streamData에 대해 userId를 대응시킨다.
 const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) => {
   const conditionQuery = creators.reduce((str, element, index) => `${index == 0 ? `(${str}` : `${str},`}'${element.twitchId}'`, '');
+
+  if(conditionQuery === ''){
+    resolve([]);
+    return;
+  }
+
   useQuery('collect', query(conditionQuery), [])
     .then((inrow) => {
       const streams = inrow.result;

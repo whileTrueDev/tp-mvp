@@ -8,7 +8,7 @@ import { Exclude } from 'class-transformer';
 import { SubscribeEntity } from './subscribe.entity';
 import { NotificationEntity } from '../../notification/entities/notification.entity';
 
-@Entity({ name: 'UserTest2' })
+@Entity({ name: 'User' })
 export class UserEntity implements User {
   // For Exclude Decorator
   constructor(partial: Partial<UserEntity>) {
@@ -38,10 +38,10 @@ export class UserEntity implements User {
   password!: string;
 
   @Column({ length: 10 })
-  birth!: string;
+  birth: string;
 
   @Column({ length: 1 })
-  gender!: string;
+  gender: string;
 
   @Column()
   marketingAgreement: boolean;
@@ -61,10 +61,10 @@ export class UserEntity implements User {
   @Column({ nullable: true, default: null })
   youtubeId?: string | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt?: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamp' })
   updatedAt?: Date;
 
   @OneToMany((type) => SubscribeEntity, (subscribe) => subscribe.user)

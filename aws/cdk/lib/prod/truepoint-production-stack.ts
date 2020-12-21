@@ -60,7 +60,7 @@ export class TruepointProductionStack extends BaseStack {
     );
 
     const dbEngine = rds.DatabaseInstanceEngine.mysql({
-      version: rds.MysqlEngineVersion.VER_8_0_17,
+      version: rds.MysqlEngineVersion.VER_8_0_20,
     });
     new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
@@ -69,12 +69,13 @@ export class TruepointProductionStack extends BaseStack {
       databaseName: ID_PREFIX,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM),
       vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
-      multiAz: false,
+      multiAz: true,
       allocatedStorage: 100,
       // Enable storage auto scailing option by specifying maximum allocated storage
       maxAllocatedStorage: 300, // GB
       autoMinorVersionUpgrade: true,
       securityGroups: [databaseSecGrp],
+      enablePerformanceInsights: true,
       parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
         engine: dbEngine,
         parameters: {
@@ -83,7 +84,7 @@ export class TruepointProductionStack extends BaseStack {
           max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
         },
       }),
-      deletionProtection: false,
+      deletionProtection: true,
     });
 
     /** ********************************************
@@ -101,7 +102,7 @@ export class TruepointProductionStack extends BaseStack {
       iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy'),
     );
     // SSM - ParameterStore 접근 권한 부여
-    truepointTaskRole.addToPolicy(
+    truepointTaskRole.addToPrincipalPolicy(
       new iam.PolicyStatement({
         resources: [`arn:aws:ssm:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:parameter/*`],
         actions: ['ssm:GetParameters'],

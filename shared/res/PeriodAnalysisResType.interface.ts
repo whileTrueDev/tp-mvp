@@ -6,8 +6,9 @@ export interface PeriodAnalysisResType{
   value:
     {
       chat_count: number;
-      viewer?: number;
+      // viewer?: number;
       smile_count: number;
+      viewer_count: number;
       date: string;
     }[];
 }

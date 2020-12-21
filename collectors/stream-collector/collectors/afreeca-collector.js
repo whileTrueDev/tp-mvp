@@ -1,14 +1,15 @@
 /* eslint-disable */
 const useQuery = require('../model/useQuery');
+
 const USER_TABLE = process.env.USER_TARGET_TABLE;
 const STREAM_TABLE = process.env.STREAM_TARGET_TABLE;
-
 
 const getDateFormat = (_date1) => {
   const Date_1 = _date1 instanceof Date ? _date1 : new Date(_date1);
   return `${Date_1.getFullYear()}-${Date_1.getMonth() + 1}-${Date_1.getDate()} ${Date_1.getHours()}:${Date_1.getMinutes()}:${Date_1.getSeconds()}`;
 };
 
+// 
 const query = (conditionQuery) => `
 SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'afreeca' AS platform
 FROM 
@@ -23,7 +24,7 @@ SELECT
   ROUND(TIMESTAMPDIFF(MINUTE, startDate, endDate) / 60, 1) AS airTime
 FROM AfreecaStreams
 WHERE creatorId IN ${conditionQuery})  
-AND endDate > DATE_SUB(NOW(), INTERVAL 7 DAY)
+AND endDate > DATE_SUB(NOW(), INTERVAL 7 DAY) 
 AND needCollect = 1
 ) AS A
 LEFT JOIN AfreecaChats  
@@ -68,7 +69,12 @@ const getCreators = () => new Promise((resolve, reject) => {
 // 3. 수집기 DB에서 twitchId를 삽입하여 streamData를 수집한다.
 // 4. 2번 map을 통해서 streamData에 대해 userId를 대응시킨다.
 const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) => {
-  const conditionQuery = creators.reduce((str, element, index) => `${index == 0 ? `(${str}` : `${str},`}'${element.afreecaId}'`, '');
+  const conditionQuery = creators.reduce((str, element, index) => `${index === 0 ? `(${str}` : `${str},`}'${element.afreecaId}'`, '');
+
+  if (conditionQuery === '') {
+    resolve([]);
+    return;
+  }
 
   useQuery('collect', query(conditionQuery), [])
     .then((inrow) => {

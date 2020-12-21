@@ -25,7 +25,6 @@ const styles = makeStyles((theme) => ({
   },
   heading: {
     fontSize: 20,
-
     fontWeight: 600,
   },
   contentRight: {
@@ -63,15 +62,23 @@ const styles = makeStyles((theme) => ({
     color: theme.palette.primary.contrastText,
     fontWeight: 'bold',
   },
+  timeDescription: {
+    marginLeft: theme.spacing(2),
+    fontWeight: 'bold',
+  },
+  timeDescriptionHighlight: {
+    color: theme.palette.warning.main,
+  },
+  mark: {
+    fontSize: '17px',
+  },
 }));
-
 interface MetricsAccordianProps {
   categories: CategoryGetRequest[];
   highlightData: any;
   selectedStream: StreamDataType|null;
 }
-type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'question'
-
+type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
 export default function MetricsAccordian(
   {
     highlightData,
@@ -89,33 +96,30 @@ export default function MetricsAccordian(
   const [page3, setPage3] = React.useState(0);
   const [pageSize3, setPageSize3] = React.useState(5);
   const [point3, setPoint3] = React.useState(initialPoint);
-
   const [chatPicked90, setChatPicked90] = React.useState(true);
   const [smilePicked90, setSmilePicked90] = React.useState(true);
   const [categoryPicked90, setCategoryPicked90] = React.useState(true);
-
   // 상위 10% 편집점 데이터
   const chatHightlight90 = highlightData.chat_points_90.map((atPoint: any) => ({
     ...highlightData.chat_points[atPoint],
   }));
-  const smileHightlight90 = highlightData.smile_points_90.map((atPoint: any) => ({
-    ...highlightData.smile_points[atPoint],
+  const smileHightlight90 = highlightData.funny_points_90.map((atPoint: any) => ({
+    ...highlightData.funny_points[atPoint],
   }));
-
   function selectCategory90(selected: string): any {
-    const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any) => ({
-      ...highlightData[`${selected}_points`][atPoint],
+    const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any, index: number) => ({
+      ...highlightData[`${selected}_points`][atPoint], tableData: { id: index },
     }));
     return categoryHightlight90;
   }
 
   const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
-
   const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {
     setSelectedCategory(clickedCategory);
     setPoint3(initialPoint);
+    setPage3(0);
+    setPageSize3(5);
   };
-
   return (
     <Paper>
       <Accordion>
@@ -132,8 +136,25 @@ export default function MetricsAccordian(
               pointNumber={chatPicked90 ? highlightData.chat_points_90.length : highlightData.chat_points.length}
             />
             <Grid container direction="column" justify="center">
+              <Grid container direction="row" justify="space-between" alignItems="center">
+                <Typography className={classes.timeDescription} variant="body1">
+                  {' '}
+                  ※ 그래프 시간은
+                  {' '}
+                  <span className={classes.timeDescriptionHighlight}>
+                    방송 플레이 타임 기준
+                  </span>
+                  입니다
+                </Typography>
+                <ScorePicker
+                  picked90={chatPicked90}
+                  setPicked90={setChatPicked90}
+                  setPage={setPage}
+                  setPageSize={setPageSize}
+                  setPoint={setPoint}
+                />
+              </Grid>
               <Grid item md={12}>
-                <ScorePicker picked90={chatPicked90} setPicked90={setChatPicked90} />
                 <Chart
                   data={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
                   chartType="chat"
@@ -166,7 +187,6 @@ export default function MetricsAccordian(
         </AccordionDetails>
       </Accordion>
       <Accordion>
-
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
         >
@@ -177,13 +197,30 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="웃음 편집점"
               iconSrc="/images/analyticsPage/logo_smile.svg"
-              pointNumber={smilePicked90 ? highlightData.smile_points_90.length : highlightData.smile_points.length}
+              pointNumber={smilePicked90 ? highlightData.funny_points_90.length : highlightData.funny_points.length}
             />
             <Grid container direction="column" justify="center">
+              <Grid container direction="row" justify="space-between" alignItems="center">
+                <Typography className={classes.timeDescription} variant="body1">
+                  {' '}
+                  ※ 그래프 시간은
+                  {' '}
+                  <span className={classes.timeDescriptionHighlight}>
+                    방송 플레이 타임 기준
+                  </span>
+                  입니다
+                </Typography>
+                <ScorePicker
+                  picked90={smilePicked90}
+                  setPicked90={setSmilePicked90}
+                  setPage2={setPage2}
+                  setPageSize2={setPageSize2}
+                  setPoint2={setPoint2}
+                />
+              </Grid>
               <Grid item md={12}>
-                <ScorePicker picked90={smilePicked90} setPicked90={setSmilePicked90} />
                 <Chart
-                  data={smilePicked90 ? smileHightlight90 : highlightData.smile_points}
+                  data={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
                   chartType="smile"
                   highlight={point2}
                   handleClick={setPoint2}
@@ -193,7 +230,7 @@ export default function MetricsAccordian(
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
-                  metrics={smilePicked90 ? smileHightlight90 : highlightData.smile_points}
+                  metrics={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
                   handleClick={setPoint2}
                   row={point2}
                   page={page2}
@@ -205,7 +242,7 @@ export default function MetricsAccordian(
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}
-                    exportCategory="smile"
+                    exportCategory="funny"
                   />
                 </div>
               </Grid>
@@ -213,7 +250,6 @@ export default function MetricsAccordian(
           </Grid>
         </AccordionDetails>
       </Accordion>
-
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -255,7 +291,24 @@ export default function MetricsAccordian(
                 </Button>
               ))}
             </div>
-            <ScorePicker picked90={categoryPicked90} setPicked90={setCategoryPicked90} />
+            <Grid container direction="row" justify="space-between" alignItems="center">
+              <Typography className={classes.timeDescription} variant="body1">
+                {' '}
+                ※ 그래프 시간은
+                {' '}
+                <span className={classes.timeDescriptionHighlight}>
+                  방송 플레이 타임 기준
+                </span>
+                입니다
+              </Typography>
+              <ScorePicker
+                picked90={categoryPicked90}
+                setPicked90={setCategoryPicked90}
+                setPage3={setPage3}
+                setPageSize3={setPageSize3}
+                setPoint3={setPoint3}
+              />
+            </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
                 <Chart
@@ -293,7 +346,6 @@ export default function MetricsAccordian(
           </Grid>
         </AccordionDetails>
       </Accordion>
-
     </Paper>
   );
 }

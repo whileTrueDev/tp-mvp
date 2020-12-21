@@ -3,8 +3,9 @@ import React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Typography, Grid, Divider, Button,
-  Dialog, DialogContent,
+  Dialog, DialogContent, Collapse,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import classnames from 'classnames';
 
 // shared sub components
@@ -64,11 +65,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(4),
     marginLeft: theme.spacing(4),
   },
+  bottomWrapper: { marginTop: theme.spacing(1) },
   completeButton: {
+    height: theme.spacing(5),
     alignSelf: 'flex-end',
     marginTop: theme.spacing(2),
     backgroundColor: theme.palette.primary.dark,
     color: theme.palette.primary.contrastText,
+  },
+  alertBody: {
+    marginRight: theme.spacing(2),
+    height: theme.spacing(5),
+    alignItems: 'center',
   },
 }));
 
@@ -142,13 +150,22 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
           </Grid>
         </Grid>
 
-        <Button
-          variant="contained"
-          onClick={handleClose}
-          className={classes.completeButton}
-        >
-          완료
-        </Button>
+        <Grid container xs={12} justify="flex-end" alignItems="flex-end" className={classes.bottomWrapper}>
+          <Collapse in={selectedStreams.filter((each) => !each.isRemoved).length === 0}>
+            <Alert severity="error" className={classes.alertBody}>
+              선택하신 기간내에 1개 이상의 방송이 포함되어야 합니다.
+            </Alert>
+          </Collapse>
+          <Button
+            variant="contained"
+            onClick={handleClose}
+            className={classes.completeButton}
+            disabled={selectedStreams.filter((each) => !each.isRemoved).length === 0}
+          >
+            완료
+          </Button>
+        </Grid>
+
       </DialogContent>
 
     </Dialog>

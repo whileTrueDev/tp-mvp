@@ -63,7 +63,6 @@ export default function UserMetricsChart({
     if (valueAxis.tooltip) {
       valueAxis.tooltip.disabled = true;
     }
-    valueAxis.min = 0;
 
     function createLineSeries(field, color) {
       const lineSeries = chart.series.push(new am4charts.LineSeries());

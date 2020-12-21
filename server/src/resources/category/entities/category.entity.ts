@@ -5,7 +5,7 @@ import { Category } from '@truepoint/shared/dist/interfaces/Category.interface';
 
 @Entity({ name: 'Category' })
 export class CategoryEntity implements Category {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'smallint' })
   categoryId: number;
 
   @Column()

@@ -47,7 +47,9 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
   // "댓글 작성" 버튼 핸들러
   function handleReplySubmit() {
     if (replyText.current) {
-      if (replyText.current.value) {
+      if (!replyText.current.value.trim()) {
+        ShowSnack('댓글을 올바르게 입력해주세요.', 'error', enqueueSnackbar);
+      } else {
         const data: ReplyPost = {
           suggestionId: currentSuggestion.suggestionId,
           author: auth.user.userId,
@@ -56,8 +58,6 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
         postReply({ data })
           .then(() => refetch())
           .catch(() => ShowSnack('댓글 작성중 오류가 발생했습니다. 문의부탁드립니다.', 'error', enqueueSnackbar));
-      } else {
-        ShowSnack('댓글을 올바르게 입력해주세요.', 'error', enqueueSnackbar);
       }
     }
   }

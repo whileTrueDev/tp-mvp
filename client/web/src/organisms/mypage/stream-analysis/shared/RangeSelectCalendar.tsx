@@ -177,7 +177,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
           handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
         }
       } else {
-        handlePeriod(timeFormatter(newDate), timeFormatter(point1, true), base);
+        handlePeriod(timeFormatter(newDate, true), timeFormatter(point1), base);
       }
 
       // const avgDate = (point1.getTime() + newDate.getTime()) / 2;

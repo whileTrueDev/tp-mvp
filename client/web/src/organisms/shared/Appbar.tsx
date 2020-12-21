@@ -169,6 +169,15 @@ export default function AppBar(): JSX.Element {
     </Menu>
   );
 
+  const links = [
+    {
+      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1),
+    },
+    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
+    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
+    { name: 'CBT신청', path: '/infoCBT', activeRouteString: '/infoCBT' },
+  ];
+
   return (
     <>
       <div className={classes.root}>
@@ -186,36 +195,21 @@ export default function AppBar(): JSX.Element {
               )}
 
               <div className={classes.links}>
-                {authContext.user.userId.length > 1 && (
-                <Button
-                  component={Link}
-                  to="/mypage/main"
-                  className={classnames(classes.link, { [classes.selected]: isActiveRoute('/mypage') })}
-                >
-                  <Typography className={classes.linkText}>마이페이지</Typography>
-                </Button>
-                )}
-                <Button
-                  component={Link}
-                  to="/notice"
-                  className={classnames(classes.link, { [classes.selected]: isActiveRoute('/notice') })}
-                >
-                  <Typography className={classes.linkText}>공지사항</Typography>
-                </Button>
-                <Button
-                  component={Link}
-                  to="/feature-suggestion"
-                  className={classnames(classes.link, { [classes.selected]: isActiveRoute('/feature-suggestion') })}
-                >
-                  <Typography className={classes.linkText}>기능제안</Typography>
-                </Button>
-                <Button
-                  component={Link}
-                  to="/infoCBT"
-                  className={classnames(classes.link, { [classes.selected]: isActiveRoute('/feature-suggestion') })}
-                >
-                  <Typography className={classes.linkText}>CBT신청</Typography>
-                </Button>
+                {links.map((link) => (
+                  <div key={link.name}>
+                    {!link.hidden && (
+                    <Button
+                      component={Link}
+                      to={link.path}
+                      className={classnames(classes.link, {
+                        [classes.selected]: isActiveRoute(link.activeRouteString),
+                      })}
+                    >
+                      <Typography className={classes.linkText}>{link.name}</Typography>
+                    </Button>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 

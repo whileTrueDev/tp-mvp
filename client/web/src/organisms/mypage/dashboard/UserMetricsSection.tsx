@@ -6,6 +6,9 @@ import {
   Grid, Card, CardContent,
   Typography, Button, Paper, IconButton,
 } from '@material-ui/core';
+import {
+  ArrowDownward, ArrowUpward,
+} from '@material-ui/icons';
 import { UserMetrics } from '../../../interfaces/UserMetrics';
 import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
 import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
@@ -137,7 +140,7 @@ export default function UserMetricsSection(): JSX.Element {
           </Typography>
           {!loading && data && (
           <div className={classes.filter}>
-            <Typography>방송사별 필터링</Typography>
+            {data.length > 0 && (<Typography>방송사별 필터링</Typography>)}
             {Array
               .from(new Set(data.map((d) => d.platform)))
               .map((platform) => (
@@ -226,6 +229,19 @@ export default function UserMetricsSection(): JSX.Element {
                 <CardContent className={classes.cardBody}>
                   <Typography variant="h5" className={classes.cardContentString}>
                     {card.value.toLocaleString()}
+
+                    {card.nameKr === '애청자 변화량' && (
+                      <Typography component="span">
+                        &nbsp;
+                        {card.value > 0 ? (
+                          // 애청자 변화량이 양수인 경우
+                          <ArrowUpward color="primary" />
+                        ) : (
+                          // 애청자 변화량이 음수인 경우
+                          <ArrowDownward color="error" />
+                        )}
+                      </Typography>
+                    )}
                   </Typography>
                 </CardContent>
               </Card>

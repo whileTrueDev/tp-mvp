@@ -25,14 +25,15 @@ export class HighlightController {
     @Query('exportCategory') exportCategory: string,
     @Query('srt') srt: number,
     @Query('csv') csv: number,
-    @Query('txt') txt: number,
+    // @Query('txt') txt: number,
     @Req() req: express.Request, @Res() res: express.Response,
   ): Promise<any> {
     if (streamId) {
       const timestamp = new Date().getTime();
       const fileName = `${timestamp}`;
       const zip = await this.highlightService.getZipFile(
-        creatorId, platform, streamId, exportCategory, srt, txt, csv,
+        creatorId, platform, streamId, exportCategory, srt, csv,
+        // txt,
       );
       res.set({
         'Content-Type': 'text/html; charset=utf-8',
