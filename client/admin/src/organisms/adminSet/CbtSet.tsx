@@ -3,7 +3,7 @@ import { Grid, Typography } from '@material-ui/core';
 // organisms
 import CbtTable from './table/CbtTable';
 import RegisterDialg from '../cbt/RegisterDialog';
-import { CreateCbtUserDto } from '../../../../../shared/Dto/cbt/createCbtUser.dto';
+import { CreateCbtUserDto } from '../../../../../shared/dto/cbt/createCbtUser.dto';
 // import DataPreView from './viewer/DataPreView';
 // import Writer from './writer/Writer';
 

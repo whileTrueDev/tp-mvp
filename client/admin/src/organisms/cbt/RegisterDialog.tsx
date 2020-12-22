@@ -12,6 +12,10 @@ import { useSnackbar } from 'notistack';
 import ShowSnack from '../snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
+  title: {
+    padding: '20px',
+    widht: '600px',
+  },
   root: {
     padding: '20px',
     width: '800px',
@@ -45,7 +49,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [{ data: userData }, executePost] = useAxios({ url: '/cbt/user', method: 'post' }, { manual: true });
+  const [, executePost] = useAxios({ url: '/cbt/user', method: 'post' }, { manual: true });
 
   const [openInputSpace, setSpace] = React.useState(false);
   const [state, setState] = React.useState({
@@ -78,7 +82,9 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
         };
         setPlatformName(event.target.name);
         handleInputOpen();
-        return (setState(stateObject)); }
+        setState(stateObject);
+        break;
+      }
       case 'twitch': {
         const stateObject = {
           afreeca: false,
@@ -87,7 +93,9 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
         };
         setPlatformName(event.target.name);
         handleInputClose();
-        return (setState(stateObject)); }
+        setState(stateObject);
+        break;
+      }
       case 'youtube': {
         const stateObject = {
           afreeca: false,
@@ -96,8 +104,9 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
         };
         setPlatformName(event.target.name);
         handleInputClose();
-        return (setState(stateObject)); }
-
+        setState(stateObject);
+        break;
+      }
       default:
     }
   };
@@ -112,11 +121,10 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
     if (user.afreecaId !== '') {
       executePost({
         data: user,
-      }).then((res) => {
+      }).then(() => {
         handleAsign();
         reload();
         handleClose();
-      }).catch((err) => {
       });
     } else {
       ShowSnack('아이디를 입력해주세요!!', 'warning', enqueueSnackbar);
@@ -135,7 +143,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
           <Grid item xs={6}>
 
             <Grid item xs={6}>
-              <Typography variant="h5" style={{ width: '600px' }}>가입 시키겠습니까?</Typography>
+              <Typography variant="h5" className={classes.title}>가입 시키겠습니까?</Typography>
             </Grid>
 
             <Grid container xs={12} className={classes.checkboxes}>
