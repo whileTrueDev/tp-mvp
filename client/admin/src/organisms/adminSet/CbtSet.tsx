@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
 // organisms
 import CbtTable from './table/CbtTable';
 import RegisterDialg from '../cbt/RegisterDialog';
-// import DataPreView from './viewer/DataPreView';
-// import Writer from './writer/Writer';
 
 /*
   CbtSet : Cbt 테이블과 회원가입하기 dialog가 모여있는 부모 컴포넌트입니다.
@@ -17,9 +15,7 @@ interface dataprops {
   cbtLoading?: any;
   reload: () => void;
 }
-/* 
-  관리자 페이지에서 기능제안, 공지사항에서 같이사용되므로 AdminSet이라는 하나의 컴포넌트로 합쳤습니다.
-*/
+
 export default function CbtSet(data: dataprops): JSX.Element {
   // 공지사항 선택을 위한 State
   // useState<NoticeData> 제네릭타입 //
@@ -28,16 +24,19 @@ export default function CbtSet(data: dataprops): JSX.Element {
     reload,
   } = data;
   const [selectedData, setSelectedData] = React.useState<any>({
+    id: -1,
+    privacyAgreement: false,
+    content: '',
     name: '',
     idForTest: '',
     creatorName: '',
     email: '',
     platform: '',
-    afreecaId: '',
     phoneNum: '',
+    isComplete: false,
   });
 
-  // dialog를 여는 hook
+  // dialog hook
   const [open, setOpen] = React.useState(false);
   function handleOpen() {
     setOpen(true);
@@ -47,7 +46,7 @@ export default function CbtSet(data: dataprops): JSX.Element {
     setOpen(false);
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (reload) {
       reload();
     }
@@ -60,8 +59,10 @@ export default function CbtSet(data: dataprops): JSX.Element {
       creatorName: d.creatorName,
       email: d.email,
       phoneNum: d.phoneNum,
-      isComplete: d.isComplete,
       platform: d.platform,
+      privacyAgreement: d.privacyAgreement,
+      isComplete: d.isComplete,
+      id: d.id,
     };
     setSelectedData(user);
   }
@@ -82,13 +83,22 @@ export default function CbtSet(data: dataprops): JSX.Element {
           </div>
 
           <Grid container xs={12}>
-            <Grid item xs={12}>
+            <Grid item xs={12} lg={6}>
               <CbtTable
                 tableData={tabledata}
                 handleOpen={handleOpen}
                 handleData={handleSelectedData}
               />
             </Grid>
+            {/* <Grid item xs={12} lg={6}>
+              {selectedData && (
+              <DataPreView
+                handleReload={handleReload}
+                selectedData={selectedData}
+                handleEditModeOn={handleEditModeOn}
+              />
+              )}
+            </Grid> */}
           </Grid>
         </div>
       )}

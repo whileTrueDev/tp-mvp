@@ -116,6 +116,13 @@ export default function CbtTable(props: Props): JSX.Element {
             <Typography>{rowData.phoneNum}</Typography>
           ),
         },
+        {
+          title: '진행상태',
+          field: 'isComplete',
+          render: (rowData) => (
+            <Typography>{rowData.isComplete ? '가입완료' : '가입 미완료'}</Typography>
+          ),
+        },
       ]}
       data={tableData}
       options={{

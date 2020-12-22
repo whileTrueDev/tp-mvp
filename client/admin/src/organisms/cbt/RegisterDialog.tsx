@@ -117,7 +117,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
       afreecaId: value,
       isComplete: true,
     };
-    if (user.afreecaId !== '') {
+    if (user.afreecaId !== '' || user.platform) {
       executePost({
         data: user,
       }).then(() => {
