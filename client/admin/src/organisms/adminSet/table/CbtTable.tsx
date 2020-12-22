@@ -30,7 +30,6 @@ interface Props {
   // handleEditModeOff: () => void;
   handleOpen: () => void;
   handleData: (Data: any) => void;
-  asignState: boolean;
 }
 
 // table 레이아웃조정
@@ -60,12 +59,12 @@ const localization = {
 
 export default function CbtTable(props: Props): JSX.Element {
   const {
-    tableData, handleOpen, handleData, asignState,
+    tableData, handleOpen, handleData,
   } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
-    <MaterialTable
+    <MaterialTable<any>
       title="공지사항"
       icons={tableIcons}
       columns={[
@@ -73,17 +72,22 @@ export default function CbtTable(props: Props): JSX.Element {
           title: '가입관리',
           field: 'register',
           render: (rowData) => (
-            <Button
-              disabled={asignState}
-              color="secondary"
-              variant="contained"
-              onClick={() => {
-                handleOpen();
-                handleData(rowData);
-              }}
-            >
-              가입
-            </Button>
+            <div>
+              {rowData.isComplete ? (
+                <Typography>가입완료</Typography>
+              ) : (
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  onClick={() => {
+                    handleOpen();
+                    handleData(rowData);
+                  }}
+                >
+                  가입시키기
+                </Button>
+              )}
+            </div>
           ),
         },
         { title: '이름', field: 'name', render: (rowData) => (<Typography>{rowData.name}</Typography>) },
@@ -110,13 +114,6 @@ export default function CbtTable(props: Props): JSX.Element {
           field: 'phoneNum',
           render: (rowData) => (
             <Typography>{rowData.phoneNum}</Typography>
-          ),
-        },
-        {
-          title: '진행상태',
-          field: 'isComplete',
-          render: (rowData) => (
-            <Typography>{rowData.isComplete}</Typography>
           ),
         },
       ]}

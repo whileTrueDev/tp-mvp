@@ -38,13 +38,12 @@ interface DialogProps {
   open: boolean;
   handleClose: () => void;
   selectedData: any;
-  handleAsign: () => void;
   reload: () => void;
 }
 
 export default function RegisterDialog(data: DialogProps): JSX.Element {
   const {
-    open, handleClose, selectedData, handleAsign, reload,
+    open, handleClose, selectedData, reload,
   } = data;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -122,7 +121,6 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
       executePost({
         data: user,
       }).then(() => {
-        handleAsign();
         reload();
         handleClose();
       });
@@ -133,6 +131,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
 
   const { afreeca, twitch, youtube } = state;
   // const error = [gilad, jason, antoine].filter((v) => v).length !== 2;
+
   return (
     <div>
       <Dialog
@@ -142,15 +141,32 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
         <Grid container xs={12} className={classes.root}>
           <Grid item xs={6}>
 
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Typography variant="h5" className={classes.title}>가입 시키겠습니까?</Typography>
             </Grid>
 
-            <Grid container xs={12} className={classes.checkboxes}>
+            <Grid item xs={12} style={{ marginLeft: 24 }}>
+              <Typography style={{ fontWeight: 'bold' }}>제출한 이름</Typography>
+              <Typography variant="body2">{selectedData.name}</Typography>
+              <Typography style={{ fontWeight: 'bold' }}>제출한 활동명</Typography>
+              <Typography variant="body2">{selectedData.creatorName}</Typography>
+              <Typography style={{ fontWeight: 'bold' }}>제출한 사용할ID</Typography>
+              <Typography variant="body2">{selectedData.idForTest}</Typography>
+              <Typography style={{ fontWeight: 'bold' }}>제출한 플랫폼</Typography>
+              <Typography variant="body2">{selectedData.platform}</Typography>
+              <Typography style={{ fontWeight: 'bold' }}>제출한 이메일</Typography>
+              <Typography variant="body2">{selectedData.email}</Typography>
+              <Typography style={{ fontWeight: 'bold' }}>제출한 기타문의</Typography>
+              <Typography variant="body2">{selectedData.content || '없음'}</Typography>
+            </Grid>
+
+            <Grid item container xs={12} className={classes.checkboxes}>
               <Grid item xs={1}>
                 <Divider orientation="vertical" />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={11}>
+                <Typography variant="body2">가입시킬 플랫폼 명</Typography>
+                <Typography variant="caption">아/트/유 셋 중 하나여야합니다.</Typography>
                 <FormControl component="fieldset" className={classes.formControl}>
                   <FormGroup>
                     <FormControlLabel
@@ -176,14 +192,16 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
               { openInputSpace && (
                 <div>
                   <TextField required fullWidth label="회원의 Afreeca 아이디를 입력해주세요" onChange={handleValue} value={value} />
+                  <Typography variant="body2" color="error" style={{ fontWeight: 'bold' }}>*아프리카TV 데이터 수집/분석에 치명적 영향을 미치므로 오타가 없어야합니다.</Typography>
                   <Typography variant="body2">ex) 기뉴다 -- arinbbidol</Typography>
+                  <Typography variant="body2">ex) 철구형2 -- y1026</Typography>
                 </div>
               )}
             </Grid>
           </Grid>
         </Grid>
         <DialogActions>
-          <Button onClick={handlePost} color="secondary" variant="contained">
+          <Button onClick={handlePost} disabled={(!afreeca && !twitch && !youtube) || (afreeca && !value)} color="secondary" variant="contained">
             확인
           </Button>
           <Button onClick={handleClose} color="primary" variant="contained">

@@ -3,7 +3,6 @@ import { Grid, Typography } from '@material-ui/core';
 // organisms
 import CbtTable from './table/CbtTable';
 import RegisterDialg from '../cbt/RegisterDialog';
-import { CreateCbtUserDto } from '../../../../../shared/dto/cbt/createCbtUser.dto';
 // import DataPreView from './viewer/DataPreView';
 // import Writer from './writer/Writer';
 
@@ -28,7 +27,7 @@ export default function CbtSet(data: dataprops): JSX.Element {
     tabledata, cbtLoading,
     reload,
   } = data;
-  const [selectedData, setSelectedData] = React.useState<CreateCbtUserDto>({
+  const [selectedData, setSelectedData] = React.useState<any>({
     name: '',
     idForTest: '',
     creatorName: '',
@@ -47,17 +46,13 @@ export default function CbtSet(data: dataprops): JSX.Element {
   function handleClose() {
     setOpen(false);
   }
-  const [asignState, setAsignState] = React.useState(false);
 
-  function handleAsign() {
-    setAsignState(true);
-  }
   useEffect(() => {
     if (reload) {
       reload();
     }
   }, [reload]);
-  function handleSelectedData(d: CreateCbtUserDto) {
+  function handleSelectedData(d: any) {
     const user = {
       ...selectedData,
       name: d.name,
@@ -65,6 +60,8 @@ export default function CbtSet(data: dataprops): JSX.Element {
       creatorName: d.creatorName,
       email: d.email,
       phoneNum: d.phoneNum,
+      isComplete: d.isComplete,
+      platform: d.platform,
     };
     setSelectedData(user);
   }
@@ -90,8 +87,6 @@ export default function CbtSet(data: dataprops): JSX.Element {
                 tableData={tabledata}
                 handleOpen={handleOpen}
                 handleData={handleSelectedData}
-                asignState={asignState}
-
               />
             </Grid>
           </Grid>
@@ -102,7 +97,6 @@ export default function CbtSet(data: dataprops): JSX.Element {
         open={open}
         handleClose={handleClose}
         selectedData={selectedData}
-        handleAsign={handleAsign}
         reload={reload}
       />
       )}
