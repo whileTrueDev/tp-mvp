@@ -116,7 +116,7 @@ export default function CbtTable(props: Props): JSX.Element {
           title: '진행상태',
           field: 'isComplete',
           render: (rowData) => (
-            <Typography>{rowData.isComplete}</Typography>
+            <Typography>{rowData.isComplete ? '가입완료' : '가입 미완료'}</Typography>
           ),
         },
       ]}

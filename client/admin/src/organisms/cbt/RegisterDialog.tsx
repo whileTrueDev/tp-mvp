@@ -118,7 +118,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
       afreecaId: value,
       isComplete: true,
     };
-    if (user.afreecaId !== '') {
+    if (user.afreecaId !== '' || user.platform) {
       executePost({
         data: user,
       }).then(() => {
@@ -142,7 +142,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
         <Grid container xs={12} className={classes.root}>
           <Grid item xs={6}>
 
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Typography variant="h5" className={classes.title}>가입 시키겠습니까?</Typography>
             </Grid>
 
