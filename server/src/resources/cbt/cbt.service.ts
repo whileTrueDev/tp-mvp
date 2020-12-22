@@ -63,6 +63,13 @@ export class CbtService {
         refreshToken: `_CBT_USER_${dto.afreecaId}`,
       });
     }
-    return this.usersRepository.save(createuser);
+    const createdUser = this.usersRepository.save(createuser);
+
+    const inquiry = await this.cbtInquiryRepository.findOne({ where: { idForTest: dto.idForTest } });
+    this.cbtInquiryRepository.save({
+      ...inquiry,
+      isComplete: true,
+    });
+    return createdUser;
   }
 }

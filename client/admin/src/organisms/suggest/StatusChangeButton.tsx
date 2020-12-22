@@ -22,7 +22,7 @@ export default function StatusChangebutton(props: statusProps): JSX.Element {
   const classes = useStyles();
 
   const [, executePatch] = useAxios({
-    url: 'http://localhost:3000/feature-suggestion/state', method: 'PATCH',
+    url: '/feature-suggestion/state', method: 'PATCH',
   });
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
