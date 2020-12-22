@@ -26,7 +26,7 @@ export default function ReplySet(data: dataprops): JSX.Element {
   // useState<NoticeData> 제네릭타입 //
   const { suggestionId } = data;
   const [{ loading: replyLoading, data: replyData }, reload] = useAxios(
-    { url: 'http://localhost:3000/feature-suggestion/reply', method: 'GET', params: { id: suggestionId } },
+    { url: '/feature-suggestion/reply', method: 'GET', params: { id: suggestionId } },
   );
 
   const [selectedData, setSelectedData] = React.useState<any>();

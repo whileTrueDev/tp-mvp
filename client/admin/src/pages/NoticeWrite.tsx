@@ -4,7 +4,7 @@ import Writer from '../organisms/adminSet/writer/Writer';
 
 export default function NoticeWrite(): JSX.Element {
   const [, reload] = useAxios(
-    { url: 'http://localhost:3000/notice', method: 'GET' },
+    { url: '/notice', method: 'GET' },
   );
   function handleReload() {
     reload();

@@ -16,7 +16,7 @@ export default function DataPreView(props: Props): JSX.Element {
 
   // 데이터 가져오기
   const [, executeDelete] = useAxios(
-    { url: 'http://localhost:3000/notice', method: 'DELETE' }, { manual: true },
+    { url: '/notice', method: 'DELETE' }, { manual: true },
   );
 
   return (
