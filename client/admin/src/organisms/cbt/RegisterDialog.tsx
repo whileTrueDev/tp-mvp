@@ -8,8 +8,8 @@ import {
   TextField,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
-import ShowSnack from '../snackbar/ShowSnack';
 import { useSnackbar } from 'notistack';
+import ShowSnack from '../snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,15 +34,16 @@ interface DialogProps {
   open: boolean;
   handleClose: () => void;
   selectedData: any;
-  handleAsign:()=>void;
-  reload:()=>void;
+  handleAsign: () => void;
+  reload: () => void;
 }
 
 export default function RegisterDialog(data: DialogProps): JSX.Element {
-  const { open, handleClose, selectedData , handleAsign, reload} = data;
+  const {
+    open, handleClose, selectedData, handleAsign, reload,
+  } = data;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-
 
   const [{ data: userData }, executePost] = useAxios({ url: '/cbt/user', method: 'post' }, { manual: true });
 
@@ -108,20 +109,18 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
       afreecaId: value,
       isComplete: true,
     };
-    if(user.afreecaId !== ''){
+    if (user.afreecaId !== '') {
       executePost({
-        data: user
+        data: user,
       }).then((res) => {
         handleAsign();
         reload();
         handleClose();
       }).catch((err) => {
       });
+    } else {
+      ShowSnack('아이디를 입력해주세요!!', 'warning', enqueueSnackbar);
     }
-    else{
-      ShowSnack("아이디를 입력해주세요!!", "warning", enqueueSnackbar);
-    }
-   
   };
 
   const { afreeca, twitch, youtube } = state;
@@ -168,9 +167,9 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
             <Grid item xs={12}>
               { openInputSpace && (
                 <div>
-              <TextField required fullWidth label="회원의 Afreeca 아이디를 입력해주세요" onChange={handleValue} value={value} />
-              <Typography variant="body2">ex) 기뉴다 -> arinbbidol</Typography>
-              </div>
+                  <TextField required fullWidth label="회원의 Afreeca 아이디를 입력해주세요" onChange={handleValue} value={value} />
+                  <Typography variant="body2">ex) 기뉴다 -- arinbbidol</Typography>
+                </div>
               )}
             </Grid>
           </Grid>
