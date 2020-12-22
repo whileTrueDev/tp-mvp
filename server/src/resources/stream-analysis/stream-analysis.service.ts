@@ -90,6 +90,9 @@ export class StreamAnalysisService {
    */
   async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
     if (streams[0]) {
+      /**
+       * base stream 에 대한 정보 조회
+       */
       const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
         .innerJoin(
@@ -105,6 +108,9 @@ export class StreamAnalysisService {
           throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
         });
       if (streams[1]) {
+        /**
+         * compare stream 에 대한 정보 조회
+         */
         const streamInfoCompare: StreamsInfo[] = await this.streamSummaryRepository
           .createQueryBuilder('streamSummary')
           .innerJoin(
@@ -122,7 +128,6 @@ export class StreamAnalysisService {
         const streamData = [streamInfoBase[0], streamInfoCompare[0]];
         return calculateStreamData(streamData);
       }
-      // return [streamInfoBase, null];
     }
     return [null, null];
   }
@@ -137,10 +142,17 @@ export class StreamAnalysisService {
       count: number;
       arr: EachStream[];
     }
-    /* 1. 기준 기간 타임라인, 비교 기간 타임라인 startedAt 기준 오름차순 정렬 */
+    /* 
+      1. 기준 기간 타임라인, 비교 기간 타임라인 startedAt 기준 오름차순 정렬
+      오름 차순 정렬 통해 병합 여부 판단 
+    */
     timeline[0].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
     timeline[1].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
-    /* 2. 각 타임라인 같은 날짜에 대한 데이터는 평균으로 병합 */
+    /* 
+      2. 각 타임라인 같은 날짜에 대한 데이터는 평균으로 병합
+      시청자수, 채팅수, 웃음 발생수 3가지 지표값에 대해 
+      날짜에 대해 Group By - average 
+    */
     const result: EachStream[][] = [[], []];
     function merge(temp: Temp, periodIndex: number): void {
       const tempResult = temp.arr.reduce((prev2, curr2) => [
@@ -193,6 +205,7 @@ export class StreamAnalysisService {
       });
     });
     return new Promise<PeriodsAnalysisResType>((periodsResolve) => {
+      /* metric 데이터는 단순 합산 (지표별 비교 막대 그래프) */
       const metrics = timeline.map((each) => each.reduce((sum, element) => [
         sum[0] + Number(element.viewer),
         sum[1] + Number(element.chatCount),
@@ -203,7 +216,7 @@ export class StreamAnalysisService {
           chatCount: Math.round(sums[1] / timeline[index].length),
           smileCount: Math.round(sums[2] / timeline[index].length),
         }));
-      // console.log(result);
+      /* 지표별 비교 막대 그래프용 데이터 , 그래프 타입, 타임 라인 그래프용 데이터 리턴 */
       periodsResolve({
         timeline: [...result],
         type: 'periods',
@@ -249,14 +262,15 @@ export class StreamAnalysisService {
      * SPRINT #3.3 S3 경로 변경에 따라 수정해야 할 부분
      * /metric_json/<platform>/<creatorId>/<streamId>.json
      */
-    const keyFunc = (stream: any) => new Promise<void>((resolveKeys, reject) => {
-      const { platform } = stream;
+    const keyFunc = (stream: SearchEachS3StreamData) => new Promise<void>((resolveKeys, reject) => {
+      const { platform } = stream; // stream 정보에 포함 (달력 데이터 그대로 사용)
       const path = `metrics_json/${platform}/${stream.creatorId}/${stream.streamId}`;
       const params = {
         Bucket: process.env.BUCKET_NAME,
         Delimiter: '',
         Prefix: path,
       };
+      /* 인자로 받은 방송 정보에 대해 키값을 하나씩 조회하고 key 리스트에 삽입 */
       s3.listObjects(params).promise()
         .then((values) => {
           if (values.Contents) {
@@ -271,14 +285,19 @@ export class StreamAnalysisService {
           reject(err);
         });
     });
-    /* S3 키 배열을 통해 해당 키와 일치하는 모든 방송 조회  함수 정의 */
-    const dataFunc = (key: any) => new Promise<void>((resolveData, reject) => {
+    /**
+     * S3 키 배열을 통해 해당 키와 일치하는 모든 방송 조회  함수 정의 
+     * @param key 방송 정보를 통해 조회한 s3 내부의 분석 결과 데이터 위치한 키 값 배열
+     */
+    const dataFunc = (key: string) => new Promise<void>((resolveData, reject) => {
       if (keyArray.length < 1) reject(new Error('Empty S3 Key Array ...'));
-      // console.log('[KEY ] : ', key);
       const param = {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
         Key: key,
       };
+      /**
+       * S3 키값을 통해 실제 데이터 객체 변환 후 data 리스트에 삽입
+       */
       const streamData = s3.getObject(param).promise()
         .then((data) => {
         /* S3 body 에서 Obejct Array 로 변경 */
@@ -297,23 +316,39 @@ export class StreamAnalysisService {
         });
       return streamData;
     });
-    /* 분리된 방송 처리 함수 정의 */
+    /**
+     * 분리된 방송 처리 함수 정의
+     * @param stream s3 에서 조회된 각 방송 정보 포맷 가진 데이터
+     * 
+     * 타임 라인 끝 시간과 다음 타임 라인의 시작 시간이 분리된 경우 병합 필요 없음 바로
+     * 병합 여부 판단 위해 calculateArray 에 삽입
+     */
     const detachFunc = (stream: S3StreamData): void => {
       calculatedArray.push(stream);
     };
-    /* 겹처진 방송 처리 함수 정의 */
+    /**
+     * 겹처진 방송 처리 함수 정의
+     * @param currStream 현재 루프가 포커스하는 방송 정보
+     * @param nextStream 루프의 다음 포커스 될 방송 정보
+     */
     const crossFunc = (currStream: S3StreamData, nextStream: S3StreamData): S3StreamData => {
       let gapSize = 0; // 두 방송의 갭 인덱스 크기
       let gapStartIndex = 0; // 현재 방송에서 갭 시작 인덱스 위치
       let isContained = false; // 현재 방송이 다음 방송을 포함 하는 경우 플래그
-      /* 현재 방송에 다음 방송이 포함 되는 경우 (끝점 일치 포함) */
+      /* 
+       * 현재 방송에 다음 방송이 포함 되는 경우 (끝점 일치 포함)
+       * 포함 되는 부분 만큼만 타임라인을 병합한다.
+       */
       if (moment(currStream.end_date) >= moment(nextStream.end_date)) {
         isContained = true;
         const timeDuration = moment(nextStream.start_date).diff(moment(currStream.start_date), 'seconds');
         gapSize = nextStream.total_index;
         gapStartIndex = Math.round(timeDuration / 30);
       } else {
-      /* 현재 방송에 다음 방송이 일부 겹치는 경우 */
+      /* 
+       * 현재 방송에 다음 방송이 일부 겹치는 경우 
+       * 일부 겹치는 부분만 타임라인을 병합한다.
+       */
         const timeDuration = moment(currStream.end_date).diff(moment(nextStream.start_date), 'seconds');
         gapSize = Math.round(timeDuration / 30);
         gapStartIndex = currStream.total_index - gapSize;
