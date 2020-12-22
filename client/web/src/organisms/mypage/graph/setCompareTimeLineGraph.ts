@@ -4,11 +4,12 @@ import am4themesKelly from '@amcharts/amcharts4/themes/kelly';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 import graphColor from './Color';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
+import { CompareGraphData } from './graphsInterface';
 
 // @hwasurr - 2020.10.13 eslint error 정리 중
 // any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function setComponent(data: any, theme: TruepointTheme): am4charts.XYChart {
+export default function setComponent(data: CompareGraphData[], theme: TruepointTheme): am4charts.XYChart {
   am4core.useTheme(am4themesKelly);
   am4core.useTheme(am4themesAnimated);
 
@@ -21,17 +22,23 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   chart.paddingRight = 15;
   chart.paddingLeft = 5;
 
+  /**
+   * multi Y lable axes
+   */
   const valueAxis: any = chart.yAxes.push(new am4charts.ValueAxis());
   valueAxis.tooltip.disabled = true;
-  valueAxis.renderer.labels.template.fill = am4core.color('#3a86ff');
+  valueAxis.renderer.labels.template.fill = am4core.color(graphColor.basePeriod);
   valueAxis.renderer.minWidth = 60;
 
   const valueAxis2: any = chart.yAxes.push(new am4charts.ValueAxis());
   valueAxis2.tooltip.disabled = true;
-  valueAxis2.renderer.labels.template.fill = am4core.color('#b1ae71');
+  valueAxis2.renderer.labels.template.fill = am4core.color(graphColor.comparePeriod);
   valueAxis2.renderer.minWidth = 60;
   valueAxis2.syncWithAxis = valueAxis;
 
+  /**
+   * multi X label axes
+   */
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.startLocation = 0.48;
   dateAxis.endLocation = 0.52;
@@ -41,7 +48,7 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]');
   dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]');
   dateAxis.periodChangeDateFormats.setKey('month', '[bold]MM-dd[/]');
-  dateAxis.renderer.labels.template.fill = am4core.color('#3a86ff');
+  dateAxis.renderer.labels.template.fill = am4core.color(graphColor.basePeriod);
 
   const dateAxis2 = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis2.startLocation = 0.48;
@@ -52,7 +59,7 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]');
   dateAxis2.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]');
   dateAxis.periodChangeDateFormats.setKey('month', '[bold]MM-dd[/]');
-  dateAxis2.renderer.labels.template.fill = am4core.color('#b1ae71');
+  dateAxis2.renderer.labels.template.fill = am4core.color(graphColor.comparePeriod);
 
   // ****************************** base count series ***************************
   const series: any = chart.series.push(new am4charts.LineSeries());
@@ -62,20 +69,18 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   series.dataFields.valueY = 'baseValue';
   series.groupFields.valueY = 'sum';
   series.dataFields.dateX = 'baseDate';
-  series.tooltipText = '기준 기간: [bold]{baseValue}[/]';
+  series.tooltipText = '기준 기간 {metricType}: [bold]{baseValue}[/]';
   series.strokeWidth = 3;
   series.tensionX = 0.8;
-  series.stroke = am4core.color('#3a86ff');
+  series.stroke = am4core.color(graphColor.basePeriod);
   // series.connect = true;
   series.hidden = true; // 기본 그래프 설정.
   series.toFront();
 
-  // Drop-shaped tooltips
-  series.tooltip.background.cornerRadius = 20;
-  series.tooltip.background.strokeOpacity = 0;
-  series.tooltip.pointerOrientation = 'vertical';
-  series.tooltip.label.minWidth = 40;
-  series.tooltip.label.minHeight = 40;
+  if (series.tooltip) {
+    series.tooltip.getFillFromObject = false;
+    series.tooltip.background.fill = am4core.color(graphColor.basePeriod);
+  }
   series.tooltip.label.textAlign = 'middle';
   series.tooltip.label.textValign = 'middle';
 
@@ -88,14 +93,14 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   newSeries.dataFields.dateX = 'compareDate';
   if (newSeries.tooltip) {
     newSeries.tooltip.getFillFromObject = false;
-    newSeries.tooltip.background.fill = am4core.color(graphColor.line);
+    newSeries.tooltip.background.fill = am4core.color(graphColor.comparePeriod);
+    newSeries.tooltip.label.textAlign = 'middle';
   }
-  newSeries.stroke = am4core.color('#b1ae71');
+  newSeries.stroke = am4core.color(graphColor.comparePeriod);
   newSeries.strokeWidth = 3;
-
   newSeries.tensionX = 0.8;
   newSeries.groupFields.valueY = 'sum';
-  newSeries.tooltipText = '비교 기간 : [bold]{compareValue}[/]';
+  newSeries.tooltipText = '비교 기간 {metricType}: [bold]{compareValue}[/]';
   newSeries.connect = true;
   newSeries.hidden = true; // 기본 그래프 설정.
   newSeries.toFront();

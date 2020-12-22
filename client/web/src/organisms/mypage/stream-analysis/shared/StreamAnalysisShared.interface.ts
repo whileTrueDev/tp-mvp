@@ -74,7 +74,13 @@ export interface PeriodSelectPopperProps {
 }
 
 export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
-
+export interface CompareGraphData {
+  baseValue?: number;
+  baseDate?: string;
+  compareValue?: number;
+  compareDate?: string;
+  metricType: string;
+}
 export interface PeriodCompareSubmitInterface {
   category: CompareMetric[];
   params: any;

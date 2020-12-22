@@ -30,6 +30,16 @@ export interface timelineGraphInterface {
   startDate: string,
 }
 
+export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
+
+export interface CompareGraphData {
+  baseValue?: number;
+  baseDate?: string;
+  compareValue?: number;
+  compareDate?: string;
+  metricType: string;
+}
+
 export interface timelineInterface {
   start_date: string,
   end_date: string,

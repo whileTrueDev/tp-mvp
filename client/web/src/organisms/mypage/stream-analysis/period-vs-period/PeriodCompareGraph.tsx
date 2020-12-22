@@ -9,7 +9,7 @@ import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStrea
 import SectionTitle from '../../../shared/sub/SectionTitles';
 import StreamMetrics from '../StreamMetrics';
 import CompareTimeLineGraph from '../../graph/CompareTimeLineGraph';
-import { CompareMetric } from '../shared/StreamAnalysisShared.interface';
+import { CompareMetric, CompareGraphData } from '../shared/StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -63,39 +63,25 @@ export default function PeriodCompareGraph(props: PeriodCompareGraphProps): JSX.
     const baseData = originData[0];
     const compareData = originData[1];
 
-    const viewerTimeLine: {
-      baseValue?: number;
-      baseDate?: string;
-      compareValue?: number;
-      compareDate?: string;
-    }[] = [];
-
-    const chatCountTimeLine: {
-      baseValue?: number;
-      baseDate?: string;
-      compareValue?: number;
-      compareDate?: string;
-    }[] = [];
-
-    const smileCountTimeLine: {
-      baseValue?: number;
-      baseDate?: string;
-      compareValue?: number;
-      compareDate?: string;
-    }[] = [];
+    const viewerTimeLine: CompareGraphData[] = [];
+    const chatCountTimeLine: CompareGraphData[] = [];
+    const smileCountTimeLine: CompareGraphData[] = [];
 
     baseData.forEach((eachBase) => {
       viewerTimeLine.push({
         baseValue: eachBase.viewer,
         baseDate: eachBase.startDate,
+        metricType: '시청자 수',
       });
       chatCountTimeLine.push({
         baseValue: eachBase.chatCount,
         baseDate: eachBase.startDate,
+        metricType: '채팅 발생수',
       });
       smileCountTimeLine.push({
         baseValue: eachBase.smileCount,
         baseDate: eachBase.startDate,
+        metricType: '웃음 발생수',
       });
     });
 
@@ -103,14 +89,18 @@ export default function PeriodCompareGraph(props: PeriodCompareGraphProps): JSX.
       viewerTimeLine.push({
         compareValue: eachCompare.viewer,
         compareDate: eachCompare.startDate,
+        metricType: '시청자 수',
       });
       chatCountTimeLine.push({
         compareValue: eachCompare.chatCount,
         compareDate: eachCompare.startDate,
+        metricType: '채팅 발생수',
       });
       smileCountTimeLine.push({
         compareValue: eachCompare.smileCount,
         compareDate: eachCompare.startDate,
+        metricType: '웃음 발생수',
+
       });
     });
 
