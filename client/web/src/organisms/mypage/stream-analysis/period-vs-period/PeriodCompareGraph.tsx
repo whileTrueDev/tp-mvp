@@ -9,7 +9,7 @@ import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStrea
 import SectionTitle from '../../../shared/sub/SectionTitles';
 import StreamMetrics from '../StreamMetrics';
 import CompareTimeLineGraph from '../../graph/CompareTimeLineGraph';
-// import { timelineGraphInterface, CompareTimeLines, ViewerTimeLines } from '../../graph/graphsInterface';
+import { CompareMetric } from '../shared/StreamAnalysisShared.interface';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,8 +36,6 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
 }));
-
-export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
 
 export interface PeriodCompareGraphProps {
   handleSelectCompareMetric: (newMetric: CompareMetric) => void;
@@ -125,6 +123,19 @@ export default function PeriodCompareGraph(props: PeriodCompareGraphProps): JSX.
     return result[metric];
   };
 
+  const compareMetricFormmater = (targetMetric: CompareMetric): string => {
+    switch (targetMetric) {
+      case 'viewer':
+        return '시청자 수';
+      case 'smileCount':
+        return '웃음 발생수';
+      case 'chatCount':
+        return '채팅 발생수';
+      default:
+        return '';
+    }
+  };
+
   return (
 
     <Grid container direction="column" spacing={8} style={{ padding: 32 }}>
@@ -150,7 +161,7 @@ export default function PeriodCompareGraph(props: PeriodCompareGraphProps): JSX.
                   className={currMetric === selectedCompareMetric
                     ? classes.selectedButtonTitle : undefined}
                 >
-                  {currMetric}
+                  {compareMetricFormmater(currMetric)}
                 </Typography>
               </Button>
             ))}

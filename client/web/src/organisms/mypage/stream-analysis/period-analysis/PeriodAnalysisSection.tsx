@@ -45,8 +45,8 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   const [termStreamsList, setTermStreamsList] = React.useState<StreamsListItem[]>([]);
   const [checkStateGroup, setCheckStateGroup] = React.useState({
     viewer: true,
-    chat: true,
-    smile: true,
+    chatCount: true,
+    smileCount: true,
     // searchKeyWord: string,
   });
 
@@ -232,8 +232,8 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         {/* 분석 항목 선택 체크박스 그룹 */}
         <CheckBoxGroup
           viewer={checkStateGroup.viewer}
-          chat={checkStateGroup.chat}
-          smile={checkStateGroup.smile}
+          chat={checkStateGroup.chatCount}
+          smile={checkStateGroup.smileCount}
           handleCheckStateChange={handleCheckStateChange}
         />
         <Grid container direction="row" justify="center">

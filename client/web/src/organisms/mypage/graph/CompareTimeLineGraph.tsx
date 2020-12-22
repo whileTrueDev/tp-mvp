@@ -27,7 +27,6 @@ export default function CompareTimeLineGraph({ data, selectedMetric }: {
           break;
       }
     });
-    // console.log(chart.series.values);
     chartRef.current = chart;
     return () => {
       chart.dispose();

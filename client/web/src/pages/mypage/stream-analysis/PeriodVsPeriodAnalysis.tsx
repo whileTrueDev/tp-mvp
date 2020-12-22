@@ -32,7 +32,6 @@ export interface PeriodsRequestParams {
   compareEndAt: string;
 }
 export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
-const compareMetrics: CompareMetric[] = ['viewer', 'smileCount', 'chatCount'];
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
@@ -47,9 +46,8 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const [selectedCompareMetric, setSelectedCompareMetric] = React.useState<CompareMetric>(
-    compareMetrics[0],
-  );
+  const [compareMetrics, setCompareMetrics] = React.useState<CompareMetric[]>([]);
+  const [selectedCompareMetric, setSelectedCompareMetric] = React.useState<CompareMetric>('viewer');
   const handleSelectCompareMetric = (newMetric: CompareMetric) => setSelectedCompareMetric(newMetric);
 
   /**
@@ -59,7 +57,8 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
    */
   const handleSubmit = ({
     category, params,
-  }: {category: string[]; params: SearchStreamInfoByPeriods}) => {
+  }: {category: CompareMetric[]; params: SearchStreamInfoByPeriods}) => {
+    setCompareMetrics(category);
     setOpen(false);
     setMetricOpen(false);
     getRequest({
@@ -106,7 +105,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
           </Paper>
 
           {/* Graph Section */}
-          {open && timeLineData && (
+          {open && timeLineData && metricData && (
           <Paper className={classes.graphSectionPaper}>
             {/* 따로 organisms 컴포넌트로 만들어야 할 것 같습니다! by @hwasurr 2020.12.10 레이아웃 수정 작업중 코멘트 */}
             <PeriodCompareGraph

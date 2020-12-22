@@ -37,7 +37,10 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   dateAxis.endLocation = 0.52;
   dateAxis.skipEmptyPeriods = true;
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd HH:mm:ss';
+  dateAxis.dateFormats.setKey('day', '[bold]MM-dd[/]');
+  dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]');
   dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]');
+  dateAxis.periodChangeDateFormats.setKey('month', '[bold]MM-dd[/]');
   dateAxis.renderer.labels.template.fill = am4core.color('#3a86ff');
 
   const dateAxis2 = chart.xAxes.push(new am4charts.DateAxis());
@@ -45,7 +48,10 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   dateAxis2.endLocation = 0.52;
   dateAxis2.skipEmptyPeriods = true;
   dateAxis2.tooltipDateFormat = 'yyyy-MM-dd HH:mm:ss';
+  dateAxis2.dateFormats.setKey('day', '[bold]MM-dd[/]');
+  dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]');
   dateAxis2.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]');
+  dateAxis.periodChangeDateFormats.setKey('month', '[bold]MM-dd[/]');
   dateAxis2.renderer.labels.template.fill = am4core.color('#b1ae71');
 
   // ****************************** base count series ***************************

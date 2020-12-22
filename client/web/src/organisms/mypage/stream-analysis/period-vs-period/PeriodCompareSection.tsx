@@ -20,7 +20,7 @@ import usePeriodCompareStyles from './PeriodCompareSection.style';
 import Loading from '../../../shared/sub/Loading';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
 // interfaces
-import { PeriodCompareProps, StreamsListItem } from '../shared/StreamAnalysisShared.interface';
+import { PeriodCompareProps, StreamsListItem, CompareMetric } from '../shared/StreamAnalysisShared.interface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // sub shared components
 import PeriodSelectBox from '../shared/PeriodSelectBox';
@@ -42,8 +42,8 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   const [comparePeriod, setComparePeriod] = useState<Date[]>(new Array<Date>(2));
   const [checkStateGroup, setCheckStateGroup] = useState({
     viewer: true,
-    chat: true,
-    smile: true,
+    chatCount: true,
+    smileCount: true,
   });
 
   const { enqueueSnackbar } = useSnackbar();
@@ -118,9 +118,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
 
   const handleAnalysisButton = () => {
     /* 카테고리 복수 선택 */
-    const selectedCategory: string[] = Object
+    const selectedCategory: CompareMetric[] = Object
       .entries(checkStateGroup)
-      .filter((pair) => pair[1]).map((pair) => pair[0]);
+      .filter((pair) => pair[1]).map((pair) => pair[0] as CompareMetric);
 
     /* 타겟 유저 아이디 + 기간 2개 요청 */
     if (selectedCategory.length < 1) {
@@ -140,10 +140,10 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           startDate: (new Date(activeStream.startDate)).toISOString(),
         }));
 
-      if (correctBaseList.length === 0) {
-        ShowSnack('기준 기간 내 선택된 방송이 없습니다. 기준 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
-      } else if (correctCompareList.length === 0) {
-        ShowSnack('비교 기간 내 선택된 방송이 없습니다. 비교 기간은 방송을 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
+      if (correctBaseList.length < 2) {
+        ShowSnack('기준 기간 내 선택된 방송이 1개 이하 입니다. 기준 기간은 방송을 2개 이상 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
+      } else if (correctCompareList.length < 2) {
+        ShowSnack('비교 기간 내 선택된 방송이 1개 이하 입니다. 비교 기간은 방송을 2개 이상 포함해 기간을 선택해주세요.', 'error', enqueueSnackbar);
       } else {
         const analysisParam: SearchStreamInfoByPeriods = {
           base: correctBaseList,
@@ -281,8 +281,8 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       {/* 분석 옵션 선택 체크박스 그룹 */}
       <CheckBoxGroup
         viewer={checkStateGroup.viewer}
-        chat={checkStateGroup.chat}
-        smile={checkStateGroup.smile}
+        chat={checkStateGroup.chatCount}
+        smile={checkStateGroup.smileCount}
         handleCheckStateChange={handleCheckStateChange}
       />
 
