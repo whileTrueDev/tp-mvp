@@ -2,8 +2,6 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import {
   Typography, Grid, makeStyles, Divider, FormControl, FormGroup, FormControlLabel,
   Checkbox,
@@ -16,7 +14,7 @@ import { useSnackbar } from 'notistack';
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: '20px',
-    width: '600px',
+    width: '800px',
     height: '300px',
   },
   formControl: {
@@ -113,11 +111,9 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
       executePost({
         data: user
       }).then((res) => {
-        console.log(res.data);
         handleAsign();
         handleClose();
       }).catch((err) => {
-        console.log(err.message);
       });
     }
     else{
@@ -177,9 +173,6 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
             </Grid>
           </Grid>
         </Grid>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description" />
-        </DialogContent>
         <DialogActions>
           <Button onClick={handlePost} color="secondary" variant="contained">
             확인

@@ -88,7 +88,7 @@ export default function CbtTable(props: Props): JSX.Element {
         },
         { title: '이름', field: 'name', render: (rowData) => (<Typography>{rowData.name}</Typography>) },
         { title: '신청 Id', field: 'idForTest', render: (rowData) => (<Typography>{rowData.idForTest}</Typography>) },
-        { title: '활동명', field: 'creatorName', render: (rowData) => (<Typography>{rowData.creatorName ? ('[중요]') : '[일반]'}</Typography>) },
+        { title: '활동명', field: 'creatorName', render: (rowData) => (<Typography>{rowData.creatorName}</Typography>) },
         {
           title: 'email',
           field: 'email',
