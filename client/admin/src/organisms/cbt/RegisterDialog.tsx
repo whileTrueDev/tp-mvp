@@ -193,8 +193,8 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
                 <div>
                   <TextField required fullWidth label="회원의 Afreeca 아이디를 입력해주세요" onChange={handleValue} value={value} />
                   <Typography variant="body2" color="error" style={{ fontWeight: 'bold' }}>*아프리카TV 데이터 수집/분석에 치명적 영향을 미치므로 오타가 없어야합니다.</Typography>
-                  <Typography variant="body2">ex) 기뉴다 -- arinbbidol</Typography>
-                  <Typography variant="body2">ex) 철구형2 -- y1026</Typography>
+                  <Typography variant="body2">ex) 가입자가 기뉴다라면 arinbbidol 만 입력</Typography>
+                  <Typography variant="body2">ex) 가입자가 철구형2라면 y1026 만 입력 따옴표 등 추가X</Typography>
                 </div>
               )}
             </Grid>
