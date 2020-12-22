@@ -16,7 +16,7 @@ import { CreateCbtUserDto } from '../../../../../shared/Dto/cbt/createCbtUser.dt
 interface dataprops {
   tabledata?: any;
   cbtLoading?: any;
-  reload?: () => void;
+  reload: () => void;
 }
 /* 
   관리자 페이지에서 기능제안, 공지사항에서 같이사용되므로 AdminSet이라는 하나의 컴포넌트로 합쳤습니다.
@@ -103,6 +103,7 @@ export default function CbtSet(data: dataprops): JSX.Element {
         handleClose={handleClose}
         selectedData={selectedData}
         handleAsign={handleAsign}
+        reload={reload}
       />
       )}
     </div>

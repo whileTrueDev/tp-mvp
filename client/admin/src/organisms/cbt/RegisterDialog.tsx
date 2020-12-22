@@ -35,10 +35,11 @@ interface DialogProps {
   handleClose: () => void;
   selectedData: any;
   handleAsign:()=>void;
+  reload:()=>void;
 }
 
 export default function RegisterDialog(data: DialogProps): JSX.Element {
-  const { open, handleClose, selectedData , handleAsign} = data;
+  const { open, handleClose, selectedData , handleAsign, reload} = data;
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -112,6 +113,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
         data: user
       }).then((res) => {
         handleAsign();
+        reload();
         handleClose();
       }).catch((err) => {
       });
