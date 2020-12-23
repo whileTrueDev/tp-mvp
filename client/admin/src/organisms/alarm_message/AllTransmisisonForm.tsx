@@ -48,7 +48,7 @@ export default function DualMessageForm(props: Props): JSX.Element {
 
   const [, executePost] = useAxios({
     url: '/notification', method: 'POST',
-  });
+  }, { manual: true });
 
   // For text
   const [title, setTitle] = React.useState('');
