@@ -50,11 +50,11 @@ export default function MessageTable(props: Props): JSX.Element {
   const [title, setTitle] = React.useState('');
 
   const [{ data: getData, loading: getLoading }] = useAxios({
-    url: 'http://localhost:3000/notification', method: 'GET', params: { userId: data.userId },
+    url: '/notification', method: 'GET', params: { userId: data.userId },
   });
 
   const [, executePost] = useAxios({
-    url: 'http://localhost:3000/notification', method: 'POST',
+    url: '/notification', method: 'POST',
   });
   function handleTitle(e: any) {
     setTitle(e.target.value);

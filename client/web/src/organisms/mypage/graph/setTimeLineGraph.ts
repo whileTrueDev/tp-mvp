@@ -23,10 +23,10 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
 
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.skipEmptyPeriods = true;
-  dateAxis.groupCount = 100;
+  // dateAxis.groupCount = 100;
   // dateAxis.renderer.inside = true; // 축 라벨을 grid 안으로 넣기/빼기
   // dateAxis.groupInterval = { timeUnit: 'day', count: 1 }; // 정적 날짜축 데이터 묶음 속성
-  dateAxis.groupData = true; //  동적 날짜축 데이터 묶음 속성
+  // dateAxis.groupData = true; //  동적 날짜축 데이터 묶음 속성
   // dateAxis.groupIntervals.setAll([ // 날짜축 묶음 속성에 대해 각 단위별 리미트를 강제 설정하는 옵션
   //   { timeUnit: 'minute', count: 1 },
   //   { timeUnit: 'hour', count: 1 },
@@ -34,8 +34,8 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   // ]);
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd HH:mm:ss';
   dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
-  dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
-  dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
+  // dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
+  // dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
   dateAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
 
   // ****************************** smile count series ***************************
@@ -49,14 +49,14 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
 
   series.yAxis = valueAxis;
   series.dataFields.valueY = 'smile_count';
-  series.groupFields.valueY = 'average';
+  series.groupFields.valueY = 'sum';
   series.dataFields.dateX = 'date';
   series.name = '웃음 발생 수';
   series.tooltipText = '웃음 발생 수: [bold]{smile_count}[/]';
   series.strokeWidth = 2.5;
   // series.fillOpacity = 0.2;
   series.tensionX = 0.8;
-  series.connect = true;
+  // series.connect = true;
   series.hidden = true; // 기본 그래프 설정.
   series.toFront();
 
@@ -87,9 +87,9 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   newSeries.strokeWidth = 2.5;
   newSeries.tensionX = 0.8;
   // newSeries.fillOpacity = 0.2;
-  newSeries.groupFields.valueY = 'average';
+  newSeries.groupFields.valueY = 'sum';
   newSeries.tooltipText = '채팅 발생 수: [bold]{chat_count}[/]';
-  newSeries.connect = true;
+  // newSeries.connect = true;
   newSeries.hidden = true; // 기본 그래프 설정.
   newSeries.toFront();
 
@@ -113,7 +113,7 @@ export default function setComponent(data: any, theme: TruepointTheme): am4chart
   viewerSeries.tooltipText = '평균 시청자 수: [bold]{viewer_count}[/]';
   viewerSeries.hidden = true; // 기본 그래프 설정.
   viewerSeries.toBack();
-  viewerSeries.connect = true;
+  // viewerSeries.connect = true;
   // viewerSeries.baseAxis = viewerSeries.yAxis; // 기준축을 y 축으로 (배경색이 위에서 부터 차오름)
 
   // ****************************** cursor ***************************

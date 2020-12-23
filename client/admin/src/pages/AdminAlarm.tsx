@@ -19,7 +19,7 @@ export default function AdminAlarm(): JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedData, setData] = React.useState();
   const [{ data: idList }] = useAxios({
-    url: 'http://localhost:3000/users/id-list', method: 'GET',
+    url: '/users/id-list', method: 'GET',
   });
 
   const [list, setList] = React.useState<any[]>([{

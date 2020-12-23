@@ -151,16 +151,16 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
         </Grid>
 
         <Grid container xs={12} justify="flex-end" alignItems="flex-end" className={classes.bottomWrapper}>
-          <Collapse in={selectedStreams.filter((each) => !each.isRemoved).length === 0}>
+          <Collapse in={selectedStreams.filter((each) => !each.isRemoved).length < 2}>
             <Alert severity="error" className={classes.alertBody}>
-              선택하신 기간내에 1개 이상의 방송이 포함되어야 합니다.
+              선택하신 기간내에 2개 이상의 방송이 포함되어야 합니다.
             </Alert>
           </Collapse>
           <Button
             variant="contained"
             onClick={handleClose}
             className={classes.completeButton}
-            disabled={selectedStreams.filter((each) => !each.isRemoved).length === 0}
+            disabled={selectedStreams.filter((each) => !each.isRemoved).length < 2}
           >
             완료
           </Button>

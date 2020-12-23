@@ -38,10 +38,10 @@ export class UserEntity implements User {
   password!: string;
 
   @Column({ length: 10 })
-  birth!: string;
+  birth: string;
 
   @Column({ length: 1 })
-  gender!: string;
+  gender: string;
 
   @Column()
   marketingAgreement: boolean;

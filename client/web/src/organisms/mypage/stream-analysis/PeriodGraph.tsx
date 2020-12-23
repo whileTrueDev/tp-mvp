@@ -80,7 +80,7 @@ export default function PeriodAnalysis({ data, loading, selectedMetric }: {
                 </Grid>
                 <Grid item>
                   <Typography className={classnames(classes.main, classes.bold)}>
-                    {`${data.chat_count}회`}
+                    {`${data.chat_count * 120}회`}
                   </Typography>
                 </Grid>
               </Grid>
