@@ -16,7 +16,7 @@ export default function ReplyPreViewer(props: Props): JSX.Element {
   const { replyData, handleReplyEditModeOn, handleReload } = props;
   // 데이터 삭제
   const [, executeDelete] = useAxios(
-    { url: 'http://localhost:3000/feature-suggestion/reply', method: 'DELETE' }, { manual: true },
+    { url: '/feature-suggestion/reply', method: 'DELETE' }, { manual: true },
   );
 
   return (

@@ -14,11 +14,30 @@ export interface metricInterface {
   value: metricGraphInterface[]
 }
 
+export interface ViewerTimeLines {
+  viewer: number;
+  startDate: string;
+}
+
+export interface CompareTimeLines {
+  viewers: ViewerTimeLines[][];
+}
+
 export interface timelineGraphInterface {
   smileCount: number,
   chatCount: number,
   viewer?: number,
   startDate: string,
+}
+
+export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
+
+export interface CompareGraphData {
+  baseValue?: number;
+  baseDate?: string;
+  compareValue?: number;
+  compareDate?: string;
+  metricType: string;
 }
 
 export interface timelineInterface {

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import getApiHost from './getApiHost';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000',
-  withCredentials: false,
+  baseURL: getApiHost(),
+  withCredentials: true,
 });
 
 export default axiosInstance;

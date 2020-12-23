@@ -37,6 +37,9 @@ export class CbtInquiryEntity implements CbtInquiry {
   @Column({ comment: '개인정보 제공 동의, 0=미동의,1=동의' })
   privacyAgreement: boolean;
 
+  @Column({ comment: '가입처리상태 0=미완, 1=완료', default: false })
+  isComplete?: boolean;
+
   @CreateDateColumn()
   createdAt?: Date;
 }

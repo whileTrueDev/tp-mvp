@@ -61,7 +61,7 @@ export default function CheckBoxGroup(
               <Checkbox
                 checked={chat}
                 onChange={handleCheckStateChange}
-                name="chat"
+                name="chatCount"
                 size="medium"
                 checkedIcon={<CheckBoxIcon className={classes.checkBoxIcons} />}
                 icon={<CheckBoxOutlineBlankIcon className={classes.checkBoxIcons} />}
@@ -79,7 +79,7 @@ export default function CheckBoxGroup(
               <Checkbox
                 checked={smile}
                 onChange={handleCheckStateChange}
-                name="smile"
+                name="smileCount"
                 checkedIcon={<CheckBoxIcon className={classes.checkBoxIcons} />}
                 icon={<CheckBoxOutlineBlankIcon className={classes.checkBoxIcons} />}
               />
