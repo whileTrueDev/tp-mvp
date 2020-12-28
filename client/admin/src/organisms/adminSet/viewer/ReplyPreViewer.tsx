@@ -6,11 +6,34 @@ import Markdown from 'react-markdown';
 import useAxios from 'axios-hooks';
 import CostomTableRow from './CostomTableRow';
 
+/* 
+Props
+****************************************************************************************
+ReplyPreViewer를 위한 Props입니다.
+****************************************************************************************
+replyData: 동일한 suggestionId를 가진 답글목록중 선택된 1개의 객체타입의 데이터에대한 속성값을 전달받습니다.
+handleEditModeON: 글 편집기 컴포넌트를 렌더링하기 위한 핸들러를 전달받습니다.
+handleReload: 글 목록 게시글에 변경사항이 있을경우 리 렌더링하기위한 핸들러 함수를 전달 받습니다.
+****************************************************************************************
+*/
 interface Props {
   replyData: any;
   handleReplyEditModeOn: () => void;
   handleReload: () => void;
 }
+
+/* 
+ReplyPreViewer
+************************************************************************
+답변목록 사용되는 데이터 개별보기를 위한 컴포넌트 입니다.
+************************************************************************
+1. 개별 데이터의 정보가 표시됩니다.
+2. 수정하기 버튼 클릭시 handleEditModeON 핸들러를 이용해 글 편집 컴포넌트를 랜더링시킵니다.
+3. 삭제하기 버튼 클릭시 백엔드로 delete 요청을 보낸다음 hadndleReload 핸들러를 통해 변경된
+답변 목록 데이터를 리랜더링합니다.
+4. Markdown 컴포넌트를 통해 데이터의 content를 표시합니다.
+************************************************************************
+*/
 
 export default function ReplyPreViewer(props: Props): JSX.Element {
   const { replyData, handleReplyEditModeOn, handleReload } = props;

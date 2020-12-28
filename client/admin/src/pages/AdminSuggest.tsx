@@ -3,6 +3,15 @@ import useAxios from 'axios-hooks';
 import Suggest from '../organisms/suggest/Suggest';
 import ReplySet from '../organisms/adminSet/ReplySet';
 
+/*
+AdminSuggest
+**********************************************************************************
+기능제안 에대한 최상위 부모 컴포넌트 입니다.
+**********************************************************************************
+1. 백엔드로 data get 요청을 보냅니다.
+2. Suggest 컴포넌트와, replymode에서 나타나는 ReplySet이 위치합니다.
+**********************************************************************************
+ */
 export default function AdminSuggest(): JSX.Element {
   /*
     기능제안 답변글 가져오기 요청
@@ -20,9 +29,6 @@ export default function AdminSuggest(): JSX.Element {
     setSuggestionId(id);
   }
 
-  /*
-    기능제안글 가져오기 요청
- */
   const [{ loading: suggestionLoading, data: getData }, suggestreload] = useAxios(
     { url: '/feature-suggestion', method: 'GET' },
   );

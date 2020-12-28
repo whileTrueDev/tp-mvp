@@ -6,6 +6,18 @@ import Markdown from 'react-markdown';
 import StatusChangeButton from '../../suggest/StatusChangeButton';
 import CostomTableRow from './CostomTableRow';
 
+/* 
+Props
+****************************************************************************************
+SuggestPreview 위한 Props입니다.
+****************************************************************************************
+selectedData: 기능제안 목록중 선택된 1개의 객체타입의 데이터에대한 속성값을 전달받습니다.
+ReplyModeOn : 답변을 하기위해 답글목록과 답변글을 편집하기위한 전체 컴포넌트를 가져오는 핸들러를 전달받습니다.
+ReplyPostModeOff : 답변을 편집하는 편집기 컴포넌트를 렌더링하지 않도록하는 핸들러를 전달받습니다.
+handleEditModeON: 답변을 편집하는 편집기 컴포넌트를 랜더링하도록 하는 핸들러를 전달받습니다.
+handleReload: 글 목록 게시글에 변경사항이 있을경우 리 렌더링하기위한 핸들러 함수를 전달 받습니다.
+****************************************************************************************
+*/
 interface Props {
   selectedData: any;
   ReplyModeOn: () => void;

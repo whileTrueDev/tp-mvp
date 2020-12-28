@@ -26,6 +26,15 @@ const tableIcons: Icons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
+/*
+Props
+**********************************************************************************
+MessageTable을 위한 props입니다.
+**********************************************************************************
+1. userData : 유저의 데이터에대한 props입니다.
+2. handleClick : click시 이밴트처리를 위한 props입니다. 
+**********************************************************************************
+ */
 interface Props {
   userData: any;
   handleClick: (event: any, d: any) => void;
@@ -56,16 +65,15 @@ const localization = {
   },
 };
 
-// 기능제안 목록 테이블
+/*
+UserlistTable
+**********************************************************************************
+메세지 목록을 보여주고 메세지 전송을위한 table입니다.
+**********************************************************************************
+ */
 export default function UserlistTable(props: Props): JSX.Element {
   const { userData, handleClick } = props;
   const [list, setList] = React.useState<any[]>([]);
-
-  // //전체 회원에대한 알람데이터
-  // const [{ data }] = useAxios({
-  //   url: 'http://localhost:3000/notification/admin', method: 'GET',
-  // });
-
   // DialogOpen
   const [open, setOpen] = React.useState(false);
 

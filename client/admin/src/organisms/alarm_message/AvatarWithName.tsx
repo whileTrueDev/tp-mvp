@@ -14,10 +14,25 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
 }));
-
+/*
+AvatarWithNameProps
+**********************************************************************************
+AvatarWithName을 위한 props입니다.
+**********************************************************************************
+1. logo : logo props입니다.
+2. name : name props입니다. 
+**********************************************************************************
+ */
 export interface AvatarWithNameProps {
  logo: string, name: string
 }
+
+/*
+AvatarWithName
+**********************************************************************************
+avatar를 보여주는 컴포넌트입니다.
+**********************************************************************************
+ */
 export default function AvatarWithName(props: AvatarWithNameProps): JSX.Element {
   const classes = useStyles();
   const { logo, name } = props;

@@ -11,7 +11,16 @@ import Check from '@material-ui/icons/Check';
 import { useSnackbar } from 'notistack';
 import AvatarWithName from './AvatarWithName';
 import ShowSnack from '../snackbar/ShowSnack';
-
+/*
+Props
+**********************************************************************************
+MessageTable을 위한 props입니다.
+**********************************************************************************
+1. data : logo props입니다.
+2. anchorEl : 다이얼로그 위치설정을 위한 props입니다. 
+3. handleClose : close를위한 props입니다.
+**********************************************************************************
+ */
 interface Props{
   data: any;
   anchorEl: any;
@@ -41,6 +50,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/*
+MessageTable
+**********************************************************************************
+메세지 목록을 보여주고 메세지 전송을위한 table입니다.
+**********************************************************************************
+ */
 export default function MessageTable(props: Props): JSX.Element {
   const {
     anchorEl, data, handleClose,

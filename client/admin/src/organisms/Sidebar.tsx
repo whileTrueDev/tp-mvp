@@ -115,10 +115,19 @@ sidebar의 프롭스
 routes: 사이드바에있는 메뉴의 목록
 location: 현재 클릭된 페이지의위치 
  */
+
 interface Props {
   routes: ListProps[];
 }
-
+/*
+Sidebar
+**********************************************************************************
+기능제안 탭 에대한 최상위 부모 컴포넌트 입니다.
+**********************************************************************************
+1. Appbar컴포넌트가 위치합니다.
+2. sidebar는 Material Ui의 Drawer를 이용하였습니다. 각 탭클릭시 해당 페이지로 이동할 수 있습니다.
+**********************************************************************************
+ */
 export default function Sidebar(props: Props): JSX.Element {
   const { routes } = props;
   const classes = useStyles();

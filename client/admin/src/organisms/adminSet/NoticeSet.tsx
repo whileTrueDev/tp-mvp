@@ -6,18 +6,30 @@ import DataPreView from './viewer/DataPreView';
 import Writer from './writer/Writer';
 
 /*
-  NoticeSet : 테이블과 미리보기, 작성하기 컴포넌트가 모여있는 부모 컴포넌트입니다.
-  게재할 목록 Table에대한 data를 GET하는 요청을 이 컴포넌트가 위치할 페이지에서 하여서, table데이터를 전달하면 됩니다.
+dataprops
+**********************************************************************************
+NoticeSet을 위한 props입니다.
+**********************************************************************************
+1. tabledata (optional) : tabledata를위한 props입니다.
+2. noticeLoading (optional) : loading을위한 props입니다.
+3. reload : 화면 reload를위한 props입니다.
+**********************************************************************************
  */
-
 interface dataprops {
   tabledata?: any;
   noticeLoading?: any;
   reload: () => void;
 }
-/* 
-  관리자 페이지에서 기능제안, 공지사항에서 같이사용되므로 AdminSet이라는 하나의 컴포넌트로 합쳤습니다.
-*/
+/*
+NoticeSet
+**********************************************************************************
+공지사항 글을 위한 Table 컴포넌트와 Writer 컴포넌트를 위치시키는 부모 컴포넌트 입니다.
+**********************************************************************************
+1.Table : 공지사항 목록을 보여주는 table입니다.
+2.DataPreView : 개별글을 보여주는 preview입니다.
+3. Writer : 글을작성하는 writer입니다.
+**********************************************************************************
+ */
 export default function NoticeSet(data: dataprops): JSX.Element {
   // 공지사항 선택을 위한 State
   // useState<NoticeData> 제네릭타입 //

@@ -33,11 +33,31 @@ function reducer(state: any, action: any) {
   }
 }
 
+/*
+SelectedData
+**********************************************************************************
+Writer 위한 props입니다.
+**********************************************************************************
+noticeData (optional) : 공지사항 데이터를 전달받는 속성값입니다.
+handleReload : 공지사항 글목록 변경사항을 랜더링하기위한 핸들러함수를 전달받습니다.
+**********************************************************************************
+ */
 interface SelectedData{
   noticeData?: any;
   handleReload: () => void;
 }
 
+/*
+Writer
+**********************************************************************************
+공지사항 답변하기 글을 작성하는 편집기 컴포넌트 입니다.
+**********************************************************************************
+1. 공지사항 편집을위한 NoticeEditViewer,NoticeEditor,
+NoticeMarkdownHelper 가 위치합니다.
+2. NoticeMarkdownHelper는 이름은 Notice가 붙지만 모든 글작성을위한 부모컴포넌트에서 동일하게
+사용되고 있습니다.
+**********************************************************************************
+ */
 export default function Writer(props: SelectedData): JSX.Element {
   const { noticeData, handleReload } = props;
   const [state, dispatch] = React.useReducer(reducer, noticeData || initialState);

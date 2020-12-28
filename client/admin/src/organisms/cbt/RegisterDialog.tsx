@@ -34,13 +34,31 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+/*
+DialogProps
+**********************************************************************************
+RegisterDialog을 위한 props입니다.
+**********************************************************************************
+1. open : dialog를 open하기위한 props입니다.
+2. handleClose : dialog를 close하기위한 props입니다.
+3. selectedData : data에대한 props입니다.
+4. reload: reloading을 위한 props입니다.
+**********************************************************************************
+ */
 interface DialogProps {
   open: boolean;
   handleClose: () => void;
   selectedData: any;
   reload: () => void;
 }
-
+/*
+RegisterDialog
+**********************************************************************************
+회원등록을 처리하는 다이얼로그 컴포넌트 입니다.
+**********************************************************************************
+1. 백엔드로 post요청을 보냅니다.
+**********************************************************************************
+ */
 export default function RegisterDialog(data: DialogProps): JSX.Element {
   const {
     open, handleClose, selectedData, reload,

@@ -5,6 +5,19 @@ import {
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 
+/*
+ReplyEditData
+**********************************************************************************
+SuggestReplyEditor를 위한 props입니다.
+**********************************************************************************
+suggestid (optional) : 기능제안 글의 id를 전달받는 속성값입니다.
+replyData (optional) : 답변글에대한 데이터를 전달받는 속성값입니다.
+state : 답변글 데이터를 post하기위한 속성값입니다.
+dispatch : 게시글 작성시 변경사항에대한 추적을 위한 dispatch 함수를 전달받습니다.
+handleHelpToggle : 도움말 보기를 띄워주는 핸들러함수를 전달받습니다.
+handleReplyReload : 답변글목록에 변경사항을 랜더링하기위한 핸들러함수를 전달받습니다.
+**********************************************************************************
+ */
 interface ReplyEditData{
   suggestid?: any;
   replyData?: any;
@@ -14,6 +27,16 @@ interface ReplyEditData{
   handleReplyReload: () => void;
 }
 
+/*
+SuggestReplyEditor
+**********************************************************************************
+기능제안 답변하기 글을 작성하는 편집기 컴포넌트 입니다.
+**********************************************************************************
+1. 백엔드로 작성글에대한 Patch, Post 요청을 보냅니다.
+2. replyData 있으면 patch가, 없으면 post가 렌더링 됩니다.
+3. post및 patch 요청시 suggestid를 포함하여 replyData 에대한 post/patch 요청을 보냅니다.
+**********************************************************************************
+ */
 export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
   const {
     state, dispatch, handleHelpToggle, handleReplyReload, replyData, suggestid,
