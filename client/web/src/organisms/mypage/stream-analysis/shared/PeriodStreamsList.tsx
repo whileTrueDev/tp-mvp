@@ -146,7 +146,6 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
   } = props;
   const classes = useStyles();
 
-
   /**
    * 방송 정보에 따른 플랫폼 아이콘 렌더링 함수
    * @param stream 방송 리스트 아이템 -> 방송 정보 포함중

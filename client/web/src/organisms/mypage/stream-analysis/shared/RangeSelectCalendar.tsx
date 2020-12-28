@@ -257,7 +257,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   ) => {
     /* 현재 달에 포함되는 날이면서 기간이 선택 된 경우 */
     if (dayInCurrentMonth && date && point1 && point2) {
-      
       /* 선택된 두 기간의 달이 같은 경우 */
       if (date.getMonth() === point1.getMonth() && point1.getMonth() === point2.getMonth()) {
         /* 선택된 두 기간의 시작지점과 date 가 같은 경우 */
