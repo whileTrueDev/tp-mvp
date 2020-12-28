@@ -51,6 +51,7 @@ const calculateStreamData = (streamData: StreamsInfo[]) => {
       unit: '회',
     },
   ];
+
   const result = template.map((element) => {
     const broad1Count = streamData[0][element.key];
     const broad2Count = streamData[1][element.key];
@@ -73,7 +74,11 @@ const calculateStreamData = (streamData: StreamsInfo[]) => {
     delete returnValue.key;
     return returnValue;
   });
-  return result;
+
+  return ({
+    calculatedData: result,
+    streamTitles: [streamData[0].title, streamData[1].title],
+  });
 };
 @Injectable()
 export class StreamAnalysisService {
@@ -88,7 +93,7 @@ export class StreamAnalysisService {
    * 두 방송에 대한 정보를 조회하고 분석 결과를 생성
    * @param streams [방송1, 방송2]
    */
-  async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType[]> {
+  async SearchStreamInfoByStreamId(streams: SearchStreamInfoByStreamId): Promise<StreamAnalysisResType> {
     if (streams[0]) {
       const streamInfoBase: StreamsInfo[] = await this.streamSummaryRepository
         .createQueryBuilder('streamSummary')
@@ -124,7 +129,7 @@ export class StreamAnalysisService {
       }
       // return [streamInfoBase, null];
     }
-    return [null, null];
+    return ({ calculatedData: [null, null], streamTitles: ['', ''] });
   }
 
   /**
@@ -207,7 +212,7 @@ export class StreamAnalysisService {
       periodsResolve({
         timeline: [...result],
         type: 'periods',
-        metrics: calculateStreamData(metrics),
+        metrics: calculateStreamData(metrics).calculatedData,
       });
     });
   }

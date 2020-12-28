@@ -12,6 +12,7 @@ export interface metricInterface {
   broad2Count: number;
   diff: number;
   value: metricGraphInterface[]
+  streamTitle: string;
 }
 
 export interface ViewerTimeLines {

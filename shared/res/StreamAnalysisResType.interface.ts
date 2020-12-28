@@ -1,4 +1,4 @@
-export interface StreamAnalysisResType{
+export interface EachMetricData {
   title: string;
   tag: string;
   value: {
@@ -10,4 +10,9 @@ export interface StreamAnalysisResType{
   broad1Count: number;
   broad2Count: number;
   diff: number;
+}
+
+export interface StreamAnalysisResType{
+  calculatedData: EachMetricData[];
+  streamTitles?: string[];
 }

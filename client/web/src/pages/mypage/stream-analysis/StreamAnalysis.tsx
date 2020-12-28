@@ -22,10 +22,10 @@ import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 export default function StreamAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
-  const [data, setData] = useState<StreamAnalysisResType[]>([]);
+  const [data, setData] = useState<StreamAnalysisResType>();
   const [open, setOpen] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
-  const [{ loading, error }, getRequest] = useAxios<StreamAnalysisResType[]>(
+  const [{ loading, error }, getRequest] = useAxios<StreamAnalysisResType>(
     '/stream-analysis/streams', { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
@@ -67,7 +67,7 @@ export default function StreamAnalysis(): JSX.Element {
           </Paper>
 
           {/* Graph Section */}
-          {open && (
+          {open && data && (
             <Paper className={classes.graphSectionPaper}>
               <StreamMetrics open={open} metricData={data} />
             </Paper>

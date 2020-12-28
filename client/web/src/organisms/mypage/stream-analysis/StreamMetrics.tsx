@@ -5,6 +5,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import shortid from 'shortid';
 import classnames from 'classnames';
+import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysisResType.interface';
 import StackedGraph from '../graph/StackedGraph';
 import { metricInterface } from '../graph/graphsInterface';
 import MetricIcons from '../../../atoms/Graph-icons/MetricIcons';
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 interface StreamAnalysisPropInterface {
   open: boolean;
-  metricData: metricInterface[];
+  metricData: StreamAnalysisResType;
   type?: string;
 }
 
@@ -57,6 +58,26 @@ export default function StreamAnalysis(
     <MetricIcons name="chat" key="chat" />,
   ];
 
+  const makeCompareTitle = (streams: string[], elementType: string) => (
+    <Typography className={classes.main}>
+      <span style={{ fontWeight: 'bold' }}>
+        {streams[0].length > 20 ? `"${streams[0].slice(0, 18)}..."` : `"${streams[0]}..."`}
+      </span>
+      {' '}
+      방송이
+      {'  '}
+      <span style={{ fontWeight: 'bold' }}>
+        {streams[1].length > 20 ? `"${streams[1].slice(0, 18)}..."` : `"${streams[1]}..."`}
+      </span>
+      {' '}
+      방송 보다
+      {'  '}
+      {elementType}
+      가
+      {' '}
+    </Typography>
+  );
+
   return (
     <Grid container direction="column" spacing={1} className={classes.root}>
       {/* {!open && metricData && (
@@ -68,7 +89,7 @@ export default function StreamAnalysis(
         <>
           <SectionTitle mainTitle="채팅 발생수 평균 비교" />
           <>
-            {metricData.map((element, index) => (
+            {metricData.calculatedData.map((element, index) => (
               <Grid item xs={12} container direction="row" key={shortid.generate()} style={{ marginTop: '32px' }}>
                 <Grid item xs={2} className={classes.center}>
                   {iconArray[index]}
@@ -84,6 +105,7 @@ export default function StreamAnalysis(
                         <CardContent className={classes.center}>
                           <Grid container direction="row" justify="center" spacing={1}>
                             <Grid item>
+                              {type && (
                               <Typography className={classes.main}>
                                 기준
                                 {' '}
@@ -97,6 +119,11 @@ export default function StreamAnalysis(
                                 가
                                 {' '}
                               </Typography>
+                              )}
+
+                              {!type && metricData.streamTitles && (
+                                makeCompareTitle(metricData.streamTitles, element.title)
+                              )}
                             </Grid>
                             <Grid item>
                               <Typography className={classnames(classes.main, classes.bold)}>

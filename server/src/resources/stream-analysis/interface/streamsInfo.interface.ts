@@ -5,4 +5,5 @@ export interface StreamsInfo {
   createdAt?: Date;
   chatCount: number;
   viewer?: number;
+  title?: string;
 }

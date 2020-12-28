@@ -36,7 +36,7 @@ export class StreamAnalysisController {
   @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: SearchEachStream })) findInfoRequest: SearchStreamInfoByStreamId,
-  ): Promise<StreamAnalysisResType[]> {
+  ): Promise<StreamAnalysisResType> {
     return this.streamAnalysisService.SearchStreamInfoByStreamId(findInfoRequest);
   }
 
