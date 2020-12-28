@@ -198,6 +198,10 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     }
   };
 
+  /**
+   * 왼쪽 으로 반원 렌더링
+   * @param dayComponent 렌더링 할 날짜 (한칸) 컴포넌트
+   */
   const leftHalfCircleDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.leftCircleBase]: base,
@@ -209,6 +213,10 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     </div>
   );
 
+  /**
+   * 오른쪽 으로 반원 렌더링
+   * @param dayComponent 렌더링 할 날짜 (한칸) 컴포넌트
+   */
   const rightHalfCircleDay = (dayComponent: JSX.Element) => (
     <div className={classnames({
       [classes.rigthCircleBase]: base,
@@ -220,6 +228,11 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     </div>
   );
 
+  /**
+   * 기간내에 포함되는 경우에 대한 렌더링 컴포넌트
+   * @param dayComponent 렌더링 할 날짜 (한칸) 컴포넌트
+   * @param date 날짜 객체 (한칸에 해당)
+   */
   const rangeInnerDay = (dayComponent: JSX.Element, date: Date) => (
     <div className={classnames({
       [classes.rangeDayBase]: base,
@@ -242,8 +255,12 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element,
   ) => {
+    /* 현재 달에 포함되는 날이면서 기간이 선택 된 경우 */
     if (dayInCurrentMonth && date && point1 && point2) {
+      
+      /* 선택된 두 기간의 달이 같은 경우 */
       if (date.getMonth() === point1.getMonth() && point1.getMonth() === point2.getMonth()) {
+        /* 선택된 두 기간의 시작지점과 date 가 같은 경우 */
         if (point1.getDate() === date.getDate()) {
           if (point1.getDate() > point2.getDate()) {
             return leftHalfCircleDay(dayComponent);
@@ -251,6 +268,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
           return rightHalfCircleDay(dayComponent);
         }
+        /* 선택된 두 기간의 끝지점과 date 가 같은 경우 */
         if (point2.getDate() === date.getDate()) {
           if (point1.getDate() < point2.getDate()) {
             return leftHalfCircleDay(dayComponent);
@@ -258,6 +276,8 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
           return rightHalfCircleDay(dayComponent);
         }
+
+        /* 선택된 두 기간의 사이에 date 가 포함되는 경우 */
         if (Math.min(point1.getDate(), point2.getDate()) < date.getDate()
         && date.getDate() < Math.max(point1.getDate(), point2.getDate())) {
           return rangeInnerDay(dayComponent, date);
@@ -276,6 +296,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
           </div>
         );
       }
+      /* 선택된 두 기간의 달이 다른 경우 */
       if (point1.getMonth() !== point2.getMonth() && point1.getMonth() < point2.getMonth()) {
         if (date.getDate() === point1.getDate() && date.getMonth() === point1.getMonth()) {
           return rightHalfCircleDay(dayComponent);
@@ -284,6 +305,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
           return leftHalfCircleDay(dayComponent);
         }
 
+        /* 달이 다른경우 사이에 위치한 달은 모두 포함된 기간으로 판단 */
         if (Math.min(point1.getMonth(), point2.getMonth()) < date.getMonth()
           && date.getMonth() < Math.max(point1.getMonth(), point2.getMonth())) {
           return rangeInnerDay(dayComponent, date);
