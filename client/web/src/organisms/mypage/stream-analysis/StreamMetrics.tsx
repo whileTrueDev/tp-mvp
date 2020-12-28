@@ -78,13 +78,10 @@ export default function StreamAnalysis(
     </Typography>
   );
 
+  const makeComparePercent = ()
+
   return (
     <Grid container direction="column" spacing={1} className={classes.root}>
-      {/* {!open && metricData && (
-        <Grid item className={classes.center}>
-          <CircularProgress />
-        </Grid>
-      )}  => 로딩도 멈추는 현상 */}
       {open && (
         <>
           <SectionTitle mainTitle="채팅 발생수 평균 비교" />
