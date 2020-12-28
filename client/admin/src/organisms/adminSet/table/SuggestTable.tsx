@@ -41,7 +41,6 @@ function dateDiff(date1: any, date2: any) {
   setSuggestionId : 기능제안글의 id값을 선택하는 핸들러함수를 전달받습니다.
   handleSuggestionId : 기능제안글의 id값을 선택하는 핸들러함수를 전달받습니다.
   **************************************************************************************************
-  by emma.sangeun
   */
 interface SuggestTableProps {
   tableData: any;

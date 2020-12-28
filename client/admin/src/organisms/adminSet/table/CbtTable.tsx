@@ -33,7 +33,6 @@ const tableIcons: Icons = {
   handleOpen : 가입시키기 버튼 클릭시 dialog가 열리는 핸들러를 전달받습니다.
   handleData : 가입시키기 버튼 클릭시 dialog에 선택된 행의 신청자 데이터 를 전달하는 핸들러를 전달받습니다.
   **************************************************************************************************
-  by emma.sangeun
   */
 interface Props {
   tableData: any;
@@ -52,8 +51,6 @@ interface Props {
   header : 
   toolbar : toolbar 부분의 레이아웃을 변경하고 싶다면 이값을 조절하여 변경할 수 있습니다.
   ******************************************************************************************************
-
-  by emma.sangeun
   */
 const localization = {
   body: {
