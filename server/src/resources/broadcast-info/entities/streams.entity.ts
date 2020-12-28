@@ -3,7 +3,7 @@ import {
 } from 'typeorm';
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
 
-@Entity({ name: 'Streams' })
+@Entity({ name: 'Streams_test_2' })
 export class StreamsEntity implements Stream {
   @PrimaryColumn()
   streamId: string;

@@ -73,8 +73,16 @@ export interface PeriodSelectPopperProps {
   handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void
 }
 
+export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
+export interface CompareGraphData {
+  baseValue?: number;
+  baseDate?: string;
+  compareValue?: number;
+  compareDate?: string;
+  metricType: string;
+}
 export interface PeriodCompareSubmitInterface {
-  category: string[];
+  category: CompareMetric[];
   params: any;
 }
 

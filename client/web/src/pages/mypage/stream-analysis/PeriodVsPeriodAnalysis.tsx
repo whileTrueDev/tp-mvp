@@ -3,26 +3,25 @@ import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 // material - ui core
-import { Grid, Paper, Typography } from '@material-ui/core';
+import {
+  Grid, Paper,
+} from '@material-ui/core';
 // shared dtos
 import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { PeriodsAnalysisResType } from '@truepoint/shared/dist/res/PeriodsAnalysisResType.interface';
 import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
 // Layout
-// import { AnyMxRecord } from 'dns';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 // contexts
 // import SubscribeContext from '../../../utils/contexts/SubscribeContext';
 // organisms
-import StreamMetrics from '../../../organisms/mypage/stream-analysis/StreamMetrics';
-import LinearGraph from '../../../organisms/mypage/graph/LinearGraph';
+import PeriodCompareGraph from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareGraph';
 import PeriodCompareSection from '../../../organisms/mypage/stream-analysis/period-vs-period/PeriodCompareSection';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import MypageHero from '../../../organisms/shared/sub/MypageHero';
 import textSource from '../../../organisms/shared/source/MypageHeroText';
 // layout style
 import useStreamAnalysisStyles from './streamAnalysisLayout.style';
-import SectionTitle from '../../../organisms/shared/sub/SectionTitles';
 import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 export interface PeriodsRequestParams {
@@ -32,6 +31,7 @@ export interface PeriodsRequestParams {
   compareStartAt: string;
   compareEndAt: string;
 }
+export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
@@ -40,19 +40,27 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [type, setType] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [metricOpen, setMetricOpen] = useState<boolean>(false);
-  const [selectedMetric, selectMetric] = useState<string[]>([]);
   // const subscribe = React.useContext(SubscribeContext);
   const [{ loading, error }, getRequest] = useAxios<PeriodsAnalysisResType>(
     '/stream-analysis/periods', { manual: true },
   );
   const { enqueueSnackbar } = useSnackbar();
+
+  const [compareMetrics, setCompareMetrics] = React.useState<CompareMetric[]>([]);
+  const [selectedCompareMetric, setSelectedCompareMetric] = React.useState<CompareMetric>('viewer');
+  const handleSelectCompareMetric = (newMetric: CompareMetric) => setSelectedCompareMetric(newMetric);
+
+  /**
+   * 분석 요청 함수
+   * @param category
+   * @param params
+   */
   const handleSubmit = ({
     category, params,
-  }: {category: string[]; params: SearchStreamInfoByPeriods}) => {
-    selectMetric(category); // 다중 선택으로 변경시 []을 제거한다.
+  }: {category: CompareMetric[]; params: SearchStreamInfoByPeriods}) => {
+    setCompareMetrics(category);
     setOpen(false);
     setMetricOpen(false);
-
     getRequest({
       data: params,
       method: 'POST',
@@ -71,6 +79,7 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
       });
   };
 
+  /* 구독 관련 기능 - CBT 주석 사항 */
   // React.useEffect(() => {
   //   setOpen(false);
   // }, [subscribe.currUser]);
@@ -96,53 +105,18 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
           </Paper>
 
           {/* Graph Section */}
-          {open && (
+          {open && timeLineData && metricData && (
           <Paper className={classes.graphSectionPaper}>
             {/* 따로 organisms 컴포넌트로 만들어야 할 것 같습니다! by @hwasurr 2020.12.10 레이아웃 수정 작업중 코멘트 */}
-            <Grid item container direction="column" spacing={8} style={{ padding: 32 }}>
-              <Grid item xs={12}>
-                <SectionTitle mainTitle="기간 비교 분석 그래프" />
-                <Typography variant="body2">선택한 기준 기간과 비교 기간의 분석 그래프입니다.</Typography>
-              </Grid>
-              <Grid item container direction="row">
-                <Grid item xs={6}>
-                  {timeLineData && (
-                  <LinearGraph
-                    data={timeLineData[0]}
-                    name="period1"
-                    opposite={0}
-                    selectedMetric={selectedMetric}
-                  />
-                  )}
-                </Grid>
-                <Grid item xs={6}>
-                  {timeLineData && (
-                  <LinearGraph
-                    data={timeLineData[1]}
-                    name="period2"
-                    opposite={1}
-                    selectedMetric={selectedMetric}
-                  />
-                  )}
-                </Grid>
-              </Grid>
-
-              {/* <Grid item xs={12}>
-                  {timeLineData && (
-                    <LinearGraph
-                      data={timeLineData}
-                    />
-                  )}
-              </Grid> */}
-            </Grid>
-
-            {metricOpen && metricData && (
-            <StreamMetrics
-              open={metricOpen}
+            <PeriodCompareGraph
+              handleSelectCompareMetric={handleSelectCompareMetric}
+              selectedCompareMetric={selectedCompareMetric}
+              compareMetrics={compareMetrics}
+              timeLineData={timeLineData}
               metricData={metricData}
+              metricOpen={metricOpen}
               type={type}
             />
-            )}
           </Paper>
           )}
         </Grid>
