@@ -85,7 +85,7 @@ export default function StreamAnalysis(
                           <Grid container direction="row" justify="center" spacing={1}>
                             <Grid item>
                               <Typography className={classes.main}>
-                                {type ? '기준 기간' : `"${element.broad1Title}" 방송` }
+                                {type ? '기준 기간' : `"${element.broad1Title}" ` }
                                 이
                                 {' '}
                                 {type ? '비교 기간' : `"${element.broad2Title}" ` }
