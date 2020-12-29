@@ -39,10 +39,15 @@ const ImportantCheckbox = withStyles({
 /*
 NoticeEditor
 **********************************************************************************
+<개요>
 공지사항 글을 작성하는 편집기 컴포넌트 입니다.
+<백엔드요청목록>
+url: '/notice', method: 'PATCH'
+url: '/notice', method: 'POST'
 **********************************************************************************
-1. 백엔드로 작성글에대한 Patch, Post 요청을 보냅니다.
-2. noticeData가 있으면 patch가, 없으면 post가 렌더링 됩니다.
+1.작성글에대한 수정, 작성 ui를 만듭니다.
+2.백엔드로 작성글에대한 수정, 작성 요청을 보냅니다.
+3. noticeData가 있으면 patch가, 없으면 post 모드의 컴포넌트가 만들어집니다.
 **********************************************************************************
  */
 export default function NoticeEditor(props: NoticeEditData): JSX.Element {

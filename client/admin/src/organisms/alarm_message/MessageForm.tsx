@@ -53,7 +53,11 @@ const useStyles = makeStyles((theme) => ({
 /*
 MessageTable
 **********************************************************************************
-메세지 목록을 보여주고 메세지 전송을위한 table입니다.
+<개요>
+사용자에게 보낼 메시지 폼을 만들어주는 컴포넌트 입니다.
+<백엔드요청>
+ url: '/notification', method: 'GET',
+url: '/notification', method: 'POST',
 **********************************************************************************
  */
 export default function MessageTable(props: Props): JSX.Element {

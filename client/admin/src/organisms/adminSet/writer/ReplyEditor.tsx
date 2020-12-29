@@ -30,11 +30,16 @@ interface ReplyEditData{
 /*
 SuggestReplyEditor
 **********************************************************************************
+<개요>
 기능제안 답변하기 글을 작성하는 편집기 컴포넌트 입니다.
+<백엔드 요청목록>
+url: '/feature-suggestion/reply', method: 'POST'
+url: '/feature-suggestion/reply', method: 'PATCH'
 **********************************************************************************
-1. 백엔드로 작성글에대한 Patch, Post 요청을 보냅니다.
-2. replyData 있으면 patch가, 없으면 post가 렌더링 됩니다.
-3. post및 patch 요청시 suggestid를 포함하여 replyData 에대한 post/patch 요청을 보냅니다.
+1.작성글에대한 수정, 작성 ui를 만듭니다.
+2.백엔드로 작성글에대한 수정, 작성 요청을 보냅니다.
+3. replyData 있으면 patch가, 없으면 post가 렌더링 됩니다.
+4. post및 patch 요청시 suggestid를 포함하여 replyData 에대한 post/patch 요청을 보냅니다.
 **********************************************************************************
  */
 export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {

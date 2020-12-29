@@ -6,7 +6,10 @@ import ReplySet from '../organisms/adminSet/ReplySet';
 /*
 AdminSuggest
 **********************************************************************************
+<개요>
 기능제안 에대한 최상위 부모 컴포넌트 입니다.
+<백엔드로요청>
+ url: '/feature-suggestion', method: 'GET'
 **********************************************************************************
 1. 백엔드로 data get 요청을 보냅니다.
 2. Suggest 컴포넌트와, replymode에서 나타나는 ReplySet이 위치합니다.

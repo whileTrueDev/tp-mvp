@@ -9,6 +9,7 @@ import ReplyPreViewer from './viewer/ReplyPreViewer';
 /*
 dataprops
 **********************************************************************************
+<개요>
 NoticeSet을 위한 props입니다.
 **********************************************************************************
 1. suggestionId : 기능제안글 id props입니다.
@@ -20,7 +21,12 @@ interface dataprops{
 /*
 ReplySet
 **********************************************************************************
-기능제안 답변 글을 위한 Table 컴포넌트와 Writer 컴포넌트를 위치시키는 부모 컴포넌트 입니다.
+<개요>
+기능제안 답변글의  Table 컴포넌트와 Writer 컴포넌트 및 DataPreView컴포넌트의 부모 컴포넌트 입니다.
+이곳에서 @Material-ui/core의 Grid를 이용해 table과 DataPreView component, writer component의 
+배치를 정합니다.
+<백엔드 요청목록>
+-url: '/feature-suggestion/reply', method: 'GET'
 **********************************************************************************
 1.ReplyTable : 글 목록을 보여주는 table입니다.
 2.ReplyPreViewer : 개별글을 보여주는 preview입니다.
