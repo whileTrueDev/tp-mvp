@@ -145,7 +145,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
                     {dateExpression({
                       compoName: 'analysys-calender',
                       createdAt: new Date(selectedStream.startDate),
-                      streamAirtime: selectedStream.airTime,
                     })}
                   </Typography>
                   <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">
