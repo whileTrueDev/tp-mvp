@@ -262,7 +262,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
                 {dateExpression({
                   createdAt: new Date(stream.startDate),
                   compoName: 'analysys-calender',
-                  streamAirtime: stream.airTime,
+                  finishAt: new Date(stream.endDate),
                 })}
               </Typography>
 
@@ -306,7 +306,8 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
                 {dateExpression({
                   createdAt: new Date(stream.startDate),
                   compoName: 'analysys-calender',
-                  streamAirtime: stream.airTime,
+                  finishAt: new Date(stream.endDate),
+
                 })}
               </Typography>
 
