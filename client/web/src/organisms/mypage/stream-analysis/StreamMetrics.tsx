@@ -88,7 +88,7 @@ export default function StreamAnalysis(
                                 {type ? '기준 기간' : `"${element.broad1Title}" 방송` }
                                 이
                                 {' '}
-                                {type ? '비교 기간' : `"${element.broad2Title}" 방송` }
+                                {type ? '비교 기간' : `"${element.broad2Title}" ` }
                                 보다
                                 {' '}
                                 {element.title}
