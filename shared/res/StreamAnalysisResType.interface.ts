@@ -9,5 +9,8 @@ export interface StreamAnalysisResType{
   unit: string;
   broad1Count: number;
   broad2Count: number;
-  diff: number;
+  broad1Title: string;
+  broad2Title: string;
+  sign: number;
+  diff: string;
 }

@@ -27,7 +27,9 @@ import { StreamSummaryEntity } from './entities/streamSummary.entity';
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
-const calculateStreamData = (streamData: StreamsInfo[]) => {
+const TITLE_STR_LIMIT = 20;
+
+const calculateStreamData = (streamData: StreamsInfo[], type: 'period'| 'stream') => {
   const template = [
     {
       title: '평균 시청자 수',
@@ -52,16 +54,41 @@ const calculateStreamData = (streamData: StreamsInfo[]) => {
     },
   ];
   const result = template.map((element) => {
-    const broad1Count = streamData[0][element.key];
-    const broad2Count = streamData[1][element.key];
+    let broad1Count;
+    let broad2Count;
+    let broad1Title = '';
+    let broad2Title = '';
+    if (element.key !== 'viewer') {
+      broad1Count = streamData[0].airTime !== 0 ? Math.round(streamData[0][element.key]
+        / streamData[0].airTime) : streamData[0][element.key];
+      broad2Count = streamData[1].airTime !== 0 ? Math.round(streamData[1][element.key]
+        / streamData[1].airTime) : streamData[1][element.key];
+    } else {
+      broad1Count = streamData[0][element.key];
+      broad2Count = streamData[1][element.key];
+    }
+    if (type === 'stream') {
+      // 함수에 복잡도 증가하는 대신, 재활용 가능하도록 구현
+      broad1Title = streamData[0].title.length > TITLE_STR_LIMIT
+        ? `${streamData[0].title.slice(0, TITLE_STR_LIMIT - 3)}...` : streamData[0].title;
+      broad2Title = streamData[1].title.length > TITLE_STR_LIMIT
+        ? `${streamData[1].title.slice(0, TITLE_STR_LIMIT - 3)}...` : streamData[1].title;
+    }
+
     const sum = broad1Count + broad2Count;
     const broad1 = sum === 0 ? 0 : Math.round((broad1Count / sum) * 100);
     const broad2 = sum === 0 ? 0 : Math.round((broad2Count / sum) * 100);
+    const percent = parseFloat((broad1Count / broad2Count).toFixed(1));
+
     const returnValue = {
       ...element,
       broad1Count,
       broad2Count,
-      diff: broad2 - broad1,
+      broad1Title,
+      broad2Title,
+      // 부호 check 
+      sign: broad1 - broad2 > 0 ? 1 : 0,
+      diff: percent >= 2 ? `${percent}배` : `${Math.abs(broad2 - broad1)}%`,
     };
     returnValue.value.push(
       {
@@ -97,7 +124,7 @@ export class StreamAnalysisService {
           'streams',
           'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
         )
-        .select(['streamSummary.*', 'viewer', 'chatCount', 'title'])
+        .select(['streamSummary.*', 'viewer', 'chatCount', 'title', 'airTime'])
         .where('streamSummary.streamId = :id', { id: streams[0].streamId })
         .andWhere('streamSummary.platform = :platform', { platform: streams[0].platform })
         .execute()
@@ -112,7 +139,7 @@ export class StreamAnalysisService {
             'streams',
             'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
           )
-          .select(['streamSummary.*', 'viewer', 'chatCount', 'title'])
+          .select(['streamSummary.*', 'viewer', 'chatCount', 'title', 'airTime'])
           .where('streamSummary.streamId = :id', { id: streams[1].streamId })
           .andWhere('streamSummary.platform = :platform', { platform: streams[1].platform })
           .execute()
@@ -120,7 +147,7 @@ export class StreamAnalysisService {
             throw new InternalServerErrorException(err, 'mySQL Query Error in Stream-Analysis ... ');
           });
         const streamData = [streamInfoBase[0], streamInfoCompare[0]];
-        return calculateStreamData(streamData);
+        return calculateStreamData(streamData, 'stream');
       }
       // return [streamInfoBase, null];
     }
@@ -202,12 +229,13 @@ export class StreamAnalysisService {
           viewer: Math.round(sums[0] / timeline[index].length),
           chatCount: Math.round(sums[1] / timeline[index].length),
           smileCount: Math.round(sums[2] / timeline[index].length),
+          airTime: 1, // 방송별 비교와의 호환을 위해
         }));
       // console.log(result);
       periodsResolve({
         timeline: [...result],
         type: 'periods',
-        metrics: calculateStreamData(metrics),
+        metrics: calculateStreamData(metrics, 'period'),
       });
     });
   }

@@ -10,7 +10,10 @@ export interface metricInterface {
   unit: string;
   broad1Count: number;
   broad2Count: number;
-  diff: number;
+  broad1Title?: string;
+  broad2Title?: string;
+  diff: string;
+  sign: number;
   value: metricGraphInterface[]
 }
 
