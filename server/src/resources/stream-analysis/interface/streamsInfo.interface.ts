@@ -4,5 +4,7 @@ export interface StreamsInfo {
   smileCount: number;
   createdAt?: Date;
   chatCount: number;
+  title?: string;
   viewer?: number;
+  airTime?: number;
 }

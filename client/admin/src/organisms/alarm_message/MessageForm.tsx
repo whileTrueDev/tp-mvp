@@ -55,7 +55,7 @@ export default function MessageTable(props: Props): JSX.Element {
 
   const [, executePost] = useAxios({
     url: '/notification', method: 'POST',
-  });
+  }, { manual: true });
   function handleTitle(e: any) {
     setTitle(e.target.value);
   }

@@ -22,9 +22,11 @@ import useScrollTop from '../../../utils/hooks/useScrollTop';
 
 export default function StreamAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
+  /* 분석 그래프 상태값 */
   const [data, setData] = useState<StreamAnalysisResType[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
+  /* 방송 대 방송 분석 결과 요청 */
   const [{ loading, error }, getRequest] = useAxios<StreamAnalysisResType[]>(
     '/stream-analysis/streams', { manual: true },
   );
