@@ -51,24 +51,30 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   });
 
   // const subscribe = React.useContext(SubscribeContext);
-  const auth = useAuthContext();
-  const { enqueueSnackbar } = useSnackbar();
-  const { open, handleClose, handleOpen } = useDialog();
+  const auth = useAuthContext(); // 유저 컨텍스트
+  const { enqueueSnackbar } = useSnackbar(); // 스낵바 컨텍스트 호출
+  const { open, handleClose, handleOpen } = useDialog(); // 다이얼로그 훅
 
+  /**
+   * 선택된 기간내의 방송 리스트에 대해 요소를 지우거나 재등록 하는 핸들러
+   * @param targetItem 지우거나 재등록 할 요소
+   * @param isRemoved 지움 여부 , true -> 지움 , false -> 재등록
+   */
   const handleStreamList = (targetItem: StreamsListItem, isRemoved?: boolean) => {
     setTermStreamsList(termStreamsList.map((item) => {
-      if (item.streamId === targetItem.streamId) {
-        const newItem = { ...item };
+      if (item.streamId === targetItem.streamId) { // 작업할 타겟 요소가 선택된 리스트에 존재 할 경우에 수행
+        const newItem = { ...item }; // 타겟 요소 카피
 
-        if (isRemoved === false) newItem.isRemoved = false;
+        if (isRemoved === false) newItem.isRemoved = false; // 카피값의 지움 상태값을 인자에 따라 변경
         else newItem.isRemoved = true;
 
-        return newItem;
+        return newItem; // 변경된 새로운 아이템을 그자리에 바꿔끼움
       }
       return item;
     }));
   };
 
+  /* 체크박스 상태값 핸들러 */
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
       ...checkStateGroup,
@@ -76,6 +82,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     });
   };
 
+  /* 달력 기간 선택 상태값 핸들러 */
   const handlePeriod = (startAt: Date, endAt: Date) => {
     const _period = {
       startAt, endAt,
@@ -92,6 +99,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     url: '/broadcast-info',
   }, { manual: true });
 
+  /* 기간 변경에 따라 재요청 및 상태값 변경 */
   React.useEffect(() => {
     if (period[0] && period[1]) {
       const params: SearchCalendarStreams = {
@@ -151,7 +159,11 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   //   setTermStreamsList([]);
   // }, [auth.user]);
 
+  /**
+   * 부모 요소로 부터 받은 방송 분석 요청 버튼 핸들러
+   */
   const handleAnalysisButton = () => {
+    /* 선택된 기간내 방송 리스트 요소중 지워지지 않은 요소만 요청 */
     const requestParams: SearchEachS3StreamData[] = termStreamsList
       .filter((stream) => !stream.isRemoved)
       .map((dayStreamInfo) => ({
@@ -162,6 +174,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         viewer: dayStreamInfo.viewer,
       }));
 
+    /* 체크박스 그룹에 의해 선택된 카테고리만 요청 */
     const selectedCategory: string[] = Object
       .entries(checkStateGroup)
       .filter((pair) => pair[1]).map((pair) => pair[0]);

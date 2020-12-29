@@ -146,6 +146,10 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
   } = props;
   const classes = useStyles();
 
+  /**
+   * 방송 정보에 따른 플랫폼 아이콘 렌더링 함수
+   * @param stream 방송 리스트 아이템 -> 방송 정보 포함중
+   */
   const platformIcon = (stream: StreamsListItem): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':
@@ -165,6 +169,10 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     }
   };
 
+  /**
+   * 리스트 아이템 툴팁 컴포넌트 렌더링 함수
+   * @param stream 방송 리스트 아이템 -> 방송 정보 포함중
+   */
   const tooltipContents = (stream: StreamsListItem): JSX.Element => (
     <div className={classes.tooltip}>
       <Typography variant="h6">
@@ -231,6 +239,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     >
 
       {removed ? (
+        /* 지워진 방송 아이템 */
         <div className={classes.listItemContainer}>
           <Button
             variant="contained"
@@ -274,6 +283,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
           </StyledToolTip>
         </div>
       ) : (
+        /* 지워지지 않은 방송 아이템 */
         <div className={classes.listItemContainer}>
           <IconButton
             className={classes.closeIcon}

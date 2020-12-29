@@ -15,6 +15,10 @@ import { ValidationPipe } from '../../pipes/validation.pipe';
 export class BroadcastInfoController {
   constructor(private readonly broadcastService: BroadcastInfoService) {}
 
+  /**
+   * 방송 정보 조회 GET 라우터
+   * @param findDaysStreamRequest 로그인 유저 아이디, 조회 시작 날짜 00시 00분 , 조회 종료 날짜 23시 59분
+   */
   @Get()
   @UseGuards(JwtAuthGuard)
   getCompleteStreamsList(@Query(new ValidationPipe())

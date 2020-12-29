@@ -62,6 +62,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     url: '/broadcast-info',
   }, { manual: true });
 
+  /* 체크박스 상태값 핸들러 */
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckStateGroup({
       ...checkStateGroup,
@@ -69,6 +70,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     });
   };
 
+  /* 달력 기간 선택 상태값 핸들러 */
   const handlePeriod = (startAt: Date, endAt: Date, base?: true) => {
     if (base) {
       setBasePeriod([startAt, endAt]);
@@ -77,6 +79,11 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     }
   };
 
+  /**
+   * 선택된 기준기간 내의 방송 리스트에 대해 요소를 지우거나 재등록 하는 핸들러
+   * @param targetItem 지우거나 재등록 할 요소
+   * @param isRemoved 지움 여부 , true -> 지움 , false -> 재등록
+   */
   const handleBaseStreamList = (targetItem: StreamsListItem, isRemoved?: boolean) => {
     setBaseStreamsList(baseStreamsList.map((item) => {
       if (item.streamId === targetItem.streamId) {
@@ -91,6 +98,11 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
     }));
   };
 
+  /**
+   * 선택된 비교기간 내의 방송 리스트에 대해 요소를 지우거나 재등록 하는 핸들러
+   * @param targetItem 지우거나 재등록 할 요소
+   * @param isRemoved 지움 여부 , true -> 지움 , false -> 재등록
+   */
   const handleCompareStreamList = (targetItem: StreamsListItem, isRemoved?: boolean) => {
     setCompareStreamsList(compareStreamsList.map((item) => {
       if (item.streamId === targetItem.streamId) {
@@ -116,6 +128,9 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   //   });
   // }, [subscribe.currUser]);
 
+  /**
+   * 부모 요소로 부터 받은 방송 분석 요청 버튼 핸들러
+   */
   const handleAnalysisButton = () => {
     /* 카테고리 복수 선택 */
     const selectedCategory: CompareMetric[] = Object
