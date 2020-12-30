@@ -207,9 +207,9 @@ export default function StreamList(props: StreamListProps): JSX.Element {
               </ListItemIcon>
               <Typography className={classes.listItemText}>
                 {dateExpression({
-                  compoName: 'analysys-calender',
+                  compoName: 'highlight-calendar',
                   createdAt: new Date(stream.startDate),
-                  streamAirtime: stream.airTime,
+                  finishAt: new Date(stream.endDate),
                 })}
               </Typography>
               <Typography className={classes.listItemText} style={{ marginLeft: '24px' }}>

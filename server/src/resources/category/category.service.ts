@@ -13,10 +13,11 @@ export class CategoryService {
   constructor(
     @InjectRepository(CategoryEntity)
       private readonly categoryRepository: Repository<CategoryEntity>,
-    // @InjectRepository(CategoricalWordsEntity)
-    //   private readonly categoryWordsRepository: Repository<CategoricalWordsEntity>,
   ) {}
 
+  /**
+   * 카테고리 DB 테이블 존재 하는 모든 카테고리값 조회후 리턴
+   */
   async findAll(): Promise<CategoryEntity[]> {
     const findResult = this.categoryRepository
       .find()

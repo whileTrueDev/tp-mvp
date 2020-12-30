@@ -56,7 +56,7 @@ export default function SignUpCompleted({
       <br />
       <Typography className={classes.bold}>회원가입이 완료되었습니다.</Typography>
       <br />
-      <Typography variant="body2">누구누구님, 트루포인트 회원가입을 진심으로 축하드립니다.</Typography>
+      <Typography variant="body2">트루포인트 회원가입을 진심으로 축하드립니다.</Typography>
       <Typography variant="body2">
         가입하신 아이디는
         {' '}

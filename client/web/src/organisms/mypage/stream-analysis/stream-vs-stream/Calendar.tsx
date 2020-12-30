@@ -62,6 +62,9 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
+  /**
+   * 달력 구성을 위한 기간 내 방송 정보 요청
+   */
   const [
     {
       data: getStreamsData,
@@ -69,6 +72,10 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       url: '/broadcast-info',
     }, { manual: true });
 
+  /**
+   * material ui picker 의 테마 오버라이딩 (달력 테마를 조정하기 위해 필요)
+   * @param others 트루포인트 테마 컨택스트
+   */
   const DATE_THEME = (others: Theme) => ({
     ...others,
     overrides: {
@@ -101,6 +108,9 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     return [];
   };
 
+  /**
+   * 달력 선택 기간 (6개월) 변경에 따라 재요청
+   */
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
       userId: auth.user.userId,
@@ -121,6 +131,10 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     });
   }, [auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
 
+  /**
+   * 달력 날짜 선택 핸들러
+   * @param newDate 새로 선택된 날짜
+   */
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) setClickedDate(newDate);
     const dayStreamList: StreamDataType[] = [];
@@ -139,23 +153,40 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
     handleDayStreamList(dayStreamList);
   };
 
+  /**
+   * 달의 차이가 전후 3개월 일 경우 새로운 월 상태값 갱신
+   * @param newMonth 새로운 달
+   */
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
     if (newMonth && Math.abs(moment(newMonth).diff(moment(currMonth), 'month')) >= reRequest) {
       setCurrMonth(newMonth);
     }
   };
 
+  /**
+   * 달력 렌더링 함수
+   * @param date 1 - 31 날짜 객체
+   * @param selectedDate 선택된 날짜 객체
+   * @param dayInCurrentMonth 현재 위치한 달에 해당 일이 존재 하는지 여부
+   * @param dayComponent 달력상에서 표시할 일 컴포넌트
+   */
   const renderDayInPicker = (
     date: MaterialUiPickersDate,
     selectedDate: MaterialUiPickersDate,
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element,
   ) => {
+    /**
+     * 달력에 날짜가 현재 달에 존재하고,
+     * 방송이 존재 하는 날이 거나 ,
+     * 선택된 비교방송/기준방송 인 날 인 경우에
+     */
     if (date && hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
       if ((compareStream && moment(new Date(compareStream.startDate)).format('YYYY-MM-DD')
       === moment(date).format('YYYY-MM-DD'))
       || (baseStream && moment(new Date(baseStream.startDate)).format('YYYY-MM-DD')
       === moment(date).format('YYYY-MM-DD'))) {
+        /* 방송이 존재함을 표시하는 날짜 컴포넌트를 렌더링한다. */
         return (
           <div className={classnames({
             [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),

@@ -31,7 +31,7 @@ export interface PeriodsRequestParams {
   compareStartAt: string;
   compareEndAt: string;
 }
-export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
+export type CompareMetric = 'viewer'|'smileCount'|'chatCount'; // 비교 분석 그래프 선택 가능 지표값 타입
 
 export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
@@ -41,14 +41,16 @@ export default function PeriodVsPeriodAnalysis(): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
   const [metricOpen, setMetricOpen] = useState<boolean>(false);
   // const subscribe = React.useContext(SubscribeContext);
+  /* 기간 대 기간 비교 분석 결과 요청 */
   const [{ loading, error }, getRequest] = useAxios<PeriodsAnalysisResType>(
     '/stream-analysis/periods', { manual: true },
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const [compareMetrics, setCompareMetrics] = React.useState<CompareMetric[]>([]);
-  const [selectedCompareMetric, setSelectedCompareMetric] = React.useState<CompareMetric>('viewer');
-  const handleSelectCompareMetric = (newMetric: CompareMetric) => setSelectedCompareMetric(newMetric);
+  /* 체크박스 그룹 선택값 -> 기간 대 기간 비교 그래프 지표값 */
+  const [compareMetrics, setCompareMetrics] = React.useState<CompareMetric[]>([]); // 체크박스에서 선택된 지표값 리스트
+  const [selectedCompareMetric, setSelectedCompareMetric] = React.useState<CompareMetric>('viewer'); // 현재 선택된 지표값
+  const handleSelectCompareMetric = (newMetric: CompareMetric) => setSelectedCompareMetric(newMetric); // 선택된 지표값 변경 핸들러
 
   /**
    * 분석 요청 함수

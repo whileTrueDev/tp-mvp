@@ -5,17 +5,33 @@ import CbtTable from './table/CbtTable';
 import RegisterDialg from '../cbt/RegisterDialog';
 
 /*
-  CbtSet : Cbt 테이블과 회원가입하기 dialog가 모여있는 부모 컴포넌트입니다.
-  Cbt텝에서는 cbt 회원목록, 회원등록 dialog 컴포넌트가 있습니다.
-  게재할 목록 Table에대한 data를 GET하는 요청을 이 컴포넌트가 위치할 페이지에서 하여서, table데이터를 전달하면 됩니다.
+dataprops
+**********************************************************************************
+<개요>
+CbtSet 위한 props입니다.
+**********************************************************************************
+tabledata (optional) : 공지사항 데이터를 전달받는 속성값입니다.
+cbtLoading (optional) : cbt 관리하기에대한 백엔드 요청에대한 loading상태를 관리하는 속성값입니다.
+reload : 공지사항 글목록 변경사항을 랜더링하기위한 핸들러함수를 전달받습니다.
+**********************************************************************************
  */
-
 interface dataprops {
   tabledata?: any;
   cbtLoading?: any;
   reload: () => void;
 }
-
+/*
+CbtSet
+**********************************************************************************
+<개요>
+cbt 회원목록을 보여주는 컴포넌트 입니다.
+**********************************************************************************
+1. CbtSet : Cbt 테이블과 회원가입하기 dialog가 모여있는 부모 컴포넌트입니다.
+2. Cbt텝에서는 cbt 회원목록, 회원등록 dialog 컴포넌트가 있습니다.
+3. 게재할 목록 Table에대한 data를 이 컴포넌트의 부모 컴포넌트에서 백엔드로부터 get 요청한후 받은 데이터를
+  table에 렌더링합니다.
+**********************************************************************************
+ */
 export default function CbtSet(data: dataprops): JSX.Element {
   // 공지사항 선택을 위한 State
   // useState<NoticeData> 제네릭타입 //
@@ -83,22 +99,13 @@ export default function CbtSet(data: dataprops): JSX.Element {
           </div>
 
           <Grid container xs={12}>
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12}>
               <CbtTable
                 tableData={tabledata}
                 handleOpen={handleOpen}
                 handleData={handleSelectedData}
               />
             </Grid>
-            {/* <Grid item xs={12} lg={6}>
-              {selectedData && (
-              <DataPreView
-                handleReload={handleReload}
-                selectedData={selectedData}
-                handleEditModeOn={handleEditModeOn}
-              />
-              )}
-            </Grid> */}
           </Grid>
         </div>
       )}

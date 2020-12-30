@@ -107,6 +107,14 @@ export const routes: ListProps[] = [
   },
 ];
 
+/*
+App
+**********************************************************************************
+전체 App의 route를 설정하는 컴포넌트 입니다.
+**********************************************************************************
+1. AdminNotice, AdminAlarm, AdminSuggest, NoticeWrite, AdminCbt 페이지가 위치합니다.
+**********************************************************************************
+ */
 export default function App(): JSX.Element {
   const classes = useStyles();
 

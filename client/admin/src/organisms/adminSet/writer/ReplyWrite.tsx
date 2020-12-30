@@ -5,12 +5,33 @@ import SuggestReplyEditViewer from '../viewer/ReplyEditViewer';
 import SuggestReplyEditor from './ReplyEditor';
 import '../../../assets/font.css';
 
+/*
+ReplyDataProps
+**********************************************************************************
+ReplyWrite를 위한 props입니다.
+**********************************************************************************
+replyData (optional) : 답변글에대한 데이터를 전달받는 속성값입니다.
+id(optional) : 답변글 데이터를 post하기위한 속성값입니다.
+handleReplyReload : 답변글목록에 변경사항을 랜더링하기위한 핸들러함수를 전달받습니다.
+**********************************************************************************
+ */
 interface ReplyDataProps{
   replyData?: any;
   id?: any;
   handleReplyReload: () => void;
 }
-
+/*
+ReplyWrite
+**********************************************************************************
+기능제안 답변하기 글을 작성하는 편집기 컴포넌트 입니다.
+**********************************************************************************
+<개요>
+1. 기능제안 답변하기 편집을위한 SuggestReplyEditor,SuggestReplyEditViewer,
+NoticeMarkdownHelper 가 위치합니다.
+2. NoticeMarkdownHelper는 이름은 Notice가 붙지만 모든 글작성을위한 부모컴포넌트에서 동일하게
+사용되고 있습니다. 도움말 보기 클릭시 NoticeMarkdownHelper 컴포넌트가 화면에 도움말을보여줍니다.
+**********************************************************************************
+ */
 export default function ReplyWrite(props: ReplyDataProps): JSX.Element {
   const { replyData, id, handleReplyReload } = props;
   const initialState = {

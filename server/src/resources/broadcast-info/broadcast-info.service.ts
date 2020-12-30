@@ -23,6 +23,8 @@ export class BroadcastInfoService {
    * @param userId 로그인 한 유저 아이디 (요청자)
    * @param startDate 시작 날짜
    * @param endDate 종료 날짜
+   * 
+   * @return 방송 정보 리스트
    */
   async findDayStreamList(
     userId: string,
@@ -30,7 +32,7 @@ export class BroadcastInfoService {
   ): Promise<StreamDataType[]> {
     const momentStart = moment(startDate).format('YYYY-MM-DD HH:mm:ss');
     const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
-    const compeleteAnalysisFlag = 0;
+    const compeleteAnalysisFlag = 0; // needAnalysis , 분석 완료 값을 비교하기 위한 체크값 (현재 0 이 완료이므로 0 으로 설정)
 
     const TermStreamsData: StreamDataType[] = await this.streamsTest2Repository
       .createQueryBuilder('streams')

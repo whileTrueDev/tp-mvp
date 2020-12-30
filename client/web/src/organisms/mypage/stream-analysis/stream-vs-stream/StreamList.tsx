@@ -193,7 +193,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
               {dateExpression({
                 compoName: 'analysys-calender',
                 createdAt: new Date(stream.startDate),
-                streamAirtime: stream.airTime,
+                finishAt: new Date(stream.endDate),
+
               })}
             </Typography>
 

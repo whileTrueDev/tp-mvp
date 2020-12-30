@@ -54,10 +54,16 @@ export default function StreamCompareSection(
   ] = React.useState<StreamDataType | null>(null);
   const [fullMessageOpen, setFullMessageOpen] = React.useState<boolean>(false);
 
+  /*  */
   const handleDayStreamList = (responseList: StreamDataType[]) => {
     setDayStreamsList(responseList);
   };
 
+  /**
+   * 기준 방송/ 비교 방송 상태값 변경 핸들러
+   * @param newStreams 새롭게 선택한 방송
+   * @param base 기준 방송인지에 대한 여부
+   */
   const handleSeletedStreams = (
     newStreams: StreamDataType | null,
     base?: true,
@@ -69,10 +75,17 @@ export default function StreamCompareSection(
     }
   };
 
+  /**
+   * 기준 방송과 비교 방송 모두 차있는 경우 풀 메세지 오픈 핸들러
+   * @param isSelectedListFull full 여부
+   */
   const handleFullMessage = (isSelectedListFull: boolean) => {
     setFullMessageOpen(isSelectedListFull);
   };
 
+  /**
+   * 방송 비교 분석 요청 (부모로부터 받은 요청 버튼 핸들러)
+   */
   const handleAnalysisButton = () => {
     // base, compare 존재시 활성화 , 서버 조회 및 연산 요청
     if (baseStream && compareStream) {
@@ -105,6 +118,10 @@ export default function StreamCompareSection(
     if (!compareStream || !baseStream) handleFullMessage(false);
   }, [compareStream, baseStream]);
 
+  /**
+   * 방송 데이터 플랫폼에 따른 아이콘 리턴 함수
+   * @param stream 방송 데이터
+   */
   const platformIcon = (stream: StreamDataType): JSX.Element => {
     switch (stream.platform) {
       case 'afreeca':

@@ -11,7 +11,16 @@ import Check from '@material-ui/icons/Check';
 import { useSnackbar } from 'notistack';
 import AvatarWithName from './AvatarWithName';
 import ShowSnack from '../snackbar/ShowSnack';
-
+/*
+Props
+**********************************************************************************
+MessageTable을 위한 props입니다.
+**********************************************************************************
+1. data : logo props입니다.
+2. anchorEl : 다이얼로그 위치설정을 위한 props입니다. 
+3. handleClose : close를위한 props입니다.
+**********************************************************************************
+ */
 interface Props{
   data: any;
   anchorEl: any;
@@ -41,6 +50,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+/*
+MessageTable
+**********************************************************************************
+<개요>
+사용자에게 보낼 메시지 폼을 만들어주는 컴포넌트 입니다.
+<백엔드요청>
+ url: '/notification', method: 'GET',
+url: '/notification', method: 'POST',
+**********************************************************************************
+ */
 export default function MessageTable(props: Props): JSX.Element {
   const {
     anchorEl, data, handleClose,
@@ -55,7 +74,7 @@ export default function MessageTable(props: Props): JSX.Element {
 
   const [, executePost] = useAxios({
     url: '/notification', method: 'POST',
-  });
+  }, { manual: true });
   function handleTitle(e: any) {
     setTitle(e.target.value);
   }

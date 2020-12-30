@@ -15,6 +15,18 @@ export interface userData {
 
 }
 
+/*
+AdminAlarm
+**********************************************************************************
+<개요>
+알람에대한 최상위 부모 컴포넌트 입니다.
+<백엔드로 요청>
+ url: '/users/id-list', method: 'GET'
+**********************************************************************************
+1. 백엔드로 data get 요청을 보냅니다.
+2. UserlistTable과 MessageTable이 위치합니다.
+**********************************************************************************
+ */
 export default function AdminAlarm(): JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedData, setData] = React.useState();
