@@ -24,15 +24,34 @@ const tableIcons: Icons = {
   DetailPanel: forwardRef((props: any, ref) => <ChevronRight {...props} ref={ref} />),
 };
 
-// cbtTable 함수의 props
+/* 
+  Props 
+  **************************************************************************************************
+  컴포넌트에 사용되는 interface -> 부모컴포넌트로 해당 인터페이스에 정의된 속성들을 전달받아야합니다.
+  **************************************************************************************************
+  tableData : table에 랜더링되는 데이터에대한 props , 부모컴포넌트에서 tableData와 일치되는 타입의 데이터를 전달받습니다. 
+  handleOpen : 가입시키기 버튼 클릭시 dialog가 열리는 핸들러를 전달받습니다.
+  handleData : 가입시키기 버튼 클릭시 dialog에 선택된 행의 신청자 데이터 를 전달하는 핸들러를 전달받습니다.
+  **************************************************************************************************
+  */
 interface Props {
   tableData: any;
-  // handleEditModeOff: () => void;
   handleOpen: () => void;
   handleData: (Data: any) => void;
 }
 
-// table 레이아웃조정
+/*
+  localization
+  *****************************************************************************************************
+  material table의 customizing을 위한 속성값 정의, 테이블의 레이아웃을 조정합니다.
+  ******************************************************************************************************
+  body : 테이블 바디에 데이터가 없는경우 , 툴팁에대한 정의입니다. 바디 레이아웃을 변경하고 싶다면 이 값을 조절하여 변경할 수 있습니다.
+  grouping : 
+  pagination : 페이지네이션 레이아웃을 변경하고 싶다면 이값을 조절하여 변경할 수 있습니다.
+  header : 
+  toolbar : toolbar 부분의 레이아웃을 변경하고 싶다면 이값을 조절하여 변경할 수 있습니다.
+  ******************************************************************************************************
+  */
 const localization = {
   body: {
     deleteTooltip: '캠페인 삭제',
@@ -57,6 +76,27 @@ const localization = {
   },
 };
 
+/*
+    *****************************************************************************************************
+    CbtTable
+    *****************************************************************************************************
+    <개요>
+    cbt 회원가입 신청을 희망하는 신청자의 목록을 보여주는 table component입니다.
+    rowClick x
+    행마다 가입관리 버튼 클릭시 다이얼로그가 나타나 회원가입을 진행합니다.
+    가입완료시 typography 컴포넌트가 랜더링 됩니다.
+    *****************************************************************************************************
+    column :
+      - 가입관리 : isComplete값에 따라 가입완료(typography) or 가입시키기(button)
+      - 이름 : 신청자 이름 (tableData.name)_string
+      - 신청 Id : 신청자가 사용하길 원하는 truepoint Id (tableData.idForTest)_string
+      - 활동명 : 신청자의 크리에이터 활동명 (tableData.creatorName)_string
+      - email : 신청자 이메일주소 (tableData.email)_string
+      - platform : 신청 플랫폼 (tableData.platform)_string
+      - 휴대전화 : 신청자 휴대전화 번호 (tableData.phoneNum)_string
+      - 진행상태 : 회원가입의 진행상태 완료시 true, 미완료시 false (tableData.isComplete)_boolean
+    *****************************************************************************************************
+    */
 export default function CbtTable(props: Props): JSX.Element {
   const {
     tableData, handleOpen, handleData,
@@ -64,6 +104,7 @@ export default function CbtTable(props: Props): JSX.Element {
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
+
     <MaterialTable<any>
       title="공지사항"
       icons={tableIcons}
