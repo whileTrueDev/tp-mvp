@@ -225,7 +225,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
           <Button onClick={handlePost} disabled={(!afreeca && !twitch && !youtube) || (afreeca && !value)} color="secondary" variant="contained">
             확인
           </Button>
-          <Button onClick={handleClose} color="primary" variant="contained">
+          <Button onClick={handleClose} variant="contained">
             취소
           </Button>
         </DialogActions>
