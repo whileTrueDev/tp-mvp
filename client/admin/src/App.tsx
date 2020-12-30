@@ -4,16 +4,18 @@ import { SnackbarProvider } from 'notistack';
 import {
   CssBaseline, ThemeProvider, createMuiTheme, Grid, makeStyles,
 } from '@material-ui/core';
+// icons
 import ListIcon from '@material-ui/icons/List';
 import EditIcon from '@material-ui/icons/Edit';
 import MessageIcon from '@material-ui/icons/Message';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import {
   BrowserRouter, Switch, Route,
 } from 'react-router-dom';
 // routes
 import AdminAlarm from './pages/AdminAlarm';
 import AdminNotice from './pages/AdminNotice';
-
+import AdminCbt from './pages/AdminCbt';
 import AdminSuggest from './pages/AdminSuggest';
 import NoticeWrite from './pages/NoticeWrite';
 import Sidebar from './organisms/Sidebar';
@@ -96,8 +98,23 @@ export const routes: ListProps[] = [
     path: '/admin/suggest',
     icon: EditIcon,
   },
+  {
+    index: 4,
+    name: 'Cbt 관리',
+    description: 'cbt 회원 관리',
+    path: '/admin/cbt',
+    icon: PersonAddIcon,
+  },
 ];
 
+/*
+App
+**********************************************************************************
+전체 App의 route를 설정하는 컴포넌트 입니다.
+**********************************************************************************
+1. AdminNotice, AdminAlarm, AdminSuggest, NoticeWrite, AdminCbt 페이지가 위치합니다.
+**********************************************************************************
+ */
 export default function App(): JSX.Element {
   const classes = useStyles();
 
@@ -117,6 +134,7 @@ export default function App(): JSX.Element {
                 <Route exact path="/admin/alarm" component={AdminAlarm} />
                 <Route exact path="/admin/suggest" component={AdminSuggest} />
                 <Route exact path="/admin/notice-write" component={NoticeWrite} />
+                <Route exact path="/admin/cbt" component={AdminCbt} />
               </Switch>
             </main>
           </BrowserRouter>

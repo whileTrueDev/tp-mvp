@@ -11,18 +11,39 @@ const useStyles = makeStyles({
   },
 });
 
+/*
+statusProps
+**********************************************************************************
+StatusChangebutton를 위한 props입니다.
+**********************************************************************************
+selectedData :  진행상태를 표시할 data에대한 props입니다.
+handleReload :  reloading을 위한 props입니다.
+**********************************************************************************
+ */
 interface statusProps {
   selectedData: any;
   handleReload: () => void;
 }
 
+/* 
+StatusChangebutton
+**********************************************************************************
+<개요>
+진행상태를 변형하는 버튼입니다.
+<백엔드로요청>
+  url: '/feature-suggestion/state', method: 'PATCH',
+**********************************************************************************
+1. Material ui의 MenuItem list component가 위치합니다.
+2. 버튼 클릭시 해당 상태에대한 백엔드로의 수정요청을 보냅니다.
+**********************************************************************************
+ */
 export default function StatusChangebutton(props: statusProps): JSX.Element {
   const { selectedData, handleReload } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const classes = useStyles();
 
   const [, executePatch] = useAxios({
-    url: 'http://localhost:3000/feature-suggestion/state', method: 'PATCH',
+    url: '/feature-suggestion/state', method: 'PATCH',
   });
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

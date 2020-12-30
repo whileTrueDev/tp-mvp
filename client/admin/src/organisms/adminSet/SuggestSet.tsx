@@ -6,14 +6,16 @@ import SuggestTable from './table/SuggestTable';
 import ReplyWrite from './writer/ReplyWrite';
 
 /*
-  SuggestSet : 테이블과 미리보기, 작성하기 컴포넌트가 모여있는 부모 컴포넌트입니다.
-  게재할 목록 Table에대한 data를 GET하는 요청을 이 컴포넌트가 위치할 페이지에서 하여서, table데이터를 전달하면 됩니다.
- */
-
-/*
-  각 페이지에서 NoticeData와 같은 Data에대한 props는 수정되어져야한다.
-  앞으로 이 컴포넌트를 다른 페이지에서도 사용할 것이므로 NoticeData 프롭스로 
-  고정해두면 안됩니다!
+dataprops
+**********************************************************************************
+SuggestSet을 위한 props입니다.
+**********************************************************************************
+1. tabledata : tabledata props입니다.
+2. suggestLoading : loading을위한 props입니다.
+3. reload : reloading을위한 props입니다.
+4. ReplyModeON : replyMode on을 위한 Props입니다.
+5. setSuggestionId : suggestionId를 설정하기위한 props 입니다.
+**********************************************************************************
  */
 interface dataprops {
   tabledata?: any;
@@ -23,12 +25,21 @@ interface dataprops {
   ReplyModeOff: () => void;
   setSuggestionId: (id: any) => void;
 }
-/* 
-  관리자 페이지에서 기능제안, 공å지사항에서 같이사용되므로 AdminSet이라는 하나의 컴포넌트로 합쳤습니다.
-*/
+/*
+SuggestSet
+**********************************************************************************
+<개요>
+기능제안 글의 Table 컴포넌트와 Writer 컴포넌트 및 DataPreView컴포넌트의 부모 컴포넌트 입니다.
+이곳에서 @Material-ui/core의 Grid를 이용해 table과 DataPreView component, writer component의 
+배치를 정합니다.
+**********************************************************************************
+1.SuggestTable : 글 목록을 보여주는 table입니다.
+2.SuggestPreview : 개별글을 보여주는 preview입니다.
+3.ReplyWrite : 글을작성하는 writer입니다.
+**********************************************************************************
+ */
 export default function SuggestSet(data: dataprops): JSX.Element {
   // 공지사항 선택을 위한 State
-  // useState<NoticeData> 제네릭타입 //
   const {
     tabledata, suggestLoading, reload, ReplyModeOn, ReplyModeOff, setSuggestionId,
   } = data;

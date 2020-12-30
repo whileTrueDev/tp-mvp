@@ -11,10 +11,10 @@ const getDateFormat = (_date1) => {
 
 // 
 const query = (conditionQuery) => `
-SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'afreeca' AS platform
+SELECT A.*, ROUND(AVG(REPLACE(viewer,',',''))) as viewer, COUNT(*) AS chatCount, 'afreeca' AS platform
 FROM 
 (
-SELECT 
+SELECT
   creatorId,
   videoId AS streamId,
   videoTitle AS title,
@@ -24,7 +24,7 @@ SELECT
   ROUND(TIMESTAMPDIFF(MINUTE, startDate, endDate) / 60, 1) AS airTime
 FROM AfreecaStreams
 WHERE creatorId IN ${conditionQuery})  
-AND endDate > DATE_SUB(NOW(), INTERVAL 7 DAY) 
+AND endDate > DATE_SUB(NOW(), INTERVAL 21 DAY) 
 AND needCollect = 1
 ) AS A
 LEFT JOIN AfreecaChats  
@@ -37,7 +37,7 @@ const getCreators = () => new Promise((resolve, reject) => {
   const creatorListQuery = `
   SELECT userId, afreecaId
   FROM ${USER_TABLE}
-  JOIN PlatformAfreecaTest USING (afreecaId)
+  JOIN PlatformAfreeca USING (afreecaId)
   `;
   useQuery('tp', creatorListQuery, [])
     .then((row) => {

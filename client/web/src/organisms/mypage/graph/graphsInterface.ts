@@ -10,8 +10,20 @@ export interface metricInterface {
   unit: string;
   broad1Count: number;
   broad2Count: number;
-  diff: number;
+  broad1Title?: string;
+  broad2Title?: string;
+  diff: string;
+  sign: number;
   value: metricGraphInterface[]
+}
+
+export interface ViewerTimeLines {
+  viewer: number;
+  startDate: string;
+}
+
+export interface CompareTimeLines {
+  viewers: ViewerTimeLines[][];
 }
 
 export interface timelineGraphInterface {
@@ -19,6 +31,16 @@ export interface timelineGraphInterface {
   chatCount: number,
   viewer?: number,
   startDate: string,
+}
+
+export type CompareMetric = 'viewer'|'smileCount'|'chatCount';
+
+export interface CompareGraphData {
+  baseValue?: number;
+  baseDate?: string;
+  compareValue?: number;
+  compareDate?: string;
+  metricType: string;
 }
 
 export interface timelineInterface {

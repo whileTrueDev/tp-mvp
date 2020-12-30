@@ -22,6 +22,7 @@ import { SlackModule } from './resources/slack/slack.module';
 import { NoticeModule } from './resources/notice/notice.module';
 import { HealthCheckModule } from './resources/health-check/healthcheck.module';
 import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.module';
+import { CbtModule } from './resources/cbt/cbt.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -46,6 +47,7 @@ import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.m
     CategoryModule,
     HealthCheckModule,
     BroadcastInfoModule,
+    CbtModule,
   ],
 })
 export class AppModule { }

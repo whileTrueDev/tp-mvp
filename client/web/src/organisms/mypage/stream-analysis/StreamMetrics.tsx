@@ -85,12 +85,10 @@ export default function StreamAnalysis(
                           <Grid container direction="row" justify="center" spacing={1}>
                             <Grid item>
                               <Typography className={classes.main}>
-                                기준
+                                {type ? '기준 기간' : `"${element.broad1Title}" ` }
+                                이
                                 {' '}
-                                {type ? '기간' : '방송' }
-                                이 비교
-                                {' '}
-                                {type ? '기간' : '방송' }
+                                {type ? '비교 기간' : `"${element.broad2Title}" ` }
                                 보다
                                 {' '}
                                 {element.title}
@@ -100,12 +98,12 @@ export default function StreamAnalysis(
                             </Grid>
                             <Grid item>
                               <Typography className={classnames(classes.main, classes.bold)}>
-                                {`${Math.abs(element.diff)}%`}
+                                {element.diff}
                               </Typography>
                             </Grid>
                             <Grid item>
                               <Typography className={classes.main}>
-                                {element.diff > 0 ? '더 낮습니다.' : '더 높습니다.'}
+                                {element.sign ? '더 많습니다.' : '더 적습니다.'}
                               </Typography>
                             </Grid>
                           </Grid>
