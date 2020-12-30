@@ -104,7 +104,6 @@ export default function CbtTable(props: Props): JSX.Element {
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
-
     <MaterialTable<any>
       title="공지사항"
       icons={tableIcons}
