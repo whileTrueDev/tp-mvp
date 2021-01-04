@@ -27,6 +27,7 @@ import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
 import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
+import JoniPilot from './pages/joniPilot/index';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
@@ -120,6 +121,7 @@ function Index(): JSX.Element {
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
               <Route path="/mypage" component={Mypage} />
+              <Route path="/joni-pilot" component={JoniPilot} />
             </Switch>
             {/* 페이지 컴포넌트 */}
           </BrowserRouter>
