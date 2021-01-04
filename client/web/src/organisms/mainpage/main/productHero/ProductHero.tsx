@@ -25,12 +25,12 @@ export default function ProductHero(
         <Grid container direction="row" justify="center" alignItems="center">
           <Grid item md={8} sm={12} xs={12} className={classes.wraper}>
             <div className={classes.main}>
-              {source.productHero.title.split('\n').map((row) => (
+              { ((pageIn === 'main') ? source.productHero : source.cbtHero).title.split('\n').map((row) => (
                 <h1 key={shortid.generate()} className={classes.mainTitle}>{row}</h1>
               ))}
             </div>
             <div className={classes.main}>
-              {source.productHero.content.split('\n').map((row) => (
+              {((pageIn === 'main') ? source.productHero : source.cbtHero).content.split('\n').map((row) => (
                 <p key={shortid.generate()} className={classes.mainContent}>{row}</p>
               ))}
             </div>

@@ -153,14 +153,14 @@ export default function Footer(): JSX.Element {
               이메일
               <span className={classes.address}>truepointceo@gmail.com</span>
             </div>
-            <div>
+            {/* <div>
               사업자등록번호
               <span className={classes.address}>659-03-01549</span>
             </div>
             <div>
               통신판매업 신고번호
               <span className={classes.address}>제2019-부산금정-0581호</span>
-            </div>
+            </div> */}
             <div>
               개인정보보호책임자
               <span className={classes.address}>전민관</span>
