@@ -99,7 +99,7 @@ export default function CbtSet(data: dataprops): JSX.Element {
           </div>
 
           <Grid container xs={12}>
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12}>
               <CbtTable
                 tableData={tabledata}
                 handleOpen={handleOpen}

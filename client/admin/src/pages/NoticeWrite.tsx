@@ -16,7 +16,7 @@ url: '/notice', method: 'post'
  */
 export default function NoticeWrite(): JSX.Element {
   const [, reload] = useAxios(
-    { url: '/notice', method: 'post' },
+    { url: '/notice', method: 'GET' },
   );
   function handleReload() {
     reload();
