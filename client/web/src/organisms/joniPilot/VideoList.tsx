@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import useAxios from 'axios-hooks';
 import { Button } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
 import VideoListSortField, { FieldType } from './VideoListSortField';
 import VideoListPeriodSelector from './VideoListPeriodSelector';
@@ -10,7 +11,27 @@ const url = 'http://localhost:4000';
 // json-server 켜기
 // npx json-server --watch ./src/pages/joniPilot/data.js --port 4000
 
+const useStyles = makeStyles((theme: Theme) => createStyles(
+  {
+    button: {
+      [theme.breakpoints.down('md')]: {
+        width: '100%',
+      },
+      [theme.breakpoints.up('lg')]: {
+        width: '220px',
+      },
+    },
+    box: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  },
+));
+
 export default function VideoList(): JSX.Element {
+  const classes = useStyles();
   const [{ data, loading }] = useAxios(`${url}/videos`);
   const [{ data: streamListData }] = useAxios(`${url}/streams`);
   const [sortField, setSortField] = useState<FieldType>('date');
@@ -74,13 +95,18 @@ export default function VideoList(): JSX.Element {
         videoList={videoListData}
         loading={loading}
       />
-      <Button
-        onClick={loadMoreVideos}
-        variant="contained"
-        disabled={isDisabled}
-      >
-        더보기
-      </Button>
+      <div className={classes.box}>
+        <Button
+          className={classes.button}
+          onClick={loadMoreVideos}
+          variant="contained"
+          color="secondary"
+          size="large"
+          disabled={isDisabled}
+        >
+          더보기
+        </Button>
+      </div>
 
     </ChannelAnalysisSectionLayout>
   );

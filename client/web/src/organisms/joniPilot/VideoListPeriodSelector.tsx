@@ -44,7 +44,7 @@ export default function VideoListPeriodSelector(props: {
         <Typography>선택된 방송</Typography>
       </div>
       <Grid item container direction="row">
-        <Grid container className={classes.bodyWrapper} style={{ minWidth: '1000px' }}>
+        <Grid container className={classes.bodyWrapper}>
           <Grid item style={{ width: '310px', marginRight: 32 }}>
             <Typography className={classes.bodyTitle}>
               <SelectDateIcon className={classes.selectIcon} />
@@ -58,6 +58,7 @@ export default function VideoListPeriodSelector(props: {
                 period={period}
                 handleDialogClose={handleClose}
                 handleDialogOpen={handleOpen}
+                base
               />
             </div>
 
