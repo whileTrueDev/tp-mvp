@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => createStyles({
 export interface ChannelAnalysisSectionLayoutProps{
   title: string;
   tooltip?: string;
-  children?: JSX.Element
+  children?: JSX.Element[] | JSX.Element | null
 }
 
 export default function ChannelAnalysisSectionLayout(props: ChannelAnalysisSectionLayoutProps): JSX.Element {

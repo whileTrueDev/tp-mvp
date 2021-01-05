@@ -42,7 +42,7 @@ const textSource = {
 
 const useStyles = makeStyles(() => createStyles({
   mypageHeroWrapper: {
-    backgroundColor: '#3f4991',
+    backgroundColor: 'rgba(63, 73, 145,50%)',
     padding: '20px 10%',
   },
   contentWrapper: {
