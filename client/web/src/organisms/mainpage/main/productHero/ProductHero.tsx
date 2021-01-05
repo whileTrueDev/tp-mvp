@@ -23,14 +23,14 @@ export default function ProductHero(
     <div className={classes.root}>
       <Container>
         <Grid container direction="row" justify="center" alignItems="center">
-          <Grid item md={8} sm={12} xs={12} className={classes.wraper}>
+          <Grid item md={9} sm={12} xs={12} className={classes.wraper}>
             <div className={classes.main}>
-              {source.productHero.title.split('\n').map((row) => (
+              { ((pageIn === 'main') ? source.productHero : source.cbtHero).title.split('\n').map((row) => (
                 <h1 key={shortid.generate()} className={classes.mainTitle}>{row}</h1>
               ))}
             </div>
             <div className={classes.main}>
-              {source.productHero.content.split('\n').map((row) => (
+              {((pageIn === 'main') ? source.productHero : source.cbtHero).content.split('\n').map((row) => (
                 <p key={shortid.generate()} className={classes.mainContent}>{row}</p>
               ))}
             </div>
@@ -45,7 +45,7 @@ export default function ProductHero(
               <div className={classes.buttonLine} />
             </div>
           </Grid>
-          <Grid item md={4} className={classes.imgWraper}>
+          <Grid item md={3} className={classes.imgWraper}>
             <img src="/images/main/heromain.svg" alt="HeroMain" className={classes.mainSVGEffect} />
             <img src="/images/main/herosub.svg" alt="HeroSub" className={classes.subSVGEffect} />
           </Grid>
