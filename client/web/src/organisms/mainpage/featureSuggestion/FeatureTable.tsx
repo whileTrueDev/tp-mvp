@@ -69,128 +69,127 @@ export default function FeatureTable({
   };
 
   return (
-    <>
-      <Table<Omit<FeatureSuggestion, 'content' | 'replies'>>
-        columns={[
-          {
-            width: '50px',
-            align: 'center',
-            title: ' ',
-          },
-          {
-            width: '150px',
-            align: 'center',
-            title: '카테고리',
-          },
-          {
-            width: '150px',
-            align: 'center',
-            title: '작성자',
-          },
-          {
-            width: '300px',
-            align: 'center',
-            title: '제목',
-          },
-          {
-            width: '200px',
-            align: 'center',
-            title: '작성일',
-          },
-          {
-            width: '150px',
-            align: 'center',
-            title: '진행상태',
-          },
-        ]}
-        data={metrics || []}
-        components={{
-          Pagination: (props) => (
-            <TablePagination
-              {...props}
-              page={page}
-            />
-          ),
-          Body: () => (
-            <TableBody>
-              {(pageSize > 0
-                ? metrics.slice(page * pageSize, page * pageSize + pageSize)
-                : metrics
-              ).map((eachRow: any) => (
-                <TableRow
-                  className={classes.tableRow}
-                  key={shortid.generate()}
-                  onClick={() => {
-                    if (eachRow.isLock) {
-                      if (eachRow.author.userId === auth.user.userId) handleClick(eachRow.suggestionId);
-                      else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
-                    } else handleClick(eachRow.suggestionId);
-                  }}
-                >
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.suggestionId}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.category}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {auth.user.userId === eachRow.author.userId
-                      ? eachRow.author.userId
-                      : transformIdToAsterisk(eachRow.author.userId, 1.8)}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="left">
+    <Table<Omit<FeatureSuggestion, 'content' | 'replies'>>
+      columns={[
+        {
+          width: '50px',
+          align: 'center',
+          title: ' ',
+        },
+        {
+          width: '150px',
+          align: 'center',
+          title: '카테고리',
+        },
+        {
+          width: '150px',
+          align: 'center',
+          title: '작성자',
+        },
+        {
+          width: '300px',
+          align: 'center',
+          title: '제목',
+        },
+        {
+          width: '200px',
+          align: 'center',
+          title: '작성일',
+        },
+        {
+          width: '150px',
+          align: 'center',
+          title: '진행상태',
+        },
+      ]}
+      data={metrics || []}
+      components={{
+        Pagination: (props) => (
+          <TablePagination
+            {...props}
+            page={page}
+          />
+        ),
+        Body: () => (
+          <TableBody>
+            {(pageSize > 0
+              // eslint-disable-next-line react/prop-types
+              ? metrics.slice(page * pageSize, page * pageSize + pageSize)
+              : metrics
+            ).map((eachRow: any) => (
+              <TableRow
+                className={classes.tableRow}
+                key={shortid.generate()}
+                onClick={() => {
+                  if (eachRow.isLock) {
+                    if (eachRow.author.userId === auth.user.userId) handleClick(eachRow.suggestionId);
+                    else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+                  } else handleClick(eachRow.suggestionId);
+                }}
+              >
+                <TableCell className={classes.tableCell} scope="row" align="center">
+                  {eachRow.suggestionId}
+                </TableCell>
+                <TableCell className={classes.tableCell} scope="row" align="center">
+                  {eachRow.category}
+                </TableCell>
+                <TableCell className={classes.tableCell} scope="row" align="center">
+                  {auth.user.userId === eachRow.author.userId
+                    ? eachRow.author.userId
+                    : transformIdToAsterisk(eachRow.author.userId, 1.8)}
+                </TableCell>
+                <TableCell className={classes.tableCell} scope="row" align="left">
 
-                    {eachRow.title}
-                    {eachRow.replies.length > 0 && (
-                      <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
-                        {`(${eachRow.replies.length})`}
-                      </Typography>
-                    )}
-                    {eachRow.isLock && (
+                  {eachRow.title}
+                  {eachRow.replies.length > 0 && (
+                  <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
+                    {`(${eachRow.replies.length})`}
+                  </Typography>
+                  )}
+                  {eachRow.isLock && (
                     <LockIcon
                       color="primary"
                       fontSize="small"
                       className={classes.lockIcon}
                     />
-                    )}
+                  )}
 
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {
+                </TableCell>
+                <TableCell className={classes.tableCell} scope="row" align="center">
+                  {
                       dateExpression({
                         compoName: 'table-view',
                         createdAt: eachRow.createdAt,
                       })
                     }
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {progressColumn(eachRow.state)}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          ),
-        }}
-        isLoading={isLoading}
-        onChangePage={handlePage}
-        onChangeRowsPerPage={handlePageSize}
-        options={{
-          toolbar: false,
-          sorting: false,
-          search: false,
-          pageSize,
-          pageSizeOptions: [8, 12],
-          headerStyle: { backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText },
-          draggable: false,
-          paginationType: 'stepped',
-        }}
-        style={{ boxShadow: 'none' }}
-      />
-    </>
+                </TableCell>
+                <TableCell className={classes.tableCell} scope="row" align="center">
+                  {progressColumn(eachRow.state)}
+                </TableCell>
+              </TableRow>
+            ))}
+            {emptyRows > 0 && (
+            <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
+              <TableCell colSpan={6} />
+            </TableRow>
+            )}
+          </TableBody>
+        ),
+      }}
+      isLoading={isLoading}
+      onChangePage={handlePage}
+      onChangeRowsPerPage={handlePageSize}
+      options={{
+        toolbar: false,
+        sorting: false,
+        search: false,
+        pageSize,
+        pageSizeOptions: [8, 12],
+        headerStyle: { backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText },
+        draggable: false,
+        paginationType: 'stepped',
+      }}
+      style={{ boxShadow: 'none' }}
+    />
   );
 }
