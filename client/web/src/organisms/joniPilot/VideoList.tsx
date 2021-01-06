@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles(
       [theme.breakpoints.up('lg')]: {
         width: '220px',
       },
+      backgroundColor: theme.palette.secondary.dark,
     },
     box: {
       width: '100%',
@@ -33,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles(
 export default function VideoList(): JSX.Element {
   const classes = useStyles();
   const [{ data, loading }] = useAxios(`${url}/videos`);
-  const [{ data: streamListData }] = useAxios(`${url}/streams`);
   const [sortField, setSortField] = useState<FieldType>('date');
   const [period, setPeriod] = useState<Date[]>(new Array<Date>(2));
   const [videoCount, setVideoCount] = useState<number>(5);
@@ -87,7 +87,6 @@ export default function VideoList(): JSX.Element {
         handleChange={handleChange}
       />
       <VideoListPeriodSelector
-        streams={streamListData || []}
         period={period}
         setPeriod={setPeriod}
       />
@@ -100,7 +99,6 @@ export default function VideoList(): JSX.Element {
           className={classes.button}
           onClick={loadMoreVideos}
           variant="contained"
-          color="secondary"
           size="large"
           disabled={isDisabled}
         >
