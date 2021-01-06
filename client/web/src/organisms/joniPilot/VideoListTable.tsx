@@ -1,9 +1,11 @@
 import React from 'react';
 import { Box } from '@material-ui/core';
 import MaterialTable from '../../atoms/Table/MaterialTable';
-import {
-  ThumbnailComponent, ActionButtonComponent, InfoComponent, LikesComponent, ViewsComponent,
-} from './VideoListTableRowComponent';
+import ActionButton from './VideoListTableRowComponents/ActionButton';
+import Thumbnail from './VideoListTableRowComponents/Thumbnail';
+import Info from './VideoListTableRowComponents/Info';
+import Likes from './VideoListTableRowComponents/Likes';
+import Views from './VideoListTableRowComponents/Views';
 
 export interface VideoListItemType {
   [key: string]: any
@@ -15,31 +17,31 @@ const VideoListColumns: {[key: string]: any}[] = [
     textAlign: 'center',
     title: '썸네일',
     sorting: false,
-    render: ThumbnailComponent,
+    render: Thumbnail,
   },
   {
     field: 'info',
     title: '동영상 정보',
-    render: InfoComponent,
+    render: Info,
   },
   {
     field: 'likes',
     textAlign: 'center',
     title: '좋아요수',
-    render: LikesComponent,
+    render: Likes,
   },
   {
     field: 'views',
     textAlign: 'center',
     title: '조회수',
-    render: ViewsComponent,
+    render: Views,
   },
   {
     field: 'link',
     textAlign: 'center',
     title: '',
     sorting: false,
-    render: ActionButtonComponent,
+    render: ActionButton,
   },
 ];
 
