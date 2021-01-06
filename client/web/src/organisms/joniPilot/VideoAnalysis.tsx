@@ -1,24 +1,49 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { StaticContext } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import VideoAnalysisReport from './VideoAnalysisReport';
 import VideoAnalysisReaction from './VideoAnalysisReaction';
 import VideoAnalysisComments from './VideoAnalysisComments';
 
-interface ParamTypes{
-  id: string
+export interface fakeVideoItemType{
+  streamId: string,
+  title: string,
+  platform: 'afreeca' | 'youtube' | 'twitch',
+  startDate: Date,
+  endDate: Date,
+  creatorId: string,
+  smileCount: number,
+  viewer: number,
+  chatCount: number,
+  needAnalysis: boolean,
+  thumbnail: string,
+  views: number,
+  likes: number,
+  hates: number,
+  rating: number,
+  tags: string[],
+  comments: string[],
 }
-
-export default function VideoAnalysis(): JSX.Element {
+interface ParamTypes{
+  id: string,
+}
+interface StateType{
+  data: fakeVideoItemType
+}
+export default function VideoAnalysis(
+  { match, location }: RouteComponentProps<ParamTypes, StaticContext, StateType>,
+): JSX.Element {
   useScrollTop();
-  const { id } = useParams<ParamTypes>();
+  const { id } = match.params;
+  const { data } = location.state;
   return (
     <div>
       <div>
         video id :
         {id}
       </div>
-      <VideoAnalysisReport />
+      <VideoAnalysisReport data={data} />
       <VideoAnalysisReaction />
       <VideoAnalysisComments />
     </div>
