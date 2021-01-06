@@ -20,7 +20,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles(
       [theme.breakpoints.up('lg')]: {
         width: '220px',
       },
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.secondary.main,
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.dark,
+      },
+      color: theme.palette.primary.contrastText,
     },
     box: {
       width: '100%',
