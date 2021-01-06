@@ -23,7 +23,7 @@ export interface fakeVideoItemType{
   hates: number,
   rating: number,
   tags: string[],
-  comments: string[],
+  comments: number,
 }
 interface ParamTypes{
   id: string,
