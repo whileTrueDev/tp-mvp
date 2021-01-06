@@ -14,7 +14,7 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @Column({ type: 'varchar', length: 50 })
   category: string;
 
-  @Column()
+  @Column({ length: 50 })
   title: string;
 
   @Column({ type: 'longtext' })
