@@ -182,6 +182,7 @@ export default function FeatureWriteForm(): JSX.Element {
         <TextField
           className={classes.titleInput}
           id="feature-title"
+          inputProps={{ maxLength: 50 }}
           value={featureSource.title}
           rowsMax={1}
           variant="outlined"

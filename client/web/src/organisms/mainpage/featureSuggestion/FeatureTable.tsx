@@ -114,6 +114,7 @@ export default function FeatureTable({
           Body: () => (
             <TableBody>
               {(pageSize > 0
+                // eslint-disable-next-line react/prop-types
                 ? metrics.slice(page * pageSize, page * pageSize + pageSize)
                 : metrics
               ).map((eachRow: any) => (
