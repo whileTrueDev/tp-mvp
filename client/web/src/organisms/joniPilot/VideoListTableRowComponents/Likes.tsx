@@ -23,25 +23,24 @@ const useLikesInnerStyle = makeStyles((theme: Theme) => createStyles({
   inner: {
     display: 'flex',
     background: 'rgba(112, 112, 112,0.3)',
-    padding: '0.2em 1em',
+    padding: `${theme.spacing(0.5)}px ${theme.spacing(4)}px`,
     borderRadius: '14px',
     '& >*': {
-      marginRight: '0.5em',
+      marginRight: `${theme.spacing(1)}px`,
     },
   },
 }));
 function LikesInner(prop: VideoListItemType) {
   const classes = useLikesInnerStyle();
-  const { data } = prop; return (
+  const { data } = prop;
+  return (
     <div className={classes.container}>
       <div className={classes.inner}>
         <ThumbUpIcon />
         <Typography>좋아요</Typography>
         <Typography>{data.likes}</Typography>
       </div>
-
     </div>
-
   );
 }
 export default function LikesComponent(data: VideoListItemType): JSX.Element {

@@ -1,19 +1,18 @@
 import React from 'react';
 import { Select, MenuItem } from '@material-ui/core';
-import { makeStyles, createStyles } from '@material-ui/styles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 export interface VideoListSortFieldPropsType{
   field? : string;
   handleChange? : (event: React.ChangeEvent<{ value: any;}>) => void
 }
 
-const useStyles = makeStyles(() => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
     textAlign: 'right',
   },
   select: {
-    border: '1px solid #d7dae2',
-    padding: '0.5em 1em',
+    padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
     borderRadius: '4px',
     fontSize: '21px',
   },
@@ -34,6 +33,7 @@ export default function VideoListSortFieldSelect(props: VideoListSortFieldPropsT
     <div className={classes.container}>
       <Select
         className={classes.select}
+        variant="outlined"
         labelId="video-sort-field-select-label"
         id="video-sort-field-select"
         value={field}
