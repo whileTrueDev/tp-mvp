@@ -5,6 +5,7 @@ import {
 import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
+import CountUp from 'react-countup';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
 import { fakeVideoItemType } from './VideoAnalysis';
 
@@ -39,12 +40,17 @@ function InfoItemLabel(prop: {text: string}): JSX.Element {
   );
 }
 // 분석보고서 조회수, 좋아요, 댓글수 숫자 부분 나타내는 컴포넌트
-function InfoItemNumberDisplay(prop: {data: string, caption: string, style?: StyleProps, }) {
-  const { data, caption, style } = prop;
+function InfoItemNumberDisplay(prop: {data: number, caption: string, style?: StyleProps, suffix?: string }) {
+  const {
+    data, caption, style, suffix,
+  } = prop;
   const classes = useInfoItemComponentStyles(style);
+
   return (
     <Grid container direction="row" alignItems="baseline">
-      <Typography component="h3" className={classes.dataText}>{data}</Typography>
+      <Typography component="h3" className={classes.dataText}>
+        <CountUp duration={2} redraw end={data} separator="," suffix={suffix} />
+      </Typography>
       <Typography variant="caption" className={classes.captionText}>{caption}</Typography>
     </Grid>
   );
@@ -61,16 +67,6 @@ function InfoItemTags(prop: {tags: string[]}) {
       ))}
     </Container>
   );
-}
-
-// 10000 -> 10,000 로 숫자 , 적용
-function formatNumByComma(number: number): string {
-  return number.toLocaleString();
-}
-
-// (좋아요/싫어요) 퍼센트 리턴
-function formatRatioLikesHates(likes: number, hates: number): string {
-  return ((likes / hates) * 100).toFixed(0);
 }
 
 const useReportSectionStyle = makeStyles((theme: Theme) => createStyles({
@@ -118,20 +114,21 @@ export default function VideoAnalysisReport(props: VideoAnalysisReportProps): JS
   const infoItems = useMemo(() => ([
     {
       label: '조회수',
-      data: `${formatNumByComma(data.views)}`,
+      data: data.views,
       caption: '수',
     },
     {
       label: '좋아요',
-      data: `${formatRatioLikesHates(data.likes, data.hates)} %`,
+      data: Math.floor((data.likes / data.hates) * 100),
       caption: `${`(${data.likes}/${data.hates})`}`,
+      suffix: '%',
       style: {
         dataTextColor: '#6f78bc',
       },
     },
     {
       label: '댓글수',
-      data: `${formatNumByComma(data.comments)}`,
+      data: data.comments,
       caption: '개',
     },
   ]), [data]);
@@ -148,18 +145,24 @@ export default function VideoAnalysisReport(props: VideoAnalysisReportProps): JS
         </Grid>
 
         <Grid item xs={12} sm={8} className={classes.reportContainer}>
+
           <Box>
             <Typography variant="h5">{data.title}</Typography>
             <Typography variant="subtitle1">{new Date(data.endDate).toISOString().split('T')[0]}</Typography>
           </Box>
-
           <Grid container alignContent="space-between">
             {infoItems.map((item) => (
               <Grid item xs={12} sm={4} className={classes.itemContainer}>
                 <InfoItemLabel text={item.label} />
-                <InfoItemNumberDisplay data={item.data} caption={item.caption} style={item.style} />
+                <InfoItemNumberDisplay
+                  data={item.data}
+                  caption={item.caption}
+                  style={item.style}
+                  suffix={item.suffix}
+                />
               </Grid>
             ))}
+
             <Grid item xs={12} className={classes.itemContainer}>
               <InfoItemLabel text="설정태그" />
               <InfoItemTags tags={data.tags} />
