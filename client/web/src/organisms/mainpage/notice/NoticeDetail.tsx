@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  secretText: {
+    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: 300,
+  },
+  listButton: { width: '100px' },
 }));
 
 export interface NoticeDetailProps {
@@ -58,6 +62,26 @@ export default function NoticeDetail({
       window.scrollTo(0, paperRef.current.scrollHeight + 70);
     }
   });
+
+  if (!currentNotice) {
+    return (
+      <Paper
+        component="article"
+        className={classes.secretText}
+      >
+        <Typography>죄송합니다. 삭제된 글이거나 글을 읽어오지 못했습니다.</Typography>
+        <Button
+          className={classes.listButton}
+          style={{ margin: 8 }}
+          size="large"
+          variant="outlined"
+          onClick={onBackClick}
+        >
+          목록
+        </Button>
+      </Paper>
+    );
+  }
 
   return (
     <div>
