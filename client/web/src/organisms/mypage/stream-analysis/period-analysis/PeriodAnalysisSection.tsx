@@ -200,8 +200,11 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         <Grid container direction="column">
 
           <SectionTitle mainTitle="기간 추세 분석" />
-          <Typography color="textSecondary" variant="body2">
+          <Typography variant="body2">
             특정 기간을 선택하면 해당 기간 내의 방송에 대한 분석을 시작합니다.
+          </Typography>
+          <Typography variant="body2">
+            비교할 기간의 시작 날짜와 끝 날짜를 선택해주세요!
           </Typography>
           <Typography color="textSecondary" variant="body2">
             * 데이터 제공 기간을 벗어난 데이터는 확인하실 수 없습니다.
