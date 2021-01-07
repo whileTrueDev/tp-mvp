@@ -2,31 +2,26 @@ import React, { useMemo } from 'react';
 import {
   Grid, Typography, Box, Chip, Container,
 } from '@material-ui/core';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import {
+  makeStyles, createStyles, Theme,
+} from '@material-ui/core/styles';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
 import { fakeVideoItemType } from './VideoAnalysis';
 
 interface StyleProps{
   [key: string]: string;
 }
-interface InfoItemProps{
-  label: string;
-  data: string;
-  caption: string;
-  style?: StyleProps,
-  children?: JSX.Element[] | JSX.Element | null
-}
-
+// 좋아요 부분 숫자만 색이 달라서 prop.dataTextColor로 받아옴
 const useInfoItemComponentStyles = makeStyles((theme: Theme) => createStyles({
   dataText: (props: StyleProps) => ({
-    fontFamily: 'SourceSansPro-Bold',
     color: props.dataTextColor,
+    fontFamily: 'SourceSansPro-Bold',
+    fontWeight: theme.typography.fontWeightBold,
     [theme.breakpoints.down('md')]: {
       fontSize: '1.2rem',
     },
     [theme.breakpoints.up('md')]: {
       fontSize: '2rem',
-      fontWeight: 'bold',
     },
     marginRight: theme.spacing(1),
   }),
@@ -35,20 +30,36 @@ const useInfoItemComponentStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-// 분석보고서 조회수, 좋아요, 댓글수 정보 표시하기 위한 컴포넌트
-function InfoItemComponent(prop: InfoItemProps): JSX.Element {
-  const {
-    label, data, caption, style,
-  } = prop;
+// 분석보고서 조회수, 좋아요, 댓글수, 설정태그 레이블 컴포넌트
+function InfoItemLabel(prop: {text: string}): JSX.Element {
+  const classes = useReportSectionStyle();
+  const { text } = prop;
+  return (
+    <Typography component="h5" gutterBottom className={classes.infoLabel}>{text}</Typography>
+  );
+}
+// 분석보고서 조회수, 좋아요, 댓글수 숫자 부분 나타내는 컴포넌트
+function InfoItemNumberDisplay(prop: {data: string, caption: string, style?: StyleProps, }) {
+  const { data, caption, style } = prop;
   const classes = useInfoItemComponentStyles(style);
   return (
-    <>
-      <Typography component="h5">{label}</Typography>
-      <Grid container direction="row" alignItems="baseline">
-        <Typography component="h3" className={classes.dataText}>{data}</Typography>
-        <Typography variant="caption" className={classes.captionText}>{caption}</Typography>
-      </Grid>
-    </>
+    <Grid container direction="row" alignItems="baseline">
+      <Typography component="h3" className={classes.dataText}>{data}</Typography>
+      <Typography variant="caption" className={classes.captionText}>{caption}</Typography>
+    </Grid>
+  );
+}
+
+// 분석보고서 태그 컴포넌트
+function InfoItemTags(prop: {tags: string[]}) {
+  const classes = useReportSectionStyle();
+  const { tags } = prop;
+  return (
+    <Container>
+      {tags.map((tag) => (
+        <Chip className={classes.chip} label={tag} />
+      ))}
+    </Container>
   );
 }
 
@@ -76,20 +87,22 @@ const useReportSectionStyle = makeStyles((theme: Theme) => createStyles({
     },
   },
   itemContainer: {
-    color: '#4d4d4d',
-    '& h5': {
-      color: 'rgba(77, 77, 77,0.5)',
-    },
+    color: theme.palette.grey[800],
     marginBottom: theme.spacing(1),
   },
+  infoLabel: {
+    color: theme.palette.text.secondary,
+  },
   chip: {
-    backgroundColor: '#6f78bc',
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.grey[50],
     marginRight: theme.spacing(4.5),
     padding: '1em 0.5em',
-    transition: 'transform 0.5s ease',
+    transitionProperty: 'transform',
+    transitionDuration: `${theme.transitions.duration.short}ms`,
+    transitionTimingFunction: theme.transitions.easing.easeIn,
     '&:hover': {
-      transform: 'scale(1.2)',
+      transform: 'scale(1.1)',
     },
   },
 }));
@@ -140,24 +153,16 @@ export default function VideoAnalysisReport(props: VideoAnalysisReportProps): JS
             <Typography variant="subtitle1">{new Date(data.endDate).toISOString().split('T')[0]}</Typography>
           </Box>
 
-          <Grid container>
+          <Grid container alignContent="space-between">
             {infoItems.map((item) => (
-              <Grid item xs={4} className={classes.itemContainer}>
-                <InfoItemComponent
-                  label={item.label}
-                  data={item.data}
-                  caption={item.caption}
-                  style={item.style}
-                />
+              <Grid item xs={12} sm={4} className={classes.itemContainer}>
+                <InfoItemLabel text={item.label} />
+                <InfoItemNumberDisplay data={item.data} caption={item.caption} style={item.style} />
               </Grid>
             ))}
             <Grid item xs={12} className={classes.itemContainer}>
-              <Typography component="h5" gutterBottom>설정태그</Typography>
-              <Container>
-                {data.tags.map((tag) => (
-                  <Chip className={classes.chip} label={tag} />
-                ))}
-              </Container>
+              <InfoItemLabel text="설정태그" />
+              <InfoItemTags tags={data.tags} />
             </Grid>
           </Grid>
 
