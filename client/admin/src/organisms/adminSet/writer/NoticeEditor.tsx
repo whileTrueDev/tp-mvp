@@ -113,7 +113,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
           minWidth: 120,
         }}
         >
-          <InputLabel htmlFor="demo-controlled-open-select">구분</InputLabel>
+          <InputLabel htmlFor="demo-controlled-open-select">카테고리</InputLabel>
           <Select
             variant="outlined"
             value={state.category}
@@ -131,16 +131,6 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
             <MenuItem value="결제/계산서/정산">결제/계산서/정산</MenuItem>
           </Select>
         </FormControl>
-
-        <TextField
-          id="title-textfield"
-          label="작성자명 입력"
-          variant="outlined"
-          style={{ width: '65%', padding: 5 }}
-          value={authorfix}
-          onChange={handleAuthorname}
-          margin="normal"
-        />
 
         <TextField
           multiline
@@ -190,6 +180,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
           <Button
             variant="contained"
             color="primary"
+            disabled={!state.content || !state.title || !state.category}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
                 executePost({
