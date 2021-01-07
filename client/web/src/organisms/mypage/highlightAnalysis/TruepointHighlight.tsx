@@ -184,7 +184,9 @@ export default function TruepointHighlight({
                 </div>
                 <Button
                   className={classes.button}
-                  onClick={() => window.open('https://s3.us-west-2.amazonaws.com/secure.notion-static.com/95dfa0a1-0544-44f5-85dc-dd6347e31c70/_.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAT73L2G45O3KS52Y5%2F20201220%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20201220T093134Z&X-Amz-Expires=86400&X-Amz-Signature=d4747573ebaa3dbb0bef509e7457c6853aa3b3d36f05759fd93cc5f7a67f17b7&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22_.pdf%22', '_blank')}
+                  onClick={() => window.open('https://drive.google.com/file/d/16OfhD-tPMURm2DOXGqEJdywg5JOLfJKs/view?usp=sharing', '_blank')}
+                  // s3 링크는 아래.
+                  // https://truepoint.s3.ap-northeast-2.amazonaws.com/tp-introduction/201014+%E1%84%90%E1%85%B3%E1%84%85%E1%85%AE%E1%84%91%E1%85%A9%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%90%E1%85%B3+%E1%84%89%E1%85%A5%E1%84%87%E1%85%B5%E1%84%89%E1%85%B3+%E1%84%8C%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A2%E1%86%BC+%E1%84%80%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B2%E1%84%8B%E1%85%AD%E1%86%BC++(1).pdf
                 >
                   편집점 알아보기
                 </Button>
