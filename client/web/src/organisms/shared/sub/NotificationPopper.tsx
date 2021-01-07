@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -19,7 +20,7 @@ export interface Notification {
   index: number;
   title: string;
   content: string;
-  dateform: string;
+  createdAt: string;
   readState: boolean;
 }
 
@@ -153,7 +154,7 @@ function NotificationPopper({
                     </span>
                   </Typography>
                   <Typography variant="caption" gutterBottom noWrap>
-                    <span>{`${noti.dateform} / TruePoint`}</span>
+                    <span>{`${moment(noti.createdAt).format('YYYY-MM-DD HH:mm')} / TruePoint`}</span>
                   </Typography>
                 </div>
               </MenuItem>
