@@ -78,6 +78,7 @@ const useReportSectionStyle = makeStyles((theme: Theme) => createStyles({
     },
   },
   reportContainer: {
+    padding: theme.spacing(2),
     '&>*': {
       marginBottom: theme.spacing(1.5),
     },

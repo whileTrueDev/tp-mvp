@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Paper } from '@material-ui/core';
-import { createStyles, makeStyles } from '@material-ui/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ChannelAnalysisSectionTitle from './ChannelAnalysisSectionTitle';
 
-const useStyles = makeStyles(() => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    marginBottom: '6px',
+    marginBottom: theme.spacing(1),
     padding: '4% 5%',
   },
 }));
@@ -16,7 +16,7 @@ export interface ChannelAnalysisSectionLayoutProps{
   children?: JSX.Element[] | JSX.Element | null
 }
 
-export default function ChannelAnalysisSectionLayout(props: ChannelAnalysisSectionLayoutProps): JSX.Element {
+export default memo((props: ChannelAnalysisSectionLayoutProps): JSX.Element => {
   const { title, tooltip, children } = props;
   const classes = useStyles();
   return (
@@ -28,4 +28,4 @@ export default function ChannelAnalysisSectionLayout(props: ChannelAnalysisSecti
       {children}
     </Paper>
   );
-}
+});

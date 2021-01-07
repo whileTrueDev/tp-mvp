@@ -38,7 +38,7 @@ export default function VideoListPeriodSelector(props: {
       <Box mb={4}>
         <Typography variant="h6">동영상 분석을 위한 기간 설정</Typography>
       </Box>
-      <Grid xs={3} className={classes.bodyWrapper}>
+      <Grid style={{ display: 'inline-block' }} className={classes.bodyWrapper}>
         <Typography className={classes.bodyTitle}>
           <SelectDateIcon className={classes.selectIcon} />
           날짜 선택
