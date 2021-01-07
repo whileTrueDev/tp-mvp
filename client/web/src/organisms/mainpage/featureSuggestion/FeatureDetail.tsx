@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, Paper, Typography, Chip, CircularProgress,
+  Button, Paper, Typography, CircularProgress,
 } from '@material-ui/core';
 import {
   Create, Delete, KeyboardArrowLeft, KeyboardArrowRight,
@@ -22,6 +22,7 @@ import FeatureReply from './sub/FeatureReply';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import CustomDialog from '../../../atoms/Dialog/Dialog';
 import useDialog from '../../../utils/hooks/useDialog';
+import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -131,15 +132,6 @@ export default function FeatureDetail({
       });
   };
 
-  // 기능제안 상태 Chip 렌더링을 위해
-  const progressTab = (value: number) => {
-    switch (value) {
-      case 1: return (<Chip style={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.23)' }} color="secondary" label="개발 확정" />);
-      case 2: return (<Chip style={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.23)' }} color="primary" label="개발보류" />);
-      default: return (<Chip style={{ color: 'black', borderColor: 'rgba(0, 0, 0, 0.23)' }} variant="outlined" label="미확인" />);
-    }
-  };
-
   if (!currentFeatureData) {
     return (
       <Paper
@@ -169,7 +161,7 @@ export default function FeatureDetail({
             <Typography component="div" variant="h6" className={classes.titleText}>
               {currentFeatureData.title}
               {' '}
-              {progressTab(currentFeatureData.state)}
+              {FeatureProgressChip(currentFeatureData.state)}
               {currentFeatureData.isLock && (
               <LockIcon
                 color="primary"

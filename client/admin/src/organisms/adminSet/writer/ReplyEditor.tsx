@@ -52,10 +52,6 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
   const [, executePatch] = useAxios(
     { url: '/feature-suggestion/reply', method: 'PATCH' }, { manual: true },
   );
-  const [authorfix, setAuthor] = React.useState('TruePoint');
-  function handleAuthorname() {
-    setAuthor('TruePoint');
-  }
   return (
     <Paper>
       <div style={{ display: 'flex', justifyContent: 'space-between', padding: 14 }}>
@@ -75,15 +71,6 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
       <Divider />
 
       <div style={{ padding: 14 }}>
-        <TextField
-          id="title-textfield"
-          label="작성자명을 작성하세요."
-          variant="outlined"
-          style={{ width: '65%', padding: 5 }}
-          value={authorfix}
-          onChange={handleAuthorname}
-          margin="normal"
-        />
 
         <TextField
           multiline
@@ -112,7 +99,7 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
                       data: {
                         id: state.replyId,
                         content: state.content,
-                        author: authorfix,
+                        author: 'TruePoint',
                       },
                     })
                       .then((res) => {
@@ -135,12 +122,12 @@ export default function SuggestReplyEditor(props: ReplyEditData): JSX.Element {
               variant="contained"
               color="primary"
               onClick={() => {
-                if (window.confirm(`공지글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
+                if (window.confirm('기능제안 답변을 정말로 남기시겠습니까?')) {
                   executePost({
                     data: {
                       suggestionId: suggestid,
                       content: state.content,
-                      author: authorfix,
+                      author: 'TruePoint',
                     },
                   })
                     .then((res) => {

@@ -25,7 +25,7 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   author: UserEntity;
 
   @Column({
-    type: 'tinyint', default: 0, comment: '기능제안 상태 플래그 0=미확인, 1=승인, 2=보류',
+    type: 'tinyint', default: 0, comment: '기능제안 상태 플래그 0=미확인, 1=검토중 2=개발확정, 3=개발보류',
   })
   state: number;
 

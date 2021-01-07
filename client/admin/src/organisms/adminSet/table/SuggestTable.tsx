@@ -115,12 +115,14 @@ export default function SuggestTable(props: SuggestTableProps): JSX.Element {
 
   function handleState(Case: number) {
     switch (Case) {
+      case 0:
+        return '미확인';
       case 1:
         return '검토중';
       case 2:
-        return '기능구현중';
+        return '개발확정';
       case 3:
-        return '구현완료';
+        return '개발보류';
       default:
         return '';
     }
@@ -165,14 +167,6 @@ export default function SuggestTable(props: SuggestTableProps): JSX.Element {
             <Typography className="상태">{handleState(rowData.state)}</Typography>
           ),
         },
-        {
-          title: '좋아요',
-          field: 'like',
-          render: (rowData) => (
-            <Typography className="상태">{rowData.like}</Typography>
-          ),
-        },
-
       ]}
       data={tableData}
       onRowClick={(e, rowData: any) => {

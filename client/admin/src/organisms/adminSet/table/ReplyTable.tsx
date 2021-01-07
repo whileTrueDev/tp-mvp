@@ -38,6 +38,7 @@ interface ReplyTableProps {
   replyData: any;
   handleReplyData: (Data: any) => void;
   handleReplyEditModeOff: () => void;
+  selectedSuggestionId: string;
 }
 
 /*
@@ -95,7 +96,9 @@ const localization = {
     *****************************************************************************************************
     */
 export default function ReplyTable(props: ReplyTableProps): JSX.Element {
-  const { replyData, handleReplyData, handleReplyEditModeOff } = props;
+  const {
+    replyData, handleReplyData, handleReplyEditModeOff, selectedSuggestionId,
+  } = props;
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
@@ -107,7 +110,7 @@ export default function ReplyTable(props: ReplyTableProps): JSX.Element {
           field: 'suggestionId',
           render: (rowData) => (
             <Typography className="suggestionId">
-              { rowData.suggestionId }
+              { selectedSuggestionId }
             </Typography>
           ),
         },

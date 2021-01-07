@@ -80,6 +80,7 @@ export default function ReplySet(data: dataprops): JSX.Element {
           <Grid container spacing={2}>
             <Grid item xs={12} lg={6}>
               <ReplyTable
+                selectedSuggestionId={suggestionId}
                 replyData={replyData}
                 handleReplyData={handleSelectedData}
                 handleReplyEditModeOff={handleReplyEditModeOff}

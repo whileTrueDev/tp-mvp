@@ -62,10 +62,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
   const [, executePost] = useAxios(
     { url: '/notice', method: 'POST' }, { manual: true },
   );
-  const [authorfix, setAuthor] = React.useState('TruePoint 관리자');
-  function handleAuthorname() {
-    setAuthor('TruePoint 관리자');
-  }
+
   return (
 
     <Paper>
@@ -158,7 +155,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
                     id: state.id,
                     title: state.title,
                     content: state.content,
-                    author: authorfix,
+                    author: 'TruePoint 관리자',
                     isImportant: state.isImportant,
                     category: state.category,
                   },
@@ -188,7 +185,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
                     id: state.id,
                     title: state.title,
                     content: state.content,
-                    author: authorfix,
+                    author: 'TruePoint 관리자',
                     isImportant: state.isImportant,
                     category: state.category,
                   },

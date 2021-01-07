@@ -2,10 +2,11 @@ import React from 'react';
 import {
   Typography, Paper, Divider, Button, Grid, Table,
 } from '@material-ui/core';
-import Markdown from 'react-markdown';
+
+import { Viewer } from '@toast-ui/react-editor';
 import StatusChangeButton from '../../suggest/StatusChangeButton';
 import CostomTableRow from './CostomTableRow';
-
+import './SuggestPreview.css';
 /* 
 Props
 ****************************************************************************************
@@ -119,11 +120,7 @@ export default function SuggestPreview(props: Props): JSX.Element {
       <Divider />
 
       <div style={{ padding: 28, maxHeight: 750, overflow: 'scroll' }}>
-        <Markdown
-          source={selectedData.content}
-          escapeHtml={false}
-          renderers={{ code: ({ value }: {value: any}) => <Markdown source={value} /> }}
-        />
+        <Viewer initialValue={selectedData.content} />
       </div>
 
     </Paper>

@@ -1895,7 +1895,7 @@
     "@types/codemirror" "0.0.71"
     codemirror "^5.48.4"
 
-"@toast-ui/react-editor@^2.5.0":
+"@toast-ui/react-editor@^2.5.0", "@toast-ui/react-editor@^2.5.1":
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/@toast-ui/react-editor/-/react-editor-2.5.1.tgz#c2d9a8075422da105c2f8af6540a00bf96a29c96"
   integrity sha512-L69DiBWWYGyHk2bjAdhZYEsIAHw8mZMj6+ln4DhuIZa45NoOfvLd7IzmdD+yy8rf99NT3Rgsnl/sR9r07NbZYg==
