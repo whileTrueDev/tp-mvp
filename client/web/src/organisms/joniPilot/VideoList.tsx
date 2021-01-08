@@ -1,13 +1,15 @@
-import React, { useMemo, useState } from 'react';
+import React, {
+  useMemo, useState, useEffect, useRef,
+} from 'react';
 import useAxios from 'axios-hooks';
-import { Button } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
 import VideoListSortField, { FieldType } from './VideoListSortField';
 import VideoListPeriodSelector from './VideoListPeriodSelector';
-import VideoListTable from './VideoListTable';
+import VideoListTable, { VideoListItemType } from './VideoListTable';
 
-const url = 'http://localhost:4000';
+const url = 'http://localhost:4000/videos';
 // json-server 켜기
 // npx json-server --watch ./src/pages/joniPilot/data.js --port 4000
 
@@ -26,27 +28,56 @@ const useStyles = makeStyles((theme: Theme) => createStyles(
       },
       color: theme.palette.primary.contrastText,
     },
-    box: {
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
   },
 ));
 
+const scrollToBottom = () => {
+  window.scroll({ top: document.body.offsetHeight, behavior: 'smooth' });
+};
+
 export default function VideoList(): JSX.Element {
   const classes = useStyles();
-  const [{ data, loading }] = useAxios(`${url}/videos`);
   const [sortField, setSortField] = useState<FieldType>('date');
   const [period, setPeriod] = useState<Date[]>(new Array<Date>(2));
-  const [videoCount, setVideoCount] = useState<number>(5);
+  const dataCount = useRef(5); // 한번에 불러올 데이터 개수
+  const [dataWillBeDisplayed, setDataWillBeDisplayed] = useState<VideoListItemType[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [{ data, loading, response }] = useAxios({
+    url,
+    params: {
+      _page: page,
+      _limit: dataCount.current,
+      // startDate_gte: period[0],
+      // endDate_lte: period[1],
+    },
+  });
+
+  const isButtonDisabled = useMemo(() => {
+    console.log('useMemo isButtonDisabled');
+    if (!response) {
+      return false;
+    }
+    return dataWillBeDisplayed.length === Number(response.headers['x-total-count']);
+  }, [dataWillBeDisplayed, response]);
+
+  const loadMoreData = () => {
+    console.log('load more data button clicked');
+    setPage((p) => p + 1);
+  };
+
+  useEffect(() => {
+    console.log('use Effect data changed, set Data Willbe displayed');
+    if (!data) return;
+    setDataWillBeDisplayed((prevData) => prevData.concat(data));
+  }, [data]);
 
   const videoListData = useMemo(() => {
-    if (!data) return [];
-    let filteredData = [...data];
-
-    // 기간이 선택된 경우 기간별로 필터
+    console.log('videoListdata useMemo');
+    if (!dataWillBeDisplayed) return [];
+    let filteredData = [...dataWillBeDisplayed];
+    // 현재 기간이 선택된 경우 기간별로 필터 
+    // -> 기간 부분은 여기서 필터링 할 게 아니라
+    // 요청시 param으로 값을 넣어서 처리하도록 바꾸자
     if (period[0] && period[1]) {
       filteredData = filteredData.filter((dataItem) => {
         const dataStartTime = new Date(dataItem.startDate).getTime();
@@ -56,8 +87,6 @@ export default function VideoList(): JSX.Element {
         return (dataStartTime >= periodStartTime)
               && (dataEndTime <= periodEndTime);
       });
-
-      setVideoCount(Math.min(data.length, filteredData.length));
     }
     // 정렬 기준 변경시 다시 정렬
     filteredData.sort((a, b) => {
@@ -67,49 +96,41 @@ export default function VideoList(): JSX.Element {
       return b[sortField] - a[sortField];
     });
 
-    return filteredData.slice(0, videoCount);
-  }, [data, sortField, period, videoCount]);
+    return filteredData;
+  }, [dataWillBeDisplayed, sortField, period]);
 
-  // 데이터가 없거나 모든 데이터가 보여진 상태라면 disabled
-  const isDisabled = useMemo(() => (
-    !data || !videoListData || (data && (data.length <= videoCount))
-  ), [data, videoCount, videoListData]);
-
-  const handleChange = (event: React.ChangeEvent<{ value: any }>) => {
+  const changeSortField = (event: React.ChangeEvent<{ value: any }>) => {
+    console.log('change sort field');
     setSortField(event.target.value);
   };
 
-  const loadMoreVideos = () => {
-    setVideoCount((prev) => Math.min(data.length, prev + 5));
-  };
 
-  // https:// www.smashingmagazine.com/2020/03/sortable-tables-react/
   return (
     <ChannelAnalysisSectionLayout title="동영상 분석" tooltip="동영상 분석">
       <VideoListSortField
         field={sortField}
-        handleChange={handleChange}
+        handleChange={changeSortField}
       />
       <VideoListPeriodSelector
         period={period}
         setPeriod={setPeriod}
       />
+      {/* <pre>{JSON.stringify(videoListData, null, 2)}</pre> */}
       <VideoListTable
         videoList={videoListData}
         loading={loading}
       />
-      <div className={classes.box}>
+      <Grid container justify="center" alignItems="center">
         <Button
           className={classes.button}
-          onClick={loadMoreVideos}
-          variant="contained"
           size="large"
-          disabled={isDisabled}
+          variant="contained"
+          disabled={isButtonDisabled}
+          onClick={loadMoreData}
         >
           더보기
         </Button>
-      </div>
-
+      </Grid>
     </ChannelAnalysisSectionLayout>
   );
 }

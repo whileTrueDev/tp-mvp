@@ -62,7 +62,7 @@ export default function VideoListTable(props: VideoListTableProps): JSX.Element 
         isLoading={loading}
         options={{
           toolbar: false,
-          pageSize: 20,
+          pageSize: 50,
           showFirstLastPageButtons: false,
           search: false,
           showTitle: false,
