@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/styles';
-
+import HelpIcon from '@material-ui/icons/Help';
 import SectionTitle from '../shared/sub/SectionTitles';
 
 const useStyles = makeStyles(() => createStyles({
@@ -9,17 +9,9 @@ const useStyles = makeStyles(() => createStyles({
     display: 'flex',
     alignItems: 'center',
     marginBottom: '1em',
-  },
-  questionMark: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '1em',
-    height: '1em',
-    borderRadius: '50%',
-    backgroundColor: 'blue',
-    color: 'white',
-    marginLeft: '1em',
+    '&>*': {
+      marginRight: '1rem',
+    },
   },
 }));
 
@@ -37,7 +29,7 @@ export default function ChannelAnalysisSectionTitle(props: ChannelAnalysisSectio
       {tooltipContent
       && (
       <Tooltip title={tooltipContent}>
-        <span className={classes.questionMark}>?</span>
+        <HelpIcon color="primary" />
       </Tooltip>
       )}
 

@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-  Typography,
+  Typography, Chip, Grid,
 } from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
+
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import { VideoListItemType } from '../VideoListTable';
 
@@ -12,35 +13,36 @@ import { VideoListItemType } from '../VideoListTable';
 // LikesInner : style 적용을 위한 Inner컴포넌트
 // ViewsComponent 내에서 useStyle 훅 사용하면 invalid 오류가 나서 한번 더 감쌈
 const useLikesInnerStyle = makeStyles((theme: Theme) => createStyles({
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    fontSize: '1rem',
-    color: '#6a6a6a',
-  },
-  inner: {
-    display: 'flex',
-    background: 'rgba(112, 112, 112,0.3)',
-    padding: `${theme.spacing(0.5)}px ${theme.spacing(4)}px`,
+  chip: {
+    background: theme.palette.divider,
+    color: theme.palette.grey.A700,
+    padding: theme.spacing(0.5, 2),
     borderRadius: '14px',
-    '& >*': {
-      marginRight: `${theme.spacing(1)}px`,
-    },
   },
+  label: {
+    marginRight: theme.spacing(1),
+  },
+
 }));
+
 function LikesInner(prop: VideoListItemType) {
   const classes = useLikesInnerStyle();
   const { data } = prop;
   return (
-    <div className={classes.container}>
-      <div className={classes.inner}>
-        <ThumbUpIcon />
-        <Typography>좋아요</Typography>
-        <Typography>{data.likes}</Typography>
-      </div>
-    </div>
+    <Chip
+      className={classes.chip}
+      avatar={<ThumbUpIcon />}
+      label={(
+        <Grid
+          container
+          direction="row"
+          justify="space-between"
+        >
+          <Typography className={classes.label}>좋아요</Typography>
+          <Typography>{data.likes}</Typography>
+        </Grid>
+      )}
+    />
   );
 }
 export default function LikesComponent(data: VideoListItemType): JSX.Element {
