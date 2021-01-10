@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   Grid, Typography, Box,
 } from '@material-ui/core';
@@ -7,10 +7,10 @@ import useStreamHeroStyles from '../mypage/stream-analysis/stream-vs-stream/Stre
 
 import RangeSelectCalendar from '../mypage/stream-analysis/shared/RangeSelectCalendar';
 
-export default function VideoListPeriodSelector(props: {
+export default memo((props: {
   period: Date[],
   setPeriod: React.Dispatch<React.SetStateAction<Date[]>>
-}): JSX.Element {
+}): JSX.Element => {
   const { period, setPeriod } = props;
   const handleOpen = () => {
     // console.log('handleopen');
@@ -59,4 +59,4 @@ export default function VideoListPeriodSelector(props: {
 
     </Box>
   );
-}
+});

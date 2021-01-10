@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Box } from '@material-ui/core';
 import MaterialTable from '../../atoms/Table/MaterialTable';
 import ActionButton from './VideoListTableRowComponents/ActionButton';
@@ -51,7 +51,7 @@ export interface VideoListTableProps {
 }
 
 // withStyles
-export default function VideoListTable(props: VideoListTableProps): JSX.Element {
+export default memo((props: VideoListTableProps): JSX.Element => {
   const { videoList, loading } = props;
   return (
     <Box mb={5}>
@@ -62,7 +62,7 @@ export default function VideoListTable(props: VideoListTableProps): JSX.Element 
         isLoading={loading}
         options={{
           toolbar: false,
-          pageSize: 50,
+          // pageSize: 50,
           showFirstLastPageButtons: false,
           search: false,
           showTitle: false,
@@ -78,4 +78,4 @@ export default function VideoListTable(props: VideoListTableProps): JSX.Element 
       />
     </Box>
   );
-}
+});

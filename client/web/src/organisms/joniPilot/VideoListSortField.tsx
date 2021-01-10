@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Select, MenuItem } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
@@ -12,8 +12,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     textAlign: 'right',
   },
   select: {
-    padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-    borderRadius: '4px',
+    padding: theme.spacing(1, 2),
+    borderRadius: theme.shape.borderRadius,
     fontSize: '21px',
   },
 }));
@@ -26,7 +26,7 @@ const menuItemList = [
   { value: 'views', text: '조회 수' },
 ];
 
-export default function VideoListSortFieldSelect(props: VideoListSortFieldPropsType): JSX.Element {
+export default memo((props: VideoListSortFieldPropsType): JSX.Element => {
   const classes = useStyles();
   const { field, handleChange } = props;
   return (
@@ -50,4 +50,4 @@ export default function VideoListSortFieldSelect(props: VideoListSortFieldPropsT
       </Select>
     </div>
   );
-}
+});

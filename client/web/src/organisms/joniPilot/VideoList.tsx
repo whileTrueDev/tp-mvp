@@ -1,15 +1,15 @@
 import React, {
-  useMemo, useState, useEffect, useRef,
+  useMemo, useState, useRef, useCallback,
 } from 'react';
-import useAxios from 'axios-hooks';
 import { Button, Grid } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
 import VideoListSortField, { FieldType } from './VideoListSortField';
 import VideoListPeriodSelector from './VideoListPeriodSelector';
-import VideoListTable, { VideoListItemType } from './VideoListTable';
+import VideoListTable from './VideoListTable';
+import useVideoDataSerach from './useVideoDataSearch';
 
-const url = 'http://localhost:4000/videos';
+// const url = 'http://localhost:4000/videos';
 // json-server 켜기
 // npx json-server --watch ./src/pages/joniPilot/data.js --port 4000
 
@@ -22,88 +22,41 @@ const useStyles = makeStyles((theme: Theme) => createStyles(
       [theme.breakpoints.up('lg')]: {
         width: '220px',
       },
-      backgroundColor: theme.palette.secondary.main,
-      '&:hover': {
-        backgroundColor: theme.palette.secondary.dark,
-      },
-      color: theme.palette.primary.contrastText,
     },
   },
 ));
 
-const scrollToBottom = () => {
-  window.scroll({ top: document.body.offsetHeight, behavior: 'smooth' });
-};
-
 export default function VideoList(): JSX.Element {
   const classes = useStyles();
   const [sortField, setSortField] = useState<FieldType>('date');
-  const [period, setPeriod] = useState<Date[]>(new Array<Date>(2));
-  const dataCount = useRef(5); // 한번에 불러올 데이터 개수
-  const [dataWillBeDisplayed, setDataWillBeDisplayed] = useState<VideoListItemType[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [{ data, loading, response }] = useAxios({
-    url,
-    params: {
-      _page: page,
-      _limit: dataCount.current,
-      // startDate_gte: period[0],
-      // endDate_lte: period[1],
-    },
-  });
+  const [period, setPeriod] = useState<Date[]>([new Date('2021-01-01'), new Date('2021-01-10')]);
+  const dataPerPage = useRef(5); // 한번에 불러올 데이터 개수
+  const [pageNumber, setPageNumber] = useState<number>(0);
+  const {
+    loading, videos, hasMore,
+  } = useVideoDataSerach(pageNumber, period, dataPerPage.current);
 
-  const isButtonDisabled = useMemo(() => {
-    console.log('useMemo isButtonDisabled');
-    if (!response) {
-      return false;
-    }
-    return dataWillBeDisplayed.length === Number(response.headers['x-total-count']);
-  }, [dataWillBeDisplayed, response]);
-
-  const loadMoreData = () => {
-    console.log('load more data button clicked');
-    setPage((p) => p + 1);
-  };
-
-  useEffect(() => {
-    console.log('use Effect data changed, set Data Willbe displayed');
-    if (!data) return;
-    setDataWillBeDisplayed((prevData) => prevData.concat(data));
-  }, [data]);
+  const loadMoreData = useCallback((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (hasMore) setPageNumber((prevPageNum) => prevPageNum + 1);
+  }, [setPageNumber, hasMore]);
 
   const videoListData = useMemo(() => {
-    console.log('videoListdata useMemo');
-    if (!dataWillBeDisplayed) return [];
-    let filteredData = [...dataWillBeDisplayed];
-    // 현재 기간이 선택된 경우 기간별로 필터 
-    // -> 기간 부분은 여기서 필터링 할 게 아니라
-    // 요청시 param으로 값을 넣어서 처리하도록 바꾸자
-    if (period[0] && period[1]) {
-      filteredData = filteredData.filter((dataItem) => {
-        const dataStartTime = new Date(dataItem.startDate).getTime();
-        const dataEndTime = new Date(dataItem.endDate).getTime();
-        const periodStartTime = new Date(period[0]).getTime();
-        const periodEndTime = new Date(period[1]).getTime();
-        return (dataStartTime >= periodStartTime)
-              && (dataEndTime <= periodEndTime);
-      });
+    const videoList = [...videos];
+
+    if (sortField === 'date') {
+      videoList.sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+    } else {
+      videoList.sort((a, b) => b[sortField] - a[sortField]);
     }
-    // 정렬 기준 변경시 다시 정렬
-    filteredData.sort((a, b) => {
-      if (sortField === 'date') {
-        return new Date(b.endDate).getTime() - new Date(a.endDate).getTime();
-      }
-      return b[sortField] - a[sortField];
-    });
 
-    return filteredData;
-  }, [dataWillBeDisplayed, sortField, period]);
+    return videoList;
+  }, [sortField, videos]);
 
-  const changeSortField = (event: React.ChangeEvent<{ value: any }>) => {
-    console.log('change sort field');
-    setSortField(event.target.value);
-  };
-
+  const changeSortField = useCallback((event: React.ChangeEvent<{ value: any }>) => {
+    if (sortField !== event.target.value) {
+      setSortField(event.target.value);
+    }
+  }, [sortField, setSortField]);
 
   return (
     <ChannelAnalysisSectionLayout title="동영상 분석" tooltip="동영상 분석">
@@ -125,7 +78,8 @@ export default function VideoList(): JSX.Element {
           className={classes.button}
           size="large"
           variant="contained"
-          disabled={isButtonDisabled}
+          color="secondary"
+          disabled={!hasMore}
           onClick={loadMoreData}
         >
           더보기
