@@ -7,6 +7,8 @@ import Info from './VideoListTableRowComponents/Info';
 import Likes from './VideoListTableRowComponents/Likes';
 import Views from './VideoListTableRowComponents/Views';
 
+import useWhyDidYouUpdate from './useWhyDidYouUpdate';
+
 export interface VideoListItemType {
   [key: string]: any
 }
@@ -56,6 +58,7 @@ export interface VideoListTableProps {
 
 // withStyles
 export default memo((props: VideoListTableProps): JSX.Element => {
+  useWhyDidYouUpdate('Table', props);
   const { videoList, loading } = props;
   return (
     <Box mb={5}>

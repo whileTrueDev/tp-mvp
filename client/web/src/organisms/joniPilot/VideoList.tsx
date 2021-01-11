@@ -49,10 +49,8 @@ export default function VideoList(): JSX.Element {
   }, [sortField, videos]);
 
   const changeSortField = useCallback((event: React.ChangeEvent<{ value: any }>) => {
-    if (sortField !== event.target.value) {
-      setSortField(event.target.value);
-    }
-  }, [sortField, setSortField]);
+    setSortField(event.target.value);
+  }, [setSortField]);
   return (
     <ChannelAnalysisSectionLayout title="동영상 분석" tooltip="동영상 분석">
 
@@ -60,7 +58,7 @@ export default function VideoList(): JSX.Element {
         period={period}
         setPeriod={setPeriod}
       />
-      {/* <pre>{JSON.stringify(videoListData, null, 2)}</pre> */}
+
       <VideoListSortField
         field={sortField}
         handleChange={changeSortField}

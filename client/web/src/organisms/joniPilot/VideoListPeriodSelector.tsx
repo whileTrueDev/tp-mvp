@@ -6,12 +6,14 @@ import SelectDateIcon from '../../atoms/stream-analysis-icons/SelectDateIcon';
 import useStreamHeroStyles from '../mypage/stream-analysis/stream-vs-stream/StreamCompareSection.style';
 
 import RangeSelectCalendar from '../mypage/stream-analysis/shared/RangeSelectCalendar';
+import useWhyDidYouUpdate from './useWhyDidYouUpdate';
 
 export default memo((props: {
   period: Date[],
   setPeriod: React.Dispatch<React.SetStateAction<Date[]>>
 }): JSX.Element => {
   const { period, setPeriod } = props;
+  useWhyDidYouUpdate('period selector', props);
   const handleOpen = () => {
     // console.log('handleopen');
   };

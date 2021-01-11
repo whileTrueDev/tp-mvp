@@ -35,14 +35,9 @@ export default function VideoAnalysis(
   { match, location }: RouteComponentProps<ParamTypes, StaticContext, StateType>,
 ): JSX.Element {
   useScrollTop();
-  const { id } = match.params;
   const { data } = location.state;
   return (
     <div>
-      <div>
-        video id :
-        {id}
-      </div>
       <VideoAnalysisReport data={data} />
       <VideoAnalysisReaction />
       <VideoAnalysisComments />

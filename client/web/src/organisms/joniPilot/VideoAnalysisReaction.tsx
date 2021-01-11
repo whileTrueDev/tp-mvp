@@ -1,10 +1,9 @@
 import React, {
   useState, useEffect, useMemo, memo, useCallback,
 } from 'react';
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { Grid, Typography, Avatar } from '@material-ui/core';
 import {
-  makeStyles, createStyles, Theme, withStyles,
+  makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
 import axios from 'axios';
 import moment from 'moment';
@@ -101,7 +100,7 @@ export default function VideoAnalysisReaction(): JSX.Element {
 
   useEffect(() => {
     getComments(url);
-  }, []);
+  }, [url]);
 
   const getComments = async (commentUrl: string) => {
     try {
@@ -114,7 +113,6 @@ export default function VideoAnalysisReaction(): JSX.Element {
 
   const handleButton = useCallback((event: React.MouseEvent<HTMLElement>, newUrl: string) => {
     setUrl(newUrl);
-    getComments(newUrl);
   }, []);
 
   const commentsData = useMemo(() => (
