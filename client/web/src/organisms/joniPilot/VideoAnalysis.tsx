@@ -6,6 +6,10 @@ import VideoAnalysisReport from './VideoAnalysisReport';
 import VideoAnalysisReaction from './VideoAnalysisReaction';
 import VideoAnalysisComments from './VideoAnalysisComments';
 
+export interface TagType{
+  tagId: number;
+  label: string;
+}
 export interface fakeVideoItemType{
   streamId: string,
   title: string,
@@ -22,7 +26,7 @@ export interface fakeVideoItemType{
   likes: number,
   hates: number,
   rating: number,
-  tags: string[],
+  tags: TagType[],
   comments: number,
 }
 interface ParamTypes{

@@ -17,7 +17,7 @@ const textSource = {
         cardTitle: '채널 분석 분석차트',
         cardIcon: '/images/analyticsPage/balloon.png',
         cardText: `
-        가실 줄이 있으랴. 관용은 미덕이다가서 발병난다.  
+        1가실 줄이 있으랴. 관용은 미덕이다가서 발병난다.  
 주었을 때 이 몸이 죽고 죽어 일백번 고쳐 죽어 백골이`,
       },
       {
@@ -25,7 +25,7 @@ const textSource = {
         cardTitle: '유입 분석 분석차트',
         cardIcon: '/images/analyticsPage/balloon.png',
         cardText: `
-        가실 줄이 있으랴. 관용은 미덕이다가서 발병난다.  
+        2가실 줄이 있으랴. 관용은 미덕이다가서 발병난다.  
 주었을 때 이 몸이 죽고 죽어 일백번 고쳐 죽어 백골이`,
       },
       {
@@ -33,7 +33,7 @@ const textSource = {
         cardTitle: '동영상 분석 분석차트',
         cardIcon: '/images/analyticsPage/balloon.png',
         cardText: `
-        가실 줄이 있으랴. 관용은 미덕이다가서 발병난다.  
+        3가실 줄이 있으랴. 관용은 미덕이다가서 발병난다.  
 주었을 때 이 몸이 죽고 죽어 일백번 고쳐 죽어 백골이`,
       },
     ],
