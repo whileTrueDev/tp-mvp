@@ -53,18 +53,18 @@ export default function VideoList(): JSX.Element {
       setSortField(event.target.value);
     }
   }, [sortField, setSortField]);
-
   return (
     <ChannelAnalysisSectionLayout title="동영상 분석" tooltip="동영상 분석">
-      <VideoListSortField
-        field={sortField}
-        handleChange={changeSortField}
-      />
+
       <VideoListPeriodSelector
         period={period}
         setPeriod={setPeriod}
       />
       {/* <pre>{JSON.stringify(videoListData, null, 2)}</pre> */}
+      <VideoListSortField
+        field={sortField}
+        handleChange={changeSortField}
+      />
       <VideoListTable
         videoList={videoListData}
         loading={loading}

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Select, MenuItem } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
@@ -29,6 +29,15 @@ const menuItemList = [
 export default memo((props: VideoListSortFieldPropsType): JSX.Element => {
   const classes = useStyles();
   const { field, handleChange } = props;
+
+  const menuItems = useMemo(() => menuItemList.map((item) => (
+    <MenuItem
+      value={item.value}
+      key={item.value}
+    >
+      {item.text}
+    </MenuItem>
+  )), []);
   return (
     <div className={classes.container}>
       <Select
@@ -39,14 +48,7 @@ export default memo((props: VideoListSortFieldPropsType): JSX.Element => {
         value={field}
         onChange={handleChange}
       >
-        {menuItemList.map((item) => (
-          <MenuItem
-            value={item.value}
-            key={item.value}
-          >
-            {item.text}
-          </MenuItem>
-        ))}
+        {menuItems}
       </Select>
     </div>
   );

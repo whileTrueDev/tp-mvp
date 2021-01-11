@@ -22,18 +22,22 @@ const VideoListColumns: {[key: string]: any}[] = [
   {
     field: 'info',
     title: '동영상 정보',
+    // sorting: false,
+    customSort: (a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime(),
     render: Info,
   },
   {
     field: 'likes',
     textAlign: 'center',
     title: '좋아요수',
+    // sorting: false,
     render: Likes,
   },
   {
     field: 'views',
     textAlign: 'center',
     title: '조회수',
+    // sorting: false,
     render: Views,
   },
   {
@@ -67,7 +71,7 @@ export default memo((props: VideoListTableProps): JSX.Element => {
           search: false,
           showTitle: false,
           draggable: false,
-          sorting: false,
+          // sorting: false,
           paging: false,
           headerStyle: {
             backgroundColor: '#f5f6fa',

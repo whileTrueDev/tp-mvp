@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { VideoListItemType } from './VideoListTable';
 
-// axios cancelation - 
-
 const vidoeListUrl = 'https://joni-pilot.glitch.me/videos/';
 
 export default function useVideoDataSerach(pageNumber: number, period: Date[], dataPerPage: number): {
@@ -12,7 +10,6 @@ export default function useVideoDataSerach(pageNumber: number, period: Date[], d
   videos: VideoListItemType[];
   hasMore: boolean;
 } {
-  // const cancel = useRef<Canceler|null >();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [videos, setVideos] = useState<VideoListItemType[]>([]);
@@ -22,7 +19,6 @@ export default function useVideoDataSerach(pageNumber: number, period: Date[], d
     setVideos([]);
   }, [period]);
 
-  // https://codesandbox.io/s/jvvkoo8pq3 ignore
   useEffect(() => {
     let ignore = false;
     setLoading(true);
@@ -55,9 +51,9 @@ export default function useVideoDataSerach(pageNumber: number, period: Date[], d
     fetchData();
     return () => {
       ignore = true;
-    }; // 컴포넌트 언마운트시(리렌더링 전) axios 요청 취소 - 모든 타이핑에 대해 요청하지 않는다
+    }; // 컴포넌트 언마운트시(리렌더링 전) ignore = true하여 언마운트 이후 가져온 데이터는 추가하지 않음
   },
-  [pageNumber, period, dataPerPage]); // query, pageNumber 바뀔때만 실행됨
+  [pageNumber, period, dataPerPage]);
 
   return {
     loading, error, videos, hasMore,
