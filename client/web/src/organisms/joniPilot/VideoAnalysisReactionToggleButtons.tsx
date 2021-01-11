@@ -73,7 +73,7 @@ export default memo((props: ToggleButtonsPropType): JSX.Element => {
       onChange={handleButton}
     >
       {buttonData.map((button) => (
-        <StyledToggleButton value={button.url}>{button.label}</StyledToggleButton>
+        <StyledToggleButton key={button.label} value={button.url}>{button.label}</StyledToggleButton>
       ))}
     </StyledToggleButtonGroup>
   );

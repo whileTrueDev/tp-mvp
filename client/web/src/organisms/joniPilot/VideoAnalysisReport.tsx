@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core/styles';
 import CountUp from 'react-countup';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
-import { fakeVideoItemType } from './VideoAnalysis';
+import { fakeVideoItemType, TagType } from './VideoAnalysis';
 
 interface StyleProps{
   [key: string]: string;
@@ -57,14 +57,12 @@ function InfoItemNumberDisplay(prop: {data: number, caption: string, style?: Sty
 }
 
 // 분석보고서 태그 컴포넌트
-function InfoItemTags(prop: {tags: string[]}) {
+function InfoItemTags(prop: {tags: TagType[]}) {
   const classes = useReportSectionStyle();
   const { tags } = prop;
   return (
     <Container>
-      {tags.map((tag) => (
-        <Chip className={classes.chip} label={tag} />
-      ))}
+      {tags.map((tag) => <Chip key={tag.tagId} className={classes.chip} label={tag.label} />)}
     </Container>
   );
 }
@@ -153,7 +151,7 @@ export default function VideoAnalysisReport(props: VideoAnalysisReportProps): JS
           </Box>
           <Grid container alignContent="space-between">
             {infoItems.map((item) => (
-              <Grid item xs={12} sm={4} className={classes.itemContainer}>
+              <Grid key={item.label} item xs={12} sm={4} className={classes.itemContainer}>
                 <InfoItemLabel text={item.label} />
                 <InfoItemNumberDisplay
                   data={item.data}
