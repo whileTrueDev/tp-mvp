@@ -9,10 +9,6 @@ import VideoListPeriodSelector from './VideoListPeriodSelector';
 import VideoListTable from './VideoListTable';
 import useVideoDataSerach from './useVideoDataSearch';
 
-// const url = 'http://localhost:4000/videos';
-// json-server 켜기
-// npx json-server --watch ./src/pages/joniPilot/data.js --port 4000
-
 const useStyles = makeStyles((theme: Theme) => createStyles(
   {
     button: {
