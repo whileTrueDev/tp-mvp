@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Typography, Chip, CircularProgress, Paper,
+  Typography, CircularProgress, Paper,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
@@ -16,6 +16,7 @@ import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import useScrollTop from '../../utils/hooks/useScrollTop';
+import { FeatureProgressChip } from '../../atoms/Chip/FeatureProgressChip';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -148,9 +149,10 @@ export default function FeatureSuggestionPage(): JSX.Element {
               )}
             </div>
             <div className={classes.chipArea}>
-              <Chip style={{ margin: 4 }} variant="outlined" label="미확인" />
-              <Chip style={{ margin: 4 }} color="secondary" label="개발 확정" />
-              <Chip style={{ margin: 4 }} color="primary" label="개발보류" />
+              {FeatureProgressChip(0)}
+              {FeatureProgressChip(1)}
+              {FeatureProgressChip(2)}
+              {FeatureProgressChip(3)}
             </div>
           </div>
           <div className={classes.tableContainer}>

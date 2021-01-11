@@ -63,6 +63,10 @@ export default function UserMetricsChart({
     if (valueAxis.tooltip) {
       valueAxis.tooltip.disabled = true;
     }
+    // y축 최댓값 (1000 이 최대값이면 1100 까지 보여지도록)
+    valueAxis.extraMax = 0.1;
+    // 최소값 패딩 (최소값 패딩, 하지만 모든 데이터가 음수로 내려갈 일이 없으므로 그대로 둔다.)
+    // valueAxios.extraMin = 0.05;
 
     function createLineSeries(field, color) {
       const lineSeries = chart.series.push(new am4charts.LineSeries());

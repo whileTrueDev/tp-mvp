@@ -131,7 +131,15 @@ export default function setComponent(data: CompareGraphData[], theme: TruepointT
   dateAxis.keepSelection = true;
   // And, for a good measure, let's add a legend
   const legend = new am4charts.Legend();
-  legend.labels.template.fill = am4core.color(theme.palette.text.secondary);
+  legend.align = 'center';
+  legend.width = 400;
+  legend.padding(8, 8, 8, 8);
+  // 범례 글자 설정
+  legend.labels.template.fill = am4core.color(theme.palette.text.primary);
+  legend.labels.template.fontWeight = 'bold';
+  // 범례 배경 생성
+  legend.background.fill = am4core.color(theme.palette.divider);
+  legend.background.fillOpacity = 0.5;
   chart.legend = legend;
 
   return chart;

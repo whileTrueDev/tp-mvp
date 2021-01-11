@@ -8,8 +8,12 @@ import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysis
 import TimeLineGraph from '../graph/TimeLineGraph';
 // import { timelineInterface } from '../graph/graphsInterface';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
+import SectionTitle from '../../shared/sub/SectionTitles';
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    padding: theme.spacing(4),
+  },
   center: {
     display: 'flex',
     justifyContent: 'center',
@@ -42,8 +46,12 @@ export default function PeriodAnalysis({ data, loading, selectedMetric }: {
     <div>
       { loading && (<CenterLoading />)}
       { !loading && (
-      <Grid container direction="column" justify="center" spacing={2}>
+      <Grid container direction="column" justify="center" spacing={2} className={classes.container}>
         <Grid item>
+          <SectionTitle mainTitle="기간 추세 분석 결과" />
+          <Typography color="textSecondary" variant="body2">
+            웃음 발생수, 채팅 발생수, 평균 시청자 수 등, 범례를 클릭하여 여러 데이터를 확인해보세요.
+          </Typography>
           <TimeLineGraph data={data.value} selectedMetric={selectedMetric} />
         </Grid>
         <Grid item>

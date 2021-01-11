@@ -1,10 +1,10 @@
 import {
-  Button, CircularProgress, DialogActions, DialogContent, makeStyles, Typography,
+  Button, CircularProgress, DialogActions, DialogContent, IconButton, InputAdornment, makeStyles, TextField, Typography,
 } from '@material-ui/core';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-import React from 'react';
-import PasswordTextField from '../../../../atoms/Input/PasswordTextField';
+import React, { useState } from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme) => ({
@@ -59,6 +59,11 @@ export default function PasswordConfirmForm({
       });
   }
 
+  // password visibility
+  const [visibility, setVisibility] = useState(false);
+  function handlePasswordVisibility() {
+    setVisibility((prev) => !prev);
+  }
   return (
     <form onSubmit={handlePasswordCheckSubmit}>
       <div className={classes.titleSection}>
@@ -66,17 +71,26 @@ export default function PasswordConfirmForm({
         <Typography variant="body2">보안을 위해 비밀번호를 입력하고 계속 진행하세요.</Typography>
       </div>
       <DialogContent>
-        <PasswordTextField
+        <TextField
           variant="filled"
           label="비밀번호"
           autoFocus
           margin="dense"
           id="password"
+          type={visibility ? 'text' : 'password'}
           value={currentPw}
           onChange={handleCurrentPwChange}
           error={!!currentPwErrMsg}
           helperText={currentPwErrMsg}
           fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handlePasswordVisibility}>
+                  {visibility ? <Visibility /> : <VisibilityOff />}
+                </IconButton>
+              </InputAdornment>),
+          }}
         />
         {checkPwObject.loading && (
         <CircularProgress />
