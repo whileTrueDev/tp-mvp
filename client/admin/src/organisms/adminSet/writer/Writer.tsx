@@ -20,7 +20,7 @@ function reducer(state: any, action: any) {
       return { ...state, title };
 
     case 'handleCategory':
-      return { ...state, category, title };
+      return { ...state, category };
 
     case 'handleContent':
       return { ...state, content };

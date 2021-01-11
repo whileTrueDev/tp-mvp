@@ -44,7 +44,7 @@ export default function StatusChangebutton(props: statusProps): JSX.Element {
 
   const [, executePatch] = useAxios({
     url: '/feature-suggestion/state', method: 'PATCH',
-  });
+  }, { manual: true });
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -53,7 +53,14 @@ export default function StatusChangebutton(props: statusProps): JSX.Element {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  // 0=미확인, 1=검토중 2=개발확정, 3=개발보류
 
+  const featureStates = [
+    { stateNumber: 0, name: '미확인' },
+    { stateNumber: 1, name: '검토중' },
+    { stateNumber: 2, name: '개발확정' },
+    { stateNumber: 3, name: '개발보류' },
+  ];
   return (
     <div>
       <Button
@@ -72,58 +79,27 @@ export default function StatusChangebutton(props: statusProps): JSX.Element {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => {
-          selectedData.state = 1;
-          // console.log(selectedData);
-          if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
-            // 백엔드에 상태 업로드
-            executePatch({
-              data: {
-                id: selectedData.suggestionId,
-                state: selectedData.state,
-              },
-            }).then((res) => {
-              handleReload();
-            }).catch((err) => false);
-          }
-        }}
-        >
-          검토중
-        </MenuItem>
-        <MenuItem onClick={() => {
-          selectedData.state = 2;
-          if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
-            // 백엔드에 상태 업로드
-            executePatch({
-              data: {
-                id: selectedData.suggestionId,
-                state: selectedData.state,
-              },
-            }).then((res) => {
-              handleReload();
-            }).catch((err) => false);
-          }
-        }}
-        >
-          기능 구현중
-        </MenuItem>
-        <MenuItem onClick={() => {
-          selectedData.state = 3;
-          if (window.confirm(`상태를\n${selectedData.state}\n 으로 업로드 하시겠습니까?`)) {
-            // 백엔드에 상태 업로드
-            executePatch({
-              data: {
-                id: selectedData.suggestionId,
-                state: selectedData.state,
-              },
-            }).then((res) => {
-              handleReload();
-            }).catch((err) => false);
-          }
-        }}
-        >
-          구현완료
-        </MenuItem>
+        {featureStates.map((feature) => (
+          <MenuItem
+            key={feature.name}
+            onClick={() => {
+              selectedData.state = feature.stateNumber;
+              if (window.confirm(`상태를\n${feature.name}\n 으로 변경 하시겠습니까?`)) {
+                // 백엔드에 상태 업로드
+                executePatch({
+                  data: {
+                    id: selectedData.suggestionId,
+                    state: selectedData.state,
+                  },
+                }).then((res) => {
+                  handleReload();
+                }).catch((err) => false);
+              }
+            }}
+          >
+            {feature.name}
+          </MenuItem>
+        ))}
       </Menu>
     </div>
   );

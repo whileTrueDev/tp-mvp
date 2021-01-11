@@ -14,21 +14,7 @@ export default function TimeLineGraph({ data, selectedMetric }: {
 
   useLayoutEffect(() => {
     // Create chart instance
-    const chart = setGraphComponent(data, theme);
-    selectedMetric.forEach((element: string) => {
-      switch (element) {
-        case 'smile':
-          chart.series.values[0].show();
-          break;
-        case 'chat':
-          chart.series.values[1].show();
-          break;
-        case 'viewer':
-          chart.series.values[2].show();
-          break;
-        default:
-      }
-    });
+    const chart = setGraphComponent(data, theme, selectedMetric);
     chartRef.current = chart;
     return () => {
       chart.dispose();

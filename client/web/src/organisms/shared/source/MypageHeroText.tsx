@@ -6,7 +6,8 @@ const textSource = {
         cardTitle: '채팅 발생 수 분석',
         cardIcon: '/images/analyticsPage/balloon.png',
         cardText: `\0
-        채팅 발생 수를 기준으로 분석합니다. 방송에서 채팅이 가장 활발했던 구간을 확인해보세요!`,
+        채팅 발생 수를 기준으로 분석합니다.
+        방송에서 채팅이 가장 활발했던 구간을 확인해보세요!`,
         // 분석 결과는 자막파일로 다운로드할 수 있습니다.
       },
       {
@@ -14,7 +15,8 @@ const textSource = {
         cardTitle: '웃음 발생 수 분석',
         cardIcon: '/images/analyticsPage/smile.png',
         cardText: `\0
-        웃음 발생 수를 기준으로 분석합니다. 시청자들이 가장 많이 웃었던 구간을 확인해보세요!`,
+        웃음 발생 수를 기준으로 분석합니다.
+        시청자들이 가장 많이 웃었던 구간을 확인해보세요!`,
       },
       {
         cardHeader: '분석 대시보드',

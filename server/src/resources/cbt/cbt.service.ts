@@ -45,7 +45,7 @@ export class CbtService {
       name: dto.name,
       mail: dto.email,
       phone: dto.phoneNum,
-      password: '$2b$10$4wceyfuHBgJj8gA/dWDCleQObCqNa0qPaQSWfoMrQJkKB3O4uNhP2', // 기본 비밀번호 "test"
+      password: '$2b$10$RL/orokDTas.m9p5yVfUp.nfxheVnAt9IZIEVkwpS1zJJSP9vkkr2', // 기본 비밀번호 ??????? slack에서 확인.
       roles: 'CBT_USER',
       birth: '',
       gender: '',

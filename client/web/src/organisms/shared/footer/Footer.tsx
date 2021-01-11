@@ -163,7 +163,7 @@ export default function Footer(): JSX.Element {
             </div> */}
             <div>
               개인정보보호책임자
-              <span className={classes.address}>전민관</span>
+              <span className={classes.address}>강태섭</span>
             </div>
             <div>
               고객센터

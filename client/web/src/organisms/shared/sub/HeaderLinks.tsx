@@ -16,7 +16,7 @@ import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 // notificaiton list component
-import NotificationPopper from './NotificationPopper';
+import NotificationPopper, { Notification } from './NotificationPopper';
 // context
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import UserMenuPopover from './UserMenuPopover';
@@ -30,13 +30,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface Notification {
-  index: number;
-  title: string;
-  content: string;
-  dateform: string;
-  readState: boolean;
-}
 export interface FatalError {
   helperText: string;
   isError: boolean;
@@ -80,7 +73,6 @@ function HeaderLinks(): JSX.Element {
         });
 
       setChangeReadState(false);
-      // snack bar 일감 이후 snack bar 삽입
     }
   }, [changeReadState, executeGet, auth.user.userId, enqueueSnackbar]);
 
