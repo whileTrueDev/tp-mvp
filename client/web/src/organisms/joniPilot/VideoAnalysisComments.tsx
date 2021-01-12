@@ -2,7 +2,10 @@ import React from 'react';
 import { Select, MenuItem } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
-import CommentWordCloud from './VideoAnalysisCommentWordCloud';
+import CommentsWordCloud from './VideoAnalysisCommentsWordCloud';
+import CommentsCompare from './VideoAnalysisCommentsCompare';
+
+import { positiveWords, negativeWords } from './tempWordsData';
 
 const useVideoAnalysisCommentsStyles = makeStyles((theme: Theme) => createStyles({
   selectInputContainer: {
@@ -35,7 +38,8 @@ export default function VideoAnalysisComments(): JSX.Element {
           <MenuItem value={30}>최근 30일</MenuItem>
         </Select>
       </div>
-      <CommentWordCloud />
+      <CommentsWordCloud words={[...positiveWords, ...negativeWords]} />
+      <CommentsCompare negativeWords={negativeWords} positiveWords={positiveWords} />
     </ChannelAnalysisSectionLayout>
   );
 }
