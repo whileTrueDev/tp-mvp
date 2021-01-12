@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import {
   Theme, withStyles,
@@ -62,15 +62,20 @@ const buttonData = [
 
 interface ToggleButtonsPropType{
   url: string;
-  handleButton: (event: React.MouseEvent<HTMLElement>, newUrl: string) => void;
+  setUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 export default memo((props: ToggleButtonsPropType): JSX.Element => {
-  const { url, handleButton } = props;
+  const { url, setUrl } = props;
+  const handleClick = useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>, newUrl: any) => {
+    if (newUrl !== null) {
+      setUrl(newUrl);
+    }
+  }, [setUrl]);
   return (
     <StyledToggleButtonGroup
       value={url}
       exclusive
-      onChange={handleButton}
+      onChange={handleClick}
     >
       {buttonData.map((button) => (
         <StyledToggleButton key={button.label} value={button.url}>{button.label}</StyledToggleButton>

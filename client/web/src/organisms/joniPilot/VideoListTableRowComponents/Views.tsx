@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   Typography,
 } from '@material-ui/core';
@@ -12,6 +12,9 @@ function formattingViewCount(viewCount: number) {
   return `${(viewCount / 10000).toFixed(2)} 만`;
 }
 
-export default function ViewsComponent(data: VideoListItemType): JSX.Element {
+function Views(prop: VideoListItemType): JSX.Element {
+  const { data } = prop;
   return <Typography>{formattingViewCount(data.views)}</Typography>;
 }
+
+export default memo(Views);

@@ -3,6 +3,9 @@ import { Grid, Typography, Avatar } from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import CenterLoading from '../../atoms/Loading/CenterLoading';
 
 const useCommentInfoStyles = makeStyles((theme: Theme) => createStyles({
   avatar: {
@@ -15,49 +18,52 @@ const useCommentInfoStyles = makeStyles((theme: Theme) => createStyles({
     textAlign: 'start',
   },
 }));
-const CommentInner = memo((prop: Record<string, any>) => {
-  const classes = useCommentInfoStyles();
-  const { commentInfo } = prop;
-  return (
-    <>
-      <Grid container>
-        <Avatar className={classes.avatar} src={commentInfo.profileImage} alt={commentInfo.nickname} />
-        <div>
-          <Grid container>
-            <Typography className={classes.nickname}>{commentInfo.nickname}</Typography>
-            <Typography color="primary">{commentInfo.time}</Typography>
-          </Grid>
 
-          <Typography className={classes.commentText}>{commentInfo.commentText}</Typography>
-        </div>
-      </Grid>
-    </>
+const CommentInfo = memo((props: Record<string, any>): JSX.Element => {
+  const classes = useCommentInfoStyles();
+  const { info } = props;
+  const {
+    profileImage, nickname, time, commentText,
+  } = info;
+  return (
+    <Grid container direction="row">
+      <Avatar className={classes.avatar} src={profileImage} alt={nickname} />
+      <div>
+        <Grid container>
+          <Typography className={classes.nickname}>{nickname}</Typography>
+          <Typography color="primary">{time}</Typography>
+        </Grid>
+
+        <Typography className={classes.commentText}>{commentText}</Typography>
+      </div>
+    </Grid>
   );
 });
 
-const testRender = (rowData: Record<string, any>): JSX.Element => {
-  const { commentInfo } = rowData;
-  return (
-    <CommentInner commentInfo={commentInfo} />
-  );
-};
-
 const commentTableColumns = [
-  { field: 'date', title: '날짜', textAlign: 'center' },
+  { field: 'date', title: '날짜', flex: 1 },
+  { field: 'commentInfo', title: '', flex: 3 },
   {
-    field: 'commentInfo',
-    title: '',
-    textAlign: 'center',
-    render: function CommentInfo(rowData: Record<string, any>) {
-      const { commentInfo } = rowData;
-      return (
-        <CommentInner commentInfo={commentInfo} />
-      );
-    },
+    field: 'likes',
+    title: () => (
+      <>
+        <ThumbUpIcon />
+        &nbsp;좋아요
+      </>
+    ),
+    flex: 1,
   },
-  { field: 'likes', title: '좋아요', textAlign: 'center' },
-  { field: 'hates', title: '싫어요', textAlign: 'center' },
-  { field: 'replies', title: '대댓글', textAlign: 'center' },
+  {
+    field: 'hates',
+    title: () => (
+      <>
+        <ThumbDownIcon />
+        &nbsp;싫어요
+      </>
+    ),
+    flex: 1,
+  },
+  { field: 'replies', title: '대댓글', flex: 1 },
 ];
 interface fakeCommentType{
 id: string;
@@ -74,48 +80,70 @@ likes: string;
 }
 
 interface proptype {
-  commentsData: fakeCommentType[]
+  commentsData: fakeCommentType[],
+  loading: boolean,
 }
+const commonCellWidth = Object.fromEntries(commentTableColumns.map((c, i) => [`&>:nth-child(${i + 1})`, { flex: c.flex || 1 }]));
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   header: {
+    color: theme.palette.primary.contrastText,
     backgroundColor: theme.palette.primary.light,
     '&>*': {
-      flex: 1,
+      padding: theme.spacing(2),
+      justifyContent: 'center',
     },
+    ...commonCellWidth,
+  },
+  body: {
+    position: 'relative',
   },
   row: {
     '&>*': {
-      flex: 1,
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      borderBottom: `1px solid ${theme.palette.divider}`,
     },
+    ...commonCellWidth,
+  },
+  noDataText: {
+    textAlign: 'center',
+    padding: theme.spacing(2),
   },
 }));
+
 export default function VideoAnalysisReactionTable(props: proptype): JSX.Element {
-  const { commentsData } = props;
+  const { commentsData, loading } = props;
   const classes = useStyles();
+
   return (
     <>
       <Grid className={classes.header} container>
         {
         commentTableColumns.map((col) => (
-          <Grid item key={col.field}>
-            {col.title}
+          <Grid container key={col.field}>
+            {typeof col.title === 'string'
+              ? col.title
+              : col.title()}
           </Grid>
         ))
       }
       </Grid>
-      <div className="body">
-        {commentsData.map((data) => (
-          <Grid className={classes.row} container key={data.id}>
-            <Grid>{data.date}</Grid>
-            <Grid>
-              {testRender(data)}
+      <div className={classes.body}>
+        {commentsData.length
+          ? commentsData.map((data, index) => (
+            <Grid className={classes.row} container key={data.id}>
+              <Grid>{data.date}</Grid>
+              <Grid>
+                <CommentInfo info={data.commentInfo} />
+              </Grid>
+              <Grid>{data.likes}</Grid>
+              <Grid>{data.hates}</Grid>
+              <Grid>{data.replies}</Grid>
             </Grid>
-            <Grid>{data.likes}</Grid>
-            <Grid>{data.hates}</Grid>
-            <Grid>{data.replies}</Grid>
-          </Grid>
-        ))}
+          ))
+          : <Typography className={classes.noDataText}>데이터가 없습니다</Typography>}
+        {loading && <CenterLoading />}
       </div>
     </>
   );

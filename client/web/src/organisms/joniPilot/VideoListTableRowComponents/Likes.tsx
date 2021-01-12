@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   Typography, Chip, Grid,
 } from '@material-ui/core';
@@ -25,7 +25,7 @@ const useLikesInnerStyle = makeStyles((theme: Theme) => createStyles({
 
 }));
 
-function LikesInner(prop: VideoListItemType) {
+function Likes(prop: VideoListItemType): JSX.Element {
   const classes = useLikesInnerStyle();
   const { data } = prop;
   return (
@@ -45,6 +45,4 @@ function LikesInner(prop: VideoListItemType) {
     />
   );
 }
-export default function LikesComponent(data: VideoListItemType): JSX.Element {
-  return <LikesInner data={data} />;
-}
+export default memo(Likes);

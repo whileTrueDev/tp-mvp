@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   Grid, Typography,
 } from '@material-ui/core';
@@ -14,6 +14,7 @@ const StyledRating = withStyles((theme) => ({
     color: 'red',
   },
 }))(Rating);
+
 const useInfoComponentStyle = makeStyles((theme: Theme) => createStyles({
   container: {
     color: '#4d4f5c',
@@ -22,7 +23,8 @@ const useInfoComponentStyle = makeStyles((theme: Theme) => createStyles({
     marginRight: theme.spacing(3),
   },
 }));
-function InfoInner(prop: VideoListItemType) {
+
+const Info = (prop: VideoListItemType): JSX.Element => {
   const classes = useInfoComponentStyle();
   const { data } = prop;
   return (
@@ -34,7 +36,5 @@ function InfoInner(prop: VideoListItemType) {
       <Typography>{new Date(data.endDate).toISOString().split('T')[0]}</Typography>
     </Grid>
   );
-}
-export default function InfoComponent(data: VideoListItemType): JSX.Element {
-  return <InfoInner data={data} />;
-}
+};
+export default memo(Info);

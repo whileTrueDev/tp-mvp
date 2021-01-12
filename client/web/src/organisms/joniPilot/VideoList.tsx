@@ -12,6 +12,7 @@ import useVideoDataSerach from './useVideoDataSearch';
 const useStyles = makeStyles((theme: Theme) => createStyles(
   {
     button: {
+      marginTop: theme.spacing(4),
       [theme.breakpoints.down('md')]: {
         width: '100%',
       },
@@ -54,15 +55,15 @@ export default function VideoList(): JSX.Element {
   return (
     <ChannelAnalysisSectionLayout title="동영상 분석" tooltip="동영상 분석">
 
+      <VideoListSortField
+        field={sortField}
+        handleChange={changeSortField}
+      />
       <VideoListPeriodSelector
         period={period}
         setPeriod={setPeriod}
       />
 
-      <VideoListSortField
-        field={sortField}
-        handleChange={changeSortField}
-      />
       <VideoListTable
         videoList={videoListData}
         loading={loading}

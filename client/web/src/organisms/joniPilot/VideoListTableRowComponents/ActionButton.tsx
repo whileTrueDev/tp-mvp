@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import {
   Button,
@@ -6,7 +6,7 @@ import {
 import { VideoListItemType } from '../VideoListTable';
 
 // 액션버튼(router link)--------------------------------
-function RouterLinkButton(prop: VideoListItemType) {
+const RouterLinkButton = (prop: VideoListItemType) => {
   const { data } = prop;
   const { url } = useRouteMatch();
   return (
@@ -22,7 +22,5 @@ function RouterLinkButton(prop: VideoListItemType) {
       분석하기
     </Button>
   );
-}
-export default function ActionButtonComponent(data: VideoListItemType): JSX.Element {
-  return <RouterLinkButton data={data} />;
-}
+};
+export default memo(RouterLinkButton);
