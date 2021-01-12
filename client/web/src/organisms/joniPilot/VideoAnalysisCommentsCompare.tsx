@@ -1,5 +1,6 @@
 import React from 'react';
 import { Word } from 'react-wordcloud';
+import SortedBarChart from './SortedBarChart';
 
 interface CommentComparePropsType extends Record<string, any>{
   negativeWords: Word[],
@@ -9,6 +10,7 @@ export default function CommentsCompare(props: CommentComparePropsType): JSX.Ele
   const { negativeWords, positiveWords } = props;
   return (
     <div>
+      <SortedBarChart negativeWords={negativeWords} positiveWords={positiveWords} />
       <div>
         <p>긍정단어</p>
         <pre>{JSON.stringify(positiveWords)}</pre>
