@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, MenuItem } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
-import AmWordCloud from './AmWordCloud';
+import AmWordCloud, { Word } from './AmWordCloud';
 import SortedBarChart from './SortedBarChart';
 import { positiveWords, negativeWords } from './tempWordsData';
 
@@ -19,6 +19,18 @@ export default function VideoAnalysisComments(): JSX.Element {
   const handleSelectInputChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     // set value
   };
+  const [posWords, setPosWords] = useState<Word[]>([]);
+  const [negWords, setNegWords] = useState<Word[]>([]);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setPosWords(positiveWords);
+      setNegWords(negativeWords);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
   return (
 
     <ChannelAnalysisSectionLayout
@@ -37,8 +49,10 @@ export default function VideoAnalysisComments(): JSX.Element {
           <MenuItem value={30}>최근 30일</MenuItem>
         </Select>
       </div>
-      <AmWordCloud words={[...positiveWords, ...negativeWords]} />
-      <SortedBarChart negativeWords={negativeWords} positiveWords={positiveWords} />
+      {/* <AmWordCloud words={[...positiveWords, ...negativeWords]} /> */}
+      <AmWordCloud words={[...posWords, ...negWords]} />
+      {/* <SortedBarChart negativeWords={negativeWords} positiveWords={positiveWords} /> */}
+      <SortedBarChart negativeWords={negWords} positiveWords={posWords} />
     </ChannelAnalysisSectionLayout>
   );
 }

@@ -11,10 +11,11 @@ import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 am4core.useTheme(am4themesAnimated);
 // Themes end
 
-interface Word extends Record<string, any>{
+export interface Word extends Record<string, any>{
 text: string;
 value: number;
 }
+
 interface WordCloudProps<W> extends Record<string, any>{
   words: W[],
 }
@@ -73,6 +74,11 @@ export default function AmWordCloud(props: WordCloudProps<Word>): JSX.Element {
   }, [words]);
 
   return (
-    <div id="chartdiv-word-cloud" style={{ width: '100%', height: '500px' }} />
+    <>
+      {words.length
+        ? <div id="chartdiv-word-cloud" style={{ width: '100%', height: '500px' }} />
+        : <div>데이터가 없습니다</div>}
+    </>
+
   );
 }

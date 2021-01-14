@@ -2,11 +2,11 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 
 // targetContainer 내에 상단에 그래프 이름과 퍼센트 표시하는 컨테이너 생성 함수
-export function makeTitle(
+export function createTitle(
   targetContainer: am4core.Container,
   type: string,
-  text: {label: string, color: string},
-  percent: number,
+  text: {label: string, color: string, percent: number, },
+
 ): void {
   const textAlign = type === 'negative' ? 'left' : 'right';
 
@@ -25,7 +25,7 @@ export function makeTitle(
   title.fill = am4core.color(text.color);
 
   const percentage = container.createChild(am4core.Label);
-  percentage.text = `${percent}%`;
+  percentage.text = `${text.percent}%`;
   percentage.align = textAlign;
   percentage.fontSize = 30;
   percentage.fill = am4core.color(text.color);
@@ -46,13 +46,9 @@ export function createYCategoryAxis(
   yAxis.renderer.line.stroke = am4core.color('#dedede');
   yAxis.renderer.inversed = true;
   yAxis.renderer.grid.template.disabled = true;
-  yAxis.renderer.labels.template.textAlign = 'end';
 
   yAxis.renderer.cellStartLocation = 0.3;
   yAxis.renderer.cellEndLocation = 0.7;
-
-  yAxis.parent = targetChart.plotContainer;
-  yAxis.align = 'center';
 
   if (name === 'positive') {
     yAxis.renderer.labels.template.fill = am4core.color('#0011ff');
@@ -62,7 +58,10 @@ export function createYCategoryAxis(
   if (name === 'negative') {
     yAxis.renderer.line.strokeOpacity = 0;
     yAxis.renderer.labels.template.dx = 50;
+    yAxis.renderer.opposite = true;
   }
+  yAxis.parent = targetChart.plotContainer;
+  yAxis.align = 'center';
 
   return yAxis;
 }
