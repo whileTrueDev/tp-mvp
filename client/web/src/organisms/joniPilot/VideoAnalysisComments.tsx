@@ -2,8 +2,8 @@ import React from 'react';
 import { Select, MenuItem } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
-import CommentsCompare from './VideoAnalysisCommentsCompare';
-// import AmWordCloud from './AmWordCloud';
+import AmWordCloud from './AmWordCloud';
+import SortedBarChart from './SortedBarChart';
 import { positiveWords, negativeWords } from './tempWordsData';
 
 const useVideoAnalysisCommentsStyles = makeStyles((theme: Theme) => createStyles({
@@ -37,8 +37,8 @@ export default function VideoAnalysisComments(): JSX.Element {
           <MenuItem value={30}>최근 30일</MenuItem>
         </Select>
       </div>
-      {/* <AmWordCloud words={[...positiveWords, ...negativeWords]} /> */}
-      <CommentsCompare negativeWords={negativeWords} positiveWords={positiveWords} />
+      <AmWordCloud words={[...positiveWords, ...negativeWords]} />
+      <SortedBarChart negativeWords={negativeWords} positiveWords={positiveWords} />
     </ChannelAnalysisSectionLayout>
   );
 }
