@@ -1,5 +1,7 @@
 import React, { memo } from 'react';
-import { Grid, Typography, Avatar } from '@material-ui/core';
+import {
+  Grid, Typography, Avatar, Table, TableHead, TableBody, TableRow, TableCell,
+} from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
@@ -41,8 +43,8 @@ const CommentInfo = memo((props: Record<string, any>): JSX.Element => {
 });
 
 const commentTableColumns = [
-  { field: 'date', title: '날짜', flex: 1 },
-  { field: 'commentInfo', title: '', flex: 3 },
+  { field: 'date', title: '날짜' },
+  { field: 'commentInfo', title: '' },
   {
     field: 'likes',
     title: () => (
@@ -51,7 +53,7 @@ const commentTableColumns = [
         &nbsp;좋아요
       </>
     ),
-    flex: 1,
+
   },
   {
     field: 'hates',
@@ -61,9 +63,9 @@ const commentTableColumns = [
         &nbsp;싫어요
       </>
     ),
-    flex: 1,
+
   },
-  { field: 'replies', title: '대댓글', flex: 1 },
+  { field: 'replies', title: '대댓글' },
 ];
 interface fakeCommentType{
 id: string;
@@ -83,17 +85,16 @@ interface proptype {
   commentsData: fakeCommentType[],
   loading: boolean,
 }
-const commonCellWidth = Object.fromEntries(commentTableColumns.map((c, i) => [`&>:nth-child(${i + 1})`, { flex: c.flex || 1 }]));
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   header: {
-    color: theme.palette.primary.contrastText,
+
     backgroundColor: theme.palette.primary.light,
     '&>*': {
+      color: theme.palette.primary.contrastText,
       padding: theme.spacing(2),
-      justifyContent: 'center',
+      textAlign: 'center',
     },
-    ...commonCellWidth,
   },
   body: {
     position: 'relative',
@@ -104,7 +105,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       textAlign: 'center',
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
-    ...commonCellWidth,
   },
   noDataText: {
     textAlign: 'center',
@@ -117,34 +117,36 @@ export default function VideoAnalysisReactionTable(props: proptype): JSX.Element
   const classes = useStyles();
 
   return (
-    <>
-      <Grid className={classes.header} container>
-        {
+    <Table>
+      <TableHead>
+        <TableRow className={classes.header}>
+          {
         commentTableColumns.map((col) => (
-          <Grid container key={col.field}>
+          <TableCell key={col.field}>
             {typeof col.title === 'string'
               ? col.title
               : col.title()}
-          </Grid>
+          </TableCell>
         ))
       }
-      </Grid>
-      <div className={classes.body}>
+        </TableRow>
+      </TableHead>
+      <TableBody className={classes.body}>
         {commentsData.length
           ? commentsData.map((data, index) => (
-            <Grid className={classes.row} container key={data.id}>
-              <Grid>{data.date}</Grid>
-              <Grid>
+            <TableRow className={classes.row} key={data.id}>
+              <TableCell>{data.date}</TableCell>
+              <TableCell>
                 <CommentInfo info={data.commentInfo} />
-              </Grid>
-              <Grid>{data.likes}</Grid>
-              <Grid>{data.hates}</Grid>
-              <Grid>{data.replies}</Grid>
-            </Grid>
+              </TableCell>
+              <TableCell>{data.likes}</TableCell>
+              <TableCell>{data.hates}</TableCell>
+              <TableCell>{data.replies}</TableCell>
+            </TableRow>
           ))
           : <Typography className={classes.noDataText}>데이터가 없습니다</Typography>}
         {loading && <CenterLoading />}
-      </div>
-    </>
+      </TableBody>
+    </Table>
   );
 }

@@ -37,6 +37,7 @@ const StyledToggleButton = withStyles((theme: Theme) => ({
   label: {
     display: 'block',
     whiteSpace: 'pre-line',
+    wordBreak: 'keep-all',
   },
 }))(ToggleButton);
 

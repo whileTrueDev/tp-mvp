@@ -28,7 +28,7 @@ const Info = (prop: VideoListItemType): JSX.Element => {
   const classes = useInfoComponentStyle();
   const { data } = prop;
   return (
-    <Grid container direction="column" className={classes.container}>
+    <Grid container alignItems="flex-start" direction="column" className={classes.container}>
       <Grid container direction="row" alignItems="center">
         <Typography className={classes.title}>{data.title}</Typography>
         <StyledRating size="small" name="video-rating" value={data.rating} readOnly />
