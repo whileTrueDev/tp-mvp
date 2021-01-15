@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import {
-  Grid, Typography, Avatar, Table, TableHead, TableBody, TableRow, TableCell,
+  Grid, Typography, Avatar, TableContainer, Table, TableHead, TableBody, TableRow, TableCell,
 } from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme,
@@ -43,29 +43,31 @@ const CommentInfo = memo((props: Record<string, any>): JSX.Element => {
 });
 
 const commentTableColumns = [
-  { field: 'date', title: '날짜' },
-  { field: 'commentInfo', title: '' },
+  { field: 'date', title: '날짜', width: '20%' },
+  { field: 'commentInfo', title: '', width: '30%' },
   {
     field: 'likes',
     title: () => (
-      <>
+      <Grid container alignItems="center" justify="center">
         <ThumbUpIcon />
-        &nbsp;좋아요
-      </>
+        <span>&nbsp;좋아요</span>
+      </Grid>
     ),
+    width: '15%',
 
   },
   {
     field: 'hates',
     title: () => (
-      <>
+      <Grid container alignItems="center" justify="center">
         <ThumbDownIcon />
-        &nbsp;싫어요
-      </>
+        <span>&nbsp;싫어요</span>
+      </Grid>
     ),
+    width: '15%',
 
   },
-  { field: 'replies', title: '대댓글' },
+  { field: 'replies', title: '대댓글', width: '20%' },
 ];
 interface fakeCommentType{
 id: string;
@@ -87,17 +89,17 @@ interface proptype {
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  tableContainer: {
+    position: 'relative',
+  },
   header: {
-
     backgroundColor: theme.palette.primary.light,
     '&>*': {
       color: theme.palette.primary.contrastText,
       padding: theme.spacing(2),
       textAlign: 'center',
+      verticalAlign: 'middle',
     },
-  },
-  body: {
-    position: 'relative',
   },
   row: {
     '&>*': {
@@ -117,36 +119,44 @@ export default function VideoAnalysisReactionTable(props: proptype): JSX.Element
   const classes = useStyles();
 
   return (
-    <Table>
-      <TableHead>
-        <TableRow className={classes.header}>
-          {
+    <TableContainer className={classes.tableContainer}>
+      <Table>
+        <TableHead>
+          <TableRow className={classes.header}>
+            {
         commentTableColumns.map((col) => (
-          <TableCell key={col.field}>
+          <TableCell key={col.field} style={{ width: col.width || 'auto' }}>
             {typeof col.title === 'string'
               ? col.title
               : col.title()}
           </TableCell>
         ))
       }
-        </TableRow>
-      </TableHead>
-      <TableBody className={classes.body}>
-        {commentsData.length
-          ? commentsData.map((data, index) => (
-            <TableRow className={classes.row} key={data.id}>
-              <TableCell>{data.date}</TableCell>
-              <TableCell>
-                <CommentInfo info={data.commentInfo} />
-              </TableCell>
-              <TableCell>{data.likes}</TableCell>
-              <TableCell>{data.hates}</TableCell>
-              <TableCell>{data.replies}</TableCell>
-            </TableRow>
-          ))
-          : <Typography className={classes.noDataText}>데이터가 없습니다</Typography>}
-        {loading && <CenterLoading />}
-      </TableBody>
-    </Table>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {commentsData.length
+            ? commentsData.map((data) => (
+              <TableRow className={classes.row} key={data.id}>
+                <TableCell>{data.date}</TableCell>
+                <TableCell>
+                  <CommentInfo info={data.commentInfo} />
+                </TableCell>
+                <TableCell>{data.likes}</TableCell>
+                <TableCell>{data.hates}</TableCell>
+                <TableCell>{data.replies}</TableCell>
+              </TableRow>
+            ))
+            : (
+              <TableRow>
+                <TableCell colSpan={commentTableColumns.length}>
+                  <Typography className={classes.noDataText}>데이터가 없습니다</Typography>
+                </TableCell>
+              </TableRow>
+            )}
+        </TableBody>
+      </Table>
+      {loading && <CenterLoading />}
+    </TableContainer>
   );
 }

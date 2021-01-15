@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Typography, Table, TableHead, TableRow, TableCell, TableBody,
+  Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody,
 } from '@material-ui/core';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
@@ -16,11 +16,11 @@ export interface VideoListItemType {
 }
 
 const VideoListColumns: {[key: string]: any}[] = [
-  { field: 'thumbnail', title: '썸네일' },
-  { field: 'info', title: '동영상 정보' },
-  { field: 'likes', title: '좋아요수' },
-  { field: 'views', title: '조회수' },
-  { field: 'link', title: '' },
+  { field: 'thumbnail', title: '썸네일', width: '10%' },
+  { field: 'info', title: '동영상 정보', width: '40%' },
+  { field: 'likes', title: '좋아요수', width: '20%' },
+  { field: 'views', title: '조회수', width: '20%' },
+  { field: 'link', title: '', width: '10%' },
 ];
 
 export interface VideoListTableProps {
@@ -28,11 +28,10 @@ export interface VideoListTableProps {
   loading: boolean
 }
 
-interface VideoListRowPropType{
-  rowData: VideoListItemType
-}
-
 const useVideoListTableStyle = makeStyles((theme: Theme) => createStyles({
+  tableContainer: {
+    position: 'relative',
+  },
   header: {
     backgroundColor: theme.palette.grey[100],
     color: theme.palette.grey.A200,
@@ -40,9 +39,6 @@ const useVideoListTableStyle = makeStyles((theme: Theme) => createStyles({
       padding: theme.spacing(2),
       textAlign: 'center',
     },
-  },
-  body: {
-    position: 'relative',
   },
   row: {
     '&>*': {
@@ -62,35 +58,40 @@ export default function VideoListTable(props: VideoListTableProps): JSX.Element 
   const { videoList, loading } = props;
   const classes = useVideoListTableStyle();
   return (
-    <Table>
-      <TableHead>
-        <TableRow className={classes.header}>
-          {VideoListColumns.map((col) => (
-            <TableCell>
-              <Typography key={col.field}>{col.title}</Typography>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody className={classes.body}>
-        {videoList.length
-          ? videoList.map((item) => (
-            <TableRow className={classes.row} key={item.streamId}>
-              <TableCell><Thumbnail data={item} /></TableCell>
-              <TableCell><Info data={item} /></TableCell>
-              <TableCell><Likes data={item} /></TableCell>
-              <TableCell><Views data={item} /></TableCell>
-              <TableCell><ActionButton data={item} /></TableCell>
-            </TableRow>
-          ))
-          : (
-            <TableRow>
-              <Typography className={classes.noDataText}>데이터가 없습니다</Typography>
-            </TableRow>
-          )}
-        {loading && (<CenterLoading />)}
-      </TableBody>
+    <TableContainer className={classes.tableContainer}>
+      <Table>
+        <TableHead>
+          <TableRow className={classes.header}>
+            {VideoListColumns.map((col) => (
+              <TableCell key={col.field} style={{ width: col.width || 'auto' }}>
+                <Typography>{col.title}</Typography>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {videoList.length
+            ? videoList.map((item) => (
+              <TableRow className={classes.row} key={item.streamId}>
+                <TableCell><Thumbnail data={item} /></TableCell>
+                <TableCell><Info data={item} /></TableCell>
+                <TableCell><Likes data={item} /></TableCell>
+                <TableCell><Views data={item} /></TableCell>
+                <TableCell><ActionButton data={item} /></TableCell>
+              </TableRow>
+            ))
+            : (
+              <TableRow>
+                <TableCell colSpan={VideoListColumns.length}>
+                  <Typography className={classes.noDataText}>데이터가 없습니다</Typography>
+                </TableCell>
+              </TableRow>
+            )}
 
-    </Table>
+        </TableBody>
+
+      </Table>
+      {loading && (<CenterLoading />)}
+    </TableContainer>
   );
 }
