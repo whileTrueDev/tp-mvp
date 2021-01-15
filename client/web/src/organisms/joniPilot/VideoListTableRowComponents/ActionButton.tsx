@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import {
-  Button,
+  Button, Typography,
 } from '@material-ui/core';
 import { VideoListItemType } from '../VideoListTable';
 
@@ -19,7 +19,7 @@ const RouterLinkButton = (prop: VideoListItemType) => {
         state: { data },
       }}
     >
-      분석하기
+      <Typography>분석하기</Typography>
     </Button>
   );
 };

@@ -1,8 +1,9 @@
 import React from 'react';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip, Popover, Typography } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/styles';
 import HelpIcon from '@material-ui/icons/Help';
 import SectionTitle from '../shared/sub/SectionTitles';
+import useAnchorEl from '../../utils/hooks/useAnchorEl';
 
 const useStyles = makeStyles(() => createStyles({
   sectionTitleContainer: {
@@ -23,14 +24,30 @@ export interface ChannelAnalysisSectionTitleProps{
 export default function ChannelAnalysisSectionTitle(props: ChannelAnalysisSectionTitleProps): JSX.Element {
   const classes = useStyles();
   const { mainTitle, tooltipContent } = props;
+  const {
+    open, anchorEl, handleAnchorOpen, handleAnchorClose,
+  } = useAnchorEl();
   return (
     <div className={classes.sectionTitleContainer}>
       <SectionTitle mainTitle={mainTitle} />
       {tooltipContent
       && (
-      <Tooltip title={tooltipContent}>
-        <HelpIcon color="primary" />
-      </Tooltip>
+        <>
+          <Typography
+            onMouseEnter={handleAnchorOpen}
+            onMouseLeave={handleAnchorClose}
+          >
+            <HelpIcon color="primary" />
+          </Typography>
+          <Popover open={open} anchorEl={anchorEl}>
+            <Typography>{tooltipContent}</Typography>
+          </Popover>
+
+          <Tooltip title={tooltipContent}>
+            <HelpIcon color="secondary" />
+          </Tooltip>
+
+        </>
       )}
 
     </div>

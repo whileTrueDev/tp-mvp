@@ -15,6 +15,7 @@ const useCommentInfoStyles = makeStyles((theme: Theme) => createStyles({
   },
   nickname: {
     marginRight: theme.spacing(4),
+    textAlign: 'start',
   },
   commentText: {
     textAlign: 'start',
@@ -48,10 +49,12 @@ const commentTableColumns = [
   {
     field: 'likes',
     title: () => (
-      <Grid container alignItems="center" justify="center">
-        <ThumbUpIcon />
-        <span>&nbsp;좋아요</span>
-      </Grid>
+      <Typography>
+        <Grid container alignItems="center" justify="center">
+          <ThumbUpIcon />
+          <span>&nbsp;좋아요</span>
+        </Grid>
+      </Typography>
     ),
     width: '15%',
 
@@ -59,10 +62,14 @@ const commentTableColumns = [
   {
     field: 'hates',
     title: () => (
-      <Grid container alignItems="center" justify="center">
-        <ThumbDownIcon />
-        <span>&nbsp;싫어요</span>
-      </Grid>
+
+      <Typography>
+        <Grid container alignItems="center" justify="center">
+          <ThumbDownIcon />
+          <span>&nbsp;싫어요</span>
+        </Grid>
+      </Typography>
+
     ),
     width: '15%',
 
@@ -126,9 +133,11 @@ export default function VideoAnalysisReactionTable(props: proptype): JSX.Element
             {
         commentTableColumns.map((col) => (
           <TableCell key={col.field} style={{ width: col.width || 'auto' }}>
-            {typeof col.title === 'string'
-              ? col.title
-              : col.title()}
+            <Typography>
+              {typeof col.title === 'string'
+                ? col.title
+                : col.title()}
+            </Typography>
           </TableCell>
         ))
       }
@@ -138,13 +147,13 @@ export default function VideoAnalysisReactionTable(props: proptype): JSX.Element
           {commentsData.length
             ? commentsData.map((data) => (
               <TableRow className={classes.row} key={data.id}>
-                <TableCell>{data.date}</TableCell>
+                <TableCell><Typography>{data.date}</Typography></TableCell>
                 <TableCell>
                   <CommentInfo info={data.commentInfo} />
                 </TableCell>
-                <TableCell>{data.likes}</TableCell>
-                <TableCell>{data.hates}</TableCell>
-                <TableCell>{data.replies}</TableCell>
+                <TableCell><Typography>{data.likes}</Typography></TableCell>
+                <TableCell><Typography>{data.hates}</Typography></TableCell>
+                <TableCell><Typography>{data.replies}</Typography></TableCell>
               </TableRow>
             ))
             : (

@@ -35,7 +35,6 @@ const StyledToggleButton = withStyles((theme: Theme) => ({
     },
   },
   label: {
-    display: 'block',
     whiteSpace: 'pre-line',
     wordBreak: 'keep-all',
   },
@@ -79,7 +78,13 @@ export default memo((props: ToggleButtonsPropType): JSX.Element => {
       onChange={handleClick}
     >
       {buttonData.map((button) => (
-        <StyledToggleButton key={button.label} value={button.url}>{button.label}</StyledToggleButton>
+        <StyledToggleButton
+          key={button.label}
+          value={button.url}
+        >
+          {button.label}
+
+        </StyledToggleButton>
       ))}
     </StyledToggleButtonGroup>
   );

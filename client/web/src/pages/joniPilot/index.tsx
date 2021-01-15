@@ -3,7 +3,7 @@ import {
   Route, useRouteMatch, Switch,
 } from 'react-router-dom';
 import {
-  makeStyles, createStyles,
+  makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
 
 import MypageSectionWrapper from '../../atoms/MypageSectionWrapper';
@@ -41,9 +41,12 @@ const textSource = {
     ],
   },
 };
-const useStyles = makeStyles(() => createStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  pageContainer: {
+    minWidth: `${theme.breakpoints.values.sm}px`,
+  },
   mypageHeroWrapper: {
-    backgroundColor: 'rgba(63, 73, 145,50%)',
+    backgroundColor: theme.palette.grey[600],
     padding: '20px 10%',
   },
   contentWrapper: {
@@ -55,7 +58,7 @@ export default function ChannelAnalysis(): JSX.Element {
   const { path } = useRouteMatch();
   const classes = useStyles();
   return (
-    <div>
+    <div className={classes.pageContainer}>
       <MypageSectionWrapper className={classes.mypageHeroWrapper}>
         <MypageHero textSource={textSource.channelAnalysisHeroSection} />
       </MypageSectionWrapper>

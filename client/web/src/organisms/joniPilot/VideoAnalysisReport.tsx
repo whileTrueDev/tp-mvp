@@ -14,6 +14,9 @@ interface StyleProps{
 }
 // 좋아요 부분 숫자만 색이 달라서 prop.dataTextColor로 받아옴
 const useInfoItemComponentStyles = makeStyles((theme: Theme) => createStyles({
+  textContainer: {
+    flexWrap: 'nowrap',
+  },
   dataText: (props: StyleProps) => ({
     color: props.dataTextColor,
     fontFamily: 'SourceSansPro-Bold',
@@ -24,7 +27,7 @@ const useInfoItemComponentStyles = makeStyles((theme: Theme) => createStyles({
     [theme.breakpoints.up('md')]: {
       fontSize: '2rem',
     },
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(0.5),
   }),
   captionText: {
     fontFamily: 'SourceSansPro-Regular',
@@ -47,7 +50,7 @@ function InfoItemNumberDisplay(prop: {data: number, caption: string, style?: Sty
   const classes = useInfoItemComponentStyles(style);
 
   return (
-    <Grid container direction="row" alignItems="baseline">
+    <Grid container direction="row" alignItems="baseline" className={classes.textContainer}>
       <Typography component="h3" className={classes.dataText}>
         <CountUp duration={2} redraw end={data} separator="," suffix={suffix} />
       </Typography>
@@ -92,6 +95,7 @@ const useReportSectionStyle = makeStyles((theme: Theme) => createStyles({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.grey[50],
     marginRight: theme.spacing(4.5),
+    marginBottom: theme.spacing(1),
     padding: '1em 0.5em',
     transitionProperty: 'transform',
     transitionDuration: `${theme.transitions.duration.short}ms`,
