@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useCallback } from 'react';
+import React, { useRef, useLayoutEffect } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
@@ -17,10 +17,16 @@ function manipulateData(data: Record<string, any>[], limit: number) {
   return data.sort((a: any, b: any) => (b.value - a.value))
     .slice(0, limit);
 }
+// 단어 퍼센트 계산
+function getPercent(wordsCount: number, totalCount: number): number {
+  return totalCount
+    ? Math.round((wordsCount / totalCount) * 100)
+    : 0;
+}
 const chartOption = {
   cornerRadius: 10,
   yAxisSpace: 100,
-  labelDx: 20,
+  labelDx: 30,
   limit: 6,
 };
 export default function SortedBarChart(props: SortedBarChartType): JSX.Element {
@@ -34,15 +40,13 @@ export default function SortedBarChart(props: SortedBarChartType): JSX.Element {
   const positiveData = manipulateData(positiveWords, chartOption.limit);
   const negativeData = manipulateData(negativeWords, chartOption.limit);
 
-  const totalLength = positiveWords.length + negativeWords.length;
+  // 단어 퍼센트 계산
+  const positiveWordsTotalCount = positiveWords.reduce((sum, word) => sum + word.value, 0);
+  const negativeWordsTotalCount = negativeWords.reduce((sum, word) => sum + word.value, 0);
+  const totalCount = positiveWordsTotalCount + negativeWordsTotalCount;
 
-  const getPercentage = useCallback(
-    (words: Record<string, any>[]) => (
-      totalLength
-        ? Math.floor((words.length / totalLength) * 100)
-        : 0
-    ), [totalLength],
-  );
+  const positiveWordsPercent = getPercent(positiveWordsTotalCount, totalCount);
+  const negativeWordsPercent = getPercent(negativeWordsTotalCount, totalCount);
 
   useLayoutEffect(() => {
     // 차트
@@ -69,7 +73,7 @@ export default function SortedBarChart(props: SortedBarChartType): JSX.Element {
         text: {
           label: '긍정단어',
           color: mainColor.current,
-          percent: getPercentage(positiveWords),
+          percent: positiveWordsPercent,
         },
       },
       {
@@ -78,7 +82,7 @@ export default function SortedBarChart(props: SortedBarChartType): JSX.Element {
         text: {
           label: '부정단어',
           color: subColor.current,
-          percent: getPercentage(negativeWords),
+          percent: negativeWordsPercent,
         },
       },
     ];
@@ -163,7 +167,7 @@ export default function SortedBarChart(props: SortedBarChartType): JSX.Element {
     return () => {
       chart.dispose();
     };
-  }, [negativeData, positiveData, positiveWords, negativeWords, getPercentage]);
+  }, [negativeData, positiveData, negativeWordsPercent, positiveWordsPercent]);
 
   return (
     <div id="pos-neg-words-bar-chart-div" style={{ width: '100%', height: '500px' }} />

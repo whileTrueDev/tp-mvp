@@ -38,7 +38,7 @@ export default function VideoAnalysisComments(): JSX.Element {
       <VideoAnalysisCommentPeriodSelect onSelect={getWords} />
       <AmWordCloud
         words={words}
-        useLoadingIndicator
+        useLoadingIndicator={false}
       />
       <div style={{ position: 'relative' }}>
         {loading && <CenterLoading />}

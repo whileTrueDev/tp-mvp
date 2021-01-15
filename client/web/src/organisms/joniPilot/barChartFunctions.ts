@@ -78,7 +78,8 @@ export function createXAxisAndSeries(
   const xAxis = targetChart.xAxes.push(new am4charts.ValueAxis());
   xAxis.data = data;
   xAxis.min = 0;
-  xAxis.max = Math.max(...data.map((d) => d.value));
+  xAxis.max = 100; // 입력되는 데이터의 최대값으로 변경해야함
+  // xAxis.max = Math.max(...data.map((d) => d.value));
   xAxis.extraMax = 0.1;
   xAxis.renderer.grid.template.disabled = true;
   xAxis.renderer.labels.template.disabled = true;
@@ -98,7 +99,6 @@ export function createXAxisAndSeries(
   series.xAxis = xAxis;
   series.yAxis = yAxis;
   series.columns.template.fill = am4core.color(color);
-
   series.columns.template.strokeOpacity = 0;
   series.columns.template.column.cornerRadius(
     chartOption.cornerRadius,
@@ -106,6 +106,10 @@ export function createXAxisAndSeries(
     chartOption.cornerRadius,
     chartOption.cornerRadius,
   );
+  // 툴팁
+  series.columns.template.tooltipText = '{categoryY}: {value}';
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  series.tooltip!.pointerOrientation = 'down';
 
   const labelBullet = series.bullets.push(new am4charts.LabelBullet());
   labelBullet.label.horizontalCenter = name.includes('positive') ? 'left' : 'right';

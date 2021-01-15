@@ -43,10 +43,10 @@ export default memo((props: WordCloudProps<Word>): JSX.Element => {
     series.angles = [0, 0, 0];
     series.maxCount = 100;
     series.minWordLength = 2;
+    // series.labels.template.margin(5, 5, 5, 5);
     series.labels.template.tooltipText = '{word}: {value}';
     series.fontFamily = 'Courier New';
     series.maxFontSize = am4core.percent(15);
-    series.randomness = 0.2; // 0~1값 단어 흐트러지는 정도
     series.heatRules.push({
       target: series.labels.template,
       property: 'fill',
@@ -61,7 +61,6 @@ export default memo((props: WordCloudProps<Word>): JSX.Element => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         ev.target.preloader!.show(0);
       });
-
       series.events.on('arrangeprogress', (ev) => {
         // eslint-disable-next-line no-param-reassign, @typescript-eslint/no-non-null-assertion
         ev.target.preloader!.progress = ev.progress;
