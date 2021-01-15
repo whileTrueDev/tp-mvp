@@ -49,12 +49,10 @@ const commentTableColumns = [
   {
     field: 'likes',
     title: () => (
-      <Typography>
-        <Grid container alignItems="center" justify="center">
-          <ThumbUpIcon />
-          <span>&nbsp;좋아요</span>
-        </Grid>
-      </Typography>
+      <Grid container alignItems="center" justify="center">
+        <ThumbUpIcon />
+        <Typography>&nbsp;좋아요</Typography>
+      </Grid>
     ),
     width: '15%',
 
@@ -62,14 +60,10 @@ const commentTableColumns = [
   {
     field: 'hates',
     title: () => (
-
-      <Typography>
-        <Grid container alignItems="center" justify="center">
-          <ThumbDownIcon />
-          <span>&nbsp;싫어요</span>
-        </Grid>
-      </Typography>
-
+      <Grid container alignItems="center" justify="center">
+        <ThumbDownIcon />
+        <Typography>&nbsp;싫어요</Typography>
+      </Grid>
     ),
     width: '15%',
 
@@ -133,11 +127,9 @@ export default function VideoAnalysisReactionTable(props: proptype): JSX.Element
             {
         commentTableColumns.map((col) => (
           <TableCell key={col.field} style={{ width: col.width || 'auto' }}>
-            <Typography>
-              {typeof col.title === 'string'
-                ? col.title
-                : col.title()}
-            </Typography>
+            {typeof col.title === 'string'
+              ? <Typography>col.title</Typography>
+              : col.title()}
           </TableCell>
         ))
       }

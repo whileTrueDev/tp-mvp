@@ -33,7 +33,7 @@ export default function VideoAnalysisComments(): JSX.Element {
   return (
     <ChannelAnalysisSectionLayout
       title="댓글 분석"
-      tooltip="댓글분석~~~"
+      description="댓글분석~~~"
     >
       <VideoAnalysisCommentPeriodSelect onSelect={getWords} />
       <AmWordCloud

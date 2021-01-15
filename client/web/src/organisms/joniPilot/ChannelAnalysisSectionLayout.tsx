@@ -13,17 +13,20 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export interface ChannelAnalysisSectionLayoutProps{
   title: string;
   tooltip?: string;
+  description?: string;
   children?: JSX.Element[] | JSX.Element | null
 }
 
 export default memo((props: ChannelAnalysisSectionLayoutProps): JSX.Element => {
-  const { title, tooltip, children } = props;
+  const {
+    title, children, description,
+  } = props;
   const classes = useStyles();
   return (
     <Paper className={classes.container}>
       <ChannelAnalysisSectionTitle
         mainTitle={title}
-        tooltipContent={tooltip}
+        description={description}
       />
       {children}
     </Paper>

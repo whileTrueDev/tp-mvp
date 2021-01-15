@@ -139,7 +139,7 @@ export default function VideoAnalysisReport(props: VideoAnalysisReportProps): JS
   return (
     <ChannelAnalysisSectionLayout
       title="동영상 분석 보고서"
-      tooltip="동영상 분석 보고서~~~"
+      description="동영상 분석 보고서~~~"
     >
       <Grid container>
 

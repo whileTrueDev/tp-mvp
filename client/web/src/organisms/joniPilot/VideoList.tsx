@@ -53,7 +53,10 @@ export default function VideoList(): JSX.Element {
     setSortField(event.target.value);
   }, [setSortField]);
   return (
-    <ChannelAnalysisSectionLayout title="동영상 분석" tooltip="동영상 분석">
+    <ChannelAnalysisSectionLayout
+      title="동영상 분석"
+      description="동영상 분석입니다 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석 동영상 분석"
+    >
 
       <VideoListPeriodSelector
         period={period}
