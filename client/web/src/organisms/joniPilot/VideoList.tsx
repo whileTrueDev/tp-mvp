@@ -55,15 +55,14 @@ export default function VideoList(): JSX.Element {
   return (
     <ChannelAnalysisSectionLayout title="동영상 분석" tooltip="동영상 분석">
 
-      <VideoListSortField
-        field={sortField}
-        handleChange={changeSortField}
-      />
       <VideoListPeriodSelector
         period={period}
         setPeriod={setPeriod}
       />
-
+      <VideoListSortField
+        field={sortField}
+        handleChange={changeSortField}
+      />
       <VideoListTable
         videoList={videoListData}
         loading={loading}

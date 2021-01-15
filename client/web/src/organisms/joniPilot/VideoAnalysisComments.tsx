@@ -1,15 +1,15 @@
 import React, {
   useState, useEffect, useCallback, useMemo,
 } from 'react';
-// import useAxios from 'axios-hooks';
 import axios from 'axios';
 import CenterLoading from '../../atoms/Loading/CenterLoading';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
+import VideoAnalysisCommentPeriodSelect from './VideoAnalysisCommentPeriodSelect';
 import AmWordCloud, { Word } from './AmWordCloud';
 import SortedBarChart from './SortedBarChart';
-import VideoAnalysisCommentPeriodSelect from './VideoAnalysisCommentPeriodSelect';
 
 const tempWordsUrl = 'https://joni-pilot.glitch.me/words';
+
 export default function VideoAnalysisComments(): JSX.Element {
   const [posWords, setPosWords] = useState<Word[]>([]);
   const [negWords, setNegWords] = useState<Word[]>([]);
@@ -27,21 +27,23 @@ export default function VideoAnalysisComments(): JSX.Element {
   const words = useMemo(() => [...posWords, ...negWords],
     [posWords, negWords]);
 
-  useEffect(() => {
-    getWords();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(getWords, []);
 
   return (
     <ChannelAnalysisSectionLayout
       title="댓글 분석"
       tooltip="댓글분석~~~"
     >
+      <VideoAnalysisCommentPeriodSelect onSelect={getWords} />
+      <AmWordCloud
+        words={words}
+        useLoadingIndicator
+      />
       <div style={{ position: 'relative' }}>
         {loading && <CenterLoading />}
-        <VideoAnalysisCommentPeriodSelect onSelect={getWords} />
-        <AmWordCloud words={words} />
+        <SortedBarChart negativeWords={negWords} positiveWords={posWords} />
       </div>
-      <SortedBarChart negativeWords={negWords} positiveWords={posWords} />
 
     </ChannelAnalysisSectionLayout>
   );

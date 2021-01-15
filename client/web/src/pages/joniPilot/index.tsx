@@ -2,7 +2,9 @@ import React from 'react';
 import {
   Route, useRouteMatch, Switch,
 } from 'react-router-dom';
-import { makeStyles, createStyles } from '@material-ui/styles';
+import {
+  makeStyles, createStyles,
+} from '@material-ui/core/styles';
 
 import MypageSectionWrapper from '../../atoms/MypageSectionWrapper';
 import MypageHero from '../../organisms/shared/sub/MypageHero';
@@ -39,7 +41,6 @@ const textSource = {
     ],
   },
 };
-
 const useStyles = makeStyles(() => createStyles({
   mypageHeroWrapper: {
     backgroundColor: 'rgba(63, 73, 145,50%)',

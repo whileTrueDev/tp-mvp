@@ -56,6 +56,8 @@ const useVideoListTableStyle = makeStyles((theme: Theme) => createStyles({
 
 export default function VideoListTable(props: VideoListTableProps): JSX.Element {
   const { videoList, loading } = props;
+  // const [data] = useState(videoList);
+
   const classes = useVideoListTableStyle();
   return (
     <TableContainer className={classes.tableContainer}>
@@ -87,9 +89,7 @@ export default function VideoListTable(props: VideoListTableProps): JSX.Element 
                 </TableCell>
               </TableRow>
             )}
-
         </TableBody>
-
       </Table>
       {loading && (<CenterLoading />)}
     </TableContainer>
