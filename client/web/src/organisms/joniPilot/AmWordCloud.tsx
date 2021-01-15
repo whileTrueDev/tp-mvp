@@ -1,15 +1,10 @@
-/* Imports */
-import React, { useRef, useLayoutEffect } from 'react';
+import React, { useRef, useLayoutEffect, memo } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import * as am4core from '@amcharts/amcharts4/core';
-// import * as am4charts from '@amcharts/amcharts4/charts';
 import * as am4pluginsWordCloud from '@amcharts/amcharts4/plugins/wordCloud';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
 
-/* Chart code */
-// Themes begin
 am4core.useTheme(am4themesAnimated);
-// Themes end
 
 export interface Word extends Record<string, any>{
 text: string;
@@ -20,7 +15,7 @@ interface WordCloudProps<W> extends Record<string, any>{
   words: W[],
 }
 
-export default function AmWordCloud(props: WordCloudProps<Word>): JSX.Element {
+export default memo((props: WordCloudProps<Word>): JSX.Element => {
   const { words } = props;
 
   const chartRef = useRef<any>(null);
@@ -75,10 +70,9 @@ export default function AmWordCloud(props: WordCloudProps<Word>): JSX.Element {
 
   return (
     <>
-      {words.length
-        ? <div id="chartdiv-word-cloud" style={{ width: '100%', height: '500px' }} />
-        : <div>데이터가 없습니다</div>}
+      <div id="chartdiv-word-cloud" style={{ width: '100%', height: '500px' }} />
+      {!words.length && <div>데이터가 없습니다</div>}
     </>
 
   );
-}
+});

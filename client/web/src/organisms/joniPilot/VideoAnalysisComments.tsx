@@ -1,58 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { Select, MenuItem } from '@material-ui/core';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import React, {
+  useState, useEffect, useCallback, useMemo,
+} from 'react';
+// import useAxios from 'axios-hooks';
+import axios from 'axios';
+import CenterLoading from '../../atoms/Loading/CenterLoading';
 import ChannelAnalysisSectionLayout from './ChannelAnalysisSectionLayout';
 import AmWordCloud, { Word } from './AmWordCloud';
 import SortedBarChart from './SortedBarChart';
-import { positiveWords, negativeWords } from './tempWordsData';
+import VideoAnalysisCommentPeriodSelect from './VideoAnalysisCommentPeriodSelect';
 
-const useVideoAnalysisCommentsStyles = makeStyles((theme: Theme) => createStyles({
-  selectInputContainer: {
-    textAlign: 'right',
-  },
-  selectInput: {
-    padding: theme.spacing(1, 2),
-  },
-}));
+const tempWordsUrl = 'https://joni-pilot.glitch.me/words';
 export default function VideoAnalysisComments(): JSX.Element {
-  const classes = useVideoAnalysisCommentsStyles();
-  const handleSelectInputChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    // set value
-  };
   const [posWords, setPosWords] = useState<Word[]>([]);
   const [negWords, setNegWords] = useState<Word[]>([]);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setPosWords(positiveWords);
-      setNegWords(negativeWords);
-    }, 1000);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    return () => {
-      clearTimeout(timeout);
-    };
+  const getWords = useCallback(() => {
+    setLoading(true);
+    axios.get(tempWordsUrl).then((res) => {
+      setPosWords(res.data.positiveWords);
+      setNegWords(res.data.negativeWords);
+      setLoading(false);
+    });
   }, []);
-  return (
 
+  const words = useMemo(() => [...posWords, ...negWords],
+    [posWords, negWords]);
+
+  useEffect(() => {
+    getWords();
+  }, []);
+
+  return (
     <ChannelAnalysisSectionLayout
       title="댓글 분석"
       tooltip="댓글분석~~~"
     >
-      <div className={classes.selectInputContainer}>
-        <Select
-          className={classes.selectInput}
-          variant="outlined"
-          value={3}
-          onChange={handleSelectInputChange}
-        >
-          <MenuItem value={3}>최근 3일</MenuItem>
-          <MenuItem value={7}>최근 7일</MenuItem>
-          <MenuItem value={30}>최근 30일</MenuItem>
-        </Select>
+      <div style={{ position: 'relative' }}>
+        {loading && <CenterLoading />}
+        <VideoAnalysisCommentPeriodSelect onSelect={getWords} />
+        <AmWordCloud words={words} />
       </div>
-      {/* <AmWordCloud words={[...positiveWords, ...negativeWords]} /> */}
-      <AmWordCloud words={[...posWords, ...negWords]} />
-      {/* <SortedBarChart negativeWords={negativeWords} positiveWords={positiveWords} /> */}
       <SortedBarChart negativeWords={negWords} positiveWords={posWords} />
+
     </ChannelAnalysisSectionLayout>
   );
 }
