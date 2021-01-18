@@ -46,6 +46,7 @@ export function createYCategoryAxis(
   yAxis.renderer.line.stroke = am4core.color('#dedede');
   yAxis.renderer.inversed = true;
   yAxis.renderer.grid.template.disabled = true;
+  yAxis.renderer.grid.template.location = 0;
 
   yAxis.renderer.cellStartLocation = 0.3;
   yAxis.renderer.cellEndLocation = 0.7;
@@ -67,7 +68,6 @@ export function createYCategoryAxis(
 }
 
 // x축과 그래프 생성하는 함수
-// 긍정그래프 -> 부정그래프 순으로 생성한다
 export function createXAxisAndSeries(
   targetChart: am4charts.XYChart,
   option: {name: string, color: string, chartOption: Record<string, any>},

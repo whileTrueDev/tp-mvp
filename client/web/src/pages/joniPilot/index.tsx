@@ -10,6 +10,7 @@ import MypageSectionWrapper from '../../atoms/MypageSectionWrapper';
 import MypageHero from '../../organisms/shared/sub/MypageHero';
 import VideoList from '../../organisms/joniPilot/VideoList';
 import VideoAnalysis from '../../organisms/joniPilot/VideoAnalysis';
+import ChannelMain from '../../organisms/joniPilot/ChannelMain';
 
 const textSource = {
   channelAnalysisHeroSection: {
@@ -65,6 +66,7 @@ export default function ChannelAnalysis(): JSX.Element {
 
       <MypageSectionWrapper className={classes.contentWrapper}>
         <Switch>
+          <Route exact path={`${path}/channel`} component={ChannelMain} />
           <Route exact path={`${path}`} component={VideoList} />
           <Route exact path={`${path}/videos/:id`} component={VideoAnalysis} />
         </Switch>
