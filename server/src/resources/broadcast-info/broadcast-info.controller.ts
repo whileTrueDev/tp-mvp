@@ -1,5 +1,5 @@
 import {
-  Controller, UseGuards, Get, Query,
+  Controller, UseGuards, Get, Query, Param,
 } from '@nestjs/common';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
@@ -28,5 +28,11 @@ export class BroadcastInfoController {
       findDaysStreamRequest.startDate,
       findDaysStreamRequest.endDate,
     );
+  }
+
+  @Get(':userId')
+  getStreamsByUserId(@Param() param: Record<string, any>): Promise<any> {
+    const { userId } = param;
+    return this.broadcastService.getStreamsByUserId(userId);
   }
 }

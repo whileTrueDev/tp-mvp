@@ -1,37 +1,58 @@
-import React from 'react';
+import React, { useCallback, memo } from 'react';
+import axios from 'axios';
 import { Button } from '@material-ui/core';
+import { BroadcastDataType } from './UserBroadcastTable';
+
+import getApiHost from '../../util/getApiHost';
+
+// 편집점 다운로드 요청 url
+const apiUrl = `${getApiHost()}/highlight/export`;
+
+interface DownloadButtonProps extends BroadcastDataType{
+  ext: string; // 확장자, srt | csv
+}
 
 // UserBroadCast 내에서 csv 다운로드, srt 다운로드 컬럼에서 사용되는 컴포넌트
-// 
-function DownloadButton(props: Record<string, any>): JSX.Element {
+function DownloadButton(props: DownloadButtonProps): JSX.Element {
   const {
-    srt, csv, ext, title,
+    ext, creatorId, platform, streamId,
   } = props;
 
-  // 확장자에 따라 다른 url 사용
-  const url = (ext === 'srt')
-    ? srt
-    : csv;
+  const csv = (ext === 'csv') ? 1 : 0;
+  const srt = (ext === 'srt') ? 1 : 0;
+  const exportCategory = 'highlight';
+  const exportFileName = '편집점';
 
-  function download() {
-    fetch(url).then((res) => {
-      res.blob().then((blob) => {
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = `${title}.${ext}`; // 다운로드 될 파일이름 : 제목.확장자
-        a.click();
-      });
+  const download = useCallback(() => {
+    axios.get(apiUrl, {
+      responseType: 'blob',
+      params: {
+        creatorId,
+        platform,
+        streamId,
+        exportCategory,
+        srt,
+        csv,
+      },
+    }).then((res) => {
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${exportFileName}.zip`);
+      link.click();
+    }).catch((e) => {
+      console.error('다운로드 에러', e);
     });
-  }
+  }, []);
+
   return (
     <Button
       variant="contained"
       onClick={download}
     >
-      {`${ext}`}
+      {`.${ext}`}
     </Button>
   );
 }
 
-export default DownloadButton;
+export default memo(DownloadButton);

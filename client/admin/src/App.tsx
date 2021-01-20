@@ -21,7 +21,7 @@ import AdminSuggest from './pages/AdminSuggest';
 import NoticeWrite from './pages/NoticeWrite';
 import Sidebar from './organisms/Sidebar';
 import AdminUsers from './pages/AdminUsers';
-import UserActivity from './pages/UserActivity';
+import UserBroadcast from './pages/UserBroadcast';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -146,7 +146,7 @@ export default function App(): JSX.Element {
                 <Route exact path="/admin/notice-write" component={NoticeWrite} />
                 <Route exact path="/admin/cbt" component={AdminCbt} />
                 <Route exact path="/admin/users" component={AdminUsers} />
-                <Route exact path="/admin/user/:userId" component={UserActivity} />
+                <Route exact path="/admin/user/:userId" component={UserBroadcast} />
               </Switch>
             </main>
           </BrowserRouter>

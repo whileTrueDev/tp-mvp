@@ -48,7 +48,7 @@ const localization = {
 interface Props extends Record<string, any>{
   title?: string,
   columns: any[],
-  data: any[],
+  data: any,
 }
 
 // UsersTable, UserBroadcastTable 에 공통으로 사용하는 테이블 컴포넌트
