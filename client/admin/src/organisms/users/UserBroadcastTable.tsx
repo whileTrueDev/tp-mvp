@@ -1,18 +1,11 @@
 import React from 'react';
+import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 import Table from './Table';
 import DownloadButton from './DownloadButton';
 import DateTimeDisplay from './DateTimeDisplay';
 
-export interface BroadcastDataType {
-  streamId: string;
-  platform: string;
-  title: string;
-  startDate: Date;
-  endDate: Date;
-  creatorId: string;
-}
 interface TableProps extends Record<string, any>{
-  data: BroadcastDataType[] | undefined,
+  data: BroadcastDataForDownload[] | undefined,
   loading? : boolean
 }
 
@@ -25,17 +18,17 @@ const UserDataTableColumns = [
   {
     title: '방송날짜 및 시간',
     field: 'dateTime',
-    render: (rowData: BroadcastDataType) => (<DateTimeDisplay {...rowData} />),
+    render: (rowData: BroadcastDataForDownload) => (<DateTimeDisplay {...rowData} />),
   },
   {
     title: 'csv 다운로드',
     field: 'csv',
-    render: (rowData: BroadcastDataType) => (<DownloadButton {...rowData} ext="csv" />),
+    render: (rowData: BroadcastDataForDownload) => (<DownloadButton {...rowData} ext="csv" />),
   },
   {
     title: 'srt 다운로드',
     field: 'srt',
-    render: (rowData: BroadcastDataType) => (<DownloadButton {...rowData} ext="srt" />),
+    render: (rowData: BroadcastDataForDownload) => (<DownloadButton {...rowData} ext="srt" />),
   },
 ].map((col) => ({ ...col, cellStyle: { textAlign: 'center' } }));
 

@@ -1,14 +1,14 @@
 import React, { useCallback, memo } from 'react';
+import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 import axios from 'axios';
 import { Button } from '@material-ui/core';
-import { BroadcastDataType } from './UserBroadcastTable';
 
 import getApiHost from '../../util/getApiHost';
 
 // 편집점 다운로드 요청 url
 const apiUrl = `${getApiHost()}/highlight/export`;
 
-interface DownloadButtonProps extends BroadcastDataType{
+interface DownloadButtonProps extends BroadcastDataForDownload{
   ext: string; // 확장자, srt | csv
 }
 

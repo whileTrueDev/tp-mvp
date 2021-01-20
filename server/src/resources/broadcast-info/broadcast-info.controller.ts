@@ -2,6 +2,7 @@ import {
   Controller, UseGuards, Get, Query, Param,
 } from '@nestjs/common';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
@@ -31,7 +32,7 @@ export class BroadcastInfoController {
   }
 
   @Get(':userId')
-  getStreamsByUserId(@Param() param: Record<string, any>): Promise<any> {
+  getStreamsByUserId(@Param() param: {userId: string}): Promise<BroadcastDataForDownload[]> {
     const { userId } = param;
     return this.broadcastService.getStreamsByUserId(userId);
   }

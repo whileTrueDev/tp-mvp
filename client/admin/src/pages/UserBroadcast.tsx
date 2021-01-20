@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import useAxios from 'axios-hooks';
-import UserBroadcastTable, { BroadcastDataType } from '../organisms/users/UserBroadcastTable';
+import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
+import UserBroadcastTable from '../organisms/users/UserBroadcastTable';
 import getApiHost from '../util/getApiHost';
 
 const url = `${getApiHost()}/broadcast-info`;
@@ -11,7 +12,7 @@ const UserBroadcast = (): JSX.Element => {
   const { userId }: Record<string, any> = useParams();
   const location: Record<string, any> = useLocation();
   const { nickName } = location.state;
-  const [{ data, loading }, refetch] = useAxios<BroadcastDataType[]>(`${url}/${userId}`);
+  const [{ data, loading }, refetch] = useAxios<BroadcastDataForDownload[]>(`${url}/${userId}`);
 
   useEffect(() => {
     refetch();
