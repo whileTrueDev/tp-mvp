@@ -167,6 +167,15 @@ export class UsersController {
     return this.usersService.findAllUserList();
   }
 
+  /**
+   * 관리자 페이지 내 이용자db 정보 조회 탭에서 사용
+   * output : [{nickName, userId, recentBroadcastDate, averageViewer}...]
+   */
+  @Get('/brief-info-list')
+  getAllUserBriefInfoList(): Promise<{userId: string, nickName: string}[]> {
+    return this.usersService.getAllUserBriefInfoList();
+  }
+
   // 회원 가입
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)

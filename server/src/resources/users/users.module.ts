@@ -14,7 +14,7 @@ import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/t
 import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/targetStreamers.entity';
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
-
+import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -24,6 +24,7 @@ import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/act
       UserEntity,
       UserTokenEntity,
       SubscribeEntity,
+      StreamsEntity,
     ]),
     TypeOrmModule.forFeature([
       AfreecaTargetStreamersEntity,

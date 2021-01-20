@@ -23,7 +23,7 @@ import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/t
 import { TwitchProfileResponse } from '../auth/interfaces/twitchProfile.interface';
 import { AfreecaLinker } from '../auth/strategies/afreeca.linker';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
-
+import { StreamsEntity } from '../broadcast-info/entities/streams.entity';
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
@@ -51,6 +51,8 @@ export class UsersService {
     private readonly afreecaActiveStreamsRepository: Repository<AfreecaActiveStreamsEntity>,
     @InjectRepository(YoutubeTargetStreamersEntity, 'WhileTrueCollectorDB')
     private readonly youtubeTargetStreamersRepository: Repository<YoutubeTargetStreamersEntity>,
+    @InjectRepository(StreamsEntity)
+    private readonly streamsRepository: Repository<StreamsEntity>,
   ) {}
 
   private resizeingYoutubeLogo(youtubeLogoString: string): string {
@@ -280,6 +282,33 @@ export class UsersService {
       .execute();
 
     return allUserId;
+  }
+
+  /**
+   * 관리자 페이지 - 이용자db 정보 조회 탭에서 사용
+   * output : [{nickName, userId, recentBroadcastDate, averageViewer}...]
+   *              이용자 닉네임, 아이디, 최근방송날짜, 평균시청자 조회
+   */
+  async getAllUserBriefInfoList(): Promise<any> {
+    const allUsers = await this.usersRepository
+      .createQueryBuilder('users')
+      .select(['users.userId, users.nickName'])
+      .getRawMany();
+    const streamsGroupByUserId = await this.streamsRepository
+      .createQueryBuilder('streams')
+      .select(['AVG(streams.viewer) as averageViewer, MAX(streams.endDate) as recentBroadcastDate, streams.userId'])
+      .groupBy('streams.userId')
+      .getRawMany();
+
+    const result = allUsers.map((user) => {
+      const matchingStream = streamsGroupByUserId.find((stream) => stream.userId === user.userId);
+      if (matchingStream) {
+        return { ...user, ...matchingStream };
+      }
+      return user;
+    });
+
+    return result;
   }
 
   // **********************************************
