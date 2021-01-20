@@ -32,12 +32,12 @@ const UsersTableColumns = [
   {
     title: '최근 방송 날짜',
     field: 'recentBroadcastDate',
-    render: (rowData: Record<string, any>) => (format(new Date(rowData.recentBroadcastDate), 'yyyy-MM-dd')),
+    render: (rowData: Record<string, any>) => rowData.recentBroadcastDate || '없음',
   },
   {
     title: '평균 시청자 수',
     field: 'averageViewer',
-    render: (rowData: Record<string, any>) => (`${rowData.averageViewer} 명`),
+    render: (rowData: Record<string, any>) => (`${Math.round(rowData.averageViewer) || 0} 명`),
   },
 ].map((col) => ({ ...col, cellStyle: { textAlign: 'center' } }));
 
