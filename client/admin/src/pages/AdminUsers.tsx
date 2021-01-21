@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import useAxios from 'axios-hooks';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import UsersTable from '../organisms/users/UsersTable';
@@ -8,11 +8,7 @@ import getApiHost from '../util/getApiHost';
 const url = `${getApiHost()}/users/brief-info-list`;
 
 export default function AdminUsers(): JSX.Element {
-  const [{ data, loading }, refetch] = useAxios<BriefInfoDataResType>(url);
-
-  useEffect(() => {
-    refetch();
-  }, []);
+  const [{ data, loading }] = useAxios<BriefInfoDataResType>(url);
 
   return (
     <div>

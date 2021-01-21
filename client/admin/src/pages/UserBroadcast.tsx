@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography, Box } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 import UserBroadcastTable from '../organisms/users/UserBroadcastTable';
@@ -12,17 +12,13 @@ const UserBroadcast = (): JSX.Element => {
   const { userId }: Record<string, any> = useParams();
   const location: Record<string, any> = useLocation();
   const { nickName } = location.state;
-  const [{ data, loading }, refetch] = useAxios<BroadcastDataForDownload[]>(`${url}/${userId}`);
-
-  useEffect(() => {
-    refetch();
-  }, []);
+  const [{ data, loading }] = useAxios<BroadcastDataForDownload[]>(`${url}/${userId}`);
 
   return (
     <div>
-      <Typography variant="h4">
-        {`${nickName}(${userId})님의 데이터`}
-      </Typography>
+      <Box p={2}>
+        <Typography variant="h5">{`${nickName}(${userId})님의 데이터`}</Typography>
+      </Box>
       <UserBroadcastTable
         data={data}
         loading={loading}

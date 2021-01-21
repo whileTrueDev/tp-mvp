@@ -1,7 +1,8 @@
 import React from 'react';
-import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
+import { BriefInfoDataResType, BriefInfoData } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { Link } from 'react-router-dom';
-import Table from './Table';
+import { format } from 'date-fns';
+import Table from '../../atoms/Table';
 
 // 'user/:userId'로 페이지 이동시키는 링크 컴포넌트
 // 'user/:userId'에서 렌더링되는 UserActivity 컴포넌트에 userName 값을 보냅니다
@@ -26,20 +27,39 @@ const UsersTableColumns = [
   {
     title: '방송활동명',
     field: 'nickName',
-    render: (rowData: Record<string, any>) => (<NameLink {...rowData} />),
+    render: (rowData: BriefInfoData) => (<NameLink {...rowData} />),
   },
   { title: 'ID', field: 'userId' },
   {
     title: '최근 방송 날짜',
     field: 'recentBroadcastDate',
-    render: (rowData: Record<string, any>) => rowData.recentBroadcastDate || '없음',
+    customSort: (a: BriefInfoData, b: BriefInfoData) => {
+      if (!a.recentBroadcastDate) return 1;
+      if (!b.recentBroadcastDate) return -1;
+
+      const Adate = new Date(a.recentBroadcastDate).getTime();
+      const Bdate = new Date(b.recentBroadcastDate).getTime();
+
+      return Bdate - Adate;
+    },
+    render: (rowData: BriefInfoData) => {
+      if (!rowData.recentBroadcastDate) return '없음';
+      return format(new Date(rowData.recentBroadcastDate), 'yyyy/MM/dd HH:mm:ss');
+    },
   },
   {
     title: '평균 시청자 수',
     field: 'averageViewer',
-    render: (rowData: Record<string, any>) => (`${Math.round(rowData.averageViewer) || 0} 명`),
+    customSort: (a: BriefInfoData, b: BriefInfoData) => a.averageViewer - b.averageViewer,
+    render: (rowData: BriefInfoData) => (`${Math.round(rowData.averageViewer)} 명`),
   },
-].map((col) => ({ ...col, cellStyle: { textAlign: 'center' } }));
+].map((col) => ({
+  ...col,
+  cellStyle: {
+    textAlign: 'center',
+    minWidth: '200px',
+  },
+}));
 
 interface UsersTableProps extends Record<string, any>{
   data: BriefInfoDataResType | undefined,

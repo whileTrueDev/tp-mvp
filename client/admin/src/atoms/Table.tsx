@@ -47,26 +47,31 @@ const localization = {
 
 interface Props extends Record<string, any>{
   title?: string,
+  loading?: boolean,
   columns: any[],
   data: any,
 }
 
 // UsersTable, UserBroadcastTable 에 공통으로 사용하는 테이블 컴포넌트
-const Table = (props: Props): JSX.Element => (
-  <>
-    <MaterialTable
-      localization={localization}
-      icons={tableIcons}
-      options={{
-        headerStyle: {
-          backgroundColor: '#01579b',
-          color: '#FFF',
-          textAlign: 'center',
-          wordBreak: 'keep-all',
-        },
-      }}
-      {...props}
-    />
-  </>
-);
+const Table = (props: Props): JSX.Element => {
+  const { loading } = props;
+  return (
+    <>
+      <MaterialTable
+        localization={localization}
+        icons={tableIcons}
+        options={{
+          headerStyle: {
+            backgroundColor: '#a4c2d8',
+            color: '#FFF',
+            textAlign: 'center',
+            wordBreak: 'keep-all',
+          },
+        }}
+        isLoading={loading}
+        {...props}
+      />
+    </>
+  );
+};
 export default Table;
