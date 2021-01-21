@@ -9,6 +9,7 @@ import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
+import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
@@ -172,7 +173,7 @@ export class UsersController {
    * output : [{nickName, userId, recentBroadcastDate, averageViewer}...]
    */
   @Get('/brief-info-list')
-  getAllUserBriefInfoList(): Promise<{userId: string, nickName: string}[]> {
+  getAllUserBriefInfoList(): Promise<BriefInfoDataResType> {
     return this.usersService.getAllUserBriefInfoList();
   }
 

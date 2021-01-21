@@ -1,6 +1,6 @@
 import React from 'react';
+import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
 import Table from './Table';
 
 // 'user/:userId'로 페이지 이동시키는 링크 컴포넌트
@@ -41,11 +41,12 @@ const UsersTableColumns = [
   },
 ].map((col) => ({ ...col, cellStyle: { textAlign: 'center' } }));
 
-interface Props extends Record<string, any>{
-  data: any[],
+interface UsersTableProps extends Record<string, any>{
+  data: BriefInfoDataResType | undefined,
   loading? : boolean
 }
-const UsersTable = (props: Props): JSX.Element => {
+
+const UsersTable = (props: UsersTableProps): JSX.Element => {
   const { data, loading } = props;
   return (
     <>
