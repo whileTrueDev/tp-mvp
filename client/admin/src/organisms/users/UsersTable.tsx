@@ -6,8 +6,12 @@ import Table from '../../atoms/Table';
 
 // 'user/:userId'로 페이지 이동시키는 링크 컴포넌트
 // 'user/:userId'에서 렌더링되는 UserActivity 컴포넌트에 userName 값을 보냅니다
-function NameLink(prop: any): JSX.Element {
-  const { userId, nickName } = prop;
+function NameLink(prop: Record<string, any>): JSX.Element {
+  const { userId, nickName, display } = prop;
+  // display 가 nickName이면 방송활동명, 
+  //            userId이면 id를 표시함
+  const content = prop[display];
+
   return (
     <Link to={{
       pathname: `user/${userId}`,
@@ -16,7 +20,7 @@ function NameLink(prop: any): JSX.Element {
       },
     }}
     >
-      {nickName}
+      {content}
     </Link>
   );
 }
@@ -27,9 +31,13 @@ const UsersTableColumns = [
   {
     title: '방송활동명',
     field: 'nickName',
-    render: (rowData: BriefInfoData) => (<NameLink {...rowData} />),
+    render: (rowData: BriefInfoData) => (<NameLink {...rowData} display="nickName" />),
   },
-  { title: 'ID', field: 'userId' },
+  {
+    title: 'ID',
+    field: 'userId',
+    render: (rowData: BriefInfoData) => (<NameLink {...rowData} display="userId" />),
+  },
   {
     title: '최근 방송 날짜',
     field: 'recentBroadcastDate',
@@ -67,7 +75,16 @@ interface UsersTableProps extends Record<string, any>{
 }
 
 const UsersTable = (props: UsersTableProps): JSX.Element => {
+  // const history = useHistory();
   const { data, loading } = props;
+
+  // function handleRowClick(e: any, rowData: any) {
+  //   console.log(e, rowData);
+  //   console.log(history);
+  //   console.log('rowclick');
+  //   history.push(`${history.location.pathname}/${rowData.userId}`, { nickName: rowData.nickName });
+  //   // history.push()
+  // }
   return (
     <>
       <Table
@@ -75,6 +92,7 @@ const UsersTable = (props: UsersTableProps): JSX.Element => {
         columns={UsersTableColumns}
         data={data}
         loading={loading}
+        // onRowClick={handleRowClick}
       />
     </>
   );

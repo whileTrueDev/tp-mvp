@@ -5,6 +5,7 @@ import DownloadButton from './DownloadButton';
 import DateTimeDisplay from './DateTimeDisplay';
 
 interface TableProps extends Record<string, any>{
+  title?: string
   data: BroadcastDataForDownload[] | undefined,
   loading? : boolean
 }
@@ -16,7 +17,7 @@ const UserDataTableColumns = [
     field: 'title',
     style: {
       minWidth: '200px',
-      maxWidth: '300px',
+      width: '400px',
     },
   },
   {
@@ -24,7 +25,7 @@ const UserDataTableColumns = [
     field: 'dateTime',
     style: {
       minWidth: '200px',
-      maxWidth: '200px',
+      width: '200px',
     },
     customSort: (a: BroadcastDataForDownload, b: BroadcastDataForDownload) => {
       // 끝나는 시간 내림차순
@@ -39,6 +40,7 @@ const UserDataTableColumns = [
     field: 'csv',
     style: {
       minWidth: '100px',
+      width: '100px',
     },
     sorting: false,
     render: (rowData: BroadcastDataForDownload) => (<DownloadButton {...rowData} ext="csv" />),
@@ -48,6 +50,7 @@ const UserDataTableColumns = [
     field: 'srt',
     style: {
       minWidth: '100px',
+      width: '100px',
     },
     sorting: false,
     render: (rowData: BroadcastDataForDownload) => (<DownloadButton {...rowData} ext="srt" />),
@@ -61,14 +64,13 @@ const UserDataTableColumns = [
 }));
 
 const UserBroadcastTable = (props: TableProps): JSX.Element => {
-  const { data, loading } = props;
+  const { data, loading, title } = props;
   return (
     <Table
-      title="편집점 데이터 내려받기"
+      title={title || '편집점 데이터 내려받기'}
       data={data}
       loading={loading}
       columns={UserDataTableColumns}
-
     />
   );
 };
