@@ -292,24 +292,17 @@ export class UsersService {
    *              이용자 닉네임, 아이디, 최근방송날짜, 평균시청자 조회
    */
   async getAllUserBriefInfoList(): Promise<BriefInfoDataResType> {
-    const allUsers = await this.usersRepository
-      .createQueryBuilder('users')
-      .select(['users.userId, users.nickName'])
+    const result = await this.usersRepository.createQueryBuilder('users')
+      .leftJoinAndSelect(StreamsEntity, 'streams', 'streams.userId = users.userId')
+      .select([
+        'users.userId AS userId',
+        'users.nickName AS nickName',
+        'AVG(streams.viewer) AS averageViewer',
+        'MAX(streams.endDate) AS recentBroadcastDate',
+      ])
+      .groupBy('users.userId')
+      .orderBy('MAX(streams.endDate)', 'DESC')
       .getRawMany();
-    const streamsGroupByUserId = await this.streamsRepository
-      .createQueryBuilder('streams')
-      .select(['AVG(streams.viewer) as averageViewer, MAX(streams.endDate) as recentBroadcastDate, streams.userId'])
-      .groupBy('streams.userId')
-      .getRawMany();
-
-    const result = allUsers.map((user) => {
-      const matchingStream = streamsGroupByUserId.find((stream) => stream.userId === user.userId);
-      if (matchingStream) {
-        return { ...user, ...matchingStream };
-      }
-      return { ...user, recentBroadcastDate: null, averageViewer: 0 };
-    });
-
     return result;
   }
 

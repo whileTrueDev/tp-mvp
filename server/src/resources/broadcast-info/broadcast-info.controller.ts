@@ -31,9 +31,13 @@ export class BroadcastInfoController {
     );
   }
 
+  /**
+   * 관리자페이지 이용자정보 조회탭에서 사용
+   * userId를 받아 해당 유저의 전체 방송 목록 조회
+   * @param userId 방송목록 조회할 유저의 userId
+   */
   @Get(':userId')
-  getStreamsByUserId(@Param() param: {userId: string}): Promise<BroadcastDataForDownload[]> {
-    const { userId } = param;
+  getStreamsByUserId(@Param('userId') userId: string): Promise<BroadcastDataForDownload[]> {
     return this.broadcastService.getStreamsByUserId(userId);
   }
 }
