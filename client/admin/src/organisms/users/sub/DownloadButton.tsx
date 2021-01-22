@@ -56,6 +56,7 @@ function DownloadButton(props: DownloadButtonProps): JSX.Element {
   return (
     <Button
       variant="contained"
+      color="primary"
       onClick={downloadFile}
     >
       {`.${ext}`}

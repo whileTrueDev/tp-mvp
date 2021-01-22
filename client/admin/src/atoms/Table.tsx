@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { useTheme } from '@material-ui/core/styles';
 import MaterialTable, { Icons } from 'material-table';
 import {
   Check, Clear, Delete, FilterList, FirstPage, ViewColumn,
@@ -54,11 +55,11 @@ interface Props extends Record<string, any>{
 
 // UsersTable, UserBroadcastTable 에 공통으로 사용하는 테이블 컴포넌트
 const Table = (props: Props): JSX.Element => {
+  const theme = useTheme();
   const { loading, options: propOptions } = props;
   const baseOptions = {
     headerStyle: {
-      backgroundColor: '#a4c2d8',
-      color: '#FFF',
+      backgroundColor: theme.palette.primary.main,
       textAlign: 'center',
       wordBreak: 'keep-all',
     },
