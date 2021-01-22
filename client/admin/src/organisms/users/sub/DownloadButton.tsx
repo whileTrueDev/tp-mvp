@@ -3,7 +3,7 @@ import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/Broa
 import axios from 'axios';
 import { Button } from '@material-ui/core';
 
-import getApiHost from '../../util/getApiHost';
+import getApiHost from '../../../util/getApiHost';
 
 interface DownloadButtonProps extends BroadcastDataForDownload{
   ext: string; // 확장자, srt | csv
@@ -37,7 +37,7 @@ function requestDownload(requestParams: DownloadRequestParamType, fileName: stri
 // UserBroadCast 내에서 csv 다운로드, srt 다운로드 컬럼에서 사용되는 컴포넌트
 function DownloadButton(props: DownloadButtonProps): JSX.Element {
   const {
-    ext, creatorId, platform, streamId,
+    ext, creatorId, platform, streamId, title, endDate,
   } = props;
 
   const reqParams: DownloadRequestParamType = {
@@ -48,7 +48,7 @@ function DownloadButton(props: DownloadButtonProps): JSX.Element {
     srt: Number(ext === 'srt'),
     csv: Number(ext === 'csv'),
   };
-  const exportFileName = '편집점';
+  const exportFileName = `${creatorId}_${title}_${endDate}`;
   function downloadFile() {
     requestDownload(reqParams, exportFileName);
   }

@@ -20,7 +20,7 @@ const UserBroadcast = (): JSX.Element => {
     <div>
 
       <Box pb={2}>
-        <Button onClick={history.goBack}>
+        <Button variant="contained" color="primary" onClick={history.goBack}>
           <ArrowBackIcon />
           돌아가기
         </Button>

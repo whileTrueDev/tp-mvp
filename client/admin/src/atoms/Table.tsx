@@ -54,22 +54,26 @@ interface Props extends Record<string, any>{
 
 // UsersTable, UserBroadcastTable 에 공통으로 사용하는 테이블 컴포넌트
 const Table = (props: Props): JSX.Element => {
-  const { loading } = props;
+  const { loading, options: propOptions } = props;
+  const baseOptions = {
+    headerStyle: {
+      backgroundColor: '#a4c2d8',
+      color: '#FFF',
+      textAlign: 'center',
+      wordBreak: 'keep-all',
+    },
+    pageSize: 10,
+    pageSizeOptions: [10, 20, 30],
+    ...propOptions,
+  };
   return (
     <>
       <MaterialTable
+        {...props}
         localization={localization}
         icons={tableIcons}
-        options={{
-          headerStyle: {
-            backgroundColor: '#a4c2d8',
-            color: '#FFF',
-            textAlign: 'center',
-            wordBreak: 'keep-all',
-          },
-        }}
         isLoading={loading}
-        {...props}
+        options={baseOptions}
       />
     </>
   );

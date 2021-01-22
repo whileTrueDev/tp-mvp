@@ -1,8 +1,8 @@
 import React from 'react';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 import Table from '../../atoms/Table';
-import DownloadButton from './DownloadButton';
-import DateTimeDisplay from './DateTimeDisplay';
+import DownloadButton from './sub/DownloadButton';
+import DateTimeDisplay from './sub/DateTimeDisplay';
 
 interface TableProps extends Record<string, any>{
   title?: string

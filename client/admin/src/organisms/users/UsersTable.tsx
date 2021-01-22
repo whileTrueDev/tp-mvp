@@ -75,16 +75,8 @@ interface UsersTableProps extends Record<string, any>{
 }
 
 const UsersTable = (props: UsersTableProps): JSX.Element => {
-  // const history = useHistory();
   const { data, loading } = props;
 
-  // function handleRowClick(e: any, rowData: any) {
-  //   console.log(e, rowData);
-  //   console.log(history);
-  //   console.log('rowclick');
-  //   history.push(`${history.location.pathname}/${rowData.userId}`, { nickName: rowData.nickName });
-  //   // history.push()
-  // }
   return (
     <>
       <Table
@@ -92,7 +84,6 @@ const UsersTable = (props: UsersTableProps): JSX.Element => {
         columns={UsersTableColumns}
         data={data}
         loading={loading}
-        // onRowClick={handleRowClick}
       />
     </>
   );
