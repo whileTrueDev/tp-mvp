@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as archiver from 'archiver';
 
 dotenv.config();
@@ -59,6 +59,15 @@ export class HighlightService {
       });
     }
 
+    // getArry가 빈 배열일 경우 - 분석된 데이터가 없는것으로 보고
+    // 에러 발생시킴
+    if (!getArray.length) {
+      throw new HttpException({
+        status: HttpStatus.NOT_FOUND,
+        error: '데이터가 없습니다',
+      }, HttpStatus.NOT_FOUND);
+    }
+
     const doGetSelectedFiles = await this.getSelectedFile(getArray);
     return doGetSelectedFiles;
   }
@@ -70,6 +79,7 @@ export class HighlightService {
         Bucket: process.env.BUCKET_NAME, // your bucket name,
         Key: `${key}`,
       };
+
       await s3.getObject(getParams).promise()
         .then((value) => {
           const fileData = value.Body.toString('utf-8');
