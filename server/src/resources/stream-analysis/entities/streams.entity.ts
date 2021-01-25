@@ -2,7 +2,6 @@ import {
   Entity, Column, PrimaryColumn,
 } from 'typeorm';
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
-
 @Entity({ name: 'Streams' })
 export class StreamsEntity implements Stream {
   @PrimaryColumn()

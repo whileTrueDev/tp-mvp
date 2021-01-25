@@ -6,12 +6,15 @@ import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPos
 import { ReplyPatch } from '@truepoint/shared/dist/dto/featureSuggestion/replyPatch.dto';
 import { FeatureSuggestionReplyEntity } from './entities/featureSuggestionReply.entity';
 import { UserEntity } from '../users/entities/user.entity';
+import { FeatureSuggestionEntity } from './entities/featureSuggestion.entity';
 
 @Injectable()
 export class FeatureSuggestionReplyService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
+    @InjectRepository(FeatureSuggestionEntity)
+    private readonly featureSuggestionRepository: Repository<FeatureSuggestionEntity>,
     @InjectRepository(FeatureSuggestionReplyEntity)
     private readonly featureSuggestionReplyRepository: Repository<FeatureSuggestionReplyEntity>,
   ) {}
@@ -31,6 +34,16 @@ export class FeatureSuggestionReplyService {
   // post - feature suggestion reply 생성 # 관리자이므로 userId가 존재하지 않는다.
   async insertOne(data: ReplyPost): Promise<FeatureSuggestionReplyEntity> {
     const author = await this.usersRepository.findOne(data.author);
+    // 답변을 달고자 하는 기능제안 글
+    const currentSuggestion = await this.featureSuggestionRepository.findOne(data.suggestionId);
+
+    // 해당 기능 제안 글의 상태가 미확인 인 경우 검토중으로 변경 (1=검토중)
+    if (currentSuggestion.state === 0) {
+      this.featureSuggestionRepository.save({
+        ...currentSuggestion, state: 1,
+      });
+    }
+
     const result = await this
       .featureSuggestionReplyRepository
       .save({ ...data, author });

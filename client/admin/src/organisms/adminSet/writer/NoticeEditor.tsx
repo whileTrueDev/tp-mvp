@@ -5,6 +5,17 @@ import {
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 
+/*
+NoticeEditData
+**********************************************************************************
+NoticeEditor를 위한 props입니다.
+**********************************************************************************
+state : 공지사항 글에대한 데이터객체입니다.
+dispatch : 게시글 작성시 변경사항에대한 추적을 위한 dispatch 함수를 전달받습니다.
+handleHelpToggle : 도움말 보기를 띄워주는 핸들러함수를 전달받습니다.
+noticeData (optional): 이전 공지사항글 데이터에대한 프롭스를 전달받습니다.
+**********************************************************************************
+ */
 interface NoticeEditData{
   state: any;
   dispatch: React.Dispatch<any>;
@@ -25,6 +36,20 @@ const ImportantCheckbox = withStyles({
   checked: {},
 })((props: CheckboxProps) => <Checkbox color="default" {...props} />);
 
+/*
+NoticeEditor
+**********************************************************************************
+<개요>
+공지사항 글을 작성하는 편집기 컴포넌트 입니다.
+<백엔드요청목록>
+url: '/notice', method: 'PATCH'
+url: '/notice', method: 'POST'
+**********************************************************************************
+1.작성글에대한 수정, 작성 ui를 만듭니다.
+2.백엔드로 작성글에대한 수정, 작성 요청을 보냅니다.
+3. noticeData가 있으면 patch가, 없으면 post 모드의 컴포넌트가 만들어집니다.
+**********************************************************************************
+ */
 export default function NoticeEditor(props: NoticeEditData): JSX.Element {
   const {
     state, dispatch, handleHelpToggle, handleReload,
@@ -37,10 +62,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
   const [, executePost] = useAxios(
     { url: '/notice', method: 'POST' }, { manual: true },
   );
-  const [authorfix, setAuthor] = React.useState('TruePoint 관리자');
-  function handleAuthorname() {
-    setAuthor('TruePoint 관리자');
-  }
+
   return (
 
     <Paper>
@@ -88,7 +110,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
           minWidth: 120,
         }}
         >
-          <InputLabel htmlFor="demo-controlled-open-select">구분</InputLabel>
+          <InputLabel htmlFor="demo-controlled-open-select">카테고리</InputLabel>
           <Select
             variant="outlined"
             value={state.category}
@@ -106,16 +128,6 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
             <MenuItem value="결제/계산서/정산">결제/계산서/정산</MenuItem>
           </Select>
         </FormControl>
-
-        <TextField
-          id="title-textfield"
-          label="작성자명 입력"
-          variant="outlined"
-          style={{ width: '65%', padding: 5 }}
-          value={authorfix}
-          onChange={handleAuthorname}
-          margin="normal"
-        />
 
         <TextField
           multiline
@@ -143,7 +155,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
                     id: state.id,
                     title: state.title,
                     content: state.content,
-                    author: authorfix,
+                    author: 'TruePoint 관리자',
                     isImportant: state.isImportant,
                     category: state.category,
                   },
@@ -165,6 +177,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
           <Button
             variant="contained"
             color="primary"
+            disabled={!state.content || !state.title || !state.category}
             onClick={() => {
               if (window.confirm(`공지글\n${state.title}\n 정말로 업로드 하시겠습니까?`)) {
                 executePost({
@@ -172,7 +185,7 @@ export default function NoticeEditor(props: NoticeEditData): JSX.Element {
                     id: state.id,
                     title: state.title,
                     content: state.content,
-                    author: authorfix,
+                    author: 'TruePoint 관리자',
                     isImportant: state.isImportant,
                     category: state.category,
                   },

@@ -6,9 +6,10 @@ import {
   Grid, Card, CardContent,
   Typography, Button, Paper, IconButton,
 } from '@material-ui/core';
-import {
-  ArrowDownward, ArrowUpward,
-} from '@material-ui/icons';
+// 변화량 지표 생성시 주석 제거 필요 @dan 21.01.07 
+// import {
+//   ArrowDownward, ArrowUpward,
+// } from '@material-ui/icons';
 import { UserMetrics } from '../../../interfaces/UserMetrics';
 import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
 import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface DataCard {
-  name: string; value: number; nameKr: string;
+  name: string; value: number; nameKr: string; delta?: number;
 }
 
 export default function UserMetricsSection(): JSX.Element {
@@ -103,13 +104,18 @@ export default function UserMetricsSection(): JSX.Element {
         prev1['평균 방송시간'] += current.airTime;
         prev1['평균 시청자'] += current.viewer;
         prev1['평균 채팅 발생수'] += current.chatCount;
+        prev1['평균 애청자 수'] += current.fan;
         return prev1;
-      }, { '평균 방송시간': 0, '평균 시청자': 0, '평균 채팅 발생수': 0 });
+      }, {
+        '평균 방송시간': 0, '평균 시청자': 0, '평균 채팅 발생수': 0, '평균 애청자 수': 0,
+      });
 
       result.push({ name: 'viewer', nameKr: '평균 시청자', value: Math.round(reduced['평균 시청자'] / count) });
       result.push({ name: 'airTime', nameKr: '평균 방송시간', value: Math.round(reduced['평균 방송시간'] / count) });
       result.push({ name: 'chatCount', nameKr: '평균 채팅 발생수', value: Math.round(reduced['평균 채팅 발생수'] / count) });
-      result.push({ name: 'fan', nameKr: '애청자 변화량', value: fanDelta });
+      result.push({
+        name: 'fan', nameKr: '평균 애청자 수', value: Math.round(reduced['평균 애청자 수'] / count), delta: fanDelta,
+      });
       return result;
     }
     return [];
@@ -225,23 +231,44 @@ export default function UserMetricsSection(): JSX.Element {
                   ) : (
                     <RedProgressBar variant="determinate" value={100} />
                   )}
+                  {/* 변화량 지표 생성시 주석 제거 필요 @dan 21.01.07 */}
+                  {/* {card.delta ? (
+                    <div>
+                      {card.delta >= 0 ? (
+                        <ProgressBar variant="determinate" value={100} />
+                      ) : (
+                        <RedProgressBar variant="determinate" value={100} />
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      {card.value >= 0 ? (
+                        <ProgressBar variant="determinate" value={100} />
+                      ) : (
+                        <RedProgressBar variant="determinate" value={100} />
+                      )}
+                    </div>
+                  )} */}
                 </div>
                 <CardContent className={classes.cardBody}>
                   <Typography variant="h5" className={classes.cardContentString}>
                     {card.value.toLocaleString()}
 
-                    {card.nameKr === '애청자 변화량' && (
-                      <Typography component="span">
+                    {/* 변화량 지표 생성시 주석 제거 필요 @dan 21.01.07 */}
+                    {/* {card.delta && (
+                      <Typography component="span" variant="body1" gutterBottom>
+                        {`(${card.delta}`}
                         &nbsp;
-                        {card.value > 0 ? (
-                          // 애청자 변화량이 양수인 경우
-                          <ArrowUpward color="primary" />
+                        {card.delta > 0 ? (
+                        // 변화량이 양수인 경우
+                          <ArrowUpward fontSize="small" color="primary" />
                         ) : (
-                          // 애청자 변화량이 음수인 경우
-                          <ArrowDownward color="error" />
+                        // 변화량이 음수인 경우
+                          <ArrowDownward fontSize="small" color="error" />
                         )}
+                        )
                       </Typography>
-                    )}
+                    )} */}
                   </Typography>
                 </CardContent>
               </Card>

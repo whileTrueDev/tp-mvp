@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  TablePagination, TableCell, TableRow, TableBody, Chip, Typography,
+  TablePagination, TableCell, TableRow, TableBody, Typography,
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import shortid from 'shortid';
@@ -15,6 +15,7 @@ import dateExpression from '../../../utils/dateExpression';
 
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 
 const TABLE_ROW_HEIGHT = 45;
 const useStyles = makeStyles((theme) => ({
@@ -59,14 +60,6 @@ export default function FeatureTable({
   // 현재 사용자와 기능제안 글쓴이가 같은 사람인지 체크하기 위해
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-
-  const progressColumn = (value: number) => {
-    switch (value) {
-      case 1: return (<Chip color="secondary" label="개발 확정" />);
-      case 2: return (<Chip color="primary" label="개발보류" />);
-      default: return (<Chip variant="outlined" label="미확인" />);
-    }
-  };
 
   return (
     <>
@@ -114,6 +107,7 @@ export default function FeatureTable({
           Body: () => (
             <TableBody>
               {(pageSize > 0
+                // eslint-disable-next-line react/prop-types
                 ? metrics.slice(page * pageSize, page * pageSize + pageSize)
                 : metrics
               ).map((eachRow: any) => (
@@ -164,7 +158,7 @@ export default function FeatureTable({
                     }
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {progressColumn(eachRow.state)}
+                    {FeatureProgressChip(eachRow.state)}
                   </TableCell>
                 </TableRow>
               ))}

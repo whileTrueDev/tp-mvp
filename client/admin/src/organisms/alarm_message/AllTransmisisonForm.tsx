@@ -32,6 +32,18 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'primary',
   },
 }));
+
+/*
+dataprops
+**********************************************************************************
+DualMessageForm을 위한 props입니다.
+**********************************************************************************
+1. list : tabledata props입니다.
+2. setList : list를 설정하기위한 props입니다. 
+3. handleClose : close를 위한 props입니다.
+4. open : component를 open하기 위한 Props입니다.
+**********************************************************************************
+ */
 interface Props{
   list: any[];
   setList: React.Dispatch<React.SetStateAction<any[]>>;
@@ -39,6 +51,19 @@ interface Props{
   open: boolean;
 }
 
+/*
+DualMessageForm
+**********************************************************************************
+<개요>
+메세지 일괄전송에데한 컴포넌트입니다.
+<백엔드로 요청목록>
+- url: '/notification', method: 'POST',
+**********************************************************************************
+1. open 값에따라 다이얼로그 화면이 열립니다.
+2. 전달받은 props의 list 에 있는 회원의 목록이 다이얼로그화면에 나열됩니다.
+3. 메시지 입력후 전송하기를 누르면 선택된 user정보와 함께 백엔드로 post 요청을 보냅니다.
+**********************************************************************************
+ */
 export default function DualMessageForm(props: Props): JSX.Element {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();

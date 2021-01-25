@@ -11,7 +11,7 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   replyId: number;
 
   @JoinColumn({ name: 'suggestionId' })
-  @ManyToOne((type) => FeatureSuggestionEntity, (fs) => fs.replies)
+  @ManyToOne((type) => FeatureSuggestionEntity, (fs) => fs.replies, { onDelete: 'CASCADE' })
   suggestionId: number;
 
   @Column()

@@ -29,6 +29,19 @@ function dateDiff(date1: any, date2: any) {
   return Math.ceil((date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24));
 }
 
+/* 
+  SuggestTableProps 
+  **************************************************************************************************
+  컴포넌트에 사용되는 interface -> 부모컴포넌트로 해당 인터페이스에 정의된 속성들을 전달받아야합니다.
+  **************************************************************************************************
+  tableData : table에 랜더링되는 데이터에대한 props , 부모컴포넌트에서 tableData와 일치되는 타입의 데이터를 전달받습니다. 
+  handleData : table의 행을 클릭시 detail component에 전달될 데이터를 선택하는 핸들러함수를 전달받습니다. 
+  ReplyPostModeOff : 답글작성모드를 off 하는 핸들러함수를 전달받습니다.
+  handleReplyModeOff : 답글작성을 off 하는 핸들러함수를 전달받습니다.
+  setSuggestionId : 기능제안글의 id값을 선택하는 핸들러함수를 전달받습니다.
+  handleSuggestionId : 기능제안글의 id값을 선택하는 핸들러함수를 전달받습니다.
+  **************************************************************************************************
+  */
 interface SuggestTableProps {
   tableData: any;
   handleData: (Data: any) => void;
@@ -38,7 +51,20 @@ interface SuggestTableProps {
   handleSuggestionId: (v: any) => void;
 }
 
-// table 레이아웃조정
+/*
+  localization
+  *****************************************************************************************************
+  material table의 customizing을 위한 속성값 정의, 테이블의 레이아웃을 조정합니다.
+  ******************************************************************************************************
+  body : 테이블 바디에 데이터가 없는경우 , 툴팁에대한 정의입니다. 바디 레이아웃을 변경하고 싶다면 이 값을 조절하여 변경할 수 있습니다.
+  grouping : 
+  pagination : 페이지네이션 레이아웃을 변경하고 싶다면 이값을 조절하여 변경할 수 있습니다.
+  header : 
+  toolbar : toolbar 부분의 레이아웃을 변경하고 싶다면 이값을 조절하여 변경할 수 있습니다.
+  ******************************************************************************************************
+
+  by emma.sangeun
+  */
 const localization = {
   body: {
     deleteTooltip: '캠페인 삭제',
@@ -63,7 +89,24 @@ const localization = {
   },
 };
 
-// 기능제안 목록 테이블
+/*
+    *****************************************************************************************************
+    SuggestTable
+    *****************************************************************************************************
+    <개요>
+    1. 기능제안글의 목록을 관리하고 보여주는 테이블입니다.
+    2. rowClick (o)
+    3. 행을 클릭시 답글 detail 컴포넌트를 랜더링 시켜 세부사항을 확인하고, 수정, 삭제 상태관리를 관리하는작업을 할 수 있도록 해줍니다.
+    4. 해당 Table에서 관리자가 다른 행을 클릭하면 다른 답글에대한 3번의 과정이 진행되어야하므로, offhandler를 통해 수정및 편집모드는 무조건 off됩니다.
+    *****************************************************************************************************
+    column :
+      - 제목 : 기능제안글의 제목 (tableData.title)_string
+      - 작성일 : 기능제안글의 생성일 (tableData.createdAt)_string
+      - 작성자 : 기능제안글의 작성자 (tableData.userId)_string
+      - 진행상태 Id : 기능제안에대한 작업처리 진행상태 (tableData.state)_number
+      - 좋아요 : 해당기능제안 글에대한 좋아요수 (tableData.liek)_number
+    *****************************************************************************************************
+    */
 export default function SuggestTable(props: SuggestTableProps): JSX.Element {
   const {
     tableData, handleData, ReplyPostModeOff, handleReplyModeOff, setSuggestionId, handleSuggestionId,
@@ -72,12 +115,14 @@ export default function SuggestTable(props: SuggestTableProps): JSX.Element {
 
   function handleState(Case: number) {
     switch (Case) {
+      case 0:
+        return '미확인';
       case 1:
         return '검토중';
       case 2:
-        return '기능구현중';
+        return '개발확정';
       case 3:
-        return '구현완료';
+        return '개발보류';
       default:
         return '';
     }
@@ -122,14 +167,6 @@ export default function SuggestTable(props: SuggestTableProps): JSX.Element {
             <Typography className="상태">{handleState(rowData.state)}</Typography>
           ),
         },
-        {
-          title: '좋아요',
-          field: 'like',
-          render: (rowData) => (
-            <Typography className="상태">{rowData.like}</Typography>
-          ),
-        },
-
       ]}
       data={tableData}
       onRowClick={(e, rowData: any) => {

@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-
+import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
@@ -51,5 +51,21 @@ export class BroadcastInfoService {
       .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));
 
     return TermStreamsData;
+  }
+
+  /**
+   * 관리자 페이지 이용자DB 조회 탭에서 사용
+   * userId로 해당 이용자의 전체 방송 목록 조회하여 날짜 내림차순으로 반환
+   * @param userId 
+   */
+  async getStreamsByUserId(userId: string): Promise<BroadcastDataForDownload[]> {
+    const result: BroadcastDataForDownload[] = await this.streamsTest2Repository
+      .createQueryBuilder('streams')
+      .select(['streams.streamId, streams.platform, streams.title, streams.startDate, streams.endDate, streams.creatorId'])
+      .where('streams.userId = :userId', { userId })
+      .orderBy('streams.startDate', 'DESC')
+      .execute()
+      .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));
+    return result;
   }
 }
