@@ -31,7 +31,8 @@ async function bootstrap() {
 
   const whiteList = [
     'http://localhost:3001', 'http://localhost:3002',
-    'https://mytruepoint.com', 'https://admin.mytruepoint.com',
+    'https://mytruepoint.com',
+    'https://admin.mytruepoint.com', 'https://test-admin.mytruepoint.com',
     'https://dev.mytruepoint.com', 'https://test.mytruepoint.com',
   ];
   app.enableCors({

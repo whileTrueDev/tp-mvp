@@ -9,6 +9,7 @@ import ListIcon from '@material-ui/icons/List';
 import EditIcon from '@material-ui/icons/Edit';
 import MessageIcon from '@material-ui/icons/Message';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import {
   BrowserRouter, Switch, Route,
 } from 'react-router-dom';
@@ -19,6 +20,8 @@ import AdminCbt from './pages/AdminCbt';
 import AdminSuggest from './pages/AdminSuggest';
 import NoticeWrite from './pages/NoticeWrite';
 import Sidebar from './organisms/Sidebar';
+import AdminUsers from './pages/AdminUsers';
+import UserBroadcast from './pages/UserBroadcast';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -105,6 +108,13 @@ export const routes: ListProps[] = [
     path: '/admin/cbt',
     icon: PersonAddIcon,
   },
+  {
+    index: 5,
+    name: '이용자 DB',
+    description: '이용자 DB 정보를 봅니다',
+    path: '/admin/users',
+    icon: AssignmentIcon,
+  },
 ];
 
 /*
@@ -135,6 +145,8 @@ export default function App(): JSX.Element {
                 <Route exact path="/admin/suggest" component={AdminSuggest} />
                 <Route exact path="/admin/notice-write" component={NoticeWrite} />
                 <Route exact path="/admin/cbt" component={AdminCbt} />
+                <Route exact path="/admin/users" component={AdminUsers} />
+                <Route exact path="/admin/user/:userId" component={UserBroadcast} />
               </Switch>
             </main>
           </BrowserRouter>

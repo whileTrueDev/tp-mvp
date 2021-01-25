@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
+import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { LinkPlatformError, LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
 import Axios from 'axios';
 import { ConfigService } from '@nestjs/config';
@@ -23,7 +24,7 @@ import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/t
 import { TwitchProfileResponse } from '../auth/interfaces/twitchProfile.interface';
 import { AfreecaLinker } from '../auth/strategies/afreeca.linker';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
-
+import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
@@ -51,6 +52,8 @@ export class UsersService {
     private readonly afreecaActiveStreamsRepository: Repository<AfreecaActiveStreamsEntity>,
     @InjectRepository(YoutubeTargetStreamersEntity, 'WhileTrueCollectorDB')
     private readonly youtubeTargetStreamersRepository: Repository<YoutubeTargetStreamersEntity>,
+    @InjectRepository(StreamsEntity)
+    private readonly streamsRepository: Repository<StreamsEntity>,
   ) {}
 
   private resizeingYoutubeLogo(youtubeLogoString: string): string {
@@ -280,6 +283,27 @@ export class UsersService {
       .execute();
 
     return allUserId;
+  }
+
+  /**
+   * 관리자 페이지 - 이용자db 정보 조회 탭에서 사용
+   * input : empty
+   * output : [{nickName, userId, recentBroadcastDate, averageViewer}...]
+   *              이용자 닉네임, 아이디, 최근방송날짜, 평균시청자 조회
+   */
+  async getAllUserBriefInfoList(): Promise<BriefInfoDataResType> {
+    const result = await this.usersRepository.createQueryBuilder('users')
+      .leftJoinAndSelect(StreamsEntity, 'streams', 'streams.userId = users.userId')
+      .select([
+        'users.userId AS userId',
+        'users.nickName AS nickName',
+        'AVG(streams.viewer) AS averageViewer',
+        'MAX(streams.endDate) AS recentBroadcastDate',
+      ])
+      .groupBy('users.userId')
+      .orderBy('MAX(streams.endDate)', 'DESC')
+      .getRawMany();
+    return result;
   }
 
   // **********************************************
