@@ -21,7 +21,7 @@ export class CommunityPostEntity implements CommunityPost {
   @Column({ type: 'varchar', length: 20 })
   ip: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', select: false, comment: '암호화된 비밀번호' })
   password: string;
 
   @CreateDateColumn({ type: 'timestamp' })
@@ -33,10 +33,10 @@ export class CommunityPostEntity implements CommunityPost {
   @Column({ type: 'tinyint', default: 0, comment: '일반글=0, 공지글=1 일반글,공지글 구분용 컬럼' })
   category: number;
 
-  @Column('int')
+  @Column({ type: 'int', default: 0 })
   hit: number;
 
-  @Column('int')
+  @Column({ type: 'int', default: 0 })
   recommend: number;
 
   @OneToMany((type) => CommunityReplyEntity, (reply) => reply.postId)

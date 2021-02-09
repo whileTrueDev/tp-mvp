@@ -1,23 +1,43 @@
 import {
   Controller,
-  // Get,
+  Get,
   Post,
   Body,
-  // Put,
-  // Param,
+  Req,
+  Put,
+  Param,
+  ParseIntPipe,
   // Delete,
 } from '@nestjs/common';
+import express from 'express';
+import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
+import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { CommunityBoardService } from './communityBoard.service';
-import { CreateCommunityPostDto } from './dto/createCommunityPost.dto';
-// import { UpdateCommunityPostDto } from './dto/updateCommunityPost.dto';
+import { CommunityPostEntity } from './entities/community-post.entity';
 
 @Controller('community')
 export class CommunityBoardController {
   constructor(private readonly communityBoardService: CommunityBoardService) {}
 
   @Post()
-  create(@Body() createCommunityPostDto: CreateCommunityPostDto): Promise<CreateCommunityPostDto> {
-    return this.communityBoardService.create(createCommunityPostDto);
+  createOnePost(
+    @Req() request: express.Request,
+    @Body() createCommunityPostDto: CreateCommunityPostDto,
+  ): Promise<CommunityPostEntity> {
+    return this.communityBoardService.createOnePost(createCommunityPostDto, request.ip);
+  }
+
+  @Put(':postId')
+  updateOnePost(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body() updateCommunityBoardDto: UpdateCommunityPostDto,
+  ): Promise<CommunityPostEntity> {
+    return this.communityBoardService.updateOnePost(postId, updateCommunityBoardDto);
+  }
+
+  @Get()
+  test(): string {
+    return 'test';
   }
 
   // @Get()
@@ -28,11 +48,6 @@ export class CommunityBoardController {
   // @Get(':id')
   // findOne(@Param('id') id: string) {
   //   return this.communityBoardService.findOne(+id);
-  // }
-
-  // @Put(':id')
-  // update(@Param('id') id: string, @Body() updateCommunityBoardDto: UpdateCommunityPostDto) {
-  //   return this.communityBoardService.update(+id, updateCommunityBoardDto);
   // }
 
   // @Delete(':id')

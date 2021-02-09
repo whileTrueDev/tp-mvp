@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-// import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
+import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
+import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { CommunityPostEntity } from './entities/community-post.entity';
-import { CreateCommunityPostDto } from './dto/createCommunityPost.dto';
-// import { UpdateCommunityPostDto } from './dto/updateCommunityPost.dto';
 
 @Injectable()
 export class CommunityBoardService {
@@ -13,22 +13,52 @@ export class CommunityBoardService {
     private readonly communityPostRepository: Repository<CommunityPostEntity>,
   ) {}
 
-  async create(createCommunityPostDto: CreateCommunityPostDto): Promise<CommunityPostEntity> {
-    // 비밀번호 암호화
-    return this.communityPostRepository.save(createCommunityPostDto);
+  async createOnePost(createCommunityPostDto: CreateCommunityPostDto, ip: string): Promise<CommunityPostEntity> {
+    try {
+      // 비밀번호 암호화
+      const { password } = createCommunityPostDto;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const postData = {
+        ...createCommunityPostDto,
+        password: hashedPassword,
+        ip,
+      };
+      const post = await this.communityPostRepository.save(postData);
+      return post;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException('error in creating post', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   // findAll() {
   //   return `This action returns all communityBoard`;
   // }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} communityBoard`;
-  // }
+  async findOnePost(postId: number): Promise<CommunityPostEntity> {
+    try {
+      const post = await this.communityPostRepository.findOne({ postId });
+      if (!post) {
+        throw new HttpException('no post with that postId', HttpStatus.BAD_REQUEST);
+      }
+      return post;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException('error in find one post', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
-  // update(id: number, updateCommunityPostDto: UpdateCommunityPostDto) {
-  //   return `This action updates a #${id} communityBoard`;
-  // }
+  async updateOnePost(
+    postId: number,
+    updateCommunityPostDto: UpdateCommunityPostDto,
+  ): Promise<CommunityPostEntity> {
+    const post = await this.findOnePost(postId);
+    return this.communityPostRepository.save({
+      ...post,
+      ...updateCommunityPostDto,
+    });
+    return post;
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} communityBoard`;
