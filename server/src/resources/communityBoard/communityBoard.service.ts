@@ -69,6 +69,7 @@ export class CommunityBoardService {
         take,
         skip: (page - 1) * take,
         order: { createDate: 'DESC' },
+        relations: ['replies'], // 현재 모든 댓글이 같이 리턴됨. 추후 count해서 보내기
       };
 
       if (category === 'notice') {
@@ -111,7 +112,9 @@ export class CommunityBoardService {
   }
 
   async findOnePost(postId: number): Promise<CommunityPostEntity> {
-    const post = await this.communityPostRepository.findOne({ postId });
+    const post = await this.communityPostRepository.findOne(
+      { postId },
+    );
     if (!post) {
       throw new HttpException('no post with that postId', HttpStatus.BAD_REQUEST);
     }
@@ -142,7 +145,12 @@ export class CommunityBoardService {
 
   // 개별 글 조회시 조회수+1 한 후 해당 글 리턴
   async hitAndFindOnePost(postId: number): Promise<CommunityPostEntity> {
-    const post = await this.findOnePost(postId);
+    const post = await this.communityPostRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.replies', 'replies')
+      .where('post.postId = :postId', { postId })
+      .getOne();
+
     const hitCount = post.hit;
     try {
       return this.communityPostRepository.save({
