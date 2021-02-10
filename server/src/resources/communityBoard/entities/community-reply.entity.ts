@@ -4,15 +4,15 @@ import {
 } from 'typeorm';
 import { CommunityPostEntity } from './community-post.entity';
 
-@Entity({ name: 'CommunityReplyTest' })
+@Entity({ name: 'CommunityReplyTest1' })
 export class CommunityReplyEntity implements CommunityReply {
   @PrimaryGeneratedColumn({ type: 'int' })
   replyId: number;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'varchar', length: 100, comment: '100자 제한' })
   content: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 12, comment: '12자 제한' })
   nickname: string;
 
   @Column({ type: 'varchar', length: 20 })
