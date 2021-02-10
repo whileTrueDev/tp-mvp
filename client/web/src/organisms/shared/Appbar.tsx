@@ -176,6 +176,7 @@ export default function AppBar(): JSX.Element {
     { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
     { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
     { name: 'CBT신청', path: '/infoCBT', activeRouteString: '/infoCBT' },
+    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
   ];
 
   return (

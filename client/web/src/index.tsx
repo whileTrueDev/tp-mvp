@@ -2,7 +2,7 @@ import 'moment/locale/ko';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  BrowserRouter, Switch, Route,
+  BrowserRouter, Switch, Route, Redirect,
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
@@ -27,6 +27,9 @@ import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
 import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
+import CommunityBoardList from './pages/mainpage/CommunityBoardList';
+import CommunityPostView from './pages/mainpage/CommunityPostView';
+import CommunityPostWrite from './pages/mainpage/CommunityPostWrite';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
@@ -119,6 +122,11 @@ function Index(): JSX.Element {
               <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
+              <Route exact path="/community-board" component={CommunityBoardList} />
+              <Route exact path="/community-board/view/:postId" component={CommunityPostView} />
+              <Redirect from="/community-board/view" to="/community-board" />
+              <Route exact path="/community-board/write" component={CommunityPostWrite} />
+              <Route exact path="/community-board/write/:postId" component={CommunityPostWrite} />
               <Route path="/mypage" component={Mypage} />
             </Switch>
             {/* 페이지 컴포넌트 */}
