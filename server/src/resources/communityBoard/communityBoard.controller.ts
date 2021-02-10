@@ -11,7 +11,6 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
-  Res,
 } from '@nestjs/common';
 import express from 'express';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
