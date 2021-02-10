@@ -26,6 +26,12 @@ export class CommunityBoardService {
 
   private getPlatformCode = (platform: string): number => this.PLATFORM_CODE[platform]
 
+  async checkPostPassword(postId: number, password: string): Promise<boolean> {
+    const post = await this.communityPostRepository.findOne({ postId }, { select: ['password'] });
+    const passwordInDb = post.password;
+    return bcrypt.compare(password, passwordInDb);
+  }
+
   async createOnePost(createCommunityPostDto: CreateCommunityPostDto, ip: string): Promise<CommunityPostEntity> {
     try {
       // 비밀번호 암호화
@@ -112,15 +118,21 @@ export class CommunityBoardService {
     postId: number,
     updateCommunityPostDto: UpdateCommunityPostDto,
   ): Promise<CommunityPostEntity> {
-    const post = await this.findOnePost(postId);
-    try {
-      return this.communityPostRepository.save({
-        ...post,
-        ...updateCommunityPostDto,
-      });
-    } catch (error) {
-      console.error(error);
-      throw new HttpException('error in updateOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
+    const { password } = updateCommunityPostDto;
+    const isValidPassword = await this.checkPostPassword(postId, password);
+    if (isValidPassword) {
+      const post = await this.findOnePost(postId);
+      try {
+        return this.communityPostRepository.save({
+          ...post,
+          ...updateCommunityPostDto,
+        });
+      } catch (error) {
+        console.error(error);
+        throw new HttpException('error in updateOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      throw new HttpException('not valid password', HttpStatus.UNAUTHORIZED);
     }
   }
 

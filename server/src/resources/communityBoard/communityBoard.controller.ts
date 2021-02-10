@@ -9,18 +9,25 @@ import {
   Param,
   Query,
   ParseIntPipe,
-  // ValidationPipe,
-  // Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import express from 'express';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
+import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
+import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 
 import { CommunityBoardService } from './communityBoard.service';
+import { CommunityReplyService } from './communityReply.service';
 import { CommunityPostEntity } from './entities/community-post.entity';
+import { CommunityReplyEntity } from './entities/community-reply.entity';
 @Controller('community')
 export class CommunityBoardController {
-  constructor(private readonly communityBoardService: CommunityBoardService) {}
+  constructor(
+    private readonly communityBoardService: CommunityBoardService,
+    private readonly communityReplyService: CommunityReplyService,
+  ) {}
 
   /**
    * 
@@ -45,6 +52,7 @@ export class CommunityBoardController {
   }
 
   @Post()
+  @UsePipes(new ValidationPipe({ transform: true }))
   createOnePost(
     @Req() request: express.Request,
     @Body() createCommunityPostDto: CreateCommunityPostDto,
@@ -54,15 +62,21 @@ export class CommunityBoardController {
 
   @Post('/:postId/recommend')
   recommendPost(
-    // @Req() request: express.Request,
-    // @Res() response: express.Response,
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<any> {
-    // 1일 1회 추천만 가능하도록 수정해야함
     return this.communityBoardService.recommendPost(postId);
   }
 
+  /**
+   * 게시글 수정 PUT /community/:postId
+   * @param postId 
+   * @param updateCommunityBoardDto 
+   *    title: string;
+        content: string;
+        password: string; -> not null일 것
+   */
   @Put(':postId')
+  @UsePipes(new ValidationPipe({ transform: true }))
   updateOnePost(
     @Param('postId', ParseIntPipe) postId: number,
     @Body() updateCommunityBoardDto: UpdateCommunityPostDto,
@@ -80,8 +94,34 @@ export class CommunityBoardController {
     return this.communityBoardService.removeOnePost(postId);
   }
 
-  @Get()
-  test(): string {
-    return 'test';
+  /**
+   * 댓글 생성 POST /community/replies
+   * @param request 
+   * @param createReplyDto 
+   *          nickname: string; 12자
+              password: string; 4자
+              content: string; 100자
+              postId: number;
+   */
+  @Post('replies')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  createReply(
+    @Req() request: express.Request,
+    @Body() createReplyDto: CreateReplyDto,
+  ): Promise<CommunityReplyEntity> {
+    return this.communityReplyService.createReply(createReplyDto, request.ip);
+  }
+
+  /**
+   * 댓글 수정 PUT /community/replies/:replyId
+   * @param updateReplyDto 
+   */
+  @Put('replies/:replyId')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  updateReply(
+    @Param('replyId', ParseIntPipe) replyId: number,
+    @Body() updateReplyDto: UpdateReplyDto,
+  ): Promise<CommunityReplyEntity> {
+    return this.communityReplyService.updateReply(replyId, updateReplyDto);
   }
 }

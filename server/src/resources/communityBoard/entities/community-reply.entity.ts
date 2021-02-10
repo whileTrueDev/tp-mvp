@@ -18,7 +18,7 @@ export class CommunityReplyEntity implements CommunityReply {
   @Column({ type: 'varchar', length: 20 })
   ip: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', select: false })
   password: string;
 
   @CreateDateColumn({ type: 'timestamp' })
