@@ -11,7 +11,6 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
-  Res,
 } from '@nestjs/common';
 import express from 'express';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
@@ -50,13 +49,13 @@ export class CommunityBoardController {
   }
 
   /**
-   * 
+   * 게시글 조회 GET /community/posts?platform=&page=&take=&category=
    * @param platform 'afreeca' | 'twitch' 플랫폼 구분
    * @param category 'all' | 'notice' | 'recommended' 전체글, 공지글, 추천글 조회용
    * @param page 보여질 페이지
    * @param take 해당 페이지에 보여지는 글의 개수
    */
-  @Get()
+  @Get('posts')
   findAllPosts(
     @Query('platform') platform: string,
     @Query('category') category: string,
@@ -71,7 +70,12 @@ export class CommunityBoardController {
     });
   }
 
-  @Post()
+  /**
+   * 게시글 작성 POST /community/posts
+   * @param request 
+   * @param createCommunityPostDto 
+   */
+  @Post('posts')
   @UsePipes(new ValidationPipe({ transform: true }))
   createOnePost(
     @Req() request: express.Request,
@@ -80,7 +84,11 @@ export class CommunityBoardController {
     return this.communityBoardService.createOnePost(createCommunityPostDto, request.ip);
   }
 
-  @Post('/:postId/recommend')
+  /**
+   * 게시글 추천 POST /community/posts/:postId/recommend
+   * @param postId 
+   */
+  @Post('posts/:postId/recommend')
   recommendPost(
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<any> {
@@ -88,14 +96,14 @@ export class CommunityBoardController {
   }
 
   /**
-   * 게시글 수정 PUT /community/:postId
+   * 게시글 수정 PUT /community/posts/:postId
    * @param postId 
    * @param updateCommunityBoardDto 
    *    title: string;
         content: string;
         password: string; -> not null일 것
    */
-  @Put(':postId')
+  @Put('posts/:postId')
   @UsePipes(new ValidationPipe({ transform: true }))
   updateOnePost(
     @Param('postId', ParseIntPipe) postId: number,
@@ -104,16 +112,20 @@ export class CommunityBoardController {
     return this.communityBoardService.updateOnePost(postId, updateCommunityBoardDto);
   }
 
-  @Get(':postId')
+  /**
+   * 단일 글 조회 GET /community/posts/:postId
+   * @param postId 
+   */
+  @Get('posts/:postId')
   findOne(@Param('postId', ParseIntPipe) postId: number): Promise<CommunityPostEntity> {
     return this.communityBoardService.hitAndFindOnePost(postId);
   }
 
   /**
-   * 글 삭제 DELETE /community/:postId
+   * 글 삭제 DELETE /community/posts/:postId
    * @param postId 
    */
-  @Delete(':postId')
+  @Delete('posts/:postId')
   removeOnePost(
     @Param('postId', ParseIntPipe) postId: number,
     @Body('password') password: string,
