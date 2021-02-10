@@ -9,10 +9,11 @@ import * as bcrypt from 'bcrypt';
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 import { CommunityReplyEntity } from './entities/community-reply.entity';
-
+import { CommunityBoardService } from './communityBoard.service';
 @Injectable()
 export class CommunityReplyService {
   constructor(
+    private readonly communityBoardService: CommunityBoardService,
     @InjectRepository(CommunityReplyEntity)
     private readonly communityReplyRepository: Repository<CommunityReplyEntity>,
   ) {}
@@ -83,6 +84,32 @@ export class CommunityReplyService {
       }
     } else {
       throw new HttpException('not valid password', HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  async findReplies({ postId, page, take }: {
+    postId: number,
+    page: number,
+    take: number
+  }): Promise<{replies: CommunityReplyEntity[], total: number}> {
+    // 해당 postId 인 글 존재하는지 확인
+    await this.communityBoardService.findOnePost(postId);
+    try {
+      const [replies, total] = await this.communityReplyRepository.findAndCount({
+        where: {
+          postId,
+        },
+        take,
+        skip: (page - 1) * take,
+        order: { createDate: 'DESC' },
+      });
+      return {
+        replies,
+        total,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(`error in find replies on postId ${postId}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

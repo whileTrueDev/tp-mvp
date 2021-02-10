@@ -99,9 +99,9 @@ export class CommunityBoardService {
         };
       }
 
-      const [result, total] = await this.communityPostRepository.findAndCount(option);
+      const [posts, total] = await this.communityPostRepository.findAndCount(option);
       return {
-        posts: result,
+        posts,
         total,
       };
     } catch (error) {

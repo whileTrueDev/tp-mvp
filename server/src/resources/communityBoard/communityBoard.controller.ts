@@ -31,6 +31,25 @@ export class CommunityBoardController {
   ) {}
 
   /**
+   * 댓글조회 GET /community/replies?postId=&page=&take=
+   * @param postId 댓글 조회할 글id
+   * @param page 댓글 페이지
+   * @param take 가져올 댓글 개수
+   */
+  @Get('replies')
+  findReplies(
+    @Query('postId', ParseIntPipe) postId: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('take', ParseIntPipe) take: number,
+  ): Promise<{replies: CommunityReplyEntity[], total: number}> {
+    return this.communityReplyService.findReplies({
+      postId,
+      page: page < 1 ? 1 : page,
+      take: take < 0 ? 10 : take,
+    });
+  }
+
+  /**
    * 
    * @param platform 'afreeca' | 'twitch' 플랫폼 구분
    * @param category 'all' | 'notice' | 'recommended' 전체글, 공지글, 추천글 조회용
@@ -136,6 +155,8 @@ export class CommunityBoardController {
   /**
    * 댓글 수정 PUT /community/replies/:replyId
    * @param updateReplyDto 
+   *   password: string;
+       content: string; 100자 제한
    */
   @Put('replies/:replyId')
   @UsePipes(new ValidationPipe({ transform: true }))
