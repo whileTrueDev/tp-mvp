@@ -27,9 +27,13 @@ export class CommunityBoardService {
   private getPlatformCode = (platform: string): number => this.PLATFORM_CODE[platform]
 
   async checkPostPassword(postId: number, password: string): Promise<boolean> {
-    const post = await this.communityPostRepository.findOne({ postId }, { select: ['password'] });
-    const passwordInDb = post.password;
-    return bcrypt.compare(password, passwordInDb);
+    try {
+      const post = await this.communityPostRepository.findOne({ postId }, { select: ['password'] });
+      const passwordInDb = post.password;
+      return bcrypt.compare(password, passwordInDb);
+    } catch (e) {
+      throw new HttpException('no post with that postId', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async createOnePost(createCommunityPostDto: CreateCommunityPostDto, ip: string): Promise<CommunityPostEntity> {
@@ -151,14 +155,19 @@ export class CommunityBoardService {
     }
   }
 
-  async removeOnePost(postId: number): Promise<boolean> {
-    const post = await this.findOnePost(postId);
-    try {
-      await this.communityPostRepository.remove(post);
-      return true;
-    } catch (error) {
-      console.error(error);
-      throw new HttpException('error in removeOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
+  async removeOnePost(postId: number, password: string): Promise<boolean> {
+    const isValidPassword = await this.checkPostPassword(postId, password);
+    if (isValidPassword) {
+      const post = await this.findOnePost(postId);
+      try {
+        await this.communityPostRepository.remove(post);
+        return true;
+      } catch (error) {
+        console.error(error);
+        throw new HttpException('error in removeOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      throw new HttpException('not valid password', HttpStatus.UNAUTHORIZED);
     }
   }
 

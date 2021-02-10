@@ -11,6 +11,7 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
+  Res,
 } from '@nestjs/common';
 import express from 'express';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
@@ -89,9 +90,16 @@ export class CommunityBoardController {
     return this.communityBoardService.hitAndFindOnePost(postId);
   }
 
+  /**
+   * 글 삭제 DELETE /community/:postId
+   * @param postId 
+   */
   @Delete(':postId')
-  remove(@Param('postId', ParseIntPipe) postId: number): Promise<boolean> {
-    return this.communityBoardService.removeOnePost(postId);
+  removeOnePost(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.communityBoardService.removeOnePost(postId, password);
   }
 
   /**
@@ -110,6 +118,19 @@ export class CommunityBoardController {
     @Body() createReplyDto: CreateReplyDto,
   ): Promise<CommunityReplyEntity> {
     return this.communityReplyService.createReply(createReplyDto, request.ip);
+  }
+
+  /**
+   * 댓글삭제 DELETE /community/replies/:replyId
+   * @param replyId 삭제할 댓글 id
+   * @param password 댓글 비밀번호
+   */
+  @Delete('replies/:replyId')
+  async removeReply(
+    @Param('replyId', ParseIntPipe) replyId: number,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.communityReplyService.removeReply(replyId, password);
   }
 
   /**
