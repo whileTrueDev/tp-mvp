@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Repository, FindManyOptions } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
@@ -60,47 +60,63 @@ export class CommunityBoardService {
     platform: string,
     page: number,
     take: number,
-    category: string
-  }): Promise<{posts: CommunityPostEntity[], total: number}> {
+    category: string // filter로 바꾸기 이름 헷갈림..
+  }): Promise<{
+    posts: CommunityPostEntity[],
+    total: number
+  }> {
     // 리턴값은 {posts, total, }
-    try {
-      let option: FindManyOptions<CommunityPostEntity> = {
-        where: { platform: this.getPlatformCode(platform) },
-        take,
-        skip: (page - 1) * take,
-        order: { createDate: 'DESC' },
-        relations: ['replies'], // 현재 모든 댓글이 같이 리턴됨. 추후 count해서 보내기
-      };
 
+    const qb = this.communityPostRepository
+      .createQueryBuilder('post')
+      .select([
+        'post.postId',
+        'post.title',
+        'post.content',
+        'post.nickname',
+        'post.ip',
+        'post.createDate',
+        'post.platform',
+        'post.category',
+        'post.hit',
+        'post.recommend',
+      ])
+      .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
+      .loadRelationCountAndMap('post.replies', 'post.replies');
+
+    let resultQb = qb.clone();
+    let countQb = qb.clone();
+
+    try {
       if (category === 'notice') {
         // 공지사항만
-        option = {
-          ...option,
-          where: {
-            category: this.POST_CATEGORY_CODE[category],
-            platform: this.getPlatformCode(platform),
-          },
-        };
+        resultQb = qb
+          .andWhere('post.category = :category', { category: this.POST_CATEGORY_CODE[category] })
+          .orderBy('post.createDate', 'DESC');
+
+        countQb = resultQb.clone();
       } if (category === 'recommended') {
-        // 추천글만
-        option = {
-          ...option,
-          where: {
-            platform: this.getPlatformCode(platform),
-          },
-          order: { recommend: 'DESC' },
-        };
+        // 추천글, 추천 10개 이상인 글만
+        const recommendCriteria = 10;
+
+        resultQb = qb
+          .orderBy('post.recommend', 'DESC')
+          .addOrderBy('post.createDate', 'DESC')
+          .andWhere('post.recommend >= :recommendCriteria', { recommendCriteria });
+
+        countQb = resultQb.clone();
       } else {
         // 일반글
-        option = {
-          ...option,
-          where: {
-            platform: this.getPlatformCode(platform),
-          },
-        };
+        resultQb = qb
+          .orderBy('post.createDate', 'DESC');
+
+        countQb = resultQb.clone();
       }
 
-      const [posts, total] = await this.communityPostRepository.findAndCount(option);
+      const posts = await resultQb.skip((page - 1) * take)
+        .take(take)
+        .getMany();
+      const total = await countQb.getCount();
       return {
         posts,
         total,
