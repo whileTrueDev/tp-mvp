@@ -1,29 +1,33 @@
-import React, { useEffect, useMemo } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useRef,
+} from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
+import useAxios from 'axios-hooks';
+import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
+import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
+import { useSnackbar } from 'notistack';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/CommunityBoardCommonLayout';
 import usePostState from '../../organisms/mainpage/communityBoard/usePostState';
 import useSunEditor from '../../organisms/mainpage/communityBoard/useSunEditor';
-import EditPost from '../../organisms/mainpage/communityBoard/EditPost';
-import WritePost from '../../organisms/mainpage/communityBoard/WritePost';
-
-const temp = `
-<h1 class="__se__p-neon"><span style="font-family: &quot;Courier New&quot;; font-size: 72px;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;안녕하세요</span></h1>
-<div class="se-component se-video-container __se__float-none" contenteditable="false">
-    <figure style="height: 302px; padding-bottom: 302px;">
-        <iframe src="https://www.youtube.com/embed/usmCjDjLeT8" data-proportion="true" data-size="537px,302px" data-align="none" data-file-name="usmCjDjLeT8" data-file-size="0" data-origin="100%,56.25%" data-index="1" style="width: 537px; height: 302px;"></iframe>
-    </figure>
-</div>
-
-`;
+import TitleAndEditor from '../../organisms/mainpage/communityBoard/sub/TitleAndEditor';
+import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/sub/NicknamePasswordInput';
+import ShowSnack from '../../atoms/snackbar/ShowSnack';
 
 export default function CommunityPostWrite(): JSX.Element {
   const {
-    postState, setNickname, setPassword, setContent,
+    postState, setContent,
   } = usePostState(); // useReducer 혹은 useContext로 바꾸기
   const { postId } = useParams<any>();
   const location = useLocation<any>();
   const history = useHistory();
   const [editorRefFn, editor] = useSunEditor();
+  const nicknameRef = useRef<HTMLInputElement>();
+  const passwordRef = useRef<HTMLInputElement>();
+  const titleRef = useRef<HTMLInputElement>();
+  const [, createPost] = useAxios({ url: '/community/posts', method: 'post' }, { manual: true });
+  const [, getPostForEdit] = useAxios({ url: `/community/posts/edit/${postId}` }, { manual: true });
+  const [, editPost] = useAxios({ url: `/community/posts/${postId}`, method: 'put' }, { manual: true });
+  const { enqueueSnackbar } = useSnackbar();
 
   let platform: 'afreeca' | 'twitch'| null = null;
   if (location.state) {
@@ -35,32 +39,124 @@ export default function CommunityPostWrite(): JSX.Element {
   // 컴포넌트 마운트 시 한번만 실행
   useEffect(() => {
     if (isEditMode) {
-      // fetchPost -> 글 내용 로드
-      console.log('set content');
-      setContent(temp);
+      // fetchPost with postId-> 글 내용 로드
+      // console.log('글 불러오기 useEffect', { isEditMode });
+      getPostForEdit()
+        .then((res) => {
+          const {
+            content, title,
+            // platformCode
+          } = res.data;
+          setContent(content);
+          if (titleRef.current) {
+            titleRef.current.value = title;
+            titleRef.current.focus();
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+          if (e.response.status === 400) {
+            ShowSnack('해당글이 존재하지 않습니다', 'error', enqueueSnackbar);
+          } else {
+            ShowSnack('글 불러오기 오류', 'error', enqueueSnackbar);
+          }
+        });
     }
   }, []);
 
-  function validate(e: any) {
-    console.log(e.target.value);
-    console.log(e.target.name);
-    if (e.target.name === 'nickname') {
-      setNickname(e.target.value);
-    } else if (e.target.name === 'password') {
-      setPassword(e.target.value);
-    }
-  }
+  // 입력된 문자열에서 띄어쓰기,탭,공백 제외한 값이 빈 문자열인지 체크
+  const isEmptyContent = useCallback((content: string): boolean => (
+    content.replace(/(<\/?[^>]+(>|$)|&nbsp;|\s)/g, '') === ''),
+  []);
 
-  function handleSubmit(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    console.log({ editor });
+  const handleSubmit = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    // console.log('글 생성');
+    const createPostDto: CreateCommunityPostDto = {
+      title: '',
+      content: '',
+      nickname: '',
+      password: '',
+      platform: platform === 'afreeca' ? 0 : 1, // 아프리카=0, 트위치=1
+      category: 0, // 일반글=0, 공지글=1
+    };
+
+    if (titleRef.current) {
+      createPostDto.title = titleRef.current.value;
+    }
+    if (nicknameRef.current) {
+      createPostDto.nickname = nicknameRef.current.value;
+    }
+    if (passwordRef.current) {
+      createPostDto.password = passwordRef.current.value;
+    }
     if (editor) {
       const cont = editor.core.getContents(false);
-      const trimmedCont = cont.replace(/(<\/?[^>]+(>|$)|&nbsp;|\s)/g, '');
-      console.log({ trimmedCont, cont });
-      const cleanedHtml = editor.core.cleanHTML(cont);
-      alert(cleanedHtml);
+      const cleanHtml = editor.core.cleanHTML(cont);
+      createPostDto.content = cleanHtml;
     }
-  }
+
+    if (createPostDto.nickname === '') {
+      ShowSnack('닉네임을 입력해주세요', 'error', enqueueSnackbar);
+      return;
+    }
+    if (createPostDto.password === '') {
+      ShowSnack('비밀번호를 입력해주세요', 'error', enqueueSnackbar);
+      return;
+    }
+    if (createPostDto.title === '') {
+      ShowSnack('제목을 입력해주세요', 'error', enqueueSnackbar);
+      return;
+    }
+    if (isEmptyContent(createPostDto.content)) {
+      ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
+    }
+
+    createPost({ data: createPostDto })
+      .then((res) => {
+        // console.log(res);
+        ShowSnack('글 작성 성공', 'info', enqueueSnackbar);
+        history.push('/community-board');
+      })
+      .catch((error) => {
+        console.error(error);
+        ShowSnack('오류가 발생했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
+      });
+  }, [editor, platform]);
+
+  const handleEdit = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    console.log('글 수정');
+
+    const updatePostDto: UpdateCommunityPostDto = {
+      title: '',
+      content: '',
+    };
+    if (titleRef.current) {
+      updatePostDto.title = titleRef.current.value;
+    }
+    if (editor) {
+      const cont = editor.core.getContents(false);
+      const cleanHtml = editor.core.cleanHTML(cont);
+      updatePostDto.content = cleanHtml;
+    }
+
+    if (updatePostDto.title === '') {
+      ShowSnack('제목을 입력해주세요', 'error', enqueueSnackbar);
+      return;
+    }
+    if (isEmptyContent(updatePostDto.content)) {
+      ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
+    }
+
+    editPost({ data: updatePostDto })
+      .then((res) => {
+        ShowSnack('글 수정 성공', 'info', enqueueSnackbar);
+        history.push('/community-board');
+      })
+      .catch((error) => {
+        console.error(error);
+        ShowSnack('오류가 발생했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
+      });
+  }, [editor, editPost, enqueueSnackbar, history, isEmptyContent]);
 
   function goBack() {
     history.goBack();
@@ -72,25 +168,27 @@ export default function CommunityPostWrite(): JSX.Element {
         {`postId : ${postId}, platform: ${platform}`}
         {isEditMode ? '개별글 수정 페이지' : '개별글 작성 페이지'}
       </div>
-      {isEditMode
-        ? (
-          <EditPost
-            editorRefFn={editorRefFn}
-            editor={editor}
-            postId={postId}
-            initialContent={initialContent}
-          />
-        )
-        : (
-          <WritePost
-            editorRefFn={editorRefFn}
-            editor={editor}
-          />
-        )}
+
+      <div>
+        {isEditMode
+          ? null
+          : (
+            <NicknamePasswordInput
+              nicknameRef={nicknameRef}
+              passwordRef={passwordRef}
+            />
+          )}
+        <TitleAndEditor
+          titleRef={titleRef}
+          editorRefFn={editorRefFn}
+          editor={editor}
+          initialContent={initialContent}
+        />
+      </div>
       <div>
         <button onClick={goBack}>취소</button>
         {isEditMode
-          ? <button onClick={handleSubmit}>수정</button>
+          ? <button onClick={handleEdit}>수정</button>
           : <button onClick={handleSubmit}>등록</button>}
 
       </div>

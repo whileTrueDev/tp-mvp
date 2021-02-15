@@ -1,16 +1,16 @@
 import { TextField } from '@material-ui/core';
 import React from 'react';
 import SunEditor from 'suneditor/src/lib/core';
-import EditorContainer from './sub/EditorContainer';
+import EditorContainer from './EditorContainer';
 
-export default function EditPost(
+export default function TitleAndEditor(
   {
-    editorRefFn, editor, postId, initialContent,
+    titleRef, editorRefFn, editor, initialContent = '',
   }: {
-    editorRefFn?: ((node: any) => void) | undefined;
-    editor?: SunEditor | undefined;
-    postId: number;
-    initialContent: string;
+    titleRef? : any;
+    editorRefFn: ((node: any) => void);
+    editor: SunEditor;
+    initialContent? : string;
   },
 ): JSX.Element {
   return (
@@ -19,12 +19,13 @@ export default function EditPost(
         variant="outlined"
         name="title"
         label="제목"
+        inputRef={titleRef}
+        inputProps={{ maxLength: 20 }}
       />
       <EditorContainer
-        initialContent={initialContent}
-        postId={postId}
         editorRefFn={editorRefFn}
         editor={editor}
+        initialContent={initialContent}
       />
     </>
   );
