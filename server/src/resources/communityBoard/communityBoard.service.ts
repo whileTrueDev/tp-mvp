@@ -141,21 +141,15 @@ export class CommunityBoardService {
     postId: number,
     updateCommunityPostDto: UpdateCommunityPostDto,
   ): Promise<CommunityPostEntity> {
-    const { password } = updateCommunityPostDto;
-    const isValidPassword = await this.checkPostPassword(postId, password);
-    if (isValidPassword) {
-      const post = await this.findOnePost(postId);
-      try {
-        return this.communityPostRepository.save({
-          ...post,
-          ...updateCommunityPostDto,
-        });
-      } catch (error) {
-        console.error(error);
-        throw new HttpException('error in updateOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    } else {
-      throw new HttpException('not valid password', HttpStatus.UNAUTHORIZED);
+    const post = await this.findOnePost(postId);
+    try {
+      return this.communityPostRepository.save({
+        ...post,
+        ...updateCommunityPostDto,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new HttpException('error in updateOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -166,6 +160,9 @@ export class CommunityBoardService {
       .leftJoinAndSelect('post.replies', 'replies')
       .where('post.postId = :postId', { postId })
       .getOne();
+    if (!post) {
+      throw new HttpException('no post with that postId', HttpStatus.NOT_FOUND);
+    }
 
     const hitCount = post.hit;
     try {

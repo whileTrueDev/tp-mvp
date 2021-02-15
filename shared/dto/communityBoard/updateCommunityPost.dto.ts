@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
 
 export class UpdateCommunityPostDto {
   @IsString()
@@ -7,7 +7,4 @@ export class UpdateCommunityPostDto {
 
   @IsString()
   content: string;
-
-  @IsNotEmpty()
-  password: string;
 }

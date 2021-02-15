@@ -11,6 +11,8 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import express from 'express';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
@@ -101,7 +103,6 @@ export class CommunityBoardController {
    * @param updateCommunityBoardDto 
    *    title: string;
         content: string;
-        password: string; -> not null일 것
    */
   @Put('posts/:postId')
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -113,12 +114,35 @@ export class CommunityBoardController {
   }
 
   /**
-   * 단일 글 조회 GET /community/posts/:postId
+   * 단일 글 조회 - 글 목록에서 단일 글 선택시 GET /community/posts/:postId
    * @param postId 
    */
   @Get('posts/:postId')
   findOne(@Param('postId', ParseIntPipe) postId: number): Promise<CommunityPostEntity> {
     return this.communityBoardService.hitAndFindOnePost(postId);
+  }
+
+  /**
+   * 단일 글 조회 - 글 수정시 글 내용 가져오기 위해
+   * @param postId 
+   */
+  @Get('posts/edit/:postId')
+  findOneForEdit(@Param('postId', ParseIntPipe) postId: number): Promise<CommunityPostEntity> {
+    return this.communityBoardService.findOnePost(postId);
+  }
+
+  /**
+   * 글 수정시 비밀번호 확인
+   * @param postId 
+   * @param password 
+   */
+  @HttpCode(200)
+  @Post('posts/:postId/password')
+  async checkPostPassword(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.communityBoardService.checkPostPassword(postId, password);
   }
 
   /**
