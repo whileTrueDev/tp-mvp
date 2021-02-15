@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import SunEditor from 'suneditor/src/lib/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import EditorContainer from './EditorContainer';
@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-export default function TitleAndEditor(
+function TitleAndEditor(
   {
     editorRefFn, editor, initialContent = '',
     titleValue, onTitleChange,
@@ -31,7 +31,6 @@ export default function TitleAndEditor(
         maxLength={20}
         helperText="* 제목은 최대 20글자까지 가능합니다"
         placeholder="제목을 입력하세요"
-        defaultValue={titleValue}
         value={titleValue}
         onChange={onTitleChange}
       />
@@ -44,3 +43,5 @@ export default function TitleAndEditor(
     </>
   );
 }
+
+export default memo(TitleAndEditor);

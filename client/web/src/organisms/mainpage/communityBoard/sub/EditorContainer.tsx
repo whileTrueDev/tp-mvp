@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import 'suneditor/dist/css/suneditor.min.css';
 import SunEditor from 'suneditor/src/lib/core';
 
@@ -39,4 +39,4 @@ function EditorContainer({
   );
 }
 
-export default EditorContainer;
+export default memo(EditorContainer);

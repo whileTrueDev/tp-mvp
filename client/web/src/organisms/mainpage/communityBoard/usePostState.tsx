@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 export default function usePostState(): {
   initialContent: string;
@@ -16,15 +16,15 @@ export default function usePostState(): {
   const [passwordValue, setPassword] = useState<string>('');
   const [nicknameValue, setNickname] = useState<string>('');
 
-  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
-  };
-  const onNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  }, []);
+  const onNicknameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
-  };
-  const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  }, []);
+  const onPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-  };
+  }, []);
 
   return {
     initialContent,
