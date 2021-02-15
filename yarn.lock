@@ -15124,6 +15124,11 @@ stylehacks@^4.0.0:
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
 
+suneditor@^2.36.1:
+  version "2.36.1"
+  resolved "https://registry.yarnpkg.com/suneditor/-/suneditor-2.36.1.tgz#cfb5f18d5f7c4da99400e69a6084313fc9ba6ef0"
+  integrity sha512-eo4v9I05Re6Wr4brv2VNUI6GjogOqOA61KZw6q4Z0yejJsx7dF3tYXsLrE3X4ynI6fKGBseKzQl4EfK1ip32YA==
+
 superagent@^3.8.3:
   version "3.8.3"
   resolved "https://registry.yarnpkg.com/superagent/-/superagent-3.8.3.tgz#460ea0dbdb7d5b11bc4f78deba565f86a178e128"

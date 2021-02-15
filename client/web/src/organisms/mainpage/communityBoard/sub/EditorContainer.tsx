@@ -7,11 +7,13 @@ function EditorContainer({
   editorRefFn,
   editor,
   style = { width: '100%', minHeight: '300px' },
+  className,
 }: {
   initialContent?: string;
   editorRefFn: (node: any) => void,
   editor: SunEditor,
   style?: React.CSSProperties,
+  className? : string
 }): JSX.Element {
   // editor가 변경될때만 실행 
   useEffect(() => () => {
@@ -27,7 +29,7 @@ function EditorContainer({
   }, [initialContent, editor]);
 
   return (
-    <div>
+    <div className={className}>
       <textarea
         id="sun-editor"
         style={style}

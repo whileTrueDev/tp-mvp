@@ -1,11 +1,14 @@
 import React, {
-  useCallback, useEffect, useMemo, useRef,
+  useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { useSnackbar } from 'notistack';
+import {
+  Container, Button, Typography, Divider,
+} from '@material-ui/core';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/CommunityBoardCommonLayout';
 import usePostState from '../../organisms/mainpage/communityBoard/usePostState';
 import useSunEditor from '../../organisms/mainpage/communityBoard/useSunEditor';
@@ -35,12 +38,9 @@ export default function CommunityPostWrite(): JSX.Element {
   }
   const isEditMode = useMemo(() => !!postId, [postId]); // postId의 여부로 글생성/글수정 모드 확인
   const initialContent = useMemo(() => postState.content, [postState.content]);
-
-  // 컴포넌트 마운트 시 한번만 실행
   useEffect(() => {
     if (isEditMode) {
-      // fetchPost with postId-> 글 내용 로드
-      // console.log('글 불러오기 useEffect', { isEditMode });
+      // fetchPost with postId
       getPostForEdit()
         .then((res) => {
           const {
@@ -62,6 +62,8 @@ export default function CommunityPostWrite(): JSX.Element {
           }
         });
     }
+  // 컴포넌트 마운트 시 한번만 실행되는 effect. postId가 있는 경우 데이터 가져오는 용도로
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 입력된 문자열에서 띄어쓰기,탭,공백 제외한 값이 빈 문자열인지 체크
@@ -121,10 +123,10 @@ export default function CommunityPostWrite(): JSX.Element {
         console.error(error);
         ShowSnack('오류가 발생했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
       });
-  }, [editor, platform]);
+  }, [createPost, editor, enqueueSnackbar, history, isEmptyContent, platform]);
 
   const handleEdit = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    console.log('글 수정');
+    // console.log('글 수정');
 
     const updatePostDto: UpdateCommunityPostDto = {
       title: '',
@@ -145,6 +147,7 @@ export default function CommunityPostWrite(): JSX.Element {
     }
     if (isEmptyContent(updatePostDto.content)) {
       ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
+      return;
     }
 
     editPost({ data: updatePostDto })
@@ -164,35 +167,52 @@ export default function CommunityPostWrite(): JSX.Element {
 
   return (
     <CommunityBoardCommonLayout>
-      <div>
-        {`postId : ${postId}, platform: ${platform}`}
-        {isEditMode ? '개별글 수정 페이지' : '개별글 작성 페이지'}
-      </div>
+      <Container maxWidth="md">
 
-      <div>
-        {isEditMode
-          ? null
-          : (
-            <NicknamePasswordInput
-              nicknameRef={nicknameRef}
-              passwordRef={passwordRef}
-            />
-          )}
-        <TitleAndEditor
-          titleRef={titleRef}
-          editorRefFn={editorRefFn}
-          editor={editor}
-          initialContent={initialContent}
-        />
-      </div>
-      <div>
-        <button onClick={goBack}>취소</button>
-        {isEditMode
-          ? <button onClick={handleEdit}>수정</button>
-          : <button onClick={handleSubmit}>등록</button>}
+        <div className="title">
+          <Typography variant="h4" gutterBottom>
+            {isEditMode ? '글수정' : '글작성'}
+          </Typography>
+        </div>
 
-      </div>
+        <form className="form">
+          {isEditMode
+            ? null
+            : (
+              <NicknamePasswordInput
+                nicknameRef={nicknameRef}
+                passwordRef={passwordRef}
+              />
+            )}
+          <TitleAndEditor
+            titleRef={titleRef}
+            editorRefFn={editorRefFn}
+            editor={editor}
+            initialContent={initialContent}
+          />
 
+          <div className="buttons">
+            <Button
+              variant="contained"
+              size="large"
+              onClick={goBack}
+            >
+              취소
+
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={isEditMode ? handleEdit : handleSubmit}
+            >
+              {isEditMode ? '수정' : '등록'}
+            </Button>
+
+          </div>
+
+        </form>
+      </Container>
     </CommunityBoardCommonLayout>
   );
 }
