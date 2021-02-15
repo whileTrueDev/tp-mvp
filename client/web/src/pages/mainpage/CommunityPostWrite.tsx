@@ -2,20 +2,30 @@ import React, {
   useCallback, useEffect, useMemo,
 } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
-import useAxios from 'axios-hooks';
-import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
-import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
-import { useSnackbar } from 'notistack';
 import {
   Container, Button, Typography, Divider,
 } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+
+import SunEditor from 'suneditor/src/lib/core';
+
+// dto
+import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
+import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
+
+// snackbar
+import { useSnackbar } from 'notistack';
+import ShowSnack from '../../atoms/snackbar/ShowSnack';
+
+// 컴포넌트
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/CommunityBoardCommonLayout';
-import usePostState from '../../organisms/mainpage/communityBoard/usePostState';
-import useSunEditor from '../../organisms/mainpage/communityBoard/useSunEditor';
 import TitleAndEditor from '../../organisms/mainpage/communityBoard/sub/TitleAndEditor';
 import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/sub/NicknamePasswordInput';
-import ShowSnack from '../../atoms/snackbar/ShowSnack';
+
+// 커스텀훅
+import usePostState from '../../organisms/mainpage/communityBoard/usePostState';
+import useSunEditor from '../../organisms/mainpage/communityBoard/useSunEditor';
+import usePostWriteEditAPI from '../../organisms/mainpage/communityBoard/usePostWriteEditAPI';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
@@ -32,12 +42,19 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-// 입력된 문자열에서 띄어쓰기,탭,공백 제외한 값이 빈 문자열인지 체크
-const isEmptyContent = (content: string): boolean => (
-  content.replace(/(<\/?[^>]+(>|$)|&nbsp;|\s)/g, '') === '');
-interface LocationState{
-    platform?: string;
-}
+// editor 내용 가져오는 함수
+const getHtmlFromEditor = (editor: React.MutableRefObject<SunEditor | null>) => {
+  if (editor.current) {
+    const unsafeHtml = editor.current.core.getContents(false);
+    return editor.current.core.cleanHTML(unsafeHtml);
+  }
+  console.error('editor.current not exist');
+  throw new Error('문제가 발생했습니다. 새로고침 후 다시 시도해 주세요');
+};
+
+// 입력된 문자열에서 띄어쓰기,탭,공백 제외한 값 반환
+const trimmedContent = (content: string): string => (
+  content.replace(/(<\/?[^>]+(>|$)|&nbsp;|\s)/g, ''));
 
 // 에러메시지
 const ErrorMessages = {
@@ -46,6 +63,20 @@ const ErrorMessages = {
   password: '비밀번호를 입력해주세요',
   content: '내용을 입력해주세요',
 };
+interface LocationState{
+  platform?: string;
+}
+
+/**
+ * 글생성/ 수정 페이지 컴포넌트
+ * 
+ * 컴포넌트함수 시작 시 
+ * params로 넘어온 postId값이 있으면 수정페이지를 보여주고, 
+ * 없으면 새 글 작성페이지를 보여준다
+ * 
+ * 글 작성버튼 -> handleSubmit 함수 실행
+ * 글 수정버튼 -> handleEdit 함수 실행
+ */
 export default function CommunityPostWrite(): JSX.Element {
   const classes = useStyles();
   const {
@@ -56,32 +87,23 @@ export default function CommunityPostWrite(): JSX.Element {
   const location = useLocation<LocationState>();
   const history = useHistory();
   const { refFn: editorRefFn, editorRef: editor } = useSunEditor();
-  const [, createPost] = useAxios({ url: '/community/posts', method: 'post' }, { manual: true });
-  const [, getPostForEdit] = useAxios({ url: `/community/posts/edit/${postId}` }, { manual: true });
-  const [, editPost] = useAxios({ url: `/community/posts/${postId}`, method: 'put' }, { manual: true });
+  const { handleCreatePost, handleEditPost, handleLoadPost } = usePostWriteEditAPI(postId);
   const { enqueueSnackbar } = useSnackbar();
 
   const { platform } = location.state;
-  const isEditMode = useMemo(() => !!postId, [postId]); // postId의 여부로 글생성/글수정 모드 확인
+  // postId의 여부로 글생성/글수정 모드 확인
+  const isEditMode = useMemo(() => !!postId, [postId]);
+
   useEffect(() => {
     if (isEditMode) {
-      // fetchPost with postId
-      getPostForEdit()
-        .then((res) => {
-          const { content, title } = res.data;
-          setInitialContent(content);
-          setTitle(title);
-        })
-        .catch((e) => {
-          console.error(e);
-          if (e.response.status === 400) {
-            ShowSnack('해당글이 존재하지 않습니다', 'error', enqueueSnackbar);
-          } else {
-            ShowSnack('글 불러오기 오류', 'error', enqueueSnackbar);
-          }
-        });
+      // 글 수정하는 경우 글 내용과 제목 가져와서 보여줌
+      handleLoadPost((res: { data: { content: any; title: any; }; }) => {
+        const { content, title } = res.data;
+        setInitialContent(content);
+        setTitle(title);
+      });
     }
-  // 컴포넌트 마운트 시 한번만 실행되는 effect. postId가 있는 경우 데이터 가져오는 용도로
+  // 컴포넌트 마운트 시 한번만 실행되는 effect
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -96,50 +118,28 @@ export default function CommunityPostWrite(): JSX.Element {
       category: 0, // 일반글=0, 공지글=1
     };
 
-    if (editor.current) {
-      const cont = editor.current.core.getContents(false);
-      const cleanHtml = editor.current.core.cleanHTML(cont);
-      createPostDto.content = cleanHtml;
-    }
+    try {
+      createPostDto.content = getHtmlFromEditor(editor);
 
-    // try {
-    //   const keys: Array<keyof CreateCommunityPostDto & keyof typeof ErrorMessages> = ['nickname', 'password', 'title'];
-    //   keys.forEach((key) => {
-    //     createPostDto[key].trim();
+      // ['nickname', 'password', 'title', 'content'] 
+      // 중 빈 값 === '' 이 있는지 확인후 없으면 에러 스낵바
+      const keys = ['nickname', 'password', 'title', 'content'] as Array<keyof CreateCommunityPostDto & keyof typeof ErrorMessages>;
 
-    //   });
-    // } catch (e) {
+      keys.forEach((key: keyof CreateCommunityPostDto & keyof typeof ErrorMessages) => {
+        const value = (key === 'content')
+          ? trimmedContent(createPostDto[key])
+          : createPostDto[key].trim();
 
-    // }
-
-    if (createPostDto.nickname.trim() === '') {
-      ShowSnack(ErrorMessages.nickname, 'error', enqueueSnackbar);
-      return;
-    }
-    if (createPostDto.password.trim() === '') {
-      ShowSnack(ErrorMessages.password, 'error', enqueueSnackbar);
-      return;
-    }
-    if (createPostDto.title.trim() === '') {
-      ShowSnack(ErrorMessages.title, 'error', enqueueSnackbar);
-      return;
-    }
-    if (isEmptyContent(createPostDto.content)) {
-      ShowSnack(ErrorMessages.content, 'error', enqueueSnackbar);
-      return;
-    }
-
-    createPost({ data: createPostDto })
-      .then((res) => {
-        // console.log(res);
-        ShowSnack('글 작성 성공', 'info', enqueueSnackbar);
-        history.push('/community-board');
-      })
-      .catch((error) => {
-        console.error(error);
-        ShowSnack('오류가 발생했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
+        if (value === '') throw new Error(ErrorMessages[key]);
       });
-  }, [createPost, editor, enqueueSnackbar, history, platform, titleValue, nicknameValue, passwordValue]);
+    } catch (err) {
+      ShowSnack(err.message, 'error', enqueueSnackbar);
+      return;
+    }
+
+    // createPostDto로 글 생성 요청
+    handleCreatePost(createPostDto);
+  }, [titleValue, nicknameValue, passwordValue, platform, handleCreatePost, editor, enqueueSnackbar]);
 
   const handleEdit = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // console.log('글 수정');
@@ -149,31 +149,27 @@ export default function CommunityPostWrite(): JSX.Element {
       content: '',
     };
 
-    if (editor.current) {
-      const cont = editor.current.core.getContents(false);
-      const cleanHtml = editor.current.core.cleanHTML(cont);
-      updatePostDto.content = cleanHtml;
-    }
+    try {
+      updatePostDto.content = getHtmlFromEditor(editor);
 
-    if (updatePostDto.title.trim() === '') {
-      ShowSnack(ErrorMessages.title, 'error', enqueueSnackbar);
-      return;
-    }
-    if (isEmptyContent(updatePostDto.content)) {
-      ShowSnack(ErrorMessages.content, 'error', enqueueSnackbar);
-      return;
-    }
+      // ['title', 'content'] 중 빈 값'' 이 있는지 확인
+      const keys = ['title', 'content'] as Array<keyof UpdateCommunityPostDto & keyof typeof ErrorMessages>;
 
-    editPost({ data: updatePostDto })
-      .then((res) => {
-        ShowSnack('글 수정 성공', 'info', enqueueSnackbar);
-        history.push('/community-board');
-      })
-      .catch((error) => {
-        console.error(error);
-        ShowSnack('오류가 발생했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
+      keys.forEach((key: keyof UpdateCommunityPostDto & keyof typeof ErrorMessages) => {
+        const value = (key === 'content')
+          ? trimmedContent(updatePostDto[key])
+          : updatePostDto[key].trim();
+
+        if (value === '') throw new Error(ErrorMessages[key]);
       });
-  }, [editor, editPost, enqueueSnackbar, history, titleValue]);
+    } catch (err) {
+      ShowSnack(err.message, 'error', enqueueSnackbar);
+      return;
+    }
+
+    // updatePostDto로 글 수정 요청
+    handleEditPost(updatePostDto);
+  }, [titleValue, handleEditPost, editor, enqueueSnackbar]);
 
   function goBack() {
     history.goBack();
@@ -226,10 +222,9 @@ export default function CommunityPostWrite(): JSX.Element {
             >
               {isEditMode ? '수정' : '등록'}
             </Button>
-
           </div>
-
         </form>
+
       </Container>
     </CommunityBoardCommonLayout>
   );
