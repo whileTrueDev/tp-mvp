@@ -16,10 +16,10 @@ export default function TitleAndEditor(
     titleValue, onTitleChange,
   }: {
     editorRefFn: ((node: any) => void);
-    editor: SunEditor;
+    editor: SunEditor|null;
     initialContent? : string;
     titleValue: string;
-    onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   },
 ): JSX.Element {
   const classes = useStyles();

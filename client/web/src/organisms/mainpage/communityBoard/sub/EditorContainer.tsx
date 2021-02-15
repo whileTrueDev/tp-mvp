@@ -11,7 +11,7 @@ function EditorContainer({
 }: {
   initialContent?: string;
   editorRefFn: (node: any) => void,
-  editor: SunEditor,
+  editor: SunEditor|null,
   style?: React.CSSProperties,
   className? : string
 }): JSX.Element {

@@ -28,7 +28,7 @@ export default function CommunityBoardList(): JSX.Element {
 
         </button>
         <button onClick={() => history.push({
-          pathname: '/community-board/write/29',
+          pathname: '/community-board/write/47',
           state: { platform: '' },
         })}
         >

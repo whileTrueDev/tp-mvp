@@ -11,7 +11,6 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
-  HttpStatus,
   HttpCode,
 } from '@nestjs/common';
 import express from 'express';

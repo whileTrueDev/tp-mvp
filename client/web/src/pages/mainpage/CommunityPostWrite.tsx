@@ -55,7 +55,7 @@ export default function CommunityPostWrite(): JSX.Element {
   const { postId } = useParams<any>();
   const location = useLocation<LocationState>();
   const history = useHistory();
-  const [editorRefFn, editor] = useSunEditor();
+  const { refFn: editorRefFn, editorRef: editor } = useSunEditor();
   const [, createPost] = useAxios({ url: '/community/posts', method: 'post' }, { manual: true });
   const [, getPostForEdit] = useAxios({ url: `/community/posts/edit/${postId}` }, { manual: true });
   const [, editPost] = useAxios({ url: `/community/posts/${postId}`, method: 'put' }, { manual: true });
@@ -96,9 +96,9 @@ export default function CommunityPostWrite(): JSX.Element {
       category: 0, // 일반글=0, 공지글=1
     };
 
-    if (editor) {
-      const cont = editor.core.getContents(false);
-      const cleanHtml = editor.core.cleanHTML(cont);
+    if (editor.current) {
+      const cont = editor.current.core.getContents(false);
+      const cleanHtml = editor.current.core.cleanHTML(cont);
       createPostDto.content = cleanHtml;
     }
 
@@ -149,9 +149,9 @@ export default function CommunityPostWrite(): JSX.Element {
       content: '',
     };
 
-    if (editor) {
-      const cont = editor.core.getContents(false);
-      const cleanHtml = editor.core.cleanHTML(cont);
+    if (editor.current) {
+      const cont = editor.current.core.getContents(false);
+      const cleanHtml = editor.current.core.cleanHTML(cont);
       updatePostDto.content = cleanHtml;
     }
 
@@ -204,7 +204,7 @@ export default function CommunityPostWrite(): JSX.Element {
             )}
           <TitleAndEditor
             editorRefFn={editorRefFn}
-            editor={editor}
+            editor={editor.current}
             initialContent={initialContent}
             titleValue={titleValue}
             onTitleChange={onTitleChange}
