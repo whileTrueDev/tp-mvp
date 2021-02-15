@@ -1,5 +1,7 @@
 import { TextField, OutlinedTextFieldProps } from '@material-ui/core';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import {
+  makeStyles, createStyles, Theme, useTheme,
+} from '@material-ui/core/styles';
 import React from 'react';
 
 interface PropType extends Partial<OutlinedTextFieldProps>{
@@ -22,12 +24,13 @@ export default function InputField(props: PropType): JSX.Element {
     maxLength, inputProps, className, ...rest
   } = props;
   const classes = useStyles();
+  const theme = useTheme();
   return (
     <TextField
       {...rest}
       className={`${classes.input} ${className}`}
       variant="outlined"
-      inputProps={{ ...inputProps, maxLength }}
+      inputProps={{ ...inputProps, style: { backgroundColor: theme.palette.common.white }, maxLength }}
       InputLabelProps={{
         shrink: true,
       }}

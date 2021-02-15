@@ -6,7 +6,7 @@ function EditorContainer({
   initialContent = '',
   editorRefFn,
   editor,
-  style = { width: '100%', minHeight: '300px' },
+  style = { width: '100%', minHeight: '400px' },
   className,
 }: {
   initialContent?: string;

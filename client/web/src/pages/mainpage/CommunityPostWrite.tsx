@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useMemo, useRef, useState,
+  useCallback, useEffect, useMemo, useRef,
 } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 import useAxios from 'axios-hooks';
@@ -9,6 +9,7 @@ import { useSnackbar } from 'notistack';
 import {
   Container, Button, Typography, Divider,
 } from '@material-ui/core';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/CommunityBoardCommonLayout';
 import usePostState from '../../organisms/mainpage/communityBoard/usePostState';
 import useSunEditor from '../../organisms/mainpage/communityBoard/useSunEditor';
@@ -16,7 +17,22 @@ import TitleAndEditor from '../../organisms/mainpage/communityBoard/sub/TitleAnd
 import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/sub/NicknamePasswordInput';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
 
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  title: {
+    padding: theme.spacing(6, 0),
+  },
+  buttonContainer: {
+    textAlign: 'end',
+    '&>*': {
+      margin: theme.spacing(1),
+    },
+    '&>:last-child': {
+      marginRight: 0,
+    },
+  },
+}));
 export default function CommunityPostWrite(): JSX.Element {
+  const classes = useStyles();
   const {
     postState, setContent,
   } = usePostState(); // useReducer 혹은 useContext로 바꾸기
@@ -169,10 +185,12 @@ export default function CommunityPostWrite(): JSX.Element {
     <CommunityBoardCommonLayout>
       <Container maxWidth="md">
 
-        <div className="title">
+        <div className={classes.title}>
           <Typography variant="h4" gutterBottom>
-            {isEditMode ? '글수정' : '글작성'}
+            {platform === 'afreeca' ? '아프리카 게시판 ' : '트위치 게시판 '}
+            {isEditMode ? '글 수정' : '글 작성'}
           </Typography>
+          <Divider />
         </div>
 
         <form className="form">
@@ -191,14 +209,13 @@ export default function CommunityPostWrite(): JSX.Element {
             initialContent={initialContent}
           />
 
-          <div className="buttons">
+          <div className={classes.buttonContainer}>
             <Button
               variant="contained"
               size="large"
               onClick={goBack}
             >
               취소
-
             </Button>
             <Button
               variant="contained"
