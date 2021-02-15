@@ -4,10 +4,13 @@ import InputField from './InputField';
 
 export default function NicknamePasswordInput(
   {
-    nicknameRef, passwordRef,
+    nicknameValue, passwordValue,
+    onPasswordChange, onNicknameChange,
   }: {
-    nicknameRef: any;
-    passwordRef: any;
+    nicknameValue: string;
+    passwordValue: string;
+    onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onNicknameChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   },
 ): JSX.Element {
   return (
@@ -21,10 +24,11 @@ export default function NicknamePasswordInput(
         <InputField
           label="닉네임"
           name="nickname"
-          inputRef={nicknameRef}
           maxLength={12}
           helperText="* 닉네임은 최대 12글자까지 가능합니다"
           placeholder="닉네임을 입력하세요"
+          value={nicknameValue}
+          onChange={onNicknameChange}
         />
       </Grid>
 
@@ -33,13 +37,14 @@ export default function NicknamePasswordInput(
           type="password"
           name="password"
           label="비밀번호"
-          inputRef={passwordRef}
           maxLength={4}
           InputLabelProps={{
             shrink: true,
           }}
           helperText="* 비밀번호는 최대 4글자까지 가능합니다"
           placeholder="비밀번호를 입력하세요"
+          value={passwordValue}
+          onChange={onPasswordChange}
         />
       </Grid>
     </Grid>

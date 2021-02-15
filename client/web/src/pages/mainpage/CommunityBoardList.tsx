@@ -27,7 +27,14 @@ export default function CommunityBoardList(): JSX.Element {
           아프리카 글작성
 
         </button>
-        <button onClick={() => history.push('/community-board/write/29')}>개별글수정</button>
+        <button onClick={() => history.push({
+          pathname: '/community-board/write/29',
+          state: { platform: '' },
+        })}
+        >
+          개별글수정
+
+        </button>
       </div>
 
     </CommunityBoardCommonLayout>

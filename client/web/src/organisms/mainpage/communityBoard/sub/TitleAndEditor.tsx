@@ -12,12 +12,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export default function TitleAndEditor(
   {
-    titleRef, editorRefFn, editor, initialContent = '',
+    editorRefFn, editor, initialContent = '',
+    titleValue, onTitleChange,
   }: {
-    titleRef? : any;
     editorRefFn: ((node: any) => void);
     editor: SunEditor;
     initialContent? : string;
+    titleValue: string;
+    onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   },
 ): JSX.Element {
   const classes = useStyles();
@@ -26,10 +28,12 @@ export default function TitleAndEditor(
       <InputField
         name="title"
         label="제목"
-        inputRef={titleRef}
         maxLength={20}
         helperText="* 제목은 최대 20글자까지 가능합니다"
         placeholder="제목을 입력하세요"
+        defaultValue={titleValue}
+        value={titleValue}
+        onChange={onTitleChange}
       />
       <EditorContainer
         editorRefFn={editorRefFn}
