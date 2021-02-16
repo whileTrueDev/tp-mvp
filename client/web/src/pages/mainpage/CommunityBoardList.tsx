@@ -2,7 +2,7 @@ import React from 'react';
 import {
   useHistory,
 } from 'react-router-dom';
-import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/CommunityBoardCommonLayout';
+import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/sub/CommunityBoardCommonLayout';
 
 export default function CommunityBoardList(): JSX.Element {
   const history = useHistory();
@@ -29,7 +29,7 @@ export default function CommunityBoardList(): JSX.Element {
         </button>
         <button onClick={() => history.push({
           pathname: '/community-board/write/47',
-          state: { platform: '' },
+          state: { platform: 'twitch' },
         })}
         >
           개별글수정

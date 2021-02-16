@@ -34,7 +34,6 @@ function InputField(props: PropType): JSX.Element {
       InputLabelProps={{
         shrink: true,
       }}
-      required
       fullWidth
     />
   );

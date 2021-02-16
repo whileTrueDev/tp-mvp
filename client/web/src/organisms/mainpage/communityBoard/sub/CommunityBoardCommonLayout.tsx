@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import Appbar from '../../shared/Appbar';
-import Footer from '../../shared/footer/Footer';
+import Appbar from '../../../shared/Appbar';
+import Footer from '../../../shared/footer/Footer';
 
 interface PropsType extends Record<string, any>{
   children?: JSX.Element[] | JSX.Element | any | any[];

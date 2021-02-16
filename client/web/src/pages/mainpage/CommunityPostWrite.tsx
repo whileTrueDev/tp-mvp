@@ -8,28 +8,33 @@ import {
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import SunEditor from 'suneditor/src/lib/core';
-
 // dto
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
-
 // snackbar
 import { useSnackbar } from 'notistack';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
-
 // 컴포넌트
-import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/CommunityBoardCommonLayout';
-import TitleAndEditor from '../../organisms/mainpage/communityBoard/sub/TitleAndEditor';
-import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/sub/NicknamePasswordInput';
-
+import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/sub/CommunityBoardCommonLayout';
+import TitleAndEditor from '../../organisms/mainpage/communityBoard/TitleAndEditor';
+import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/NicknamePasswordInput';
 // 커스텀훅
 import usePostState from '../../organisms/mainpage/communityBoard/usePostState';
 import useSunEditor from '../../organisms/mainpage/communityBoard/useSunEditor';
 import usePostWriteEditAPI from '../../organisms/mainpage/communityBoard/usePostWriteEditAPI';
+// 이미지
+// import twitchLogo fro
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
     padding: theme.spacing(6, 0),
+    display: 'flex',
+  },
+  logoImage: {
+    width: '100%',
+    maxWidth: '40px',
+    maxHeight: '40px',
+    marginRight: theme.spacing(2),
   },
   buttonContainer: {
     textAlign: 'end',
@@ -180,6 +185,11 @@ export default function CommunityPostWrite(): JSX.Element {
       <Container maxWidth="md">
 
         <div className={classes.title}>
+          <img
+            src={`/images/logo/${platform}Logo.png`}
+            alt={`${platform}Logo`}
+            className={classes.logoImage}
+          />
           <Typography variant="h4" gutterBottom>
             {platform === 'afreeca' ? '아프리카 게시판 ' : '트위치 게시판 '}
             {isEditMode ? '글 수정' : '글 작성'}

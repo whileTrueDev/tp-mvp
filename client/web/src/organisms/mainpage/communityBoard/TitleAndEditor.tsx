@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import SunEditor from 'suneditor/src/lib/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import EditorContainer from './EditorContainer';
-import InputField from './InputField';
+import EditorContainer from './sub/EditorContainer';
+import InputField from './sub/InputField';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   editorContainer: {
