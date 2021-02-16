@@ -72,7 +72,6 @@ export class CommunityBoardService {
       .select([
         'post.postId',
         'post.title',
-        'post.content',
         'post.nickname',
         'post.ip',
         'post.createDate',
