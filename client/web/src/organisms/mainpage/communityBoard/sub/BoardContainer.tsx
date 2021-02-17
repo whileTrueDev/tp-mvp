@@ -1,144 +1,216 @@
 import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import React, { useEffect, useMemo, useState } from 'react';
 import useAxios from 'axios-hooks';
-import PostList from './PostList';
-import useBoardState, {FilterType} from '../useBoardState';
-import { Button, MenuItem, Select } from '@material-ui/core';
-import {useHistory} from 'react-router-dom';
+import { Button } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 import CreateIcon from '@material-ui/icons/Create';
+import {
+  makeStyles, createStyles, Theme, withStyles,
+} from '@material-ui/core/styles';
+import useBoardState, { FilterType } from '../useBoardState';
+import PostList from './PostList';
+import SearchForm from './SearchForm';
 
 const boardColumns = [
-  { key: 'numbering', title: '글번호', width: '5%' },
+  { key: 'numbering', title: '번호', width: '5%' },
   { key: 'title', title: '제목', width: '50%' },
   { key: 'writer', title: '작성자', width: '20%' },
   { key: 'date', title: '작성일', width: '15%' },
-  { key: 'hit', title: '조회수', width: '5%' },
-  { key: 'recommend', title: '추천수', width: '5%' },
+  { key: 'hit', title: '조회', width: '5%' },
+  { key: 'recommend', title: '추천', width: '5%' },
 ];
 
-const filterButtonValues: Array<{key:FilterType, text: string, color: string}> = [
-  {key: 'all', text: '전체글', color: 'primary'},
-  {key: 'notice', text: '공지글', color: 'default'},
-  {key: 'recommended', text: '추천글', color:'secondary'},
+const filterButtonValues: Array<{key: FilterType, text: string, color: string}> = [
+  { key: 'all', text: '전체글', color: 'primary' },
+  { key: 'notice', text: '공지글', color: 'default' },
+  { key: 'recommended', text: '추천글', color: 'secondary' },
 ];
+
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  root: {
+    height: '100%',
+  },
+  centeredContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: theme.spacing(4),
+  },
+  controls: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    '&>.right': {
+      display: 'flex',
+      alignItems: 'center',
+      '&>*': {
+        marginLeft: theme.spacing(1),
+      },
+    },
+  },
+}));
+
+const StyledToggleButton = withStyles((theme: Theme) => createStyles({
+  root: {
+    '&.Mui-selected': {
+      color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
+}))(ToggleButton);
 
 interface BoardProps{
   platform: 'afreeca' | 'twitch',
   take?: number,
-  title?:String,
-  select?: Array<number>,
-  selectValue?:number,
-  handleSelectChange?: (event: React.ChangeEvent<{
-    name?: string | undefined;
-    value: unknown;
-}>, child: React.ReactNode) => void
+  title?: string,
+  selectComponent?: any,
 }
 export default function BoardContainer({
-  platform, 
-  take=10, 
-  title, 
-  select=[10,20],
-  selectValue=10,
-  handleSelectChange= () => {}
-}:BoardProps): JSX.Element {
-  const {posts, setPosts, page, setPage,
-    totalRows, setTotalRows, 
+  platform,
+  take = 10,
+  title,
+  selectComponent,
+}: BoardProps): JSX.Element {
+  const {
+    posts, setPosts, page, setPage,
+    totalRows, setTotalRows,
     // currentPostId, setCurrentPostId,
     filter, setFilter, pagenationHandler,
   } = useBoardState();
   const history = useHistory();
+  const classes = useStyles();
+  const url = useMemo(() => `/community/posts?platform=${platform}&category=${filter}&page=${page}&take=${take}`, [filter, platform, page, take]);
+  const [searchType, setSearchType] = useState<string>('');
+  const [searchText, setSeatchText] = useState<string>('');
+  const searchUrl = useMemo(() => `${url}&qtext=${searchText}&qtype=${searchType}`, [url, searchText, searchType]);
 
-  const url = useMemo(() => {
-    return `/community/posts?platform=${platform}&category=${filter}&page=${page}&take=${take}`
-  }, [filter,platform,page, take])
+  const [{ loading }, getPostList] = useAxios({ url }, { manual: true });
+  const [{ loading: searchLoading }, getSearchList] = useAxios({ url: searchUrl }, { manual: true });
 
-  const [{loading}, getPostList] = useAxios({ url}, { manual: true });
-  
+  const handleLoadedPosts = ({ posts: loadedPosts, total }: {posts: any[], total: number}) => {
+    setTotalRows(total);
+    setPosts(loadedPosts);
+  };
+
   useEffect(() => {
-    // console.log('request');
-    getPostList().then((res) => {
-      const { posts: loadedPosts, total: loadedTotal } = res.data;
-      // console.log(loadedPosts);
-      setTotalRows(loadedTotal);
-      setPosts(loadedPosts);
-    }).catch((e) => {
-      console.error(e);
-    });
-  }, [filter,platform,page, take]);
+    if (!searchType || searchType === '' || !searchText || searchText === '') {
+      // console.log('일반 글 보기...');
+      getPostList().then((res) => {
+        handleLoadedPosts(res.data);
+      }).catch((e) => {
+        console.error(e);
+      });
+    } else {
+      // 검색하는경우
+      // console.log('검색');
+      getSearchList().then((res) => {
+        handleLoadedPosts(res.data);
+      }).catch((e) => {
+        console.error(e);
+      });
+    }
+  }, [filter, platform, page, take, searchType, searchText]);
 
-  const postFilterHandler = (event: React.MouseEvent<HTMLElement>,categoryFilter:FilterType) => {
-    // console.log({categoryFilter,event});
-    if (categoryFilter !== null){
+  const postFilterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
+    if (categoryFilter !== null) {
+      setPage(1);
+      setSearchType('');
+      setSeatchText('');
       setFilter(categoryFilter);
     }
-  }
+  };
 
   const moveToWritePage = (event: React.MouseEvent<HTMLElement>) => {
     history.push({
       pathname: '/community-board/write',
       state: { platform },
-    })
-  }
+    });
+  };
 
-  
-  // height 고정
+  const onSearch = (field: any, text: string) => {
+    // request with field and text
+    // console.log('요청', { field, text });
+    let searchColumn = '';
+    if (field === '제목') {
+      searchColumn = 'title';
+    } else if (field === '내용') {
+      searchColumn = 'content';
+    } else if (field === '작성자') {
+      searchColumn = 'nickname';
+    }
+    setPage(1);
+    setFilter('all');
+    setSearchType(searchColumn);
+    setSeatchText(text);
+  };
+
   return (
-    <div className="boardContainer" style={{height:'700px'}}>
-      <div className="header">
-        <div className="title">{platform} {title}</div>
-        <div className="controls">
-          <ToggleButtonGroup
-            value={filter}
-            onChange={postFilterHandler}
-            exclusive>
-            {filterButtonValues.map(btn => (
-                <ToggleButton 
-                value={btn.key}
-                key={btn.key}>{btn.text}</ToggleButton>
-                ))}
-          </ToggleButtonGroup>
+    <div className={classes.root}>
 
-          <div>
-            <select className="postPerPageSelectBox">
-              {select.map((val) => (<option key={val}>{`${val}개`}</option>))}
-            </select>
-            <Select
-            variant="outlined"
-          value={selectValue}
-          onChange={handleSelectChange}
+      <div className="title">
+        {platform}
+        {' '}
+        {title}
+      </div>
+
+      <div className={classes.controls}>
+        <ToggleButtonGroup
+          value={filter}
+          onChange={postFilterHandler}
+          exclusive
         >
-          {select.map(val => (
-            <MenuItem key={val} value={val}>{val}</MenuItem>
+          {filterButtonValues.map((btn) => (
+            <StyledToggleButton
+              value={btn.key}
+              key={btn.key}
+            >
+              {btn.text}
+
+            </StyledToggleButton>
           ))}
-        </Select>
-            <Button variant="contained" color="primary" onClick={moveToWritePage}><CreateIcon/></Button>
-          </div>
+        </ToggleButtonGroup>
+
+        <div className="right">
+          {selectComponent}
+          <Button variant="contained" color="primary" onClick={moveToWritePage}><CreateIcon /></Button>
         </div>
       </div>
 
-      <PostList 
+      <div>
+        {searchText && (
+          <div>
+            <span>{`검색한 내용 : ${searchText}`}</span>
+            <button onClick={() => {
+              setSearchType('all'); setSeatchText('');
+            }}
+            >
+              x
+            </button>
+          </div>
+        )}
+      </div>
+      <PostList
         boardColumns={boardColumns}
         posts={posts}
         total={totalRows}
         page={page}
         take={take}
-        loading={loading}
+        loading={loading || searchLoading}
       />
 
-      <Pagination 
-      shape="rounded" 
-      size="small" 
-      count={Math.ceil(totalRows / take)} 
-      onChange={pagenationHandler}
+      <Pagination
+        className={classes.centeredContainer}
+        shape="rounded"
+        size="small"
+        page={page}
+        count={Math.ceil(totalRows / take)}
+        onChange={pagenationHandler}
       />
 
-      <div className="searchForm">
-        <select>
-          {['제목+내용', '글쓴이'].map((val) => (<option key={val}>{val}</option>))}
-        </select>
-        <input placeholder="검색할 내용을 입력하세요" />
-        <button>검색</button>
-      </div>
+      <SearchForm
+        className={classes.centeredContainer}
+        onSearch={onSearch}
+        selectOptions={['제목', '내용', '작성자']}
+      />
     </div>
   );
 }

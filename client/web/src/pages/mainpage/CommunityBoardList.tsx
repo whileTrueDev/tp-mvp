@@ -6,35 +6,41 @@ import {
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/sub/CommunityBoardCommonLayout';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import BoardContainer from '../../organisms/mainpage/communityBoard/sub/BoardContainer';
+import SelectField from '../../atoms/SelectField';
 
 export default function CommunityBoardList(): JSX.Element {
   const history = useHistory();
-  const [take, setTake] = useState<number>(10);
-  const select = useRef<Array<number>>([10,20,30]);
+  const select = useRef<Array<number>>([8, 16]);
+  const [take, setTake] = useState<number>(select.current[0]);
 
-//   const handleSelectChange = ((event: React.ChangeEvent<{
-//     name?: string | undefined;
-//     value: unknown;
-// }>, child: React.ReactNode)) => {
-//     setTake(event?.target.value as number);
-//   }
   return (
     <CommunityBoardCommonLayout>
       <ProductHero title="자유게시판" content="자유게시판입니다" />
-      <Grid container spacing={2} justify="space-between" alignItems="center" style={{ width: '90%', margin: '0 auto', minWidth: '1200px' }}>
-        <Grid item style={{ border: '2px solid black', width: '48%', minWidth: '600px' }}>
-          <BoardContainer 
+      <Grid container spacing={2} justify="space-between" alignItems="flex-start" style={{ width: '90%', margin: '0 auto', minWidth: '1200px' }}>
+        <Grid
+          item
+          style={{
+            border: '2px solid black', width: '48%', minWidth: '600px', minHeight: ' 700px',
+          }}
+        >
+          <BoardContainer
             platform="afreeca"
             title="아프리카게시판"
-            select={select.current}
-            // handleSelectChange={handleSelectChange}
             take={take}
+            selectComponent={<SelectField handleCallback={setTake} value={take} select={select.current} />}
           />
         </Grid>
-        <Grid item style={{ border: '2px solid black', width: '48%', minWidth: '600px' }}>
-          <BoardContainer 
+        <Grid
+          item
+          style={{
+            border: '2px solid black', width: '48%', minWidth: '600px', minHeight: ' 700px',
+          }}
+        >
+          <BoardContainer
             platform="twitch"
             title="트위치게시판"
+            take={take}
+            selectComponent={<SelectField handleCallback={setTake} value={take} select={select.current} />}
           />
         </Grid>
       </Grid>

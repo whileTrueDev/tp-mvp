@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 export type FilterType = 'all'|'notice'|'recommended';
-export default function useBoardState(){
+export default function useBoardState() {
   const [posts, setPosts] = useState<any[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalRows, setTotalRows] = useState<number>(0);
@@ -11,7 +11,7 @@ export default function useBoardState(){
   const pagenationHandler = (event: React.ChangeEvent<unknown>, newPage: number) => {
     if (page === newPage) return;
     setPage(newPage);
-  }
+  };
 
   return {
     posts,
@@ -22,9 +22,8 @@ export default function useBoardState(){
     setTotalRows,
     currentPostId,
     setCurrentPostId,
-    filter, 
+    filter,
     setFilter,
-    pagenationHandler
-  }
+    pagenationHandler,
+  };
 }
-
