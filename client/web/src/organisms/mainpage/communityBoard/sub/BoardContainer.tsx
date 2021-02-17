@@ -1,7 +1,7 @@
 import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import React, { useEffect, useMemo, useState } from 'react';
 import useAxios from 'axios-hooks';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import CreateIcon from '@material-ui/icons/Create';
 import {
@@ -29,6 +29,14 @@ const filterButtonValues: Array<{key: FilterType, text: string, color: string}> 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     height: '100%',
+  },
+  title: {
+    display: 'flex',
+  },
+  platformLogo: {
+    width: '100%',
+    maxWidth: '50px',
+    minHeight: '100%',
   },
   centeredContainer: {
     display: 'flex',
@@ -61,13 +69,11 @@ const StyledToggleButton = withStyles((theme: Theme) => createStyles({
 interface BoardProps{
   platform: 'afreeca' | 'twitch',
   take?: number,
-  title?: string,
-  selectComponent?: any,
+  selectComponent?: JSX.Element,
 }
 export default function BoardContainer({
   platform,
   take = 10,
-  title,
   selectComponent,
 }: BoardProps): JSX.Element {
   const {
@@ -83,6 +89,7 @@ export default function BoardContainer({
   const [searchText, setSeatchText] = useState<string>('');
   const searchUrl = useMemo(() => `${url}&qtext=${searchText}&qtype=${searchType}`, [url, searchText, searchType]);
 
+  // TODO : post 값이 postEntity라서 필요없는 content도 같이 들어옴... 리턴값 변경하고 useAxios타입정의하기
   const [{ loading }, getPostList] = useAxios({ url }, { manual: true });
   const [{ loading: searchLoading }, getSearchList] = useAxios({ url: searchUrl }, { manual: true });
 
@@ -132,8 +139,6 @@ export default function BoardContainer({
     let searchColumn = '';
     if (field === '제목') {
       searchColumn = 'title';
-    } else if (field === '내용') {
-      searchColumn = 'content';
     } else if (field === '작성자') {
       searchColumn = 'nickname';
     }
@@ -146,10 +151,16 @@ export default function BoardContainer({
   return (
     <div className={classes.root}>
 
-      <div className="title">
-        {platform}
-        {' '}
-        {title}
+      <div className={classes.title}>
+        <img
+          className={classes.platformLogo}
+          src={`/images/logo/${platform}Logo.png`}
+          alt={`${platform}Logo`}
+        />
+        <Typography variant="h4" gutterBottom>
+          {`${platform === 'afreeca' ? '아프리카' : '트위치'}
+          게시판`}
+        </Typography>
       </div>
 
       <div className={classes.controls}>
@@ -209,7 +220,7 @@ export default function BoardContainer({
       <SearchForm
         className={classes.centeredContainer}
         onSearch={onSearch}
-        selectOptions={['제목', '내용', '작성자']}
+        selectOptions={['제목', '작성자']}
       />
     </div>
   );

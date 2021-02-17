@@ -25,7 +25,6 @@ export default function CommunityBoardList(): JSX.Element {
         >
           <BoardContainer
             platform="afreeca"
-            title="아프리카게시판"
             take={take}
             selectComponent={<SelectField handleCallback={setTake} value={take} select={select.current} />}
           />
@@ -38,8 +37,6 @@ export default function CommunityBoardList(): JSX.Element {
         >
           <BoardContainer
             platform="twitch"
-            title="트위치게시판"
-            take={take}
             selectComponent={<SelectField handleCallback={setTake} value={take} select={select.current} />}
           />
         </Grid>
