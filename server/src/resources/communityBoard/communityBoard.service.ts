@@ -54,6 +54,56 @@ export class CommunityBoardService {
     }
   }
 
+  async findPostContainsText({
+    platform, page, take, searchColumn, searchText,
+  }: {
+    platform: string,
+    page: number,
+    take: number,
+    searchColumn: string,
+    searchText: string,
+  }): Promise<{
+    posts: CommunityPostEntity[],
+    total: number
+  }> {
+    const qb = this.communityPostRepository
+      .createQueryBuilder('post')
+      .select([
+        'post.postId',
+        'post.title',
+        'post.nickname',
+        'post.ip',
+        'post.createDate',
+        'post.platform',
+        'post.category',
+        'post.hit',
+        'post.recommend',
+        // `REGEXP_REPLACE('post.${searchColumn}', '<(/)?(img|label|table|thead|tbody|tfoot|tr|td|p|br|div|span|font|strong|b)(.|\s|\t|\n|\r\n)*?>', '') AS content`
+      ])
+      .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
+      // .andWhere(`REGEXP_REPLACE('post.${searchColumn}', '<(/)?(img|label|table|thead|tbody|tfoot|tr|td|p|br|div|span|font|strong|b)(.|\s|\t|\n|\r\n)*?>', '') like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
+      .andWhere(`post.${searchColumn} like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
+
+    const countQb = qb.clone();
+    const resultQb = qb
+      .loadRelationCountAndMap('post.replies', 'post.replies')
+      .orderBy('post.createDate', 'DESC');
+
+    try {
+      const posts = await resultQb.skip((page - 1) * take)
+        .take(take)
+        .getMany();
+      const total = await countQb.getCount();
+      return {
+        posts,
+        total,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new HttpException('error in find all posts', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async findAllPosts({
     platform, page, take, category,
   }: {
@@ -86,32 +136,32 @@ export class CommunityBoardService {
     let resultQb = qb.clone();
     let countQb = qb.clone();
 
+    if (category === 'notice') {
+      // 공지사항만
+      resultQb = qb
+        .andWhere('post.category = :category', { category: this.POST_CATEGORY_CODE[category] })
+        .orderBy('post.createDate', 'DESC');
+
+      countQb = resultQb.clone();
+    } else if (category === 'recommended') {
+      // 추천글, 추천 10개 이상인 글만
+      const recommendCriteria = 10;
+
+      resultQb = qb
+        .orderBy('post.recommend', 'DESC')
+        .addOrderBy('post.createDate', 'DESC')
+        .andWhere('post.recommend >= :recommendCriteria', { recommendCriteria });
+
+      countQb = resultQb.clone();
+    } else {
+      // 일반글
+      resultQb = qb
+        .orderBy('post.createDate', 'DESC');
+
+      countQb = resultQb.clone();
+    }
+
     try {
-      if (category === 'notice') {
-        // 공지사항만
-        resultQb = qb
-          .andWhere('post.category = :category', { category: this.POST_CATEGORY_CODE[category] })
-          .orderBy('post.createDate', 'DESC');
-
-        countQb = resultQb.clone();
-      } if (category === 'recommended') {
-        // 추천글, 추천 10개 이상인 글만
-        const recommendCriteria = 10;
-
-        resultQb = qb
-          .orderBy('post.recommend', 'DESC')
-          .addOrderBy('post.createDate', 'DESC')
-          .andWhere('post.recommend >= :recommendCriteria', { recommendCriteria });
-
-        countQb = resultQb.clone();
-      } else {
-        // 일반글
-        resultQb = qb
-          .orderBy('post.createDate', 'DESC');
-
-        countQb = resultQb.clone();
-      }
-
       const posts = await resultQb.skip((page - 1) * take)
         .take(take)
         .getMany();

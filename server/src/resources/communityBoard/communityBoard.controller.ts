@@ -5,7 +5,6 @@ import {
   Put,
   Delete,
   Body,
-  Req,
   Param,
   Query,
   ParseIntPipe,
@@ -13,18 +12,17 @@ import {
   ValidationPipe,
   HttpCode,
 } from '@nestjs/common';
-import express from 'express';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 
+import { RealIP } from 'nestjs-real-ip';
+import { Address6 } from 'ip-address';
 import { CommunityBoardService } from './communityBoard.service';
 import { CommunityReplyService } from './communityReply.service';
 import { CommunityPostEntity } from './entities/community-post.entity';
 import { CommunityReplyEntity } from './entities/community-reply.entity';
-import { RealIP } from 'nestjs-real-ip';
-import {Address6} from 'ip-address';
 @Controller('community')
 export class CommunityBoardController {
   constructor(
@@ -64,7 +62,18 @@ export class CommunityBoardController {
     @Query('category') category: string,
     @Query('page', ParseIntPipe) page: number,
     @Query('take', ParseIntPipe) take: number,
+    @Query('qtype') searchColumn: string,
+    @Query('qtext') searchText: string,
   ): Promise<{posts: CommunityPostEntity[], total: number}> {
+    if (searchColumn && searchText) {
+      return this.communityBoardService.findPostContainsText({
+        platform,
+        page: page < 1 ? 1 : page,
+        take: take < 0 ? 10 : take,
+        searchColumn,
+        searchText,
+      });
+    }
     return this.communityBoardService.findAllPosts({
       platform,
       category: category || 'all',
@@ -84,13 +93,13 @@ export class CommunityBoardController {
     @RealIP() ip: string,
     @Body() createCommunityPostDto: CreateCommunityPostDto,
   ): Promise<CommunityPostEntity> {
-     // ip주소가 ipv6으로 들어오는데ipv4 로 address family 바꾸는 방법 못찾아서
+    // ip주소가 ipv6으로 들어오는데ipv4 로 address family 바꾸는 방법 못찾아서
     // ipv6주소를 ipv4로 변환하여 저장함
     const address = new Address6(ip);
     const teredo = address.inspectTeredo();
-    const ipv4 = teredo.client4; //255.255.255.254
-    
-    const ipToSave = ipv4.split('.').slice(0,2).join('.');// 255.255 처럼 잘라서 저장
+    const ipv4 = teredo.client4; // 255.255.255.254
+
+    const ipToSave = ipv4.split('.').slice(0, 2).join('.');// 255.255 처럼 잘라서 저장
     return this.communityBoardService.createOnePost(createCommunityPostDto, ipToSave);
   }
 
@@ -184,9 +193,9 @@ export class CommunityBoardController {
     // ipv6주소를 ipv4로 변환하여 저장함
     const address = new Address6(ip);
     const teredo = address.inspectTeredo();
-    const ipv4 = teredo.client4; //255.255.255.254
-    
-    const ipToSave = ipv4.split('.').slice(0,2).join('.');// 255.255 처럼 잘라서 저장
+    const ipv4 = teredo.client4; // 255.255.255.254
+
+    const ipToSave = ipv4.split('.').slice(0, 2).join('.');// 255.255 처럼 잘라서 저장
     return this.communityReplyService.createReply(createReplyDto, ipToSave);
   }
 
