@@ -5,7 +5,7 @@ import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import ShowSnack from '../../atoms/snackbar/ShowSnack';
 
 /**
  * CommunityPostWrite.tsx 페이지에서 사용되는 axios 요청 핸들러

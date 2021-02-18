@@ -1,6 +1,6 @@
 import { Grid } from '@material-ui/core';
 import React, { memo, useMemo } from 'react';
-import InputField from './sub/InputField';
+import InputField from './InputField';
 
 function NicknamePasswordInput(
   {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/sub/CommunityBoardCommonLayout';
+import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
 
 export default function CommunityPostView(): JSX.Element {
   const { postId } = useParams<any>();

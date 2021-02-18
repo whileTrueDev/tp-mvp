@@ -7,7 +7,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import {
   makeStyles, createStyles, Theme, withStyles,
 } from '@material-ui/core/styles';
-import useBoardState, { FilterType } from '../useBoardState';
+import useBoardState, { FilterType } from '../useBoardListState';
 import PostList from './PostList';
 import SearchForm from './SearchForm';
 

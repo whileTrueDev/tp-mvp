@@ -15,13 +15,13 @@ import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoar
 import { useSnackbar } from 'notistack';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
 // 컴포넌트
-import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/sub/CommunityBoardCommonLayout';
-import TitleAndEditor from '../../organisms/mainpage/communityBoard/TitleAndEditor';
-import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/NicknamePasswordInput';
+import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
+import TitleAndEditor from '../../organisms/mainpage/communityBoard/write/TitleAndEditor';
+import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/write/NicknamePasswordInput';
 // 커스텀훅
-import usePostState from '../../organisms/mainpage/communityBoard/usePostState';
-import useSunEditor from '../../organisms/mainpage/communityBoard/useSunEditor';
-import usePostWriteEditAPI from '../../organisms/mainpage/communityBoard/usePostWriteEditAPI';
+import usePostState from '../../utils/hooks/usePostWriteState';
+import useSunEditor from '../../utils/hooks/useSunEditor';
+import usePostWriteEditAPI from '../../utils/hooks/usePostWriteEditAPI';
 // 이미지
 // import twitchLogo fro
 

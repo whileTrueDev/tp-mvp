@@ -3,9 +3,9 @@ import React, { useRef, useState } from 'react';
 import {
   useHistory,
 } from 'react-router-dom';
-import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/sub/CommunityBoardCommonLayout';
+import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
-import BoardContainer from '../../organisms/mainpage/communityBoard/sub/BoardContainer';
+import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
 import SelectField from '../../atoms/SelectField';
 
 export default function CommunityBoardList(): JSX.Element {
