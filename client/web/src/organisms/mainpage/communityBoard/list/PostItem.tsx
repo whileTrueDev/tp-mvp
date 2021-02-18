@@ -4,6 +4,7 @@ import { ko } from 'date-fns/locale';
 import * as dateFns from 'date-fns';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
 
 const usePostItemStyles = makeStyles((theme: Theme) => createStyles({
   postNumber: { width: '5%', textAlign: 'center' },
@@ -18,7 +19,7 @@ const usePostItemStyles = makeStyles((theme: Theme) => createStyles({
   recommend: { width: '5%', textAlign: 'center' },
 }));
 interface PostItemProps{
-  post: any;
+  post: PostFound;
 }
 
 function PostItem({
@@ -35,12 +36,16 @@ function PostItem({
   const history = useHistory();
 
   let dateDisplay: string;
-  const date = new Date(createDate);
-  if (date.getDate() === new Date().getDate()) {
-    // 오늘 날짜인 경우
-    dateDisplay = `${dateFns.formatDistanceToNow(date, { locale: ko })} 전`;
+  if (createDate) {
+    const date = new Date(createDate);
+    if (date.getDate() === new Date().getDate()) {
+      // 오늘 날짜인 경우
+      dateDisplay = `${dateFns.formatDistanceToNow(date, { locale: ko })} 전`;
+    } else {
+      dateDisplay = dateFns.format(date, 'MM-dd');
+    }
   } else {
-    dateDisplay = dateFns.format(date, 'yyyy-MM-dd');
+    dateDisplay = '';
   }
 
   const ipText = category === 0 ? ` (${ip})` : '';// category===0 일반글인 경우만 ip보이게

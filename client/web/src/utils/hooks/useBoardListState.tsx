@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 
 export type FilterType = 'all'|'notice'|'recommended';
 
 interface BoardListState{
-  posts: any[];
+  posts: PostFound[];
   setPosts: React.Dispatch<React.SetStateAction<any[]>>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
@@ -14,10 +15,19 @@ interface BoardListState{
   filter: FilterType;
   setFilter: React.Dispatch<React.SetStateAction<FilterType>>;
   pagenationHandler: (event: React.ChangeEvent<unknown>, newPage: number) => void;
+  handlePostsLoad: ({ posts, total }: FindPostResType) => void;
+  changeFilter: (categoryFilter: FilterType) => void;
+  initializeFilter: () => void;
+  boardState: {
+    posts: PostFound[];
+    page: number;
+    totalRows: number;
+    filter: FilterType;
+}
 }
 
 export default function useBoardListState(): BoardListState {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<PostFound[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalRows, setTotalRows] = useState<number>(0);
   const [currentPostId, setCurrentPostId] = useState<number|null>(null);
@@ -28,6 +38,29 @@ export default function useBoardListState(): BoardListState {
     setPage(newPage);
   };
 
+  const handlePostsLoad = useCallback(({
+    posts: loadedPosts,
+    total,
+  }: FindPostResType) => {
+    setTotalRows(total);
+    setPosts(loadedPosts);
+  }, []);
+
+  const changeFilter = useCallback((categoryFilter: FilterType) => {
+    setPage(1);
+    setFilter(categoryFilter);
+  }, []);
+
+  const initializeFilter = useCallback(() => {
+    changeFilter('all');
+  }, [changeFilter]);
+
+  const boardState = useMemo(() => ({
+    posts,
+    page,
+    totalRows,
+    filter,
+  }), [filter, page, posts, totalRows]);
   return {
     posts,
     setPosts,
@@ -40,5 +73,9 @@ export default function useBoardListState(): BoardListState {
     filter,
     setFilter,
     pagenationHandler,
+    handlePostsLoad,
+    changeFilter,
+    initializeFilter,
+    boardState,
   };
 }

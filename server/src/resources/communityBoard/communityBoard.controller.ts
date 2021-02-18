@@ -16,7 +16,7 @@ import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoar
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
-
+import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { RealIP } from 'nestjs-real-ip';
 import { Address6 } from 'ip-address';
 import { CommunityBoardService } from './communityBoard.service';
@@ -34,6 +34,15 @@ function ipv6ToIpv4(ipv6: string): string {
   const ipToSave = ipv4.split('.').slice(0, 2).join('.');// 255.255 처럼 잘라서 저장
   return ipToSave;
 }
+
+// type FindedPost = {
+//   postNumber: number;
+// } & Partial<CommunityPostEntity>
+// interface FindPostResType{
+//   posts: FindedPost[];
+//   total: number;
+// }
+
 @Controller('community')
 export class CommunityBoardController {
   constructor(
@@ -75,7 +84,7 @@ export class CommunityBoardController {
     @Query('take', ParseIntPipe) take: number,
     @Query('qtype') searchColumn: string,
     @Query('qtext') searchText: string,
-  ): Promise<{posts: CommunityPostEntity[], total: number}> {
+  ): Promise<FindPostResType> {
     if (searchColumn && searchText) {
       return this.communityBoardService.findPostContainsText({
         platform,

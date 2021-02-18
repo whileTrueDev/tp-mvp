@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
+import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { CommunityPostEntity } from './entities/community-post.entity';
-
 @Injectable()
 export class CommunityBoardService {
   constructor(
@@ -86,10 +86,7 @@ export class CommunityBoardService {
     take: number,
     searchColumn: string,
     searchText: string,
-  }): Promise<{
-    posts: CommunityPostEntity[],
-    total: number
-  }> {
+  }): Promise<FindPostResType> {
     const qb = this.communityPostRepository
       .createQueryBuilder('post')
       .select([
@@ -133,10 +130,7 @@ export class CommunityBoardService {
     page: number,
     take: number,
     category: string // filter로 바꾸기 이름 헷갈림..
-  }): Promise<{
-    posts: CommunityPostEntity[],
-    total: number
-  }> {
+  }): Promise<FindPostResType> {
     // 리턴값은 {posts, total, }
 
     const qb = this.communityPostRepository
