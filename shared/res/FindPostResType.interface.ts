@@ -1,10 +1,11 @@
 import { CommunityPost } from '../interfaces/CommunityPost.interface';
 
-export type FindedPost = {
+export type PostFound = {
   postNumber: number;
+  replies: number;
 } & Partial<CommunityPost>
 
 export interface FindPostResType{
-  posts: FindedPost[];
+  posts: PostFound[];
   total: number;
 }

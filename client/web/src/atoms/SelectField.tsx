@@ -17,7 +17,6 @@ function SelectField({
 
   return (
     <Select
-      style={{ height: '32px' }}
       variant="outlined"
       value={value}
       onChange={handleSelectChange}

@@ -49,6 +49,7 @@ export default function CommunityBoardList(): JSX.Element {
     handlePostsLoad: afreecaPostLoadHandler,
     changeFilter: changeAfreecaFilter,
     initializeFilter: initializeAfreecaFilter,
+    setPage: setAfreecaPage,
   } = useBoardState();
   const {
     boardState: twitchBoard,
@@ -56,6 +57,7 @@ export default function CommunityBoardList(): JSX.Element {
     handlePostsLoad: twitchPostLoadHandler,
     changeFilter: changeTwitchFilter,
     initializeFilter: initializeTwitchFilter,
+    setPage: setTwitchPage,
   } = useBoardState();
   const scrollRef = useRef<any>();
 
@@ -126,6 +128,7 @@ export default function CommunityBoardList(): JSX.Element {
               boardState={afreecaBoard}
               postFilterHandler={afreecaBoardFilterHandler}
               handlePostsLoad={afreecaPostLoadHandler}
+              setPage={setAfreecaPage}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -139,6 +142,7 @@ export default function CommunityBoardList(): JSX.Element {
               boardState={twitchBoard}
               postFilterHandler={twitchBoardFilterHandler}
               handlePostsLoad={twitchPostLoadHandler}
+              setPage={setTwitchPage}
             />
           </Grid>
         </Grid>

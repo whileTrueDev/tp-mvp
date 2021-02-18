@@ -46,6 +46,7 @@
     "express": "^4.17.1",
     "helmet": "^4.0.0",
     "husky": "^4.3.0",
+    "ip-address": "^7.1.0",
     "js-file-download": "^0.4.12",
     "lint-staged": "^10.4.0",
     "moment": "^2.28.0",

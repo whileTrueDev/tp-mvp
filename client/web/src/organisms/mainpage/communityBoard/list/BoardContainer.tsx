@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       },
     },
   },
+  writeButton: {
+    height: '65.5px',
+  },
 }));
 
 const StyledToggleButton = withStyles((theme: Theme) => createStyles({
@@ -76,12 +79,13 @@ interface BoardProps{
     page: number;
     totalRows: number;
     filter: FilterType;
-}
+},
+setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function BoardContainer({
   platform,
-  take = 10,
+  take,
   selectComponent,
   searchText,
   searchType,
@@ -89,6 +93,7 @@ export default function BoardContainer({
   postFilterHandler,
   handlePostsLoad,
   boardState,
+  setPage,
 }: BoardProps): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
@@ -103,6 +108,11 @@ export default function BoardContainer({
   const [{ loading: searchLoading }, getSearchList] = useAxios({ url: searchUrl }, { manual: true });
 
   const hasSearchText = useMemo(() => searchType && searchType !== '' && searchText && searchText !== '', [searchText, searchType]);
+
+  useEffect(() => {
+    setPage(paginationCount);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [take]); // take가 바뀔 때 page값을 변경해준다
 
   useEffect(() => {
     if (hasSearchText) {
@@ -154,7 +164,15 @@ export default function BoardContainer({
 
         <div className="right">
           {selectComponent}
-          <Button variant="contained" color="primary" onClick={moveToWritePage}><CreateIcon /></Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={moveToWritePage}
+            className={classes.writeButton}
+          >
+            <CreateIcon />
+
+          </Button>
         </div>
       </div>
 
