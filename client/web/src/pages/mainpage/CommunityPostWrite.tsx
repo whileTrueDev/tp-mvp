@@ -18,7 +18,8 @@ import ShowSnack from '../../atoms/snackbar/ShowSnack';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
 import TitleAndEditor from '../../organisms/mainpage/communityBoard/write/TitleAndEditor';
 import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/write/NicknamePasswordInput';
-// 커스텀훅
+// 훅
+import useScrollTop from '../../utils/hooks/useScrollTop';
 import usePostState from '../../utils/hooks/usePostWriteState';
 import useSunEditor from '../../utils/hooks/useSunEditor';
 import usePostWriteEditAPI from '../../utils/hooks/usePostWriteEditAPI';
@@ -94,10 +95,13 @@ export default function CommunityPostWrite(): JSX.Element {
   const { refFn: editorRefFn, editorRef: editor } = useSunEditor();
   const { handleCreatePost, handleEditPost, handleLoadPost } = usePostWriteEditAPI(postId);
   const { enqueueSnackbar } = useSnackbar();
+  // const { platform } = location.state;
+  const platform = location.state ? location.state.platform : undefined;
 
-  const { platform } = location.state;
   // postId의 여부로 글생성/글수정 모드 확인
   const isEditMode = useMemo(() => !!postId, [postId]);
+
+  useScrollTop();
 
   useEffect(() => {
     if (isEditMode) {
