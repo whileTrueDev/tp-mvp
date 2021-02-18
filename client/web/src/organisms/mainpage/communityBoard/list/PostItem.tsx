@@ -6,7 +6,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 const usePostItemStyles = makeStyles((theme: Theme) => createStyles({
-  numbering: { width: '5%', textAlign: 'center' },
+  postNumber: { width: '5%', textAlign: 'center' },
   title: {
     width: ' 50%',
     overflow: 'hidden',
@@ -19,12 +19,10 @@ const usePostItemStyles = makeStyles((theme: Theme) => createStyles({
 }));
 interface PostItemProps{
   post: any;
-  numbering: number;
 }
 
 function PostItem({
   post,
-  numbering,
 }: PostItemProps): JSX.Element {
   const classes = usePostItemStyles();
   const {
@@ -32,6 +30,7 @@ function PostItem({
     // platform,
     title, nickname, ip, createDate,
     category, hit, recommend, replies,
+    postNumber,
   } = post;
   const history = useHistory();
 
@@ -61,7 +60,7 @@ function PostItem({
         history.push(`/community-board/view/${post.postId}`);
       }}
     >
-      <Typography className={classes.numbering}>{numbering}</Typography>
+      <Typography className={classes.postNumber}>{postNumber}</Typography>
       <Typography className={classes.title}>{titleDisplay}</Typography>
       <Typography className={classes.writer}>{userDisplay}</Typography>
       <Typography className={classes.date}>{dateDisplay}</Typography>

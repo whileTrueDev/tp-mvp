@@ -7,14 +7,11 @@ import PostItem from './PostItem';
 interface PostListProps {
   boardColumns: Record<string, any>[],
   posts: any[],
-  total: number,
-  page: number,
-  take: number,
   loading?: boolean
 }
 function PostList(props: PostListProps): JSX.Element {
   const {
-    boardColumns, posts, total, page, take, loading,
+    boardColumns, posts, loading,
   } = props;
   return (
     <List component="div" className="postListContainer">
@@ -24,16 +21,12 @@ function PostList(props: PostListProps): JSX.Element {
         className="listItemContainer"
         style={{ minHeight: '300px' }}
       >
-        {posts.map((post, index) => {
-          const numbering = total - ((page - 1) * take) - index;
-          return (
-            <PostItem
-              key={post.postId}
-              post={post}
-              numbering={numbering}
-            />
-          );
-        })}
+        {posts.map((post, index) => (
+          <PostItem
+            key={post.postId}
+            post={post}
+          />
+        ))}
         {posts.length === 0 ? <Typography>데이터가 없습니다</Typography> : null}
         {loading ? <CenterLoading /> : null}
 

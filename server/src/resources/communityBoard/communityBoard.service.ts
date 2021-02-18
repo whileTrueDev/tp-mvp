@@ -24,7 +24,31 @@ export class CommunityBoardService {
     notice: 1,
   }
 
+  /**
+   * 'afreeca' | 'twitch' 문자열을 대응되는 플랫폼코드 0, 1로 변환
+   * @param platform 'afreeca' | 'twitch'
+   */
   private getPlatformCode = (platform: string): number => this.PLATFORM_CODE[platform]
+
+  /**
+   * 'normal'|'notice' 문자열을 대응되는 글카테고리 구분 코드 0,1로 변환
+   * @param category 'normal'|'notice'
+   */
+  private getPostCategoryCode = (category: string): number => this.POST_CATEGORY_CODE[category]
+
+  /**
+   * 응답 보낼 posts에 글번호 매기는 함수
+   * @param posts post 배열
+   * @param total 요청에 맞는 글의 총 개수
+   * @param page 요청한 페이지
+   * @param take 요청한 글의 개수
+   */
+  private numberingPosts = (
+    posts: any[],
+    total: number,
+    page: number,
+    take: number,
+  ): any[] => posts.map((post, index) => ({ ...post, postNumber: total - ((page - 1) * take) - index }))
 
   async checkPostPassword(postId: number, password: string): Promise<boolean> {
     try {
@@ -78,10 +102,8 @@ export class CommunityBoardService {
         'post.category',
         'post.hit',
         'post.recommend',
-        // `REGEXP_REPLACE('post.${searchColumn}', '<(/)?(img|label|table|thead|tbody|tfoot|tr|td|p|br|div|span|font|strong|b)(.|\s|\t|\n|\r\n)*?>', '') AS content`
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
-      // .andWhere(`REGEXP_REPLACE('post.${searchColumn}', '<(/)?(img|label|table|thead|tbody|tfoot|tr|td|p|br|div|span|font|strong|b)(.|\s|\t|\n|\r\n)*?>', '') like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
       .andWhere(`post.${searchColumn} like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
 
     const countQb = qb.clone();
@@ -95,7 +117,7 @@ export class CommunityBoardService {
         .getMany();
       const total = await countQb.getCount();
       return {
-        posts,
+        posts: this.numberingPosts(posts, total, page, take),
         total,
       };
     } catch (error) {
@@ -139,23 +161,25 @@ export class CommunityBoardService {
     if (category === 'notice') {
       // 공지사항만
       resultQb = qb
-        .andWhere('post.category = :category', { category: this.POST_CATEGORY_CODE[category] })
+        .andWhere('post.category = :category', { category: this.getPostCategoryCode('notice') })
         .orderBy('post.createDate', 'DESC');
 
       countQb = resultQb.clone();
     } else if (category === 'recommended') {
-      // 추천글, 추천 10개 이상인 글만
+      // 추천글, 추천 10개 이상인 일반글만
       const recommendCriteria = 10;
 
       resultQb = qb
+        .andWhere('post.category = :category', { category: this.getPostCategoryCode('normal') })
+        .andWhere('post.recommend >= :recommendCriteria', { recommendCriteria })
         .orderBy('post.recommend', 'DESC')
-        .addOrderBy('post.createDate', 'DESC')
-        .andWhere('post.recommend >= :recommendCriteria', { recommendCriteria });
+        .addOrderBy('post.createDate', 'DESC');
 
       countQb = resultQb.clone();
     } else {
-      // 일반글
+      // 일반글만
       resultQb = qb
+        .andWhere('post.category = :category', { category: this.getPostCategoryCode('normal') })
         .orderBy('post.createDate', 'DESC');
 
       countQb = resultQb.clone();
@@ -166,8 +190,9 @@ export class CommunityBoardService {
         .take(take)
         .getMany();
       const total = await countQb.getCount();
+
       return {
-        posts,
+        posts: this.numberingPosts(posts, total, page, take),
         total,
       };
     } catch (error) {

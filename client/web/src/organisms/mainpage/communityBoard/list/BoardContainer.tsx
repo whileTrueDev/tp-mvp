@@ -15,7 +15,7 @@ import SearchForm from './SearchForm';
 import BoardTitle from './BoardTitle';
 
 const boardColumns = [
-  { key: 'numbering', title: '번호', width: '5%' },
+  { key: 'postNumber', title: '번호', width: '5%' },
   { key: 'title', title: '제목', width: '50%' },
   { key: 'writer', title: '작성자', width: '20%' },
   { key: 'date', title: '작성일', width: '15%' },
@@ -83,6 +83,7 @@ export default function BoardContainer({
   const [searchType, setSearchType] = useState<string>('');
   const [searchText, setSeatchText] = useState<string>('');
   const searchUrl = useMemo(() => `${url}&qtext=${searchText}&qtype=${searchType}`, [url, searchText, searchType]);
+  const paginationCount = useMemo(() => Math.ceil(totalRows / take), [totalRows, take]);
 
   // TODO : post 값이 postEntity라서 필요없는 content도 같이 들어옴... 리턴값 변경하고 useAxios타입정의하기
   const [{ loading }, getPostList] = useAxios({ url }, { manual: true });
@@ -91,6 +92,8 @@ export default function BoardContainer({
   const handleLoadedPosts = useCallback(({ posts: loadedPosts, total }: {posts: any[], total: number}) => {
     setTotalRows(total);
     setPosts(loadedPosts);
+
+    // console.log('handleLodedPost', { total, loadedPosts });
   }, [setPosts, setTotalRows]);
 
   const hasSearchText = useMemo(() => searchType && searchType !== '' && searchText && searchText !== '', [searchText, searchType]);
@@ -187,9 +190,6 @@ export default function BoardContainer({
       <PostList
         boardColumns={boardColumns}
         posts={posts}
-        total={totalRows}
-        page={page}
-        take={take}
         loading={loading || searchLoading}
       />
 
@@ -198,7 +198,7 @@ export default function BoardContainer({
         shape="rounded"
         size="small"
         page={page}
-        count={Math.ceil(totalRows / take)}
+        count={paginationCount}
         onChange={pagenationHandler}
       />
 
