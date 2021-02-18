@@ -1,56 +1,201 @@
-import { List, Paper, Typography } from '@material-ui/core';
-import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { Paper, Typography } from '@material-ui/core';
+import React, { useMemo, memo } from 'react';
+import { useHistory } from 'react-router-dom';
+import {
+  makeStyles, createStyles, Theme, useTheme,
+} from '@material-ui/core/styles';
+import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { ko } from 'date-fns/locale';
+import * as dateFns from 'date-fns';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
-import ColumnHeader from './ColumnHeader';
-import PostItem from './PostItem';
 
+const rowHeightBase = 9; // row(listItem)하나당 높이 기준픽셀
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
+    marginBottom: theme.spacing(2),
+  },
+  header: {
+    justifyContent: 'center',
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+  },
+  row: {
+    display: 'flex',
+    height: theme.spacing(rowHeightBase),
+  },
+  cell: {
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+  },
+  cellText: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  listContainer: {
+    position: 'relative',
+  },
+  listItem: {
+    width: '100%',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    border: 'none',
+    boxSizing: 'border-box',
+    '&:hover': {
+      backgroundColor: theme.palette.grey[100],
+    },
+    '&+&': {
+      borderTop: `1px solid ${theme.palette.divider}`,
+    },
+  },
+  replies: {
 
   },
-  rowItem: {
-    minHeight: '300px', padding: 'none',
+  noDataText: {
+    textAlign: 'center',
   },
-
 }));
 
 interface PostListProps {
-  boardColumns: Record<string, any>[],
-  posts: any[],
+  take: number,
+  posts: PostFound[],
   loading?: boolean,
 }
+
+type DisplayData =
+|'postNumber'
+|'title'
+|'nickname'
+|'createDate'
+|'hit'
+|'recommend';
+
+interface ColumnData {
+  key: DisplayData,
+  text: string,
+  width: string
+}
+
+// 목록 컬럼
+const boardColumns: ColumnData[] = [
+  { key: 'postNumber', text: '번호', width: '8%' },
+  { key: 'title', text: '제목', width: '44%' },
+  { key: 'nickname', text: '작성자', width: '17%' },
+  { key: 'createDate', text: '작성일', width: '15%' },
+  { key: 'hit', text: '조회', width: '8%' },
+  { key: 'recommend', text: '추천', width: '8%' },
+];
+
+// 날짜표현함수
+function getDateDisplay(createDate: Date|undefined): string {
+  let dateDisplay = '';
+  if (createDate) {
+    const date = new Date(createDate);
+    if (date.getDate() === new Date().getDate()) { // 오늘 날짜인 경우
+      // '**시간 전' 형태로 표현
+      dateDisplay = `${dateFns.formatDistanceToNow(date, { locale: ko }).replace('약 ', '')} 전`;
+    } else {
+      // 오늘 날짜가 아닌경우 '12-26'형태로 표현
+      dateDisplay = dateFns.format(date, 'MM-dd');
+    }
+  }
+  return dateDisplay;
+}
+
 function PostList(props: PostListProps): JSX.Element {
   const {
-    boardColumns, posts, loading,
+    take,
+    posts, loading,
   } = props;
+  const history = useHistory();
+  const theme = useTheme();
   const classes = useStyles();
-  const widths = boardColumns.map((col) => col.width);
+
+  // posts를 boardColumns의 key에 맞게 변형한다
+  // boardColumns.key에 해당하는 값이 해당 열에 보여진다
+  const postToDisplay = useMemo(() => (posts.map((post) => ({
+    postId: post.postId,
+    platform: post.platform,
+    postNumber: post.postNumber,
+    title: (
+      <>
+        {post.title}
+        {post.replies ? <span className={classes.replies}>{`[${post.replies}]`}</span> : null}
+      </>
+    ),
+    nickname: `${post.nickname}${post.category === 0 ? `(${post.ip})` : ''}`,
+    createDate: `${getDateDisplay(post.createDate)}`,
+    hit: post.hit,
+    recommend: post.recommend,
+  }))), [posts]);
+
+  const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
+    history.push({
+      pathname: `/community-board/write/${postId}`,
+      state: {
+        platform: platform === 0 ? 'afreeca' : 'twitch',
+      },
+    });
+  };
 
   return (
-    <List component="div" className={classes.root}>
-      <ColumnHeader columns={boardColumns} />
-      <Paper>
-        <List
-          component="div"
-          className={classes.rowItem}
-        >
+    <div className={classes.root}>
+      {/* 헤더 컬럼 */}
+      <div className={` ${classes.row} ${classes.header}`}>
+        {boardColumns.map((col) => (
+          <div
+            key={col.key}
+            className={classes.cell}
+            style={{ width: col.width }}
+          >
+            <Typography className={classes.cellText}>
+              {col.text}
+            </Typography>
+          </div>
+        ))}
+      </div>
 
-          {posts.map((post) => (
-            <PostItem
-              key={post.postId}
-              post={post}
-              widths={widths}
-            />
-          ))}
-          {posts.length === 0 ? <Typography>데이터가 없습니다</Typography> : null}
-          {loading ? <CenterLoading /> : null}
+      {/* 글 목록 컨테이너 */}
+      <Paper
+        className={classes.listContainer}
+        style={{ minHeight: `${theme.spacing(rowHeightBase) * take}px` }}
+      >
 
-        </List>
-
+        {postToDisplay.map((post) => (
+          /** row 시작 */
+          <button
+            onClick={moveToPost(post.postId, post.platform)}
+            key={post.postId}
+            className={`${classes.row} ${classes.listItem}`}
+          >
+            {boardColumns.map((col) => (
+              /** col 시작 */
+              <div
+                key={`${post.postId}_${col.key}`}
+                className={classes.cell}
+                style={{ width: col.width }}
+              >
+                <Typography
+                  noWrap
+                  className={`${classes.cellText}`}
+                >
+                  {post[col.key]}
+                </Typography>
+              </div>/** col 끝 */
+            ))}
+          </button>/** row 끝 */
+        ))}
+        {/* 데이터가 없는 경우 */}
+        {(!loading && postToDisplay.length === 0)
+          ? <Typography className={classes.noDataText}>데이터가 없습니다...</Typography>
+          : null}
+        {/* 로딩중인 경우 */}
+        {loading ? <CenterLoading /> : null}
       </Paper>
-    </List>
+    </div>
   );
 }
 
-export default PostList;
+export default memo(PostList);

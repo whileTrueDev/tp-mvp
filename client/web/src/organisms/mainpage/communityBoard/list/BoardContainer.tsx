@@ -13,15 +13,6 @@ import PostList from './PostList';
 import BoardTitle from './BoardTitle';
 import { FilterType } from '../../../../utils/hooks/useBoardListState';
 
-const boardColumns = [
-  { key: 'postNumber', title: '번호', width: '5%' },
-  { key: 'title', title: '제목', width: '50%' },
-  { key: 'writer', title: '작성자', width: '20%' },
-  { key: 'date', title: '작성일', width: '15%' },
-  { key: 'hit', title: '조회', width: '5%' },
-  { key: 'recommend', title: '추천', width: '5%' },
-];
-
 const filterButtonValues: Array<{key: FilterType, text: string, color: string}> = [
   { key: 'all', text: '전체글', color: 'primary' },
   { key: 'notice', text: '공지글', color: 'default' },
@@ -43,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   controls: {
     display: 'flex',
     justifyContent: 'space-between',
+    marginBottom: theme.spacing(1),
     '&>.right': {
       display: 'flex',
       alignItems: 'center',
@@ -109,10 +101,12 @@ export default function BoardContainer({
 
   const hasSearchText = useMemo(() => searchType && searchType !== '' && searchText && searchText !== '', [searchText, searchType]);
 
-  useEffect(() => {
-    setPage(paginationCount);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [take]); // take가 바뀔 때 page값을 변경해준다
+  // useEffect(() => {
+  //   if (page > paginationCount) {
+  //     setPage(paginationCount);
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [take]); // take가 바뀔 때 page값을 변경해준다
 
   useEffect(() => {
     if (hasSearchText) {
@@ -157,7 +151,6 @@ export default function BoardContainer({
               key={btn.key}
             >
               {btn.text}
-
             </StyledToggleButton>
           ))}
         </ToggleButtonGroup>
@@ -171,13 +164,12 @@ export default function BoardContainer({
             className={classes.writeButton}
           >
             <CreateIcon />
-
           </Button>
         </div>
       </div>
 
       <PostList
-        boardColumns={boardColumns}
+        take={take}
         posts={posts}
         loading={loading || searchLoading}
       />
@@ -185,7 +177,6 @@ export default function BoardContainer({
       <Pagination
         className={classes.pagination}
         shape="rounded"
-        size="small"
         page={page}
         count={paginationCount}
         onChange={pagenationHandler}

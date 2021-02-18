@@ -21,6 +21,7 @@ const scrollToContainerTop = (ref: React.MutableRefObject<any>) => {
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   center: {
+    width: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   container: {
     width: '90%',
-    minWidth: '1300px',
+    minWidth: '1400px',
   },
   hide: {
     visibility: 'hidden',
@@ -37,8 +38,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
-  const select = useRef<number[]>([8, 16]);
-  const [take, setTake] = useState<number>(select.current[0]);
+
+  const select = useRef<number[]>([8, 16]); // 한 페이지당 보여질 글 개수 select 옵션
+  const [take, setTake] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
+  // 검색어 state
   const [searchState, setSearchState] = useState<{text: string, type: string}>({
     text: '',
     type: '',
@@ -50,7 +53,7 @@ export default function CommunityBoardList(): JSX.Element {
     changeFilter: changeAfreecaFilter,
     initializeFilter: initializeAfreecaFilter,
     setPage: setAfreecaPage,
-  } = useBoardState();
+  } = useBoardState(); // 아프리카 게시판 상태, 핸들러
   const {
     boardState: twitchBoard,
     pagenationHandler: twitchPagenationHandler,
@@ -58,7 +61,9 @@ export default function CommunityBoardList(): JSX.Element {
     changeFilter: changeTwitchFilter,
     initializeFilter: initializeTwitchFilter,
     setPage: setTwitchPage,
-  } = useBoardState();
+  } = useBoardState();// 트위치 게시판 상태, 핸들러
+
+  // 검색버튼 눌렀을 때 스크롤 될 엘리먼트 저장
   const scrollRef = useRef<any>();
 
   const initializeSearchState = useCallback(() => {
@@ -72,7 +77,6 @@ export default function CommunityBoardList(): JSX.Element {
     } else if (field === '작성자') {
       searchColumn = 'nickname';
     }
-
     setSearchState({ text, type: searchColumn });
     initializeAfreecaFilter();
     initializeTwitchFilter();
