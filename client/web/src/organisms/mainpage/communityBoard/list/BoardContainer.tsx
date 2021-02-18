@@ -1,7 +1,9 @@
 import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import useAxios from 'axios-hooks';
-import { Button, Typography } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import CreateIcon from '@material-ui/icons/Create';
 import {
@@ -10,6 +12,7 @@ import {
 import useBoardState, { FilterType } from '../useBoardListState';
 import PostList from './PostList';
 import SearchForm from './SearchForm';
+import BoardTitle from './BoardTitle';
 
 const boardColumns = [
   { key: 'numbering', title: '번호', width: '5%' },
@@ -29,14 +32,6 @@ const filterButtonValues: Array<{key: FilterType, text: string, color: string}> 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     height: '100%',
-  },
-  title: {
-    display: 'flex',
-  },
-  platformLogo: {
-    width: '100%',
-    maxWidth: '50px',
-    minHeight: '100%',
   },
   centeredContainer: {
     display: 'flex',
@@ -93,29 +88,31 @@ export default function BoardContainer({
   const [{ loading }, getPostList] = useAxios({ url }, { manual: true });
   const [{ loading: searchLoading }, getSearchList] = useAxios({ url: searchUrl }, { manual: true });
 
-  const handleLoadedPosts = ({ posts: loadedPosts, total }: {posts: any[], total: number}) => {
+  const handleLoadedPosts = useCallback(({ posts: loadedPosts, total }: {posts: any[], total: number}) => {
     setTotalRows(total);
     setPosts(loadedPosts);
-  };
+  }, [setPosts, setTotalRows]);
+
+  const hasSearchText = useMemo(() => searchType && searchType !== '' && searchText && searchText !== '', [searchText, searchType]);
 
   useEffect(() => {
-    if (!searchType || searchType === '' || !searchText || searchText === '') {
-      // console.log('일반 글 보기...');
-      getPostList().then((res) => {
-        handleLoadedPosts(res.data);
-      }).catch((e) => {
-        console.error(e);
-      });
-    } else {
+    if (hasSearchText) {
       // 검색하는경우
-      // console.log('검색');
       getSearchList().then((res) => {
         handleLoadedPosts(res.data);
       }).catch((e) => {
         console.error(e);
       });
+    } else {
+      getPostList().then((res) => {
+        handleLoadedPosts(res.data);
+      }).catch((e) => {
+        console.error(e);
+      });
     }
-  }, [filter, platform, page, take, searchType, searchText]);
+  // 아래 변수가 바뀌는 경우에만 실행되는 이펙트
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter, platform, page, take, hasSearchText]);
 
   const postFilterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
     if (categoryFilter !== null) {
@@ -134,8 +131,6 @@ export default function BoardContainer({
   };
 
   const onSearch = (field: any, text: string) => {
-    // request with field and text
-    // console.log('요청', { field, text });
     let searchColumn = '';
     if (field === '제목') {
       searchColumn = 'title';
@@ -151,17 +146,7 @@ export default function BoardContainer({
   return (
     <div className={classes.root}>
 
-      <div className={classes.title}>
-        <img
-          className={classes.platformLogo}
-          src={`/images/logo/${platform}Logo.png`}
-          alt={`${platform}Logo`}
-        />
-        <Typography variant="h4" gutterBottom>
-          {`${platform === 'afreeca' ? '아프리카' : '트위치'}
-          게시판`}
-        </Typography>
-      </div>
+      <BoardTitle platform={platform} />
 
       <div className={classes.controls}>
         <ToggleButtonGroup

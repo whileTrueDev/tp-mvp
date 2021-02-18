@@ -1,11 +1,9 @@
-import {ListItem, Typography } from "@material-ui/core";
-import { makeStyles, Theme, createStyles} from "@material-ui/core/styles";
-import { ko } from "date-fns/locale";
+import { ListItem, Typography } from '@material-ui/core';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { ko } from 'date-fns/locale';
 import * as dateFns from 'date-fns';
-import React from "react";
-import {useHistory} from 'react-router-dom';
-
-
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 const usePostItemStyles = makeStyles((theme: Theme) => createStyles({
   numbering: { width: '5%', textAlign: 'center' },
@@ -30,8 +28,10 @@ function PostItem({
 }: PostItemProps): JSX.Element {
   const classes = usePostItemStyles();
   const {
-    postId, title, nickname, ip, createDate,
-    platform, category, hit, recommend, replies,
+    // postId,
+    // platform,
+    title, nickname, ip, createDate,
+    category, hit, recommend, replies,
   } = post;
   const history = useHistory();
 
@@ -44,15 +44,20 @@ function PostItem({
     dateDisplay = dateFns.format(date, 'yyyy-MM-dd');
   }
 
-  const ipText = category === 0 ? ` (${ip})`: '';// category===0 일반글인 경우만 ip보이게
-  const userDisplay = <><span>{nickname}</span><span>{ipText}</span></>; 
+  const ipText = category === 0 ? ` (${ip})` : '';// category===0 일반글인 경우만 ip보이게
+  const userDisplay = (
+    <>
+      <span>{nickname}</span>
+      <span>{ipText}</span>
+    </>
+  );
   const titleDisplay = `${title}${replies > 0 ? `[${replies}]` : ''}`;
   return (
     <ListItem
       button
       onClick={() => {
         // 개별글 보기로 이동
-        console.log(post);
+        // console.log(post);
         history.push(`/community-board/view/${post.postId}`);
       }}
     >
