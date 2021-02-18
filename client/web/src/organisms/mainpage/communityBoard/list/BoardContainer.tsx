@@ -31,8 +31,10 @@ const filterButtonValues: Array<{key: FilterType, text: string, color: string}> 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     height: '100%',
+    width: '100%',
+    minWidth: '600px',
   },
-  centeredContainer: {
+  pagination: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -163,7 +165,7 @@ export default function BoardContainer({
       />
 
       <Pagination
-        className={classes.centeredContainer}
+        className={classes.pagination}
         shape="rounded"
         size="small"
         page={page}

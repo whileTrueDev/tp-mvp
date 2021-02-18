@@ -26,18 +26,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     alignItems: 'center',
     padding: theme.spacing(2),
   },
-  board: {
-    border: '2px solid black',
-    width: '48%',
-    minWidth: '600px',
-    minHeight: ' 700px',
-  },
   container: {
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
     width: '90%',
-    margin: '0 auto',
-    minWidth: '1200px',
+    minWidth: '1300px',
   },
   hide: {
     visibility: 'hidden',
@@ -110,43 +101,49 @@ export default function CommunityBoardList(): JSX.Element {
         </IconButton>
       </div>
 
-      <Grid
-        container
-        className={classes.container}
-      >
-        <Grid item className={classes.board}>
-          <BoardContainer
-            platform="afreeca"
-            take={take}
-            selectComponent={(
-              <SelectField
-                handleCallback={setTake}
-                value={take}
-                select={select.current}
-              />
+      <div className={classes.center}>
+        <Grid
+          className={classes.container}
+          container
+          justify="space-around"
+          alignItems="flex-start"
+          spacing={2}
+        >
+          <Grid item xs={12} sm={6}>
+            <BoardContainer
+              platform="afreeca"
+              take={take}
+              selectComponent={(
+                <SelectField
+                  handleCallback={setTake}
+                  value={take}
+                  select={select.current}
+                />
             )}
-            pagenationHandler={afreecaPagenationHandler}
-            searchText={searchState.text}
-            searchType={searchState.type}
-            boardState={afreecaBoard}
-            postFilterHandler={afreecaBoardFilterHandler}
-            handlePostsLoad={afreecaPostLoadHandler}
-          />
+              pagenationHandler={afreecaPagenationHandler}
+              searchText={searchState.text}
+              searchType={searchState.type}
+              boardState={afreecaBoard}
+              postFilterHandler={afreecaBoardFilterHandler}
+              handlePostsLoad={afreecaPostLoadHandler}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <BoardContainer
+              platform="twitch"
+              take={take}
+              selectComponent={<SelectField handleCallback={setTake} value={take} select={select.current} />}
+              pagenationHandler={twitchPagenationHandler}
+              searchText={searchState.text}
+              searchType={searchState.type}
+              boardState={twitchBoard}
+              postFilterHandler={twitchBoardFilterHandler}
+              handlePostsLoad={twitchPostLoadHandler}
+            />
+          </Grid>
         </Grid>
-        <Grid item className={classes.board}>
-          <BoardContainer
-            platform="twitch"
-            take={take}
-            selectComponent={<SelectField handleCallback={setTake} value={take} select={select.current} />}
-            pagenationHandler={twitchPagenationHandler}
-            searchText={searchState.text}
-            searchType={searchState.type}
-            boardState={twitchBoard}
-            postFilterHandler={twitchBoardFilterHandler}
-            handlePostsLoad={twitchPostLoadHandler}
-          />
-        </Grid>
-      </Grid>
+      </div>
+
       <SearchForm
         className={classes.center}
         onSearch={onSearch}
