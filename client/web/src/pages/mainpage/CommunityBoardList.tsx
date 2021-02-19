@@ -1,4 +1,6 @@
-import { Grid, IconButton, Typography } from '@material-ui/core';
+import {
+  Grid, IconButton, InputLabel, Typography,
+} from '@material-ui/core';
 import React, {
   useCallback, useMemo, useRef, useState,
 } from 'react';
@@ -95,7 +97,16 @@ export default function CommunityBoardList(): JSX.Element {
 
   // memo 적용한 컴포넌트들, dependencies에 포함된 값이 바뀔때만 리렌더링 되도록 한다
   const SelectComponent = useMemo(() => (
-    <SelectField handleCallback={setTake} value={take} select={select.current} />
+    <>
+      <InputLabel id="post-count-select-label">글개수</InputLabel>
+      <SelectField
+        labelId="post-count-select-label"
+        handleCallback={setTake}
+        value={take}
+        select={select.current}
+      />
+    </>
+
   ), [take]);
 
   const AfreecaBoard = useMemo(() => (
