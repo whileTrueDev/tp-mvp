@@ -52,8 +52,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 // editor 내용 가져오는 함수
 const getHtmlFromEditor = (editor: React.MutableRefObject<SunEditor | null>) => {
   if (editor.current) {
-    const unsafeHtml = editor.current.core.getContents(false);
-    return editor.current.core.cleanHTML(unsafeHtml);
+    return editor.current.core.getContents(false);
   }
   console.error('editor.current not exist');
   throw new Error('문제가 발생했습니다. 새로고침 후 다시 시도해 주세요');
