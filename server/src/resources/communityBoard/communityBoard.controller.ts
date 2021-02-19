@@ -110,12 +110,14 @@ export class CommunityBoardController {
 
   /**
    * 게시글 추천 POST /community/posts/:postId/recommend
+   * 
    * @param postId 
+   * @return 새로운 추천수 리턴
    */
   @Post('posts/:postId/recommend')
   recommendPost(
     @Param('postId', ParseIntPipe) postId: number,
-  ): Promise<any> {
+  ): Promise<number> {
     return this.communityBoardService.recommendPost(postId);
   }
 

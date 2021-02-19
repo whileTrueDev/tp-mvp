@@ -260,14 +260,15 @@ export class CommunityBoardService {
     }
   }
 
-  async recommendPost(postId: number): Promise<CommunityPostEntity> {
+  async recommendPost(postId: number): Promise<number> {
     const post = await this.findOnePost(postId);
     const recommendCount = post.recommend;
     try {
-      return await this.communityPostRepository.save({
+      const savedPost = await this.communityPostRepository.save({
         ...post,
         recommend: recommendCount + 1,
       });
+      return savedPost.recommend;
     } catch (error) {
       console.error(error);
       throw new HttpException('error in recommendPost', HttpStatus.INTERNAL_SERVER_ERROR);
