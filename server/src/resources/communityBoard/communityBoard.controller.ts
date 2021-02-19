@@ -35,14 +35,6 @@ function ipv6ToIpv4(ipv6: string): string {
   return ipToSave;
 }
 
-// type FindedPost = {
-//   postNumber: number;
-// } & Partial<CommunityPostEntity>
-// interface FindPostResType{
-//   posts: FindedPost[];
-//   total: number;
-// }
-
 @Controller('community')
 export class CommunityBoardController {
   constructor(

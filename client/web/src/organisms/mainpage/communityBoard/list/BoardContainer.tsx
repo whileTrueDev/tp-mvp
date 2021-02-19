@@ -10,7 +10,7 @@ import {
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 
 import PostList from './PostList';
-import BoardTitle from './BoardTitle';
+import BoardTitle from '../share/BoardTitle';
 import { FilterType } from '../../../../utils/hooks/useBoardListState';
 
 const filterButtonValues: Array<{key: FilterType, text: string, color: string}> = [

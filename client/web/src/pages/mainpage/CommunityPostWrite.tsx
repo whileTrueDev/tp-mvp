@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 import {
-  Container, Button, Typography, Divider,
+  Container, Button,
 } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
@@ -18,6 +18,7 @@ import ShowSnack from '../../atoms/snackbar/ShowSnack';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
 import TitleAndEditor from '../../organisms/mainpage/communityBoard/write/TitleAndEditor';
 import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/write/NicknamePasswordInput';
+import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
 // 훅
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import usePostState from '../../utils/hooks/usePostWriteState';
@@ -70,7 +71,7 @@ const ErrorMessages = {
   content: '내용을 입력해주세요',
 };
 interface LocationState{
-  platform?: string;
+  platform: 'afreeca' | 'twitch';
 }
 
 /**
@@ -99,10 +100,14 @@ export default function CommunityPostWrite(): JSX.Element {
   const platform = location.state ? location.state.platform : undefined;
 
   // postId의 여부로 글생성/글수정 모드 확인
+
   const isEditMode = useMemo(() => !!postId, [postId]);
 
   useScrollTop();
 
+  // 글 수정을 하려면 개별글을 불러와야하고,
+  // 거기서 수정 페이지로 이동할 때 platform 말고 다른 데이터도 state에 담아서 보내주면
+  // 요청을 안해도 될거같다....
   useEffect(() => {
     if (isEditMode) {
       // 글 수정하는 경우 글 내용과 제목 가져와서 보여줌
@@ -188,18 +193,7 @@ export default function CommunityPostWrite(): JSX.Element {
     <CommunityBoardCommonLayout>
       <Container maxWidth="md">
 
-        <div className={classes.title}>
-          <img
-            src={`/images/logo/${platform}Logo.png`}
-            alt={`${platform}Logo`}
-            className={classes.logoImage}
-          />
-          <Typography variant="h4" gutterBottom>
-            {platform === 'afreeca' ? '아프리카 게시판 ' : '트위치 게시판 '}
-            {isEditMode ? '글 수정' : '글 작성'}
-          </Typography>
-          <Divider />
-        </div>
+        <BoardTitle platform={platform} />
 
         <form className="form">
           {isEditMode

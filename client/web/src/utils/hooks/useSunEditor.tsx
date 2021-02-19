@@ -12,7 +12,7 @@ import SunEditor from 'suneditor/src/lib/core';
  * suneditor-react라는 리액트용 라이브러리가 존재하나 ref 적용안됨, lang옵션 적용 안됨 문제로
  * 그냥 suneditor사용함
  * 
- * 리턴값 [refFn, editorRef]
+ * 리턴값 {refFn, editorRef}
  * 
  * @return refFn (node) => void 
  * <textarea id="suneditor" ref={refFn}> 과 같이 사용함
@@ -50,6 +50,7 @@ export default function useSunEditor(): {
           ['preview'],
         ],
         showPathLabel: false,
+        resizingBar: false,
       });
       editorRef.current = editorInstance;
     }

@@ -23,8 +23,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
   },
 }));
-export default function BoardTitle({ platform }: {platform: 'afreeca'|'twitch'}): JSX.Element {
+export default function BoardTitle({ platform }: {platform: 'afreeca'|'twitch'|undefined}): JSX.Element {
   const classes = useStyles();
+  if (!platform) {
+    return (
+      <Typography variant="h4" className={classes.titleText}>게시판</Typography>
+    );
+  }
   return (
     <div className={classes.title}>
       <img

@@ -133,7 +133,7 @@ function PostList(props: PostListProps): JSX.Element {
 
   const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
     history.push({
-      pathname: `/community-board/write/${postId}`,
+      pathname: `/community-board/view/${postId}`,
       state: {
         platform: platform === 0 ? 'afreeca' : 'twitch',
       },
