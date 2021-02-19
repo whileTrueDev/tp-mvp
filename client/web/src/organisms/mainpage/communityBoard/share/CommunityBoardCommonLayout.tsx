@@ -11,11 +11,9 @@ export default function CommunityBoardCommonLayout(props: PropsType): JSX.Elemen
   const { children } = props;
   return (
     <div>
-      {/* <Appbar /> */}
       {memoAppbar}
       {children}
       {memoFooter}
-      {/* <Footer /> */}
     </div>
 
   );

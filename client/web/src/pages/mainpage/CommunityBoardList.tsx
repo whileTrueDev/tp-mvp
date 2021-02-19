@@ -1,5 +1,7 @@
 import { Grid, IconButton, Typography } from '@material-ui/core';
-import React, { useCallback, useRef, useState } from 'react';
+import React, {
+  useCallback, useMemo, useRef, useState,
+} from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
@@ -20,16 +22,16 @@ const scrollToContainerTop = (ref: React.MutableRefObject<any>) => {
 };
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  center: {
+  centerWrapper: {
     width: '100%',
+    minWidth: '1400px', // <ProductHero/>의 minWidth에 맞춤
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     padding: theme.spacing(2),
   },
-  container: {
-    width: '90%',
-    minWidth: '1400px',
+  boardWrapper: {
+    width: '45%',
   },
   hide: {
     visibility: 'hidden',
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
 
-  const select = useRef<number[]>([8, 16]); // 한 페이지당 보여질 글 개수 select 옵션
+  const select = useRef<number[]>([5, 10]); // 한 페이지당 보여질 글 개수 select 옵션
   const [take, setTake] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
   // 검색어 state
   const [searchState, setSearchState] = useState<{text: string, type: string}>({
@@ -52,7 +54,6 @@ export default function CommunityBoardList(): JSX.Element {
     handlePostsLoad: afreecaPostLoadHandler,
     changeFilter: changeAfreecaFilter,
     initializeFilter: initializeAfreecaFilter,
-    setPage: setAfreecaPage,
   } = useBoardState(); // 아프리카 게시판 상태, 핸들러
   const {
     boardState: twitchBoard,
@@ -60,7 +61,6 @@ export default function CommunityBoardList(): JSX.Element {
     handlePostsLoad: twitchPostLoadHandler,
     changeFilter: changeTwitchFilter,
     initializeFilter: initializeTwitchFilter,
-    setPage: setTwitchPage,
   } = useBoardState();// 트위치 게시판 상태, 핸들러
 
   // 검색버튼 눌렀을 때 스크롤 될 엘리먼트 저장
@@ -70,7 +70,7 @@ export default function CommunityBoardList(): JSX.Element {
     setSearchState({ type: '', text: '' });
   }, []);
 
-  const onSearch = (field: any, text: string) => {
+  const onSearch = useCallback((field: any, text: string) => {
     let searchColumn = '';
     if (field === '제목') {
       searchColumn = 'title';
@@ -81,7 +81,7 @@ export default function CommunityBoardList(): JSX.Element {
     initializeAfreecaFilter();
     initializeTwitchFilter();
     scrollToContainerTop(scrollRef);
-  };
+  }, [initializeAfreecaFilter, initializeTwitchFilter]);
 
   const afreecaBoardFilterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
     initializeSearchState();
@@ -93,12 +93,47 @@ export default function CommunityBoardList(): JSX.Element {
     changeTwitchFilter(categoryFilter);
   };
 
+  // memo 적용한 컴포넌트들, dependencies에 포함된 값이 바뀔때만 리렌더링 되도록 한다
+  const SelectComponent = useMemo(() => (
+    <SelectField handleCallback={setTake} value={take} select={select.current} />
+  ), [take]);
+
+  const AfreecaBoard = useMemo(() => (
+    <BoardContainer
+      platform="afreeca"
+      take={take}
+      selectComponent={SelectComponent}
+      pagenationHandler={afreecaPagenationHandler}
+      searchText={searchState.text}
+      searchType={searchState.type}
+      boardState={afreecaBoard}
+      postFilterHandler={afreecaBoardFilterHandler}
+      handlePostsLoad={afreecaPostLoadHandler}
+    />
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), [take, searchState, afreecaBoard]);
+
+  const TwitchBoard = useMemo(() => (
+    <BoardContainer
+      platform="twitch"
+      take={take}
+      selectComponent={SelectComponent}
+      pagenationHandler={twitchPagenationHandler}
+      searchText={searchState.text}
+      searchType={searchState.type}
+      boardState={twitchBoard}
+      postFilterHandler={twitchBoardFilterHandler}
+      handlePostsLoad={twitchPostLoadHandler}
+    />
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), [take, searchState, twitchBoard]);
+
   return (
     <CommunityBoardCommonLayout>
       <ProductHero title="자유게시판" content="자유게시판입니다" />
 
       <div
-        className={searchState.text ? classes.center : classes.hide}
+        className={searchState.text ? classes.centerWrapper : classes.hide}
         ref={scrollRef}
       >
         <Typography>{`검색한 내용 : ${searchState.text}`}</Typography>
@@ -107,53 +142,25 @@ export default function CommunityBoardList(): JSX.Element {
         </IconButton>
       </div>
 
-      <div className={classes.center}>
+      <div className={classes.centerWrapper}>
         <Grid
-          className={classes.container}
           container
           justify="space-around"
           alignItems="flex-start"
-          spacing={2}
         >
-          <Grid item xs={12} sm={6}>
-            <BoardContainer
-              platform="afreeca"
-              take={take}
-              selectComponent={(
-                <SelectField
-                  handleCallback={setTake}
-                  value={take}
-                  select={select.current}
-                />
-            )}
-              pagenationHandler={afreecaPagenationHandler}
-              searchText={searchState.text}
-              searchType={searchState.type}
-              boardState={afreecaBoard}
-              postFilterHandler={afreecaBoardFilterHandler}
-              handlePostsLoad={afreecaPostLoadHandler}
-              setPage={setAfreecaPage}
-            />
+          <Grid item className={classes.boardWrapper}>
+            {AfreecaBoard}
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <BoardContainer
-              platform="twitch"
-              take={take}
-              selectComponent={<SelectField handleCallback={setTake} value={take} select={select.current} />}
-              pagenationHandler={twitchPagenationHandler}
-              searchText={searchState.text}
-              searchType={searchState.type}
-              boardState={twitchBoard}
-              postFilterHandler={twitchBoardFilterHandler}
-              handlePostsLoad={twitchPostLoadHandler}
-              setPage={setTwitchPage}
-            />
+          <Grid item className={classes.boardWrapper}>
+            {TwitchBoard}
           </Grid>
+
         </Grid>
+
       </div>
 
       <SearchForm
-        className={classes.center}
+        className={classes.centerWrapper}
         onSearch={onSearch}
         selectOptions={['제목', '작성자']}
       />

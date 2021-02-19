@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     height: '100%',
     width: '100%',
-    minWidth: '600px',
+    minWidth: '650px',
   },
   pagination: {
     display: 'flex',
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
   },
   writeButton: {
-    height: '65.5px',
+    padding: theme.spacing(2, 0),
   },
 }));
 
@@ -72,7 +72,6 @@ interface BoardProps{
     totalRows: number;
     filter: FilterType;
 },
-setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function BoardContainer({
@@ -85,7 +84,6 @@ export default function BoardContainer({
   postFilterHandler,
   handlePostsLoad,
   boardState,
-  setPage,
 }: BoardProps): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
@@ -100,13 +98,6 @@ export default function BoardContainer({
   const [{ loading: searchLoading }, getSearchList] = useAxios({ url: searchUrl }, { manual: true });
 
   const hasSearchText = useMemo(() => searchType && searchType !== '' && searchText && searchText !== '', [searchText, searchType]);
-
-  // useEffect(() => {
-  //   if (page > paginationCount) {
-  //     setPage(paginationCount);
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [take]); // take가 바뀔 때 page값을 변경해준다
 
   useEffect(() => {
     if (hasSearchText) {
@@ -134,10 +125,14 @@ export default function BoardContainer({
     });
   };
 
+  const TitleComponent = useMemo(() => (
+    <BoardTitle platform={platform} />
+  ), []);
+
   return (
     <div className={classes.root}>
 
-      <BoardTitle platform={platform} />
+      {TitleComponent}
 
       <div className={classes.controls}>
         <ToggleButtonGroup

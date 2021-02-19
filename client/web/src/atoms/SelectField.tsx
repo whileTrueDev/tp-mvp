@@ -1,14 +1,14 @@
 import React from 'react';
 import { Select, MenuItem, SelectProps } from '@material-ui/core';
 
-export interface SelectFieldProps<T> extends SelectProps{
+export interface SelectFieldProps extends SelectProps{
   value: any,
   select: any[],
   handleCallback: React.Dispatch<React.SetStateAction<any>>
 }
 function SelectField({
   value, handleCallback, select, ...rest
-}: SelectFieldProps<any>): JSX.Element {
+}: SelectFieldProps): JSX.Element {
   const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (handleCallback) {
       handleCallback(event.target.value as any);
