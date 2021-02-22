@@ -166,6 +166,7 @@ export class CommunityBoardController {
     @Param('postId', ParseIntPipe) postId: number,
     @Body('password') password: string,
   ): Promise<boolean> {
+    console.log({ password });
     return this.communityBoardService.checkPostPassword(postId, password);
   }
 
@@ -176,9 +177,8 @@ export class CommunityBoardController {
   @Delete('posts/:postId')
   removeOnePost(
     @Param('postId', ParseIntPipe) postId: number,
-    @Body('password') password: string,
   ): Promise<boolean> {
-    return this.communityBoardService.removeOnePost(postId, password);
+    return this.communityBoardService.removeOnePost(postId);
   }
 
   /**
