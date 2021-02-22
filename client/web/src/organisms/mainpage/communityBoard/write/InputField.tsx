@@ -10,7 +10,9 @@ interface PropType extends Partial<OutlinedTextFieldProps>{
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   input: {
-    marginBottom: theme.spacing(2),
+    '&>.MuiOutlinedInput-root': {
+      backgroundColor: theme.palette.background.paper,
+    },
   },
 }));
 
@@ -24,13 +26,12 @@ function InputField(props: PropType): JSX.Element {
     maxLength, inputProps, className, ...rest
   } = props;
   const classes = useStyles();
-  const theme = useTheme();
   return (
     <TextField
       {...rest}
       className={`${classes.input} ${className}`}
       variant="outlined"
-      inputProps={{ ...inputProps, style: { backgroundColor: theme.palette.common.white }, maxLength }}
+      inputProps={{ ...inputProps, maxLength }}
       InputLabelProps={{
         shrink: true,
       }}

@@ -26,6 +26,7 @@ import ShowSnack from '../../atoms/snackbar/ShowSnack';
 import CustomDialog from '../../atoms/Dialog/Dialog';
 import CheckPasswordForm from '../../organisms/mainpage/communityBoard/postView/CheckPasswordForm';
 import RepliesSection from '../../organisms/mainpage/communityBoard/postView/RepliesSection';
+import ReplyForm from '../../organisms/mainpage/communityBoard/postView/ReplyForm';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   boardTitle: {},
@@ -50,7 +51,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       marginLeft: theme.spacing(1),
     },
   },
-  replyContainer: {},
 }));
 
 interface LocationState{
@@ -212,7 +212,6 @@ export default function CommunityPostView(): JSX.Element {
               onClick={editPostButtonHandler}
             >
               글수정
-
             </Button>
             <Button
               variant="contained"
@@ -220,7 +219,6 @@ export default function CommunityPostView(): JSX.Element {
               onClick={deletePostButtonHandler}
             >
               글삭제
-
             </Button>
           </div>
         </div>
@@ -241,10 +239,10 @@ export default function CommunityPostView(): JSX.Element {
         {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
 
         <RepliesSection
-          className={classes.replyContainer}
-          totalReplyCount={10}
+          totalReplyCount={currentPost && currentPost.replies ? currentPost.replies.length : 0}
+          replies={currentPost ? currentPost.replies : []}
         />
-
+        <ReplyForm />
       </Container>
 
     </CommunityBoardCommonLayout>

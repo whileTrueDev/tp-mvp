@@ -78,7 +78,7 @@ export class CommunityBoardService {
     }
   }
 
-  async findPostContainsText({
+  async findPostContainsSearchText({
     platform, page, take, searchColumn, searchText,
   }: {
     platform: string,
@@ -131,8 +131,6 @@ export class CommunityBoardService {
     take: number,
     category: string // filter로 바꾸기 이름 헷갈림..
   }): Promise<FindPostResType> {
-    // 리턴값은 {posts, total, }
-
     const qb = this.communityPostRepository
       .createQueryBuilder('post')
       .select([
@@ -147,7 +145,7 @@ export class CommunityBoardService {
         'post.recommend',
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
-      .loadRelationCountAndMap('post.replies', 'post.replies');
+      .loadRelationCountAndMap('post.repliesCount', 'post.replies');
 
     let resultQb = qb.clone();
     let countQb = qb.clone();
@@ -223,21 +221,19 @@ export class CommunityBoardService {
 
   // 개별 글 조회시 조회수+1 한 후 해당 글 리턴
   async hitAndFindOnePost(postId: number): Promise<CommunityPostEntity> {
-    const post = await this.communityPostRepository
-      .createQueryBuilder('post')
-      .leftJoinAndSelect('post.replies', 'replies')
-      .where('post.postId = :postId', { postId })
-      .getOne();
-    if (!post) {
-      throw new HttpException('no post with that postId', HttpStatus.NOT_FOUND);
-    }
-
-    const hitCount = post.hit;
+    const post = await this.findOnePost(postId);
     try {
-      return this.communityPostRepository.save({
+      await this.communityPostRepository.save({
         ...post,
-        hit: hitCount + 1,
+        hit: post.hit + 1,
       });
+
+      return await this.communityPostRepository
+        .createQueryBuilder('post')
+        .leftJoinAndSelect('post.replies', 'replies')
+        .where('post.postId = :postId', { postId })
+        .loadRelationCountAndMap('post.repliesCount', 'post.replies')
+        .getOne();
     } catch (error) {
       console.error(error);
       throw new HttpException('error in hitAndFindOnePost', HttpStatus.INTERNAL_SERVER_ERROR);

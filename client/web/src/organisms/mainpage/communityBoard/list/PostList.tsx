@@ -122,7 +122,7 @@ function PostList(props: PostListProps): JSX.Element {
     title: (
       <>
         {post.title}
-        {post.replies ? <span className={classes.replies}>{`[${post.replies}]`}</span> : null}
+        {post.repliesCount ? <span className={classes.replies}>{`[${post.repliesCount}]`}</span> : null}
       </>
     ),
     nickname: `${post.nickname}${post.category === 0 ? `(${post.ip})` : ''}`,

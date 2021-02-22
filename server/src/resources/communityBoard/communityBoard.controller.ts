@@ -78,7 +78,7 @@ export class CommunityBoardController {
     @Query('qtext') searchText: string,
   ): Promise<FindPostResType> {
     if (searchColumn && searchText) {
-      return this.communityBoardService.findPostContainsText({
+      return this.communityBoardService.findPostContainsSearchText({
         platform,
         page: page < 1 ? 1 : page,
         take: take < 0 ? 10 : take,
@@ -166,7 +166,6 @@ export class CommunityBoardController {
     @Param('postId', ParseIntPipe) postId: number,
     @Body('password') password: string,
   ): Promise<boolean> {
-    console.log({ password });
     return this.communityBoardService.checkPostPassword(postId, password);
   }
 
