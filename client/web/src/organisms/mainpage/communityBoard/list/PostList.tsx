@@ -119,8 +119,6 @@ function PostList(props: PostListProps): JSX.Element {
   const theme = useTheme();
   const classes = useStyles();
 
-  console.log({ currentPostId }, 'in PostList');
-
   // posts를 boardColumns의 key에 맞게 변형한다
   // boardColumns.key에 해당하는 값이 해당 열에 보여진다
   const postToDisplay = useMemo(() => (posts.map((post) => ({
@@ -174,33 +172,30 @@ function PostList(props: PostListProps): JSX.Element {
         style={{ minHeight: `${theme.spacing(rowHeightBase) * take}px` }}
       >
 
-        {postToDisplay.map((post) => {
-          console.log({ post }, currentPostId, post.postId === currentPostId);
-          return (
+        {postToDisplay.map((post) => (
           /** row 시작 */
-            <button
-              onClick={moveToPost(post.postId, post.platform)}
-              key={post.postId}
-              className={`${classes.row} ${classes.listItem} ${post.postId === currentPostId ? classes.currentPostItem : ''}`}
-            >
-              {boardColumns.map((col) => (
+          <button
+            onClick={moveToPost(post.postId, post.platform)}
+            key={post.postId}
+            className={`${classes.row} ${classes.listItem} ${post.postId === currentPostId ? classes.currentPostItem : ''}`}
+          >
+            {boardColumns.map((col) => (
               /** col 시작 */
-                <div
-                  key={`${post.postId}_${col.key}`}
-                  className={classes.cell}
-                  style={{ width: col.width }}
+              <div
+                key={`${post.postId}_${col.key}`}
+                className={classes.cell}
+                style={{ width: col.width }}
+              >
+                <Typography
+                  noWrap
+                  className={`${classes.cellText}`}
                 >
-                  <Typography
-                    noWrap
-                    className={`${classes.cellText}`}
-                  >
-                    {post[col.key]}
-                  </Typography>
-                </div>/** col 끝 */
-              ))}
-            </button>/** row 끝 */
-          );
-        })}
+                  {post[col.key]}
+                </Typography>
+              </div>/** col 끝 */
+            ))}
+          </button>/** row 끝 */
+        ))}
         {/* 데이터가 없는 경우 */}
         {(!loading && postToDisplay.length === 0)
           ? <Typography className={classes.noDataText}>데이터가 없습니다...</Typography>

@@ -4,7 +4,7 @@ import React, {
 import { CommunityReply } from '@truepoint/shared/dist/interfaces/CommunityReply.interface';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
-  Divider, Paper, Typography, Button, Popper,
+  Paper, Typography, Button, Popper,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   controls: {
     display: 'flex',
+    marginBottom: theme.spacing(1),
   },
   popper: {
     padding: theme.spacing(2),
@@ -128,7 +129,6 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
       <div className={classes.controls}>
         <Typography>{`전체댓글 : ${totalReplyCount} 개`}</Typography>
       </div>
-      <Divider />
 
       <Paper>
         {/* 댓글목록 */}
@@ -143,8 +143,6 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
           />
         ))}
       </Paper>
-
-      {replies.length ? <Divider /> : null}
 
       <Popper open={open && !replyEditing} anchorEl={anchorEl}>
         <Paper className={classes.popper}>

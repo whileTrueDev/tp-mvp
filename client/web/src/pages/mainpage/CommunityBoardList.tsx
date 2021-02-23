@@ -12,6 +12,7 @@ import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardCo
 import SelectField from '../../atoms/SelectField';
 import SearchForm from '../../organisms/mainpage/communityBoard/list/SearchForm';
 import useBoardState, { FilterType } from '../../utils/hooks/useBoardListState';
+import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
 
 const scrollToContainerTop = (ref: React.MutableRefObject<any>) => {
   if (ref.current) {
@@ -109,8 +110,16 @@ export default function CommunityBoardList(): JSX.Element {
 
   ), [take]);
 
+  const afreecaTitleComponent = useMemo(() => (
+    <BoardTitle platform="afreeca" />
+  ), []);
+  const twitchTitleComponent = useMemo(() => (
+    <BoardTitle platform="twitch" />
+  ), []);
+
   const AfreecaBoard = useMemo(() => (
     <BoardContainer
+      titleComponent={afreecaTitleComponent}
       platform="afreeca"
       take={take}
       selectComponent={SelectComponent}
@@ -127,6 +136,7 @@ export default function CommunityBoardList(): JSX.Element {
   const TwitchBoard = useMemo(() => (
     <BoardContainer
       platform="twitch"
+      titleComponent={twitchTitleComponent}
       take={take}
       selectComponent={SelectComponent}
       pagenationHandler={twitchPagenationHandler}

@@ -31,7 +31,7 @@ const useReplyItemStyle = makeStyles((theme: Theme) => createStyles({
     color: theme.palette.grey[700],
   },
   content: {
-    width: '52%',
+    width: '50%',
   },
   date: {
     width: '15%',
@@ -40,7 +40,7 @@ const useReplyItemStyle = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
-    width: '13%',
+    width: '15%',
   },
   editButton: {
     padding: theme.spacing(0.5, 1),

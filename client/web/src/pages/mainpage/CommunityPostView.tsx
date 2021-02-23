@@ -45,21 +45,25 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   recommendCard: {
     display: 'flex',
   },
-  buttons: {
+  buttonsContainer: {
     padding: theme.spacing(1, 0),
     display: 'flex',
     justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
   },
   postButtons: {
     '&>*+*': {
       marginLeft: theme.spacing(1),
     },
   },
-  pagenation: {
+  replyPagenation: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: theme.spacing(2),
+  },
+  repliesContainer: {
+    marginBottom: theme.spacing(8),
   },
 }));
 
@@ -149,6 +153,7 @@ export default function CommunityPostView(): JSX.Element {
     getPostForView().then((res) => {
       if (viewerRef && viewerRef.current) {
         viewerRef.current.innerHTML = res.data.content;
+        window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
       }
     }).catch((e) => {
       console.error('글 불러오기 오류', e);
@@ -279,7 +284,7 @@ export default function CommunityPostView(): JSX.Element {
           </div>
         </Paper>
 
-        <div className={classes.buttons}>
+        <div className={classes.buttonsContainer}>
           <Button
             variant="contained"
             color="primary"
@@ -320,28 +325,30 @@ export default function CommunityPostView(): JSX.Element {
         </CustomDialog>
         {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
 
-        <RepliesSection
-          totalReplyCount={replies ? replies.total : 0}
-          replies={replies ? replies.replies : []}
-          loadReplies={loadReplies}
-        />
+        <div className={classes.repliesContainer}>
+          <RepliesSection
+            totalReplyCount={replies ? replies.total : 0}
+            replies={replies ? replies.replies : []}
+            loadReplies={loadReplies}
+          />
 
-        { replyPaginationCount > 1
-          ? (
-            <Pagination
-              className={classes.pagenation}
-              shape="rounded"
-              page={replyPage}
-              count={replyPaginationCount}
-              onChange={changeReplyPage}
-            />
-          )
-          : null}
+          { replyPaginationCount > 1
+            ? (
+              <Pagination
+                className={classes.replyPagenation}
+                shape="rounded"
+                page={replyPage}
+                count={replyPaginationCount}
+                onChange={changeReplyPage}
+              />
+            )
+            : null}
 
-        <ReplyForm
-          postId={postId}
-          afterCreateReplyHandler={loadReplies}
-        />
+          <ReplyForm
+            postId={postId}
+            afterCreateReplyHandler={loadReplies}
+          />
+        </div>
 
         <BoardContainer
           platform={platform}
@@ -352,6 +359,7 @@ export default function CommunityPostView(): JSX.Element {
           boardState={boardState}
           postFilterHandler={filterHandler}
           handlePostsLoad={handlePostsLoad}
+          currentPostId={Number(postId)}
         />
       </Container>
 

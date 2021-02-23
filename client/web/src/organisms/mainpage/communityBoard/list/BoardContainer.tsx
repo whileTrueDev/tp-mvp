@@ -72,7 +72,8 @@ interface BoardProps{
     totalRows: number;
     filter: FilterType;
   },
-  currentPostId? : number
+  currentPostId? : number,
+  titleComponent? : JSX.Element
 }
 
 export default function BoardContainer({
@@ -86,6 +87,7 @@ export default function BoardContainer({
   handlePostsLoad,
   boardState,
   currentPostId,
+  titleComponent,
 }: BoardProps): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
@@ -127,14 +129,10 @@ export default function BoardContainer({
     });
   };
 
-  const TitleComponent = useMemo(() => (
-    <BoardTitle platform={platform} />
-  ), [platform]);
-
   return (
     <div className={classes.root}>
 
-      {TitleComponent}
+      {titleComponent}
 
       <div className={classes.controls}>
         <ToggleButtonGroup
