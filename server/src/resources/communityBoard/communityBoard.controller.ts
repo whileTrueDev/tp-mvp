@@ -16,7 +16,7 @@ import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoar
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
-import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { FindPostResType, PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { RealIP } from 'nestjs-real-ip';
 import { Address6 } from 'ip-address';
 import { CommunityBoardService } from './communityBoard.service';
@@ -142,7 +142,7 @@ export class CommunityBoardController {
    * @param postId 
    */
   @Get('posts/:postId')
-  findOne(@Param('postId', ParseIntPipe) postId: number): Promise<CommunityPostEntity> {
+  findOne(@Param('postId', ParseIntPipe) postId: number): Promise<PostFound> {
     return this.communityBoardService.hitAndFindOnePost(postId);
   }
 

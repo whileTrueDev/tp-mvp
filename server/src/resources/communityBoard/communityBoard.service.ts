@@ -5,10 +5,13 @@ import * as bcrypt from 'bcrypt';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { PostFound } from '@truepoint/shared/res/FindPostResType.interface';
 import { CommunityPostEntity } from './entities/community-post.entity';
+import { CommunityReplyService } from './communityReply.service';
 @Injectable()
 export class CommunityBoardService {
   constructor(
+    private readonly communityReplyService: CommunityReplyService,
     @InjectRepository(CommunityPostEntity)
     private readonly communityPostRepository: Repository<CommunityPostEntity>,
   ) {}
@@ -129,7 +132,7 @@ export class CommunityBoardService {
     platform: string,
     page: number,
     take: number,
-    category: string // filter로 바꾸기 이름 헷갈림..
+    category: string
   }): Promise<FindPostResType> {
     const qb = this.communityPostRepository
       .createQueryBuilder('post')
@@ -220,20 +223,21 @@ export class CommunityBoardService {
   }
 
   // 개별 글 조회시 조회수+1 한 후 해당 글 리턴
-  async hitAndFindOnePost(postId: number): Promise<CommunityPostEntity> {
+  async hitAndFindOnePost(postId: number): Promise<PostFound> {
     const post = await this.findOnePost(postId);
+    const replies = await this.communityReplyService.findReplies({ postId, page: 1, take: 5 });
     try {
-      await this.communityPostRepository.save({
+      const postToReturn = await this.communityPostRepository.save({
         ...post,
         hit: post.hit + 1,
       });
 
-      return await this.communityPostRepository
-        .createQueryBuilder('post')
-        .leftJoinAndSelect('post.replies', 'replies')
-        .where('post.postId = :postId', { postId })
-        .loadRelationCountAndMap('post.repliesCount', 'post.replies')
-        .getOne();
+      return {
+        postNumber: null,
+        ...postToReturn,
+        repliesCount: replies.total,
+        replies: replies.replies,
+      };
     } catch (error) {
       console.error(error);
       throw new HttpException('error in hitAndFindOnePost', HttpStatus.INTERNAL_SERVER_ERROR);

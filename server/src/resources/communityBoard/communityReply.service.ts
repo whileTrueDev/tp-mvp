@@ -9,11 +9,9 @@ import * as bcrypt from 'bcrypt';
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 import { CommunityReplyEntity } from './entities/community-reply.entity';
-import { CommunityBoardService } from './communityBoard.service';
 @Injectable()
 export class CommunityReplyService {
   constructor(
-    private readonly communityBoardService: CommunityBoardService,
     @InjectRepository(CommunityReplyEntity)
     private readonly communityReplyRepository: Repository<CommunityReplyEntity>,
   ) {}
@@ -92,8 +90,6 @@ export class CommunityReplyService {
     page: number,
     take: number
   }): Promise<{replies: CommunityReplyEntity[], total: number}> {
-    // 해당 postId 인 글 존재하는지 확인
-    await this.communityBoardService.findOnePost(postId);
     try {
       const [replies, total] = await this.communityReplyRepository.findAndCount({
         where: {
