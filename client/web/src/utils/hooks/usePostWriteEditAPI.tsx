@@ -23,7 +23,7 @@ export default function usePostWriteEditAPI(postId: number): {
   const { enqueueSnackbar } = useSnackbar();
   const history = useHistory();
   const [, createPost] = useAxios({ url: '/community/posts', method: 'post' }, { manual: true });
-  const [, getPostForEdit] = useAxios({ url: `/community/posts/edit/${postId}` }, { manual: true });
+  const [, getPostForEdit] = useAxios({ url: `/community/posts/${postId}` }, { manual: true });
   const [, editPost] = useAxios({ url: `/community/posts/${postId}`, method: 'put' }, { manual: true });
 
   const handleLoadPost = useCallback((cb: (res: AxiosResponse<any>) => void) => {

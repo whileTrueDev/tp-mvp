@@ -1,5 +1,7 @@
 import { Paper, Typography } from '@material-ui/core';
-import React, { useMemo, memo } from 'react';
+import React, {
+  useMemo, memo,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   makeStyles, createStyles, Theme, useTheme,
@@ -8,6 +10,7 @@ import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface'
 import { ko } from 'date-fns/locale';
 import * as dateFns from 'date-fns';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import axios from '../../../../utils/axios';
 
 const rowHeightBase = 9; // row(listItem)하나당 높이 기준픽셀
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -121,31 +124,36 @@ function PostList(props: PostListProps): JSX.Element {
 
   // posts를 boardColumns의 key에 맞게 변형한다
   // boardColumns.key에 해당하는 값이 해당 열에 보여진다
-  const postToDisplay = useMemo(() => (posts.map((post) => ({
-    postId: post.postId,
-    platform: post.platform,
-    postNumber: post.postNumber,
-    title: (
-      <>
-        {post.title}
-        {post.repliesCount ? <span className={classes.replies}>{`[${post.repliesCount}]`}</span> : null}
-      </>
-    ),
-    nickname: `${post.nickname}${post.category === 0 ? `(${post.ip})` : ''}`,
-    createDate: `${getDateDisplay(post.createDate)}`,
-    hit: post.hit,
-    recommend: post.recommend,
-  }))), [classes.replies, posts]);
+  const postToDisplay = useMemo(() => (
+    posts.map((post) => ({
+      postId: post.postId,
+      platform: post.platform,
+      postNumber: post.postNumber,
+      title: (
+        <>
+          {post.title}
+          {post.repliesCount ? <span className={classes.replies}>{`[${post.repliesCount}]`}</span> : null}
+        </>
+      ),
+      nickname: `${post.nickname}${post.category === 0 ? `(${post.ip})` : ''}`,
+      createDate: `${getDateDisplay(post.createDate)}`,
+      hit: post.hit,
+      recommend: post.recommend,
+    }))), [classes.replies, posts]);
 
   const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
     const postPlatform = platform === 0 ? 'afreeca' : 'twitch';
-    history.push({
-      pathname: `/community-board/view/${postId}`,
-      state: {
-        platform: postPlatform,
-        page,
-        take,
-      },
+    axios.post(`/community/posts/${postId}/hit`).then(() => {
+      history.push({
+        pathname: `/community-board/view/${postId}`,
+        state: {
+          platform: postPlatform,
+          page,
+          take,
+        },
+      });
+    }).catch((e) => {
+      console.error(e);
     });
   };
 

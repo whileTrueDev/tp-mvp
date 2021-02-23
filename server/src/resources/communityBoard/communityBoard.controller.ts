@@ -16,7 +16,7 @@ import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoar
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
-import { FindPostResType, PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
 import { RealIP } from 'nestjs-real-ip';
 import { Address6 } from 'ip-address';
@@ -63,11 +63,14 @@ export class CommunityBoardController {
   }
 
   /**
-   * 게시글 조회 GET /community/posts?platform=&page=&take=&category=
+   * 게시글 목록 조회, 글 내용은 포함되어 있지 않음
+   * GET /community/posts?platform=&page=&take=&category=
    * @param platform 'afreeca' | 'twitch' 플랫폼 구분
    * @param category 'all' | 'notice' | 'recommended' 전체글, 공지글, 추천글 조회용
    * @param page 보여질 페이지
    * @param take 해당 페이지에 보여지는 글의 개수
+   * @param qtext 검색어
+   * @param qtype 'title' | 'nickname', 제목 검색 | 작성자 검색
    */
   @Get('posts')
   findAllPosts(
@@ -123,6 +126,19 @@ export class CommunityBoardController {
   }
 
   /**
+   * 게시글 조회 - 조회수만 올림 POST /community/posts/:postId/hit
+   * 
+   * @param postId 
+   * @return 새로운 조회수 리턴
+   */
+  @Post('posts/:postId/hit')
+  hitPost(
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<number> {
+    return this.communityBoardService.hitPost(postId);
+  }
+
+  /**
    * 게시글 수정 PUT /community/posts/:postId
    * @param postId 
    * @param updateCommunityBoardDto 
@@ -139,20 +155,11 @@ export class CommunityBoardController {
   }
 
   /**
-   * 단일 글 조회 - 글 목록에서 단일 글 선택시 GET /community/posts/:postId
+   * 단일 글 조회 - 글 내용 리턴  GET /community/posts/:postId
    * @param postId 
    */
   @Get('posts/:postId')
-  findOne(@Param('postId', ParseIntPipe) postId: number): Promise<PostFound> {
-    return this.communityBoardService.hitAndFindOnePost(postId);
-  }
-
-  /**
-   * 단일 글 조회 - 글 수정시 글 내용 가져오기 위해
-   * @param postId 
-   */
-  @Get('posts/edit/:postId')
-  findOneForEdit(@Param('postId', ParseIntPipe) postId: number): Promise<CommunityPostEntity> {
+  findOne(@Param('postId', ParseIntPipe) postId: number): Promise<CommunityPostEntity> {
     return this.communityBoardService.findOnePost(postId);
   }
 

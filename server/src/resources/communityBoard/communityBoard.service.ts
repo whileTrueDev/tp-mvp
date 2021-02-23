@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
-import { PostFound } from '@truepoint/shared/res/FindPostResType.interface';
 import { CommunityPostEntity } from './entities/community-post.entity';
 import { CommunityReplyService } from './communityReply.service';
 @Injectable()
@@ -222,28 +221,6 @@ export class CommunityBoardService {
     }
   }
 
-  // 개별 글 조회시 조회수+1 한 후 해당 글 리턴
-  async hitAndFindOnePost(postId: number): Promise<PostFound> {
-    const post = await this.findOnePost(postId);
-    const replies = await this.communityReplyService.findReplies({ postId, page: 1, take: 5 });
-    try {
-      const postToReturn = await this.communityPostRepository.save({
-        ...post,
-        hit: post.hit + 1,
-      });
-
-      return {
-        postNumber: null,
-        ...postToReturn,
-        repliesCount: replies.total,
-        replies: replies.replies,
-      };
-    } catch (error) {
-      console.error(error);
-      throw new HttpException('error in hitAndFindOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   async removeOnePost(postId: number): Promise<boolean> {
     const post = await this.findOnePost(postId);
     try {
@@ -252,6 +229,21 @@ export class CommunityBoardService {
     } catch (error) {
       console.error(error);
       throw new HttpException('error in removeOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async hitPost(postId: number): Promise<number> {
+    const post = await this.findOnePost(postId);
+    const hitCount = post.hit;
+    try {
+      const savedPost = await this.communityPostRepository.save({
+        ...post,
+        hit: hitCount + 1,
+      });
+      return savedPost.hit;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException('error in hitPost', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
