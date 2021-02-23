@@ -5,10 +5,13 @@ import * as bcrypt from 'bcrypt';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { PostFound } from '@truepoint/shared/res/FindPostResType.interface';
 import { CommunityPostEntity } from './entities/community-post.entity';
+import { CommunityReplyService } from './communityReply.service';
 @Injectable()
 export class CommunityBoardService {
   constructor(
+    private readonly communityReplyService: CommunityReplyService,
     @InjectRepository(CommunityPostEntity)
     private readonly communityPostRepository: Repository<CommunityPostEntity>,
   ) {}
@@ -78,7 +81,7 @@ export class CommunityBoardService {
     }
   }
 
-  async findPostContainsText({
+  async findPostContainsSearchText({
     platform, page, take, searchColumn, searchText,
   }: {
     platform: string,
@@ -129,10 +132,8 @@ export class CommunityBoardService {
     platform: string,
     page: number,
     take: number,
-    category: string // filter로 바꾸기 이름 헷갈림..
+    category: string
   }): Promise<FindPostResType> {
-    // 리턴값은 {posts, total, }
-
     const qb = this.communityPostRepository
       .createQueryBuilder('post')
       .select([
@@ -147,7 +148,7 @@ export class CommunityBoardService {
         'post.recommend',
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
-      .loadRelationCountAndMap('post.replies', 'post.replies');
+      .loadRelationCountAndMap('post.repliesCount', 'post.replies');
 
     let resultQb = qb.clone();
     let countQb = qb.clone();
@@ -222,41 +223,35 @@ export class CommunityBoardService {
   }
 
   // 개별 글 조회시 조회수+1 한 후 해당 글 리턴
-  async hitAndFindOnePost(postId: number): Promise<CommunityPostEntity> {
-    const post = await this.communityPostRepository
-      .createQueryBuilder('post')
-      .leftJoinAndSelect('post.replies', 'replies')
-      .where('post.postId = :postId', { postId })
-      .getOne();
-    if (!post) {
-      throw new HttpException('no post with that postId', HttpStatus.NOT_FOUND);
-    }
-
-    const hitCount = post.hit;
+  async hitAndFindOnePost(postId: number): Promise<PostFound> {
+    const post = await this.findOnePost(postId);
+    const replies = await this.communityReplyService.findReplies({ postId, page: 1, take: 5 });
     try {
-      return this.communityPostRepository.save({
+      const postToReturn = await this.communityPostRepository.save({
         ...post,
-        hit: hitCount + 1,
+        hit: post.hit + 1,
       });
+
+      return {
+        postNumber: null,
+        ...postToReturn,
+        repliesCount: replies.total,
+        replies: replies.replies,
+      };
     } catch (error) {
       console.error(error);
       throw new HttpException('error in hitAndFindOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async removeOnePost(postId: number, password: string): Promise<boolean> {
-    const isValidPassword = await this.checkPostPassword(postId, password);
-    if (isValidPassword) {
-      const post = await this.findOnePost(postId);
-      try {
-        await this.communityPostRepository.remove(post);
-        return true;
-      } catch (error) {
-        console.error(error);
-        throw new HttpException('error in removeOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    } else {
-      throw new HttpException('not valid password', HttpStatus.UNAUTHORIZED);
+  async removeOnePost(postId: number): Promise<boolean> {
+    const post = await this.findOnePost(postId);
+    try {
+      await this.communityPostRepository.remove(post);
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException('error in removeOnePost', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

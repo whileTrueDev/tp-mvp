@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
-  Card, CardContent, Chip, Divider, Grid, Typography,
+  Card, Chip, Divider, Grid, Typography,
 } from '@material-ui/core';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 
@@ -40,9 +40,6 @@ function PostInfoCard({ post }: PostProps) {
 
   const cardClass = usePostInfoCardStyle();
 
-  function handleChipClick() {
-    console.log('move to ref element');
-  }
   return (
 
     <Card className={cardClass.postInfoCard}>
@@ -62,12 +59,10 @@ function PostInfoCard({ post }: PostProps) {
             <Chip
               className={cardClass.repliesChip}
               label={`댓글 ${replies ? replies.length : 0}`}
-              onClick={handleChipClick}
             />
           </div>
         </Grid>
       </Grid>
-
     </Card>
   );
 }

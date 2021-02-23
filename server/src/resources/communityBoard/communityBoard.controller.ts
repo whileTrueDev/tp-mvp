@@ -16,7 +16,8 @@ import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoar
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
-import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { FindPostResType, PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
 import { RealIP } from 'nestjs-real-ip';
 import { Address6 } from 'ip-address';
 import { CommunityBoardService } from './communityBoard.service';
@@ -53,7 +54,7 @@ export class CommunityBoardController {
     @Query('postId', ParseIntPipe) postId: number,
     @Query('page', ParseIntPipe) page: number,
     @Query('take', ParseIntPipe) take: number,
-  ): Promise<{replies: CommunityReplyEntity[], total: number}> {
+  ): Promise<FindReplyResType> {
     return this.communityReplyService.findReplies({
       postId,
       page: page < 1 ? 1 : page,
@@ -78,7 +79,7 @@ export class CommunityBoardController {
     @Query('qtext') searchText: string,
   ): Promise<FindPostResType> {
     if (searchColumn && searchText) {
-      return this.communityBoardService.findPostContainsText({
+      return this.communityBoardService.findPostContainsSearchText({
         platform,
         page: page < 1 ? 1 : page,
         take: take < 0 ? 10 : take,
@@ -142,7 +143,7 @@ export class CommunityBoardController {
    * @param postId 
    */
   @Get('posts/:postId')
-  findOne(@Param('postId', ParseIntPipe) postId: number): Promise<CommunityPostEntity> {
+  findOne(@Param('postId', ParseIntPipe) postId: number): Promise<PostFound> {
     return this.communityBoardService.hitAndFindOnePost(postId);
   }
 
@@ -176,9 +177,22 @@ export class CommunityBoardController {
   @Delete('posts/:postId')
   removeOnePost(
     @Param('postId', ParseIntPipe) postId: number,
-    @Body('password') password: string,
   ): Promise<boolean> {
-    return this.communityBoardService.removeOnePost(postId, password);
+    return this.communityBoardService.removeOnePost(postId);
+  }
+
+  /**
+   * 댓글 수정 PUT /community/replies/:replyId
+   * @param updateReplyDto 
+       content: string; 100자 제한
+   */
+  @Put('replies/:replyId')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  updateReply(
+    @Param('replyId', ParseIntPipe) replyId: number,
+    @Body() updateReplyDto: UpdateReplyDto,
+  ): Promise<CommunityReplyEntity> {
+    return this.communityReplyService.updateReply(replyId, updateReplyDto);
   }
 
   /**
@@ -200,6 +214,20 @@ export class CommunityBoardController {
   }
 
   /**
+   * 댓글 수정,삭제시 비밀번호 확인
+   * @param postId 
+   * @param password 
+   */
+  @HttpCode(200)
+  @Post('replies/:replyId/password')
+  async checkReplyPassword(
+    @Param('replyId', ParseIntPipe) replyId: number,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.communityReplyService.checkReplyPassword(replyId, password);
+  }
+
+  /**
    * 댓글삭제 DELETE /community/replies/:replyId
    * @param replyId 삭제할 댓글 id
    * @param password 댓글 비밀번호
@@ -207,23 +235,7 @@ export class CommunityBoardController {
   @Delete('replies/:replyId')
   async removeReply(
     @Param('replyId', ParseIntPipe) replyId: number,
-    @Body('password') password: string,
   ): Promise<boolean> {
-    return this.communityReplyService.removeReply(replyId, password);
-  }
-
-  /**
-   * 댓글 수정 PUT /community/replies/:replyId
-   * @param updateReplyDto 
-   *   password: string;
-       content: string; 100자 제한
-   */
-  @Put('replies/:replyId')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  updateReply(
-    @Param('replyId', ParseIntPipe) replyId: number,
-    @Body() updateReplyDto: UpdateReplyDto,
-  ): Promise<CommunityReplyEntity> {
-    return this.communityReplyService.updateReply(replyId, updateReplyDto);
+    return this.communityReplyService.removeReply(replyId);
   }
 }

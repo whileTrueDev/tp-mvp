@@ -71,7 +71,8 @@ interface BoardProps{
     page: number;
     totalRows: number;
     filter: FilterType;
-},
+  },
+  currentPostId? : number
 }
 
 export default function BoardContainer({
@@ -84,6 +85,7 @@ export default function BoardContainer({
   postFilterHandler,
   handlePostsLoad,
   boardState,
+  currentPostId,
 }: BoardProps): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
@@ -127,7 +129,7 @@ export default function BoardContainer({
 
   const TitleComponent = useMemo(() => (
     <BoardTitle platform={platform} />
-  ), []);
+  ), [platform]);
 
   return (
     <div className={classes.root}>
@@ -165,7 +167,9 @@ export default function BoardContainer({
 
       <PostList
         take={take}
+        page={page}
         posts={posts}
+        currentPostId={currentPostId}
         loading={loading || searchLoading}
       />
 

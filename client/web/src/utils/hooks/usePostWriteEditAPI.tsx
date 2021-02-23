@@ -58,7 +58,7 @@ export default function usePostWriteEditAPI(postId: number): {
     editPost({ data: updatePostDto })
       .then((res) => {
         ShowSnack('글 수정 성공', 'info', enqueueSnackbar);
-        history.push('/community-board');
+        history.goBack();
       })
       .catch((error) => {
         console.error(error);

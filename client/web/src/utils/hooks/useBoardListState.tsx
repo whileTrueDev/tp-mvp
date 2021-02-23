@@ -26,9 +26,13 @@ interface BoardListState{
 }
 }
 
-export default function useBoardListState(): BoardListState {
+export default function useBoardListState({
+  page: initialPage,
+}: {
+  page?: number
+}): BoardListState {
   const [posts, setPosts] = useState<PostFound[]>([]);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(initialPage || 1);
   const [totalRows, setTotalRows] = useState<number>(0);
   const [currentPostId, setCurrentPostId] = useState<number|null>(null);
   const [filter, setFilter] = useState<FilterType>('all');

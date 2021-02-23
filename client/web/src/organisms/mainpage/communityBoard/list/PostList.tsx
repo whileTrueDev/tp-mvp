@@ -56,12 +56,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   noDataText: {
     textAlign: 'center',
   },
+  currentPostItem: {
+    backgroundColor: theme.palette.secondary.light,
+  },
 }));
 
 interface PostListProps {
   take: number,
+  page: number,
   posts: PostFound[],
   loading?: boolean,
+  currentPostId?: number
 }
 
 type DisplayData =
@@ -106,12 +111,15 @@ function getDateDisplay(createDate: Date|undefined): string {
 
 function PostList(props: PostListProps): JSX.Element {
   const {
-    take,
+    take, page,
     posts, loading,
+    currentPostId,
   } = props;
   const history = useHistory();
   const theme = useTheme();
   const classes = useStyles();
+
+  console.log({ currentPostId }, 'in PostList');
 
   // posts를 boardColumns의 key에 맞게 변형한다
   // boardColumns.key에 해당하는 값이 해당 열에 보여진다
@@ -122,20 +130,23 @@ function PostList(props: PostListProps): JSX.Element {
     title: (
       <>
         {post.title}
-        {post.replies ? <span className={classes.replies}>{`[${post.replies}]`}</span> : null}
+        {post.repliesCount ? <span className={classes.replies}>{`[${post.repliesCount}]`}</span> : null}
       </>
     ),
     nickname: `${post.nickname}${post.category === 0 ? `(${post.ip})` : ''}`,
     createDate: `${getDateDisplay(post.createDate)}`,
     hit: post.hit,
     recommend: post.recommend,
-  }))), [posts]);
+  }))), [classes.replies, posts]);
 
   const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
+    const postPlatform = platform === 0 ? 'afreeca' : 'twitch';
     history.push({
       pathname: `/community-board/view/${postId}`,
       state: {
-        platform: platform === 0 ? 'afreeca' : 'twitch',
+        platform: postPlatform,
+        page,
+        take,
       },
     });
   };
@@ -163,30 +174,33 @@ function PostList(props: PostListProps): JSX.Element {
         style={{ minHeight: `${theme.spacing(rowHeightBase) * take}px` }}
       >
 
-        {postToDisplay.map((post) => (
+        {postToDisplay.map((post) => {
+          console.log({ post }, currentPostId, post.postId === currentPostId);
+          return (
           /** row 시작 */
-          <button
-            onClick={moveToPost(post.postId, post.platform)}
-            key={post.postId}
-            className={`${classes.row} ${classes.listItem}`}
-          >
-            {boardColumns.map((col) => (
+            <button
+              onClick={moveToPost(post.postId, post.platform)}
+              key={post.postId}
+              className={`${classes.row} ${classes.listItem} ${post.postId === currentPostId ? classes.currentPostItem : ''}`}
+            >
+              {boardColumns.map((col) => (
               /** col 시작 */
-              <div
-                key={`${post.postId}_${col.key}`}
-                className={classes.cell}
-                style={{ width: col.width }}
-              >
-                <Typography
-                  noWrap
-                  className={`${classes.cellText}`}
+                <div
+                  key={`${post.postId}_${col.key}`}
+                  className={classes.cell}
+                  style={{ width: col.width }}
                 >
-                  {post[col.key]}
-                </Typography>
-              </div>/** col 끝 */
-            ))}
-          </button>/** row 끝 */
-        ))}
+                  <Typography
+                    noWrap
+                    className={`${classes.cellText}`}
+                  >
+                    {post[col.key]}
+                  </Typography>
+                </div>/** col 끝 */
+              ))}
+            </button>/** row 끝 */
+          );
+        })}
         {/* 데이터가 없는 경우 */}
         {(!loading && postToDisplay.length === 0)
           ? <Typography className={classes.noDataText}>데이터가 없습니다...</Typography>

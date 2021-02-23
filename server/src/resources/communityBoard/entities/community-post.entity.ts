@@ -9,15 +9,12 @@ export class CommunityPostEntity implements CommunityPost {
   @PrimaryGeneratedColumn({ type: 'int' })
   postId: number;
 
-  @Index({ fulltext: true })
   @Column({ type: 'varchar', length: 20, comment: '20자 제한' })
   title: string;
 
-  @Index({ fulltext: true })
   @Column({ type: 'longtext' })
   content: string;
 
-  @Index({ fulltext: true })
   @Column({ type: 'varchar', length: 12, comment: '12자 제한' })
   nickname: string;
 
