@@ -1,6 +1,6 @@
 import { TextField, OutlinedTextFieldProps } from '@material-ui/core';
 import {
-  makeStyles, createStyles, Theme, useTheme,
+  makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
 import React, { memo } from 'react';
 

@@ -192,7 +192,6 @@ export class CommunityBoardController {
     @Param('replyId', ParseIntPipe) replyId: number,
     @Body() updateReplyDto: UpdateReplyDto,
   ): Promise<CommunityReplyEntity> {
-    console.log('put', updateReplyDto);
     return this.communityReplyService.updateReply(replyId, updateReplyDto);
   }
 

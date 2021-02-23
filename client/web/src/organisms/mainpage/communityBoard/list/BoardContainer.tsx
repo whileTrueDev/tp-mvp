@@ -127,7 +127,7 @@ export default function BoardContainer({
 
   const TitleComponent = useMemo(() => (
     <BoardTitle platform={platform} />
-  ), []);
+  ), [platform]);
 
   return (
     <div className={classes.root}>

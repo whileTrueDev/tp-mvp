@@ -129,7 +129,7 @@ function PostList(props: PostListProps): JSX.Element {
     createDate: `${getDateDisplay(post.createDate)}`,
     hit: post.hit,
     recommend: post.recommend,
-  }))), [posts]);
+  }))), [classes.replies, posts]);
 
   const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
     history.push({
