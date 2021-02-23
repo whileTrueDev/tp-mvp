@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
 
 /**
- * CommunityPostWrite.tsx 페이지에서 사용되는 axios 요청 핸들러
+ * CommunityPostWrite 컴포넌트에서 사용되는 axios 요청 핸들러
  * @param postId 
  * 
  * @return handleLoadPost : 글 수정시 postId인 글 불러오는 핸들러 get요청

@@ -16,16 +16,14 @@ import { useSnackbar } from 'notistack';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
 // 컴포넌트
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
-import TitleAndEditor from '../../organisms/mainpage/communityBoard/write/TitleAndEditor';
 import NicknamePasswordInput from '../../organisms/mainpage/communityBoard/write/NicknamePasswordInput';
 import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
+import InputField from '../../organisms/mainpage/communityBoard/write/InputField';
 // 훅
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import usePostState from '../../utils/hooks/usePostWriteState';
 import useSunEditor from '../../utils/hooks/useSunEditor';
 import usePostWriteEditAPI from '../../utils/hooks/usePostWriteEditAPI';
-// 이미지
-// import twitchLogo fro
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
@@ -46,6 +44,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     '&>:last-child': {
       marginRight: 0,
     },
+  },
+  editorContainer: {
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -86,34 +87,33 @@ interface LocationState{
 export default function CommunityPostWrite(): JSX.Element {
   const classes = useStyles();
   const {
-    initialContent, setInitialContent, titleValue, onTitleChange,
-    passwordValue, onNicknameChange, nicknameValue, onPasswordChange, setTitle,
-  } = usePostState();
+    titleValue, onTitleChange, setTitle,
+    passwordValue, onPasswordChange,
+    nicknameValue, onNicknameChange,
+  } = usePostState(); // 닉네임, 비밀번호, 제목 인풋 상태
   const { postId } = useParams<any>();
   const location = useLocation<LocationState>();
   const history = useHistory();
-  const { refFn: editorRefFn, editorRef: editor } = useSunEditor();
+  const { editorRef: editor, EditorContainer } = useSunEditor();
   const { handleCreatePost, handleEditPost, handleLoadPost } = usePostWriteEditAPI(postId);
   const { enqueueSnackbar } = useSnackbar();
-  // const { platform } = location.state;
+
   const platform = location.state ? location.state.platform : undefined;
 
   // postId의 여부로 글생성/글수정 모드 확인
-
   const isEditMode = useMemo(() => !!postId, [postId]);
 
   useScrollTop();
 
-  // 글 수정을 하려면 개별글을 불러와야하고,
-  // 거기서 수정 페이지로 이동할 때 platform 말고 다른 데이터도 state에 담아서 보내주면
-  // 요청을 안해도 될거같다....
   useEffect(() => {
     if (isEditMode) {
       // 글 수정하는 경우 글 내용과 제목 가져와서 보여줌
       handleLoadPost((res: { data: { content: any; title: any; }; }) => {
         const { content, title } = res.data;
-        setInitialContent(content);
         setTitle(title);
+        if (editor.current) {
+          editor.current.setContents(content);
+        }
       });
     }
   // 컴포넌트 마운트 시 한번만 실행되는 effect
@@ -205,12 +205,18 @@ export default function CommunityPostWrite(): JSX.Element {
                 onNicknameChange={onNicknameChange}
               />
             )}
-          <TitleAndEditor
-            editorRefFn={editorRefFn}
-            editor={editor.current}
-            initialContent={initialContent}
-            titleValue={titleValue}
-            onTitleChange={onTitleChange}
+
+          <InputField
+            name="title"
+            label="제목"
+            maxLength={20}
+            helperText="* 제목은 최대 20글자까지 가능합니다"
+            placeholder="제목을 입력하세요"
+            value={titleValue}
+            onChange={onTitleChange}
+          />
+          <EditorContainer
+            className={classes.editorContainer}
           />
 
           <div className={classes.buttonContainer}>

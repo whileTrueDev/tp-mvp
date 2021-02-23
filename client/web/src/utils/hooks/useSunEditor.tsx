@@ -1,6 +1,5 @@
-import {
-  // useState, 
-  useCallback, useRef, MutableRefObject,
+import React, {
+  useCallback, useRef,
 } from 'react';
 import 'suneditor/dist/css/suneditor.min.css';
 import suneditor from 'suneditor';
@@ -11,23 +10,30 @@ import SunEditor from 'suneditor/src/lib/core';
  * @description suneditor 인스턴스 생성하기 위한 훅, 에디터 생성시 적용할 옵션도 여기서 적용할 수 있다
  * suneditor-react라는 리액트용 라이브러리가 존재하나 ref 적용안됨, lang옵션 적용 안됨 문제로
  * 그냥 suneditor사용함
+ *
  * 
- * 리턴값 {refFn, editorRef}
- * 
- * @return refFn (node) => void 
- * <textarea id="suneditor" ref={refFn}> 과 같이 사용함
- * suneditor가 마운트 될 노드를 전달받아 에디터를 생성하는 함수이다
- * 
- * @return editorRef : Suneditor
- * editorRef.current로 suneditor instance에 접근할 수 있다
- * 에디터 관련 여러 메서드 가지고 있다 http://suneditor.com/sample/html/out/document-user.html
- * editor.setContents(contents) -> 에디터 내용 등록
- * editor.core.getContents(false) -> 에디터 내용 html로 가져오기
- */
-export default function useSunEditor(): {
-  refFn: (node: any) => void,
-  editorRef: React.MutableRefObject<SunEditor | null>
-  } {
+ * @return editorRef 
+ * - suneditor객체가 담긴 React.mutableObject
+ * - editorRef.current로 core object와 util에 접근할 수 있다
+ * - 다음과 같이 사용
+ * - editorRef.current.setContents(content) : db에서 가져온 contents를 에디터에 표시할 때
+ * - editorRef.current.core.getContents(false) : 에디터에 작성된 html을 가져올 때
+ *      
+ * @return EditorContainer
+ * - suneditor가 마운트된 textarea 컴포넌트
+ *  <EditorContainer /> 와 같이 사용함.
+ *  에디터 관련 조작은 editorRef.current로 가능
+ * */
+interface EditorContainerProps {
+  style?: React.CSSProperties;
+  className? : string;
+}
+interface useSunEditorReturnType{
+  editorRef: React.MutableRefObject<SunEditor | null>,
+  EditorContainer: (props: EditorContainerProps) => JSX.Element,
+}
+
+export default function useSunEditor(): useSunEditorReturnType {
   const editorRef = useRef<SunEditor|null>(null);
 
   const refFn = useCallback((node) => {
@@ -56,8 +62,16 @@ export default function useSunEditor(): {
     }
   }, []);
 
+  const EditorContainer = ({
+    style = { width: '100%', minHeight: '400px' },
+    className,
+  }: EditorContainerProps): JSX.Element => (
+    <div className={className}>
+      <textarea ref={refFn} id="suneditor" style={style} />
+    </div>
+  );
   return {
-    refFn,
     editorRef,
+    EditorContainer,
   };
 }
