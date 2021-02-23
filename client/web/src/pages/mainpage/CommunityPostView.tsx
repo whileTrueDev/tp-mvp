@@ -29,6 +29,8 @@ import CustomDialog from '../../atoms/Dialog/Dialog';
 import CheckPasswordForm from '../../organisms/mainpage/communityBoard/postView/CheckPasswordForm';
 import RepliesSection from '../../organisms/mainpage/communityBoard/postView/RepliesSection';
 import ReplyForm from '../../organisms/mainpage/communityBoard/postView/ReplyForm';
+import useBoardState, { FilterType } from '../../utils/hooks/useBoardListState';
+import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   boardTitle: {},
@@ -61,8 +63,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
+// organisms>mainpage>communityBoard>list>PostList에서
+// moveToPost 함수에서 history.push({state:})로 넘어오는 값들
 interface LocationState{
   platform: 'afreeca'|'twitch';
+  page: number,
+  take: number
 }
 
 const SUN_EDITOR_VIEWER_CLASSNAME = 'sun-editor-editable'; // suneditor로 작성된 글을 innerHTML로 넣을 때 해당 엘리먼트에 붙어야 할 클래스네임
@@ -95,15 +101,29 @@ export default function CommunityPostView(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
-  const { postId } = useParams<any>();
   const history = useHistory();
+  const { postId } = useParams<any>();
+
   const location = useLocation<LocationState>();
-  const platform = location.state ? location.state.platform : undefined;
+  const { platform } = location.state;
+  const take = location.state ? location.state.take : 5;
+  const initialPage = location.state ? location.state.page : 1;
 
   const [dialogState, setDialogState] = useState<{open: boolean, context: 'edit'|'delete'}>({ open: false, context: 'edit' });
   const [{ data: currentPost }, getPostForView] = useAxios<CommunityPost>({ url: `/community/posts/${postId}` }, { manual: true });
   const [{ data: recommendCount }, postRecommend] = useAxios<number>({ url: `/community/posts/${postId}/recommend`, method: 'post' }, { manual: true });
   const [, deletePost] = useAxios({ url: `/community/posts/${postId}`, method: 'delete' }, { manual: true });
+
+  // 게시판 관련
+  const {
+    pagenationHandler,
+    boardState,
+    changeFilter,
+    handlePostsLoad,
+  } = useBoardState({ page: initialPage });
+  const filterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
+    changeFilter(categoryFilter);
+  };
 
   // 글 내용 컨텐츠를 표시할 element
   const viewerRef = useRef<any>();
@@ -124,7 +144,6 @@ export default function CommunityPostView(): JSX.Element {
 
   /**
    * 페이지 마운트 된 후 postId로 글 내용 불러오기
-   * 한번만 실행되는 effect
    */
   useEffect(() => {
     getPostForView().then((res) => {
@@ -136,7 +155,7 @@ export default function CommunityPostView(): JSX.Element {
       ShowSnack(snackMessages.error.getPost, 'error', enqueueSnackbar);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [postId]);
 
   // 댓글 다시 불러오는 함수
   const loadReplies = useCallback(() => {
@@ -322,6 +341,17 @@ export default function CommunityPostView(): JSX.Element {
         <ReplyForm
           postId={postId}
           afterCreateReplyHandler={loadReplies}
+        />
+
+        <BoardContainer
+          platform={platform}
+          take={take}
+          pagenationHandler={pagenationHandler}
+          searchText=""
+          searchType=""
+          boardState={boardState}
+          postFilterHandler={filterHandler}
+          handlePostsLoad={handlePostsLoad}
         />
       </Container>
 

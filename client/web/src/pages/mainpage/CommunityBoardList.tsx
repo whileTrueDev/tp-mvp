@@ -56,14 +56,14 @@ export default function CommunityBoardList(): JSX.Element {
     handlePostsLoad: afreecaPostLoadHandler,
     changeFilter: changeAfreecaFilter,
     initializeFilter: initializeAfreecaFilter,
-  } = useBoardState(); // 아프리카 게시판 상태, 핸들러
+  } = useBoardState({}); // 아프리카 게시판 상태, 핸들러
   const {
     boardState: twitchBoard,
     pagenationHandler: twitchPagenationHandler,
     handlePostsLoad: twitchPostLoadHandler,
     changeFilter: changeTwitchFilter,
     initializeFilter: initializeTwitchFilter,
-  } = useBoardState();// 트위치 게시판 상태, 핸들러
+  } = useBoardState({});// 트위치 게시판 상태, 핸들러
 
   // 검색버튼 눌렀을 때 스크롤 될 엘리먼트 저장
   const scrollRef = useRef<any>();
