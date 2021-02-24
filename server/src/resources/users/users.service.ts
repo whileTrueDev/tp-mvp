@@ -10,6 +10,7 @@ import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interfac
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { LinkPlatformError, LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
+import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import Axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { UserEntity } from './entities/user.entity';
@@ -303,6 +304,85 @@ export class UsersService {
       .groupBy('users.userId')
       .orderBy('MAX(streams.endDate)', 'DESC')
       .getRawMany();
+    return result;
+  }
+
+  /**
+   * 유투브 편집점 페이지 편집점 제공 목록
+   * 해당 플랫폼에서 크리에이터당 최신 방송날짜를 가져온다
+   * @param platform 'afreeca' | 'twitch'
+   * 
+   * @return EditingPointListResType[]
+   * {   
+   *  creatorId: string, // 크리에이터 ID
+      platform: string, // 플랫폼 'afreeca' | 'twitch'
+      userId: string,   // userId
+      title: string,   // 가장 최근 방송 제목
+      endDate: Date,   // 가장 최근 방송의 종료시간
+      nickname: string // 크리에이터 활동명
+   * }[]
+   */
+  async getEditingPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
+    let result: EditingPointListResType[];
+    try {
+      // PlatformAfreecaEntity 에 없는 userId, nickname 존재하여 빈 값이 있음
+      if (platform === 'afreeca') {
+        result = await this.streamsRepository.createQueryBuilder('streams')
+          .leftJoinAndSelect(PlatformAfreecaEntity, 'afreeca', 'streams.creatorId = afreeca.afreecaId')
+          .select([
+            'streams.creatorId AS creatorId',
+            'streams.platform AS platform',
+            'streams.userId AS userId',
+            'streams.title AS title',
+            'MAX(streams.endDate) AS endDate',
+            'afreeca.afreecaStreamerName AS nickname',
+          ])
+          .where('streams.platform = :platform', { platform })
+          .groupBy('streams.creatorId')
+          .orderBy('MAX(streams.endDate)', 'DESC')
+          .getRawMany();
+      }
+
+      // AfreecaTargetStreamersEntity 와 조인시
+      // TypeError: Class constructor AfreecaTargetStreamersEntity cannot be invoked without 'new'
+      // if (platform === 'afreeca') {
+      //   result = await this.streamsRepository.createQueryBuilder('streams')
+      //     .leftJoinAndSelect(AfreecaTargetStreamersEntity, 'afreeca', 'streams.creatorId = afreeca.creatorId')
+      //     .select([
+      //       'streams.creatorId AS creatorId',
+      //       'streams.platform AS platform',
+      //       'streams.userId AS userId',
+      //       'streams.title AS title',
+      //       'MAX(streams.endDate) AS endDate',
+      //       'afreeca.creatorName AS nickname',
+      //     ])
+      //     .where('streams.platform = :platform', { platform })
+      //     .groupBy('streams.creatorId')
+      //     .orderBy('MAX(streams.endDate)', 'DESC')
+      //     .getRawMany();
+      // }
+
+      if (platform === 'twitch') {
+        result = await this.streamsRepository.createQueryBuilder('streams')
+          .leftJoinAndSelect(UserEntity, 'users', 'streams.creatorId = users.twitchId')
+          .select([
+            'streams.creatorId AS creatorId',
+            'streams.platform AS platform',
+            'streams.userId AS userId',
+            'streams.title AS title',
+            'MAX(streams.endDate) AS endDate',
+            'users.nickName AS nickName',
+          ])
+          .where('streams.platform = :platform', { platform })
+          .groupBy('streams.creatorId')
+          .orderBy('MAX(streams.endDate)', 'DESC')
+          .getRawMany();
+      }
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException('Error in getEditingPointList');
+    }
+
     return result;
   }
 
