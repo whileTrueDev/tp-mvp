@@ -16,6 +16,7 @@ const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
   },
   input: {
     textAlign: 'center',
+    padding: theme.spacing(1),
   },
   buttonContainer: {
     display: 'flex',

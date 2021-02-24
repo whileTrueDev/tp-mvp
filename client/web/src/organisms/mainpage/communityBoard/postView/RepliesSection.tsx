@@ -36,8 +36,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   popper: {
     padding: theme.spacing(2),
+    '&>*': {
+      marginRight: theme.spacing(0.5),
+    },
     '&>input': {
       width: theme.spacing(10),
+      padding: theme.spacing(0.5),
     },
     '&>button': {
       minWidth: theme.spacing(6),
@@ -45,6 +49,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
+/**
+ * 댓글목록과 댓글 수정/삭제 버튼 눌렀을 때 뜨는 popper 관리하는 컴포넌트
+ * @param props 
+ */
 export default function RepliesSection(props: SectionProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();

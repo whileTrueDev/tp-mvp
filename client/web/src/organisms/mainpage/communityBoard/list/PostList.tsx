@@ -44,12 +44,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   listContainer: {
     position: 'relative',
   },
-  listItem: {
+  listItem: { // button 엘리먼트 사용하고 있어서 기본 기본스타일 제거
     width: '100%',
+    position: 'relative',
     backgroundColor: 'transparent',
     cursor: 'pointer',
     border: 'none',
-    boxSizing: 'border-box',
+    padding: 0,
     '&:hover': {
       backgroundColor: theme.palette.grey[100],
     },
