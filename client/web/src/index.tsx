@@ -2,7 +2,7 @@ import 'moment/locale/ko';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  BrowserRouter, Switch, Route, Redirect,
+  BrowserRouter, Switch, Route,
 } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import {
@@ -123,10 +123,9 @@ function Index(): JSX.Element {
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
               <Route exact path="/community-board" component={CommunityBoardList} />
-              <Route exact path="/community-board/view/:postId" component={CommunityPostView} />
-              <Redirect from="/community-board/view" to="/community-board" />
-              <Route exact path="/community-board/write" component={CommunityPostWrite} />
-              <Route exact path="/community-board/write/:postId" component={CommunityPostWrite} />
+              <Route exact path="/community-board/:platform/view/:postId" component={CommunityPostView} />
+              <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
+              <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
               <Route path="/mypage" component={Mypage} />
             </Switch>
             {/* 페이지 컴포넌트 */}

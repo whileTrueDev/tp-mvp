@@ -1,7 +1,7 @@
 import React, {
   useCallback, useEffect, useMemo,
 } from 'react';
-import { useParams, useLocation, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   Container, Button,
 } from '@material-ui/core';
@@ -91,14 +91,11 @@ export default function CommunityPostWrite(): JSX.Element {
     passwordValue, onPasswordChange,
     nicknameValue, onNicknameChange,
   } = usePostState(); // 닉네임, 비밀번호, 제목 인풋 상태
-  const { postId } = useParams<any>();
-  const location = useLocation<LocationState>();
+  const { postId, platform } = useParams<any>();
   const history = useHistory();
   const { editorRef: editor, EditorContainer } = useSunEditor();
   const { handleCreatePost, handleEditPost, handleLoadPost } = usePostWriteEditAPI(postId);
   const { enqueueSnackbar } = useSnackbar();
-
-  const platform = location.state ? location.state.platform : undefined;
 
   // postId의 여부로 글생성/글수정 모드 확인
   const isEditMode = useMemo(() => !!postId, [postId]);
@@ -127,7 +124,7 @@ export default function CommunityPostWrite(): JSX.Element {
       content: '',
       nickname: nicknameValue,
       password: passwordValue,
-      platform: platform === 'afreeca' ? 0 : 1, // 아프리카=0, 트위치=1
+      platform,
       category: 0, // 일반글=0, 공지글=1
     };
 
@@ -184,10 +181,6 @@ export default function CommunityPostWrite(): JSX.Element {
     handleEditPost(updatePostDto);
   }, [titleValue, handleEditPost, editor, enqueueSnackbar]);
 
-  function goBack() {
-    history.goBack();
-  }
-
   return (
     <CommunityBoardCommonLayout>
       <Container maxWidth="md">
@@ -223,7 +216,7 @@ export default function CommunityPostWrite(): JSX.Element {
             <Button
               variant="contained"
               size="large"
-              onClick={goBack}
+              onClick={history.goBack}
             >
               취소
             </Button>

@@ -1,17 +1,19 @@
-import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import React, { useEffect, useMemo } from 'react';
-import useAxios from 'axios-hooks';
-import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import CreateIcon from '@material-ui/icons/Create';
+
 import {
   makeStyles, createStyles, Theme, withStyles,
 } from '@material-ui/core/styles';
+import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { Button } from '@material-ui/core';
+import CreateIcon from '@material-ui/icons/Create';
+
+import useAxios from 'axios-hooks';
+
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { FilterType } from '../../../../utils/hooks/useBoardListState';
 
 import PostList from './PostList';
-import BoardTitle from '../share/BoardTitle';
-import { FilterType } from '../../../../utils/hooks/useBoardListState';
 
 const filterButtonValues: Array<{key: FilterType, text: string, color: string}> = [
   { key: 'all', text: '전체글', color: 'primary' },
@@ -124,7 +126,7 @@ export default function BoardContainer({
 
   const moveToWritePage = (event: React.MouseEvent<HTMLElement>) => {
     history.push({
-      pathname: '/community-board/write',
+      pathname: `/community-board/${platform}/write`,
       state: { platform },
     });
   };

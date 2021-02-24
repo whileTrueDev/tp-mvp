@@ -1,18 +1,22 @@
-import { Paper, Typography } from '@material-ui/core';
-import React, {
-  useMemo, memo,
-} from 'react';
+import React, { useMemo, memo } from 'react';
 import { useHistory } from 'react-router-dom';
+import { Paper, Typography } from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
-import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
+
+// 날짜포맷 라이브러리
 import { ko } from 'date-fns/locale';
 import * as dateFns from 'date-fns';
-import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+// 응답타입
+import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
+// axios객체
 import axios from '../../../../utils/axios';
+// 컴포넌트
+import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
 const rowHeightBase = 9; // row(listItem)하나당 높이 기준픽셀
+
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     marginBottom: theme.spacing(2),
@@ -145,9 +149,8 @@ function PostList(props: PostListProps): JSX.Element {
     const postPlatform = platform === 0 ? 'afreeca' : 'twitch';
     axios.post(`/community/posts/${postId}/hit`).then(() => {
       history.push({
-        pathname: `/community-board/view/${postId}`,
+        pathname: `/community-board/${postPlatform}/view/${postId}`,
         state: {
-          platform: postPlatform,
           page,
           take,
         },

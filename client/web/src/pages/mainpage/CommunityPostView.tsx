@@ -2,35 +2,34 @@ import React, {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
-  makeStyles, createStyles, Theme,
-} from '@material-ui/core/styles';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Container, Typography,
-  Paper,
+  Button, Card, CardActions, CardContent, Container, Typography, Paper,
 } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
+
 import useAxios from 'axios-hooks';
-import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import * as dateFns from 'date-fns';
 import { useSnackbar } from 'notistack';
+
+// 타입정의
+import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
-import { Pagination } from '@material-ui/lab';
+import useBoardState, { FilterType } from '../../utils/hooks/useBoardListState';
+
+// 하위 컴포넌트
+import ShowSnack from '../../atoms/snackbar/ShowSnack';
+import CenterLoading from '../../atoms/Loading/CenterLoading';
+import CustomDialog from '../../atoms/Dialog/Dialog';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
 import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
-import CenterLoading from '../../atoms/Loading/CenterLoading';
+import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
 import PostInfoCard from '../../organisms/mainpage/communityBoard/postView/PostInfoCard';
-import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
-import ShowSnack from '../../atoms/snackbar/ShowSnack';
-import CustomDialog from '../../atoms/Dialog/Dialog';
 import CheckPasswordForm from '../../organisms/mainpage/communityBoard/postView/CheckPasswordForm';
 import RepliesSection from '../../organisms/mainpage/communityBoard/postView/RepliesSection';
 import ReplyForm from '../../organisms/mainpage/communityBoard/postView/ReplyForm';
-import useBoardState, { FilterType } from '../../utils/hooks/useBoardListState';
-import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
+// 스타일
+import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   boardTitle: {},
@@ -67,10 +66,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-// organisms>mainpage>communityBoard>list>PostList에서
-// moveToPost 함수에서 history.push({state:})로 넘어오는 값들
+// PostList 컴포넌트의 moveToPost 함수에서 history.push({state:})로 넘어오는 값들
 interface LocationState{
-  platform: 'afreeca'|'twitch';
   page: number,
   take: number
 }
@@ -104,43 +101,50 @@ const snackMessages = {
 export default function CommunityPostView(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
-
   const history = useHistory();
-  const { postId } = useParams<any>();
+
+  const { postId, platform } = useParams<any>();
 
   const location = useLocation<LocationState>();
-  const { platform } = location.state;
   const take = location.state ? location.state.take : 5;
   const initialPage = location.state ? location.state.page : 1;
 
+  // 글수정,삭제버튼 눌렀을 때 어떤 버튼이 눌렸는지 상태 저장 && 다이얼로그 개폐 상태 저장
   const [dialogState, setDialogState] = useState<{open: boolean, context: 'edit'|'delete'}>({ open: false, context: 'edit' });
+  // 개별글 내용 요청
   const [{ data: currentPost }, getPostForView] = useAxios<CommunityPost>({ url: `/community/posts/${postId}` }, { manual: true });
+  // 개별글 추천 요청
   const [{ data: recommendCount }, postRecommend] = useAxios<number>({ url: `/community/posts/${postId}/recommend`, method: 'post' }, { manual: true });
+  // 개별글 삭제 요청
   const [, deletePost] = useAxios({ url: `/community/posts/${postId}`, method: 'delete' }, { manual: true });
 
-  // 게시판 관련
+  // 게시판 상태
   const {
     pagenationHandler,
     boardState,
     changeFilter,
     handlePostsLoad,
   } = useBoardState({ page: initialPage });
+  // 게시판 전체글,공지글,추천글 필터 버튼 핸들러
   const filterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
     changeFilter(categoryFilter);
   };
 
-  // 글 내용 컨텐츠를 표시할 element
+  // 개별글 내용 post.content를 표시할 element
   const viewerRef = useRef<any>();
 
   /**
    * 댓글 페이지네이션 관련
    */
-  const maxReplyToDisplay = useRef<number>(10);
-  const [replyPage, setReplyPage] = useState<number>(1);
+  const maxReplyToDisplay = useRef<number>(10); // 댓글 최대 10개 표시
+  const [replyPage, setReplyPage] = useState<number>(1); // 현재 댓글 페이지
+  // 댓글 요청 함수
   const [{ data: replies }, getReplies] = useAxios<FindReplyResType>({ url: `/community/replies?postId=${postId}&take=${maxReplyToDisplay.current}&page=${replyPage}` }, { manual: true });
+  // 댓글 페이지 총 개수
   const replyPaginationCount = useMemo(() => (
     Math.ceil((replies ? replies.total : 0) / maxReplyToDisplay.current)
   ), [replies]);
+  // 댓글 페이지 변경 핸들러
   const changeReplyPage = (event: React.ChangeEvent<unknown>, newPage: number) => {
     if (replyPage === newPage) return;
     setReplyPage(newPage);
@@ -211,12 +215,7 @@ export default function CommunityPostView(): JSX.Element {
    */
   // 글수정 페이지로 이동
   const moveToEditPostPage = useCallback(() => {
-    history.push({
-      pathname: `/community-board/write/${postId}`,
-      state: {
-        platform,
-      },
-    });
+    history.push(`/community-board/${platform}/write/${postId}`);
   }, [history, platform, postId]);
 
   // 글 삭제 요청 핸들러
@@ -261,9 +260,7 @@ export default function CommunityPostView(): JSX.Element {
         <BoardTitle platform={platform} />
 
         {currentPost ? (
-          <>
-            <PostInfoCard post={currentPost} />
-          </>
+          <PostInfoCard post={currentPost} />
         ) : (
           <CenterLoading />
         )}
