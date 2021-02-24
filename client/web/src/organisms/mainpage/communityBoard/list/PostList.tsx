@@ -66,6 +66,16 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   currentPostItem: {
     backgroundColor: theme.palette.secondary.light,
+    '&:before': {
+      position: 'absolute',
+      content: '""',
+      top: theme.spacing(rowHeightBase / 2),
+      left: theme.spacing(1),
+      transform: 'translate(0,-50%)',
+      borderTop: `${theme.spacing(1)}px solid transparent`,
+      borderBottom: `${theme.spacing(1)}px solid transparent`,
+      borderLeft: `${theme.spacing(1.2)}px solid ${theme.palette.primary.dark}`,
+    },
   },
 }));
 

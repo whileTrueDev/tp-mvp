@@ -70,9 +70,6 @@ const ErrorMessages = {
   password: '비밀번호를 입력해주세요',
   content: '내용을 입력해주세요',
 };
-interface LocationState{
-  platform: 'afreeca' | 'twitch';
-}
 
 /**
  * 글생성/ 수정 페이지 컴포넌트
