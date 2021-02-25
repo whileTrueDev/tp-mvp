@@ -4,7 +4,7 @@ import {
   ForbiddenException, Inject, forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
@@ -55,6 +55,7 @@ export class UsersService {
     private readonly youtubeTargetStreamersRepository: Repository<YoutubeTargetStreamersEntity>,
     @InjectRepository(StreamsEntity)
     private readonly streamsRepository: Repository<StreamsEntity>,
+    private connection: Connection,
   ) {}
 
   private resizeingYoutubeLogo(youtubeLogoString: string): string {
@@ -323,67 +324,26 @@ export class UsersService {
    * }[]
    */
   async getEditingPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
-    let result: EditingPointListResType[];
     try {
-      // PlatformAfreecaEntity 에 없는 userId, nickname 존재하여 빈 값이 있음
-      if (platform === 'afreeca') {
-        result = await this.streamsRepository.createQueryBuilder('streams')
-          .leftJoinAndSelect(PlatformAfreecaEntity, 'afreeca', 'streams.creatorId = afreeca.afreecaId')
-          .select([
-            'streams.creatorId AS creatorId',
-            'streams.platform AS platform',
-            'streams.userId AS userId',
-            'streams.title AS title',
-            'MAX(streams.endDate) AS endDate',
-            'afreeca.afreecaStreamerName AS nickname',
-          ])
-          .where('streams.platform = :platform', { platform })
-          .groupBy('streams.creatorId')
-          .orderBy('MAX(streams.endDate)', 'DESC')
-          .getRawMany();
-      }
-
-      // AfreecaTargetStreamersEntity 와 조인시
-      // TypeError: Class constructor AfreecaTargetStreamersEntity cannot be invoked without 'new'
-      // if (platform === 'afreeca') {
-      //   result = await this.streamsRepository.createQueryBuilder('streams')
-      //     .leftJoinAndSelect(AfreecaTargetStreamersEntity, 'afreeca', 'streams.creatorId = afreeca.creatorId')
-      //     .select([
-      //       'streams.creatorId AS creatorId',
-      //       'streams.platform AS platform',
-      //       'streams.userId AS userId',
-      //       'streams.title AS title',
-      //       'MAX(streams.endDate) AS endDate',
-      //       'afreeca.creatorName AS nickname',
-      //     ])
-      //     .where('streams.platform = :platform', { platform })
-      //     .groupBy('streams.creatorId')
-      //     .orderBy('MAX(streams.endDate)', 'DESC')
-      //     .getRawMany();
-      // }
-
-      if (platform === 'twitch') {
-        result = await this.streamsRepository.createQueryBuilder('streams')
-          .leftJoinAndSelect(UserEntity, 'users', 'streams.creatorId = users.twitchId')
-          .select([
-            'streams.creatorId AS creatorId',
-            'streams.platform AS platform',
-            'streams.userId AS userId',
-            'streams.title AS title',
-            'MAX(streams.endDate) AS endDate',
-            'users.nickName AS nickName',
-          ])
-          .where('streams.platform = :platform', { platform })
-          .groupBy('streams.creatorId')
-          .orderBy('MAX(streams.endDate)', 'DESC')
-          .getRawMany();
-      }
+      const matchingId = `${platform}Id`;
+      return await this.streamsRepository.createQueryBuilder('streams')
+        .leftJoinAndSelect(UserEntity, 'users', `streams.creatorId = users.${matchingId}`)
+        .select([
+          'streams.creatorId AS creatorId',
+          'streams.platform AS platform',
+          'streams.title AS title',
+          'MAX(streams.endDate) AS endDate',
+          'users.userId AS userId',
+          'users.nickName AS nickName',
+        ])
+        .where('streams.platform = :platform', { platform })
+        .groupBy('streams.creatorId')
+        .orderBy('MAX(streams.endDate)', 'DESC')
+        .getRawMany();
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException('Error in getEditingPointList');
     }
-
-    return result;
   }
 
   // **********************************************
