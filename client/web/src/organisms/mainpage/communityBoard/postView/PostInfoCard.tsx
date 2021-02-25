@@ -31,11 +31,12 @@ const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface PostProps {
-  post: CommunityPost
+  post: CommunityPost,
+  repliesCount?: number
 }
-function PostInfoCard({ post }: PostProps) {
+function PostInfoCard({ post, repliesCount }: PostProps) {
   const {
-    title, nickname, ip, createDate, hit, recommend, replies,
+    title, nickname, ip, createDate, hit, recommend,
   } = post;
 
   const cardClass = usePostInfoCardStyle();
@@ -58,7 +59,7 @@ function PostInfoCard({ post }: PostProps) {
           <div className="text">
             <Chip
               className={cardClass.repliesChip}
-              label={`댓글 ${replies ? replies.length : 0}`}
+              label={`댓글 ${repliesCount || 0}`}
             />
           </div>
         </Grid>

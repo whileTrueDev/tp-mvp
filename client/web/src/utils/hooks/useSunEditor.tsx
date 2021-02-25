@@ -6,6 +6,16 @@ import suneditor from 'suneditor';
 import { ko } from 'suneditor/src/lang';
 import plugins from 'suneditor/src/plugins';
 import SunEditor from 'suneditor/src/lib/core';
+
+interface EditorContainerProps {
+  style?: React.CSSProperties;
+  className? : string;
+}
+interface useSunEditorReturnType{
+  editorRef: React.MutableRefObject<SunEditor | null>,
+  EditorContainer: (props: EditorContainerProps) => JSX.Element,
+}
+
 /**
  * @description suneditor 인스턴스 생성하기 위한 훅, 에디터 생성시 적용할 옵션도 여기서 적용할 수 있다
  * suneditor-react라는 리액트용 라이브러리가 존재하나 ref 적용안됨, lang옵션 적용 안됨 문제로
@@ -24,15 +34,6 @@ import SunEditor from 'suneditor/src/lib/core';
  *  <EditorContainer /> 와 같이 사용함.
  *  에디터 관련 조작은 editorRef.current로 가능
  * */
-interface EditorContainerProps {
-  style?: React.CSSProperties;
-  className? : string;
-}
-interface useSunEditorReturnType{
-  editorRef: React.MutableRefObject<SunEditor | null>,
-  EditorContainer: (props: EditorContainerProps) => JSX.Element,
-}
-
 export default function useSunEditor(): useSunEditorReturnType {
   const editorRef = useRef<SunEditor|null>(null);
 

@@ -139,7 +139,14 @@ export default function CommunityPostView(): JSX.Element {
   const maxReplyToDisplay = useRef<number>(10); // 댓글 최대 10개 표시
   const [replyPage, setReplyPage] = useState<number>(1); // 현재 댓글 페이지
   // 댓글 요청 함수
-  const [{ data: replies }, getReplies] = useAxios<FindReplyResType>({ url: `/community/replies?postId=${postId}&take=${maxReplyToDisplay.current}&page=${replyPage}` }, { manual: true });
+  const [{ data: replies }, getReplies] = useAxios<FindReplyResType>({
+    url: '/community/replies',
+    params: {
+      postId,
+      take: maxReplyToDisplay.current,
+      page: replyPage,
+    },
+  }, { manual: true });
   // 댓글 페이지 총 개수
   const replyPaginationCount = useMemo(() => (
     Math.ceil((replies ? replies.total : 0) / maxReplyToDisplay.current)
@@ -260,7 +267,10 @@ export default function CommunityPostView(): JSX.Element {
         <BoardTitle platform={platform} />
 
         {currentPost ? (
-          <PostInfoCard post={currentPost} />
+          <PostInfoCard
+            post={currentPost}
+            repliesCount={replies ? replies.total : 0}
+          />
         ) : (
           <CenterLoading />
         )}

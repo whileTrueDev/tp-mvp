@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
 
-  const select = useRef<number[]>([5, 10]); // 한 페이지당 보여질 글 개수 select 옵션
+  const select = useRef<number[]>([10, 20]); // 한 페이지당 보여질 글 개수 select 옵션
   const [take, setTake] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
   // 검색어 state
   const [searchState, setSearchState] = useState<{text: string, type: string}>({

@@ -5,9 +5,10 @@ import {
   makeStyles, createStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
 
-// 날짜포맷 라이브러리
+// 라이브러리
 import { ko } from 'date-fns/locale';
 import * as dateFns from 'date-fns';
+import classnames from 'classnames';
 // 응답타입
 import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
 // axios객체
@@ -15,7 +16,7 @@ import axios from '../../../../utils/axios';
 // 컴포넌트
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
-const rowHeightBase = 9; // row(listItem)하나당 높이 기준픽셀
+const rowHeightBase = 6; // row(listItem)하나당 높이 기준픽셀
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -174,7 +175,7 @@ function PostList(props: PostListProps): JSX.Element {
   return (
     <div className={classes.root}>
       {/* 헤더 컬럼 */}
-      <div className={` ${classes.row} ${classes.header}`}>
+      <div className={classnames(classes.row, classes.header)}>
         {boardColumns.map((col) => (
           <div
             key={col.key}
@@ -199,7 +200,11 @@ function PostList(props: PostListProps): JSX.Element {
           <button
             onClick={moveToPost(post.postId, post.platform)}
             key={post.postId}
-            className={`${classes.row} ${classes.listItem} ${post.postId === currentPostId ? classes.currentPostItem : ''}`}
+            className={classnames(
+              classes.row,
+              classes.listItem,
+              { [classes.currentPostItem]: post.postId === currentPostId },
+            )}
           >
             {boardColumns.map((col) => (
               /** col 시작 */

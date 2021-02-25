@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { IconButton, InputBase, Paper } from '@material-ui/core';
+import {
+  IconButton, InputAdornment, OutlinedInput, Paper,
+} from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
@@ -53,20 +55,21 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
         <SelectField value={value} select={select.current} handleCallback={setValue} />
 
         <Paper className={classes.inputContainer}>
-          <InputBase
-            className={classes.input}
+          <OutlinedInput
             inputRef={inputRef}
-            placeholder="검색어를 입력해주세요"
+            endAdornment={(
+              <InputAdornment position="end">
+                <IconButton
+                  color="primary"
+                  className={classes.iconButton}
+                  aria-label="search"
+                  onClick={onClick}
+                >
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            )}
           />
-          <IconButton
-            color="primary"
-            className={classes.iconButton}
-            aria-label="search"
-            onClick={onClick}
-          >
-            <SearchIcon />
-          </IconButton>
-
         </Paper>
       </div>
     </div>

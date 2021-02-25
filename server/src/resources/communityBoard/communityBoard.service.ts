@@ -46,11 +46,16 @@ export class CommunityBoardService {
    * @param take 요청한 글의 개수
    */
   private numberingPosts = (
-    posts: any[],
+    posts: CommunityPostEntity[],
     total: number,
     page: number,
     take: number,
-  ): any[] => posts.map((post, index) => ({ ...post, postNumber: total - ((page - 1) * take) - index }))
+  ): any[] => posts.map((post, index) => (
+    {
+      ...post,
+      postNumber: total - ((page - 1) * take) - index,
+      // postNumber: post.postId,
+    }))
 
   async checkPostPassword(postId: number, password: string): Promise<boolean> {
     try {
