@@ -323,7 +323,7 @@ export class UsersService {
       nickname: string // 크리에이터 활동명
    * }[]
    */
-  async getEditingPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
+  async getHighlightPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
     try {
       const matchingId = `${platform}Id`;
       return await this.streamsRepository.createQueryBuilder('streams')

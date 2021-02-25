@@ -180,7 +180,7 @@ export class UsersController {
 
   /**
    * 유투브 편집점 페이지 편집점 제공 목록 요청
-   * GET /users/editing-point-list/:platform
+   * GET /users/highlight-point-list/:platform
    * 플랫폼에 따라 최근 방송 종료순으로 
    * 크리에이터 활동명, userId, 최근방송제목, 최근방송종료시간, 플랫폼 정보를 반환한다
    * 
@@ -196,11 +196,11 @@ export class UsersController {
       nickname: string // 크리에이터 활동명
    * }[]
    */
-  @Get('/editing-point-list/:platform')
-  getEditingPointList(
+  @Get('/highlight-point-list/:platform')
+  getHighlightPointList(
     @Param('platform') platform: 'afreeca'|'twitch',
   ): Promise<any[]> {
-    return this.usersService.getEditingPointList(platform);
+    return this.usersService.getHighlightPointList(platform);
   }
 
   // 회원 가입
