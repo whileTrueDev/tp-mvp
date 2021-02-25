@@ -91,7 +91,7 @@ const snackMessages = {
   },
   error: {
     getReplies: '댓글 내용을 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요',
-    getPost: '글 내용 불러오는 중 문제가 생겼습니다. 잠시 후 다시 시도해주세요',
+    getPost: '존재하지 않는 글입니다. 목록페이지로 이동합니다',
     postRecommend: '추천하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
     duplicateRecommend: '동일한 글은 하루에 한 번만 추천 할 수 있습니다',
     deletePost: '글을 삭제하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요',
@@ -169,19 +169,21 @@ export default function CommunityPostView(): JSX.Element {
     }).catch((e) => {
       console.error('글 불러오기 오류', e);
       ShowSnack(snackMessages.error.getPost, 'error', enqueueSnackbar);
+      history.push('/community-board');
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
   // 댓글 다시 불러오는 함수
   const loadReplies = useCallback(() => {
+    if (!currentPost) return;
     getReplies().then((res) => {
       // console.log(res);
     }).catch((e) => {
       console.error('댓글 불러오기 오류', e);
       ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
     });
-  }, [enqueueSnackbar, getReplies]);
+  }, [enqueueSnackbar, getReplies, currentPost]);
 
   // replyPage (댓글 페이지네이션) 이 바뀌면 댓글 불러오는 이펙트
   useEffect(() => {

@@ -39,6 +39,7 @@ import useAutoLogin from './utils/hooks/useAutoLogin';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 import './assets/truepoint.css';
+import PageNotFound from './pages/others/PageNotFound';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -127,6 +128,7 @@ function Index(): JSX.Element {
               <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
               <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
               <Route path="/mypage" component={Mypage} />
+              <Route component={PageNotFound} />
             </Switch>
             {/* 페이지 컴포넌트 */}
           </BrowserRouter>
