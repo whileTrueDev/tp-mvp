@@ -1,10 +1,11 @@
 import {
-  Controller, UseGuards, Get, Query, Param,
+  // UseGuards, 
+  Controller, Get, Query, Param,
 } from '@nestjs/common';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 // service
 import { BroadcastInfoService } from './broadcast-info.service';
@@ -21,7 +22,7 @@ export class BroadcastInfoController {
    * @param findDaysStreamRequest 로그인 유저 아이디, 조회 시작 날짜 00시 00분 , 조회 종료 날짜 23시 59분
    */
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // 가드 임시 주석처리
   getCompleteStreamsList(@Query(new ValidationPipe())
     findDaysStreamRequest: SearchCalendarStreams): Promise<StreamDataType[]> {
     return this.broadcastService.findDayStreamList(
