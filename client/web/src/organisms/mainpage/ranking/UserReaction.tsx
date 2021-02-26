@@ -1,11 +1,10 @@
 import {
   Avatar,
   Button,
-  Grid,
   List, ListItem, ListItemAvatar, ListItemText, TextField, Typography,
 } from '@material-ui/core';
 import React, {
-  useEffect, useState, useRef,
+  useEffect, useRef,
 } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import * as datefns from 'date-fns';
@@ -57,7 +56,6 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface CreateUserReactionDto{
-  nickname: string;
   content: string;
 }
 
@@ -68,36 +66,21 @@ export interface UserReactionData {
   createDate: Date;
   content: string;
 }
-function createUserReactionData(count = 10) {
-  const result: UserReactionData[] = [];
-  for (let i = 0; i < count; i += 1) {
-    result.push({
-      id: i,
-      username: `시청자${i}`,
-      ip: `${Math.floor(Math.random() * 255) + 1}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
-      createDate: new Date(),
-      // content: `시청자 반응${i}입니다. 시청자반응은 50자 이내로 댓글 시청자 반응 핫한 반응 순서대로 올`,
-      content: `시청자 반응${i}입니다. `,
-    });
-  }
-  return result;
-}
+
+const userReactionUrl = '/user-reactions';
 export default function UserReaction(): JSX.Element {
   const classes = useUserReactionStyle();
-  const [userReactionData, setUserReactionData] = useState<UserReactionData[]>([]);
-  const [,
-    // {data:userReactionData, loading}
-    getUserReactions] = useAxios<UserReactionData[]>('url', { manual: true });
+  // const [userReactionData, setUserReactionData] = useState<UserReactionData[]>([]);
+  const [{
+    data: userReactionData,
+    //  loading 
+  }, getUserReactions] = useAxios<UserReactionData[]>(userReactionUrl, { manual: true });
   const [, postUserReaction] = useAxios({
-    url: 'url',
+    url: userReactionUrl,
     method: 'post',
   }, { manual: true });
   const formRef = useRef<HTMLFormElement>(null);
   const { enqueueSnackbar } = useSnackbar();
-
-  useEffect(() => {
-    setUserReactionData(createUserReactionData());
-  }, []);
 
   const loadUserReactions = () => {
     getUserReactions().then((res) => {
@@ -106,6 +89,10 @@ export default function UserReaction(): JSX.Element {
       console.error('시청자 반응 데이터 불러오기 오류', e);
     });
   };
+
+  useEffect(() => {
+    loadUserReactions();
+  }, []);
 
   const createUserReaction = (createUserReactionDto: CreateUserReactionDto) => {
     postUserReaction({
@@ -124,15 +111,10 @@ export default function UserReaction(): JSX.Element {
     if (!formRef.current) {
       return;
     }
-    if (formRef.current.nickname.value === '') {
-      ShowSnack('닉네임을 입력해주세요', 'error', enqueueSnackbar);
-      return;
-    }
     if (formRef.current.content.value === '') {
       ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
     }
     createUserReaction({
-      nickname: formRef.current.nickname.value,
       content: formRef.current.content.value,
     });
   };
@@ -146,40 +128,31 @@ export default function UserReaction(): JSX.Element {
         </Button>
       </header>
       <List className={classes.list}>
-        {userReactionData.map((data) => (
-          <ListItem key={data.id} alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar />
-            </ListItemAvatar>
-            <ListItemText
-              classes={{
-                primary: classes.itemPrimaryText,
-              }}
-              primary={(
-                <>
-                  <Typography>{`${data.username} (${transformIdToAsterisk(data.ip, 2)})`}</Typography>
-                  <Typography variant="caption" component="span">{datefns.format(data.createDate, 'hh:MM aaaaa\'m\'')}</Typography>
-                </>
+        { userReactionData && userReactionData.length !== 0
+          ? userReactionData.map((data) => (
+            <ListItem key={data.id} alignItems="flex-start">
+              <ListItemAvatar>
+                <Avatar />
+              </ListItemAvatar>
+              <ListItemText
+                classes={{
+                  primary: classes.itemPrimaryText,
+                }}
+                primary={(
+                  <>
+                    <Typography>{`${data.username} (${transformIdToAsterisk(data.ip, 2)})`}</Typography>
+                    <Typography variant="caption" component="span">{datefns.format(new Date(data.createDate), 'hh:MM aaaaa\'m\'')}</Typography>
+                  </>
               )}
-              secondary={
-                <Typography>{data.content}</Typography>
+                secondary={
+                  <Typography>{data.content}</Typography>
               }
-            />
-          </ListItem>
-        ))}
+              />
+            </ListItem>
+          ))
+          : <ListItem>데이터가 없습니다</ListItem>}
       </List>
       <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
-        <Grid container alignItems="center">
-          <TextField
-            className={classes.nicknameInput}
-            name="nickname"
-            placeholder="닉네임"
-            inputProps={{ maxLength: 8 }}
-            variant="outlined"
-          />
-          <Button type="submit" size="large" variant="contained" color="primary">등록</Button>
-        </Grid>
-
         <TextField
           name="content"
           placeholder="여러분들의 의견을 올려주세요"
@@ -187,7 +160,7 @@ export default function UserReaction(): JSX.Element {
           variant="outlined"
           fullWidth
         />
-
+        <Button type="submit" size="large" variant="contained" color="primary">등록</Button>
       </form>
     </section>
 
