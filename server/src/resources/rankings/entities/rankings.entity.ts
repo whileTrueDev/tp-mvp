@@ -1,15 +1,18 @@
 import { Rankings } from '@truepoint/shared/interfaces/Rankings.interface';
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryColumn,
+  CreateDateColumn, PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity({ name: 'Rankings' })
 export class RankingsEntity implements Rankings {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
   creatorId: string;
 
-  @PrimaryColumn()
+  @Column()
   platform: string;
 
   @Column()
@@ -24,14 +27,17 @@ export class RankingsEntity implements Rankings {
   @Column({ type: 'mediumint', default: 0, comment: '시청자 수' })
   viewer: number;
 
-  @Column({ type: 'smallint', default: 0, comment: '웃음 점수' })
+  @Column({ type: 'float', default: 0, comment: '웃음 점수' })
   smileScore: number;
 
-  @Column({ type: 'smallint', default: 0, comment: '답답함 점수' })
+  @Column({ type: 'float', default: 0, comment: '답답함 점수' })
   frustrateScore: number;
 
-  @Column({ type: 'smallint', default: 0, comment: '감탄 점수' })
+  @Column({ type: 'float', default: 0, comment: '감탄 점수' })
   admireScore: number;
+
+  @Column({ type: 'float', default: 0, comment: '욕설 점수' })
+  cussScore: number;
 
   constructor(partial: Partial<RankingsEntity>) {
     Object.assign(this, partial);
