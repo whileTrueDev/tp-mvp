@@ -4,9 +4,11 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
+import UserReaction from '../../organisms/mainpage/ranking/UserReaction';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
+    minWidth: '1400px',
     border: '1px solid black',
   },
   top: {},
@@ -44,6 +46,7 @@ export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const memoAppbar = useMemo(() => <Appbar />, []);
   const memoFooter = useMemo(() => <Footer />, []);
+
   return (
     <div>
       {memoAppbar}
@@ -71,9 +74,7 @@ export default function Ranking(): JSX.Element {
               <section className={wrapper.weeklyViewer}>
                 주간 시청자수 추이
               </section>
-              <section className={wrapper.userReaction}>
-                시청자반응
-              </section>
+              <UserReaction />
             </Grid>
           </Grid>
         </Grid>
