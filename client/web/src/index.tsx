@@ -26,6 +26,9 @@ import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
 import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
+import CommunityBoardList from './pages/mainpage/CommunityBoardList';
+import CommunityPostView from './pages/mainpage/CommunityPostView';
+import CommunityPostWrite from './pages/mainpage/CommunityPostWrite';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
@@ -35,6 +38,7 @@ import useAutoLogin from './utils/hooks/useAutoLogin';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 import './assets/truepoint.css';
+import PageNotFound from './pages/others/PageNotFound';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -117,7 +121,12 @@ function Index(): JSX.Element {
               <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
+              <Route exact path="/community-board" component={CommunityBoardList} />
+              <Route exact path="/community-board/:platform/view/:postId" component={CommunityPostView} />
+              <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
+              <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
               <Route path="/mypage" component={Mypage} />
+              <Route component={PageNotFound} />
             </Switch>
             {/* 페이지 컴포넌트 */}
           </BrowserRouter>

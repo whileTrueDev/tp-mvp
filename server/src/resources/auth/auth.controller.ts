@@ -1,28 +1,33 @@
 import express from 'express';
 import {
-  Controller, Request, Post, UseGuards, Get, Query,
+  // UseGuards,
+  Controller, Request, Post, Get, Query,
   HttpException, HttpStatus, Res, BadRequestException,
   Body, Req, Delete, UseFilters, InternalServerErrorException, ForbiddenException,
 } from '@nestjs/common';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import { LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
-import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from './auth.service';
-import { LogedInExpressRequest, UserLoginPayload } from '../../interfaces/logedInUser.interface';
+import {
+  LogedInExpressRequest,
+  // UserLoginPayload 
+} from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import { UsersService } from '../users/users.service';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
-import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
-import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
 import { AfreecaLinker } from './strategies/afreeca.linker';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
 import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import getFrontHost from '../../utils/getFrontHost';
+// 가드 임시 주석처리
+// import { LocalAuthGuard } from '../../guards/local-auth.guard';
+// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+// import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
+// import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -43,31 +48,32 @@ export class AuthController {
     return { success: false };
   }
 
+  // 로그인 컨트롤러 임시 주석처리
   // 로그인 컨트롤러
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(
-    @Body('stayLogedIn') stayLogedIn: boolean,
-    @Request() req: express.Request,
-    @Res() res: express.Response,
-  ): Promise<void> {
-    const user = req.user as UserLoginPayload;
-    const {
-      accessToken, refreshToken,
-    } = await this.authService.login(user, stayLogedIn);
+  // @UseGuards(LocalAuthGuard)
+  // @Post('login')
+  // async login(
+  //   @Body('stayLogedIn') stayLogedIn: boolean,
+  //   @Request() req: express.Request,
+  //   @Res() res: express.Response,
+  // ): Promise<void> {
+  //   const user = req.user as UserLoginPayload;
+  //   const {
+  //     accessToken, refreshToken,
+  //   } = await this.authService.login(user, stayLogedIn);
 
-    // *************************************
-    // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
+  //   // *************************************
+  //   // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
 
-    // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
-    // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
-    if (user.twitchId) this.usersService.refreshTwitchInfo(user.twitchId);
-    if (user.youtubeId) this.usersService.refreshYoutubeInfo(user.youtubeId);
+  //   // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
+  //   // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
+  //   if (user.twitchId) this.usersService.refreshTwitchInfo(user.twitchId);
+  //   if (user.youtubeId) this.usersService.refreshYoutubeInfo(user.youtubeId);
 
-    // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
-    res.cookie('refresh_token', refreshToken, { httpOnly: true });
-    res.send({ access_token: accessToken });
-  }
+  //   // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
+  //   res.cookie('refresh_token', refreshToken, { httpOnly: true });
+  //   res.send({ access_token: accessToken });
+  // }
 
   /**
    * 패스워드가 맞는지 확인하여 true , false를 반환하는 컨트롤러로,
@@ -75,7 +81,7 @@ export class AuthController {
    * @param req 로그인 user 정보를 포함한 요청 객체
    * @param password 패스워드 plain 문자열
    */
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('check-pw')
   async checkPw(
     @Req() req: LogedInExpressRequest,
@@ -128,7 +134,7 @@ export class AuthController {
    * @param id 연동하는 플랫폼의 고유 아이디
    */
   @Post('link')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async platformLink(
     @Req() req: LogedInExpressRequest,
     @Body('platform') platform: string, @Body('id') id: string,
@@ -143,7 +149,7 @@ export class AuthController {
    * @param platform 연동 제거할 플랫폼 문자열 twitch|youtube|afreeca 셋 중 하나.
    */
   @Delete('link')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   async deletePlatformLink(
     @Req() req: LogedInExpressRequest, @Body('platform') platform: string,
   ): Promise<string> {
@@ -159,14 +165,14 @@ export class AuthController {
   // *********** Twitch ******************
   // Twitch Link start
   @Get('twitch')
-  @UseGuards(TwitchLinkGuard)
+  // @UseGuards(TwitchLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   twitch(): void {}
 
   // Twitch oauth Callback url
   @Get('twitch/callback')
   @UseFilters(TwitchLinkExceptionFilter)
-  @UseGuards(TwitchLinkGuard)
+  // @UseGuards(TwitchLinkGuard)
   twitchCallback(
     @Req() req: express.Request,
     @Res() res: express.Response,
@@ -180,13 +186,13 @@ export class AuthController {
   // *********** Youtube ******************
   // Youtube link start
   @Get('youtube')
-  @UseGuards(YoutubeLinkGuard)
+  // @UseGuards(YoutubeLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   youtube(): void {}
 
   @Get('youtube/callback')
   @UseFilters(YoutubeLinkExceptionFilter)
-  @UseGuards(YoutubeLinkGuard)
+  // @UseGuards(YoutubeLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   youtubeCallback(
     @Req() req: express.Request,

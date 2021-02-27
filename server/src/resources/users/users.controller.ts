@@ -1,6 +1,7 @@
 import {
+  // UseGuards,
   Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, UseGuards, Req, ForbiddenException, Delete,
+  ClassSerializerInterceptor, Query, Patch, Req, ForbiddenException, Delete, Param,
 } from '@nestjs/common';
 // DTOs
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
@@ -10,7 +11,7 @@ import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interfac
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
@@ -33,7 +34,7 @@ export class UsersController {
    * @param userId 유저 정보를 열람하고자 하는 유저의 아이디
    */
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async findUser(
     @Req() req: LogedInExpressRequest,
@@ -49,7 +50,7 @@ export class UsersController {
    * @param userId 연동된 플랫폼 프로필 이미지를 열람하고자 하는 유저 아이디
    */
   @Get('profile-images')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async findUserProfileImages(
     @Req() req: LogedInExpressRequest,
@@ -65,7 +66,7 @@ export class UsersController {
    * @param userId 연동된 플랫폼 닉네임/채널명을 열람하고자 하는 유저 아이디
    */
   @Get('platform-names')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async findLinkedChannelNames(
     @Req() req: LogedInExpressRequest,
@@ -81,7 +82,7 @@ export class UsersController {
    * @param updateUserDto 변경할 유저 정보 Data Transfer Object
    */
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async updateUser(
     @Req() req: LogedInExpressRequest,
@@ -95,7 +96,7 @@ export class UsersController {
   }
 
   @Delete()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async deleteUser(
     @Req() req: LogedInExpressRequest,
@@ -150,7 +151,7 @@ export class UsersController {
     output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
   */
   @Get('/subscribe-users')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   getUserValidSubscribeInfo(
     @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers,
   ): Promise<{validUserList: SubscribeEntity[]; inValidUserList: SubscribeEntity[]}> {
@@ -175,6 +176,31 @@ export class UsersController {
   @Get('/brief-info-list')
   getAllUserBriefInfoList(): Promise<BriefInfoDataResType> {
     return this.usersService.getAllUserBriefInfoList();
+  }
+
+  /**
+   * 유투브 편집점 페이지 편집점 제공 목록 요청
+   * GET /users/highlight-point-list/:platform
+   * 플랫폼에 따라 최근 방송 종료순으로 
+   * 크리에이터 활동명, userId, 최근방송제목, 최근방송종료시간, 플랫폼 정보를 반환한다
+   * 
+   * @param platform 'afreeca' | 'twitch'
+   * 
+   * @return EditingPointListResType[]
+   * {   
+   *  creatorId: string, // 크리에이터 ID(아프리카아이디 || 트위치아이디)
+      platform: string, // 플랫폼 'afreeca' | 'twitch'
+      userId: string,   // userId
+      title: string,   // 가장 최근 방송 제목
+      endDate: Date,   // 가장 최근 방송의 종료시간
+      nickname: string // 크리에이터 활동명
+   * }[]
+   */
+  @Get('/highlight-point-list/:platform')
+  getHighlightPointList(
+    @Param('platform') platform: 'afreeca'|'twitch',
+  ): Promise<any[]> {
+    return this.usersService.getHighlightPointList(platform);
   }
 
   // 회원 가입

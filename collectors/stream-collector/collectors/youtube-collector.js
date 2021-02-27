@@ -38,7 +38,7 @@ const getCreators = () => new Promise((resolve, reject) => {
   const creatorListQuery = `
   SELECT userId, youtubeId
   FROM ${USER_TABLE}
-  RIGHT JOIN PlatformYoutubeTest USING (youtubeId)
+  RIGHT JOIN PlatformYoutube USING (youtubeId)
   `;
   useQuery('tp', creatorListQuery, [])
     .then((row) => {

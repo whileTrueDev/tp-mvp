@@ -1,7 +1,7 @@
 import {
+  // UseGuards,
   Controller, Get, ParseArrayPipe,
-  Query, UseGuards,
-  Post, Body,
+  Query, Post, Body,
 } from '@nestjs/common';
 // shared dto , interfaces
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
@@ -18,7 +18,7 @@ import { StreamAnalysisService } from './stream-analysis.service';
 // // pipe
 // import { ValidationPipe } from '../../pipes/validation.pipe';
 // guard
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // Entity
 import { StreamsEntity } from './entities/streams.entity';
 
@@ -48,6 +48,7 @@ export class StreamAnalysisController {
    */
   @Post('periods')
   // 마케팅을 위한 개발로 인한 가드 해제 - 일시주석
+
   // @UseGuards(JwtAuthGuard)
   async getPeriodsStreamsInfo(
   @Body('base', new ParseArrayPipe({ items: EachStream })) base: EachStream[],
@@ -76,7 +77,7 @@ export class StreamAnalysisController {
   * @param findUserStatisticRequest 유저 아이디 
   */
   @Get('user-statistics')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   getUserStatisticsInfo(
     @Query() findUserStatisticRequest: SearchUserStatisticData,
   ): Promise<StreamsEntity[]> {
