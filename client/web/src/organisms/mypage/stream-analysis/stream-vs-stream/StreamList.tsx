@@ -12,6 +12,7 @@ import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 // shared interface
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // interface
+import shortid from 'shortid';
 import { StreamListProps } from './StreamCompareSectioninterface';
 import dateExpression from '../../../../utils/dateExpression';
 
@@ -178,6 +179,7 @@ export default function StreamList(props: StreamListProps): JSX.Element {
         <StyledToolTip
           placement="top"
           title={tooltipContents(stream)}
+          key={shortid.generate()}
         >
           <ListItem
             key={stream.streamId}

@@ -19,6 +19,8 @@ import usePeriodCompareStyles from './PeriodCompareSection.style';
 // attoms
 import Loading from '../../../shared/sub/Loading';
 import SelectVideoIcon from '../../../../atoms/stream-analysis-icons/SelectVideoIcon';
+import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
+import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
 // interfaces
 import { PeriodCompareProps, StreamsListItem, CompareMetric } from '../shared/StreamAnalysisShared.interface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
@@ -34,7 +36,7 @@ import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {
-    loading, error, handleSubmit,
+    loading, error, handleSubmit, exampleMode,
   } = props;
   const classes = usePeriodCompareStyles();
   // const subscribe = useContext(SubscribeContext);
@@ -176,46 +178,50 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   React.useEffect(() => {
     if (basePeriod[0] && basePeriod[1]) {
       const searchParam: SearchCalendarStreams = {
-        userId: auth.user.userId,
+        userId: exampleMode ? 'sal_gu' : auth.user.userId,
         startDate: basePeriod[0].toISOString(),
         endDate: basePeriod[1].toISOString(),
       };
       excuteGetStreams({
         params: searchParam,
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-        setBaseStreamsList(res.data.map((data) => ({
-          ...data,
+        const result = res.data.map((row) => ({
+          ...row,
+          title: '예시 방송1 입니다',
           isRemoved: false,
-        })));
+        }));
+        setBaseStreamsList(result);
       }).catch((err) => {
         if (err.response) {
           ShowSnack('방송 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
         }
       });
     }
-  }, [basePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, basePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
 
   React.useEffect(() => {
     if (comparePeriod[0] && comparePeriod[1]) {
       const searchParam: SearchCalendarStreams = {
-        userId: auth.user.userId,
+        userId: exampleMode ? 'sal_gu' : auth.user.userId,
         startDate: comparePeriod[0].toISOString(),
         endDate: comparePeriod[1].toISOString(),
       };
       excuteGetStreams({
         params: searchParam,
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-        setCompareStreamsList(res.data.map((data) => ({
-          ...data,
+        const result = res.data.map((row) => ({
+          ...row,
+          title: '예시 방송2 입니다',
           isRemoved: false,
-        })));
+        }));
+        setCompareStreamsList(result);
       }).catch((err) => {
         if (err.response) {
           ShowSnack('방송 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
         }
       });
     }
-  }, [comparePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, comparePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
 
   return (
     <div className={classes.root}>
@@ -249,6 +255,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           {/*  기간 선택 부 - 기간 선택 달력 + popper open 로직 */}
           <div className={classes.calendarWrapper}>
             <RangeSelectCalendar
+              exampleMode={exampleMode}
               handlePeriod={handlePeriod}
               period={basePeriod}
               handleDialogOpen={baseDialog.handleOpen}
@@ -277,6 +284,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
           {/*  기간 선택 부 - 기간 선택 달력 + popper open 로직 */}
           <div className={classes.calendarWrapper}>
             <RangeSelectCalendar
+              exampleMode={exampleMode}
               handlePeriod={handlePeriod}
               period={comparePeriod}
               handleDialogOpen={compareDialog.handleOpen}
@@ -287,14 +295,31 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         </Grid>
       </div>
 
-      <Typography
-        className={classnames({
-          [classes.mainBody]: true,
-          [classes.categoryTitle]: true,
-        })}
-      >
-        확인할 데이터 선택
-      </Typography>
+      {exampleMode ? (
+        <StepGuideTooltip
+          position="top-start"
+          stepTitle="step3"
+          content={stepguideSource.mainpagePeriodAnalysis.step3}
+        >
+          <Typography
+            className={classnames({
+              [classes.mainBody]: true,
+              [classes.categoryTitle]: true,
+            })}
+          >
+            확인할 데이터 선택
+          </Typography>
+        </StepGuideTooltip>
+      ) : (
+        <Typography
+          className={classnames({
+            [classes.mainBody]: true,
+            [classes.categoryTitle]: true,
+          })}
+        >
+          확인할 데이터 선택
+        </Typography>
+      )}
 
       {/* 분석 옵션 선택 체크박스 그룹 */}
       <CheckBoxGroup
@@ -305,18 +330,39 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       />
 
       <Grid container justify="center">
-        <Button
-          className={classes.anlaysisButton}
-          variant="contained"
-          onClick={handleAnalysisButton}
-          disabled={
-            (Object.values(checkStateGroup).indexOf(true) < 0)
-            || !(basePeriod[0] && basePeriod[1])
-            || !(comparePeriod[0] && comparePeriod[1])
-          }
-        >
-          분석하기
-        </Button>
+        { exampleMode ? (
+          <StepGuideTooltip
+            position="right"
+            stepTitle="step4"
+            content={stepguideSource.mainpagePeriodAnalysis.step4}
+          >
+            <Button
+              className={classes.anlaysisButton}
+              variant="contained"
+              onClick={handleAnalysisButton}
+              disabled={
+                (Object.values(checkStateGroup).indexOf(true) < 0)
+                || !(basePeriod[0] && basePeriod[1])
+                || !(comparePeriod[0] && comparePeriod[1])
+              }
+            >
+              분석하기
+            </Button>
+          </StepGuideTooltip>
+        ) : (
+          <Button
+            className={classes.anlaysisButton}
+            variant="contained"
+            onClick={handleAnalysisButton}
+            disabled={
+              (Object.values(checkStateGroup).indexOf(true) < 0)
+              || !(basePeriod[0] && basePeriod[1])
+              || !(comparePeriod[0] && comparePeriod[1])
+            }
+          >
+            분석하기
+          </Button>
+        )}
       </Grid>
 
       {baseStreamsList && basePeriod[0] && basePeriod[1] && (

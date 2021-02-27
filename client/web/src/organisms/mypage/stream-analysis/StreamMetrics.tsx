@@ -41,13 +41,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface StreamAnalysisPropInterface {
+  exampleMode?: boolean;
   open: boolean;
   metricData: metricInterface[];
   type?: string;
 }
 
 export default function StreamAnalysis(
-  { open, metricData, type }: StreamAnalysisPropInterface,
+  {
+    open, metricData, type, exampleMode,
+  }: StreamAnalysisPropInterface,
 ): JSX.Element {
   const classes = useStyles();
 
