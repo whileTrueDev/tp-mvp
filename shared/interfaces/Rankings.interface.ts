@@ -1,4 +1,6 @@
 export interface Rankings{
+  id: number;
+
   creatorId: string;
 
   platform: string;
