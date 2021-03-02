@@ -5,8 +5,8 @@ import React, { memo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import * as datefns from 'date-fns';
+import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
-import { UserReactionData } from '../UserReaction';
 
 const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
   itemPrimaryText: {
@@ -24,7 +24,7 @@ const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-function UserReactionListItem({ data }: {data: UserReactionData}): JSX.Element {
+function UserReactionListItem({ data }: {data: IUserReaction}): JSX.Element {
   const classes = useUserReactionListItemStyle();
   const { username, content } = data;
   const ip = transformIdToAsterisk(data.ip, 2);
