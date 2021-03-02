@@ -1,18 +1,20 @@
 import {
-  Avatar,
-  Button,
-  List, ListItem, ListItemAvatar, ListItemText, TextField, Typography,
+  Button, List, ListItem, TextField, Typography,
 } from '@material-ui/core';
 import React, {
-  useEffect, useRef,
+  useEffect, useRef, useCallback, useMemo,
 } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import * as datefns from 'date-fns';
+
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
-import transformIdToAsterisk from '../../../utils/transformAsterisk';
+
+import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
+
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import CenterLoading from '../../../atoms/Loading/CenterLoading';
+import UserReactionListItem from './sub/UserReactionListItem';
 
 const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
   userReactionContainer: {
@@ -24,20 +26,11 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
     justifyContent: 'space-between',
     padding: theme.spacing(2),
   },
-  title: {},
   list: {
     maxHeight: theme.spacing(40),
     overflowY: 'scroll',
     borderTop: `1px solid ${theme.palette.divider}`,
     borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  itemPrimaryText: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing(1),
-    '&>span': {
-      color: theme.palette.grey[600],
-    },
   },
   form: {
     width: '100%',
@@ -45,19 +38,8 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
     '& input': {
       padding: theme.spacing(1.5, 2),
     },
-    '&>*+*': {
-      marginTop: theme.spacing(0.5),
-    },
-  },
-  nicknameInput: {
-    width: theme.spacing(18),
-    marginRight: theme.spacing(0.5),
   },
 }));
-
-interface CreateUserReactionDto{
-  content: string;
-}
 
 export interface UserReactionData {
   id: number;
@@ -70,98 +52,116 @@ export interface UserReactionData {
 const userReactionUrl = '/user-reactions';
 export default function UserReaction(): JSX.Element {
   const classes = useUserReactionStyle();
-  // const [userReactionData, setUserReactionData] = useState<UserReactionData[]>([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const formRef = useRef<HTMLFormElement>(null);
+  const listContainerRef = useRef<HTMLUListElement>(null);
   const [{
     data: userReactionData,
-    //  loading 
-  }, getUserReactions] = useAxios<UserReactionData[]>(userReactionUrl, { manual: true });
+    loading,
+  },
+  getUserReactions] = useAxios<UserReactionData[]>(userReactionUrl, { manual: true });
   const [, postUserReaction] = useAxios({
     url: userReactionUrl,
     method: 'post',
   }, { manual: true });
-  const formRef = useRef<HTMLFormElement>(null);
-  const { enqueueSnackbar } = useSnackbar();
 
-  const loadUserReactions = () => {
+  // api요청 핸들러
+  const loadUserReactions = useCallback(() => {
     getUserReactions().then((res) => {
-      // console.log(res);
+      if (listContainerRef.current && listContainerRef.current.scrollTop !== 0) {
+        listContainerRef.current.scrollTop = 0; // 새로운 데이터 로드 후 ul스크롤 위치를 최상단으로
+      }
     }).catch((e) => {
       console.error('시청자 반응 데이터 불러오기 오류', e);
     });
-  };
+  }, [getUserReactions]);
 
-  useEffect(() => {
-    loadUserReactions();
-  }, []);
-
-  const createUserReaction = (createUserReactionDto: CreateUserReactionDto) => {
+  const createUserReaction = useCallback((createUserReactionDto: CreateUserReactionDto) => {
     postUserReaction({
       data: createUserReactionDto,
-    }).then((res) => {
-      // console.log(res);
+    }).then(() => {
+      if (formRef.current) {
+        formRef.current.username.value = '';
+        formRef.current.content.value = '';
+        formRef.current.content.focus();
+      }
       loadUserReactions();
     }).catch((err) => {
       console.error('시청자 반응 생성 에러', err);
     });
-  };
+  }, [loadUserReactions, postUserReaction]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // 마운트 시 한번만 실행
+  useEffect(() => {
+    loadUserReactions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 등록버튼 클릭 | 인풋창에서 엔터 누를 시 실행되는 핸들러
+  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // console.log('submit');
     if (!formRef.current) {
       return;
     }
     if (formRef.current.content.value === '') {
       ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
+      return;
     }
+    const username = formRef.current.username.value || '사용자';
     createUserReaction({
+      username,
       content: formRef.current.content.value,
     });
-  };
+  }, [createUserReaction, enqueueSnackbar]);
+
+  // 컴포넌트들
+  const listComponent = useMemo(() => (
+    <List className={classes.list} ref={listContainerRef}>
+      {loading && <CenterLoading />}
+      { userReactionData && userReactionData.length !== 0
+      /* 데이터가 있는 경우 */
+        ? userReactionData.map((data) => (
+          <UserReactionListItem key={data.id} data={data} />
+        ))
+      /* 데이터가 없는 경우 */
+        : <ListItem>데이터가 없습니다</ListItem>}
+    </List>
+  ), [classes.list, loading, userReactionData]);
+
+  const formComponent = useMemo(() => (
+    <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
+      <div>
+        <TextField
+          name="username"
+          placeholder="사용자명"
+          inputProps={{ maxLength: 8 }}
+          variant="outlined"
+        />
+        <Button type="submit" size="large" variant="contained" color="primary">
+          등록
+        </Button>
+      </div>
+      <TextField
+        name="content"
+        placeholder="여러분들의 의견을 올려주세요"
+        inputProps={{ maxLength: 50 }}
+        variant="outlined"
+        fullWidth
+      />
+    </form>
+  ), [classes.form, handleSubmit]);
+
   return (
     <section className={classes.userReactionContainer}>
       <header className={classes.header}>
-        <Typography variant="h6" className={classes.title}>핫 시청자 반응</Typography>
+        <Typography variant="h6">핫 시청자 반응</Typography>
         <Button variant="outlined" onClick={loadUserReactions}>
           <RefreshIcon />
           새로고침
         </Button>
       </header>
-      <List className={classes.list}>
-        { userReactionData && userReactionData.length !== 0
-          ? userReactionData.map((data) => (
-            <ListItem key={data.id} alignItems="flex-start">
-              <ListItemAvatar>
-                <Avatar />
-              </ListItemAvatar>
-              <ListItemText
-                classes={{
-                  primary: classes.itemPrimaryText,
-                }}
-                primary={(
-                  <>
-                    <Typography>{`${data.username} (${transformIdToAsterisk(data.ip, 2)})`}</Typography>
-                    <Typography variant="caption" component="span">{datefns.format(new Date(data.createDate), 'hh:MM aaaaa\'m\'')}</Typography>
-                  </>
-              )}
-                secondary={
-                  <Typography>{data.content}</Typography>
-              }
-              />
-            </ListItem>
-          ))
-          : <ListItem>데이터가 없습니다</ListItem>}
-      </List>
-      <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
-        <TextField
-          name="content"
-          placeholder="여러분들의 의견을 올려주세요"
-          inputProps={{ maxLength: 50 }}
-          variant="outlined"
-          fullWidth
-        />
-        <Button type="submit" size="large" variant="contained" color="primary">등록</Button>
-      </form>
+      {listComponent}
+      {formComponent}
     </section>
 
   );

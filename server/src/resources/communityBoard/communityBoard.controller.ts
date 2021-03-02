@@ -19,7 +19,7 @@ import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/update
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
 import { RealIP } from 'nestjs-real-ip';
-import { ipv6ToIpv4 } from '../../utils/convertIpAddress';
+import { GetIpv4Half } from '../../utils/convertIpAddress';
 import { CommunityBoardService } from './communityBoard.service';
 import { CommunityReplyService } from './communityReply.service';
 import { CommunityPostEntity } from './entities/community-post.entity';
@@ -98,7 +98,7 @@ export class CommunityBoardController {
     @RealIP() ip: string,
     @Body() createCommunityPostDto: CreateCommunityPostDto,
   ): Promise<CommunityPostEntity> {
-    return this.communityBoardService.createOnePost(createCommunityPostDto, ipv6ToIpv4(ip));
+    return this.communityBoardService.createOnePost(createCommunityPostDto, GetIpv4Half(ip));
   }
 
   /**
@@ -206,7 +206,7 @@ export class CommunityBoardController {
     @RealIP() ip: string,
     @Body() createReplyDto: CreateReplyDto,
   ): Promise<CommunityReplyEntity> {
-    return this.communityReplyService.createReply(createReplyDto, ipv6ToIpv4(ip));
+    return this.communityReplyService.createReply(createReplyDto, GetIpv4Half(ip));
   }
 
   /**

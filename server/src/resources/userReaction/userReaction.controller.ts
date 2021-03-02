@@ -2,13 +2,10 @@ import {
   Controller, Get, Post, Body,
 } from '@nestjs/common';
 import { RealIP } from 'nestjs-real-ip';
+import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
 import { UserReactionService } from './userReaction.service';
-import { ipv6ToIpv4 } from '../../utils/convertIpAddress';
+import { convertIpv6ToTo4 } from '../../utils/convertIpAddress';
 
-interface CreateUserReactionDto {
-  nickname: string;
-  content: string;
-}
 @Controller('user-reactions')
 export class UserReactionController {
   constructor(
@@ -25,7 +22,6 @@ export class UserReactionController {
     @RealIP() ip: string,
     @Body() createUserReactionDto: CreateUserReactionDto,
   ): Promise<any> {
-    // console.log(createUserReactionDto);
-    return this.userReactionService.createUserReactions(createUserReactionDto, ipv6ToIpv4(ip));
+    return this.userReactionService.createUserReactions(createUserReactionDto, convertIpv6ToTo4(ip));
   }
 }
