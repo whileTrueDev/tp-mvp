@@ -24,6 +24,7 @@ import { HealthCheckModule } from './resources/health-check/healthcheck.module';
 import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.module';
 import { CbtModule } from './resources/cbt/cbt.module';
 import { CommunityBoardModule } from './resources/communityBoard/communityBoard.module';
+import { RankingsModule } from './resources/rankings/rankings.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -50,6 +51,7 @@ import { CommunityBoardModule } from './resources/communityBoard/communityBoard.
     BroadcastInfoModule,
     CbtModule,
     CommunityBoardModule,
+    RankingsModule,
   ],
 })
 export class AppModule { }
