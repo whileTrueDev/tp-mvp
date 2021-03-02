@@ -10,6 +10,7 @@ import Chart from './Chart';
 import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';
+import Highcharts from './HighChart';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -195,6 +196,8 @@ export default function TruepointHighlight({
             </div>
           </Grid>
         </Grid>
+        {/* test code */}
+        <Highcharts />
       </Grid>
     </Paper>
   );

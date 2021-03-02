@@ -20,6 +20,8 @@
     "axios-hooks": "^2.1.0",
     "classnames": "^2.2.6",
     "date-fns": "2.12.0",
+    "highcharts": "^9.0.1",
+    "highcharts-react-official": "^3.0.0",
     "history": "^5.0.0",
     "js-file-download": "^0.4.12",
     "jwt-decode": "^3.0.0-beta.2",
