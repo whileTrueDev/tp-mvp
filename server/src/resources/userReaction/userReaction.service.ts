@@ -1,32 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
+import { Repository } from 'typeorm';
+import { UserReactionEntity } from './entities/userReaction.entity';
 
-interface UserReactionData {
-  id: number;
-  ip: string;
-  username: string;
-  createDate: Date;
-  content: string;
-}
-
-const userReactions: UserReactionData[] = [];
 @Injectable()
 export class UserReactionService {
-  async getUserReactions(): Promise<any> {
-    return userReactions.slice(0, 10);
+  constructor(
+    @InjectRepository(UserReactionEntity)
+    private readonly userReactionRepository: Repository<UserReactionEntity>,
+  ) {}
+
+  async getUserReactions(): Promise<UserReactionEntity[]> {
+    return this.userReactionRepository.find({
+      order: { createDate: 'DESC' },
+      take: 10,
+    });
   }
 
   async createUserReactions(
     createUserReactionDto: CreateUserReactionDto,
     ip: string,
-  ): Promise<any> {
+  ): Promise<UserReactionEntity> {
     const newReaction = {
       ...createUserReactionDto,
       ip,
-      createDate: new Date(),
-      id: userReactions.length + 1,
     };
-    userReactions.unshift(newReaction);
-    return newReaction;
+    try {
+      const reaction = await this.userReactionRepository.save(newReaction);
+      return reaction;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('error in creating user reaction');
+    }
   }
 }
