@@ -28,7 +28,7 @@ function UserReactionListItem({ data }: {data: IUserReaction}): JSX.Element {
   const classes = useUserReactionListItemStyle();
   const { username, content } = data;
   const ip = transformIdToAsterisk(data.ip, 2);
-  const date = datefns.format(new Date(data.createDate), 'hh:MM aaaaa\'m\'');
+  const date = datefns.format(new Date(data.createDate), 'hh:mm aaaaa\'m\'');
   return (
     <ListItem alignItems="flex-start">
       <ListItemAvatar>
