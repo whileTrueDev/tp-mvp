@@ -155,7 +155,7 @@ export default function UserReaction(): JSX.Element {
         fullWidth
       />
     </form>
-  ), [classes.form, handleSubmit]);
+  ), [classes.form, classes.formRow, handleSubmit]);
 
   return (
     <section className={classes.userReactionContainer}>
