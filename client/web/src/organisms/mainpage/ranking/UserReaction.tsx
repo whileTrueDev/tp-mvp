@@ -28,7 +28,7 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
   },
   list: {
     maxHeight: theme.spacing(40),
-    overflowY: 'scroll',
+    overflowY: 'auto',
     borderTop: `1px solid ${theme.palette.divider}`,
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
@@ -37,6 +37,12 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(2, 0),
     '& input': {
       padding: theme.spacing(1.5, 2),
+    },
+  },
+  formRow: {
+    marginBottom: theme.spacing(0.8),
+    '&>*': {
+      marginRight: theme.spacing(0.6),
     },
   },
 }));
@@ -121,7 +127,7 @@ export default function UserReaction(): JSX.Element {
 
   const formComponent = useMemo(() => (
     <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
-      <div>
+      <div className={classes.formRow}>
         <TextField
           name="username"
           placeholder="사용자명"
