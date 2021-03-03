@@ -173,6 +173,7 @@ export default function AppBar(): JSX.Element {
     {
       name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1),
     },
+    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
     { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
     { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
     { name: 'CBT신청', path: '/infoCBT', activeRouteString: '/infoCBT' },
