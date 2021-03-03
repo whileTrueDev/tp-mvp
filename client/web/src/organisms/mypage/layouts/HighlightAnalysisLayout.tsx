@@ -207,7 +207,7 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
               selectedStream={selectedStream}
               handleSeletedStreams={handleSeletedStreams2}
               platformIcon={platformIcon}
-              exampleMode
+              exampleMode={exampleMode}
             />
           </Grid>
         </Grid>
