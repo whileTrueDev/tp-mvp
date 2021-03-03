@@ -5,9 +5,23 @@ import HighchartsReact from 'highcharts-react-official';
 export default function Chart(): JSX.Element {
   const [hoverData, setHoverData] = useState(null);
   const [chartOptions, setChartOptions] = useState({
+    chart: {
+      renderTo: 'container',
+      type: 'area',
+    },
+    title: {
+      text: undefined,
+    },
     xAxis: {
       categories: ['A', 'B', 'C'],
     },
+    // yAxis: {
+    //   labels: {
+    //     formatter: function() {
+    //         return '%';
+    //     }
+    // },
+    // },
     series: [
       { data: [1, 2, 3] },
     ],
