@@ -11,7 +11,7 @@ import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
 
 import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
-
+import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import UserReactionListItem from './sub/UserReactionListItem';
@@ -47,27 +47,19 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-export interface UserReactionData {
-  id: number;
-  username: string;
-  ip: string;
-  createDate: Date;
-  content: string;
-}
-
-const userReactionUrl = '/user-reactions';
 export default function UserReaction(): JSX.Element {
   const classes = useUserReactionStyle();
   const { enqueueSnackbar } = useSnackbar();
   const formRef = useRef<HTMLFormElement>(null);
   const listContainerRef = useRef<HTMLUListElement>(null);
+  const userReactionUrl = useRef<string>('/user-reactions');
+  const defaultUsername = useRef<string>('시청자');
   const [{
     data: userReactionData,
     loading,
-  },
-  getUserReactions] = useAxios<UserReactionData[]>(userReactionUrl, { manual: true });
-  const [, postUserReaction] = useAxios({
-    url: userReactionUrl,
+  }, getUserReactions] = useAxios<IUserReaction[]>(userReactionUrl.current, { manual: true });
+  const [, postUserReaction] = useAxios<IUserReaction>({
+    url: userReactionUrl.current,
     method: 'post',
   }, { manual: true });
 
@@ -113,9 +105,8 @@ export default function UserReaction(): JSX.Element {
       ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
       return;
     }
-    const username = formRef.current.username.value || '사용자';
     createUserReaction({
-      username,
+      username: formRef.current.username.value || defaultUsername.current,
       content: formRef.current.content.value,
     });
   }, [createUserReaction, enqueueSnackbar]);

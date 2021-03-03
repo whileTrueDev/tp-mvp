@@ -11,7 +11,7 @@ import { Address6 } from 'ip-address';
  * @return ipv4 형태의 문자열
  * 예시) 192.88.99.255
  */
-export function convertIpv6ToTo4(ipv6: string): string {
+export function convertIpv6ToIpv4(ipv6: string): string {
   const address = new Address6(ipv6);
   const teredo = address.inspectTeredo();
   return teredo.client4; // 255.255.255.254
@@ -24,7 +24,7 @@ export function convertIpv6ToTo4(ipv6: string): string {
  * 예시) 192.88
  */
 export function GetIpv4Half(ipv6: string): string {
-  const ipv4ToSave = convertIpv6ToTo4(ipv6)
+  const ipv4ToSave = convertIpv6ToIpv4(ipv6)
     .split('.')
     .slice(0, 2)
     .join('.');// 255.255 처럼 잘라서 저장
