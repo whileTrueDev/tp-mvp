@@ -113,6 +113,26 @@ const styles = makeStyles((theme) => ({
       width: 350,
     },
   },
+  mainExcept: {
+    margin: '20px 0px 20px 0px',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  button: {
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    border: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
+    borderRadius: 0,
+    width: 150,
+  },
+  buttonLine: {
+    animation: '$lineSpread 0.5s ease-in-out',
+    borderBottom: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
+    width: '100%',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+    },
+  },
 }));
 
 export default styles;
