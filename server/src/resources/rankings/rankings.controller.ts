@@ -24,6 +24,14 @@ export class RankingsController {
 
   /**
    * 반응별 랭킹 top 10
+   * GET /rankings/top-ten
+   * @return
+   * {
+    smile: TopTenRankData[],
+    admire: TopTenRankData[],
+    frustrate: TopTenRankData[],
+    cuss: TopTenRankData[],
+    }
    */
   @Get('/top-ten')
   getTopTenRank(): Promise<any> {
