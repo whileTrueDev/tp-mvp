@@ -18,6 +18,9 @@ export class RankingsEntity implements Rankings {
   @Column()
   creatorName: string;
 
+  @Column()
+  title: string;
+
   @CreateDateColumn({ type: 'timestamp', comment: '테이블에 삽입된 날짜' })
   createDate: Date;
 
