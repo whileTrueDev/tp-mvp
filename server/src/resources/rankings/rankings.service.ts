@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  // getConnection, 
+  getConnection,
   Repository,
 } from 'typeorm';
 import { RankingsEntity } from './entities/rankings.entity';
@@ -12,6 +12,7 @@ interface MonthlyRankData{
   platform: 'twitch' | 'afreeca';
   avgScore: number;
 }
+type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
 @Injectable()
 export class RankingsService {
   constructor(
@@ -49,7 +50,7 @@ export class RankingsService {
       "avgScore": 9.3595
     }[]
    */
-  async getMonthlyRank(column: 'smileScore'|'frustrateScore'|'admireScore'): Promise<MonthlyRankData[]> {
+  async getMonthlyRankByColumn(column: ScoreColumn): Promise<MonthlyRankData[]> {
     const decimalPlace = 2;// 평균점수 소수점 2자리까지만
     try {
       return await this.monthlyScoreBaseQuery.clone()
@@ -70,14 +71,14 @@ export class RankingsService {
      admire: MonthlyRankData[]
    * }
    */
-  async getMonthlyScores(): Promise<{
+  async getMonthlyScoresRank(): Promise<{
     smile: MonthlyRankData[],
     frustrate: MonthlyRankData[],
     admire: MonthlyRankData[]
   }> {
-    const smile = await this.getMonthlyRank('smileScore');
-    const frustrate = await this.getMonthlyRank('frustrateScore');
-    const admire = await this.getMonthlyRank('admireScore');
+    const smile = await this.getMonthlyRankByColumn('smileScore');
+    const frustrate = await this.getMonthlyRankByColumn('frustrateScore');
+    const admire = await this.getMonthlyRankByColumn('admireScore');
     return {
       smile,
       frustrate,
@@ -85,17 +86,37 @@ export class RankingsService {
     };
   }
 
-  async test(): Promise<any> {
-    return this.rankingsRepository.find();
+  async getTopTenByColumn(column: ScoreColumn): Promise<any> {
+    return [];
   }
 
-  async getTopTenViewerByPlatform(): Promise<any> {
-    const data = await this.rankingsRepository
-      .createQueryBuilder('rankings')
-      .select('rankings.createDate')
-      .addSelect('rankings.creatorName')
-      .addSelect('rankings.viewer')
-      .orderBy('rankings.viewer', 'DESC');
+  async getTopTenRank(): Promise<any> {
+    // 웃음점수 상위 10명 
+    // group by로 뽑아온 값중에 가장큰 값(max)의 상태값을 가져오기 http://b1ix.net/87
+    const data = await getConnection()
+      .createQueryBuilder()
+      .select([
+        't1.id AS id',
+        't1.creatorId AS creatorId',
+        't1.creatorName AS creatorName',
+        't1.platform AS platform',
+        't1.createDate AS createDate',
+        't1.smileScore AS smileScore'])
+      .addSelect('ROW_NUMBER () OVER (ORDER BY t1.smileScore DESC)', 'rank')
+      .from(RankingsEntity, 't1')
+      .addFrom((subQuery) => subQuery
+        .addSelect('MAX(t2.smileScore)', 'maxScore')
+        .addSelect('t2.creatorId', 'creatorId')
+        .from(RankingsEntity, 't2')
+        .groupBy('t2.creatorName'),
+      // .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'), // 최근 24시간에 대해서
+      't2')
+      .where('t1.creatorId = t2.creatorId')
+      .andWhere('t1.smileScore = t2.maxScore')
+      // .orderBy('smileScore', 'DESC')
+      .take(10)
+      .getRawMany();
+
     return data;
   }
 }

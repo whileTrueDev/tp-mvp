@@ -7,11 +7,6 @@ export class RankingsController {
     private readonly rankingsService: RankingsService,
   ) {}
 
-  @Get()
-  test(): Promise<any> {
-    return this.rankingsService.test();
-  }
-
   /**
    * 지난 월간 웃음/감탄/답답함점수 랭킹목록 반환
    * GET /rankings/monthly-scores
@@ -23,7 +18,15 @@ export class RankingsController {
    * }
    */
   @Get('/monthly-scores')
-  getMonthlyScores(): Promise<any> {
-    return this.rankingsService.getMonthlyScores();
+  getMonthlyScoresRank(): Promise<any> {
+    return this.rankingsService.getMonthlyScoresRank();
+  }
+
+  /**
+   * 반응별 랭킹 top 10
+   */
+  @Get('/top-ten')
+  getTopTenRank(): Promise<any> {
+    return this.rankingsService.getTopTenRank();
   }
 }
