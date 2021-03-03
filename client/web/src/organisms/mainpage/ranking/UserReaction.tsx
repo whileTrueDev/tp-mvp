@@ -28,7 +28,7 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
   },
   list: {
     maxHeight: theme.spacing(40),
-    overflowY: 'scroll',
+    overflowY: 'auto',
     borderTop: `1px solid ${theme.palette.divider}`,
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
