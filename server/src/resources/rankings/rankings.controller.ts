@@ -17,7 +17,7 @@ export class RankingsController {
      admire: MonthlyRankData[]
    * }
    */
-  @Get('/monthly-scores')
+  @Get('monthly-scores')
   getMonthlyScoresRank(): Promise<any> {
     return this.rankingsService.getMonthlyScoresRank();
   }
@@ -33,8 +33,22 @@ export class RankingsController {
     cuss: TopTenRankData[],
     }
    */
-  @Get('/top-ten')
+  @Get('top-ten')
   getTopTenRank(): Promise<any> {
     return this.rankingsService.getTopTenRank();
+  }
+
+  /**
+   * 플랫폼별 상위 10인 시청자수 합 비교
+   * GET /rankings/daily-total-viewers
+   * @return
+   * {
+   *  twitch: { data: [], total : number},
+   *  afreeca: { data: [], total: number}
+   * }
+   */
+  @Get('daily-total-viewers')
+  getDailyTotalViewers(): Promise<any> {
+    return this.rankingsService.getDailyTotalViewers();
   }
 }

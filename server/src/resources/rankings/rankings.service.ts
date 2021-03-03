@@ -1,9 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  getConnection,
+  // getConnection,
   Repository,
 } from 'typeorm';
+// import { Rankings } from '@truepoint/shared/dist/interfaces/Rankings.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 
 type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
@@ -22,6 +23,12 @@ interface TopTenRankData{
   streamDate: Date;
   smileScore: number;
   rank: string; // "1"처럼 들어옴
+}
+
+interface DailyTotalViewerData{
+  creatorId: string;
+  creatorName: string;
+  maxViewer: number;
 }
 
 @Injectable()
@@ -112,23 +119,23 @@ export class RankingsService {
     }[]
    * @param column "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
    */
-  async getTopTenByColumn(column: ScoreColumn): Promise<TopTenRankData[]> {
+  // async getTopTenByColumn(column: ScoreColumn): Promise<TopTenRankData[]> {
+  async getTopTenByColumn(column: ScoreColumn): Promise<any> {
     // group by로 뽑아온 값중에 가장큰 값(max)의 상태값을 가져오기 http://b1ix.net/87 참고함
-    return getConnection()
-      .createQueryBuilder()
+    return this.rankingsRepository
+      .createQueryBuilder('t1')
       .select(`t1.${column}`, `${column}`)
       .addSelect('t1.creatorId', 'creatorId')
       .addSelect('t1.creatorName', 'creatorName')
       .addSelect('t1.title', 'title')
       .addSelect('t1.streamDate', 'streamDate')
       .addSelect('t1.platform', 'platform')
-      .addSelect(`ROW_NUMBER () OVER (ORDER BY t1.${column} DESC)`, 'rank') // 랭크 "1" 이렇게 들어옴
-      .from(RankingsEntity, 't1')
+      .addSelect(`ROW_NUMBER () OVER (ORDER BY t1.${column} DESC)`, 'rank') // 랭크 "1" 이렇게 들어옴 cast()로 타입변경 가능하다는데 오류가 나서 일단 보류함
       .addFrom((subQuery) => subQuery
         .addSelect(`MAX(t2.${column})`, 'maxScore')
         .addSelect('t2.creatorId', 'creatorId')
         .from(RankingsEntity, 't2')
-        .groupBy('t2.creatorName'),
+        .groupBy('t2.creatorId'),
       // .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'), // 최근 24시간에 대해서
       't2')
       .where('t1.creatorId = t2.creatorId')
@@ -147,15 +154,10 @@ export class RankingsService {
     cuss: TopTenRankData[],
    * }
    */
-  async getTopTenRank(): Promise<{
-    smile: TopTenRankData[],
-    admire: TopTenRankData[],
-    frustrate: TopTenRankData[],
-    cuss: TopTenRankData[],
-  }> {
+  async getTopTenRank(): Promise<any> {
     // 웃음점수 상위 10명 
     const smile = await this.getTopTenByColumn('smileScore');
-    // 감탄점수 상위 10명
+    // // 감탄점수 상위 10명
     const admire = await this.getTopTenByColumn('admireScore');
     // 답답함점수 상위 10명
     const frustrate = await this.getTopTenByColumn('frustrateScore');
@@ -165,5 +167,56 @@ export class RankingsService {
     return {
       smile, admire, frustrate, cuss,
     };
+  }
+
+  /**
+   * 최근 24시간 내 플랫폼 별 
+   * 시청자 수 상위 10인의 최대 시청자 수,활동명,creatorId
+   * && 해당 플랫폼의 상위10인 총 시청자수 합 반환
+   * @param platform 'twitch'|'afreeca'
+   * @return
+   * {
+   * data: DailyTotalViewerData[], // 시청자 수 상위 10인의 최대 시청자 수,활동명,creatorId
+     total: number // 해당 플랫폼의 상위10인 총 시청자수 합
+   * }
+   * 
+   */
+  async getDailyTotalViewersByPlatform(platform: 'twitch'|'afreeca'): Promise<
+  {
+    data: DailyTotalViewerData[],
+    total: number
+  }
+  > {
+    const data = await this.rankingsRepository
+      .createQueryBuilder('rankings')
+      .select('MAX(rankings.viewer)', 'maxViewer')
+      .addSelect('rankings.creatorName', 'creatorName')
+      .addSelect('rankings.creatorId', 'creatorId')
+      .where('rankings.platform =:platform', { platform })
+      .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)') // 최근 24시간에 대해서
+      .groupBy('rankings.creatorId')
+      .orderBy('maxViewer', 'DESC')
+      .take(10)
+      .getRawMany();
+    return {
+      data,
+      total: data.reduce((sum, item) => sum + item.maxViewer, 0),
+    };
+  }
+
+  /**
+   * 최근 24시간 내 플랫폼별 최대시청자 10인의 데이터와, 
+   * 최대시청자10인의 시청자합을 플랫폼별로 반환
+   * @return 
+   * {
+   *  twitch: { data: [], total : number},
+   *  afreeca: { data: [], total: number}
+   * }
+   */
+  async getDailyTotalViewers(): Promise<any> {
+    const twitch = await this.getDailyTotalViewersByPlatform('twitch');
+    const afreeca = await this.getDailyTotalViewersByPlatform('afreeca');
+
+    return { twitch, afreeca };
   }
 }
