@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  // getConnection,
+  getConnection,
   Repository,
 } from 'typeorm';
 // import { Rankings } from '@truepoint/shared/dist/interfaces/Rankings.interface';
@@ -122,21 +122,22 @@ export class RankingsService {
   // async getTopTenByColumn(column: ScoreColumn): Promise<TopTenRankData[]> {
   async getTopTenByColumn(column: ScoreColumn): Promise<any> {
     // group by로 뽑아온 값중에 가장큰 값(max)의 상태값을 가져오기 http://b1ix.net/87 참고함
-    return this.rankingsRepository
-      .createQueryBuilder('t1')
+    return getConnection()
+      .createQueryBuilder()
+      .from(RankingsEntity, 't1')
       .select(`t1.${column}`, `${column}`)
       .addSelect('t1.creatorId', 'creatorId')
       .addSelect('t1.creatorName', 'creatorName')
       .addSelect('t1.title', 'title')
       .addSelect('t1.streamDate', 'streamDate')
       .addSelect('t1.platform', 'platform')
-      .addSelect(`ROW_NUMBER () OVER (ORDER BY t1.${column} DESC)`, 'rank') // 랭크 "1" 이렇게 들어옴 cast()로 타입변경 가능하다는데 오류가 나서 일단 보류함
+      // .addSelect(`ROW_NUMBER () OVER (ORDER BY t1.${column} DESC)`, 'rank') // 랭크 "1" 이렇게 들어옴 cast()로 타입변경 가능하다는데 오류가 나서 일단 보류함
       .addFrom((subQuery) => subQuery
         .addSelect(`MAX(t2.${column})`, 'maxScore')
         .addSelect('t2.creatorId', 'creatorId')
         .from(RankingsEntity, 't2')
-        .groupBy('t2.creatorId'),
-      // .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'), // 최근 24시간에 대해서
+        .groupBy('t2.creatorId')
+        .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'), // 최근 24시간에 대해서
       't2')
       .where('t1.creatorId = t2.creatorId')
       .andWhere(`t1.${column} = t2.maxScore`)
@@ -218,5 +219,119 @@ export class RankingsService {
     const afreeca = await this.getDailyTotalViewersByPlatform('afreeca');
 
     return { twitch, afreeca };
+  }
+
+  /**
+   * rankings테이블에서 생성날짜, 최대시청자수로 정렬한 데이터를
+   * 최대시청자 순으로 rank를 매기고,
+   * 상위10인(rank <= 10)이면서 생성날짜가 최근7일 내인 데이터를 생성날짜순으로 정렬하여 가져옴..
+   * 
+   * @return 최근 7일 내 날짜별 트위치,아프리카 시청자수 상위 10인의 시청자수 총합
+   * {
+   * afreeca: [{date:'2021-3-4',totalViewer:'23432'}, {date:'2021-3-3',totalViewer:'1235'}, ... ],
+   * twitch: [{date:'2021-3-4',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
+   * }
+   */
+  async getWeeklyViewers(): Promise<any> {
+    const query = `
+    SELECT platform, cdate as "date", SUM(maxViewer) as totalViewer
+    FROM(
+      SELECT A.*, ROW_NUMBER() OVER (partition by cdate, platform order by maxViewer DESC) AS "rank"
+        FROM (
+          SELECT creatorId, createDate, platform, MAX(viewer) as maxViewer, DATE_FORMAT(createDate,"%Y-%c-%e") AS cdate
+          FROM Rankings
+          Group by creatorId, cdate
+          Order by platform, cdate DESC, maxViewer DESC
+        ) AS A
+    ) AS B
+    where "rank" <= 10 and cdate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+    group by platform, cdate
+    order by platform, cdate DESC;`;
+
+    const data = await getConnection().query(query);
+    const result = { afreeca: [], twitch: [] };
+    data.forEach((item) => {
+      result[item.platform].push({ date: item.date, totalViewer: item.totalViewer });
+    });
+    return result;
+  }
+
+  // 가짜데이터 넣기위해 임시로 사용..
+  async insert(platform: string, dayDiff: number): Promise<any> {
+    const twitch = [
+      { creatorName: '소행성', creatorId: 'thgodtjd' },
+      { creatorName: '철면수심', creatorId: 'cjfaustntla' },
+      { creatorName: '탬탬버린', creatorId: 'xoaxoaqjfls' },
+      { creatorName: '머독', creatorId: 'ajehr' },
+      { creatorName: '웁_게임방송', creatorId: 'dnq_rpdlaqkdthd' },
+      { creatorName: '치킨쿤', creatorId: 'clzlszns' },
+      { creatorName: '꽃핀', creatorId: 'Rhcvls' },
+      { creatorName: '따효니', creatorId: 'Ekgysl' },
+      { creatorName: '다주', creatorId: 'ekwn' },
+      { creatorName: '개복어', creatorId: 'roqhrdj' },
+    ];
+    const afreeca = [
+      { creatorName: '임아니', creatorId: 'dladksl' },
+      { creatorName: '범프리카', creatorId: 'qjavmflzk' },
+      { creatorName: '에디린', creatorId: 'dpelfls' },
+      { creatorName: '신나린', creatorId: 'tlsskfls' },
+      { creatorName: 'bj샤코타임1', creatorId: 'bjtizhxkdla1' },
+      { creatorName: 'bj타요', creatorId: 'bjxkdy' },
+      { creatorName: '대세는bj세야', creatorId: 'eotpsmsbjtpdi' },
+      { creatorName: 'az형태형', creatorId: 'az형태형' },
+      { creatorName: '나는푸르', creatorId: 'sksmsvnfm' },
+      { creatorName: 'flash이영호', creatorId: 'flashdldudgh' },
+      { creatorName: '예능인최군', creatorId: 'dPsmddlschlrns' },
+      { creatorName: '유혜디', creatorId: 'dbgPel' },
+    ];
+    const today = new Date();
+    const createDate = new Date(today);
+    createDate.setDate(createDate.getDate() - dayDiff);
+
+    function getRandomViewer() {
+      return Math.round(Math.random() * 15000);
+    }
+    function getRandomScore() {
+      return Number((Math.random() * 10).toFixed(3));
+    }
+
+    const twitchValues = twitch.map((d) => ({
+      ...d,
+      platform: 'twitch',
+      title: `${d.creatorName} 방송 ${createDate.toISOString()}`,
+      createDate,
+      streamDate: createDate,
+      viewer: getRandomViewer(),
+      smileScore: getRandomScore(),
+      frustrateScore: getRandomScore(),
+      admireScore: getRandomScore(),
+      cussScore: getRandomScore(),
+    }));
+
+    const afreecaValues = afreeca.map((d) => ({
+      ...d,
+      platform: 'afreeca',
+      title: `${d.creatorName} 방송 ${createDate.toISOString()}`,
+      createDate,
+      streamDate: createDate,
+      viewer: getRandomViewer(),
+      smileScore: getRandomScore(),
+      frustrateScore: getRandomScore(),
+      admireScore: getRandomScore(),
+      cussScore: getRandomScore(),
+    }));
+
+    try {
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(RankingsEntity)
+        .values(platform === 'twitch' ? twitchValues : afreecaValues)
+        .execute();
+      return true;
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException('error in insert');
+    }
   }
 }
