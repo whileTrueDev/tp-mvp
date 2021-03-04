@@ -115,34 +115,59 @@ export class RankingsService {
       title: string;
       streamDate: Date;
       smileScore: number;
-      rank: string; // "1"처럼 들어옴
     }[]
    * @param column "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
    */
-  // async getTopTenByColumn(column: ScoreColumn): Promise<TopTenRankData[]> {
   async getTopTenByColumn(column: ScoreColumn): Promise<any> {
-    // group by로 뽑아온 값중에 가장큰 값(max)의 상태값을 가져오기 http://b1ix.net/87 참고함
-    return getConnection()
+    const data = await getConnection()
       .createQueryBuilder()
       .from(RankingsEntity, 't1')
-      .select(`t1.${column}`, `${column}`)
-      .addSelect('t1.creatorId', 'creatorId')
-      .addSelect('t1.creatorName', 'creatorName')
-      .addSelect('t1.title', 'title')
-      .addSelect('t1.streamDate', 'streamDate')
-      .addSelect('t1.platform', 'platform')
-      // .addSelect(`ROW_NUMBER () OVER (ORDER BY t1.${column} DESC)`, 'rank') // 랭크 "1" 이렇게 들어옴 cast()로 타입변경 가능하다는데 오류가 나서 일단 보류함
-      .addFrom((subQuery) => subQuery
-        .addSelect(`MAX(t2.${column})`, 'maxScore')
-        .addSelect('t2.creatorId', 'creatorId')
+      .select([
+        `t1.${column} AS ${column}`,
+        't1.id AS id',
+        't1.creatorId AS creatorId',
+        't1.creatorName AS creatorName',
+        't1.title AS title',
+        't1.createDate AS createDate',
+        't1.platform AS platform',
+      ])
+      .addFrom((subQuery) => subQuery // 최근 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한다 => t2
+        .select([
+          `MAX(t2.${column}) AS maxScore`,
+          't2.creatorId AS creatorId',
+        ])
         .from(RankingsEntity, 't2')
         .groupBy('t2.creatorId')
-        .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'), // 최근 24시간에 대해서
+        .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'),
       't2')
       .where('t1.creatorId = t2.creatorId')
-      .andWhere(`t1.${column} = t2.maxScore`)
+      .andWhere(`t1.${column} = t2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 t1의 creatorId와 점수가 같은 레코드)
+      .orderBy(`t1.${column}`, 'DESC')
       .take(10)
       .getRawMany();
+
+    const topTenCreatorIds = data.map((d) => d.creatorId);
+
+    const series = await getConnection()
+      .createQueryBuilder()
+      .select(['t.*'])
+      .from((subQuery) => subQuery
+        .from(RankingsEntity, 'r')
+        .select([
+          `r.${column} AS ${column}`,
+          'r.createDate AS createDate',
+          'r.creatorId AS creatorId',
+          'RANK() OVER(PARTITION BY r.creatorName ORDER BY r.createDate DESC) AS rnk',
+        ]),
+      't')
+      .where(`t.creatorId IN ('${topTenCreatorIds.join("','")}')`)
+      .andWhere('t.rnk <= 7')
+      .getRawMany();
+
+    return {
+      data,
+      series,
+    };
   }
 
   /**
@@ -156,17 +181,18 @@ export class RankingsService {
    * }
    */
   async getTopTenRank(): Promise<any> {
-    // 웃음점수 상위 10명 
-    const smile = await this.getTopTenByColumn('smileScore');
-    // // 감탄점수 상위 10명
-    const admire = await this.getTopTenByColumn('admireScore');
-    // 답답함점수 상위 10명
-    const frustrate = await this.getTopTenByColumn('frustrateScore');
+    // // 웃음점수 상위 10명 
+    // const smile = await this.getTopTenByColumn('smileScore');
+    // // // 감탄점수 상위 10명
+    // const admire = await this.getTopTenByColumn('admireScore');
+    // // 답답함점수 상위 10명
+    // const frustrate = await this.getTopTenByColumn('frustrateScore');
     // 욕점수 상위 10명
     const cuss = await this.getTopTenByColumn('cussScore');
 
     return {
-      smile, admire, frustrate, cuss,
+      // smile, admire, frustrate, 
+      cuss,
     };
   }
 
@@ -222,9 +248,9 @@ export class RankingsService {
   }
 
   /**
-   * rankings테이블에서 생성날짜, 최대시청자수로 정렬한 데이터를
+   * rankings테이블에서 생성날짜, 최대시청자수로 정렬한 데이터를 크리에이터별, 날짜별로 그룹화하여
    * 최대시청자 순으로 rank를 매기고,
-   * 상위10인(rank <= 10)이면서 생성날짜가 최근7일 내인 데이터를 생성날짜순으로 정렬하여 가져옴..
+   * 상위10인(rank <= 10)이면서 생성날짜가 최근7일 내인 데이터를 생성날짜순으로 정렬하여 가져옴
    * 
    * @return 최근 7일 내 날짜별 트위치,아프리카 시청자수 상위 10인의 시청자수 총합
    * {
@@ -256,7 +282,7 @@ export class RankingsService {
     return result;
   }
 
-  // 가짜데이터 넣기위해 임시로 사용..
+  // 가짜데이터 넣기위해 임시로 사용
   async insert(platform: string, dayDiff: number): Promise<any> {
     const twitch = [
       { creatorName: '소행성', creatorId: 'thgodtjd' },
@@ -294,23 +320,10 @@ export class RankingsService {
     function getRandomScore() {
       return Number((Math.random() * 10).toFixed(3));
     }
-
-    const twitchValues = twitch.map((d) => ({
+    const baseArr = platform === 'afreeca' ? afreeca : twitch;
+    const values = baseArr.map((d) => ({
       ...d,
-      platform: 'twitch',
-      title: `${d.creatorName} 방송 ${createDate.toISOString()}`,
-      createDate,
-      streamDate: createDate,
-      viewer: getRandomViewer(),
-      smileScore: getRandomScore(),
-      frustrateScore: getRandomScore(),
-      admireScore: getRandomScore(),
-      cussScore: getRandomScore(),
-    }));
-
-    const afreecaValues = afreeca.map((d) => ({
-      ...d,
-      platform: 'afreeca',
+      platform,
       title: `${d.creatorName} 방송 ${createDate.toISOString()}`,
       createDate,
       streamDate: createDate,
@@ -326,7 +339,7 @@ export class RankingsService {
         .createQueryBuilder()
         .insert()
         .into(RankingsEntity)
-        .values(platform === 'twitch' ? twitchValues : afreecaValues)
+        .values(values)
         .execute();
       return true;
     } catch (e) {
