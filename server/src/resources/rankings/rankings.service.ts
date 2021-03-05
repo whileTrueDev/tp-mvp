@@ -15,15 +15,25 @@ interface MonthlyRankData{
   avgScore: number;
 }
 
-interface TopTenRankData{
-  creatorId: string;
-  id: number;
-  platform: string;
-  creatorName: string;
-  title: string;
-  streamDate: Date;
-  smileScore: number;
-}
+/**
+    smileScore 부분은 ScoreColumn이 키로 들어가는데
+    string union type을 키로 사용하는 방법 찾아봐야함
+    [key:ScoreColumn]: number; 처럼 사용할 수 없음
+ */
+// interface TopTenRankData{
+//  rankingData : {
+//    creatorId: string;
+//    id: number;
+//    platform: string;
+//    creatorName: string;
+//    title: string;
+//    streamDate: Date;
+//    [key:ScoreColumn]: number;
+//  }
+//  weeklyTrends : {
+//    [key:string] :  { createDate: string; [key:ScoreColumn]: number }[]}
+//  }
+// }
 
 interface DailyTotalViewerData{
   creatorId: string;
@@ -112,7 +122,15 @@ export class RankingsService {
    * 
    * @param column "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
    * @return {
-      rankingData : TopTenRankData[]
+      rankingData : {
+                     creatorId: string;
+                     id: number;
+                     platform: string;
+                     creatorName: string;
+                     title: string;
+                     streamDate: Date;
+                     [key:ScoreColumn]: number;
+                   }
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    }
    */
