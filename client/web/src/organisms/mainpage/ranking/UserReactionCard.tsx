@@ -47,7 +47,7 @@ const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-export default function UserReaction(): JSX.Element {
+export default function UserReactionCard(): JSX.Element {
   const classes = useUserReactionStyle();
   const { enqueueSnackbar } = useSnackbar();
   const formRef = useRef<HTMLFormElement>(null);
