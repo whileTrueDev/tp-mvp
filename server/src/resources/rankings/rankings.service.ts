@@ -71,6 +71,7 @@ export class RankingsService {
    * 월간 평균점수컬럼을 추가하고, 
    * 해당 평균점수 별로 내림차순 정렬하여 값을 가져온다
    * @param column 'smileScore'|'frustrateScore'|'admireScore'
+   * @param errorHandler (error: any) => void 에러핸들링 할 함수
    * @return MonthlyRankData[]
     {
       "creatorName": "랄로",
@@ -128,6 +129,7 @@ export class RankingsService {
    * 자기 조인 예시
    * 
    * @param column "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
+   * @param errorHandler (error: any) => void 에러핸들링 할 함수
    * @return {
       rankingData : {
                      creatorId: string;
@@ -141,43 +143,49 @@ export class RankingsService {
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    }
    */
-  async getTopTenByColumn(column: ScoreColumn): Promise<any> {
-    const rankingData = await getConnection()
-      .createQueryBuilder()
-      .from(RankingsEntity, 'T1')
-      .select([
-        `T1.${column} AS ${column}`,
-        'T1.id AS id',
-        'T1.creatorId AS creatorId',
-        'T1.creatorName AS creatorName',
-        'T1.title AS title',
-        'T1.createDate AS createDate',
-        'T1.platform AS platform',
-      ])
-      .addFrom((subQuery) => subQuery // 최근 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
+  async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<any> {
+    try {
+      const rankingData = await getConnection()
+        .createQueryBuilder()
+        .from(RankingsEntity, 'T1')
         .select([
-          `MAX(rankings.${column}) AS maxScore`,
-          'rankings.creatorId AS creatorId',
+          `T1.${column} AS ${column}`,
+          'T1.id AS id',
+          'T1.creatorId AS creatorId',
+          'T1.creatorName AS creatorName',
+          'T1.title AS title',
+          'T1.createDate AS createDate',
+          'T1.platform AS platform',
         ])
-        .from(RankingsEntity, 'rankings')
-        .groupBy('rankings.creatorId')
-        .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'),
-      'T2')
-      .where('T1.creatorId = T2.creatorId')
-      .andWhere(`T1.${column} = T2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
-      .orderBy(`T1.${column}`, 'DESC')
-      .take(10)
-      .getRawMany();
+        .addFrom((subQuery) => subQuery // 최근 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
+          .select([
+            `MAX(rankings.${column}) AS maxScore`,
+            'rankings.creatorId AS creatorId',
+          ])
+          .from(RankingsEntity, 'rankings')
+          .groupBy('rankings.creatorId')
+          .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'),
+        'T2')
+        .where('T1.creatorId = T2.creatorId')
+        .andWhere(`T1.${column} = T2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
+        .orderBy(`T1.${column}`, 'DESC')
+        .take(10)
+        .getRawMany();
 
-    // 상위 10명 크리에이터의 아이디를 뽑아낸다
-    const topTenCreatorIds = rankingData.map((d) => d.creatorId);
-    // 상위 10명 크리에이터의 최근 7개 방송 점수 동향을 구함
-    const weeklyTrends = await this.getTopTenTrendsByColumn(topTenCreatorIds, column);
-
-    return {
-      rankingData,
-      weeklyTrends,
-    };
+      // 상위 10명 크리에이터의 아이디를 뽑아낸다
+      const topTenCreatorIds = rankingData.map((d) => d.creatorId);
+      // 상위 10명 크리에이터의 최근 7개 방송 점수 동향을 구함
+      const weeklyTrends = await this.getTopTenTrendsByColumn(topTenCreatorIds, column, console.error);
+      return {
+        rankingData,
+        weeklyTrends,
+      };
+    } catch (error) {
+      if (errorHandler) {
+        errorHandler(error);
+      }
+      throw new InternalServerErrorException(`error in getTopTenByColumn column:${column}`);
+    }
   }
 
   /**
@@ -189,38 +197,50 @@ export class RankingsService {
    * 
    * @param topTenCreatorIds 상위 10인의 creatorId array
    * @param column 기준 점수 컬럼 "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
+   * @param errorHandler (error: any) => void 에러핸들링 할 함수
    * @return {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    * 예시: { creatorId: [ {createDate: "2021-3-5", cussScore: 9.861}, ... ], }
    */
-  async getTopTenTrendsByColumn(topTenCreatorIds: string[], column: ScoreColumn): Promise<any> {
-    const data = await getConnection()
-      .createQueryBuilder()
-      .select([
-        'T.creatorId',
-        'T.createDate',
-        `T.${column}`,
-      ])
-      .from((subQuery) => subQuery
-        .from(RankingsEntity, 'R')
+  async getTopTenTrendsByColumn(
+    topTenCreatorIds: string[],
+    column: ScoreColumn,
+    errorHandler?: (error: any) => void,
+  ): Promise<any> {
+    try {
+      const data = await getConnection()
+        .createQueryBuilder()
         .select([
-          `R.${column} AS ${column}`,
-          'DATE_FORMAT(R.createDate,"%Y-%c-%e") AS createDate',
-          'R.creatorId AS creatorId',
-          'RANK() OVER(PARTITION BY R.creatorId ORDER BY R.createDate DESC) AS rnk',
+          'T.creatorId',
+          'T.createDate',
+          `T.${column}`,
         ])
-        .where(`R.creatorId IN ('${topTenCreatorIds.join("','")}')`),
-      'T')
-      .where('T.rnk <= 7')
-      .getRawMany();
+        .from((subQuery) => subQuery
+          .from(RankingsEntity, 'R')
+          .select([
+            `R.${column} AS ${column}`,
+            'DATE_FORMAT(R.createDate,"%Y-%c-%e") AS createDate',
+            'R.creatorId AS creatorId',
+            'RANK() OVER(PARTITION BY R.creatorId ORDER BY R.createDate DESC) AS rnk',
+          ])
+          .where(`R.creatorId IN ('${topTenCreatorIds.join("','")}')`),
+        'T')
+        .where('T.rnk <= 7')
+        .getRawMany();
 
-    // 가져온 데이터를 { creatorId: [ {createDate: "2021-3-5", cussScore: 9.861}, ... ], } 형태로 변환함
-    const result = topTenCreatorIds.reduce((obj, key) => ({ ...obj, [key]: [] }), {});
-    data.reverse().forEach((d) => {
-      const { creatorId, createDate } = d;
-      result[creatorId].push({ createDate, [column]: d[column] });
-    });
+      // 가져온 데이터를 { creatorId: [ {createDate: "2021-3-5", cussScore: 9.861}, ... ], } 형태로 변환함
+      const result = topTenCreatorIds.reduce((obj, key) => ({ ...obj, [key]: [] }), {});
+      data.reverse().forEach((d) => {
+        const { creatorId, createDate } = d;
+        result[creatorId].push({ createDate, [column]: d[column] });
+      });
 
-    return result;
+      return result;
+    } catch (error) {
+      if (errorHandler) {
+        errorHandler(error);
+      }
+      throw new InternalServerErrorException(`error in getTopTenTrendsByColumn column:${column}, creatorIds: ${topTenCreatorIds}`);
+    }
   }
 
   /**
@@ -228,14 +248,15 @@ export class RankingsService {
    * @return  { smile: TopTenRankData[],admire: TopTenRankData[],frustrate: TopTenRankData[],cuss: TopTenRankData[]}
    */
   async getTopTenRank(): Promise<any> {
+    // 아직 어떤 에러처리가 필요한지 불확실하여 콘솔에 에러찍는것만 에러핸들러로 넘김
     // 웃음점수 상위 10명 
-    const smile = await this.getTopTenByColumn('smileScore');
+    const smile = await this.getTopTenByColumn('smileScore', console.error);
     // // 감탄점수 상위 10명
-    const admire = await this.getTopTenByColumn('admireScore');
+    const admire = await this.getTopTenByColumn('admireScore', console.error);
     // 답답함점수 상위 10명
-    const frustrate = await this.getTopTenByColumn('frustrateScore');
+    const frustrate = await this.getTopTenByColumn('frustrateScore', console.error);
     // 욕점수 상위 10명
-    const cuss = await this.getTopTenByColumn('cussScore');
+    const cuss = await this.getTopTenByColumn('cussScore', console.error);
 
     return {
       smile, admire, frustrate, cuss,
@@ -253,6 +274,7 @@ export class RankingsService {
    * && 해당 플랫폼의 상위10인 총 시청자수 합 반환
    * 
    * @param platform 'twitch'|'afreeca'
+   * @param errorHandler (error: any) => void 에러핸들링 할 함수
    * @return
    * {
    * data: DailyTotalViewerData[], // 시청자 수 상위 10인의 최대 시청자 수,활동명,creatorId
@@ -260,29 +282,36 @@ export class RankingsService {
    * }
    * 
    */
-  async getDailyTotalViewersByPlatform(platform: 'twitch'|'afreeca'): Promise<
+  async getDailyTotalViewersByPlatform(platform: 'twitch'|'afreeca', errorHandler?: (error: any) => void): Promise<
   {
     data: DailyTotalViewerData[],
     total: number
   }
   > {
-    const data = await this.rankingsRepository
-      .createQueryBuilder('rankings')
-      .select([
-        'MAX(rankings.viewer) AS maxViewer',
-        'rankings.creatorName AS creatorName',
-        'rankings.creatorId AS creatorId',
-      ])
-      .where('rankings.platform =:platform', { platform })
-      .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)') // 최근 24시간에 대해서
-      .groupBy('rankings.creatorId')
-      .orderBy('maxViewer', 'DESC')
-      .take(10)
-      .getRawMany();
-    return {
-      data,
-      total: data.reduce((sum, item) => sum + item.maxViewer, 0),
-    };
+    try {
+      const data = await this.rankingsRepository
+        .createQueryBuilder('rankings')
+        .select([
+          'MAX(rankings.viewer) AS maxViewer',
+          'rankings.creatorName AS creatorName',
+          'rankings.creatorId AS creatorId',
+        ])
+        .where('rankings.platform =:platform', { platform })
+        .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)') // 최근 24시간에 대해서
+        .groupBy('rankings.creatorId')
+        .orderBy('maxViewer', 'DESC')
+        .take(10)
+        .getRawMany();
+      return {
+        data,
+        total: data.reduce((sum, item) => sum + item.maxViewer, 0),
+      };
+    } catch (error) {
+      if (errorHandler) {
+        errorHandler(error);
+      }
+      throw new InternalServerErrorException(`error in getDailyTotalViewersByPlatform platform:${platform}`);
+    }
   }
 
   /**
@@ -334,14 +363,20 @@ export class RankingsService {
     group by platform, cdate
     order by platform, cdate DESC;`;
 
-    const data = await getConnection().query(query);
-    const result = { afreeca: [], twitch: [] };
-    data
-      .reverse() // 날짜 오름차순으로 넣기 위해
-      .forEach((item) => {
-        result[item.platform].push({ date: item.date, totalViewer: item.totalViewer });
-      });
-    return result;
+    try {
+      const data = await getConnection().query(query);
+      const result = { afreeca: [], twitch: [] };
+      data
+        .reverse() // 날짜 오름차순으로 넣기 위해
+        .forEach((item) => {
+          result[item.platform].push({ date: item.date, totalViewer: item.totalViewer });
+        });
+      return result;
+    } catch (error) {
+      // 에러 핸들러 함수 넣을 곳
+      console.error(error);
+      throw new InternalServerErrorException('error in getWeeklyViewers');
+    }
   }
 
   /**
