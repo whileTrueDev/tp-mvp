@@ -8,6 +8,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import * as datefns from 'date-fns';
 
+import useAxios from 'axios-hooks';
 import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 
@@ -24,30 +25,8 @@ const useWeeklyViewerStyle = makeStyles((theme: Theme) => createStyles({
 
 interface WeeklyData{
   date: string;
-  totalViewer: number;
+  totalViewer: string;
 }
-
-// 임시데이터 - 백엔드와 연결이후 삭제예정
-const dummyWeeklyData = {
-  afreeca: [
-    { date: '2021-3-5', totalViewer: 134321 },
-    { date: '2021-3-4', totalViewer: 123411 },
-    { date: '2021-3-3', totalViewer: 134531 },
-    { date: '2021-3-2', totalViewer: 121351 },
-    { date: '2021-3-1', totalViewer: 123451 },
-    { date: '2021-2-28', totalViewer: 126421 },
-    { date: '2021-2-27', totalViewer: 134561 },
-  ].reverse(),
-  twitch: [
-    { date: '2021-3-5', totalViewer: 109382 },
-    { date: '2021-3-4', totalViewer: 113452 },
-    { date: '2021-3-3', totalViewer: 124532 },
-    { date: '2021-3-2', totalViewer: 111352 },
-    { date: '2021-3-1', totalViewer: 113452 },
-    { date: '2021-2-28', totalViewer: 116422 },
-    { date: '2021-2-27', totalViewer: 124562 },
-  ].reverse(),
-};
 
 const markerSize = {
   width: 14,
@@ -61,14 +40,13 @@ function WeeklyViewerRankingCard(): JSX.Element {
     container: React.RefObject<HTMLDivElement>
 }>(null);
 
-  const [data, setData] = useState<any>({ afreeca: [], twitch: [] });
-  const [loading, setLoading] = useState<boolean>(true);
-  // const [{loading}, getWeeklyData] = useAxios({ url: '/rankings/weekly-viewers' }, { manual: true });
+  const [data, setData] = useState<{afreeca: WeeklyData[], twitch: WeeklyData[]}>({ afreeca: [], twitch: [] });
+  const [{ loading }, getWeeklyData] = useAxios({ url: '/rankings/weekly-viewers' }, { manual: true });
   // 백엔드와 연결이후 바로 윗줄 코드와 교체예정
 
   const dates = useMemo(() => data.afreeca.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd')), [data.afreeca]);
-  const afreecaViewerData = useMemo(() => data.afreeca.map((d: WeeklyData) => d.totalViewer), [data.afreeca]);
-  const twitchViewerData = useMemo(() => data.twitch.map((d: WeeklyData) => d.totalViewer), [data.twitch]);
+  const afreecaViewerData = useMemo(() => data.afreeca.map((d: WeeklyData) => +d.totalViewer), [data.afreeca]);
+  const twitchViewerData = useMemo(() => data.twitch.map((d: WeeklyData) => +d.totalViewer), [data.twitch]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -133,20 +111,14 @@ function WeeklyViewerRankingCard(): JSX.Element {
   });
 
   useEffect(() => {
-    const timeoutID = window.setTimeout(() => {
-      setData(dummyWeeklyData);
-      setLoading(false);
-    }, 3000);
-
-    return () => window.clearTimeout(timeoutID);
-
-    // 백엔드 코드 수정후 합칠 예정
-    // getWeeklyData().then((res) => {
-    //   setWeeklyData(res.data);
-    // }).catch((error) => {
-    //   // 에러핸들링
-    //   console.error(error);
-    // });
+    getWeeklyData().then((res) => {
+      setData(res.data);
+    }).catch((error) => {
+      // 에러핸들링
+      console.error(error);
+    });
+  // 마운트 후 한번만 실행예정
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -157,7 +129,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
       ],
       xAxis: { categories: dates },
     });
-  }, [afreecaViewerData, twitchViewerData, dates]);
+  }, [afreecaViewerData, twitchViewerData, dates, data]);
 
   return (
     <section className={classes.weeklyViewerContainer}>
