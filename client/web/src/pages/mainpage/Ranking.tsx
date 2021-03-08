@@ -1,7 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Container, Grid } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-// import useAxios from 'axios-hooks';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
@@ -40,54 +39,10 @@ const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
 
 }));
 
-// 임시데이터 - 백엔드와 연결이후 삭제예정
-const dummyWeeklyData = {
-  afreeca: [
-    { date: '2021-3-5', totalViewer: 134321 },
-    { date: '2021-3-4', totalViewer: 123411 },
-    { date: '2021-3-3', totalViewer: 134531 },
-    { date: '2021-3-2', totalViewer: 121351 },
-    { date: '2021-3-1', totalViewer: 123451 },
-    { date: '2021-2-28', totalViewer: 126421 },
-    { date: '2021-2-27', totalViewer: 134561 },
-  ],
-  twitch: [
-    { date: '2021-3-5', totalViewer: 109382 },
-    { date: '2021-3-4', totalViewer: 113452 },
-    { date: '2021-3-3', totalViewer: 124532 },
-    { date: '2021-3-2', totalViewer: 111352 },
-    { date: '2021-3-1', totalViewer: 113452 },
-    { date: '2021-2-28', totalViewer: 116422 },
-    { date: '2021-2-27', totalViewer: 124562 },
-  ],
-};
-
 export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const memoAppbar = useMemo(() => <Appbar />, []);
   const memoFooter = useMemo(() => <Footer />, []);
-
-  // const [{ loading: WeeklyDataLoading }, getWeeklyData] = useAxios({ url: '/rankings/weekly-viewers' }, { manual: true });
-  // 백엔드와 연결이후 바로 윗줄 코드와 교체예정
-  const [weeklyData, setWeeklyData] = useState<any>({ afreeca: [], twitch: [] });
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const timeoutID = window.setTimeout(() => {
-      setWeeklyData(dummyWeeklyData);
-      setLoading(false);
-    }, 3000);
-
-    return () => window.clearTimeout(timeoutID);
-
-    // 백엔드 코드 수정후 합칠 예정
-    // getWeeklyData().then((res) => {
-    //   setWeeklyData(res.data);
-    // }).catch((error) => {
-    //   // 에러핸들링
-    //   console.error(error);
-    // });
-  }, []);
 
   return (
     <div>
@@ -113,11 +68,7 @@ export default function Ranking(): JSX.Element {
               <section className={wrapper.monthlyScore}>
                 월간 점수
               </section>
-              <WeeklyViewerRankingCard
-                data={weeklyData}
-                loading={loading}
-                // loading={WeeklyDatLoading}
-              />
+              <WeeklyViewerRankingCard />
               <UserReactionCard />
             </Grid>
           </Grid>

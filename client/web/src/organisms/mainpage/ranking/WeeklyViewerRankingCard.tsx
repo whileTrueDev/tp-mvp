@@ -2,10 +2,12 @@ import React, {
   useEffect, useMemo, useState, useRef,
 } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { Divider, Typography } from '@material-ui/core';
+
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import * as datefns from 'date-fns';
-import { Divider, Typography } from '@material-ui/core';
+
 import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 
@@ -25,31 +27,48 @@ interface WeeklyData{
   totalViewer: number;
 }
 
-interface WeeklyViewerRankingCardProps {
-  data: {
-    afreeca: WeeklyData[],
-    twitch: WeeklyData[]
-  },
-  loading?: boolean
-}
+// 임시데이터 - 백엔드와 연결이후 삭제예정
+const dummyWeeklyData = {
+  afreeca: [
+    { date: '2021-3-5', totalViewer: 134321 },
+    { date: '2021-3-4', totalViewer: 123411 },
+    { date: '2021-3-3', totalViewer: 134531 },
+    { date: '2021-3-2', totalViewer: 121351 },
+    { date: '2021-3-1', totalViewer: 123451 },
+    { date: '2021-2-28', totalViewer: 126421 },
+    { date: '2021-2-27', totalViewer: 134561 },
+  ].reverse(),
+  twitch: [
+    { date: '2021-3-5', totalViewer: 109382 },
+    { date: '2021-3-4', totalViewer: 113452 },
+    { date: '2021-3-3', totalViewer: 124532 },
+    { date: '2021-3-2', totalViewer: 111352 },
+    { date: '2021-3-1', totalViewer: 113452 },
+    { date: '2021-2-28', totalViewer: 116422 },
+    { date: '2021-2-27', totalViewer: 124562 },
+  ].reverse(),
+};
 
 const markerSize = {
   width: 14,
   height: 14,
 };
 
-function WeeklyViewerRankingCard(props: WeeklyViewerRankingCardProps): JSX.Element {
+function WeeklyViewerRankingCard(): JSX.Element {
   const classes = useWeeklyViewerStyle();
   const chartRef = useRef<{
     chart: Highcharts.Chart
     container: React.RefObject<HTMLDivElement>
 }>(null);
-  const { data, loading } = props;
-  const afreecaDataArray = useMemo(() => data.afreeca.reverse(), [data]);
-  const twitchDataArray = useMemo(() => data.twitch.reverse(), [data]);
-  const dates = useMemo(() => afreecaDataArray.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd')), [afreecaDataArray]);
-  const afreecaViewerData = useMemo(() => afreecaDataArray.map((d: WeeklyData) => d.totalViewer), [afreecaDataArray]);
-  const twitchViewerData = useMemo(() => twitchDataArray.map((d: WeeklyData) => d.totalViewer), [twitchDataArray]);
+
+  const [data, setData] = useState<any>({ afreeca: [], twitch: [] });
+  const [loading, setLoading] = useState<boolean>(true);
+  // const [{loading}, getWeeklyData] = useAxios({ url: '/rankings/weekly-viewers' }, { manual: true });
+  // 백엔드와 연결이후 바로 윗줄 코드와 교체예정
+
+  const dates = useMemo(() => data.afreeca.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd')), [data.afreeca]);
+  const afreecaViewerData = useMemo(() => data.afreeca.map((d: WeeklyData) => d.totalViewer), [data.afreeca]);
+  const twitchViewerData = useMemo(() => data.twitch.map((d: WeeklyData) => d.totalViewer), [data.twitch]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -114,6 +133,23 @@ function WeeklyViewerRankingCard(props: WeeklyViewerRankingCardProps): JSX.Eleme
   });
 
   useEffect(() => {
+    const timeoutID = window.setTimeout(() => {
+      setData(dummyWeeklyData);
+      setLoading(false);
+    }, 3000);
+
+    return () => window.clearTimeout(timeoutID);
+
+    // 백엔드 코드 수정후 합칠 예정
+    // getWeeklyData().then((res) => {
+    //   setWeeklyData(res.data);
+    // }).catch((error) => {
+    //   // 에러핸들링
+    //   console.error(error);
+    // });
+  }, []);
+
+  useEffect(() => {
     setChartOptions({
       series: [
         { type: 'line', data: afreecaViewerData },
@@ -121,7 +157,7 @@ function WeeklyViewerRankingCard(props: WeeklyViewerRankingCardProps): JSX.Eleme
       ],
       xAxis: { categories: dates },
     });
-  }, [afreecaViewerData, dates, twitchViewerData]);
+  }, [afreecaViewerData, twitchViewerData, dates]);
 
   return (
     <section className={classes.weeklyViewerContainer}>
