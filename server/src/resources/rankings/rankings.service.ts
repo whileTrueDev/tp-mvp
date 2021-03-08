@@ -143,15 +143,15 @@ export class RankingsService {
   async getTopTenByColumn(column: ScoreColumn): Promise<any> {
     const rankingData = await getConnection()
       .createQueryBuilder()
-      .from(RankingsEntity, 't1')
+      .from(RankingsEntity, 'T1')
       .select([
-        `t1.${column} AS ${column}`,
-        't1.id AS id',
-        't1.creatorId AS creatorId',
-        't1.creatorName AS creatorName',
-        't1.title AS title',
-        't1.createDate AS createDate',
-        't1.platform AS platform',
+        `T1.${column} AS ${column}`,
+        'T1.id AS id',
+        'T1.creatorId AS creatorId',
+        'T1.creatorName AS creatorName',
+        'T1.title AS title',
+        'T1.createDate AS createDate',
+        'T1.platform AS platform',
       ])
       .addFrom((subQuery) => subQuery // 최근 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
         .select([
@@ -161,10 +161,10 @@ export class RankingsService {
         .from(RankingsEntity, 'rankings')
         .groupBy('rankings.creatorId')
         .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'),
-      't2')
-      .where('t1.creatorId = t2.creatorId')
-      .andWhere(`t1.${column} = t2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 t1의 creatorId와 점수가 같은 레코드)
-      .orderBy(`t1.${column}`, 'DESC')
+      'T2')
+      .where('T1.creatorId = T2.creatorId')
+      .andWhere(`T1.${column} = T2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
+      .orderBy(`T1.${column}`, 'DESC')
       .take(10)
       .getRawMany();
 
@@ -195,26 +195,26 @@ export class RankingsService {
     const data = await getConnection()
       .createQueryBuilder()
       .select([
-        't.creatorId',
-        't.createDate',
-        `t.${column}`,
+        'T.creatorId',
+        'T.createDate',
+        `T.${column}`,
       ])
       .from((subQuery) => subQuery
-        .from(RankingsEntity, 'r')
+        .from(RankingsEntity, 'R')
         .select([
-          `r.${column} AS ${column}`,
-          'DATE_FORMAT(r.createDate,"%Y-%c-%e") AS createDate',
-          'r.creatorId AS creatorId',
-          'RANK() OVER(PARTITION BY r.creatorId ORDER BY r.createDate DESC) AS rnk',
+          `R.${column} AS ${column}`,
+          'DATE_FORMAT(R.createDate,"%Y-%c-%e") AS createDate',
+          'R.creatorId AS creatorId',
+          'RANK() OVER(PARTITION BY R.creatorId ORDER BY R.createDate DESC) AS rnk',
         ])
-        .where(`r.creatorId IN ('${topTenCreatorIds.join("','")}')`),
-      't')
-      .where('t.rnk <= 7')
+        .where(`R.creatorId IN ('${topTenCreatorIds.join("','")}')`),
+      'T')
+      .where('T.rnk <= 7')
       .getRawMany();
 
     // 가져온 데이터를 { creatorId: [ {createDate: "2021-3-5", cussScore: 9.861}, ... ], } 형태로 변환함
     const result = topTenCreatorIds.reduce((obj, key) => ({ ...obj, [key]: [] }), {});
-    data.forEach((d) => {
+    data.reverse().forEach((d) => {
       const { creatorId, createDate } = d;
       result[creatorId].push({ createDate, [column]: d[column] });
     });
