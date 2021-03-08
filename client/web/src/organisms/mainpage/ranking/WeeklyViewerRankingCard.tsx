@@ -7,9 +7,11 @@ import HighchartsReact from 'highcharts-react-official';
 import * as datefns from 'date-fns';
 import { Divider, Typography } from '@material-ui/core';
 import getPlatformColor from '../../../utils/getPlatformColor';
+import CenterLoading from '../../../atoms/Loading/CenterLoading';
 
 const useWeeklyViewerStyle = makeStyles((theme: Theme) => createStyles({
   weeklyViewerContainer: {
+    position: 'relative',
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2),
   },
@@ -27,7 +29,8 @@ interface WeeklyViewerRankingCardProps {
   data: {
     afreeca: WeeklyData[],
     twitch: WeeklyData[]
-  }
+  },
+  loading?: boolean
 }
 
 const markerSize = {
@@ -41,12 +44,12 @@ function WeeklyViewerRankingCard(props: WeeklyViewerRankingCardProps): JSX.Eleme
     chart: Highcharts.Chart
     container: React.RefObject<HTMLDivElement>
 }>(null);
-  const { data } = props;
-  const afreecaData = useMemo(() => data.afreeca.reverse(), [data]);
-  const twitchData = useMemo(() => data.twitch.reverse(), [data]);
-  const dates = useMemo(() => afreecaData.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd')), [afreecaData]);
-  const afreecaViewerArray = useMemo(() => afreecaData.map((d: WeeklyData) => d.totalViewer), [afreecaData]);
-  const twitchViewerArray = useMemo(() => twitchData.map((d: WeeklyData) => d.totalViewer), [twitchData]);
+  const { data, loading } = props;
+  const afreecaDataArray = useMemo(() => data.afreeca.reverse(), [data]);
+  const twitchDataArray = useMemo(() => data.twitch.reverse(), [data]);
+  const dates = useMemo(() => afreecaDataArray.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd')), [afreecaDataArray]);
+  const afreecaViewerData = useMemo(() => afreecaDataArray.map((d: WeeklyData) => d.totalViewer), [afreecaDataArray]);
+  const twitchViewerData = useMemo(() => twitchDataArray.map((d: WeeklyData) => d.totalViewer), [twitchDataArray]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -75,7 +78,7 @@ function WeeklyViewerRankingCard(props: WeeklyViewerRankingCardProps): JSX.Eleme
       {
         type: 'line',
         name: '아프리카',
-        data: afreecaViewerArray,
+        data: afreecaViewerData,
         color: getPlatformColor('afreeca'),
         marker: {
           symbol: 'url(/images/logo/afreecaLogo.png)',
@@ -85,7 +88,7 @@ function WeeklyViewerRankingCard(props: WeeklyViewerRankingCardProps): JSX.Eleme
       {
         type: 'line',
         name: '트위치',
-        data: twitchViewerArray,
+        data: twitchViewerData,
         color: getPlatformColor('twitch'),
         marker: {
           symbol: 'url(/images/logo/twitchLogo.png)',
@@ -94,41 +97,46 @@ function WeeklyViewerRankingCard(props: WeeklyViewerRankingCardProps): JSX.Eleme
       },
     ],
     tooltip: {
-      formatter(this: Highcharts.TooltipFormatterContextObject, tooltip: Highcharts.Tooltip) {
-        const { x, points } = this; // x: x축, points: 각 마커에 대응되는 정보
-
-        // const pointsData = points
-        //   ? points.map((point) => `${point.series.name}: ${point.y}m`)
-        //   : [];
-
-        return [`<b>${x}</b>`].concat(
-          points
-            ? points.map((point) => `${point.series.name}: ${point.y}m`) : [],
-        );
+      split: true,
+      useHTML: true,
+      shape: 'callout',
+      padding: 4,
+      pointFormatter(this: Highcharts.Point) {
+        const { y, series, color } = this;
+        return `
+        <div>
+          <p style="color: ${color}">${series.name}</p> 
+          <p>${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명</p>
+        </div>
+        `;
       },
-      shared: true,
     },
   });
 
   useEffect(() => {
     setChartOptions({
       series: [
-        { type: 'line', data: afreecaViewerArray },
-        { type: 'line', data: twitchViewerArray },
+        { type: 'line', data: afreecaViewerData },
+        { type: 'line', data: twitchViewerData },
       ],
       xAxis: { categories: dates },
     });
-  }, [afreecaViewerArray, dates, twitchViewerArray]);
+  }, [afreecaViewerData, dates, twitchViewerData]);
 
   return (
     <section className={classes.weeklyViewerContainer}>
       <Typography variant="h6" className={classes.weeklyViewerTitle}>주간 시청자수 랭킹</Typography>
       <Divider />
+
       <HighchartsReact
         ref={chartRef}
         highcharts={Highcharts}
         options={chartOptions}
       />
+      {loading && (
+      <CenterLoading />
+      )}
+
     </section>
   );
 }
