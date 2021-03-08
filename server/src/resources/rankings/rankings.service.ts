@@ -53,7 +53,7 @@ export class RankingsService {
    * 
    * 현재 기준으로 1개월 내에 생성된 데이터에 대하여
    * creatorName, creatorId, platform정보를 
-   * 5개 가져오도록 한다
+   * 5개 가져오도록 한다(creatorId, platform별로 그룹화했을 때, 방송이 10개 이상인 경우만)
    */
   private monthlyScoreBaseQuery = this.rankingsRepository
     .createQueryBuilder('rankings')
@@ -61,7 +61,9 @@ export class RankingsService {
     .addSelect('creatorId')
     .addSelect('platform')
     .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')
-    .groupBy('creatorName')
+    .groupBy('creatorId')
+    .addGroupBy('platform')
+    .having('COUNT(*) >= 10')
     .take(5);
 
   /**
@@ -77,7 +79,7 @@ export class RankingsService {
       "avgScore": 9.3595
     }[]
    */
-  async getMonthlyRankByColumn(column: ScoreColumn): Promise<MonthlyRankData[]> {
+  async getMonthlyRankByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<MonthlyRankData[]> {
     const decimalPlace = 2;// 평균점수 소수점 2자리까 자른다
     try {
       return await this.monthlyScoreBaseQuery.clone()
@@ -85,7 +87,10 @@ export class RankingsService {
         .orderBy('avgScore', 'DESC')
         .getRawMany();
     } catch (error) {
-      throw new InternalServerErrorException('error in getMonthlySmileRank');
+      if (errorHandler) {
+        errorHandler(error);
+      }
+      throw new InternalServerErrorException(`error in getMonthlyRankByColumn column :${column}`);
     }
   }
 
@@ -103,9 +108,10 @@ export class RankingsService {
     frustrate: MonthlyRankData[],
     admire: MonthlyRankData[]
   }> {
-    const smile = await this.getMonthlyRankByColumn('smileScore');
-    const frustrate = await this.getMonthlyRankByColumn('frustrateScore');
-    const admire = await this.getMonthlyRankByColumn('admireScore');
+    // 추후 함수별 분기처리 & 에러핸들러 추가 필요, 임시로 console.error만 실행하도록 넣어둠
+    const smile = await this.getMonthlyRankByColumn('smileScore', console.error);
+    const frustrate = await this.getMonthlyRankByColumn('frustrateScore', console.error);
+    const admire = await this.getMonthlyRankByColumn('admireScore', console.error);
     return {
       smile,
       frustrate,
@@ -306,8 +312,8 @@ export class RankingsService {
    * 
    * @return 최근 7일 내 플랫폼별 & 날짜별 시청자수 상위 10인의 시청자수 총합
    * {
-   * afreeca: [{date:'2021-3-4',totalViewer:'23432'}, {date:'2021-3-3',totalViewer:'1235'}, ... ],
-   * twitch: [{date:'2021-3-4',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
+   * afreeca: [{date:'2021-3-2',totalViewer:'23432'}, {date:'2021-3-3',totalViewer:'1235'}, ... ],
+   * twitch: [{date:'2021-3-2',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
    * }
    */
   async getWeeklyViewers(): Promise<any> {
@@ -329,9 +335,11 @@ export class RankingsService {
 
     const data = await getConnection().query(query);
     const result = { afreeca: [], twitch: [] };
-    data.forEach((item) => {
-      result[item.platform].push({ date: item.date, totalViewer: item.totalViewer });
-    });
+    data
+      .reverse() // 날짜 오름차순으로 넣기 위해
+      .forEach((item) => {
+        result[item.platform].push({ date: item.date, totalViewer: item.totalViewer });
+      });
     return result;
   }
 
