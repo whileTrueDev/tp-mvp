@@ -125,6 +125,7 @@ export class RankingsService {
    * 최근 24시간 내 방송에 대해 크리에이터별로 최고 점수를 구한 테이블(t2)을 만들고
    * rankings테이블(t1)에서 최고 점수(t2.maxScore)인 데이터를 가져와
    * 점수순으로 내림차순하여 10개를 가지고온다
+   * 자기 조인 예시
    * 
    * @param column "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
    * @return {

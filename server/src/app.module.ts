@@ -25,6 +25,7 @@ import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.m
 import { CbtModule } from './resources/cbt/cbt.module';
 import { CommunityBoardModule } from './resources/communityBoard/communityBoard.module';
 import { RankingsModule } from './resources/rankings/rankings.module';
+import { UserReactionModule } from './resources/userReaction/userReaction.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -52,6 +53,7 @@ import { RankingsModule } from './resources/rankings/rankings.module';
     CbtModule,
     CommunityBoardModule,
     RankingsModule,
+    UserReactionModule,
   ],
 })
 export class AppModule { }

@@ -1597,6 +1597,16 @@
     tslib "2.0.3"
     uuid "8.3.2"
 
+"@nestjs/common@^7.6.13":
+  version "7.6.13"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-7.6.13.tgz#597558afedfddeb5021fe8a154327ee082279ab8"
+  integrity sha512-xijw6so4yA8Ywi8mnrA7Kz97ZC36u20Eyb5/XvmokdLcgTcTyHVdE39r44JYnjHPf8SKZoJ965zdu/fKl4s4GQ==
+  dependencies:
+    axios "0.21.1"
+    iterare "1.2.1"
+    tslib "2.1.0"
+    uuid "8.3.2"
+
 "@nestjs/config@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-0.5.0.tgz#ad1110d937ec26941b8fce5f575859046f8d7b4b"
@@ -1628,6 +1638,11 @@
   dependencies:
     "@types/jsonwebtoken" "8.5.0"
     jsonwebtoken "8.5.1"
+
+"@nestjs/mapped-types@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-0.3.0.tgz#1dcf178c198e948c548ca803850e2eba639900d4"
+  integrity sha512-AdWVTOg3AhAEcVhPGgUJiLbLXb7L5Pe7vc20YQ0oOXP/KD/nJj0I3BcytVdBhzmgepol67BdivNUvo27Hx3Ndw==
 
 "@nestjs/passport@^7.1.0":
   version "7.1.5"
@@ -15161,10 +15176,10 @@ stylehacks@^4.0.0:
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
 
-suneditor@^2.36.1:
-  version "2.36.1"
-  resolved "https://registry.yarnpkg.com/suneditor/-/suneditor-2.36.1.tgz#cfb5f18d5f7c4da99400e69a6084313fc9ba6ef0"
-  integrity sha512-eo4v9I05Re6Wr4brv2VNUI6GjogOqOA61KZw6q4Z0yejJsx7dF3tYXsLrE3X4ynI6fKGBseKzQl4EfK1ip32YA==
+suneditor@^2.36.3:
+  version "2.36.4"
+  resolved "https://registry.yarnpkg.com/suneditor/-/suneditor-2.36.4.tgz#10fb23fa5be71676f454ac588ce1e34d4523117a"
+  integrity sha512-xOB96cQWzt8PQ8fSF6Q5NzxMPpOFTeaQBbHTx+ZuUt6s7hxh2LE8bh0yU+hLmeoXfBCTtV/A0zb+e7sLy2G0BA==
 
 superagent@^3.8.3:
   version "3.8.3"
@@ -15699,7 +15714,7 @@ tslib@2.0.3:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
   integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==
 
-tslib@>=1.9.0, tslib@^2.0.1, tslib@^2.0.3:
+tslib@2.1.0, tslib@>=1.9.0, tslib@^2.0.1, tslib@^2.0.3:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
