@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import {
+  makeStyles, createStyles, Theme, useTheme,
+} from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
 
 import Highcharts from 'highcharts';
@@ -26,15 +28,18 @@ interface PlottablePoint extends Highcharts.Point {
   plotY: number;
 }
 
-function ScoresBarChart({
-  title, data, loading, column, barColor,
-}: {
-  title: string,
+interface ScoresBarChartProps{
+  title?: string,
   data: MonthlyScoresItem[],
-  loading: boolean,
+  loading?: boolean,
   column? : string,
   barColor? : string,
-}) {
+}
+
+function ScoresBarChart({
+  title, data, loading, column, barColor,
+}: ScoresBarChartProps) {
+  const theme = useTheme();
   const chartRef = useRef<{
     chart: Highcharts.Chart
     container: React.RefObject<HTMLDivElement>
@@ -54,7 +59,7 @@ function ScoresBarChart({
           // 별에 그라디언트 넣기 위한 색 설정
           const starColors = [
             { id: 'gold', startColor: '#f5f542', endColor: '#c9a234' }, // 금
-            { id: 'silver', startColor: '#d2d6d5', endColor: '#7f8785' }, // 은
+            { id: 'silver', startColor: '#d2d6d5', endColor: '#7f9090' }, // 은
             { id: 'bronze', startColor: '#ff8800', endColor: '#9f5c02' }, // 동
           ];
 
@@ -110,6 +115,14 @@ function ScoresBarChart({
     },
     legend: { enabled: false },
     series: [],
+    xAxis: {
+      labels: {
+        style: {
+          fontSize: '0.8rem',
+          color: theme.palette.common.black,
+        },
+      },
+    },
   });
 
   useEffect(() => {
