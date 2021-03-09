@@ -131,6 +131,9 @@ function ScoresBarChart({
       },
     },
     legend: { enabled: false },
+    tooltip: {
+      headerFormat: '<p style="font-size: 0.8rem;">{point.key}</p><br/>',
+    },
   });
 
   useEffect(() => {
