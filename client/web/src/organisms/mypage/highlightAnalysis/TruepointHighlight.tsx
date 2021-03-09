@@ -115,6 +115,13 @@ export default function TruepointHighlight({
   const [point, setPoint] = React.useState(initialPoint);
   const classes = styles();
 
+  // testCode
+  const dateRange = {
+    startDate: highlightData.start_date,
+    endDate: highlightData.end_date,
+    totalIndex: highlightData.total_index,
+  };
+
   const graphCSS = {
     grid: {
       width: '100%',
@@ -197,7 +204,15 @@ export default function TruepointHighlight({
           </Grid>
         </Grid>
         {/* test code */}
-        <Highcharts />
+        <Highcharts
+          data={picked90 ? hightlight90 : highlightData.highlight_points}
+          dateRange={dateRange}
+          chartType="highlight"
+          highlight={point}
+          handleClick={setPoint}
+          handlePage={setPage}
+          pageSize={pageSize}
+        />
       </Grid>
     </Paper>
   );
