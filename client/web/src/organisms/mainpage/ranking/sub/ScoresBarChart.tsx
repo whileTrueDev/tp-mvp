@@ -2,11 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+// eslint-disable-next-line camelcase
+import HC_brokenAxis from 'highcharts/modules/broken-axis';
 
 import { Typography, Divider } from '@material-ui/core';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
 import { MonthlyScoresItem } from '../MonthlyScoresRankingCard';
+
+HC_brokenAxis(Highcharts); // yAxis break 사용하기 위해 필요
 
 interface ScoresBarChartProps{
   title?: string,
@@ -23,7 +27,7 @@ interface PlottablePoint extends Highcharts.Point {
 }
 
 /**
- * 막대그래프 안에 1,2,3위 별 표시
+ * 별 그리는 함수
  * @param renderer Highcharts.SVGRenderer
  * @param order 금=0, 은=1, 동=2
  * @param x 별이 표시될 x좌표
@@ -61,6 +65,25 @@ function createStar(renderer: Highcharts.SVGRenderer, order: number, x: number, 
   }).add();
 }
 
+/**
+ * 차트 리드로우 이벤트 핸들러 -> 데이터가 들어와서 차트 다시 그려질 때, 데이터 값에 따라 금은동에 별 표시하는 함수
+ * @param this Highcharts.Chart
+ */
+function markStarByDataOrder(this: Highcharts.Chart) {
+  const {
+    series, renderer, plotHeight,
+  } = this;
+  if (!series[0] || series[0].data.length === 0) return;
+
+  // 1,2,3위에 대해 금은동 별 표시
+  for (let i = 0; i < 3; i += 1) {
+    const point = series[0].data[i] as PlottablePoint;
+    const x = point.plotX + 2; // 별이 표시될 x좌표
+    const y = plotHeight; // 별이 표시될 y 좌표
+    createStar(renderer, i, x, y);
+  }
+}
+
 function ScoresBarChart({
   title, data, loading, column, barColor,
 }: ScoresBarChartProps): JSX.Element {
@@ -76,29 +99,10 @@ function ScoresBarChart({
       spacingTop: 30,
       height: 250,
       events: {
-        redraw(this: Highcharts.Chart) { // redraw이벤트 발생시 === 데이터가 들어왔을때
-          const {
-            series, renderer, plotHeight,
-          } = this;
-          if (!series[0] || series[0].data.length === 0) return;
-
-          // 1,2,3위에 대해 금은동 별 표시
-          for (let i = 0; i < 3; i += 1) {
-            const point = series[0].data[i] as PlottablePoint;
-            const x = point.plotX + 2; // 별이 표시될 x좌표
-            const y = plotHeight; // 별이 표시될 y 좌표
-            createStar(renderer, i, x, y);
-          }
-        },
+        redraw: markStarByDataOrder, // redraw이벤트 발생시 === 데이터가 들어왔을때 -> 데이터 값에 따라 금은동 표시
       },
     },
     title: { text: undefined },
-    yAxis: {
-      title: { text: undefined },
-      labels: { enabled: false },
-      max: 10,
-      tickInterval: 1,
-    },
     plotOptions: {
       column: {
         dataLabels: {
@@ -110,26 +114,36 @@ function ScoresBarChart({
       },
     },
     legend: { enabled: false },
-    series: [],
-    xAxis: {
-      labels: {
-        style: {
-          fontSize: '0.8rem',
-          color: theme.palette.common.black,
-        },
-      },
-    },
   });
 
   useEffect(() => {
     if (data.length === 0) return;
     const creatorNames = data.map((d) => d.creatorName);
     const scores = data.map((d) => d.avgScore);
+    const minInt = Math.floor(scores[scores.length - 1]); // 내림차순 5개 들어오는 값 중 마지막 == 최소값
     setChartOptions({
-      xAxis: { categories: creatorNames },
+      xAxis: {
+        categories: creatorNames,
+        labels: {
+          style: {
+            fontSize: '0.8rem',
+            color: theme.palette.common.black,
+          },
+        },
+      },
+      yAxis: {
+        breaks: [{
+          from: 0,
+          to: minInt,
+          breakSize: 0.3,
+        }],
+        title: { text: undefined },
+        tickInterval: 0.1,
+        labels: { enabled: false },
+      },
       series: [{ type: 'column', name: `평균 ${column} 점수`, data: scores }],
     });
-  }, [column, data]);
+  }, [column, data, theme.palette.common.black]);
 
   return (
     <section>
