@@ -109,6 +109,7 @@ function ScoresBarChart({
     container: React.RefObject<HTMLDivElement>
   }>(null);
   const title = useMemo(() => (`지난 월간 ${column} 점수 순위`), [column]);
+  const creatorNameFontSize = useMemo(() => (`${theme.typography.body2.fontSize}`), [theme.typography.body2.fontSize]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -132,7 +133,7 @@ function ScoresBarChart({
     },
     legend: { enabled: false },
     tooltip: {
-      headerFormat: '<p style="font-size: 0.8rem;">{point.key}</p><br/>',
+      headerFormat: `<p style="font-size: ${creatorNameFontSize};">{point.key}</p><br/>`,
     },
   });
 
@@ -146,7 +147,7 @@ function ScoresBarChart({
         categories: creatorNames,
         labels: {
           style: {
-            fontSize: '0.8rem',
+            fontSize: creatorNameFontSize,
             color: theme.palette.common.black,
           },
         },
