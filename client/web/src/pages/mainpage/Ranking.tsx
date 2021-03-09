@@ -4,7 +4,8 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
-import UserReaction from '../../organisms/mainpage/ranking/UserReaction';
+import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
+import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -29,10 +30,6 @@ const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   },
   monthlyScore: {
     background: 'blue',
-    height: '300px',
-  },
-  weeklyViewer: {
-    background: 'yellow',
     height: '300px',
   },
   userReaction: {
@@ -71,10 +68,8 @@ export default function Ranking(): JSX.Element {
               <section className={wrapper.monthlyScore}>
                 월간 점수
               </section>
-              <section className={wrapper.weeklyViewer}>
-                주간 시청자수 추이
-              </section>
-              <UserReaction />
+              <WeeklyViewerRankingCard />
+              <UserReactionCard />
             </Grid>
           </Grid>
         </Grid>
