@@ -6,7 +6,6 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 import { Typography, Divider } from '@material-ui/core';
-import { start } from 'repl';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 
 interface MonthlyScoresItem{
@@ -28,12 +27,13 @@ interface PlottablePoint extends Highcharts.Point {
 }
 
 function ScoresBarChart({
-  title, data, loading, column,
+  title, data, loading, column, barColor,
 }: {
   title: string,
   data: MonthlyScoresItem[],
   loading: boolean,
-  column? : string
+  column? : string,
+  barColor? : string,
 }) {
   const chartRef = useRef<{
     chart: Highcharts.Chart
@@ -45,8 +45,7 @@ function ScoresBarChart({
       type: 'column',
       height: 250,
       events: {
-        // http://jsfiddle.net/chemark/s7mmprdt/ : legend redraw 
-        redraw(this: Highcharts.Chart) {
+        redraw(this: Highcharts.Chart) { // redraw이벤트 발생시 === 데이터가 들어왔을때
           const {
             series, renderer, plotHeight,
           } = this;
@@ -103,7 +102,10 @@ function ScoresBarChart({
         dataLabels: {
           enabled: true,
         },
+        borderRadius: 12,
+        color: barColor,
       },
+
     },
     legend: { enabled: false },
     series: [],
@@ -155,6 +157,21 @@ function MonthlyScoresRankingCard(): JSX.Element {
         data={data?.smile || []}
         loading={loading}
         column="웃음"
+        barColor="rgba(202, 186, 219,0.7)"
+      />
+      <ScoresBarChart
+        title="지난 월간 감탄 점수 순위"
+        data={data?.admire || []}
+        loading={loading}
+        column="감탄"
+        barColor="rgba(162, 221, 195, 0.698)"
+      />
+      <ScoresBarChart
+        title="지난 월간 답답함 점수 순위"
+        data={data?.frustrate || []}
+        loading={loading}
+        column="답답함"
+        barColor="rgba(229, 160, 206, 0.726)"
       />
     </section>
   );
