@@ -367,10 +367,12 @@ export class RankingsService {
       const data = await getConnection().query(query);
       const result = { afreeca: [], twitch: [] };
       data
-        .reverse() // 날짜 오름차순으로 넣기 위해
         .forEach((item) => {
           result[item.platform].push({ date: item.date, totalViewer: item.totalViewer });
         });
+      // 최근 7개 날짜만 남겨서 날짜 오름차순으로 변경
+      result.afreeca = result.afreeca.slice(0, 7).reverse();
+      result.twitch = result.twitch.slice(0, 7).reverse();
       return result;
     } catch (error) {
       // 에러 핸들러 함수 넣을 곳
