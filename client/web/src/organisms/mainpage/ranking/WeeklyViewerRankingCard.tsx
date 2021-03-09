@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useMemo, useState, useRef,
+  useEffect, useState, useRef,
 } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Divider, Typography } from '@material-ui/core';
@@ -8,9 +8,11 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import * as datefns from 'date-fns';
 
+import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
 import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useWeeklyViewerStyle = makeStyles((theme: Theme) => createStyles({
   weeklyViewerContainer: {
@@ -35,29 +37,19 @@ const markerSize = {
 
 function WeeklyViewerRankingCard(): JSX.Element {
   const classes = useWeeklyViewerStyle();
-  const chartRef = useRef<{
-    chart: Highcharts.Chart
-    container: React.RefObject<HTMLDivElement>
-}>(null);
-
-  const [data, setData] = useState<{afreeca: WeeklyData[], twitch: WeeklyData[]}>({ afreeca: [], twitch: [] });
-  const [{ loading }, getWeeklyData] = useAxios({ url: '/rankings/weekly-viewers' }, { manual: true });
-  // 백엔드와 연결이후 바로 윗줄 코드와 교체예정
-
-  const dates = useMemo(() => data.afreeca.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd')), [data.afreeca]);
-  const afreecaViewerData = useMemo(() => data.afreeca.map((d: WeeklyData) => +d.totalViewer), [data.afreeca]);
-  const twitchViewerData = useMemo(() => data.twitch.map((d: WeeklyData) => +d.totalViewer), [data.twitch]);
-
+  const { enqueueSnackbar } = useSnackbar();
+  // 차트컨테이너 ref
+  const chartRef = useRef<{chart: Highcharts.Chart, container: React.RefObject<HTMLDivElement>}>(null);
+  // 주간 시청자수 데이터
+  const [{ data, error, loading }] = useAxios<{afreeca: WeeklyData[], twitch: WeeklyData[]}>('/rankings/weekly-viewers');
+  // 차트 옵션 state
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       spacingTop: 24,
       height: 250,
     },
     title: { text: undefined },
-    xAxis: {
-      categories: dates,
-      crosshair: true,
-    },
+    xAxis: { crosshair: true },
     yAxis: {
       title: { text: undefined },
       labels: { enabled: false },
@@ -72,28 +64,6 @@ function WeeklyViewerRankingCard(): JSX.Element {
       symbolWidth: 40,
       symbolHeight: 20,
     },
-    series: [
-      {
-        type: 'line',
-        name: '아프리카',
-        data: afreecaViewerData,
-        color: getPlatformColor('afreeca'),
-        marker: {
-          symbol: 'url(/images/logo/afreecaLogo.png)',
-          ...markerSize,
-        },
-      },
-      {
-        type: 'line',
-        name: '트위치',
-        data: twitchViewerData,
-        color: getPlatformColor('twitch'),
-        marker: {
-          symbol: 'url(/images/logo/twitchLogo.png)',
-          ...markerSize,
-        },
-      },
-    ],
     tooltip: {
       shared: true,
       useHTML: true,
@@ -111,26 +81,45 @@ function WeeklyViewerRankingCard(): JSX.Element {
     },
   });
 
+  // data변경시 (데이터를 불러왔을 때) 실행 -> 그래프 series옵션 변경하여 그래프 그림
   useEffect(() => {
-    getWeeklyData().then((res) => {
-      setData(res.data);
-    }).catch((error) => {
-      // 에러핸들링
-      console.error(error);
-    });
-  // 마운트 후 한번만 실행예정
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!data) return;
+    const dates = data.afreeca.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd'));
 
-  useEffect(() => {
+    const afreecaViewerData = data.afreeca.map((d: WeeklyData) => +d.totalViewer);
+    const twitchViewerData = data.twitch.map((d: WeeklyData) => +d.totalViewer);
+
     setChartOptions({
       series: [
-        { type: 'line', data: afreecaViewerData },
-        { type: 'line', data: twitchViewerData },
+        {
+          type: 'line',
+          name: '아프리카',
+          data: afreecaViewerData,
+          color: getPlatformColor('afreeca'),
+          marker: {
+            symbol: 'url(/images/logo/afreecaLogo.png)',
+            ...markerSize,
+          },
+        },
+        {
+          type: 'line',
+          name: '트위치',
+          data: twitchViewerData,
+          color: getPlatformColor('twitch'),
+          marker: {
+            symbol: 'url(/images/logo/twitchLogo.png)',
+            ...markerSize,
+          },
+        },
       ],
       xAxis: { categories: dates },
     });
-  }, [afreecaViewerData, twitchViewerData, dates, data]);
+  }, [data]);
+
+  // 에러핸들러
+  if (error) {
+    ShowSnack('주간 시청자수 데이터를 가져오는데 실패했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
+  }
 
   return (
     <section className={classes.weeklyViewerContainer}>
