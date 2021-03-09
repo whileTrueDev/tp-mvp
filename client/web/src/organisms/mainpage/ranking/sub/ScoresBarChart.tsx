@@ -164,7 +164,7 @@ function ScoresBarChart({
       },
       series: [{ type: 'column', name: `평균 ${column} 점수`, data: scores }],
     });
-  }, [column, data, theme.palette.common.black]);
+  }, [column, creatorNameFontSize, data, theme.palette.common.black]);
 
   return (
     <section className={classes.barChartSection}>
