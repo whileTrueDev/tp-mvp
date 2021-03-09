@@ -88,6 +88,9 @@ function markStarByDataOrder(this: Highcharts.Chart) {
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
+  barChartSection: {
+    position: 'relative',
+  },
   header: {
     padding: theme.spacing(2),
   },
@@ -160,7 +163,7 @@ function ScoresBarChart({
   }, [column, data, theme.palette.common.black]);
 
   return (
-    <section>
+    <section className={classes.barChartSection}>
       <header className={classes.header}>
         <Typography variant="h6" className={classes.title}>{title}</Typography>
         <Divider />

@@ -3,7 +3,9 @@ import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
 import ScoresBarChart from './sub/ScoresBarChart';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 export interface MonthlyScoresItem{
   creatorName: string;
@@ -27,10 +29,15 @@ const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
   },
 }));
 function MonthlyScoresRankingCard(): JSX.Element {
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useMonthlyScoresRankingStyle();
   const monthlyScoresUrl = useRef<string>('/rankings/monthly-scores');
-  const [{ data, loading }] = useAxios<MonthlyScoresData>(monthlyScoresUrl.current);
+  const [{ data, error, loading }] = useAxios<MonthlyScoresData>(monthlyScoresUrl.current);
 
+  if (error) {
+    console.error(error);
+    ShowSnack('월간 점수 데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.', 'error', enqueueSnackbar);
+  }
   return (
     <section className={classes.monthlyScores}>
       <ScoresBarChart
