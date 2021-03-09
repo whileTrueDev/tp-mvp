@@ -1,5 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useTheme } from '@material-ui/core/styles';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
+import {
+  useTheme, createStyles, makeStyles, Theme,
+} from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 // eslint-disable-next-line camelcase
@@ -13,7 +17,6 @@ import { MonthlyScoresItem } from '../MonthlyScoresRankingCard';
 HC_brokenAxis(Highcharts); // yAxis break 사용하기 위해 필요
 
 interface ScoresBarChartProps{
-  title?: string,
   data: MonthlyScoresItem[],
   loading?: boolean,
   column? : string,
@@ -36,8 +39,8 @@ interface PlottablePoint extends Highcharts.Point {
 function createStar(renderer: Highcharts.SVGRenderer, order: number, x: number, y: number) {
   // 별에 그라디언트 넣기 위한 색 설정
   const starColors = [
-    { id: 'gold', startColor: '#f5f542', endColor: '#c9a234' }, // 금
-    { id: 'silver', startColor: '#d2d6d5', endColor: '#7f9090' }, // 은
+    { id: 'gold', startColor: '#ffff00', endColor: '#c9a589' }, // 금
+    { id: 'silver', startColor: '#ebebeb', endColor: '#7f9090' }, // 은
     { id: 'bronze', startColor: '#ff8800', endColor: '#9f5c02' }, // 동
   ];
   const { id: gradientId, startColor, endColor } = starColors[order];
@@ -84,14 +87,25 @@ function markStarByDataOrder(this: Highcharts.Chart) {
   }
 }
 
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  header: {
+    padding: theme.spacing(2),
+  },
+  title: {
+    padding: theme.spacing(2),
+  },
+}));
+
 function ScoresBarChart({
-  title, data, loading, column, barColor,
+  data, loading, column, barColor,
 }: ScoresBarChartProps): JSX.Element {
   const theme = useTheme();
+  const classes = useStyles();
   const chartRef = useRef<{
-    chart: Highcharts.Chart
+    chart: Highcharts.Chart,
     container: React.RefObject<HTMLDivElement>
   }>(null);
+  const title = useMemo(() => (`지난 월간 ${column} 점수 순위`), [column]);
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -147,8 +161,10 @@ function ScoresBarChart({
 
   return (
     <section>
-      <Typography variant="h6">{title}</Typography>
-      <Divider />
+      <header className={classes.header}>
+        <Typography variant="h6" className={classes.title}>{title}</Typography>
+        <Divider />
+      </header>
 
       <HighchartsReact
         ref={chartRef}
