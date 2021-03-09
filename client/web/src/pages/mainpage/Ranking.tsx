@@ -7,6 +7,7 @@ import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
 import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
+import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -52,9 +53,7 @@ export default function Ranking(): JSX.Element {
       <Container className={wrapper.root}>
         <Grid container direction="column" spacing={1}>
           <Grid item className={wrapper.top}>
-            <section className={wrapper.polarChart}>
-              아프리카, 트위치 시청자수 상위 10인 비교 폴라차트 위치
-            </section>
+            <ViewerComparisonPolarAreaCard />
           </Grid>
           <Grid item>
             {`${new Date()}`}
