@@ -61,8 +61,8 @@ function ScoresBarChart({
           // 1,2,3 위 금은동 표시
           for (let i = 0; i < 3; i += 1) {
             const point = series[0].data[i] as PlottablePoint;
-            const x = point.plotX; // 별이 표시될 x좌표
-            const y = plotHeight - 20; // 별이 표시될 y 좌표
+            const x = point.plotX + 2; // 별이 표시될 x좌표
+            const y = plotHeight - 15; // 별이 표시될 y 좌표
             const { id: gradientId, startColor, endColor } = starColors[i];
             // 그라디언트 생성
             const gradient = renderer.createElement('linearGradient')
@@ -84,7 +84,7 @@ function ScoresBarChart({
               points: '20,5 25,20 40,20 30,30 35,45 20,35 5,45 10,30 0,20 15,20', // 별의 각 모서리 좌표 x,y
               fill: `url(#${gradientId})`,
               zIndex: 5,
-              transform: `translate(${x},${y}) scale(0.5)`,
+              transform: `translate(${x},${y}) scale(0.4)`,
             }).add();
           }
         },
@@ -104,6 +104,7 @@ function ScoresBarChart({
         },
         borderRadius: 12,
         color: barColor,
+        pointWidth: 30,
       },
 
     },
