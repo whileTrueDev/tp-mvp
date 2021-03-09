@@ -51,6 +51,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       spacingTop: 24,
+      height: 250,
     },
     title: { text: undefined },
     xAxis: {
@@ -94,7 +95,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
       },
     ],
     tooltip: {
-      split: true,
+      shared: true,
       useHTML: true,
       shape: 'callout',
       padding: 4,
@@ -102,8 +103,8 @@ function WeeklyViewerRankingCard(): JSX.Element {
         const { y, series, color } = this;
         return `
         <div>
-          <p style="color: ${color}">${series.name}</p> 
-          <p>${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명</p>
+          <span style="color: ${color}; margin-right: 20px;">${series.name}</span> 
+          <span>${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명</span>
         </div>
         `;
       },
