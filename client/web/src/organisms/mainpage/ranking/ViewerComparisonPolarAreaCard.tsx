@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import {
+  createStyles, makeStyles, Theme, useTheme,
+} from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
 
 import Highcharts from 'highcharts';
@@ -28,6 +30,7 @@ interface CustomPointOption extends Highcharts.PointOptionsObject {
   name: string;
   order: number;
   color: string;
+  originValue: number;
 }
 
 type Color = typeof blue | typeof purple; // material ui color객체, blue: 아프리카용, purple: 트위치용
@@ -36,7 +39,6 @@ type ColorIndex = keyof Color; // material ui color 인덱스값
 /**
  * 폴라차트에서 표현할 형태로 
  * 백엔드에서 받은 플랫폼별 24시간내 시청자 상위 10명 데이터를 변형하는 함수
- * 시청자수 순위별로 1 3 5 7 9 8 6 4 2 순서로 배치하여 반환한다(최대 시청자 9번째가 가운데에 온다)
  * 
  * @param list 플랫폼별 24시간내 시청자 상위 10명 데이터 목록
  * @param colors material ui color객체, blue: 아프리카용, purple: 트위치용
@@ -45,19 +47,21 @@ function toPolarAreaData(list: DailyTotalViewersItemData[], colors: Color) {
   const odd: CustomPointOption[] = [];
   const even: CustomPointOption[] = [];
   list.forEach((d: DailyTotalViewersItemData, i: number) => {
-    const colorIndex = ((9 - Math.ceil(i / 2)) - 2) * 100; // 700 ~ 200까지(material ui color 인덱스값)
-    const values = {
+    const colorIndex = ((9 - Math.ceil(i / 2)) - 3) * 100; // 600 ~ 100까지(material ui color 인덱스값)
+    const pointOptions = {
       originValue: d.maxViewer, // 실제 최대시청자수 -> 툴팁에서 보여줄 값
       y: (9 - Math.ceil(i * 0.7)) * 100, // 실제값은 별도로 넣고, 표시될 크기 y는 순위에 따라 일정하게 적용
       // y: d.maxViewer,
       name: d.creatorName,
-      order: i, // order < 5 상위 5인만 이름을 표시한다
+      order: i, // 상위 5인(order < 5 )만 이름을 표시한다, 0부터 시작함(0번째가 1위)
       color: colors[colorIndex as ColorIndex], // 순위에 따라 다른 색을 적용한다
     };
-    if (i < 3 || i % 2 === 0) {
-      even.push(values);
+
+    // 배열 순서가 시청자순 오름차순이 아니라, 1 3 5 7 9 10 8 6 4 2순으로 섞는다(시안과 유사한 형태로 그래프 표현하기 위해)
+    if (i % 2 === 0) {
+      even.push(pointOptions);
     } else {
-      odd.push(values);
+      odd.push(pointOptions);
     }
   });
   return even.concat(odd.reverse());
@@ -73,6 +77,23 @@ function polarAreaLabelFormatter(this: Highcharts.PointLabelObject) {
   const { options: pointOptions } = point;
   const opt = pointOptions as CustomPointOption;
   return opt.order < 5 ? opt.name : null;
+}
+
+/**
+ * 폴라차트 툴팁 포맷 지정함수
+ * toPolarAreaData 에서 생성된 originValue값(실제 최대시청자 값)을 툴팁에 표시한다
+ * @param this Highcharts.TooltipFormatterContextObject
+ */
+function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
+  const { point } = this;
+  const { options: pointOptions, name } = point;
+  const { originValue, order } = pointOptions as CustomPointOption;
+  return `${order === 0 ? '🥇' : ''}
+          ${order === 1 ? '🥈' : ''}
+          ${order === 2 ? '🥉' : ''}
+          ${order + 1}위 <br />
+          ${name} <br />
+          ${Highcharts.numberFormat(originValue as number, 0, undefined, ',')} 명`;
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -106,6 +127,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 function ViewerComparisonPolarAreaCard(): JSX.Element {
   const classes = useStyles();
+  const theme = useTheme();
   const [{ data, loading, error }] = useAxios<{afreeca: DailyTotalViewersData, twitch: DailyTotalViewersData}>('/rankings/daily-total-viewers');
   const tickInterval = 360 / 10;
 
@@ -148,7 +170,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
         pointPlacement: 'between', // column차트가 x축 사이에 들어가도록
         dataLabels: {
           enabled: true,
-          color: '#FFFFFF',
+          color: theme.palette.common.white,
           align: 'center',
           verticalAlign: 'middle',
           formatter: polarAreaLabelFormatter,
@@ -159,6 +181,11 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
         groupPadding: 0,
         grouping: false,
       },
+    },
+    tooltip: {
+      useHTML: true,
+      style: { fontSize: `${theme.typography.body2.fontSize}` },
+      formatter: polarAreaTooltipFormatter,
     },
   });
 
