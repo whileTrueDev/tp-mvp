@@ -47,19 +47,20 @@ function toPolarAreaData(list: DailyTotalViewersItemData[], colors: Color) {
   list.forEach((d: DailyTotalViewersItemData, i: number) => {
     const colorIndex = ((9 - Math.ceil(i / 2)) - 2) * 100; // 700 ~ 200까지(material ui color 인덱스값)
     const values = {
-      y: d.maxViewer,
+      originValue: d.maxViewer, // 실제 최대시청자수 -> 툴팁에서 보여줄 값
+      y: (9 - Math.ceil(i * 0.7)) * 100, // 실제값은 별도로 넣고, 표시될 크기 y는 순위에 따라 일정하게 적용
+      // y: d.maxViewer,
       name: d.creatorName,
       order: i, // order < 5 상위 5인만 이름을 표시한다
       color: colors[colorIndex as ColorIndex], // 순위에 따라 다른 색을 적용한다
     };
-    if (i % 2 === 0) { // 짝수이면
+    if (i < 3 || i % 2 === 0) {
       even.push(values);
-    } else { // 홀수이면
+    } else {
       odd.push(values);
     }
   });
-  // 시청자수 순위별로 1 3 5 7 9 8 6 4 2 순서로 배치한다
-  return odd.concat(even.reverse());
+  return even.concat(odd.reverse());
 }
 
 /**
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     zIndex: 10,
     transform: 'translate(20%,30%)',
   },
-  total: {
+  totalCount: {
     position: 'absolute',
     width: '100%',
     top: '45%',
@@ -92,15 +93,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       width: '100%',
       maxWidth: '50px',
     },
-    '&>*': {
-      position: 'absolute',
-    },
-    '&>*:nth-child(1)': {
-      left: '15%',
-    },
-    '&>*:nth-child(2)': {
-      right: '15%',
-    },
+  },
+  afreecaCount: {
+    position: 'absolute',
+    left: '20%',
+  },
+  twitchCount: {
+    position: 'absolute',
+    right: '20%',
   },
 }));
 
@@ -112,20 +112,22 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   // Multiple polar charts https://www.highcharts.com/forum/viewtopic.php?t=42296#p148602
   const [options, setOptions] = useState<Highcharts.Options>({
     chart: { type: 'column', polar: true },
+    credits: { enabled: false },
     legend: { enabled: false },
     title: { text: '' },
-    pane: [{ // 결합된 x,y축을 위한 옵션, 각 x,y축은 인덱스번호로 해당 옵션 참조가능
-      center: ['35%', '50%'], // pixel or %, default [50%,50%]
-      startAngle: 36 * (-3), // x축 시작 위치 default 0 (12시방향)
+    pane: [{
+      center: ['40%', '50%'],
+      startAngle: 36 * (-2), // x축 시작 위치 default 0 (12시방향)// 괄호안의 값 : 가장 큰 파이가 위치할 칸 번호
     }, {
-      center: ['65%', '50%'],
-      startAngle: 0,
+      center: ['60%', '50%'],
+      startAngle: 36 * (2),
     }] as Highcharts.PaneOptions, // pane 타입정의가 배열을 못받게 되어있어서 임시로 타입 단언 사용함
     yAxis: [
       { pane: 0, labels: { enabled: false } },
       { pane: 1, labels: { enabled: false } },
     ],
     xAxis: [{
+      reversed: true,
       pane: 0,
       tickInterval,
       lineWidth: 0,
@@ -163,12 +165,16 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   useEffect(() => {
     if (!data) return;
     const { afreeca, twitch } = data;
-    console.log(data);
+
+    const bigSize = 300;
+    const smallSize = 200;
+    const afreecaChartSize = afreeca.total > twitch.total ? bigSize : smallSize;
+    const twitchChartSize = afreeca.total < twitch.total ? bigSize : smallSize;
     setOptions({
       pane: [{
-        size: 300,
+        size: afreecaChartSize,
       }, {
-        size: 240,
+        size: twitchChartSize,
       }] as Highcharts.PaneOptions, // pane 타입정의가 배열을 못받게 되어있어서 임시로 타입 단언 사용함
       series: [{
         type: 'column',
@@ -179,7 +185,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       }, {
         type: 'column',
         name: 'twitch',
-        data: [1, 2, 3, 4, 5],
+        data: toPolarAreaData(twitch.data, purple),
         yAxis: 1,
         xAxis: 1,
       }],
@@ -197,12 +203,12 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
         <Typography>상위 10인 시청자수 합 비교</Typography>
       </div>
 
-      <div className={classes.total}>
-        <div>
+      <div className={classes.totalCount}>
+        <div className={classes.afreecaCount}>
           <img src="/images/logo/afreecaLogo.png" alt="아프리카 로고" />
           <Typography>{`${data?.afreeca.total || 0} 명`}</Typography>
         </div>
-        <div>
+        <div className={classes.twitchCount}>
           <img src="/images/logo/twitchLogo.png" alt="트위치 로고" />
           <Typography>{`${data?.twitch.total || 0} 명`}</Typography>
         </div>
