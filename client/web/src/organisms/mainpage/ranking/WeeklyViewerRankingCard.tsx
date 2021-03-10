@@ -48,6 +48,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
       spacingTop: 24,
       height: 250,
     },
+    credits: { enabled: false },
     title: { text: undefined },
     xAxis: { crosshair: true },
     yAxis: {
