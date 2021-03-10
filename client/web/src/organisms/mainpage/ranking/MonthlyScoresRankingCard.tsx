@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
@@ -31,8 +31,7 @@ const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
 function MonthlyScoresRankingCard(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useMonthlyScoresRankingStyle();
-  const monthlyScoresUrl = useRef<string>('/rankings/monthly-scores');
-  const [{ data, error, loading }] = useAxios<MonthlyScoresData>(monthlyScoresUrl.current);
+  const [{ data, error, loading }] = useAxios<MonthlyScoresData>('/rankings/monthly-scores');
 
   if (error) {
     console.error(error);

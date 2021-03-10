@@ -120,6 +120,7 @@ function ScoresBarChart({
         redraw: markStarByDataOrder, // redraw이벤트 발생시 === 데이터가 들어왔을때 -> 데이터 값에 따라 금은동 표시
       },
     },
+    credits: { enabled: false },
     title: { text: undefined },
     plotOptions: {
       column: {
