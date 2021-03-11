@@ -23,7 +23,6 @@ interface DailyTotalViewersItemData{
   creatorName: string;
   creatorId: string;
 }
-
 interface DailyTotalViewersData{
   total: number;
   data: DailyTotalViewersItemData[];
@@ -104,40 +103,94 @@ function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObjec
 
 function onRender(this: Highcharts.Chart, event: Event) {
   const {
-    series, renderer, plotLeft, plotTop,
+    series, renderer, plotLeft, plotTop, plotWidth, plotHeight,
   } = this;
   if (series.length === 0) return;
-
-  // renderer.rect(50, 10, 799, 299).attr({
-  //   fill: 'green',
-  // }).add();
-
   const { xAxis: afreecaXAxis } = series[0];
   const { xAxis: twitchXAxis } = series[1];
-  const { center: afreecaCenterCoord } = afreecaXAxis as CustomAxisType;
-  const { center: twitchCenterCoord } = twitchXAxis as CustomAxisType;
-  const scale = 1.15;
+  const { center: afreecaCenter } = afreecaXAxis as CustomAxisType;
+  const { center: twitchCenter } = twitchXAxis as CustomAxisType;
+  const afreecaChartCoord = {
+    x: afreecaCenter[0] + plotLeft,
+    y: afreecaCenter[1] + plotTop,
+    r: afreecaCenter[2] / 2,
+  };
+  const twitchChartCoord = {
+    x: twitchCenter[0] + plotLeft,
+    y: twitchCenter[1] + plotTop,
+    r: twitchCenter[2] / 2,
+  };
+
+  // SVG filters https://jsfiddle.net/jL72qh55/9/
+  const filter = renderer.createElement('filter')
+    .attr({
+      id: 'goo',
+    }).add(renderer.defs);
+
+  renderer.createElement('feGaussianBlur').attr({
+    in: 'SourceGraphic',
+    stdDeviation: '10',
+    result: 'blur',
+  }).add(filter);
+  renderer.createElement('feColorMatrix').attr({
+    in: 'blur',
+    mode: 'matrix',
+    result: 'goo',
+    values: '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7',
+  }).add(filter);
+
+  renderer.createElement('feBlend').attr({
+    in: 'SourceGraphic',
+    in2: 'goo',
+    result: 'mix',
+  }).add(filter);
+
+  const mask = renderer.createElement('mask').attr({ id: 'maska' }).add();
+  const g = renderer.g('blobs').add(mask);
+  renderer.circle({
+    cx: afreecaChartCoord.x, cy: afreecaChartCoord.y, r: afreecaChartCoord.r * 1.15, fill: 'white',
+  }).add(g);
+  renderer.circle({
+    cx: twitchChartCoord.x, cy: twitchChartCoord.y, r: twitchChartCoord.r * 1.15, fill: 'white',
+  }).add(g);
+
+  renderer.rect(0, 0, plotWidth, plotHeight).attr({
+    mask: 'url(#maska)',
+    fill: {
+      linearGradient: {
+        x1: 0.25, y1: 0, x2: 0.75, y2: 0,
+      },
+      stops: [
+        [0, blue[300]],
+        [1, purple[300]],
+      ],
+    },
+  }).add();
+
+  // 호 그리기---------------------------------------------------
+  const scale = 1.25;
+  const strokeWidth = 5;
   // 아프리카 arc
-  const afreecaRadius = (afreecaCenterCoord[2] / 2) * scale;
+  const afreecaRadius = afreecaChartCoord.r * scale;
   renderer.arc(
-    afreecaCenterCoord[0] + plotLeft,
-    afreecaCenterCoord[1] + plotTop,
+    afreecaChartCoord.x,
+    afreecaChartCoord.y,
     afreecaRadius, afreecaRadius,
     (Math.PI / 180) * 90, (Math.PI / 180) * 270,
   ).attr({
-    stroke: blue[900],
-    'stroke-width': 3,
+    stroke: blue[700],
+    'stroke-width': strokeWidth,
   }).add();
   // 트위치 arc
-  const twitchRadius = (twitchCenterCoord[2] / 2) * scale;
+  const twitchRadius = twitchChartCoord.r * scale;
   renderer.arc(
-    twitchCenterCoord[0] + plotLeft,
-    twitchCenterCoord[1] + plotTop,
+    twitchChartCoord.x,
+    twitchChartCoord.y,
     twitchRadius, twitchRadius,
     (Math.PI / 180) * -90, (Math.PI / 180) * 90,
   ).attr({
-    stroke: purple[500],
-    'stroke-width': 3,
+    stroke: purple[700],
+    'stroke-width': strokeWidth,
   }).add();
 }
 
@@ -162,6 +215,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     position: 'relative',
     padding: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
+    '& .highcharts-blobs': {
+      '-webkit-filter': 'url(#goo)',
+      fill: 'url(#goo)',
+    },
   },
   title: {
     position: 'absolute',
