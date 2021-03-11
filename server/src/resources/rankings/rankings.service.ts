@@ -356,12 +356,12 @@ export class RankingsService {
         FROM Rankings
         WHERE createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
         Group by creatorId, cdate
-        Order by platform, cdate DESC, maxViewer DESC
+        Order by platform, createDate DESC, maxViewer DESC
       ) AS A
     ) AS B
     where "rank" <= 10 
     group by platform, cdate
-    order by platform, cdate DESC;`;
+    order by platform, createDate DESC;`;
 
     try {
       const data = await getConnection().query(query);
