@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   createStyles, makeStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
@@ -121,57 +121,67 @@ function onRender(this: Highcharts.Chart, event: Event) {
     r: twitchCenter[2] / 2,
   };
 
-  // SVG filters https://jsfiddle.net/jL72qh55/9/
+  /**
+   * 그라데이션 && 물방울 모양 배경------SVG filters https://jsfiddle.net/jL72qh55/9/
+   * 1. svg filter(#gooey-effect) 생성
+   * 2. svg mask(.highcharts-blobs) 생성
+   * 3. svg rect 생성 : gradient 적용 && mask: 'url(#gooey-effect)' 로 필터적용
+   * 4. css에서 .highcharts-blobs { -webkit-filter: 'url(#gooey-effect)'; filter: 'url(#gooey-effect)'; } 적용
+   */
+  // 1. 필터 생성(블러, contrast)
   const filter = renderer.createElement('filter')
     .attr({
-      id: 'goo',
+      id: 'gooey-effect', // 해당 필터의 id를 .highcharts-blobs': {'-webkit-filter': 'url(#gooey-effect)',filter: 'url(#gooey-effect)'} 와 같이 적용한다
     }).add(renderer.defs);
 
   renderer.createElement('feGaussianBlur').attr({
     in: 'SourceGraphic',
-    stdDeviation: '10',
+    stdDeviation: '25', // blur 값
     result: 'blur',
   }).add(filter);
   renderer.createElement('feColorMatrix').attr({
     in: 'blur',
     mode: 'matrix',
-    result: 'goo',
-    values: '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7',
+    result: 'gooey-effect',
+    values: '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7', //  알파 채널 값에 18을 곱한 다음 해당 값에서 7 * 255를 빼서 투명도 대비를 증가 https://css-tricks.com/gooey-effect/#about-color-matrices
   }).add(filter);
-
   renderer.createElement('feBlend').attr({
     in: 'SourceGraphic',
-    in2: 'goo',
+    in2: 'gooey-effect',
     result: 'mix',
   }).add(filter);
 
-  const mask = renderer.createElement('mask').attr({ id: 'maska' }).add();
-  const g = renderer.g('blobs').add(mask);
+  // 2. 물방울 모양 마스크 생성
+  const mask = renderer.createElement('mask').attr({ id: 'blobMask' }).add();
+  const blobOuterScale = 1.15; // 차트 지름의 몇배만큼 배경을 보이게 할건지
+  const g = renderer.g('blobs') // g('blobs') => .highcharts-blobs라는 클래스네임 적용됨. 여기에 css filter를 적용한다
+    .add(mask);
   renderer.circle({
-    cx: afreecaChartCoord.x, cy: afreecaChartCoord.y, r: afreecaChartCoord.r * 1.15, fill: 'white',
+    cx: afreecaChartCoord.x, cy: afreecaChartCoord.y, r: afreecaChartCoord.r * blobOuterScale, fill: 'white',
   }).add(g);
   renderer.circle({
-    cx: twitchChartCoord.x, cy: twitchChartCoord.y, r: twitchChartCoord.r * 1.15, fill: 'white',
+    cx: twitchChartCoord.x, cy: twitchChartCoord.y, r: twitchChartCoord.r * blobOuterScale, fill: 'white',
   }).add(g);
 
+  // 3. 그라데이션 배경 -> mask프로퍼티 적용하여 물방울 모양으로 잘라냄
   renderer.rect(0, 0, plotWidth, plotHeight).attr({
-    mask: 'url(#maska)',
+    mask: 'url(#blobMask)',
     fill: {
       linearGradient: {
-        x1: 0.25, y1: 0, x2: 0.75, y2: 0,
+        x1: 0.3, y1: 0, x2: 0.7, y2: 0,
       },
       stops: [
-        [0, blue[300]],
-        [1, purple[300]],
+        [0, blue[200]],
+        [1, purple[200]],
       ],
     },
   }).add();
 
   // 호 그리기---------------------------------------------------
-  const scale = 1.25;
+  const arcOuterScale = 1.28;
   const strokeWidth = 5;
   // 아프리카 arc
-  const afreecaRadius = afreecaChartCoord.r * scale;
+  const afreecaRadius = afreecaChartCoord.r * arcOuterScale;
   renderer.arc(
     afreecaChartCoord.x,
     afreecaChartCoord.y,
@@ -182,7 +192,7 @@ function onRender(this: Highcharts.Chart, event: Event) {
     'stroke-width': strokeWidth,
   }).add();
   // 트위치 arc
-  const twitchRadius = twitchChartCoord.r * scale;
+  const twitchRadius = twitchChartCoord.r * arcOuterScale;
   renderer.arc(
     twitchChartCoord.x,
     twitchChartCoord.y,
@@ -196,28 +206,35 @@ function onRender(this: Highcharts.Chart, event: Event) {
 
 /**
  * 두 플랫폼 총 시청자수에 따라 차트사이즈 반환
- * 큰쪽은 사이즈 300, 작은쪽은 200
+ * 큰차트사이즈 300px, 작은차트 사이즈 200px 기준
+ * subPx파라미터로 차트사이즈 크기 조절이 가능하다
+ * 
  * @param afreecaTotal 아프리카 총 시청자수
  * @param twitchTotal 트위치 총 시청자수
+ * @compensationPx 차트 크기 보정값(픽셀단위). 양수일 경우 (기본차트사이즈 + sub)px / 음수일 경우 (기본차트사이즈 - sub)px
  * @returns [afreecaChartSize: number, twitchChartSize: number]
  */
-function getChartSize(afreecaTotal: number, twitchTotal: number) {
-  const bigSize = 300;
-  const smallSize = 200;
+function getChartSize(afreecaTotal: number, twitchTotal: number, compensationPx = 0) {
+  const bigSize = 300 + compensationPx;
+  const smallSize = 200 + compensationPx;
   const afreecaChartSize = afreecaTotal > twitchTotal ? bigSize : smallSize;
   const twitchChartSize = afreecaTotal < twitchTotal ? bigSize : smallSize;
 
   return [afreecaChartSize, twitchChartSize];
 }
 
+/**
+ * 스타일 훅
+ * 4.컨테이터 클래스 polarAreaContainer 아래 .highcharts-blobs { -webkit-filter: 'url(#gooey-effect)'; filter: 'url(#gooey-effect)'; } 적용
+ */
 const useStyles = makeStyles((theme: Theme) => createStyles({
   polarAreaContainer: {
     position: 'relative',
     padding: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     '& .highcharts-blobs': {
-      '-webkit-filter': 'url(#goo)',
-      fill: 'url(#goo)',
+      '-webkit-filter': 'url(#gooey-effect)',
+      filter: 'url(#gooey-effect)', // 마스크에 svg필터 적용
     },
   },
   title: {
@@ -228,19 +245,21 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   totalCount: {
     position: 'absolute',
     width: '100%',
-    top: '45%',
+    top: '50%',
     zIndex: 10,
     '& img': {
       width: '100%',
-      maxWidth: '50px',
+      maxWidth: '100px',
+    },
+    '&>*': {
+      transform: 'translateY(-50%)',
+      position: 'absolute',
     },
   },
   afreecaCount: {
-    position: 'absolute',
     left: '20%',
   },
   twitchCount: {
-    position: 'absolute',
     right: '20%',
   },
 }));
@@ -249,10 +268,12 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const theme = useTheme();
+  // 차트컨테이너 ref
+  const chartRef = useRef<{chart: Highcharts.Chart, container: React.RefObject<HTMLDivElement>}>(null);
+  // 플랫폼별 시청자수 상위 10인의 데이터
   const [{ data, loading, error }] = useAxios<{afreeca: DailyTotalViewersData, twitch: DailyTotalViewersData}>('/rankings/daily-total-viewers');
-  const tickInterval = 360 / 10;
+  const tickInterval = 360 / 10; // 원을 10개의 칸으로 나눔
 
-  // Multiple polar charts https://www.highcharts.com/forum/viewtopic.php?t=42296#p148602
   const [options, setOptions] = useState<Highcharts.Options>({
     chart: {
       type: 'column',
@@ -263,18 +284,16 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     legend: { enabled: false },
     title: { text: '' },
     pane: [{
-      center: ['40%', '50%'],
-      startAngle: 36 * (-2), // x축 시작 위치 default 0 (12시방향)// 괄호안의 값 : 가장 큰 파이가 위치할 칸 번호
+      startAngle: tickInterval * (-2), // x축 시작 위치, 12시 방향인 0 을 기준으로 함. -2 이면 왼쪽 두번째 칸부터 시작
     }, {
-      center: ['60%', '50%'],
-      startAngle: 36 * (2),
+      startAngle: tickInterval * (2), // 양수값이면 오른쪽 두번째 칸부터 시작
     }] as Highcharts.PaneOptions, // pane 타입정의가 배열을 못받게 되어있어서 임시로 타입 단언 사용함
     yAxis: [
       { pane: 0, labels: { enabled: false }, gridLineWidth: 0 },
       { pane: 1, labels: { enabled: false }, gridLineWidth: 0 },
     ],
     xAxis: [{
-      reversed: true,
+      reversed: true, // 오른쪽 차트와 대칭되도록 
       pane: 0,
       tickInterval,
       lineWidth: 0,
@@ -292,12 +311,15 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     plotOptions: {
       series: {
         pointInterval: tickInterval,
-        pointPlacement: 'between', // column차트가 x축 사이에 들어가도록
+        pointPlacement: 'between',
         dataLabels: {
           enabled: true,
           color: theme.palette.common.white,
           align: 'center',
           verticalAlign: 'middle',
+          style: {
+            fontSize: `${theme.typography.caption.fontSize}`,
+          },
           formatter: polarAreaLabelFormatter,
         },
         states: {
@@ -320,15 +342,22 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   });
 
   useEffect(() => {
-    if (!data) return;
+    if (!chartRef.current || !data) return;
     const { afreeca, twitch } = data;
-    const [afreecaChartSize, twitchChartSize] = getChartSize(afreeca.total, twitch.total);
+    const compensationPx = -50;
+    const [afreecaChartSize, twitchChartSize] = getChartSize(afreeca.total, twitch.total, compensationPx);
+    const { plotWidth, plotHeight } = chartRef.current.chart;
+    const verticalCenter = plotHeight * 0.5;
+    const afreecaHorizontalCenter = plotWidth * 0.40 - compensationPx / 2;
+    const twitchHorizontalCenter = plotWidth * 0.60 + compensationPx / 2;
 
     setOptions({
       pane: [{
         size: afreecaChartSize,
+        center: [`${afreecaHorizontalCenter}`, `${verticalCenter}`],
       }, {
         size: twitchChartSize,
+        center: [`${twitchHorizontalCenter}`, `${verticalCenter}`],
       }] as Highcharts.PaneOptions, // pane 타입정의가 배열을 못받게 되어있어서 임시로 타입 단언 사용함
       series: [{
         type: 'column',
@@ -361,15 +390,15 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       <div className={classes.totalCount}>
         <div className={classes.afreecaCount}>
           <img src="/images/logo/afreecaLogo.png" alt="아프리카 로고" />
-          <Typography>{`${data?.afreeca.total || 0} 명`}</Typography>
+          <Typography align="center">{`${data ? Highcharts.numberFormat(data.afreeca.total, 0, undefined, ',') : 0} 명`}</Typography>
         </div>
         <div className={classes.twitchCount}>
           <img src="/images/logo/twitchLogo.png" alt="트위치 로고" />
-          <Typography>{`${data?.twitch.total || 0} 명`}</Typography>
+          <Typography align="center">{`${data ? Highcharts.numberFormat(data.twitch.total, 0, undefined, ',') : 0} 명`}</Typography>
         </div>
       </div>
 
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <HighchartsReact highcharts={Highcharts} options={options} ref={chartRef} />
       {loading && <CenterLoading />}
     </section>
   );
