@@ -1,5 +1,4 @@
 import {
-  // UseGuards, 
   Controller, Get, Query, Param,
 } from '@nestjs/common';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
@@ -22,7 +21,8 @@ export class BroadcastInfoController {
    * @param findDaysStreamRequest 로그인 유저 아이디, 조회 시작 날짜 00시 00분 , 조회 종료 날짜 23시 59분
    */
   @Get()
-  // @UseGuards(JwtAuthGuard) // 가드 임시 주석처리
+  // 일시적 가드해제 : 마케팅을 위한 개발 목적
+  // @UseGuards(JwtAuthGuard)
   getCompleteStreamsList(@Query(new ValidationPipe())
     findDaysStreamRequest: SearchCalendarStreams): Promise<StreamDataType[]> {
     return this.broadcastService.findDayStreamList(

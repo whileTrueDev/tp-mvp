@@ -6,6 +6,7 @@ export interface FatalError {
   isError: boolean;
 }
 export interface StreamCompareSectionPropInterface {
+  exampleMode?: boolean;
   handleSubmit: (params: SearchStreamInfoByStreamId) => void;
   loading: boolean;
   error: FatalError | undefined;
@@ -28,6 +29,7 @@ export interface StreamCardProps {
 }
 
 export interface StreamCalendarProps {
+  exampleMode?: boolean;
   handleDayStreamList: (responseList: (StreamDataType)[]) => void;
   clickedDate: Date;
   baseStream: StreamDataType|null;

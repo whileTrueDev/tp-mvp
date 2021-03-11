@@ -23,6 +23,8 @@ import {
 } from '../shared/StreamAnalysisShared.interface';
 // attoms
 import Loading from '../../../shared/sub/Loading';
+import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
+import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
 // context
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // hooks
@@ -38,7 +40,7 @@ import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
-    loading, error, handleSubmit,
+    loading, error, handleSubmit, exampleMode,
   } = props;
   const classes = usePeriodAnalysisHeroStyle();
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
@@ -99,54 +101,27 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
     url: '/broadcast-info',
   }, { manual: true });
 
-  /* 기간 변경에 따라 재요청 및 상태값 변경 */
-  React.useEffect(() => {
-    if (period[0] && period[1]) {
-      const params: SearchCalendarStreams = {
-        userId: auth.user.userId,
-        startDate: period[0].toISOString(),
-        endDate: period[1].toISOString(),
-      };
-
-      excuteGetStreams({
-        params,
-      })
-        .then((res) => {
-          // LOGIN ERROR -> 리다이렉트 필요
-          setTermStreamsList(res.data.map((data) => ({
-            ...data,
-            isRemoved: false,
-          })));
-        })
-        .catch((err) => {
-          if (err.response) {
-            ShowSnack('방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요.', 'error', enqueueSnackbar);
-          }
-        });
-    }
-  }, [period, auth.user, excuteGetStreams, enqueueSnackbar]);
-
   React.useEffect(() => {
     if (period[0] && period[1]) {
       const searchParam: SearchCalendarStreams = {
-        userId: auth.user.userId,
+        userId: exampleMode ? 'sal_gu' : auth.user.userId,
         startDate: period[0].toISOString(),
         endDate: period[1].toISOString(),
       };
       excuteGetStreams({
         params: searchParam,
-      }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-        setTermStreamsList(res.data.map((data) => ({
-          ...data,
-          isRemoved: false,
-        })));
+      }).then((res) => {
+        const result = res.data.map((row) => ({
+          ...row, isRemoved: false, title: '예시 방송입니다',
+        }));
+        setTermStreamsList(result);
       }).catch((err) => {
         if (err.response) {
           ShowSnack('방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요.', 'error', enqueueSnackbar);
         }
       });
     }
-  }, [period, auth.user, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, period, auth.user, excuteGetStreams, enqueueSnackbar]);
 
   /* 네비바 유저 전환시 이전 값 초기화 -> CBT 주석 사항 */
   // React.useEffect(() => {
@@ -224,6 +199,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           {/*  기간 선택 부 - 기간 선택 달력 + dialog open 로직 */}
           <div className={classes.calendarWrapper}>
             <RangeSelectCalendar
+              exampleMode={exampleMode}
               handlePeriod={handlePeriod}
               period={period}
               handleDialogClose={handleClose}
@@ -237,14 +213,32 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       </Grid>
 
       <Grid item>
-        <Typography
-          className={classnames({
-            [classes.mainBody]: true,
-            [classes.categoryTitle]: true,
-          })}
-        >
-          확인할 데이터 선택
-        </Typography>
+        { exampleMode ? (
+          <StepGuideTooltip
+            position="top-start"
+            stepTitle="step3"
+            content={stepguideSource.mainpagePeriodAnalysis.step3}
+          >
+            <Typography
+              className={classnames({
+                [classes.mainBody]: true,
+                [classes.categoryTitle]: true,
+              })}
+            >
+              확인할 데이터 선택
+            </Typography>
+          </StepGuideTooltip>
+
+        ) : (
+          <Typography
+            className={classnames({
+              [classes.mainBody]: true,
+              [classes.categoryTitle]: true,
+            })}
+          >
+            확인할 데이터 선택
+          </Typography>
+        )}
         {/* 분석 항목 선택 체크박스 그룹 */}
         <CheckBoxGroup
           viewer={checkStateGroup.viewer}
@@ -253,17 +247,37 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
           handleCheckStateChange={handleCheckStateChange}
         />
         <Grid container direction="row" justify="center">
-          <Button
-            className={classes.anlaysisButton}
-            variant="contained"
-            onClick={handleAnalysisButton}
-            disabled={
-            (Object.values(checkStateGroup).indexOf(true) < 0)
-            || (!(period[0] && period[1]))
-          }
-          >
-            분석하기
-          </Button>
+          { exampleMode ? (
+            <StepGuideTooltip
+              position="right"
+              stepTitle="step4"
+              content={stepguideSource.mainpagePeriodAnalysis.step4}
+            >
+              <Button
+                className={classes.anlaysisButton}
+                variant="contained"
+                onClick={handleAnalysisButton}
+                disabled={
+                (Object.values(checkStateGroup).indexOf(true) < 0)
+                || (!(period[0] && period[1]))
+              }
+              >
+                분석하기
+              </Button>
+            </StepGuideTooltip>
+          ) : (
+            <Button
+              className={classes.anlaysisButton}
+              variant="contained"
+              onClick={handleAnalysisButton}
+              disabled={
+              (Object.values(checkStateGroup).indexOf(true) < 0)
+              || (!(period[0] && period[1]))
+            }
+            >
+              분석하기
+            </Button>
+          )}
         </Grid>
       </Grid>
 

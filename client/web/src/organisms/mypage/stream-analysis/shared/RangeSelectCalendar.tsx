@@ -31,11 +31,13 @@ import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import { RangeSelectCaledarProps } from './StreamAnalysisShared.interface';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAllCalendarStyles from './RangeSelectCalendar.style';
+import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
+import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
 
 const reRequest = 3;
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base,
+    period, handlePeriod, base, exampleMode,
     handleDialogOpen, removeFunc,
   } = props;
   const classes = useAllCalendarStyles();
@@ -101,7 +103,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: auth.user.userId,
+      userId: exampleMode ? 'sal_gu' : auth.user.userId,
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
@@ -117,7 +119,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [auth.user, excuteGetStreams, enqueueSnackbar, currMonth]);
+  }, [exampleMode, auth.user, excuteGetStreams, enqueueSnackbar, currMonth]);
 
   React.useEffect(() => {
     if (period.length > 1 && period[0] && period[1]) {
@@ -361,38 +363,84 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         <Grid container direction="column">
           <Grid item>
             <ThemeProvider<typeof DATE_THEME> theme={DATE_THEME}>
-              <DatePicker
-                value={currDate}
-                onChange={handleDate}
-                onMonthChange={handleMonthChange}
-                disableFuture
-                renderDay={renderDayInPicker}
-                variant="static"
-                openTo="date"
-                disableToolbar
-              />
+              { exampleMode ? (
+                <StepGuideTooltip
+                  position="right-start"
+                  stepTitle="step1"
+                  content={stepguideSource.mainpagePeriodAnalysis.step1}
+                >
+                  <DatePicker
+                    value={currDate}
+                    onChange={handleDate}
+                    onMonthChange={handleMonthChange}
+                    disableFuture
+                    renderDay={renderDayInPicker}
+                    variant="static"
+                    openTo="date"
+                    disableToolbar
+                  />
+                </StepGuideTooltip>
+              ) : (
+                <DatePicker
+                  value={currDate}
+                  onChange={handleDate}
+                  onMonthChange={handleMonthChange}
+                  disableFuture
+                  renderDay={renderDayInPicker}
+                  variant="static"
+                  openTo="date"
+                  disableToolbar
+                />
+              )}
             </ThemeProvider>
           </Grid>
 
           {removeFunc && (
-            <Chip
-              icon={<FormatListBulletedIcon style={{ color: theme.palette.common.white }} />}
-              label="제외할 방송 선택"
-              clickable
-              style={{
-                width: '175px',
-                alignSelf: 'flex-end',
-                color: theme.palette.common.white,
-                backgroundColor: '#aaaaaa',
-              }}
-              onClick={() => {
-                if (period[0] && period[1] && handleDialogOpen) {
-                  handleDialogOpen();
-                } else {
-                  ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
-                }
-              }}
-            />
+            exampleMode ? (
+              <StepGuideTooltip
+                position="right"
+                stepTitle="step2"
+                content={stepguideSource.mainpagePeriodAnalysis.step2}
+              >
+                <Chip
+                  icon={<FormatListBulletedIcon style={{ color: theme.palette.common.white }} />}
+                  label="제외할 방송 선택"
+                  clickable
+                  style={{
+                    width: '175px',
+                    float: 'right',
+                    color: theme.palette.common.white,
+                    backgroundColor: '#aaaaaa',
+                  }}
+                  onClick={() => {
+                    if (period[0] && period[1] && handleDialogOpen) {
+                      handleDialogOpen();
+                    } else {
+                      ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
+                    }
+                  }}
+                />
+              </StepGuideTooltip>
+            ) : (
+              <Chip
+                icon={<FormatListBulletedIcon style={{ color: theme.palette.common.white }} />}
+                label="제외할 방송 선택"
+                clickable
+                style={{
+                  width: '175px',
+                  alignSelf: 'flex-end',
+                  color: theme.palette.common.white,
+                  backgroundColor: '#aaaaaa',
+                }}
+                onClick={() => {
+                  if (period[0] && period[1] && handleDialogOpen) {
+                    handleDialogOpen();
+                  } else {
+                    ShowSnack('기간을 선택해 주세요.', 'info', enqueueSnackbar);
+                  }
+                }}
+              />
+            )
           )}
         </Grid>
 

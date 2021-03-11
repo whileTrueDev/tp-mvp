@@ -70,13 +70,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface StreamCalenderProps {
+  exampleMode?: boolean;
   clickedDate: Date;
   handleClickedDate: (newDate: Date) => void;
   handleDayStreamList: (responseList: (StreamDataType)[]) => void;
 }
 function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   /* 일감 - 편집점 분석 달력 렌더링 방식 변경 */
-  const { clickedDate, handleClickedDate, handleDayStreamList } = props;
+  const {
+    exampleMode, clickedDate, handleClickedDate, handleDayStreamList,
+  } = props;
 
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
@@ -127,7 +130,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: auth.user.userId,
+      userId: exampleMode ? 'sal_gu' : auth.user.userId,
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
@@ -143,7 +146,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
         ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) handleClickedDate(newDate);
@@ -153,7 +156,12 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
         getStreamsData.forEach((stream: StreamDataType) => {
           if (newDate
             && moment(newDate).format('YYYY-MM-DD') === moment(stream.startDate).format('YYYY-MM-DD')) {
-            dayStreamList.push(stream);
+            // 마케팅을 위한 개발 목적 => 추후 변경
+            if (!exampleMode) {
+              dayStreamList.push(stream);
+            } else {
+              dayStreamList.push({ ...stream, title: '예시 방송입니다' });
+            }
           }
         });
       }
