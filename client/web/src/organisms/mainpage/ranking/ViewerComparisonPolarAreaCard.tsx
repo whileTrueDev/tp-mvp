@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react';
 import {
   createStyles, makeStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
+import purple from '@material-ui/core/colors/purple';
+import blue from '@material-ui/core/colors/blue';
+import { Divider, Typography } from '@material-ui/core';
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HCmore from 'highcharts/highcharts-more'; // polar area chart 사용 위해 필요
 
-import purple from '@material-ui/core/colors/purple';
-import blue from '@material-ui/core/colors/blue';
-import { Divider, Typography } from '@material-ui/core';
+import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 HCmore(Highcharts);// polar area chart 사용 위해 필요
 
@@ -96,6 +99,13 @@ function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObjec
           ${Highcharts.numberFormat(originValue as number, 0, undefined, ',')} 명`;
 }
 
+function onRender(this: Highcharts.Chart, event: Event) {
+  console.log('render', this);
+  const {
+    xAxis, plotLeft, plotTop, plotWidth, plotHeight, series, renderer,
+  } = this;
+}
+
 const useStyles = makeStyles((theme: Theme) => createStyles({
   polarAreaContainer: {
     position: 'relative',
@@ -126,6 +136,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 function ViewerComparisonPolarAreaCard(): JSX.Element {
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const theme = useTheme();
   const [{ data, loading, error }] = useAxios<{afreeca: DailyTotalViewersData, twitch: DailyTotalViewersData}>('/rankings/daily-total-viewers');
@@ -133,7 +144,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
 
   // Multiple polar charts https://www.highcharts.com/forum/viewtopic.php?t=42296#p148602
   const [options, setOptions] = useState<Highcharts.Options>({
-    chart: { type: 'column', polar: true },
+    chart: { type: 'column', polar: true, events: { render: onRender } },
     credits: { enabled: false },
     legend: { enabled: false },
     title: { text: '' },
@@ -145,8 +156,8 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       startAngle: 36 * (2),
     }] as Highcharts.PaneOptions, // pane 타입정의가 배열을 못받게 되어있어서 임시로 타입 단언 사용함
     yAxis: [
-      { pane: 0, labels: { enabled: false } },
-      { pane: 1, labels: { enabled: false } },
+      { pane: 0, labels: { enabled: false }, gridLineWidth: 0 },
+      { pane: 1, labels: { enabled: false }, gridLineWidth: 0 },
     ],
     xAxis: [{
       reversed: true,
@@ -174,6 +185,11 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
           align: 'center',
           verticalAlign: 'middle',
           formatter: polarAreaLabelFormatter,
+        },
+        states: {
+          hover: {
+            brightness: 0.3,
+          },
         },
       },
       column: {
@@ -221,6 +237,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
 
   if (error) {
     console.error(error);
+    ShowSnack('상위 10인 시청자수 데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.', 'error', enqueueSnackbar);
   }
   return (
     <section className={classes.polarAreaContainer}>
