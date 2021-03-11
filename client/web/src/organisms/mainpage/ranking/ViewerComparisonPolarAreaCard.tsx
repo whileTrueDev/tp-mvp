@@ -35,6 +35,9 @@ interface CustomPointOption extends Highcharts.PointOptionsObject {
   color: string;
   originValue: number;
 }
+interface CustomAxisType extends Highcharts.Axis{
+  center: number[];
+}
 
 type Color = typeof blue | typeof purple; // material ui color객체, blue: 아프리카용, purple: 트위치용
 type ColorIndex = keyof Color; // material ui color 인덱스값
@@ -100,15 +103,65 @@ function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObjec
 }
 
 function onRender(this: Highcharts.Chart, event: Event) {
-  console.log('render', this);
   const {
-    xAxis, plotLeft, plotTop, plotWidth, plotHeight, series, renderer,
+    series, renderer, plotLeft, plotTop,
   } = this;
+  if (series.length === 0) return;
+
+  // renderer.rect(50, 10, 799, 299).attr({
+  //   fill: 'green',
+  // }).add();
+
+  const { xAxis: afreecaXAxis } = series[0];
+  const { xAxis: twitchXAxis } = series[1];
+  const { center: afreecaCenterCoord } = afreecaXAxis as CustomAxisType;
+  const { center: twitchCenterCoord } = twitchXAxis as CustomAxisType;
+  const scale = 1.15;
+  // 아프리카 arc
+  const afreecaRadius = (afreecaCenterCoord[2] / 2) * scale;
+  renderer.arc(
+    afreecaCenterCoord[0] + plotLeft,
+    afreecaCenterCoord[1] + plotTop,
+    afreecaRadius, afreecaRadius,
+    (Math.PI / 180) * 90, (Math.PI / 180) * 270,
+  ).attr({
+    stroke: blue[900],
+    'stroke-width': 3,
+  }).add();
+  // 트위치 arc
+  const twitchRadius = (twitchCenterCoord[2] / 2) * scale;
+  renderer.arc(
+    twitchCenterCoord[0] + plotLeft,
+    twitchCenterCoord[1] + plotTop,
+    twitchRadius, twitchRadius,
+    (Math.PI / 180) * -90, (Math.PI / 180) * 90,
+  ).attr({
+    stroke: purple[500],
+    'stroke-width': 3,
+  }).add();
+}
+
+/**
+ * 두 플랫폼 총 시청자수에 따라 차트사이즈 반환
+ * 큰쪽은 사이즈 300, 작은쪽은 200
+ * @param afreecaTotal 아프리카 총 시청자수
+ * @param twitchTotal 트위치 총 시청자수
+ * @returns [afreecaChartSize: number, twitchChartSize: number]
+ */
+function getChartSize(afreecaTotal: number, twitchTotal: number) {
+  const bigSize = 300;
+  const smallSize = 200;
+  const afreecaChartSize = afreecaTotal > twitchTotal ? bigSize : smallSize;
+  const twitchChartSize = afreecaTotal < twitchTotal ? bigSize : smallSize;
+
+  return [afreecaChartSize, twitchChartSize];
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   polarAreaContainer: {
     position: 'relative',
+    padding: theme.spacing(2),
+    backgroundColor: theme.palette.background.paper,
   },
   title: {
     position: 'absolute',
@@ -144,7 +197,11 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
 
   // Multiple polar charts https://www.highcharts.com/forum/viewtopic.php?t=42296#p148602
   const [options, setOptions] = useState<Highcharts.Options>({
-    chart: { type: 'column', polar: true, events: { render: onRender } },
+    chart: {
+      type: 'column',
+      polar: true,
+      events: { render: onRender },
+    },
     credits: { enabled: false },
     legend: { enabled: false },
     title: { text: '' },
@@ -208,11 +265,8 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   useEffect(() => {
     if (!data) return;
     const { afreeca, twitch } = data;
+    const [afreecaChartSize, twitchChartSize] = getChartSize(afreeca.total, twitch.total);
 
-    const bigSize = 300;
-    const smallSize = 200;
-    const afreecaChartSize = afreeca.total > twitch.total ? bigSize : smallSize;
-    const twitchChartSize = afreeca.total < twitch.total ? bigSize : smallSize;
     setOptions({
       pane: [{
         size: afreecaChartSize,
