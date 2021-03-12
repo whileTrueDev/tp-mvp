@@ -17,6 +17,9 @@ export interface DailyTotalViewersItemData{
 type Color = typeof blue | typeof purple; // material ui color객체, blue: 아프리카용, purple: 트위치용
 type ColorIndex = keyof Color; // material ui color 인덱스값
 
+//---------------------------------------------------------------------------
+// polar chart 컴포넌트 내에서 사용하는 함수들
+
 /**
  * 폴라차트에서 표현할 형태로 
  * 백엔드에서 받은 플랫폼별 24시간내 시청자 상위 10명 데이터를 변형하는 함수
@@ -62,7 +65,7 @@ export function polarAreaLabelFormatter(this: Highcharts.PointLabelObject): stri
 
 /**
  * 두 플랫폼 총 시청자수에 따라 차트사이즈(지름) 반환
- * compensationPx 차트 지름 크기 조절이 가능하다
+ * compensationPx값으로 차트 지름 크기 조절이 가능하다
  * 
  * @param afreecaTotal 아프리카 총 시청자수
  * @param twitchTotal 트위치 총 시청자수
@@ -84,16 +87,16 @@ export function getChartSize(afreecaTotal: number, twitchTotal: number, compensa
 // ----------------------------------------------
 // svg 관련
 /**
- * 물방울이 이어진 효과 표현하기 위한 svg filter생성하는 함수
+ * 물방울이 이어진 효과 표현하기 위한 svg filter생성 & 그림자 효과 filter  생성
  * createBlobGradationBackground 함수 내부에서 사용
  * @param renderer 
  */
-export function createGooeyEffectFilter(renderer: Highcharts.SVGRenderer): void {
+export function createSVGFilters(renderer: Highcharts.SVGRenderer): void {
+  // 물방울이 이어진 효과(gooey-effect) filter
   const filter = renderer.createElement('filter')
     .attr({
-      id: 'gooey-effect', // 해당 필터의 id를 .highcharts-blobs': {'-webkit-filter': 'url(#gooey-effect)',filter: 'url(#gooey-effect)'} 와 같이 적용한다
+      id: 'gooey-effect', // 해당 필터의 id를 필터 적용할 svg 엘리먼트의 fill attribute로 설정한다
     }).add(renderer.defs);
-
   renderer.createElement('feGaussianBlur').attr({
     in: 'SourceGraphic',
     stdDeviation: '25', // blur 값
@@ -110,66 +113,83 @@ export function createGooeyEffectFilter(renderer: Highcharts.SVGRenderer): void 
     in2: 'gooey-effect',
     result: 'mix',
   }).add(filter);
+
+  // 물방울 뒤 그림자 효과 filter
+  const shadowFilter = renderer.createElement('filter')
+    .attr({
+      id: 'shadow-effect',
+    }).add(renderer.defs);
+  renderer.createElement('feDropShadow').attr({
+    dx: '0',
+    dy: '0',
+    stdDeviation: '10', // blur의 정도. 10 이상일 시 이상하게 나타남
+    'flood-color': '#000000', // shadow color
+    'flood-opacity': '0.5', // shadow opacity
+  }).add(shadowFilter);
 }
 
 /**
- * 물방울 모양 svg mask 엘리먼트 생성
+ * 물방울 모양 svg 엘리먼트 생성
+ * circle 두개를 만들어 필터를 적용한다
  * createBlobGradationBackground 함수 내부에서 사용
  * @param renderer 
  * @param blobs [afreecaChartCoord{x,y,r}, twitchChartCoord{x,y,r}]
  */
-export function createBlobMask(renderer: Highcharts.SVGRenderer, blobs: {x: number, y: number, r: number}[]): void{
-  const mask = renderer.createElement('mask').attr({ id: 'blobMask' }).add();
-  const blobOuterScale = 1.15; // 차트 지름의 몇배만큼 배경을 보이게 할건지
-  const g = renderer.g('blobs') // g('blobs') => .highcharts-blobs라는 클래스네임 적용됨. 여기에 css filter를 적용한다
-    .add(mask);
+export function createBlobs(renderer: Highcharts.SVGRenderer, blobs: {x: number, y: number, r: number}[]): void{
+  const blobOuterScale = 1.15;// 배경의 지름이 차트 지름의 몇배가 될 것인지
+
+  // 그림자를 먼저 생성
+  const shadowG = renderer.g('shadow-blobs').add();
   blobs.forEach((blob) => {
     renderer.circle({
-      cx: blob.x, cy: blob.y, r: blob.r * blobOuterScale, fill: 'white',
+      cx: blob.x, cy: blob.y, r: blob.r * blobOuterScale, fill: 'white', filter: 'url(#shadow-effect)',
+    }).add(shadowG);
+  });
+
+  // 그림자 생성 후 물방울 배경을 생성
+  const g = renderer.g('blobs').attr({
+    filter: 'url(#gooey-effect)', // createSVGFilters에서 작성한 filter 적용
+  }).add();
+  const middleColor = '#a4a4fa';
+  const gradientColorStops = [
+    { startColor: blue[200], endColor: middleColor },
+    { startColor: middleColor, endColor: purple[200] },
+  ];
+  blobs.forEach((blob, index) => {
+    const { startColor, endColor } = gradientColorStops[index];
+    renderer.circle({
+      cx: blob.x,
+      cy: blob.y,
+      r: blob.r * blobOuterScale,
+      fill: {
+        linearGradient: {
+          x1: 0, y1: 0, x2: 1, y2: 0,
+        },
+        stops: [
+          [0, startColor],
+          [1, endColor],
+        ],
+      },
     }).add(g);
   });
 }
 
 /**
- * 그라데이션 && 물방울 모양 배경 생성
+ * 그라데이션 && 물방울 모양 배경------SVG filters https://jsfiddle.net/jL72qh55/9/
+ * 1. svg filter(#gooey-effect) 생성
+ * 2. 물방울 모양&그림자 생성
  * @param renderer Highcharts.SVGRenderer
- * @param plotWidth chart.plotWidth 그래프가 표시될 plotarea의 너비
- * @param plotHeight chart.plotHeight 그래프가 표시될 plotarea의 높이
  * @param blobCoords [afreecaChartCoord, twitchChartCoord]
- * @returns 물방울 모양 & 그라데이션 mask 적용된 배경 rect
  */
-export function createBlobGradationBackground(
+export function createGradationBlobBackground(
   renderer: Highcharts.SVGRenderer,
-  plotWidth: number,
-  plotHeight: number,
   blobCoords: {x: number, y: number, r: number}[],
-): Highcharts.SVGElement {
-  /**
-   * 그라데이션 && 물방울 모양 배경------SVG filters https://jsfiddle.net/jL72qh55/9/
-   * 1. svg filter(#gooey-effect) 생성
-   * 2. svg mask(.highcharts-blobs) 생성
-   * 3. svg rect 생성 : gradient 적용 && mask: 'url(#gooey-effect)' 로 필터적용
-   * 4. css에서 .highcharts-blobs { -webkit-filter: 'url(#gooey-effect)'; filter: 'url(#gooey-effect)'; } 적용
-   */
-  // 1. 필터 생성(블러, contrast)
-  createGooeyEffectFilter(renderer);
+): void {
+  // 1. 필터 생성(블러, contrast, shadow)
+  createSVGFilters(renderer);
 
-  // 2. 물방울 모양 마스크 생성
-  createBlobMask(renderer, blobCoords);
-
-  // 3. 그라데이션 배경 -> mask프로퍼티 적용하여 물방울 모양으로 잘라냄
-  return renderer.rect(0, 0, plotWidth, plotHeight).attr({
-    mask: 'url(#blobMask)',
-    fill: {
-      linearGradient: {
-        x1: 0.3, y1: 0, x2: 0.7, y2: 0,
-      },
-      stops: [
-        [0, blue[200]],
-        [1, purple[200]],
-      ],
-    },
-  });
+  // 2. 물방울 모양 & 그림자 생성
+  createBlobs(renderer, blobCoords);
 }
 
 /**
@@ -190,9 +210,9 @@ export function createArc(
 ): Highcharts.SVGElement {
   const startAngle = direction === 'left' ? 90 : -90;
   const endAlgne = direction === 'left' ? 270 : 90;
-  const strokeWidth = 5; // 선의 굵기
-  const arcOuterScale = 1.28; // (폴라차트 반지름 r * arcOuterScale) 만큼의 반지름 가지는 호가 생성됨
-  const radius = coord.r * arcOuterScale;
+  const strokeWidth = 4; // 선의 굵기
+  const arcOuterScale = 1.3;
+  const radius = coord.r * arcOuterScale;// (폴라차트 반지름 r * arcOuterScale) 만큼의 반지름 가지는 호가 생성됨
   return renderer.arc(
     coord.x,
     coord.y,

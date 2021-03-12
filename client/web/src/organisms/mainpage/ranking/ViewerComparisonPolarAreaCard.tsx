@@ -14,16 +14,16 @@ import { useSnackbar } from 'notistack';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
-import { useStyles as usePolatChartStyles } from './sub/polarChartStyle';
+import { useStyles as usePolatChartStyles } from './polar/polarChartStyle';
 import {
   getChartSize,
   toPolarAreaData,
   polarAreaLabelFormatter,
   createArc,
-  createBlobGradationBackground,
+  createGradationBlobBackground,
   CustomPointOption,
   DailyTotalViewersItemData,
-} from './sub/polarChartUtils';
+} from './polar/polarChartUtils';
 
 HCmore(Highcharts);// polar area chart 사용 위해 필요
 interface DailyTotalViewersData{
@@ -47,18 +47,25 @@ function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObjec
           ${Highcharts.numberFormat(originValue as number, 0, undefined, ',')} 명`;
 }
 
+const commonXAxisOptions = {
+  lineWidth: 0,
+  min: 0,
+  max: 360,
+  labels: { enabled: false },
+};
+
 function ViewerComparisonPolarAreaCard(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = usePolatChartStyles();
   const theme = useTheme();
   // 차트컨테이너 ref
   const chartRef = useRef<{chart: Highcharts.Chart, container: React.RefObject<HTMLDivElement>}>(null);
-  const afreecaLogoRef = useRef<HTMLDivElement>(null);
-  const twitchLogoRef = useRef<HTMLDivElement>(null);
+  const afreecaLogoRef = useRef<HTMLDivElement>(null); // 아프리카 로고 & 총 시청자수 컴포넌트 ref
+  const twitchLogoRef = useRef<HTMLDivElement>(null); // 트위치 로고 & 총 시청자수 컴포넌트 ref
   // 플랫폼별 시청자수 상위 10인의 데이터
   const [{ data, loading, error }] = useAxios<{afreeca: DailyTotalViewersData, twitch: DailyTotalViewersData}>('/rankings/daily-total-viewers');
   const tickInterval = 360 / 10; // 원을 10개의 칸으로 나눔
-
+  // 기본 차트 옵션
   const [options, setOptions] = useState<Highcharts.Options>({
     chart: {
       type: 'column',
@@ -80,17 +87,11 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       reversed: true, // 오른쪽 차트와 대칭되도록 
       pane: 0,
       tickInterval,
-      lineWidth: 0,
-      min: 0,
-      max: 360,
-      labels: { enabled: false },
+      ...commonXAxisOptions,
     }, {
       pane: 1,
       tickInterval,
-      lineWidth: 0,
-      min: 0,
-      max: 360,
-      labels: { enabled: false },
+      ...commonXAxisOptions,
     }],
     plotOptions: {
       series: {
@@ -106,11 +107,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
           },
           formatter: polarAreaLabelFormatter,
         },
-        states: {
-          hover: {
-            brightness: 0.3,
-          },
-        },
+        states: { hover: { brightness: 0.3 } },
       },
       column: {
         pointPadding: 0,
@@ -130,6 +127,12 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     ShowSnack('상위 10인 시청자수 데이터를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.', 'error', enqueueSnackbar);
   }
 
+  // 데이터가 변경되었을 때 실행하는 훅
+  // 1.플랫폼 별 총 시청자 수에 따라 차트 크기와 중심 좌표를 계산,
+  // 2.물방울 모양 그라데이션 배경 생성
+  // 3.차트 옆 반원모양 호 생성
+  // 4.로고 위치 조정
+  // 5.차트옵션 변경 - 시청자수에 따라 차트 크기 조정, series 데이터 추가
   useEffect(() => {
     if (!chartRef.current || !data) return;
     const { afreeca, twitch } = data;
@@ -158,13 +161,12 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     };
 
     // 물방울모양 그라데이션 배경 그리기---------------------------------------------------
-    createBlobGradationBackground(renderer, plotWidth, plotHeight, [afreecaChartCoord, twitchChartCoord])
-      .add();
+    createGradationBlobBackground(renderer, [afreecaChartCoord, twitchChartCoord]);
 
     // 호 그리기---------------------------------------------------
-    const afreecaArc = createArc(renderer, afreecaChartCoord, 'left', blue[700]);
+    const afreecaArc = createArc(renderer, afreecaChartCoord, 'left', blue[400]);
     afreecaArc.add();
-    const twitchArc = createArc(renderer, twitchChartCoord, 'right', purple[700]);
+    const twitchArc = createArc(renderer, twitchChartCoord, 'right', purple[400]);
     twitchArc.add();
 
     // 로고 위치 조정---------------------------------------------------
@@ -179,6 +181,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       twitchLogoRef.current.style.setProperty('left', `${(twitchArcX + twitchArcWidth) + distanceFromArc}px`);
     }
 
+    // 차트옵션 변경 - 시청자수에 따라 차트 크기 조정, series 데이터 추가
     setOptions({
       pane: [{
         size: afreecaChartSize,
@@ -211,16 +214,20 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
         <Typography variant="h5">상위 10인 시청자수 합 비교</Typography>
       </div>
 
-      <div className={classes.totalCount}>
-        <div className={classes.afreecaCount} ref={afreecaLogoRef}>
-          <img src="/images/logo/afreecaLogo.png" alt="아프리카 로고" />
-          <Typography align="center">{`${data ? Highcharts.numberFormat(data.afreeca.total, 0, undefined, ',') : 0} 명`}</Typography>
-        </div>
-        <div className={classes.twitchCount} ref={twitchLogoRef}>
-          <img src="/images/logo/twitchLogo.png" alt="트위치 로고" />
-          <Typography align="center">{`${data ? Highcharts.numberFormat(data.twitch.total, 0, undefined, ',') : 0} 명`}</Typography>
-        </div>
-      </div>
+      { data
+        ? (
+          <div className={classes.totalCount}>
+            <div className={classes.afreecaCount} ref={afreecaLogoRef}>
+              <img src="/images/logo/afreecaLogo.png" alt="아프리카 로고" />
+              <Typography align="center">{`${data ? Highcharts.numberFormat(data.afreeca.total, 0, undefined, ',') : 0} 명`}</Typography>
+            </div>
+            <div className={classes.twitchCount} ref={twitchLogoRef}>
+              <img src="/images/logo/twitchLogo.png" alt="트위치 로고" />
+              <Typography align="center">{`${data ? Highcharts.numberFormat(data.twitch.total, 0, undefined, ',') : 0} 명`}</Typography>
+            </div>
+          </div>
+        )
+        : null}
 
       <HighchartsReact highcharts={Highcharts} options={options} ref={chartRef} />
       {loading && <CenterLoading />}
