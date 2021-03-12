@@ -28,7 +28,7 @@ const usePeriodCompareStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.dark,
     fontSize: '24px',
     marginTop: theme.spacing(3),
-    marginRight: theme.spacing(10),
+    marginBottom: theme.spacing(3),
     color: theme.palette.primary.contrastText,
     '&:hover': {
       backgroundColor: theme.palette.primary.light,

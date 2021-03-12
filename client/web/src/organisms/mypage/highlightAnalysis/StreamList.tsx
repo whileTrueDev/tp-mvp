@@ -11,10 +11,11 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 // shared interface
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-
 import shortid from 'shortid';
 import dateExpression from '../../../utils/dateExpression';
 import SelectVideoIcon from '../../../atoms/stream-analysis-icons/SelectVideoIcon';
+import StepGuideTooltip from '../../../atoms/Tooltip/StepGuideTooltip';
+import { stepguideSource } from '../../../atoms/Tooltip/StepGuideTooltip.text';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -91,6 +92,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 export interface StreamListProps {
+  exampleMode?: boolean;
   dayStreamsList: (StreamDataType)[];
   selectedStream: StreamDataType|null;
   handleSeletedStreams: (newStreams: StreamDataType|null, base?: true | undefined) => void;
@@ -111,7 +113,7 @@ const StyledToolTip = withStyles((theme) => ({
 export default function StreamList(props: StreamListProps): JSX.Element {
   const {
     dayStreamsList, handleSeletedStreams, selectedStream,
-    platformIcon,
+    platformIcon, exampleMode,
   } = props;
 
   const tooltipContents = (stream: StreamDataType): JSX.Element => (
@@ -183,10 +185,23 @@ export default function StreamList(props: StreamListProps): JSX.Element {
 
   return (
     <div>
-      <Typography className={classes.bodyTitle}>
-        <SelectVideoIcon className={classes.selectIcon} />
-        방송 선택
-      </Typography>
+      { exampleMode ? (
+        <StepGuideTooltip
+          position="right-start"
+          stepTitle="step2"
+          content={stepguideSource.mainpageHighlight.step2}
+        >
+          <Typography className={classes.bodyTitle}>
+            <SelectVideoIcon className={classes.selectIcon} />
+            방송 선택
+          </Typography>
+        </StepGuideTooltip>
+      ) : (
+        <Typography className={classes.bodyTitle}>
+          <SelectVideoIcon className={classes.selectIcon} />
+          방송 선택
+        </Typography>
+      )}
 
       <List className={classes.listWrapper}>
         {dayStreamsList && dayStreamsList.map((stream) => (
@@ -221,6 +236,5 @@ export default function StreamList(props: StreamListProps): JSX.Element {
         ))}
       </List>
     </div>
-
   );
 }

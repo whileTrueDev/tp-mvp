@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import useAxios from 'axios-hooks';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
+// import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import { Chip } from '@material-ui/core';
@@ -24,9 +24,16 @@ import dateExpression from '../../../utils/dateExpression';
 import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
+import StepGuideTooltip from '../../../atoms/Tooltip/StepGuideTooltip';
+import { stepguideSource } from '../../../atoms/Tooltip/StepGuideTooltip.text';
 import Loading from '../../shared/sub/Loading';
 
-export default function HighlightAnalysisLayout(): JSX.Element {
+interface HighlightAnalysisLayoutProps {
+  exampleMode?: boolean
+
+}
+
+export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalysisLayoutProps): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -109,10 +116,18 @@ export default function HighlightAnalysisLayout(): JSX.Element {
     }
   };
 
+  // 일시적 주석처리 - 마케팅을 위한 개발
   // 카테고리 리스트 요청
-  const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
-    url: '/category',
-  });
+  // const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
+  //   url: '/category',
+  // });
+
+  const categoriesData = [
+    { categoryId: 1, category: 'agree', categoryName: '모두가 인정한' },
+    { categoryId: 2, category: 'disgust', categoryName: '역겨운' },
+    { categoryId: 3, category: 'surprise', categoryName: '놀라운' },
+    { categoryId: 4, category: 'question', categoryName: '의문이 드는' },
+  ];
 
   return (
     <Paper className={classes.root}>
@@ -162,21 +177,39 @@ export default function HighlightAnalysisLayout(): JSX.Element {
           className={classes.calendarWrapper}
           direction="row"
         >
-          <div style={{ display: 'flex' }}>
+          <Grid item md={12} style={{ display: 'flex' }}>
             <div style={{ marginRight: 32 }}>
-              <Calendar
-                clickedDate={clickedDate}
-                handleClickedDate={handleClickedDate}
-                handleDayStreamList={handleDayStreamList}
-              />
+              { exampleMode
+                ? (
+                  <StepGuideTooltip
+                    position="bottom"
+                    stepTitle="step1"
+                    content={stepguideSource.mainpageHighlight.step1}
+                  >
+                    <Calendar
+                      exampleMode={exampleMode}
+                      clickedDate={clickedDate}
+                      handleClickedDate={handleClickedDate}
+                      handleDayStreamList={handleDayStreamList}
+                    />
+                  </StepGuideTooltip>
+                ) : (
+                  <Calendar
+                    exampleMode={exampleMode}
+                    clickedDate={clickedDate}
+                    handleClickedDate={handleClickedDate}
+                    handleDayStreamList={handleDayStreamList}
+                  />
+                )}
             </div>
             <StreamList
               dayStreamsList={dayStreamsList}
               selectedStream={selectedStream}
               handleSeletedStreams={handleSeletedStreams2}
               platformIcon={platformIcon}
+              exampleMode={exampleMode}
             />
-          </div>
+          </Grid>
         </Grid>
       </Grid>
 
@@ -188,14 +221,29 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         justify="flex-end"
       >
         <Grid container direction="row" justify="center">
-          <div>
-            <Button
-              onClick={handleAnalyze}
-              disabled={isClicked || Boolean(!selectedStream)}
-            >
-              분석하기
-            </Button>
-          </div>
+          { exampleMode
+            ? (
+              <StepGuideTooltip
+                position="right"
+                stepTitle="step3"
+                content={stepguideSource.mainpageHighlight.step3}
+              >
+                <Button
+                  onClick={handleAnalyze}
+                  disabled={isClicked || Boolean(!selectedStream)}
+                >
+                  분석하기
+                </Button>
+              </StepGuideTooltip>
+            )
+            : (
+              <Button
+                onClick={handleAnalyze}
+                disabled={isClicked || Boolean(!selectedStream)}
+              >
+                분석하기
+              </Button>
+            )}
         </Grid>
       </Grid>
       <Loading clickOpen={isClicked} />

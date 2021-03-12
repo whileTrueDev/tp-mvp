@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 400,
     height: 200,
     overflow: 'hidden',
+    [theme.breakpoints.down('md')]: {
+      width: 300,
+      hegiht: 150,
+    },
   },
   base: { marginRight: theme.spacing(2) },
   compare: { marginLeft: theme.spacing(2) },
