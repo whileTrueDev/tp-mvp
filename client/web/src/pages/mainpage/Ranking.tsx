@@ -6,6 +6,7 @@ import Footer from '../../organisms/shared/footer/Footer';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
+import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -65,9 +66,7 @@ export default function Ranking(): JSX.Element {
               </section>
             </Grid>
             <Grid item xs={4} className={wrapper.right}>
-              <section className={wrapper.monthlyScore}>
-                월간 점수
-              </section>
+              <MonthlyScoresRankingCard />
               <WeeklyViewerRankingCard />
               <UserReactionCard />
             </Grid>
