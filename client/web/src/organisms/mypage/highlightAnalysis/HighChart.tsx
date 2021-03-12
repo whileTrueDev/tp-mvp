@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import useTheme from '@material-ui/core/styles/useTheme';
@@ -44,22 +44,15 @@ export default function Chart({
     container: React.RefObject<HTMLDivElement>
   }>(null);
 
-  // 컬럼값 바꾸지 않고 맵핑할 것
-  const dataScore = data.map((row: DataType) => ({
+  // const endDate = new Date(dateRange.endDate).getTime();
+
+  const dataScore = useMemo(() => data.map((row: DataType) => ({
     start_date: row.start_date,
     y: row.score,
     start_index: row.start_index,
     end_index: row.end_index,
-  }));
-
-  // testCode
-  // const sDate = new Date(dateRange.startDate).getTime();
-  // const eDate = new Date(dateRange.endDate).getTime();
-  // const between = (eDate - sDate) / 10;
-
-  // console.log(sDate, 'start');
-  // console.log(eDate, 'end');
-  // console.log(between, 'between');
+    x: new Date(row.start_date).getTime() - new Date('2021-3-3 00:00:00').getTime(),
+  })), [data]);
 
   if (highlight.start_index) {
     const chartDataRef = highchartsRef.current?.chart.series[0].data[highlight.index];
@@ -85,10 +78,10 @@ export default function Chart({
     xAxis: {
       crosshair: true,
       type: 'datetime',
-      // labels: {
-      //   format: '{value:%H시%m분%S초}',
-      //   align: 'center',
-      // },
+      labels: {
+        format: '{value:%H:%M:%S}',
+        align: 'center',
+      },
     },
     yAxis: {
       title: {
@@ -105,8 +98,6 @@ export default function Chart({
     },
     series: [{
       data: dataScore,
-      // pointStart: Date.UTC(2021, 0, 0),
-      pointInterval: 638200 / 2,
       lineWidth: 4,
       lineColor: theme.palette.primary.main,
       color: theme.palette.primary.main,
@@ -124,7 +115,7 @@ export default function Chart({
       borderRadius: 5,
       formatter(this: Highcharts.TooltipFormatterContextObject) {
         const { y } = this;
-        return `${y}`;
+        return `트루포인트 SCORE:${y}`;
       },
       style: {
         color: theme.palette.common.white,
