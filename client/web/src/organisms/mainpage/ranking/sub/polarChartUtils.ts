@@ -61,20 +61,19 @@ export function polarAreaLabelFormatter(this: Highcharts.PointLabelObject): stri
 }
 
 /**
- * 두 플랫폼 총 시청자수에 따라 차트사이즈 반환
- * 큰차트사이즈 300px, 작은차트 사이즈 200px 기준
- * subPx파라미터로 차트사이즈 크기 조절이 가능하다
+ * 두 플랫폼 총 시청자수에 따라 차트사이즈(지름) 반환
+ * compensationPx 차트 지름 크기 조절이 가능하다
  * 
  * @param afreecaTotal 아프리카 총 시청자수
  * @param twitchTotal 트위치 총 시청자수
- * @compensationPx 차트 크기 보정값(픽셀단위). 양수일 경우 (기본차트사이즈 + sub)px / 음수일 경우 (기본차트사이즈 - sub)px
+ * @compensationPx 차트 지름 크기 보정값(픽셀단위). 양수일 경우 (기본차트사이즈 + compensationPx)px / 음수일 경우 (기본차트사이즈 - compensationPx)px
  * @returns [afreecaChartSize: number, twitchChartSize: number]
  */
 export function getChartSize(afreecaTotal: number, twitchTotal: number, compensationPx = 0): number[] {
-  const bigSize = 300 + compensationPx;
-  const smallSize = 200 + compensationPx;
+  const bigSize = 280 + compensationPx; // 큰 차트 지름
+  const smallSize = 200 + compensationPx; // 작은 차트 지름
   if (afreecaTotal === twitchTotal) {
-    return [200, 200];
+    return [200, 200]; // [아프리카, 트위치]
   }
   const afreecaChartSize = afreecaTotal > twitchTotal ? bigSize : smallSize;
   const twitchChartSize = afreecaTotal < twitchTotal ? bigSize : smallSize;

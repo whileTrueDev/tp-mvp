@@ -35,11 +35,10 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     },
   },
   afreecaCount: {
-    left: '20%',
-    // transform: 'translate(-100%, -50%)',
+    right: '75%',
+    transform: 'translate(-50%, -50%)',
   },
   twitchCount: {
-    right: '20%',
-    // transform: 'translateY(-50%)',
+    left: '75%',
   },
 }));

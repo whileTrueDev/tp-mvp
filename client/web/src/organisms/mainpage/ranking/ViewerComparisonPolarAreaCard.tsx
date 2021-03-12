@@ -133,28 +133,31 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   useEffect(() => {
     if (!chartRef.current || !data) return;
     const { afreeca, twitch } = data;
-    const compensationPx = -50;
+
+    const compensationPx = -30; // 차트 크기(지름) 조정값
     const [afreecaChartSize, twitchChartSize] = getChartSize(afreeca.total, twitch.total, compensationPx);
     const {
       plotWidth, plotHeight, renderer, plotLeft, plotTop,
     } = chartRef.current.chart;
-    const verticalCenter = plotHeight * 0.5;
-    const supplementDistance = compensationPx * 0.2;
+    const verticalCenter = plotHeight * 0.5; // 차트 y좌표값
+
+    const supplementDistance = compensationPx * 0.2; // 차트 크기(지름) 조정값에 따라 차트 중심 x좌표값을 조절한다
     const afreecaHorizontalCenter = (plotWidth * 0.40) - supplementDistance;
     const twitchHorizontalCenter = (plotWidth * 0.60) + supplementDistance;
-
+    // 아프리카 차트 x,y좌표와 반지름r
     const afreecaChartCoord = {
       x: afreecaHorizontalCenter + plotLeft,
       y: verticalCenter + plotTop,
       r: afreecaChartSize / 2,
     };
+    // 트위치 차트 x,y좌표와 반지름r
     const twitchChartCoord = {
       x: twitchHorizontalCenter + plotLeft,
       y: verticalCenter + plotTop,
       r: twitchChartSize / 2,
     };
 
-    // 물방울모양 그라데이션 배경 그리기-------------------
+    // 물방울모양 그라데이션 배경 그리기---------------------------------------------------
     createBlobGradationBackground(renderer, plotWidth, plotHeight, [afreecaChartCoord, twitchChartCoord])
       .add();
 
@@ -163,15 +166,18 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     afreecaArc.add();
     const twitchArc = createArc(renderer, twitchChartCoord, 'right', purple[700]);
     twitchArc.add();
-    // console.log(afreecaArc.getBBox()); // x,y,width,height
 
-    // 로고 위치 조정
-    // if (twitchLogoRef.current) {
-    //   twitchLogoRef.current.style.setProperty('left', `${twitchHorizontalCenter + (twitchRadius + 50)}px`);
-    // }
-    // if (afreecaLogoRef.current) {
-    //   afreecaLogoRef.current.style.setProperty('left', `${afreecaHorizontalCenter - (afreecaRadius + 50)}px`);
-    // }
+    // 로고 위치 조정---------------------------------------------------
+    const { x: afreecaArcX } = afreecaArc.getBBox();
+    const { x: twitchArcX, width: twitchArcWidth } = twitchArc.getBBox();
+    const distanceFromArc = 30; // arc에서 얼마나 떨어질것인지 px단위
+
+    if (afreecaLogoRef.current) {
+      afreecaLogoRef.current.style.setProperty('right', `${(plotWidth - afreecaArcX) + distanceFromArc}px`);
+    }
+    if (twitchLogoRef.current) {
+      twitchLogoRef.current.style.setProperty('left', `${(twitchArcX + twitchArcWidth) + distanceFromArc}px`);
+    }
 
     setOptions({
       pane: [{
