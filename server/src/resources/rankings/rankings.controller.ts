@@ -47,7 +47,7 @@ export class RankingsController {
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    }
    */
-  @Get('top-ten/')
+  @Get('top-ten')
   getTopTenRank(
     @Query('column') column: 'smile'| 'frustrate'| 'admire'| 'cuss',
   ): Promise<any> {
