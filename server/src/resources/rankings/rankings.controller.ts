@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  Controller, Get, Param, ParseIntPipe,
+  Controller, Get, Param, ParseIntPipe, Query,
 } from '@nestjs/common';
 import { RankingsService, ScoreColumn } from './rankings.service';
 
@@ -47,9 +47,9 @@ export class RankingsController {
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    }
    */
-  @Get('top-ten/:column')
+  @Get('top-ten/')
   getTopTenRank(
-    @Param('column') column: 'smile'| 'frustrate'| 'admire'| 'cuss',
+    @Query('column') column: 'smile'| 'frustrate'| 'admire'| 'cuss',
   ): Promise<any> {
     if (!this.columns.includes(column)) {
       throw new BadRequestException(`column must be one of ${this.columns.join(', ')}`);

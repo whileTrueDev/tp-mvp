@@ -1,17 +1,21 @@
 import React, { useMemo } from 'react';
 import { Container, Grid } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import useAxios from 'axios-hooks';
+import dayjs from 'dayjs';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
 import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
+import ToptenCard from '../../organisms/mainpage/ranking/ToptenCard';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
     minWidth: '1400px',
     border: '1px solid black',
+    backgroundColor: theme.palette.grey[400],
   },
   top: {},
   left: {},
@@ -25,18 +29,7 @@ const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
     background: 'pink',
     height: '300px',
   },
-  ranking: {
-    background: 'orange',
-    height: '100%',
-  },
-  monthlyScore: {
-    background: 'blue',
-    height: '300px',
-  },
-  userReaction: {
-    background: 'green',
-    height: '300px',
-  },
+  recentAnalysisDate: {},
 
 }));
 
@@ -44,6 +37,9 @@ export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const memoAppbar = useMemo(() => <Appbar />, []);
   const memoFooter = useMemo(() => <Footer />, []);
+  const [{ data: recentAnalysisDate },
+    // , refetch
+  ] = useAxios<Date>('/rankings/recent-analysis-date');
 
   return (
     <div>
@@ -57,13 +53,15 @@ export default function Ranking(): JSX.Element {
             </section>
           </Grid>
           <Grid item>
-            {`${new Date()}`}
+            <section className={wrapper.recentAnalysisDate}>
+              {` ${recentAnalysisDate
+                ? `${dayjs(recentAnalysisDate).format('YYYY. MM. DD')}`
+                : ''} 기준`}
+            </section>
           </Grid>
           <Grid item container spacing={1}>
             <Grid item xs={8} className={wrapper.left}>
-              <section className={wrapper.ranking}>
-                인방랭킹목록 컴포넌트 위치
-              </section>
+              <ToptenCard />
             </Grid>
             <Grid item xs={4} className={wrapper.right}>
               <MonthlyScoresRankingCard />
