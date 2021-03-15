@@ -8,7 +8,7 @@ import {
 // import { Rankings } from '@truepoint/shared/dist/interfaces/Rankings.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 
-type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
+export type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
 interface MonthlyRankData{
   creatorName: string;
   creatorId: string;
@@ -253,20 +253,9 @@ export class RankingsService {
    * 감탄점수/웃음점수/답답함점수/욕점수 상위 10명 뽑아서 반환 -> 반응별랭킹 TOP 10에 사용
    * @return  { smile: TopTenRankData[],admire: TopTenRankData[],frustrate: TopTenRankData[],cuss: TopTenRankData[]}
    */
-  async getTopTenRank(): Promise<any> {
+  async getTopTenRank(column: ScoreColumn): Promise<any> {
     // 아직 어떤 에러처리가 필요한지 불확실하여 콘솔에 에러찍는것만 에러핸들러로 넘김
-    // 웃음점수 상위 10명 
-    const smile = await this.getTopTenByColumn('smileScore', console.error);
-    // // 감탄점수 상위 10명
-    const admire = await this.getTopTenByColumn('admireScore', console.error);
-    // 답답함점수 상위 10명
-    const frustrate = await this.getTopTenByColumn('frustrateScore', console.error);
-    // 욕점수 상위 10명
-    const cuss = await this.getTopTenByColumn('cussScore', console.error);
-
-    return {
-      smile, admire, frustrate, cuss,
-    };
+    return this.getTopTenByColumn(column, console.error);
   }
 
   /**
