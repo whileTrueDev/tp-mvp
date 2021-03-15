@@ -143,10 +143,11 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       plotWidth, plotHeight, renderer, plotLeft, plotTop,
     } = chartRef.current.chart;
     const verticalCenter = plotHeight * 0.5; // 차트 y좌표값
+    const horizontalCenter = plotWidth * 0.5; // 차트 x좌표 기본값
 
     const supplementDistance = compensationPx * 0.2; // 차트 크기(지름) 조정값에 따라 차트 중심 x좌표값을 조절한다
-    const afreecaHorizontalCenter = (plotWidth * 0.40) - supplementDistance;
-    const twitchHorizontalCenter = (plotWidth * 0.60) + supplementDistance;
+    const afreecaHorizontalCenter = horizontalCenter - afreecaChartSize / 2 + supplementDistance;
+    const twitchHorizontalCenter = horizontalCenter + twitchChartSize / 2 - supplementDistance;
     // 아프리카 차트 x,y좌표와 반지름r
     const afreecaChartCoord = {
       x: afreecaHorizontalCenter + plotLeft,
