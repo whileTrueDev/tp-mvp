@@ -76,6 +76,15 @@ export class RankingsController {
   }
 
   /**
+   * 가장 최근 분석날짜와 시간( = max(createDate)) 반환 
+   * @returns 가장최근 분석날짜 2021-03-15 00:09:34.358000 와 같이 반환
+   */
+  @Get('recent-analysis-date')
+  getRecentAnalysisDate(): Promise<Date> {
+    return this.rankingsService.getRecentAnalysysDate();
+  }
+
+  /**
    * 가짜데이터 넣기위해 임시로 만듦
    * 해당 플랫폼에
    * 오늘날짜로부터 dayDiff만큼 떨어진 날짜로 

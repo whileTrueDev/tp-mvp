@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   getConnection,
   Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
 // import { Rankings } from '@truepoint/shared/dist/interfaces/Rankings.interface';
 import { RankingsEntity } from './entities/rankings.entity';
@@ -49,22 +50,25 @@ export class RankingsService {
   ) {}
 
   /**
-   * 월간 월간 웃음/감탄/답답함 점수 순위 구할 때 사용할 기본 쿼리
+   * 월간 월간 웃음/감탄/답답함 점수 순위 구할 때 사용할 기본 쿼리 반환
    * 
-   * 현재 기준으로 1개월 내에 생성된 데이터에 대하여
+   * 최근분석시간 기준으로 1개월 내에 생성된 데이터에 대하여
    * creatorName, creatorId, platform정보를 
    * 5개 가져오도록 한다(creatorId, platform별로 그룹화했을 때, 방송이 10개 이상인 경우만)
    */
-  private monthlyScoreBaseQuery = this.rankingsRepository
-    .createQueryBuilder('rankings')
-    .select('creatorName')
-    .addSelect('creatorId')
-    .addSelect('platform')
-    .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')
-    .groupBy('creatorId')
-    .addGroupBy('platform')
-    .having('COUNT(*) >= 10')
-    .take(5);
+  async getMonthlyScoreBaseQuery(): Promise<SelectQueryBuilder<RankingsEntity>> {
+    const recentAnalysisDate = await this.getRecentAnalysysDate();
+    return this.rankingsRepository
+      .createQueryBuilder('rankings')
+      .select('creatorName')
+      .addSelect('creatorId')
+      .addSelect('platform')
+      .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 MONTH)`)
+      .groupBy('creatorId')
+      .addGroupBy('platform')
+      .having('COUNT(*) >= 10')
+      .take(5);
+  }
 
   /**
    * monthlyScoreBaseQuery 기본 쿼리를 바탕으로
@@ -83,7 +87,8 @@ export class RankingsService {
   async getMonthlyRankByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<MonthlyRankData[]> {
     const decimalPlace = 2;// 평균점수 소수점 2자리까 자른다
     try {
-      return await this.monthlyScoreBaseQuery.clone()
+      const baseQuery = await this.getMonthlyScoreBaseQuery();
+      return baseQuery
         .addSelect(`TRUNCATE(AVG(${column}),${decimalPlace})`, 'avgScore')
         .orderBy('avgScore', 'DESC')
         .getRawMany();
@@ -121,9 +126,9 @@ export class RankingsService {
   }
 
   /**
-   * 24시간 내 해당 점수 상위 10명의 방송정보를 뽑아내는 함수
+   * 최근분석시간 기준 24시간 내 해당 점수 상위 10명의 방송정보를 뽑아내는 함수
    * 
-   * 최근 24시간 내 방송에 대해 크리에이터별로 최고 점수를 구한 테이블(t2)을 만들고
+   * 최근분석시간으로부터 24시간 내 방송에 대해 크리에이터별로 최고 점수를 구한 테이블(t2)을 만들고
    * rankings테이블(t1)에서 최고 점수(t2.maxScore)인 데이터를 가져와
    * 점수순으로 내림차순하여 10개를 가지고온다
    * 자기 조인 예시
@@ -145,6 +150,7 @@ export class RankingsService {
    */
   async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<any> {
     try {
+      const recentAnalysisDate = await this.getRecentAnalysysDate();
       const rankingData = await getConnection()
         .createQueryBuilder()
         .from(RankingsEntity, 'T1')
@@ -157,14 +163,14 @@ export class RankingsService {
           'T1.createDate AS createDate',
           'T1.platform AS platform',
         ])
-        .addFrom((subQuery) => subQuery // 최근 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
+        .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
           .select([
             `MAX(rankings.${column}) AS maxScore`,
             'rankings.creatorId AS creatorId',
           ])
           .from(RankingsEntity, 'rankings')
           .groupBy('rankings.creatorId')
-          .where('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)'),
+          .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
         'T2')
         .where('T1.creatorId = T2.creatorId')
         .andWhere(`T1.${column} = T2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
@@ -265,7 +271,7 @@ export class RankingsService {
 
   /**
    * Rankings테이블에서 
-   * 해당 플랫폼이면서 최근 24시간 내 방송에 대하여
+   * 해당 플랫폼이면서 가장 최근 분석시간으로부터 24시간 내 데이터에 대하여
    * creatorId별로 그룹화하여 최대 시청자수 구하고,
    * 최대시청자수 내림차순으로 정렬하여 
    * 10개의 데이터(최대시청자수 상위10인)의 데이터를 가져옴
@@ -289,6 +295,7 @@ export class RankingsService {
   }
   > {
     try {
+      const recentAnalysisDate = await this.getRecentAnalysysDate();
       const data = await this.rankingsRepository
         .createQueryBuilder('rankings')
         .select([
@@ -297,11 +304,12 @@ export class RankingsService {
           'rankings.creatorId AS creatorId',
         ])
         .where('rankings.platform =:platform', { platform })
-        .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)') // 최근 24시간에 대해서
+        .andWhere(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`) // 가장 최근 분석시간으로부터 1일 이내
         .groupBy('rankings.creatorId')
         .orderBy('maxViewer', 'DESC')
         .take(10)
         .getRawMany();
+
       return {
         data,
         total: data.reduce((sum, item) => sum + item.maxViewer, 0),
@@ -326,8 +334,8 @@ export class RankingsService {
    * }
    */
   async getDailyTotalViewers(): Promise<any> {
-    const twitch = await this.getDailyTotalViewersByPlatform('twitch');
-    const afreeca = await this.getDailyTotalViewersByPlatform('afreeca');
+    const twitch = await this.getDailyTotalViewersByPlatform('twitch', console.error);
+    const afreeca = await this.getDailyTotalViewersByPlatform('afreeca', console.error);
 
     return { twitch, afreeca };
   }
@@ -335,18 +343,19 @@ export class RankingsService {
   /**
    * 주간 시청자수 랭킹 구하는 함수 -> 주간 시청자수 랭킹 카드에 사용됨
    * 
-   * rankings테이블에서 생성날짜가 최근 7일 내인 데이터를
+   * rankings테이블에서 생성날짜가 최근분석시간 기준 7일 내인 데이터를
    * 생성날짜, 최대시청자수로 정렬 & 크리에이터별, 날짜별로 그룹화하여(A),
    * 최대시청자 순으로 rank를 매기고(B),
    * 날짜와 해당 날의 상위10인(rank <= 10)의 최대시청자수 총합을 가져와 플랫폼별, 날짜별로 그룹화함
    * 
-   * @return 최근 7일 내 플랫폼별 & 날짜별 시청자수 상위 10인의 시청자수 총합
+   * @return 최근분석시간 기준 7일 내 플랫폼별 & 날짜별 시청자수 상위 10인의 시청자수 총합
    * {
    * afreeca: [{date:'2021-3-2',totalViewer:'23432'}, {date:'2021-3-3',totalViewer:'1235'}, ... ],
    * twitch: [{date:'2021-3-2',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
    * }
    */
   async getWeeklyViewers(): Promise<any> {
+    const recentAnalysisDate = await this.getRecentAnalysysDate();
     const query = `
     SELECT platform, cdate AS "date", SUM(maxViewer) AS totalViewer
     FROM(
@@ -354,14 +363,14 @@ export class RankingsService {
       FROM (
         SELECT creatorId, createDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(createDate,"%Y-%c-%e") AS cdate
         FROM Rankings
-        WHERE createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+        WHERE createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 WEEK)
         Group by creatorId, cdate
-        Order by platform, cdate DESC, maxViewer DESC
+        Order by platform, createDate DESC, maxViewer DESC
       ) AS A
     ) AS B
     where "rank" <= 10 
     group by platform, cdate
-    order by platform, cdate DESC;`;
+    order by platform, createDate DESC;`;
 
     try {
       const data = await getConnection().query(query);
@@ -378,6 +387,23 @@ export class RankingsService {
       // 에러 핸들러 함수 넣을 곳
       console.error(error);
       throw new InternalServerErrorException('error in getWeeklyViewers');
+    }
+  }
+
+  /**
+   * 가장 최근 분석시간 찾기 max(createDate) from Rankings
+   * 데이터 기간 검색 시 기준이 됨
+   * @returns 2021-03-15 00:09:34.358000 와 같이 반환
+   */
+  async getRecentAnalysysDate(): Promise<Date> {
+    try {
+      const { recentCreateDate } = await this.rankingsRepository.createQueryBuilder('rank')
+        .select('max(rank.createDate) AS recentCreateDate')
+        .getRawOne();
+      return recentCreateDate;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('error in getRecentAnalysysDate');
     }
   }
 
