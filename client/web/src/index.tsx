@@ -40,6 +40,7 @@ import Notice from './pages/mainpage/Notice';
 import './assets/truepoint.css';
 import PageNotFound from './pages/others/PageNotFound';
 import Ranking from './pages/mainpage/Ranking';
+import YoutubeHighlightList from './pages/mainpage/YoutubeHighlightList';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -129,6 +130,7 @@ function Index(): JSX.Element {
               <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
               <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
               <Route exact path="/ranking" component={Ranking} />
+              <Route exact path="/highlight-list" component={YoutubeHighlightList} />
               <Route path="/mypage" component={Mypage} />
               <Route component={PageNotFound} />
             </Switch>
