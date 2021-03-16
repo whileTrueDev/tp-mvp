@@ -9,7 +9,7 @@ import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
 import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
-import ToptenCard from '../../organisms/mainpage/ranking/ToptenCard';
+import TopTenCard from '../../organisms/mainpage/ranking/TopTenCard';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -61,7 +61,7 @@ export default function Ranking(): JSX.Element {
           </Grid>
           <Grid item container spacing={1}>
             <Grid item xs={8} className={wrapper.left}>
-              <ToptenCard />
+              <TopTenCard />
             </Grid>
             <Grid item xs={4} className={wrapper.right}>
               <MonthlyScoresRankingCard />
