@@ -24,7 +24,7 @@ export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.background.paper;
   const defaultLabelColor = theme.palette.common.black;
   const defaultMinWith = '90%';
-  const rootHeight = theme.spacing(8);
+  const rootHeight = theme.spacing(6);
   return createStyles({
     root: {
       textTransform: 'initial',
