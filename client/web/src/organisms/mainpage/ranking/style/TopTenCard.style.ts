@@ -23,24 +23,28 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
 export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.background.paper;
   const defaultLabelColor = theme.palette.common.black;
-  const rootHeight = 80;
+  const defaultMinWith = '90%';
+  const rootHeight = theme.spacing(8);
   return createStyles({
     root: {
       textTransform: 'initial',
       backgroundColor: defaultBgColor,
       height: rootHeight,
-      width: '80%',
+      minHeight: 'auto',
+      width: defaultMinWith,
       overflow: 'visible',
       position: 'relative',
       borderBottom: `1px solid ${theme.palette.divider}`,
-
+      [theme.breakpoints.up('sm')]: {
+        minWidth: defaultMinWith,
+      },
       '&:after': {
         content: '" "',
         display: 'block',
         position: 'absolute',
-        right: `-${rootHeight / 2}px`,
         top: 0,
-        borderLeft: `${rootHeight / 2}px solid ${defaultBgColor}`,
+        right: `-${rootHeight / 4}px`,
+        borderLeft: `${rootHeight / 4}px solid ${defaultBgColor}`,
         borderTop: `${rootHeight / 2}px solid transparent`,
         borderBottom: `${rootHeight / 2}px solid transparent`,
       },
@@ -60,15 +64,14 @@ export const useTabItem = makeStyles((theme: Theme) => {
     wrapper: {
       color: defaultLabelColor,
       position: 'relative',
-      fontSize: theme.typography.body1.fontSize,
+      fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginRight: theme.spacing(2),
+      justifyContent: 'center',
       '& svg': {
         opacity: 0,
         fill: theme.palette.primary.main,
-        fontSize: theme.typography.h3.fontSize,
+        fontSize: theme.typography.h5.fontSize,
       },
 
     },

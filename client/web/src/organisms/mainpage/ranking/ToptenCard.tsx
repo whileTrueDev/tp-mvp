@@ -2,18 +2,19 @@ import {
   Grid, Tab, Tabs, Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
-import PhoneIcon from '@material-ui/icons/Phone';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
+import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
+import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 import useAxios from 'axios-hooks';
 import { useStyles, useTabs, useTabItem } from './style/TopTenCard.style';
 import ToptenList from './sub/TopTenList';
 
 const columns = [
-  { name: 'admire', label: '감탄점수', icon: <PersonPinIcon /> },
-  { name: 'smile', label: '웃음점수', icon: <PersonPinIcon /> },
-  { name: 'frustrate', label: '답답함점수', icon: <PhoneIcon /> },
-  { name: 'cuss', label: '욕점수', icon: <FavoriteIcon /> },
+  { name: 'admire', label: '감탄점수', icon: <SentimentVerySatisfiedIcon /> },
+  { name: 'smile', label: '웃음점수', icon: <SentimentSatisfiedAltIcon /> },
+  { name: 'frustrate', label: '답답함점수', icon: <SentimentDissatisfiedIcon /> },
+  { name: 'cuss', label: '욕점수', icon: <SentimentVeryDissatisfiedIcon /> },
 ];
 function TopTenCard(): JSX.Element {
   const classes = useStyles();
