@@ -1,42 +1,28 @@
-interface AdmireTopTenDataItem{
-  admireScore: number;
-  }
-  interface FrustrateTopTenDataItem{
-  frustrateScore: number;
-  }
-  interface CussTopTenDataItem{
-  cussScore: number;
-  }
-  interface SmileTopTenDataItem{
-  smileScore: number;
-  }
-  interface TopTenDataItem extends Partial<AdmireTopTenDataItem>,
-  Partial<CussTopTenDataItem>,
-  Partial<FrustrateTopTenDataItem>,
-  Partial<SmileTopTenDataItem> {
-    id: number,
-    creatorId: string,
-    creatorName: string,
-    title: string,
-    platform: 'afreeca'|'twitch'
-  }
-  interface AdmireScoreItem {
+  interface AdmireScore {
   admireScore: number
   }
-  interface FrustrateScoreItem {
+  interface FrustrateScore {
   frustrateScore: number
   }
-  interface CussScoreItem {
+  interface CussScore {
   cussScore: number
   }
-  interface SmileScoreItem {
+  interface SmileScore {
   smileScore: number
   }
 
-  interface WeeklyTrendsItem extends Partial<AdmireScoreItem>,
-  Partial<FrustrateScoreItem>,
-  Partial<CussScoreItem>,
-  Partial<SmileScoreItem>{
+export interface Scores extends Partial<AdmireScore>,
+Partial<FrustrateScore>,
+Partial<CussScore>,
+Partial<SmileScore> {}
+export interface TopTenDataItem extends Scores {
+  id: number,
+  creatorId: string,
+  creatorName: string,
+  title: string,
+  platform: 'afreeca'|'twitch'
+}
+  interface WeeklyTrendsItem extends Scores{
     createDate: string;
   }
   interface RankingDataType{
@@ -46,5 +32,6 @@ interface AdmireTopTenDataItem{
     }
   }
 export interface TopTenListProps{
+    currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
     data: RankingDataType
   }

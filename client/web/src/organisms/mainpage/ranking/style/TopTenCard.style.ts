@@ -1,8 +1,10 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-export const useStyles = makeStyles((theme: Theme) => createStyles({
+// TopTenCard 스타일
+export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
   topTenWrapper: {
     backgroundColor: theme.palette.background.paper,
+    height: '100%',
     padding: theme.spacing(2),
   },
   header: {
@@ -10,6 +12,8 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(2),
   },
 }));
+
+// TopTenCard내 Tabs컴포넌트 스타일
 export const useTabs = makeStyles((theme: Theme) => createStyles({
   indicator: {
     display: 'none',
@@ -20,6 +24,7 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
 }));
 
 // https://mui-treasury.com/styles/tabs/
+// TopTenCard내 Tab 컴포넌트 스타일 
 export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.background.paper;
   const defaultLabelColor = theme.palette.common.black;

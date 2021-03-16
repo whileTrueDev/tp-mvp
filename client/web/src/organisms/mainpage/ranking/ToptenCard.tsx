@@ -7,7 +7,7 @@ import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissa
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 import useAxios from 'axios-hooks';
-import { useStyles, useTabs, useTabItem } from './style/TopTenCard.style';
+import { useTopTenCard, useTabs, useTabItem } from './style/TopTenCard.style';
 import ToptenList from './sub/TopTenList';
 
 const columns = [
@@ -17,7 +17,7 @@ const columns = [
   { name: 'cuss', label: '욕점수', icon: <SentimentVeryDissatisfiedIcon /> },
 ];
 function TopTenCard(): JSX.Element {
-  const classes = useStyles();
+  const classes = useTopTenCard();
   const [tabIndex, setTabIndex] = useState(0);
   const tabsStyles = useTabs();
   const tabItemStyles = useTabItem();
@@ -61,7 +61,7 @@ function TopTenCard(): JSX.Element {
         </Grid>
         <Grid item xs={10}>
           {loading && <div>loading...</div>}
-          <ToptenList data={data} />
+          <ToptenList data={data} currentTab={columns[tabIndex].name} />
         </Grid>
       </Grid>
     </section>
