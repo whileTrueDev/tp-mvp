@@ -16,7 +16,7 @@ export const useTopTenList = makeStyles((theme: Theme) => createStyles({
   listItems: {},
   listItem: {
     display: 'flex',
-    height: theme.spacing(20),
+    height: theme.spacing(19),
     '&:nth-child(1) $star': {
       color: yellow[500],
     },
@@ -80,8 +80,6 @@ export const useTopTenList = makeStyles((theme: Theme) => createStyles({
     width: theme.spacing(2),
     height: theme.spacing(2),
     marginRight: theme.spacing(1),
-  },
-  progressContainer: {
   },
   scoreText: {
     position: 'relative',

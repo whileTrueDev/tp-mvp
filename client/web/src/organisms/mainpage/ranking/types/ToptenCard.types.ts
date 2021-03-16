@@ -33,5 +33,6 @@ export interface TopTenDataItem extends Scores {
   }
 export interface TopTenListProps{
     currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
-    data: RankingDataType
+    data: RankingDataType,
+    loading?: boolean
   }
