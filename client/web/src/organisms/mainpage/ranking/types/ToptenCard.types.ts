@@ -20,7 +20,10 @@ export interface TopTenDataItem extends Scores {
   creatorId: string,
   creatorName: string,
   title: string,
-  platform: 'afreeca'|'twitch'
+  platform: 'afreeca'|'twitch',
+  twitchProfileImage: null | string,
+  afreecaProfileImage: null | string,
+  twitchChannelName: null | string,
 }
   interface WeeklyTrendsItem extends Scores{
     createDate: string;

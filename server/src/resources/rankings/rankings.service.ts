@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 // import { Rankings } from '@truepoint/shared/dist/interfaces/Rankings.interface';
 import { RankingsEntity } from './entities/rankings.entity';
+import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
+import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 
 export type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
 interface MonthlyRankData{
@@ -162,6 +164,9 @@ export class RankingsService {
           'T1.title AS title',
           'T1.createDate AS createDate',
           'T1.platform AS platform',
+          'twitch.logo AS twitchProfileImage',
+          'twitch.twitchChannelName AS twitchChannelName',
+          'afreeca.logo AS afreecaProfileImage',
         ])
         .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
           .select([
@@ -172,6 +177,8 @@ export class RankingsService {
           .groupBy('rankings.creatorId')
           .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
         'T2')
+        .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T2.creatorId')
+        .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T2.creatorId')
         .where('T1.creatorId = T2.creatorId')
         .andWhere(`T1.${column} = T2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
         .orderBy(`T1.${column}`, 'DESC')

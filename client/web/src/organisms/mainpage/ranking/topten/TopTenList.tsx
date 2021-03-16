@@ -65,7 +65,7 @@ function TopTenList(props: TopTenListProps): JSX.Element {
               style={{width: headerColumns[1].width}}>
                 {loading
                 ? <Skeleton variant="circle" width={theme.spacing(10)} height={theme.spacing(10)}/>
-                : <Avatar alt={d.creatorName} className={classes.avatarImage}/>
+                : <Avatar alt={d.creatorName} className={classes.avatarImage} src={d.afreecaProfileImage || d.twitchProfileImage || undefined}/>
                }
 
             </div>
@@ -91,7 +91,7 @@ function TopTenList(props: TopTenListProps): JSX.Element {
                         clickable
                         href={d.platform === 'afreeca'
                         ? `https://bj.afreecatv.com/${d.creatorId}`
-                        : `https://www.twitch.tv/${d.creatorId}`}
+                        : `https://www.twitch.tv/${d.twitchChannelName}`}
                         label="방송 보러 가기"/>
                     </>
                   }
