@@ -51,6 +51,7 @@ function TopTenCard(): JSX.Element {
           >
             {columns.map((c: typeof columns[0]) => (
               <Tab
+                disableRipple
                 classes={tabItemStyles}
                 key={c.name}
                 icon={c.icon}
