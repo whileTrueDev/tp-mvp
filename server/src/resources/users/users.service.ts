@@ -785,40 +785,4 @@ export class UsersService {
       refreshToken,
     });
   }
-
-  async test(): Promise<any> {
-    // logo가 NULL이거나 ''인 데이터 찾기
-    const clientId = this.configService.get<string>('TWITCH_CLIENT_ID');
-    const logoNullTwitchRows = await this.twitchRepository.createQueryBuilder('twitch')
-      .select([
-        'twitch.twitchId AS twitchId',
-      ])
-      .where('twitch.logo IS NULL OR twitch.logo=""')
-      .andWhere('twitch.twitchId NOT IN ("30904062","102845970")') // 요청오류나는 아이디
-      .getRawMany();
-
-    const requests = logoNullTwitchRows.map((d) => {
-      const { twitchId } = d;
-      return Axios.get<any>(
-        `https://api.twitch.tv/kraken/channels/${twitchId}`, {
-          headers: {
-            'Client-ID': clientId,
-            Accept: 'application/vnd.twitchtv.v5+json',
-          },
-        },
-      );
-    });
-      // 각 id에 대해 promise요청 후 logo뽑아내기
-    const allPromRes = await Promise.all(requests);
-    const idAndLogo = allPromRes.map((d) => ({ twitchId: d.data._id, logo: d.data.logo }));
-
-    const updateRequests = idAndLogo.map((r) => this.twitchRepository.createQueryBuilder('twitch')
-      .update()
-      .set({ logo: r.logo })
-      .where('twitchId = :id', { id: r.twitchId })
-      .execute());
-
-    await Promise.all(updateRequests).catch((e) => console.error(e));
-    return 'done';
-  }
 }
