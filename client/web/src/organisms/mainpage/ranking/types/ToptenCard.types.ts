@@ -39,3 +39,8 @@ export interface TopTenListProps{
     data: RankingDataType,
     loading?: boolean
   }
+
+export interface TrendsBarChartProps{
+  data: WeeklyTrendsItem[]
+  currentScoreName: keyof Scores
+}

@@ -11,6 +11,7 @@ import {
 } from '../types/ToptenCard.types';
 import { useTopTenList } from '../style/TopTenList.style';
 import ScoreBar from './ScoreBar';
+import TrendsBarChart from './TrendsBarChart';
 
 const headerColumns = [
   {
@@ -26,7 +27,7 @@ function TopTenList(props: TopTenListProps): JSX.Element {
   const { data, currentTab, loading } = props;
   const theme = useTheme();
   const currentScoreName = useMemo(() => (`${currentTab}Score` as keyof Scores), [currentTab]);
-  const rectSkeleton = useMemo(() => (<Skeleton variant="rect" width="100%" height={theme.spacing(4)} />), []);
+  const rectSkeleton = useMemo(() => (<Skeleton variant="rect" width="100%" height={theme.spacing(4)} />), [theme]);
   return (
     <div className={classes.wrapper}>
 
@@ -48,6 +49,7 @@ function TopTenList(props: TopTenListProps): JSX.Element {
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems}>
         {data?.rankingData.map((d, index:number) => {
+          const weeklyData = data?.weeklyTrends[d.creatorId];
           return (
             // 목록 아이템 (row) 컴포넌트
           <div key={d.id} className={classes.listItem}>
@@ -67,7 +69,6 @@ function TopTenList(props: TopTenListProps): JSX.Element {
                 ? <Skeleton variant="circle" width={theme.spacing(10)} height={theme.spacing(10)}/>
                 : <Avatar alt={d.creatorName} className={classes.avatarImage} src={d.afreecaProfileImage || d.twitchProfileImage || undefined}/>
                }
-
             </div>
             {/* bj이름 cell */}
             <div
@@ -116,8 +117,12 @@ function TopTenList(props: TopTenListProps): JSX.Element {
                   </Typography>
                 </div>
                 }
-
               </div>
+            </div>
+            {/* 주간점수그래프 */}
+            <div className={classnames(classes.trendsBarContainer, classes.center)}
+              style={{width: headerColumns[3].width}}>
+              <TrendsBarChart data={weeklyData} currentScoreName={currentScoreName}/>
             </div>
 
           </div>);

@@ -87,6 +87,9 @@ export const useTopTenList = makeStyles((theme: Theme) => createStyles({
     fontWeight: theme.typography.fontWeightBold,
     color: theme.palette.primary.dark,
   },
+  trendsBarContainer: {
+    padding: theme.spacing(1),
+  },
 }));
 
 // TopTenList 내 LinearProgress 컴포넌트에 적용되는 스타일
