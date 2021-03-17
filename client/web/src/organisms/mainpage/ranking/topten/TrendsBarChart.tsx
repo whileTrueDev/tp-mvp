@@ -2,7 +2,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { TrendsBarChartProps } from '../types/ToptenCard.types';
+import { Scores, TrendsBarChartProps } from '../types/ToptenCard.types';
+
+function getSeriesName(currentScoreName: keyof Scores) {
+  switch (currentScoreName) {
+    case 'admireScore':
+      return '감탄 점수';
+    case 'smileScore':
+      return '웃음 점수';
+    case 'cussScore':
+      return '욕 점수';
+    case 'frustrateScore':
+      return '답답함 점수';
+    default:
+      return '점수';
+  }
+}
 
 function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
   const { data, currentScoreName } = props;
@@ -11,6 +26,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     chart: Highcharts.Chart,
     container: React.RefObject<HTMLDivElement>
   }>(null);
+  const TrendsBarChartStyle = useRef<{height: string, width: string}>({ height: `${theme.spacing(14)}px`, width: '100%' });
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     credits: { enabled: false },
@@ -19,13 +35,16 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     chart: {
       marginLeft: 0,
       marginRight: 0,
-      marginBottom: 0,
       plotBackgroundColor: theme.palette.grey[300],
+    },
+    plotOptions: {
+      series: {
+        color: theme.palette.primary.main,
+      },
     },
     xAxis: {
       labels: { enabled: false },
       gridLineColor: 'transparent',
-
     },
     yAxis: {
       labels: { enabled: false },
@@ -34,15 +53,18 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
       max: 10,
       title: { text: ' ' },
     },
+    tooltip: {
+      headerFormat: `<span style="font-size: ${theme.typography.body2.fontSize}">{point.key}</span><br/>`,
+      style: {
+        fontSize: `${theme.typography.body2.fontSize}`,
+      },
+    },
   });
 
   useEffect(() => {
     if (!data) return;
-    console.log(data, currentScoreName);
     const dates = data.map((d) => d.createDate);
-    const scores = data.map((d) => d[currentScoreName] as number);
     setChartOptions({
-
       xAxis: {
         categories: dates,
         plotLines: dates.map((value: string, index: number) => ({
@@ -52,17 +74,21 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
         })),
       },
       series: [
-        { type: 'line', data: scores },
+        {
+          type: 'line',
+          data: data.map((d) => d[currentScoreName] as number),
+          name: getSeriesName(currentScoreName),
+        },
       ],
     });
-  }, [data, currentScoreName, theme.palette.grey]);
+  }, [data, currentScoreName, theme.palette.grey, theme.palette.background.paper]);
 
   return (
     <HighchartsReact
       ref={chartRef}
       highcharts={Highcharts}
       options={chartOptions}
-      containerProps={{ style: { height: `${theme.spacing(12)}px`, width: '100%' } }}
+      containerProps={{ style: TrendsBarChartStyle.current }}
     />
   );
 }

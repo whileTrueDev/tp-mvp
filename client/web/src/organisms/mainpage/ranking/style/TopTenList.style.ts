@@ -89,6 +89,7 @@ export const useTopTenList = makeStyles((theme: Theme) => createStyles({
   },
   trendsBarContainer: {
     padding: theme.spacing(1),
+    alignItems: 'flex-end',
   },
 }));
 
