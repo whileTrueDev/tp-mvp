@@ -91,6 +91,14 @@ export const useTopTenList = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(1),
     alignItems: 'flex-end',
   },
+  placeholder: {
+    '&>*': {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  },
 }));
 
 // TopTenList 내 LinearProgress 컴포넌트에 적용되는 스타일
