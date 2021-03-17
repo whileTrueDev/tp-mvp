@@ -211,4 +211,9 @@ export class UsersController {
   ): Promise<UserEntity> {
     return this.usersService.register(createUserDto);
   }
+
+  @Get('test')
+  async test(): Promise<any> {
+    return this.usersService.test();
+  }
 }
