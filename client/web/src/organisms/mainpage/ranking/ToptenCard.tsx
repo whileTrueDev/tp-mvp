@@ -38,7 +38,7 @@ function TopTenCard(): JSX.Element {
   return (
     <section className={classes.topTenWrapper}>
       <Grid container>
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           <header className={classes.header}>
             <Typography>반응별 랭킹</Typography>
             <Typography variant="h4">TOP 10</Typography>
@@ -60,7 +60,7 @@ function TopTenCard(): JSX.Element {
             ))}
           </Tabs>
         </Grid>
-        <Grid item xs={10}>
+        <Grid item xs={9}>
           <ToptenList data={data} currentTab={columns[tabIndex].name} loading={loading} />
         </Grid>
       </Grid>

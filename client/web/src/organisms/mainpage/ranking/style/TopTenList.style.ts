@@ -12,6 +12,7 @@ export const useTopTenList = makeStyles((theme: Theme) => createStyles({
   },
   headerColumn: {
     color: theme.palette.grey[600],
+    whiteSpace: 'nowrap',
   },
   listItems: {},
   listItem: {
@@ -71,6 +72,9 @@ export const useTopTenList = makeStyles((theme: Theme) => createStyles({
   creatorName: {
     fontWeight: theme.typography.fontWeightBold,
     fontSize: theme.typography.h6.fontSize,
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
   },
   chip: {
     backgroundColor: theme.palette.grey[200],

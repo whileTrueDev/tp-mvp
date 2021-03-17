@@ -9,7 +9,7 @@ import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
 import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
-import TopTenCard from '../../organisms/mainpage/ranking/TopTenCard';
+import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
