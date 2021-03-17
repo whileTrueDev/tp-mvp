@@ -69,7 +69,7 @@ export class RankingsService {
       .groupBy('creatorId')
       .addGroupBy('platform')
       .having('COUNT(*) >= 10')
-      .take(5);
+      .limit(5);
   }
 
   /**
@@ -182,13 +182,14 @@ export class RankingsService {
         .where('T1.creatorId = T2.creatorId')
         .andWhere(`T1.${column} = T2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
         .orderBy(`T1.${column}`, 'DESC')
-        .take(10)
+        .limit(10)
         .getRawMany();
 
       // 상위 10명 크리에이터의 아이디를 뽑아낸다
       const topTenCreatorIds = rankingData.map((d) => d.creatorId);
       // 상위 10명 크리에이터의 최근 7개 방송 점수 동향을 구함
       const weeklyTrends = await this.getTopTenTrendsByColumn(topTenCreatorIds, column, console.error);
+
       return {
         rankingData,
         weeklyTrends,
@@ -303,7 +304,7 @@ export class RankingsService {
         .andWhere(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`) // 가장 최근 분석시간으로부터 1일 이내
         .groupBy('rankings.creatorId')
         .orderBy('maxViewer', 'DESC')
-        .take(10)
+        .limit(10)
         .getRawMany();
 
       return {
@@ -415,30 +416,30 @@ export class RankingsService {
    */
   async insert(platform: string, dayDiff: number): Promise<any> {
     const twitch = [
-      { creatorName: '소행성', creatorId: 'thgodtjd' },
-      { creatorName: '철면수심', creatorId: 'cjfaustntla' },
-      { creatorName: '탬탬버린', creatorId: 'xoaxoaqjfls' },
-      { creatorName: '머독', creatorId: 'ajehr' },
-      { creatorName: '웁_게임방송', creatorId: 'dnq_rpdlaqkdthd' },
-      { creatorName: '치킨쿤', creatorId: 'clzlszns' },
-      { creatorName: '꽃핀', creatorId: 'Rhcvls' },
-      { creatorName: '따효니', creatorId: 'Ekgysl' },
-      { creatorName: '다주', creatorId: 'ekwn' },
-      { creatorName: '개복어', creatorId: 'roqhrdj' },
+      { creatorName: '소행성', creatorId: '597621638' },
+      { creatorName: '철면수심', creatorId: '102900195' },
+      { creatorName: '탬탬버린', creatorId: '133923936' },
+      { creatorName: '머독', creatorId: '138240340' },
+      { creatorName: '웁_게임방송', creatorId: '137753119' },
+      { creatorName: '치킨쿤', creatorId: '106961925' },
+      { creatorName: '꽃핀', creatorId: '83257026' },
+      { creatorName: '따효니', creatorId: '102381201' },
+      { creatorName: '다주', creatorId: '137736535' },
+      { creatorName: '개복어', creatorId: '49233748' },
     ];
     const afreeca = [
-      { creatorName: '임아니', creatorId: 'dladksl' },
-      { creatorName: '범프리카', creatorId: 'qjavmflzk' },
-      { creatorName: '에디린', creatorId: 'dpelfls' },
-      { creatorName: '신나린', creatorId: 'tlsskfls' },
-      { creatorName: 'bj샤코타임1', creatorId: 'bjtizhxkdla1' },
-      { creatorName: 'bj타요', creatorId: 'bjxkdy' },
-      { creatorName: '대세는bj세야', creatorId: 'eotpsmsbjtpdi' },
-      { creatorName: 'az형태형', creatorId: 'az형태형' },
-      { creatorName: '나는푸르', creatorId: 'sksmsvnfm' },
-      { creatorName: 'flash이영호', creatorId: 'flashdldudgh' },
-      { creatorName: '예능인최군', creatorId: 'dPsmddlschlrns' },
-      { creatorName: '유혜디', creatorId: 'dbgPel' },
+      { creatorName: '임아니', creatorId: '1004suna' },
+      { creatorName: '범프리카', creatorId: '120510' },
+      { creatorName: '에디린', creatorId: 'ad1yn2' },
+      { creatorName: '신나린', creatorId: 'anfdksrud96' },
+      { creatorName: 'bj샤코타임1', creatorId: 'asa0921' },
+      { creatorName: 'bj타요', creatorId: 'b13246' },
+      { creatorName: '대세는bj세야', creatorId: 'barams01' },
+      { creatorName: 'az형태형', creatorId: 'bht0205' },
+      { creatorName: '나는푸르', creatorId: 'bhw2209' },
+      { creatorName: 'flash이영호', creatorId: 'byflash' },
+      { creatorName: '예능인최군', creatorId: 'ch1716' },
+      { creatorName: '유혜디', creatorId: 'cinnamoroll' },
     ];
     const today = new Date();
     const createDate = new Date(today);
