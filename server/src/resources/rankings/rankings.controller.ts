@@ -2,7 +2,7 @@ import {
   BadRequestException,
   Controller, Get, Param, ParseIntPipe, Query,
 } from '@nestjs/common';
-import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import { DailyTotalViewersResType, MonthlyScoresResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsService, ScoreColumn } from './rankings.service';
 
 @Controller('rankings')
@@ -24,7 +24,7 @@ export class RankingsController {
    * }
    */
   @Get('monthly-scores')
-  getMonthlyScoresRank(): Promise<any> {
+  getMonthlyScoresRank(): Promise<MonthlyScoresResType> {
     return this.rankingsService.getMonthlyScoresRank();
   }
 

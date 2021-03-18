@@ -4,20 +4,9 @@ import {
 } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
+import { MonthlyScoresResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import ScoresBarChart from './sub/ScoresBarChart';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-
-export interface MonthlyScoresItem{
-  creatorName: string;
-  creatorId: string;
-  platform: string;
-  avgScore: number;
-}
-interface MonthlyScoresData{
-  smile: MonthlyScoresItem[],
-  frustrate: MonthlyScoresItem[],
-  admire: MonthlyScoresItem[],
-}
 
 const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
   monthlyScores: {
@@ -31,7 +20,7 @@ const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
 function MonthlyScoresRankingCard(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useMonthlyScoresRankingStyle();
-  const [{ data, error, loading }] = useAxios<MonthlyScoresData>('/rankings/monthly-scores');
+  const [{ data, error, loading }] = useAxios<MonthlyScoresResType>('/rankings/monthly-scores');
 
   if (error) {
     console.error(error);
@@ -40,19 +29,19 @@ function MonthlyScoresRankingCard(): JSX.Element {
   return (
     <section className={classes.monthlyScores}>
       <ScoresBarChart
-        data={data?.smile || []}
+        data={data ? data.smile : []}
         loading={loading}
         column="웃음"
         barColor="rgba(202, 186, 219,0.7)"
       />
       <ScoresBarChart
-        data={data?.admire || []}
+        data={data ? data.admire : []}
         loading={loading}
         column="감탄"
         barColor="rgba(162, 221, 195, 0.698)"
       />
       <ScoresBarChart
-        data={data?.frustrate || []}
+        data={data ? data.frustrate : []}
         loading={loading}
         column="답답함"
         barColor="rgba(229, 160, 206, 0.726)"

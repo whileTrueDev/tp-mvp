@@ -1,3 +1,4 @@
+// 폴라차트
 export interface DailyTotalViewersItemData{
   maxViewer: number;
   creatorName: string;
@@ -12,4 +13,17 @@ export interface DailyTotalViewersData{
 export interface DailyTotalViewersResType{
   afreeca: DailyTotalViewersData,
   twitch: DailyTotalViewersData
+}
+
+// 월간 막대차트
+export interface MonthlyScoresItem{
+  creatorName: string;
+  creatorId: string;
+  platform: string;
+  avgScore: number;
+}
+export interface MonthlyScoresResType{
+  smile: MonthlyScoresItem[],
+  frustrate: MonthlyScoresItem[],
+  admire: MonthlyScoresItem[],
 }

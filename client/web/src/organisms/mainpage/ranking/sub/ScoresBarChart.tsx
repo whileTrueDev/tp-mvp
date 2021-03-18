@@ -1,27 +1,19 @@
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
-import {
-  useTheme, createStyles, makeStyles, Theme,
-} from '@material-ui/core/styles';
+import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-// eslint-disable-next-line camelcase
-import HC_brokenAxis from 'highcharts/modules/broken-axis';
+import HCBrokenAxis from 'highcharts/modules/broken-axis';
 
 import { Typography, Divider } from '@material-ui/core';
+
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import { ScoresBarChartProps } from '../types/ScoresBarChart.types'; // yAxis break 사용하기 위해 필요
 
-import { MonthlyScoresItem } from '../MonthlyScoresRankingCard';
+import { useStyles } from '../style/ScoresBarChart.style';
 
-HC_brokenAxis(Highcharts); // yAxis break 사용하기 위해 필요
-
-interface ScoresBarChartProps{
-  data: MonthlyScoresItem[],
-  loading?: boolean,
-  column? : string,
-  barColor? : string,
-}
+HCBrokenAxis(Highcharts);
 
 // https://github.com/highcharts/highcharts/issues/13738
 interface PlottablePoint extends Highcharts.Point {
@@ -81,18 +73,6 @@ function markStarByDataOrder(this: Highcharts.Chart) {
   }
 }
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  barChartSection: {
-    position: 'relative',
-  },
-  header: {
-    padding: theme.spacing(2),
-  },
-  title: {
-    padding: theme.spacing(2),
-  },
-}));
-
 function ScoresBarChart({
   data, loading, column, barColor,
 }: ScoresBarChartProps): JSX.Element {
@@ -120,6 +100,9 @@ function ScoresBarChart({
       column: {
         dataLabels: {
           enabled: true,
+          style: {
+            fontSize: `${theme.typography.body2.fontSize}`,
+          },
         },
         borderRadius: 12,
         color: barColor,
@@ -129,11 +112,15 @@ function ScoresBarChart({
     legend: { enabled: false },
     tooltip: {
       headerFormat: `<p style="font-size: ${creatorNameFontSize};">{point.key}</p><br/>`,
+      style: {
+        fontSize: `${theme.typography.body2.fontSize}`,
+      },
     },
   });
 
   useEffect(() => {
-    if (data.length === 0) return;
+    if (data.length === 0 || !chartRef.current) return;
+
     const creatorNames = data.map((d) => d.creatorName);
     const scores = data.map((d) => d.avgScore);
     const minInt = Math.floor(scores[scores.length - 1]); // 내림차순 5개 들어오는 값 중 마지막 == 최소값
