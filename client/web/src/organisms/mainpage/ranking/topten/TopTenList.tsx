@@ -1,17 +1,17 @@
-import React, { useMemo } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React from 'react';
 import {
   Avatar, Divider, Typography,
 } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
 import StarIcon from '@material-ui/icons/Star';
 import classnames from 'classnames';
-import { Skeleton } from '@material-ui/lab';
 import {
   TopTenListProps, Scores,
 } from '../types/ToptenCard.types';
 import { useTopTenList } from '../style/TopTenList.style';
 import TrendsBarChart from './TrendsBarChart';
 import InfoComponent from './InfoComponent';
+import ListItemSkeleton from './ListItemSkeleton';
 
 const headerColumns = [
   {
@@ -25,28 +25,6 @@ const headerColumns = [
 function TopTenList(props: TopTenListProps): JSX.Element {
   const classes = useTopTenList();
   const { data, loading } = props;
-  const theme = useTheme();
-
-  const placeholderSkeleton = useMemo(() => (
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((v: number, index: number) => (
-      <div key={v} className={classnames(classes.listItem, classes.placeholder)}>
-        <div style={{ width: headerColumns[0].width }}>
-          <Skeleton variant="rect" width="100%" height={theme.spacing(4)} />
-        </div>
-        <div style={{ width: headerColumns[1].width }}>
-          <Skeleton variant="circle" width={theme.spacing(10)} height={theme.spacing(10)} />
-        </div>
-        <div style={{ width: headerColumns[2].width }}>
-          <Skeleton width="90%" height={theme.spacing(4)} />
-          <Skeleton width="90%" />
-          <Skeleton width="90%" />
-        </div>
-        <div style={{ width: headerColumns[3].width }}>
-          <Skeleton variant="rect" width="90%" height={theme.spacing(10)} />
-        </div>
-      </div>
-    ))
-  ), [classes.listItem, classes.placeholder, theme]);
 
   return (
     <div className={classes.wrapper}>
@@ -68,52 +46,55 @@ function TopTenList(props: TopTenListProps): JSX.Element {
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems}>
         {loading
-          ? (placeholderSkeleton)
+          ? (Array.from(Array(10).keys()).map((v: number) => (
+            <React.Fragment key={v}>
+              <ListItemSkeleton headerColumns={headerColumns} />
+            </React.Fragment>
+          )))
           : (data?.rankingData.map((d, index: number) => {
             const currentScoreName = `${props.currentTab}Score` as keyof Scores;
-            const weeklyData = props.data?.weeklyTrends[d.creatorId];
+            const weeklyData = data?.weeklyTrends[d.creatorId];
             return (
               // 목록 아이템 (row) 컴포넌트
               <div key={d.id} className={classes.listItem}>
 
-                <div
-                  className={classnames(classes.orderContainer, classes.center)}
-                  style={{ width: headerColumns[0].width }}
-                >
-                  {index < 3
-                    ? <StarIcon className={classes.star} />
-                    : null}
-                  <Typography>{index + 1}</Typography>
-                </div>
+              <div
+              className={classnames(classes.orderContainer, classes.center)}
+              style={{ width: headerColumns[0].width }}
+              >
+              {index < 3
+              ? <StarIcon className={classes.star} />
+              : null}
+              <Typography>{index + 1}</Typography>
+              </div>
 
-                <div
-                  className={classnames(classes.avatarContainer, classes.center)}
-                  style={{ width: headerColumns[1].width }}
-                >
-                  <Avatar
-                    alt={d.creatorName}
-                    className={classes.avatarImage}
-                    src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
-                  />
-                </div>
+              <div
+              className={classnames(classes.avatarContainer, classes.center)}
+              style={{ width: headerColumns[1].width }}
+              >
+              <Avatar
+              alt={d.creatorName}
+              className={classes.avatarImage}
+              src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
+              />
+              </div>
 
-                <div
-                  className={classnames(classes.infoContainer, classes.center)}
-                  style={{ width: headerColumns[2].width }}
-                >
-                  <InfoComponent data={d} currentScoreName={currentScoreName} />
+              <div
+              className={classnames(classes.infoContainer, classes.center)}
+              style={{ width: headerColumns[2].width }}
+              >
+              <InfoComponent data={d} currentScoreName={currentScoreName} />
+              </div>
 
-                </div>
-
-                <div
-                  className={classnames(classes.trendsBarContainer, classes.center)}
-                  style={{ width: headerColumns[3].width }}
-                >
-                  <TrendsBarChart data={weeklyData} currentScoreName={currentScoreName} />
-                </div>
+              <div
+              className={classnames(classes.trendsBarContainer, classes.center)}
+              style={{ width: headerColumns[3].width }}
+              >
+              <TrendsBarChart data={weeklyData} currentScoreName={currentScoreName} />
+              </div>
               </div>
             );
-          })
+            })
           )}
       </div>
     </div>
