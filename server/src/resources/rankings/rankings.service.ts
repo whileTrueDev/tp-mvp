@@ -7,8 +7,8 @@ import {
 } from 'typeorm';
 import {
   DailyTotalViewersResType,
-  MonthlyScoresResType, DailyTotalViewersItemData, MonthlyScoresItem,
-  WeeklyViewersResType,
+  MonthlyScoresResType, MonthlyScoresItem,
+  WeeklyViewersResType, RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
@@ -118,7 +118,7 @@ export class RankingsService {
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    }
    */
-  async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<any> {
+  async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<RankingDataType> {
     try {
       const recentAnalysisDate = await this.getRecentAnalysysDate();
       const rankingData = await getConnection()
@@ -187,7 +187,7 @@ export class RankingsService {
     topTenCreatorIds: string[],
     column: ScoreColumn,
     errorHandler?: (error: any) => void,
-  ): Promise<any> {
+  ): Promise<WeeklyTrendsType> {
     try {
       const data = await getConnection()
         .createQueryBuilder()
@@ -229,7 +229,7 @@ export class RankingsService {
    * 감탄점수/웃음점수/답답함점수/욕점수 상위 10명 뽑아서 반환 -> 반응별랭킹 TOP 10에 사용
    * @return  { smile: TopTenRankData[],admire: TopTenRankData[],frustrate: TopTenRankData[],cuss: TopTenRankData[]}
    */
-  async getTopTenRank(column: ScoreColumn): Promise<any> {
+  async getTopTenRank(column: ScoreColumn): Promise<RankingDataType> {
     // 아직 어떤 에러처리가 필요한지 불확실하여 콘솔에 에러찍는것만 에러핸들러로 넘김
     return this.getTopTenByColumn(column, console.error);
   }
@@ -253,12 +253,10 @@ export class RankingsService {
    * }
    * 
    */
-  async getDailyTotalViewersByPlatform(platform: 'twitch'|'afreeca', errorHandler?: (error: any) => void): Promise<
-  {
-    data: DailyTotalViewersItemData[],
-    total: number
-  }
-  > {
+  async getDailyTotalViewersByPlatform(
+    platform: 'twitch'|'afreeca',
+    errorHandler?: (error: any) => void,
+  ): Promise<DailyTotalViewersData> {
     try {
       const recentAnalysisDate = await this.getRecentAnalysysDate();
       const data = await this.rankingsRepository

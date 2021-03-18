@@ -2,8 +2,8 @@ import { Typography, Avatar } from '@material-ui/core';
 import classnames from 'classnames';
 import React from 'react';
 import StarIcon from '@material-ui/icons/Star';
+import { Scores, TopTenDataItem, WeeklyTrendsItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { useTopTenList } from '../style/TopTenList.style';
-import { Scores, TopTenDataItem, WeeklyTrendsItem } from '../types/ToptenCard.types';
 import InfoComponent from './InfoComponent';
 import TrendsBarChart from './TrendsBarChart';
 

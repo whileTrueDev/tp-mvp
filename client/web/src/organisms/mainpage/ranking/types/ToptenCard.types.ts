@@ -1,39 +1,7 @@
-  interface AdmireScore {
-  admireScore: number
-  }
-  interface FrustrateScore {
-  frustrateScore: number
-  }
-  interface CussScore {
-  cussScore: number
-  }
-  interface SmileScore {
-  smileScore: number
-  }
+import {
+  RankingDataType, WeeklyTrendsItem, Scores, TopTenDataItem,
+} from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 
-export interface Scores extends Partial<AdmireScore>,
-Partial<FrustrateScore>,
-Partial<CussScore>,
-Partial<SmileScore> {}
-export interface TopTenDataItem extends Scores {
-  id: number,
-  creatorId: string,
-  creatorName: string,
-  title: string,
-  platform: 'afreeca'|'twitch',
-  twitchProfileImage: null | string,
-  afreecaProfileImage: null | string,
-  twitchChannelName: null | string,
-}
-export interface WeeklyTrendsItem extends Scores{
-    createDate: string;
-  }
-export interface RankingDataType{
-    rankingData: Array<TopTenDataItem>,
-    weeklyTrends: {
-      [key: string]: Array<WeeklyTrendsItem>
-    }
-  }
 export interface TopTenListProps{
     currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
     data: undefined | RankingDataType,
@@ -43,9 +11,11 @@ export interface TopTenListProps{
 export interface TrendsBarChartProps{
   data: WeeklyTrendsItem[],
   currentScoreName: keyof Scores
+
 }
 
 export interface InfoComponentProps{
   data: TopTenDataItem,
   currentScoreName: keyof Scores
+
 }

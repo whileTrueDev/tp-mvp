@@ -37,3 +37,43 @@ export interface WeeklyViewersResType{
   afreeca: WeeklyData[],
   twitch: WeeklyData[]
 }
+
+// 탑텐
+interface AdmireScore {
+  admireScore: number
+  }
+  interface FrustrateScore {
+  frustrateScore: number
+  }
+  interface CussScore {
+  cussScore: number
+  }
+  interface SmileScore {
+  smileScore: number
+  }
+
+export interface Scores extends Partial<AdmireScore>,
+Partial<FrustrateScore>,
+Partial<CussScore>,
+Partial<SmileScore> {}
+export interface TopTenDataItem extends Scores {
+  id: number,
+  creatorId: string,
+  creatorName: string,
+  title: string,
+  platform: 'afreeca'|'twitch',
+  twitchProfileImage: null | string,
+  afreecaProfileImage: null | string,
+  twitchChannelName: null | string,
+}
+export interface WeeklyTrendsItem extends Scores{
+    createDate: string;
+  }
+
+export interface WeeklyTrendsType{
+  [key: string]: Array<WeeklyTrendsItem>
+}
+export interface RankingDataType{
+    rankingData: Array<TopTenDataItem>,
+    weeklyTrends: WeeklyTrendsType
+  }

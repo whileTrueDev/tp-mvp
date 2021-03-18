@@ -1,7 +1,8 @@
 import { Divider, Typography } from '@material-ui/core';
 import React from 'react';
+import { Scores } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { useTopTenList } from '../style/TopTenList.style';
-import { Scores, TopTenListProps } from '../types/ToptenCard.types';
+import { TopTenListProps } from '../types/ToptenCard.types';
 import ListItemSkeleton from './ListItemSkeleton';
 import TopTenListItem from './TopTenListItem';
 
