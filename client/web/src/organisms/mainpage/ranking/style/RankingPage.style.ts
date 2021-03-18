@@ -16,7 +16,7 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   },
   right: {
     '&>*:not(:last-child)': {
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(4),
     },
   },
 }));

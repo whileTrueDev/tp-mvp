@@ -16,7 +16,7 @@ export class UserReactionController {
 
   /** 시청자반응 목록 조회 /Get /user-reactions
    * @return UserReactionEntity[] 
-   * createDate 내림차순으로 최대 10개 반환
+   * 가장 최신 시청자반응을 createDate 오름차순으로 최대 10개 반환
     { id: number;
       username: string;
       ip: string;

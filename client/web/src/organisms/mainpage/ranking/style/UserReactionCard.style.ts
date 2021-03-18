@@ -8,7 +8,8 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
-    padding: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
+    color: theme.palette.text.secondary,
   },
   list: {
     maxHeight: theme.spacing(40),

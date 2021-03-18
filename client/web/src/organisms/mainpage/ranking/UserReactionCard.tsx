@@ -2,7 +2,7 @@ import {
   Button, List, ListItem, TextField, Typography,
 } from '@material-ui/core';
 import React, {
-  useEffect, useRef, useCallback, useMemo,
+  useEffect, useRef, useCallback, useMemo, useLayoutEffect,
 } from 'react';
 
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -34,11 +34,7 @@ export default function UserReactionCard(): JSX.Element {
 
   // api요청 핸들러
   const loadUserReactions = useCallback(() => {
-    getUserReactions().then((res) => {
-      if (listContainerRef.current && listContainerRef.current.scrollTop !== 0) {
-        listContainerRef.current.scrollTop = 0; // 새로운 데이터 로드 후 ul스크롤 위치를 최상단으로
-      }
-    }).catch((e) => {
+    getUserReactions().catch((e) => {
       console.error('시청자 반응 데이터 불러오기 오류', e);
     });
   }, [getUserReactions]);
@@ -63,6 +59,13 @@ export default function UserReactionCard(): JSX.Element {
     loadUserReactions();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 새로운 데이터 로드 후 ul스크롤 위치를 최하단으로
+  useLayoutEffect(() => {
+    if (!listContainerRef.current) return;
+    const { scrollHeight, clientHeight } = listContainerRef.current;
+    listContainerRef.current.scrollTop = scrollHeight - clientHeight;
+  }, [userReactionData]);
 
   // 등록버튼 클릭 | 인풋창에서 엔터 누를 시 실행되는 핸들러
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {

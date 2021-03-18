@@ -13,15 +13,16 @@ export class UserReactionService {
   ) {}
 
   /**
-   * 시청자반응을 최신순으로 정렬하여 
+   * 시청자반응 가장 최신 데이터 10개를 시간 오름차순으로 반환
    * 최대 10개 반환함(데이터가 10개 미만인 경우 데이터가 존재하는 만큼 반환)
    * @return UserReactionEntity[]
    */
   async getUserReactions(): Promise<UserReactionEntity[]> {
-    return this.userReactionRepository.find({
+    const data = await this.userReactionRepository.find({
       order: { createDate: 'DESC' },
       take: 10,
     });
+    return data.reverse();
   }
 
   /**

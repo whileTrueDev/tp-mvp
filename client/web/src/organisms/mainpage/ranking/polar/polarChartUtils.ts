@@ -1,6 +1,6 @@
 import purple from '@material-ui/core/colors/purple';
 import blue from '@material-ui/core/colors/blue';
-
+import { DailyTotalViewersItemData } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 // 타입----------------------------------------------------------
 export interface CustomPointOption extends Highcharts.PointOptionsObject {
   y: number;
@@ -9,11 +9,7 @@ export interface CustomPointOption extends Highcharts.PointOptionsObject {
   color: string;
   originValue: number;
 }
-export interface DailyTotalViewersItemData{
-  maxViewer: number;
-  creatorName: string;
-  creatorId: string;
-}
+
 type Color = typeof blue | typeof purple; // material ui color객체, blue: 아프리카용, purple: 트위치용
 type ColorIndex = keyof Color; // material ui color 인덱스값
 
