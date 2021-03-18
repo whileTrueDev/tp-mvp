@@ -28,7 +28,7 @@ export interface TopTenDataItem extends Scores {
   interface WeeklyTrendsItem extends Scores{
     createDate: string;
   }
-  interface RankingDataType{
+export interface RankingDataType{
     rankingData: Array<TopTenDataItem>,
     weeklyTrends: {
       [key: string]: Array<WeeklyTrendsItem>
@@ -36,7 +36,7 @@ export interface TopTenDataItem extends Scores {
   }
 export interface TopTenListProps{
     currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
-    data: RankingDataType,
+    data: undefined | RankingDataType,
     loading?: boolean
   }
 

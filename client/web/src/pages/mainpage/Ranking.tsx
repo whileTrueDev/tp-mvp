@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import { Container, Grid } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
-import dayjs from 'dayjs';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
@@ -17,7 +15,9 @@ const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
     border: '1px solid black',
     backgroundColor: theme.palette.grey[400],
   },
-  top: {},
+  top: {
+    marginBottom: theme.spacing(2),
+  },
   left: {},
   right: {
     '&>*+*': {
@@ -37,9 +37,6 @@ export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const memoAppbar = useMemo(() => <Appbar />, []);
   const memoFooter = useMemo(() => <Footer />, []);
-  const [{ data: recentAnalysisDate },
-    // , refetch
-  ] = useAxios<Date>('/rankings/recent-analysis-date');
 
   return (
     <div>
@@ -52,13 +49,9 @@ export default function Ranking(): JSX.Element {
               아프리카, 트위치 시청자수 상위 10인 비교 폴라차트 위치
             </section>
           </Grid>
-          <Grid item>
-            <section className={wrapper.recentAnalysisDate}>
-              {` ${recentAnalysisDate
-                ? `${dayjs(recentAnalysisDate).format('YYYY. MM. DD')}`
-                : ''} 기준`}
-            </section>
-          </Grid>
+          {/* <Grid item>
+
+          </Grid> */}
           <Grid item container spacing={1}>
             <Grid item xs={8} className={wrapper.left}>
               <TopTenCard />

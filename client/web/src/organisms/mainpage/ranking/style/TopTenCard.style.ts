@@ -6,6 +6,11 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     backgroundColor: theme.palette.background.paper,
     height: '100%',
     padding: theme.spacing(2),
+    position: 'relative',
+  },
+  recentAnalysisDate: {
+    position: 'absolute',
+    transform: 'translateY(-100%)',
   },
   header: {
     textAlign: 'center',

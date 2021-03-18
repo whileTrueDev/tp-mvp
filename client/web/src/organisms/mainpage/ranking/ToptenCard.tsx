@@ -7,8 +7,10 @@ import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissa
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 import useAxios from 'axios-hooks';
+import dayjs from 'dayjs';
 import { useTopTenCard, useTabs, useTabItem } from './style/TopTenCard.style';
 import TopTenList from './topten/TopTenList';
+import { RankingDataType } from './types/ToptenCard.types';
 
 const columns = [
   { name: 'admire', label: '감탄점수', icon: <SentimentVerySatisfiedIcon /> },
@@ -22,10 +24,14 @@ function TopTenCard(): JSX.Element {
   const tabsStyles = useTabs();
   const tabItemStyles = useTabItem();
 
-  const [{ data, loading, error }, refetch] = useAxios({
+  // 탭 별 상위 10인 요청
+  const [{ data, loading, error }, refetch] = useAxios<RankingDataType>({
     url: '/rankings/top-ten',
     params: { column: columns[0].name },
   });
+  // 최근 분석날짜 요청
+  const [{ data: recentAnalysisDate },
+  ] = useAxios<Date>('/rankings/recent-analysis-date');
 
   const onChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setTabIndex(value);
@@ -36,39 +42,44 @@ function TopTenCard(): JSX.Element {
     console.error(error);
   }
   return (
-    <section className={classes.topTenWrapper}>
-      <Grid container>
-        <Grid item xs={3}>
-          <header className={classes.header}>
-            <Typography>반응별 랭킹</Typography>
-            <Typography variant="h4">TOP 10</Typography>
-          </header>
-          <Tabs
-            classes={tabsStyles}
-            orientation="vertical"
-            value={tabIndex}
-            onChange={onChange}
-          >
-            {columns.map((c: typeof columns[0]) => (
-              <Tab
-                disableRipple
-                classes={tabItemStyles}
-                key={c.name}
-                icon={c.icon}
-                label={c.label}
-              />
-            ))}
-          </Tabs>
+    <>
+      <Typography className={classes.recentAnalysisDate}>
+        {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
+      </Typography>
+      <section className={classes.topTenWrapper}>
+        <Grid container>
+          <Grid item xs={3}>
+            <header className={classes.header}>
+              <Typography>반응별 랭킹</Typography>
+              <Typography variant="h4">TOP 10</Typography>
+            </header>
+            <Tabs
+              classes={tabsStyles}
+              orientation="vertical"
+              value={tabIndex}
+              onChange={onChange}
+            >
+              {columns.map((c: typeof columns[0]) => (
+                <Tab
+                  disableRipple
+                  classes={tabItemStyles}
+                  key={c.name}
+                  icon={c.icon}
+                  label={c.label}
+                />
+              ))}
+            </Tabs>
+          </Grid>
+          <Grid item xs={9}>
+            <TopTenList
+              data={data}
+              currentTab={columns[tabIndex].name}
+              loading={loading}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <TopTenList
-            data={data}
-            currentTab={columns[tabIndex].name}
-            loading={loading}
-          />
-        </Grid>
-      </Grid>
-    </section>
+      </section>
+    </>
   );
 }
 
