@@ -6,7 +6,7 @@ import { Divider, Typography } from '@material-ui/core';
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import * as datefns from 'date-fns';
+import dayjs from 'dayjs';
 
 import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
@@ -85,7 +85,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
   // data변경시 (데이터를 불러왔을 때) 실행 -> 그래프 series옵션 변경하여 그래프 그림
   useEffect(() => {
     if (!data) return;
-    const dates = data.afreeca.map((d: WeeklyData) => datefns.format(new Date(d.date), 'MM-dd'));
+    const dates = data.afreeca.map((d: WeeklyData) => dayjs(d.date).format('MM-DD'));
 
     const afreecaViewerData = data.afreeca.map((d: WeeklyData) => +d.totalViewer);
     const twitchViewerData = data.twitch.map((d: WeeklyData) => +d.totalViewer);

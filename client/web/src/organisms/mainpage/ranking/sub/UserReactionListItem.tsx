@@ -4,7 +4,7 @@ import {
 import React, { memo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-import * as datefns from 'date-fns';
+import dayjs from 'dayjs';
 import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 
@@ -28,7 +28,7 @@ function UserReactionListItem({ data }: {data: IUserReaction}): JSX.Element {
   const classes = useUserReactionListItemStyle();
   const { username, content } = data;
   const ip = transformIdToAsterisk(data.ip, 2);
-  const date = datefns.format(new Date(data.createDate), 'hh:mm aaaaa\'m\'');
+  const date = dayjs(data.createDate).format('hh:mm A');
   return (
     <ListItem alignItems="flex-start">
       <ListItemAvatar>

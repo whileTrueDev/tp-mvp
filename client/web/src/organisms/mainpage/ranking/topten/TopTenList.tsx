@@ -51,50 +51,48 @@ function TopTenList(props: TopTenListProps): JSX.Element {
               <ListItemSkeleton headerColumns={headerColumns} />
             </React.Fragment>
           )))
-          : (data?.rankingData.map((d, index: number) => {
-            const currentScoreName = `${props.currentTab}Score` as keyof Scores;
-            const weeklyData = data?.weeklyTrends[d.creatorId];
-            return (
-              // 목록 아이템 (row) 컴포넌트
-              <div key={d.id} className={classes.listItem}>
+          : (data?.rankingData.map((d, index: number) => (
+        // 목록 아이템 (row) 컴포넌트
+            <>
+            <div key={d.id} className={classes.listItem}>
 
-              <div
-              className={classnames(classes.orderContainer, classes.center)}
-              style={{ width: headerColumns[0].width }}
-              >
-              {index < 3
-              ? <StarIcon className={classes.star} />
-              : null}
-              <Typography>{index + 1}</Typography>
-              </div>
+            <div
+            className={classnames(classes.orderContainer, classes.center)}
+            style={{ width: headerColumns[0].width }}
+            >
+            {index < 3
+            ? <StarIcon className={classes.star} />
+            : null}
+            <Typography>{index + 1}</Typography>
+            </div>
 
-              <div
-              className={classnames(classes.avatarContainer, classes.center)}
-              style={{ width: headerColumns[1].width }}
-              >
-              <Avatar
-              alt={d.creatorName}
-              className={classes.avatarImage}
-              src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
-              />
-              </div>
+            <div
+            className={classnames(classes.avatarContainer, classes.center)}
+            style={{ width: headerColumns[1].width }}
+            >
+            <Avatar
+            alt={d.creatorName}
+            className={classes.avatarImage}
+            src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
+            />
+            </div>
 
-              <div
-              className={classnames(classes.infoContainer, classes.center)}
-              style={{ width: headerColumns[2].width }}
-              >
-              <InfoComponent data={d} currentScoreName={currentScoreName} />
-              </div>
+            <div
+            className={classnames(classes.infoContainer, classes.center)}
+            style={{ width: headerColumns[2].width }}
+            >
+            <InfoComponent data={d} currentScoreName={`${props.currentTab}Score` as keyof Scores} />
+            </div>
 
-              <div
-              className={classnames(classes.trendsBarContainer, classes.center)}
-              style={{ width: headerColumns[3].width }}
-              >
-              <TrendsBarChart data={weeklyData} currentScoreName={currentScoreName} />
-              </div>
-              </div>
-            );
-            })
+            <div
+            className={classnames(classes.trendsBarContainer, classes.center)}
+            style={{ width: headerColumns[3].width }}
+            >
+            <TrendsBarChart data={data?.weeklyTrends[d.creatorId]} currentScoreName={`${props.currentTab}Score` as keyof Scores} />
+            </div>
+            </div>
+            </>
+          ))
           )}
       </div>
     </div>
