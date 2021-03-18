@@ -25,7 +25,7 @@ export interface TopTenDataItem extends Scores {
   afreecaProfileImage: null | string,
   twitchChannelName: null | string,
 }
-  interface WeeklyTrendsItem extends Scores{
+export interface WeeklyTrendsItem extends Scores{
     createDate: string;
   }
 export interface RankingDataType{
@@ -43,11 +43,9 @@ export interface TopTenListProps{
 export interface TrendsBarChartProps{
   data: WeeklyTrendsItem[],
   currentScoreName: keyof Scores
-
 }
 
 export interface InfoComponentProps{
   data: TopTenDataItem,
   currentScoreName: keyof Scores
-
 }
