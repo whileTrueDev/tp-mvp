@@ -4,7 +4,6 @@ import {
 import React, {
   useEffect, useRef, useCallback, useMemo,
 } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { useSnackbar } from 'notistack';
@@ -15,51 +14,21 @@ import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import UserReactionListItem from './sub/UserReactionListItem';
+import { useUserReactionStyle } from './style/UserReactionCard.style';
 
-const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
-  userReactionContainer: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2),
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: theme.spacing(2),
-  },
-  list: {
-    maxHeight: theme.spacing(40),
-    overflowY: 'auto',
-    borderTop: `1px solid ${theme.palette.divider}`,
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  form: {
-    width: '100%',
-    padding: theme.spacing(2, 0),
-    '& input': {
-      padding: theme.spacing(1.5, 2),
-    },
-  },
-  formRow: {
-    marginBottom: theme.spacing(0.8),
-    '&>*': {
-      marginRight: theme.spacing(0.6),
-    },
-  },
-}));
-
+const userReactionUrl = '/user-reactions';
 export default function UserReactionCard(): JSX.Element {
   const classes = useUserReactionStyle();
   const { enqueueSnackbar } = useSnackbar();
   const formRef = useRef<HTMLFormElement>(null);
   const listContainerRef = useRef<HTMLUListElement>(null);
-  const userReactionUrl = useRef<string>('/user-reactions');
-  const defaultUsername = useRef<string>('시청자');
+
   const [{
     data: userReactionData,
     loading,
-  }, getUserReactions] = useAxios<IUserReaction[]>(userReactionUrl.current, { manual: true });
+  }, getUserReactions] = useAxios<IUserReaction[]>(userReactionUrl, { manual: true });
   const [, postUserReaction] = useAxios<IUserReaction>({
-    url: userReactionUrl.current,
+    url: userReactionUrl,
     method: 'post',
   }, { manual: true });
 
@@ -106,7 +75,7 @@ export default function UserReactionCard(): JSX.Element {
       return;
     }
     createUserReaction({
-      username: formRef.current.username.value || defaultUsername.current,
+      username: formRef.current.username.value || '시청자',
       content: formRef.current.content.value,
     });
   }, [createUserReaction, enqueueSnackbar]);

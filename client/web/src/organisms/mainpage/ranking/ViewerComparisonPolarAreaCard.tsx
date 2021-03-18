@@ -15,7 +15,7 @@ import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsRes
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
-import { useStyles as usePolatChartStyles } from './polar/polarChartStyle';
+import { useStyles as usePolatChartStyles } from './style/polarChartStyle';
 import {
   getChartSize,
   toPolarAreaData,
