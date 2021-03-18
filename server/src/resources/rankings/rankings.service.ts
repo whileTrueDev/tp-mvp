@@ -5,7 +5,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-// import { Rankings } from '@truepoint/shared/dist/interfaces/Rankings.interface';
+import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
@@ -330,7 +330,7 @@ export class RankingsService {
    *            total: number }
    * }
    */
-  async getDailyTotalViewers(): Promise<any> {
+  async getDailyTotalViewers(): Promise<DailyTotalViewersResType> {
     const twitch = await this.getDailyTotalViewersByPlatform('twitch', console.error);
     const afreeca = await this.getDailyTotalViewersByPlatform('afreeca', console.error);
 

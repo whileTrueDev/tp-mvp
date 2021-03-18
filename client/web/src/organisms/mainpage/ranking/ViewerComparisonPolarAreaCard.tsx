@@ -11,6 +11,7 @@ import HCmore from 'highcharts/highcharts-more'; // polar area chart 사용 위�
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 
+import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
@@ -22,14 +23,10 @@ import {
   createArc,
   createGradationBlobBackground,
   CustomPointOption,
-  DailyTotalViewersItemData,
 } from './polar/polarChartUtils';
 
 HCmore(Highcharts);// polar area chart 사용 위해 필요
-interface DailyTotalViewersData{
-  total: number;
-  data: DailyTotalViewersItemData[];
-}
+
 /**
  * 폴라차트 툴팁 포맷 지정함수
  * toPolarAreaData 에서 생성된 originValue값(실제 최대시청자 값)을 툴팁에 표시한다
@@ -63,7 +60,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   const afreecaLogoRef = useRef<HTMLDivElement>(null); // 아프리카 로고 & 총 시청자수 컴포넌트 ref
   const twitchLogoRef = useRef<HTMLDivElement>(null); // 트위치 로고 & 총 시청자수 컴포넌트 ref
   // 플랫폼별 시청자수 상위 10인의 데이터
-  const [{ data, loading, error }] = useAxios<{afreeca: DailyTotalViewersData, twitch: DailyTotalViewersData}>('/rankings/daily-total-viewers');
+  const [{ data, loading, error }] = useAxios<DailyTotalViewersResType>('/rankings/daily-total-viewers');
   const tickInterval = 360 / 10; // 원을 10개의 칸으로 나눔
   // 기본 차트 옵션
   const [options, setOptions] = useState<Highcharts.Options>({
@@ -98,12 +95,17 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
         pointInterval: tickInterval,
         pointPlacement: 'between',
         dataLabels: {
+          crop: false,
+          allowOverlap: true,
+          overflow: 'allow',
+          position: 'center',
+          inside: false,
           enabled: true,
           color: theme.palette.common.white,
           align: 'center',
           verticalAlign: 'middle',
           style: {
-            fontSize: `${theme.typography.caption.fontSize}`,
+            fontSize: `${theme.typography.body2.fontSize}`,
           },
           formatter: polarAreaLabelFormatter,
         },

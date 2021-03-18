@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller, Get, Param, ParseIntPipe, Query,
 } from '@nestjs/common';
+import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsService, ScoreColumn } from './rankings.service';
 
 @Controller('rankings')
@@ -69,7 +70,7 @@ export class RankingsController {
    * }
    */
   @Get('daily-total-viewers')
-  getDailyTotalViewers(): Promise<any> {
+  getDailyTotalViewers(): Promise<DailyTotalViewersResType> {
     return this.rankingsService.getDailyTotalViewers();
   }
 
