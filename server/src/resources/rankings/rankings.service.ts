@@ -6,7 +6,9 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import {
-  DailyTotalViewersResType, MonthlyScoresResType, DailyTotalViewersItemData, MonthlyScoresItem,
+  DailyTotalViewersResType,
+  MonthlyScoresResType, DailyTotalViewersItemData, MonthlyScoresItem,
+  WeeklyViewersResType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
@@ -317,7 +319,7 @@ export class RankingsService {
    * twitch: [{date:'2021-3-2',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
    * }
    */
-  async getWeeklyViewers(): Promise<any> {
+  async getWeeklyViewers(): Promise<WeeklyViewersResType> {
     const recentAnalysisDate = await this.getRecentAnalysysDate();
     const query = `
     SELECT platform, cdate AS "date", SUM(maxViewer) AS totalViewer

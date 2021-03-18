@@ -27,3 +27,13 @@ export interface MonthlyScoresResType{
   frustrate: MonthlyScoresItem[],
   admire: MonthlyScoresItem[],
 }
+
+// 주간시청자수 그래프
+export interface WeeklyData{
+  date: string;
+  totalViewer: string;
+}
+export interface WeeklyViewersResType{
+  afreeca: WeeklyData[],
+  twitch: WeeklyData[]
+}
