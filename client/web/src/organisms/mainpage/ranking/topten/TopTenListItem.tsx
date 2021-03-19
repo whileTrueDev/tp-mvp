@@ -1,7 +1,6 @@
 import { Typography, Avatar } from '@material-ui/core';
 import classnames from 'classnames';
 import React from 'react';
-import StarIcon from '@material-ui/icons/Star';
 import { Scores, TopTenDataItem, WeeklyTrendsItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { useTopTenList } from '../style/TopTenList.style';
 import InfoComponent from './InfoComponent';
@@ -27,7 +26,7 @@ function TopTenListItem(props: Props): JSX.Element {
         style={{ width: headerColumns[0].width }}
       >
         {index < 3
-          ? <StarIcon className={classes.star} />
+          ? <i className="fas fa-star" />
           : null}
         <Typography>{index + 1}</Typography>
       </div>

@@ -12,7 +12,6 @@ export const useStyles = makeStyles((theme: Theme) => {
     return {
       color,
       background: `linear-gradient(${startColor}, ${endColor})`,
-
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       MozBackgroundClip: 'text',
