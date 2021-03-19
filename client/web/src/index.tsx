@@ -19,6 +19,7 @@ import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
+import PublickMypage from './pages/mainpage/PublicMypage';
 import KakaoTalk from './organisms/shared/KakaoTalkButton';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
@@ -131,6 +132,7 @@ function Index(): JSX.Element {
               <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
               <Route exact path="/ranking" component={Ranking} />
               <Route exact path="/highlight-list" component={YoutubeHighlightList} />
+              <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
               <Route path="/mypage" component={Mypage} />
               <Route component={PageNotFound} />
             </Switch>
