@@ -78,7 +78,7 @@ export default function YoutubeHighlightList(): JSX.Element {
   return (
     <YoutubeHighlightListLayout>
       <ProductHero
-        title="유튜브 편짐점 및 방송분석 제공"
+        title="유튜브 편집점 및 방송분석 제공"
         content={'시청자들이 재밌게 보았던 시간을 찾아드립니다! \n유튜브 편집시 놓치지 말고 활용 해보세요!'}
       />
 
