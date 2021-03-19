@@ -10,68 +10,10 @@ import { Typography, Divider } from '@material-ui/core';
 
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import { ScoresBarChartProps } from '../types/ScoresBarChart.types'; // yAxis break 사용하기 위해 필요
-
 import { useStyles } from '../style/ScoresBarChart.style';
+import '@fortawesome/fontawesome-free/css/all.css';
 
 HCBrokenAxis(Highcharts);
-
-// https://github.com/highcharts/highcharts/issues/13738
-interface PlottablePoint extends Highcharts.Point {
-  plotX: number;
-  plotY: number;
-}
-
-/**
- * 별 그리는 함수
- * @param renderer Highcharts.SVGRenderer
- * @param order 금=0, 은=1, 동=2
- * @param x 별이 표시될 x좌표
- * @param y 별이 표시될 y좌표
- */
-function createStar(renderer: Highcharts.SVGRenderer, order: number, x: number, y: number) {
-  // 별에 그라디언트 넣기 위한 색 설정
-  const starColors = [
-    { id: 'gold', startColor: '#ffff00', endColor: '#c9a589' }, // 금
-    { id: 'silver', startColor: '#ebebeb', endColor: '#7f9090' }, // 은
-    { id: 'bronze', startColor: '#ff8800', endColor: '#9f5c02' }, // 동
-  ];
-  const { startColor, endColor } = starColors[order];
-
-  const star = renderer.createElement('polygon');
-  star.attr({
-    points: '20,5 25,20 40,20 30,30 35,45 20,35 5,45 10,30 0,20 15,20', // 별의 각 모서리 좌표 x,y
-    fill: {
-      linearGradient: {
-        x1: 0, y1: 0, x2: 0, y2: 1,
-      },
-      stops: [
-        [0, startColor],
-        [1, endColor],
-      ],
-    },
-    zIndex: 5,
-    transform: `translate(${x},${y}) scale(0.4)`,
-  }).add();
-}
-
-/**
- * 차트 리드로우 이벤트 핸들러 -> 데이터가 들어와서 차트 다시 그려질 때, 데이터 값에 따라 금은동에 별 표시하는 함수
- * @param this Highcharts.Chart
- */
-function markStarByDataOrder(this: Highcharts.Chart) {
-  const {
-    series, renderer, plotHeight,
-  } = this;
-  if (!series[0] || series[0].data.length === 0) return;
-
-  // 1,2,3위에 대해 금은동 별 표시
-  for (let i = 0; i < 3; i += 1) {
-    const point = series[0].data[i] as PlottablePoint;
-    const x = point.plotX + 2; // 별이 표시될 x좌표
-    const y = plotHeight; // 별이 표시될 y 좌표
-    createStar(renderer, i, x, y);
-  }
-}
 
 function ScoresBarChart({
   data, loading, column, barColor,
@@ -90,9 +32,6 @@ function ScoresBarChart({
       type: 'column',
       spacingTop: 30,
       height: 250,
-      events: {
-        redraw: markStarByDataOrder, // redraw이벤트 발생시 === 데이터가 들어왔을때 -> 데이터 값에 따라 금은동 표시
-      },
     },
     credits: { enabled: false },
     title: { text: undefined },
@@ -120,7 +59,6 @@ function ScoresBarChart({
 
   useEffect(() => {
     if (data.length === 0 || !chartRef.current) return;
-
     const creatorNames = data.map((d) => d.creatorName);
     const scores = data.map((d) => d.avgScore);
     const minInt = Math.floor(scores[scores.length - 1]); // 내림차순 5개 들어오는 값 중 마지막 == 최소값
@@ -128,9 +66,17 @@ function ScoresBarChart({
       xAxis: {
         categories: creatorNames,
         labels: {
+          useHTML: true,
           style: {
             fontSize: creatorNameFontSize,
             color: theme.palette.common.black,
+          },
+          formatter(this: Highcharts.AxisLabelsFormatterContextObject<number>) {
+            // 1,2,3위 에 별모양 폰트아이콘 붙임
+            const { pos, value } = this;
+            return pos < 3
+              ? `${value}<i class="fas fa-star star-${pos + 1}"></i>`
+              : `${value}`;
           },
         },
       },
