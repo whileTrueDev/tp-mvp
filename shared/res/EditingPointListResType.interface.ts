@@ -4,5 +4,5 @@ export interface EditingPointListResType{
   userId: string,
   title: string,
   endDate: Date,
-  nickname: string
+  nickName: string
 }
