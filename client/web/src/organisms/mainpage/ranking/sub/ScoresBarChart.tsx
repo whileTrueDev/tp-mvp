@@ -4,16 +4,24 @@ import React, {
 import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import HCBrokenAxis from 'highcharts/modules/broken-axis';
+import HCBrokenAxis from 'highcharts/modules/broken-axis';// yAxis break 사용하기 위해 필요
 
 import { Typography, Divider } from '@material-ui/core';
 
+import { MonthlyScoresItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
-import { ScoresBarChartProps } from '../types/ScoresBarChart.types'; // yAxis break 사용하기 위해 필요
+
 import { useStyles } from '../style/ScoresBarChart.style';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 HCBrokenAxis(Highcharts);
+
+export interface ScoresBarChartProps{
+  data: MonthlyScoresItem[],
+  loading?: boolean,
+  column? : string,
+  barColor? : string,
+}
 
 function ScoresBarChart({
   data, loading, column, barColor,

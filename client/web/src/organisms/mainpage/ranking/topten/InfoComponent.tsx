@@ -1,9 +1,14 @@
 import { Typography, Chip } from '@material-ui/core';
 import React from 'react';
+import { Scores, TopTenDataItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import ScoreBar from './ScoreBar';
 import { useTopTenList } from '../style/TopTenList.style';
-import { InfoComponentProps } from '../types/ToptenCard.types';
 
+export interface InfoComponentProps{
+  data: TopTenDataItem,
+  currentScoreName: keyof Scores
+
+}
 function InfoComponent(props: InfoComponentProps): JSX.Element {
   const { data: d, currentScoreName } = props;
   const classes = useTopTenList();
