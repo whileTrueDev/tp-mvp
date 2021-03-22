@@ -18,7 +18,6 @@ function getSeriesName(currentScoreName: keyof Scores) {
       return '점수';
   }
 }
-
 export interface TrendsBarChartProps{
   data: WeeklyTrendsItem[],
   currentScoreName: keyof Scores
