@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { Scores, TrendsBarChartProps } from '../types/ToptenCard.types';
+import { Scores, WeeklyTrendsItem } from '../types/ToptenCard.types';
 
 function getSeriesName(currentScoreName: keyof Scores) {
   switch (currentScoreName) {
@@ -17,6 +17,10 @@ function getSeriesName(currentScoreName: keyof Scores) {
     default:
       return '점수';
   }
+}
+export interface TrendsBarChartProps{
+  data: WeeklyTrendsItem[],
+  currentScoreName: keyof Scores
 }
 
 function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {

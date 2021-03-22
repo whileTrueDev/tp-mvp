@@ -40,11 +40,6 @@ export interface TopTenListProps{
     loading?: boolean
   }
 
-export interface TrendsBarChartProps{
-  data: WeeklyTrendsItem[],
-  currentScoreName: keyof Scores
-}
-
 export interface InfoComponentProps{
   data: TopTenDataItem,
   currentScoreName: keyof Scores
