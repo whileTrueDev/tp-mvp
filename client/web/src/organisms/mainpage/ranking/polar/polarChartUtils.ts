@@ -9,7 +9,6 @@ export interface CustomPointOption extends Highcharts.PointOptionsObject {
   color: string;
   originValue: number;
 }
-
 type Color = typeof blue | typeof purple; // material ui color객체, blue: 아프리카용, purple: 트위치용
 type ColorIndex = keyof Color; // material ui color 인덱스값
 
