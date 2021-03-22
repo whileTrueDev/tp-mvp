@@ -30,7 +30,7 @@ export class RankingsService {
    * creatorName, creatorId, platform정보를 
    * 5개 가져오도록 한다(creatorId, platform별로 그룹화했을 때, 방송이 10개 이상인 경우만)
    */
-  async getMonthlyScoreBaseQuery(): Promise<SelectQueryBuilder<RankingsEntity>> {
+  private async getMonthlyScoreBaseQuery(): Promise<SelectQueryBuilder<RankingsEntity>> {
     const recentAnalysisDate = await this.getRecentAnalysysDate();
     return this.rankingsRepository
       .createQueryBuilder('rankings')
@@ -58,7 +58,10 @@ export class RankingsService {
       "avgScore": 9.3595
     }[]
    */
-  async getMonthlyRankByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<MonthlyScoresItem[]> {
+  private async getMonthlyRankByColumn(
+    column: ScoreColumn,
+    errorHandler?: (error: any) => void,
+  ): Promise<MonthlyScoresItem[]> {
     const decimalPlace = 2;// 평균점수 소수점 2자리까 자른다
     try {
       const baseQuery = await this.getMonthlyScoreBaseQuery();
@@ -118,7 +121,7 @@ export class RankingsService {
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    }
    */
-  async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<RankingDataType> {
+  private async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<RankingDataType> {
     try {
       const recentAnalysisDate = await this.getRecentAnalysysDate();
       const rankingData = await getConnection()
@@ -183,7 +186,7 @@ export class RankingsService {
    * @return {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    * 예시: { creatorId: [ {createDate: "2021-3-5", cussScore: 9.861}, ... ], }
    */
-  async getTopTenTrendsByColumn(
+  private async getTopTenTrendsByColumn(
     topTenCreatorIds: string[],
     column: ScoreColumn,
     errorHandler?: (error: any) => void,
@@ -253,7 +256,7 @@ export class RankingsService {
    * }
    * 
    */
-  async getDailyTotalViewersByPlatform(
+  private async getDailyTotalViewersByPlatform(
     platform: 'twitch'|'afreeca',
     errorHandler?: (error: any) => void,
   ): Promise<DailyTotalViewersData> {

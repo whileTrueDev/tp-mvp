@@ -1,12 +1,11 @@
 import {
-  BadRequestException,
-  Controller, Get, Param, ParseIntPipe, Query,
+  Controller, Get, Query, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {
   DailyTotalViewersResType, MonthlyScoresResType, WeeklyViewersResType, RankingDataType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import { GetTopTenDto } from '@truepoint/shared/dist/dto/rankings/getTopTen.dto';
 import { RankingsService, ScoreColumn } from './rankings.service';
-
 @Controller('rankings')
 export class RankingsController {
   constructor(
@@ -51,12 +50,11 @@ export class RankingsController {
    }
    */
   @Get('top-ten')
+  @UsePipes(new ValidationPipe())
   getTopTenRank(
-    @Query('column') column: 'smile'| 'frustrate'| 'admire'| 'cuss',
+    @Query() getTopTenDto: GetTopTenDto,
   ): Promise<RankingDataType> {
-    if (!this.columns.includes(column)) {
-      throw new BadRequestException(`column must be one of ${this.columns.join(', ')}`);
-    }
+    const { column } = getTopTenDto;
     return this.rankingsService.getTopTenRank(`${column}Score` as ScoreColumn);
   }
 
