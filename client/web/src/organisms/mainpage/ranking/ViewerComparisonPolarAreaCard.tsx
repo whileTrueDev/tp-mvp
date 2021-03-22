@@ -26,6 +26,7 @@ import {
 } from './polar/polarChartUtils';
 
 HCmore(Highcharts);// polar area chart 사용 위해 필요
+
 interface DailyTotalViewersData{
   total: number;
   data: DailyTotalViewersItemData[];
@@ -39,9 +40,12 @@ function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObjec
   const { point } = this;
   const { options: pointOptions, name } = point;
   const { originValue, order } = pointOptions as CustomPointOption;
-  return `${order === 0 ? '🥇' : ''}
-          ${order === 1 ? '🥈' : ''}
-          ${order === 2 ? '🥉' : ''}
+  const FirstPlaceMedalEmoji = '&#x1F947;';
+  const SecondPlaceMedalEmoji = '&#x1F948;';
+  const ThirdPlaceMedalEmoji = '&#x1F949;';
+  return `${order === 0 ? FirstPlaceMedalEmoji : ''}
+          ${order === 1 ? SecondPlaceMedalEmoji : ''}
+          ${order === 2 ? ThirdPlaceMedalEmoji : ''}
           ${order + 1}위 <br />
           ${name} <br />
           ${Highcharts.numberFormat(originValue as number, 0, undefined, ',')} 명`;

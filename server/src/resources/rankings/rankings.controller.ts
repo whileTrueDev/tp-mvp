@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Param, ParseIntPipe,
+  Controller, Get,
 } from '@nestjs/common';
 import { RankingsService } from './rankings.service';
 
@@ -73,21 +73,5 @@ export class RankingsController {
   @Get('weekly-viewers')
   getWeeklyViewers(): Promise<any> {
     return this.rankingsService.getWeeklyViewers();
-  }
-
-  /**
-   * 가짜데이터 넣기위해 임시로 만듦
-   * 해당 플랫폼에
-   * 오늘날짜로부터 dayDiff만큼 떨어진 날짜로 
-   * 약 10명의 방송데이터를 생성한다
-   * @param dayDiff 0: 오늘날짜로 createDate입력, 1: 1일전 날짜로 createDate입력
-   * @param platform 'afreeca'|'twitch'
-   */
-  @Get('insert/:platform/:dayDiff')
-  insert(
-    @Param('dayDiff', ParseIntPipe) dayDiff: number,
-    @Param('platform') platform: string,
-  ): any {
-    return this.rankingsService.insert(platform, dayDiff);
   }
 }
