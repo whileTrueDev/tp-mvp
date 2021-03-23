@@ -7,14 +7,18 @@ import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
 import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
+import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
 
 const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   root: {
     minWidth: '1400px',
     border: '1px solid black',
+    backgroundColor: theme.palette.grey[400],
   },
-  top: {},
+  top: {
+    marginBottom: theme.spacing(2),
+  },
   left: {},
   right: {
     '&>*+*': {
@@ -26,18 +30,7 @@ const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
     background: 'pink',
     height: '300px',
   },
-  ranking: {
-    background: 'orange',
-    height: '100%',
-  },
-  monthlyScore: {
-    background: 'blue',
-    height: '300px',
-  },
-  userReaction: {
-    background: 'green',
-    height: '300px',
-  },
+  recentAnalysisDate: {},
 
 }));
 
@@ -55,14 +48,9 @@ export default function Ranking(): JSX.Element {
           <Grid item className={wrapper.top}>
             <ViewerComparisonPolarAreaCard />
           </Grid>
-          <Grid item>
-            {`${new Date()}`}
-          </Grid>
           <Grid item container spacing={1}>
             <Grid item xs={8} className={wrapper.left}>
-              <section className={wrapper.ranking}>
-                인방랭킹목록 컴포넌트 위치
-              </section>
+              <TopTenCard />
             </Grid>
             <Grid item xs={4} className={wrapper.right}>
               <MonthlyScoresRankingCard />
