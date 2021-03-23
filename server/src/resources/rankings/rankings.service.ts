@@ -265,7 +265,7 @@ export class RankingsService {
 
   /**
    * Rankings테이블에서 
-   * 해당 플랫폼이면서 최근 24시간 내 방송에 대하여
+   * 해당 플랫폼이면서 가장 최근 분석시간으로부터 24시간 내 데이터에 대하여
    * creatorId별로 그룹화하여 최대 시청자수 구하고,
    * 최대시청자수 내림차순으로 정렬하여 
    * 10개의 데이터(최대시청자수 상위10인)의 데이터를 가져옴
@@ -289,6 +289,7 @@ export class RankingsService {
   }
   > {
     try {
+      const recentAnalysisDate = await this.getRecentAnalysysDate();
       const data = await this.rankingsRepository
         .createQueryBuilder('rankings')
         .select([
@@ -297,7 +298,7 @@ export class RankingsService {
           'rankings.creatorId AS creatorId',
         ])
         .where('rankings.platform =:platform', { platform })
-        .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 DAY)') // 최근 24시간에 대해서
+        .andWhere(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`) // 가장 최근 분석시간으로부터 1일 이내
         .groupBy('rankings.creatorId')
         .orderBy('maxViewer', 'DESC')
         .take(10)
@@ -356,12 +357,12 @@ export class RankingsService {
         FROM Rankings
         WHERE createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
         Group by creatorId, cdate
-        Order by platform, cdate DESC, maxViewer DESC
+        Order by platform, createDate DESC, maxViewer DESC
       ) AS A
     ) AS B
     where "rank" <= 10 
     group by platform, cdate
-    order by platform, cdate DESC;`;
+    order by platform, createDate DESC;`;
 
     try {
       const data = await getConnection().query(query);
@@ -382,77 +383,19 @@ export class RankingsService {
   }
 
   /**
-   * 가짜데이터 넣기 위해 임시로 만든 함수
-   * 플랫폼별 임의로 10명정도의 크리에이터이름과 아이디를 넣어두고
-   * 랜덤 시청자수와 점수를 생성
-   * 
-   * @param platform 'twitch' | 'afreeca'
-   * @param dayDiff 생성날짜를 오늘로부터 며칠전으로 할 것인지
-   * 0 : 오늘날짜로 생성날짜 지정, 
-   * 1 : 오늘로부터 1일전으로 생성날짜 지정...
+   * 가장 최근 분석시간 찾기 max(createDate) from Rankings
+   * 데이터 기간 검색 시 기준이 됨
+   * @returns 2021-03-15 00:09:34.358000 와 같이 반환
    */
-  async insert(platform: string, dayDiff: number): Promise<any> {
-    const twitch = [
-      { creatorName: '소행성', creatorId: 'thgodtjd' },
-      { creatorName: '철면수심', creatorId: 'cjfaustntla' },
-      { creatorName: '탬탬버린', creatorId: 'xoaxoaqjfls' },
-      { creatorName: '머독', creatorId: 'ajehr' },
-      { creatorName: '웁_게임방송', creatorId: 'dnq_rpdlaqkdthd' },
-      { creatorName: '치킨쿤', creatorId: 'clzlszns' },
-      { creatorName: '꽃핀', creatorId: 'Rhcvls' },
-      { creatorName: '따효니', creatorId: 'Ekgysl' },
-      { creatorName: '다주', creatorId: 'ekwn' },
-      { creatorName: '개복어', creatorId: 'roqhrdj' },
-    ];
-    const afreeca = [
-      { creatorName: '임아니', creatorId: 'dladksl' },
-      { creatorName: '범프리카', creatorId: 'qjavmflzk' },
-      { creatorName: '에디린', creatorId: 'dpelfls' },
-      { creatorName: '신나린', creatorId: 'tlsskfls' },
-      { creatorName: 'bj샤코타임1', creatorId: 'bjtizhxkdla1' },
-      { creatorName: 'bj타요', creatorId: 'bjxkdy' },
-      { creatorName: '대세는bj세야', creatorId: 'eotpsmsbjtpdi' },
-      { creatorName: 'az형태형', creatorId: 'az형태형' },
-      { creatorName: '나는푸르', creatorId: 'sksmsvnfm' },
-      { creatorName: 'flash이영호', creatorId: 'flashdldudgh' },
-      { creatorName: '예능인최군', creatorId: 'dPsmddlschlrns' },
-      { creatorName: '유혜디', creatorId: 'dbgPel' },
-    ];
-    const today = new Date();
-    const createDate = new Date(today);
-    createDate.setDate(createDate.getDate() - dayDiff);
-
-    function getRandomViewer() {
-      return Math.round(Math.random() * 15000);
-    }
-    function getRandomScore() {
-      return Number((Math.random() * 10).toFixed(3));
-    }
-    const baseArr = platform === 'afreeca' ? afreeca : twitch;
-    const values = baseArr.map((d) => ({
-      ...d,
-      platform,
-      title: `${d.creatorName} 방송 ${createDate.toISOString()}`,
-      createDate,
-      streamDate: createDate,
-      viewer: getRandomViewer(),
-      smileScore: getRandomScore(),
-      frustrateScore: getRandomScore(),
-      admireScore: getRandomScore(),
-      cussScore: getRandomScore(),
-    }));
-
+  async getRecentAnalysysDate(): Promise<Date> {
     try {
-      await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(RankingsEntity)
-        .values(values)
-        .execute();
-      return true;
-    } catch (e) {
-      console.error(e);
-      throw new InternalServerErrorException('error in insert');
+      const { recentCreateDate } = await this.rankingsRepository.createQueryBuilder('rank')
+        .select('max(rank.createDate) AS recentCreateDate')
+        .getRawOne();
+      return recentCreateDate;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('error in getRecentAnalysysDate');
     }
   }
 }
