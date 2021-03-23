@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Query, UsePipes, ValidationPipe,
+  Controller, Get, Query, UsePipes, ValidationPipe
 } from '@nestjs/common';
 import { GetTopTenDto } from '@truepoint/shared/dist/dto/rankings/getTopTen.dto';
 import { RankingsService, ScoreColumn } from './rankings.service';

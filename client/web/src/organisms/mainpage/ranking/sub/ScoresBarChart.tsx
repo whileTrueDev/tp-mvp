@@ -43,26 +43,20 @@ function createStar(renderer: Highcharts.SVGRenderer, order: number, x: number, 
     { id: 'silver', startColor: '#ebebeb', endColor: '#7f9090' }, // 은
     { id: 'bronze', startColor: '#ff8800', endColor: '#9f5c02' }, // 동
   ];
-  const { id: gradientId, startColor, endColor } = starColors[order];
-  // 그라디언트 생성
-  const gradient = renderer.createElement('linearGradient')
-    .attr({
-      id: gradientId, x1: '0%', y1: '0%', x2: '0%', y2: '100%',
-    }).add(renderer.defs);
-  renderer.createElement('stop')
-    .attr({
-      offset: '0%', style: `stop-color:${startColor}`,
-    }).add(gradient);
-  renderer.createElement('stop')
-    .attr({
-      offset: '100%', style: `stop-color:${endColor}`,
-    }).add(gradient);
+  const { startColor, endColor } = starColors[order];
 
-  // 별모양 생성
   const star = renderer.createElement('polygon');
   star.attr({
     points: '20,5 25,20 40,20 30,30 35,45 20,35 5,45 10,30 0,20 15,20', // 별의 각 모서리 좌표 x,y
-    fill: `url(#${gradientId})`,
+    fill: {
+      linearGradient: {
+        x1: 0, y1: 0, x2: 0, y2: 1,
+      },
+      stops: [
+        [0, startColor],
+        [1, endColor],
+      ],
+    },
     zIndex: 5,
     transform: `translate(${x},${y}) scale(0.4)`,
   }).add();
