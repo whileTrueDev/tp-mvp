@@ -5,13 +5,14 @@ import { useTopTenList } from '../style/TopTenList.style';
 import ListItemSkeleton from './ListItemSkeleton';
 import TopTenListItem from './TopTenListItem';
 
+// width 는 반드시 '80%' 와 같이 %기호가 포함된 문자열이어야 함(TopTenListItem내 칸 너비를 %로 지정함)
 const headerColumns = [
   {
     key: 'order', label: '순위', width: '5%', textAlign: 'center',
   },
   { key: 'profileImage', label: '', width: '15%' },
-  { key: 'bjName', label: 'BJ이름', width: '45%' },
-  { key: 'weeklyScoreGraph', label: '주간 점수 그래프', width: '35%' },
+  { key: 'bjName', label: 'BJ이름', width: '50%' },
+  { key: 'weeklyScoreGraph', label: '주간 점수 그래프', width: '30%' },
 ];
 
 export interface TopTenListProps{

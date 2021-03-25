@@ -42,9 +42,6 @@ export default function Ranking(): JSX.Element {
         </div >
         <Container className={wrapper.container}>
           <Grid container direction="column">
-
-
-
             <Grid item container spacing={2}>
               <Grid item xs={8} className={wrapper.left}>
                 <TopTenCard />

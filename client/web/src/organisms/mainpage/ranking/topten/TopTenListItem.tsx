@@ -1,11 +1,29 @@
 import { Typography, Avatar } from '@material-ui/core';
 import classnames from 'classnames';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Scores, TopTenDataItem, WeeklyTrendsItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { useTopTenList } from '../style/TopTenList.style';
 import InfoComponent from './InfoComponent';
 import TrendsBarChart from './TrendsBarChart';
 
+
+/**
+ * '80%' -> 80으로 반환하는 함수
+ * @param strPercentNum '80%' 처럼 %가 포함된 문자열
+ * @returns 숫자
+ */
+function getPercentNumber (strPercentNum:string):number {
+  return Number(strPercentNum.replace('%',''));
+}
+
+/**
+ * 80 -> '80%' 으로 변환하는 함수
+ * @param num 
+ * @returns 
+ */
+function toPercentString(num:number):string{
+  return `${num}%`
+}
 interface Props{
   index: number;
   data: TopTenDataItem
@@ -18,37 +36,57 @@ function TopTenListItem(props: Props): JSX.Element {
   const {
     data: d, index, headerColumns, currentScoreName, weeklyTrendsData,
   } = props;
+  const {platform} = d;
+
+
+  // 주간점수그래프 부분 제외한 너비
+  const backgroundWidth = useMemo(() => 100 - getPercentNumber(headerColumns[3].width),[headerColumns]);
+  // 배경색으로 묶이는 칸의 너비 array
+  const innerBackgroundWidths = useMemo(() => (
+    headerColumns
+    .slice(0, headerColumns.length-1)
+    .map((col,index:number) => (
+      100 * (getPercentNumber(headerColumns[index].width)/backgroundWidth))
+    )
+  ),[headerColumns, backgroundWidth]);
+  
+
   return (
     <div className={classes.listItem}>
 
-      <div
-        className={classnames(classes.orderContainer, classes.center)}
-        style={{ width: headerColumns[0].width }}
+      <div className={classnames(platform, classes.background)}
+      style={{width: toPercentString(backgroundWidth)}}
       >
-        {index < 3
-          ? <i className="fas fa-star" />
-          : null}
-        <Typography>{index + 1}</Typography>
-      </div>
+        <div
+          className={classnames(classes.orderContainer, classes.center)}
+          style={{ width: toPercentString(innerBackgroundWidths[0]) }}
+        >
+          {index < 3
+            ? <i className="fas fa-star" />
+            : null}
+          <Typography>{index + 1}</Typography>
+        </div>
 
-      <div
-        className={classnames(classes.avatarContainer, classes.center)}
-        style={{ width: headerColumns[1].width }}
-      >
-        <Avatar
-          alt={d.creatorName}
-          className={classes.avatarImage}
-          src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
-        />
-      </div>
+        <div
+          className={classnames(classes.avatarContainer, classes.center)}
+          style={{ width: toPercentString(innerBackgroundWidths[1]) }}
+        >
+          <Avatar
+            alt={d.creatorName}
+            className={classes.avatarImage}
+            src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
+          />
+        </div>
 
-      <div
-        className={classnames(classes.infoContainer, classes.center)}
-        style={{ width: headerColumns[2].width }}
-      >
-        <InfoComponent data={d} currentScoreName={currentScoreName} />
-      </div>
+        <div
+          className={classnames(classes.infoContainer, classes.center)}
+          style={{ width: toPercentString(innerBackgroundWidths[2]) }}
+        >
+          <InfoComponent data={d} currentScoreName={currentScoreName} />
+        </div>
 
+      </div>
+      
       <div
         className={classnames(classes.trendsBarContainer, classes.center)}
         style={{ width: headerColumns[3].width }}
