@@ -8,7 +8,7 @@ const useHeaderStyle = makeStyles((theme:Theme) => {
 
   return createStyles({
     wrapper: {
-      position: 'absolute',
+      position: 'relative',
       zIndex: 10,
       transform: `translate(${buttonSize}, ${theme.spacing(2)}px)`,
     },

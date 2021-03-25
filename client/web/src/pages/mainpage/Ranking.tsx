@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { Container, Grid } from '@material-ui/core';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
-import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
 import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
@@ -24,25 +23,27 @@ export default function Ranking(): JSX.Element {
   return (
     <div>
       {memoAppbar}
-      <ProductHero title="인방랭킹" content="아프리카 vs 트위치 랭킹 비교" />
       <div className={wrapper.background}>
+        <div className={wrapper.top}>
+          <Container className={wrapper.container}>
+            <Carousel
+            NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon}/>}
+            PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon}/>}
+            indicators={false}
+            animation="slide"
+            autoPlay={false}
+            navButtonsProps={{style: {backgroundColor:'transparent', transform: 'translateY(-2rem)'}, className: 'carousel-button'}}
+            >
+              <ViewerComparisonPolarAreaCard />
+              <WeeklyViewerRankingCard />
+            </Carousel>
+          </Container>
 
-        <Container className={wrapper.root}>
+        </div >
+        <Container className={wrapper.container}>
           <Grid container direction="column">
 
-            <Grid item className={wrapper.top}>
-              <Carousel
-              NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon}/>}
-              PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon}/>}
-              indicators={false}
-              animation="slide"
-              autoPlay={false}
-              navButtonsProps={{style: {backgroundColor:'transparent', transform: 'translateY(-2rem)'}, className: 'carousel-button'}}
-              >
-                <ViewerComparisonPolarAreaCard />
-                <WeeklyViewerRankingCard />
-              </Carousel>
-            </Grid>
+
 
             <Grid item container spacing={2}>
               <Grid item xs={8} className={wrapper.left}>

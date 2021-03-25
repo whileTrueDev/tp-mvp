@@ -6,11 +6,12 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   background: {
     backgroundColor: blueGrey[100],
   },
-  root: {
+  container: {
     minWidth: `${MYPAGE_MAIN_MIN_WIDTH}px`,
     padding: 0,
   },
   top: {
+    backgroundColor: theme.palette.background.paper,
     marginBottom: theme.spacing(6),
   },
   left: {

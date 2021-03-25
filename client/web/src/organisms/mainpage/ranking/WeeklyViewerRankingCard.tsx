@@ -1,7 +1,6 @@
 import React, {
   useEffect, useState, useRef,
 } from 'react';
-import { Divider, Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -14,6 +13,7 @@ import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { useWeeklyViewerStyle } from './style/WeeklyViewerRankingCard.style';
+import CarouselItemHeader from './sub/CarouselItemHeader';
 
 const markerSize = {
   width: 14,
@@ -32,7 +32,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       spacingTop: 24,
-      height: 250,
+      // height: 250,
     },
     credits: { enabled: false },
     title: { text: undefined },
@@ -121,8 +121,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
 
   return (
     <section className={classes.weeklyViewerContainer}>
-      <Typography variant="h6" className={classes.weeklyViewerTitle}>주간 시청자수 랭킹</Typography>
-      <Divider />
+      <CarouselItemHeader title="주간 시청자수 랭킹"/>
 
       <HighchartsReact
         ref={chartRef}
