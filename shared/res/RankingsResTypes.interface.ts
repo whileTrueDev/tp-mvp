@@ -26,6 +26,7 @@ export interface MonthlyScoresResType{
   smile: MonthlyScoresItem[],
   frustrate: MonthlyScoresItem[],
   admire: MonthlyScoresItem[],
+  cuss: MonthlyScoresItem[],
 }
 
 // 주간시청자수 그래프

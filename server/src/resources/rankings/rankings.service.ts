@@ -91,10 +91,12 @@ export class RankingsService {
     const smile = await this.getMonthlyRankByColumn('smileScore', console.error);
     const frustrate = await this.getMonthlyRankByColumn('frustrateScore', console.error);
     const admire = await this.getMonthlyRankByColumn('admireScore', console.error);
+    const cuss = await this.getMonthlyRankByColumn('cussScore', console.error);
     return {
       smile,
       frustrate,
       admire,
+      cuss,
     };
   }
 
