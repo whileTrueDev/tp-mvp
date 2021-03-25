@@ -1,7 +1,10 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import useTheme from '@material-ui/core/styles/useTheme';
+// import DarkUnica from 'highcharts/themes/dark-unica';
+
+// DarkUnica(Highcharts);
 
 type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'highlight'|'question'
 
@@ -13,6 +16,11 @@ interface DataType {
   score: number
 }
 
+interface ToTalDataType {
+  x: number;
+  y: number
+}
+
 interface PointType extends Highcharts.Point {
   start_index: number;
   end_index: number
@@ -20,18 +28,20 @@ interface PointType extends Highcharts.Point {
 
 interface ChartProps {
   data: DataType[];
+  dataOption: {boundary: number};
+  totalData: ToTalDataType[];
   chartType: MetricsType;
   highlight?: any;
   handleClick: (a: any) => void;
   handlePage: any;
-  dateRange: any;
   pageSize: number;
 }
 
 export default function Chart({
   data,
-  dateRange,
   chartType,
+  totalData,
+  dataOption,
   highlight,
   handleClick,
   handlePage,
@@ -43,16 +53,6 @@ export default function Chart({
     chart: Highcharts.Chart
     container: React.RefObject<HTMLDivElement>
   }>(null);
-
-  // const endDate = new Date(dateRange.endDate).getTime();
-
-  const dataScore = useMemo(() => data.map((row: DataType) => ({
-    start_date: row.start_date,
-    y: row.score,
-    start_index: row.start_index,
-    end_index: row.end_index,
-    x: new Date(row.start_date).getTime() - new Date('2021-3-3 00:00:00').getTime(),
-  })), [data]);
 
   if (highlight.start_index) {
     const chartDataRef = highchartsRef.current?.chart.series[0].data[highlight.index];
@@ -90,21 +90,21 @@ export default function Chart({
       allowDecimals: false,
       type: 'linear',
       plotLines: [{
-        value: 40,
+        value: dataOption.boundary,
         width: 2,
         color: theme.palette.primary.main,
         dashStyle: 'dash',
       }],
     },
     series: [{
-      data: dataScore,
+      data: totalData,
       lineWidth: 4,
       lineColor: theme.palette.primary.main,
       color: theme.palette.primary.main,
       fillOpacity: 0.5,
       zones: [{
         color: theme.palette.grey[300],
-        value: 40, // 임계점 테스트 진행 후 진행
+        value: dataOption.boundary, // 임계점 테스트 진행 후 진행
       }, {
         color: theme.palette.primary.main,
       }],
@@ -128,6 +128,7 @@ export default function Chart({
     },
     plotOptions: {
       series: {
+        turboThreshold: 50000,
         allowPointSelect: true,
         marker: {
           lineWidth: 3,
@@ -147,7 +148,7 @@ export default function Chart({
                 y, start_index, end_index, index,
               } = this;
               event.preventDefault();
-              if (y as number > 40) {
+              if (y as number > dataOption.boundary) {
                 handleClick({
                   start_index,
                   end_index,

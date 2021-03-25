@@ -11,6 +11,7 @@ import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';
 import Highcharts from './HighChart';
+import sampleData from './sample/sample.json';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -115,12 +116,7 @@ export default function TruepointHighlight({
   const [point, setPoint] = React.useState(initialPoint);
   const classes = styles();
 
-  // testCode
-  const dateRange = {
-    startDate: highlightData.start_date,
-    endDate: highlightData.end_date,
-    totalIndex: highlightData.total_index,
-  };
+  // const testData = JSON.parse(sampleData);
 
   const graphCSS = {
     grid: {
@@ -205,8 +201,12 @@ export default function TruepointHighlight({
         </Grid>
         {/* test code */}
         <Highcharts
-          data={picked90 ? hightlight90 : highlightData.highlight_points}
-          dateRange={dateRange}
+          // data={picked90 ? hightlight90 : highlightData.highlight_points}
+          data={sampleData.agree_points}
+          totalData={sampleData.agree_total_data}
+          dataOption={{
+            boundary: sampleData.boundary.agree,
+          }}
           chartType="highlight"
           highlight={point}
           handleClick={setPoint}
