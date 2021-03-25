@@ -20,7 +20,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
 
   return createStyles({
     wrapper: {
-      paddingTop: theme.spacing(2),
+      padding: theme.spacing(2,1),
     },
     header: {
       display: 'flex',

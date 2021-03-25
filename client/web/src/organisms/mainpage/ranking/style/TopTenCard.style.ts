@@ -5,7 +5,6 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
   topTenWrapper: {
     backgroundColor: theme.palette.background.paper,
     height: '100%',
-    padding: theme.spacing(2),
     position: 'relative',
     border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
     borderRadius: theme.shape.borderRadius
@@ -14,9 +13,22 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     position: 'absolute',
     transform: 'translateY(-100%)',
   },
+  left:{
+    backgroundColor: theme.palette.grey[200]
+  },
   header: {
     textAlign: 'center',
+    backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+    '&>:nth-child(1)':{
+      fontSize: theme.typography.h6.fontSize
+    },
+    '&>:nth-child(2)':{
+      fontSize: theme.typography.h4.fontSize,
+      fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.primary.main
+    }
   },
 }));
 
@@ -26,7 +38,7 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
     display: 'none',
   },
   scroller: {
-    padding: theme.spacing(1),
+    overflow: 'visible',
   },
 }));
 
@@ -34,25 +46,21 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
 // TopTenCard내 Tab 컴포넌트 스타일 
 export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.background.paper;
-  const defaultLabelColor = theme.palette.common.black;
-  const defaultMinWith = '90%';
-  const rootHeight = theme.spacing(6);
+  const defaultLabelColor = theme.palette.text.disabled;
+  const svgFontSize = theme.typography.h4.fontSize;
+  const rootHeight = theme.spacing(9);
   return createStyles({
     root: {
       textTransform: 'initial',
-      backgroundColor: defaultBgColor,
       height: rootHeight,
-      minHeight: 'auto',
-      width: defaultMinWith,
+      minHeight: rootHeight,
       overflow: 'visible',
       position: 'relative',
-      borderBottom: `1px solid ${theme.palette.divider}`,
-      [theme.breakpoints.up('sm')]: {
-        minWidth: defaultMinWith,
-      },
+      justifyContent: 'flex-start',
+      paddingLeft: theme.spacing(3),
       '&:after': {
         content: '" "',
-        display: 'block',
+        display: 'none',
         position: 'absolute',
         top: 0,
         right: `-${rootHeight / 4}px`,
@@ -64,26 +72,27 @@ export const useTabItem = makeStyles((theme: Theme) => {
     selected: {
       '&$root': {
         filter: `drop-shadow(2px 2px 3px ${theme.palette.action.disabled}) drop-shadow(0px 0px 10px ${theme.palette.divider})`,
+        backgroundColor: defaultBgColor,
         zIndex: 1,
+      },
+      '&$root:after':{
+        display: 'block',
       },
       '& $wrapper': {
         color: theme.palette.primary.main,
-      },
-      '& $wrapper svg': {
-        opacity: 1,
       },
     },
     wrapper: {
       color: defaultLabelColor,
       position: 'relative',
-      fontSize: theme.typography.body2.fontSize,
+      fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       flexDirection: 'row',
-      justifyContent: 'center',
+      width:'auto',
+      alignItems:'center',
       '& svg': {
-        opacity: 0,
-        fill: theme.palette.primary.main,
-        fontSize: theme.typography.h5.fontSize,
+        fontSize: svgFontSize,
+        marginRight: theme.spacing(0.5),
       },
 
     },
