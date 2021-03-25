@@ -4,7 +4,7 @@ import { useProgressBar } from '../style/TopTenList.style';
 
 const MIN = 0;
 const MAX = 10;
-const normalize = (value: number): number => ((value - MIN) * 100) / (MAX - MIN);
+const normalize = (value: number): number => Number((((value - MIN) * 100) / (MAX - MIN)).toFixed(2));
 
 function ScoreBar({ score }: {score: number}): JSX.Element {
   const progressBarStyles = useProgressBar();

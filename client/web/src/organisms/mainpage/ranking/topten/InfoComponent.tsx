@@ -48,7 +48,7 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
             transform: `translateX(${(10 - (d[currentScoreName] || 0)) * (-10)}%`,
           }}
         >
-          {`${d[currentScoreName]}`}
+          {`${(d[currentScoreName])?.toFixed(2)}`}
         </Typography>
       </div>
     </div>
