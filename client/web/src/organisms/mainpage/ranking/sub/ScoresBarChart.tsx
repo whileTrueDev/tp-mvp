@@ -21,10 +21,11 @@ export interface ScoresBarChartProps{
   loading?: boolean,
   column? : string,
   barColor? : string,
+  icon? : string | React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined
 }
 
 function ScoresBarChart({
-  data, loading, column, barColor,
+  data, loading, column, barColor, icon
 }: ScoresBarChartProps): JSX.Element {
   const theme = useTheme();
   const classes = useStyles();
@@ -33,8 +34,7 @@ function ScoresBarChart({
     container: React.RefObject<HTMLDivElement>
   }>(null);
   const title = useMemo(() => (`지난 월간 ${column} 점수 순위`), [column]);
-  const creatorNameFontSize = useMemo(() => (`${theme.typography.body2.fontSize}`), [theme.typography.body2.fontSize]);
-
+  const creatorNameFontSize = useRef(`${theme.typography.body2.fontSize}`);
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       type: 'column',
@@ -58,7 +58,7 @@ function ScoresBarChart({
     },
     legend: { enabled: false },
     tooltip: {
-      headerFormat: `<p style="font-size: ${creatorNameFontSize};">{point.key}</p><br/>`,
+      headerFormat: `<p style="font-size: ${creatorNameFontSize.current};">{point.key}</p><br/>`,
       style: {
         fontSize: `${theme.typography.body2.fontSize}`,
       },
@@ -76,7 +76,7 @@ function ScoresBarChart({
         labels: {
           useHTML: true,
           style: {
-            fontSize: creatorNameFontSize,
+            fontSize: creatorNameFontSize.current,
             color: theme.palette.common.black,
           },
           formatter(this: Highcharts.AxisLabelsFormatterContextObject<number>) {
@@ -100,13 +100,15 @@ function ScoresBarChart({
       },
       series: [{ type: 'column', name: `평균 ${column} 점수`, data: scores }],
     });
-  }, [column, creatorNameFontSize, data, theme.palette.common.black]);
+  }, [column, data, theme.palette.common.black]);
 
   return (
     <section className={classes.barChartSection}>
       <header className={classes.header}>
-        <Typography variant="h6" className={classes.title}>{title}</Typography>
-        <Divider />
+        <div className={classes.wrapper}>
+          <div className={classes.icon}>{icon}</div>
+          <Typography variant="h6" className={classes.title}>{title}</Typography>
+        </div>
       </header>
 
       <HighchartsReact

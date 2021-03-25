@@ -36,8 +36,22 @@ export const useStyles = makeStyles((theme: Theme) => {
     header: {
       padding: theme.spacing(2),
     },
+    wrapper:{
+      display: 'flex',
+      borderBottom: `${1}px solid ${theme.palette.divider}`
+    },
+    icon: {
+      display: 'flex',
+      justifyContent:'center',
+      alignItems:'center',
+      marginRight: theme.spacing(1),
+      '& .MuiSvgIcon-root':{
+        fontSize: theme.typography.h4.fontSize
+      }
+    },
     title: {
-      color: theme.palette.text.secondary,
+      fontSize: theme.typography.h6.fontSize,
+      fontWeight: theme.typography.fontWeightBold
     },
   });
 });
