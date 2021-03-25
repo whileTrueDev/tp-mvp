@@ -1,10 +1,11 @@
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
-import blueGrey from '@material-ui/core/colors/blueGrey';
 import { MYPAGE_MAIN_MIN_WIDTH } from '../../../../assets/constants';
+import grey from '@material-ui/core/colors/grey';
+
 
 export const useRankingPageLayout = makeStyles((theme: Theme) => createStyles({
   background: {
-    backgroundColor: blueGrey[100],
+    backgroundColor: grey[100],
   },
   root: {
     minWidth: `${MYPAGE_MAIN_MIN_WIDTH}px`,
