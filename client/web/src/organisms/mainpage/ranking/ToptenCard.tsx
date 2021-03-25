@@ -54,42 +54,40 @@ function TopTenCard(): JSX.Element {
       <Typography className={classes.recentAnalysisDate}>
         {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
       </Typography>
-      <section className={classes.topTenWrapper}>
-        <Grid container>
-          <Grid item xs={2} className={classes.left}>
-            <header className={classes.header}>
-              <Typography>반응별 랭킹</Typography>
-              <Typography variant="h4">TOP 10</Typography>
-            </header>
-            <Tabs
-              style={{overflow: 'visible'}} // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
-              classes={tabsStyles}
-              orientation="vertical"
-              value={tabIndex}
-              onChange={onChange}
-              variant="fullWidth"
-              ref={tabRef}
-            >
-              {columns.map((c: typeof columns[0]) => (
-                <Tab
-                  disableRipple
-                  classes={tabItemStyles}
-                  key={c.name}
-                  icon={c.icon}
-                  label={c.label}
-                />
-              ))}
-            </Tabs>
-          </Grid>
-          <Grid item xs={10}>
-            <TopTenListContainer
-              data={data}
-              currentTab={columns[tabIndex].name}
-              loading={loading}
-            />
-          </Grid>
+      <Grid container component="section" className={classes.topTenWrapper}>
+        <Grid item xs={2} className={classes.left}>
+          <header className={classes.header}>
+            <Typography>반응별 랭킹</Typography>
+            <Typography variant="h4">TOP 10</Typography>
+          </header>
+          <Tabs
+            style={{overflow: 'visible'}} // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
+            classes={tabsStyles}
+            orientation="vertical"
+            value={tabIndex}
+            onChange={onChange}
+            variant="fullWidth"
+            ref={tabRef}
+          >
+            {columns.map((c: typeof columns[0]) => (
+              <Tab
+                disableRipple
+                classes={tabItemStyles}
+                key={c.name}
+                icon={c.icon}
+                label={c.label}
+              />
+            ))}
+          </Tabs>
         </Grid>
-      </section>
+        <Grid item xs={10}>
+          <TopTenListContainer
+            data={data}
+            currentTab={columns[tabIndex].name}
+            loading={loading}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 }

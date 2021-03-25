@@ -6,12 +6,12 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HCBrokenAxis from 'highcharts/modules/broken-axis';// yAxis break 사용하기 위해 필요
 
-import { Typography, Divider } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
 import { MonthlyScoresItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
-import { useStyles } from '../style/ScoresBarChart.style';
+import { useScoreBarChartStyle } from '../style/ScoresBarChart.style';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 HCBrokenAxis(Highcharts);
@@ -28,7 +28,7 @@ function ScoresBarChart({
   data, loading, column, barColor, icon
 }: ScoresBarChartProps): JSX.Element {
   const theme = useTheme();
-  const classes = useStyles();
+  const classes = useScoreBarChartStyle();
   const chartRef = useRef<{
     chart: Highcharts.Chart,
     container: React.RefObject<HTMLDivElement>

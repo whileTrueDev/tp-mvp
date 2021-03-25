@@ -123,7 +123,7 @@ export default function UserReactionCard(): JSX.Element {
   return (
     <section className={classes.userReactionContainer}>
       <header className={classes.header}>
-        <Typography variant="h6">핫 시청자 반응</Typography>
+        <Typography className={classes.title}>핫 시청자 반응</Typography>
         <Button variant="outlined" onClick={loadUserReactions}>
           <RefreshIcon />
           새로고침

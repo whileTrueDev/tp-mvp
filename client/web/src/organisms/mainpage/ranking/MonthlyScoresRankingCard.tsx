@@ -1,7 +1,4 @@
 import React from 'react';
-import {
-  makeStyles, createStyles, Theme,
-} from '@material-ui/core/styles';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
@@ -13,18 +10,8 @@ import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied'
 import ScoresBarChart from './sub/ScoresBarChart';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import getPlatformColor from '../../../utils/getPlatformColor';
+import { useMonthlyScoresRankingStyle } from './style/ScoresBarChart.style';
 
-const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
-  monthlyScores: {
-    border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.background.paper,
-    paddingBottom: theme.spacing(2),
-    '&>*': {
-      marginBottom: theme.spacing(2),
-    },
-  },
-}));
 interface BarChartData{
   key: keyof MonthlyScoresResType,
   column: string,
