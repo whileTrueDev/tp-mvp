@@ -8,12 +8,18 @@ import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyView
 import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
 import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
-import { useRankingPageLayout } from '../../organisms/mainpage/ranking/style/RankingPage.style';
+import { useRankingPageLayout, useCarouselStyle} from '../../organisms/mainpage/ranking/style/RankingPage.style';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import Carousel from 'react-material-ui-carousel'
+
 
 export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
+  const carousel = useCarouselStyle();
   const memoAppbar = useMemo(() => <Appbar />, []);
   const memoFooter = useMemo(() => <Footer />, []);
+
 
   return (
     <div>
@@ -25,7 +31,17 @@ export default function Ranking(): JSX.Element {
           <Grid container direction="column">
 
             <Grid item className={wrapper.top}>
-              <ViewerComparisonPolarAreaCard />
+              <Carousel
+              NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon}/>}
+              PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon}/>}
+              indicators={false}
+              animation="slide"
+              autoPlay={false}
+              navButtonsProps={{style: {backgroundColor:'transparent', transform: 'translateY(-2rem)'}, className: 'carousel-button'}}
+              >
+                <ViewerComparisonPolarAreaCard />
+                <WeeklyViewerRankingCard />
+              </Carousel>
             </Grid>
 
             <Grid item container spacing={2}>
@@ -34,7 +50,6 @@ export default function Ranking(): JSX.Element {
               </Grid>
               <Grid item xs={4} className={wrapper.right}>
                 <MonthlyScoresRankingCard />
-                <WeeklyViewerRankingCard />
                 <UserReactionCard />
               </Grid>
             </Grid>

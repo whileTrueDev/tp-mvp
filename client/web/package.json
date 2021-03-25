@@ -94,6 +94,7 @@
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.0",
     "prettier": "^2.0.5",
+    "react-material-ui-carousel": "^2.2.1",
     "suneditor": "^2.36.3"
   },
   "resolutions": {
