@@ -208,7 +208,6 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     }
     const afreecaPercentage = getPercentage(data.afreeca.total);
     const twitchPercentage = getPercentage(data.twitch.total);
-    console.log(totalSum, data.afreeca.total, data.twitch.total, afreecaPercentage,twitchPercentage);
     return [afreecaPercentage, twitchPercentage];
   },[data])
 
