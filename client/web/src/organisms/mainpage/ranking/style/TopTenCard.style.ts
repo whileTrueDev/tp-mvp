@@ -44,10 +44,17 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
   scroller: {
     overflow: 'visible',
   },
+  root: {
+    [theme.breakpoints.down('sm')]: {
+      '& .MuiTab-root': {
+        minWidth: 'auto',
+      },
+    },
+  },
 }));
 
 // https://mui-treasury.com/styles/tabs/
-// TopTenCard내 Tab 컴포넌트 스타일 
+// TopTenCard내 ~~점수 Tab 컴포넌트 스타일 
 export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.background.paper;
   const defaultLabelColor = theme.palette.text.disabled;
@@ -102,3 +109,12 @@ export const useTabItem = makeStyles((theme: Theme) => {
     },
   });
 });
+
+export const useViewerTabButtonStyle = makeStyles((theme: Theme) => createStyles({
+  root: {
+    borderTop: '1px solid red',
+  },
+  selected: {
+    backgroundColor: 'blue',
+  },
+}));

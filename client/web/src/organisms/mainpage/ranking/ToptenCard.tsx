@@ -12,7 +12,9 @@ import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied'
 import useAxios from 'axios-hooks';
 import dayjs from 'dayjs';
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { useTopTenCard, useTabs, useTabItem } from './style/TopTenCard.style';
+import {
+  useTopTenCard, useTabs, useTabItem, useViewerTabButtonStyle,
+} from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 
 const columns = [
@@ -25,7 +27,8 @@ function TopTenCard(): JSX.Element {
   // 스타일
   const classes = useTopTenCard();
   const tabsStyles = useTabs();
-  const tabItemStyles = useTabItem();
+  const mainTabItemStyles = useTabItem();
+  const viewerTabButtonStyles = useViewerTabButtonStyle();
 
   const tabRef = useRef<any>(null);
 
@@ -39,8 +42,11 @@ function TopTenCard(): JSX.Element {
   const [{ data: recentAnalysisDate },
   ] = useAxios<Date>('/rankings/recent-analysis-date');
 
-  // state
-  const [tabIndex, setTabIndex] = useState(0);
+  // states
+  const [tabIndex, setTabIndex] = useState(0); // 선택된 탭의 인덱스
+  const [currentTab, setCurrentTab] = useState<string>(''); // 현재 탭 이름 admire, smile ... 
+  // -> topTenContainer에게 넘겨주기 위함, 해당 prop은 Score글자를 붙여서 topTenListItem 으로 전달되고, 또 하위 컴포넌트로 전달됨... 
+
   // 보여줄 데이터 상태
   const [dataToDisplay, setDataToDisplay] = useState<Omit<RankingDataType, 'totalDataCount'>>({
     rankingData: [],
@@ -62,7 +68,13 @@ function TopTenCard(): JSX.Element {
 
   const onChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setTabIndex(index);
-    loadInitialData(index);
+
+    if (columns[index]) {
+      setCurrentTab(columns[index].name);
+      loadInitialData(index);
+    } else {
+      // 시청자수 순위 버튼 누른 경우
+    }
   }, [loadInitialData]);
 
   const loadMoreData = useCallback(() => {
@@ -113,24 +125,29 @@ function TopTenCard(): JSX.Element {
             orientation="vertical"
             value={tabIndex}
             onChange={onChange}
-            variant="fullWidth"
+            // variant="fullWidth"
             ref={tabRef}
           >
-            {columns.map((c: typeof columns[0]) => (
+            {columns.map((c) => (
               <Tab
                 disableRipple
-                classes={tabItemStyles}
+                classes={mainTabItemStyles}
                 key={c.name}
                 icon={c.icon}
                 label={c.label}
               />
             ))}
+            <Tab
+              disableRipple
+              classes={viewerTabButtonStyles}
+              label="시청자수 순위"
+            />
           </Tabs>
         </Grid>
         <Grid item xs={10}>
           <TopTenListContainer
             data={dataToDisplay}
-            currentTab={columns[tabIndex].name}
+            currentTab={currentTab}
             loading={loading}
           />
           <div className={classes.loadMoreButtonContainer}>
