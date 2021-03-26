@@ -52,7 +52,6 @@ interface AdmireScore {
   interface SmileScore {
   smileScore: number
   }
-
 export interface Scores extends Partial<AdmireScore>,
 Partial<FrustrateScore>,
 Partial<CussScore>,
@@ -66,6 +65,7 @@ export interface TopTenDataItem extends Scores {
   twitchProfileImage: null | string,
   afreecaProfileImage: null | string,
   twitchChannelName: null | string,
+  viewer?: number
 }
 export interface WeeklyTrendsItem extends Scores{
     createDate: string;

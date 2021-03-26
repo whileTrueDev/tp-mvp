@@ -1,10 +1,10 @@
 import {
-  Controller, Get, ParseIntPipe, Query, UsePipes, ValidationPipe,
+  Controller, DefaultValuePipe, Get, ParseIntPipe, Query, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {
   DailyTotalViewersResType, MonthlyScoresResType, WeeklyViewersResType, RankingDataType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { RankingsService, ScoreColumn } from './rankings.service';
+import { RankingsService, ColumnType } from './rankings.service';
 @Controller('rankings')
 export class RankingsController {
   constructor(
@@ -56,10 +56,10 @@ export class RankingsController {
   @Get('top-ten')
   @UsePipes(new ValidationPipe())
   getTopTenRank(
-    @Query('column') column: 'smile'| 'frustrate'| 'admire'| 'cuss',
-    @Query('skip', ParseIntPipe) skip: number,
+    @Query('column') column: ColumnType,
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
   ): Promise<RankingDataType> {
-    return this.rankingsService.getTopTenRank(`${column}Score` as ScoreColumn, skip);
+    return this.rankingsService.getTopTenRank(column, skip);
   }
 
   /**

@@ -15,7 +15,7 @@ import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 
 export type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
-
+export type ColumnType = 'smile'| 'frustrate'| 'admire'| 'cuss' | 'viewer';
 @Injectable()
 export class RankingsService {
   constructor(
@@ -245,12 +245,76 @@ export class RankingsService {
   }
 
   /**
+   * 탑텐 랭킹에서 시청자수 순위로 데이터 가져오기
+   * @param skip 
+   * @param errorHandler 
+   * 
+   * @return
+  // rankingData: Array<TopTenDataItem>,
+  // weeklyTrends: WeeklyTrendsType,
+  // totalDataCount: number
+   */
+  private async getTopTenByViewer(
+    skip: number,
+    errorHandler?: (error: any) => void,
+  ): Promise<any> {
+    try {
+      // const recentAnalysisDate = await this.getRecentAnalysysDate();
+      // const qb = await getConnection()
+      //   .createQueryBuilder()
+      //   .from(RankingsEntity, 'T1')
+      //   .select([
+      //     'T1.viewer AS viewer',
+      //     'T1.id AS id',
+      //     'T1.creatorId AS creatorId',
+      //     'T1.creatorName AS creatorName',
+      //     'T1.title AS title',
+      //     'T1.createDate AS createDate',
+      //     'T1.platform AS platform',
+      //     'twitch.logo AS twitchProfileImage',
+      //     'twitch.twitchChannelName AS twitchChannelName',
+      //     'afreeca.logo AS afreecaProfileImage',
+      //   ])
+      //   .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
+      //     .select([
+      //       'MAX(rankings.viewer) AS maxViewer',
+      //       'rankings.creatorId AS creatorId',
+      //     ])
+      //     .from(RankingsEntity, 'rankings')
+      //     .groupBy('rankings.creatorId')
+      //     .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
+      //   'T2')
+      //   .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T2.creatorId')
+      //   .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T2.creatorId')
+      //   .where('T1.creatorId = T2.creatorId')
+      //   .andWhere('T1.viewer = T2.maxViewer');
+
+      // const dataTotalCount = await qb.clone().getCount();
+      // const data = await qb.orderBy('T2.maxViewer', 'DESC')
+      //   .offset(skip)
+      //   .limit(10)
+      //   .getRawMany();
+    } catch (error) {
+      console.error(error);
+      if (errorHandler) {
+        errorHandler(error);
+      }
+    }
+  }
+
+  /**
    * 감탄점수/웃음점수/답답함점수/욕점수 상위 10명 뽑아서 반환 -> 반응별랭킹 TOP 10에 사용
    * @return  { smile: TopTenRankData[],admire: TopTenRankData[],frustrate: TopTenRankData[],cuss: TopTenRankData[]}
    */
-  async getTopTenRank(column: ScoreColumn, skip: number): Promise<RankingDataType> {
+  async getTopTenRank(column: ColumnType, skip: number): Promise<RankingDataType> {
     // 아직 어떤 에러처리가 필요한지 불확실하여 콘솔에 에러찍는것만 에러핸들러로 넘김
-    return this.getTopTenByColumn(column, skip, console.error);
+
+    if (column === 'viewer') {
+      return this.getTopTenByViewer(skip, console.error);
+    }
+    const targetColumn = `${column}Score` as ScoreColumn;
+
+    return this.getTopTenByColumn(targetColumn, skip, console.error);
   }
 
   /**
