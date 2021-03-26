@@ -109,6 +109,7 @@ export class RankingsService {
    * 자기 조인 예시
    * 
    * @param column "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
+   * @param skip 해당 숫자만큼 이후의 데이터를 가져옴
    * @param errorHandler (error: any) => void 에러핸들링 할 함수
    * @return {
       rankingData : {
@@ -120,13 +121,19 @@ export class RankingsService {
                      streamDate: Date;
                      [key:ScoreColumn]: number;
                    }
-      weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
+      weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }],
+      totalDataCount: number
+    }
    }
    */
-  private async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<RankingDataType> {
+  private async getTopTenByColumn(
+    column: ScoreColumn,
+    skip: number,
+    errorHandler?: (error: any) => void,
+  ): Promise<RankingDataType> {
     try {
       const recentAnalysisDate = await this.getRecentAnalysysDate();
-      const rankingData = await getConnection()
+      const qb = await getConnection()
         .createQueryBuilder()
         .from(RankingsEntity, 'T1')
         .select([
@@ -153,8 +160,14 @@ export class RankingsService {
         .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T2.creatorId')
         .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T2.creatorId')
         .where('T1.creatorId = T2.creatorId')
-        .andWhere(`T1.${column} = T2.maxScore`) // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
+        .andWhere(`T1.${column} = T2.maxScore`); // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
+
+      // 해당 조건에 맞는 offset, limit 적용하지 않은 총 데이터 개수
+      const totalDataCount = await qb.clone().getCount();
+
+      const rankingData = await qb
         .orderBy(`T1.${column}`, 'DESC')
+        .offset(skip)
         .limit(10)
         .getRawMany();
 
@@ -166,6 +179,7 @@ export class RankingsService {
       return {
         rankingData,
         weeklyTrends,
+        totalDataCount,
       };
     } catch (error) {
       if (errorHandler) {
@@ -234,9 +248,9 @@ export class RankingsService {
    * 감탄점수/웃음점수/답답함점수/욕점수 상위 10명 뽑아서 반환 -> 반응별랭킹 TOP 10에 사용
    * @return  { smile: TopTenRankData[],admire: TopTenRankData[],frustrate: TopTenRankData[],cuss: TopTenRankData[]}
    */
-  async getTopTenRank(column: ScoreColumn): Promise<RankingDataType> {
+  async getTopTenRank(column: ScoreColumn, skip: number): Promise<RankingDataType> {
     // 아직 어떤 에러처리가 필요한지 불확실하여 콘솔에 에러찍는것만 에러핸들러로 넘김
-    return this.getTopTenByColumn(column, console.error);
+    return this.getTopTenByColumn(column, skip, console.error);
   }
 
   /**

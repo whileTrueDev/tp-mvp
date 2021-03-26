@@ -76,5 +76,6 @@ export interface WeeklyTrendsType{
 }
 export interface RankingDataType{
     rankingData: Array<TopTenDataItem>,
-    weeklyTrends: WeeklyTrendsType
+    weeklyTrends: WeeklyTrendsType,
+    totalDataCount: number
   }
