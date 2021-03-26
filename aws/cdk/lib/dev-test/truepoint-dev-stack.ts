@@ -151,8 +151,8 @@ export class TruepointDevStack extends BaseStack {
       environment: { NODE_ENV: 'test' },
       secrets: { // 필요 시크릿 값
         // AWS credentials
-        AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_ACCESS_KEY_ID')),
-        AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_SECRET_ACCESS_KEY')),
+        AWS_ACCESS_KEY_ID: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_ACCESS_KEY_ID', 2)),
+        AWS_SECRET_ACCESS_KEY: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_SECRET_ACCESS_KEY', 2)),
         BUCKET_NAME: ecs.Secret.fromSsmParameter(this.getStringParam(ID_PREFIX, 'TRUEPOINT_BUCKET_NAME')),
 
         // Jwt secret
