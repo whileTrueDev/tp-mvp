@@ -10,6 +10,7 @@ import AppBar from '../../organisms/shared/Appbar';
 import PageSizeAlert from '../../organisms/mypage/alertbar/PageSizeAlert';
 import SidebarWithNavbar from '../../organisms/mypage/layouts/sidebar-with-navbar/SidebarWithNavbar';
 import useAuthContext from '../../utils/hooks/useAuthContext';
+import useDialog from '../../utils/hooks/useDialog';
 
 export interface ParamTypes {
   userId: string
@@ -19,6 +20,7 @@ export default function PublicMypage(): JSX.Element {
   const classes = useLayoutStyles();
   const { userId } = useParams<ParamTypes>();
   const auth = useAuthContext();
+  const { open: alertOpen, handleOpen: handleAlertOpen, handleClose: handleAlertClose } = useDialog();
 
   // main ref
   const mainPanel = useRef<HTMLDivElement>(null);
@@ -32,15 +34,6 @@ export default function PublicMypage(): JSX.Element {
       auth.user.userId = userId;
     }
   }, [auth, userId]);
-
-  // 화면 크기 관련 경고 알림창을 위한 스테이트
-  const [alertOpen, setAlertOpen] = useState<boolean>();
-  function handleAlertOpen() {
-    setAlertOpen(true);
-  }
-  function handleAlertClose() {
-    setAlertOpen(false);
-  }
 
   // 사이드바 오픈 스테이트
   const [open, setOpen] = useState(true);

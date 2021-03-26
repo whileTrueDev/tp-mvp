@@ -12,6 +12,7 @@ import * as dateFns from 'date-fns';
 import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 // 컴포넌트
 import Table from '../../../../atoms/Table/MaterialTable';
+import AvatarWithName from '../../../../atoms/User/AvatarWithName';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -62,12 +63,12 @@ function PostList(props: PostListProps): JSX.Element {
         columns={[
           {
             title: '방송인',
-            width: '20%',
+            width: '25%',
             field: 'nickName',
             render: (rowData: EditingPointListResType): JSX.Element => (
-              <Typography variant="subtitle1" align="center" className={classes.columnText}>
-                {rowData.nickName}
-              </Typography>
+              <>
+                <AvatarWithName name={rowData.nickName} />
+              </>
             ),
           },
           {
@@ -82,7 +83,7 @@ function PostList(props: PostListProps): JSX.Element {
           },
           {
             title: '최근 방송',
-            width: '30%',
+            width: '25%',
             field: 'endDate',
             render: (rowData: EditingPointListResType): JSX.Element => (
               <Typography variant="subtitle1" align="center" className={classes.columnText}>
