@@ -7,28 +7,32 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     height: '100%',
     position: 'relative',
     border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
-    borderRadius: theme.shape.borderRadius
+    borderRadius: theme.shape.borderRadius,
   },
   recentAnalysisDate: {
     position: 'absolute',
     transform: 'translateY(-100%)',
   },
-  left:{
-    backgroundColor: theme.palette.grey[200]
+  left: {
+    backgroundColor: theme.palette.grey[200],
   },
   header: {
     textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(2),
     marginBottom: theme.spacing(1),
-    '&>:nth-child(1)':{
-      fontSize: theme.typography.h6.fontSize
+    '&>:nth-child(1)': {
+      fontSize: theme.typography.h6.fontSize,
     },
-    '&>:nth-child(2)':{
+    '&>:nth-child(2)': {
       fontSize: theme.typography.h4.fontSize,
       fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.primary.main
-    }
+      color: theme.palette.primary.main,
+    },
+  },
+  loadMoreButtonContainer: {
+    textAlign: 'center',
+    paddingBottom: theme.spacing(2),
   },
 }));
 
@@ -75,7 +79,7 @@ export const useTabItem = makeStyles((theme: Theme) => {
         backgroundColor: defaultBgColor,
         zIndex: 1,
       },
-      '&$root:after':{
+      '&$root:after': {
         display: 'block',
       },
       '& $wrapper': {
@@ -88,8 +92,8 @@ export const useTabItem = makeStyles((theme: Theme) => {
       fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       flexDirection: 'row',
-      width:'auto',
-      alignItems:'center',
+      width: 'auto',
+      alignItems: 'center',
       '& svg': {
         fontSize: svgFontSize,
         marginRight: theme.spacing(0.5),

@@ -1,6 +1,6 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import getPlatformColor from '../../../../utils/getPlatformColor';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import getPlatformColor from '../../../../utils/getPlatformColor';
 
 // TopTenList 스타일
 export const useTopTenList = makeStyles((theme: Theme) => {
@@ -19,8 +19,9 @@ export const useTopTenList = makeStyles((theme: Theme) => {
   });
 
   return createStyles({
-    wrapper: {
-      padding: theme.spacing(2,1),
+    topTenListWrapper: {
+      position: 'relative',
+      padding: theme.spacing(2, 1),
     },
     header: {
       display: 'flex',
@@ -30,7 +31,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       whiteSpace: 'nowrap',
     },
     listItems: {
-      paddingTop: theme.spacing(1)
+      padding: theme.spacing(2, 0),
     },
     listItem: {
       display: 'flex',
@@ -53,15 +54,15 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         MozTextFillColor: 'transparent',
       },
     },
-    background:{
+    background: {
       display: 'flex',
       borderRadius: theme.spacing(2),
       '&.twitch': {
-        backgroundColor: lighten(getPlatformColor('twitch'),0.9)
+        backgroundColor: lighten(getPlatformColor('twitch'), 0.9),
       },
       '&.afreeca': {
-        backgroundColor: lighten(getPlatformColor('afreeca'),0.9)
-      }
+        backgroundColor: lighten(getPlatformColor('afreeca'), 0.9),
+      },
     },
     star: {
       marginBottom: (-1) * theme.spacing(1),
@@ -137,6 +138,11 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         justifyContent: 'center',
         alignItems: 'center',
       },
+    },
+    scrollTopButton: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
     },
   });
 });

@@ -6,14 +6,13 @@ import { useTopTenList } from '../style/TopTenList.style';
 import InfoComponent from './InfoComponent';
 import TrendsBarChart from './TrendsBarChart';
 
-
 /**
  * '80%' -> 80으로 반환하는 함수
  * @param strPercentNum '80%' 처럼 %가 포함된 문자열
  * @returns 숫자
  */
-function getPercentNumber (strPercentNum:string):number {
-  return Number(strPercentNum.replace('%',''));
+function getPercentNumber(strPercentNum: string): number {
+  return Number(strPercentNum.replace('%', ''));
 }
 
 /**
@@ -21,8 +20,8 @@ function getPercentNumber (strPercentNum:string):number {
  * @param num 
  * @returns 
  */
-function toPercentString(num:number):string{
-  return `${num}%`
+function toPercentString(num: number): string {
+  return `${num}%`;
 }
 interface Props{
   index: number;
@@ -36,26 +35,24 @@ function TopTenListItem(props: Props): JSX.Element {
   const {
     data: d, index, headerColumns, currentScoreName, weeklyTrendsData,
   } = props;
-  const {platform} = d;
-
+  const { platform } = d;
 
   // 주간점수그래프 부분 제외한 너비
-  const backgroundWidth = useMemo(() => 100 - getPercentNumber(headerColumns[3].width),[headerColumns]);
+  const backgroundWidth = useMemo(() => 100 - getPercentNumber(headerColumns[3].width), [headerColumns]);
   // 배경색으로 묶이는 칸의 너비 array
   const innerBackgroundWidths = useMemo(() => (
     headerColumns
-    .slice(0, headerColumns.length-1)
-    .map((col,index:number) => (
-      100 * (getPercentNumber(headerColumns[index].width)/backgroundWidth))
-    )
-  ),[headerColumns, backgroundWidth]);
-  
+      .slice(0, headerColumns.length - 1)
+      .map((col, idx: number) => (
+        100 * (getPercentNumber(headerColumns[idx].width) / backgroundWidth)))
+  ), [headerColumns, backgroundWidth]);
 
   return (
     <div className={classes.listItem}>
 
-      <div className={classnames(platform, classes.background)}
-      style={{width: toPercentString(backgroundWidth)}}
+      <div
+        className={classnames(platform, classes.background)}
+        style={{ width: toPercentString(backgroundWidth) }}
       >
         <div
           className={classnames(classes.orderContainer, classes.center)}
@@ -86,7 +83,7 @@ function TopTenListItem(props: Props): JSX.Element {
         </div>
 
       </div>
-      
+
       <div
         className={classnames(classes.trendsBarContainer, classes.center)}
         style={{ width: headerColumns[3].width }}
