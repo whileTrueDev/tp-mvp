@@ -67,7 +67,7 @@ function PostList(props: PostListProps): JSX.Element {
             field: 'nickName',
             render: (rowData: EditingPointListResType): JSX.Element => (
               <>
-                <AvatarWithName name={rowData.nickName} />
+                <AvatarWithName name={rowData.nickname} logo={rowData.logo} />
               </>
             ),
           },
