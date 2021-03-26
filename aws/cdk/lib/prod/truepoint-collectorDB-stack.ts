@@ -107,8 +107,8 @@ export class WhileTrueCollectorStack extends BaseStack {
     // *********************************************
     const CRAWL_TWITCH_API_CLIENT_SECRET = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'CRAWL_TWITCH_API_CLIENT_SECRET'));
     const CRAWL_TWITCH_API_KEY = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'CRAWL_TWITCH_API_KEY'));
-    const AWS_ACCESS_KEY_ID = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_ACCESS_KEY_ID'));
-    const AWS_SECRET_ACCESS_KEY = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_SECRET_ACCESS_KEY'));
+    const AWS_ACCESS_KEY_ID = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_ACCESS_KEY_ID', 2));
+    const AWS_SECRET_ACCESS_KEY = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TRUEPOINT_SECRET_ACCESS_KEY', 2));
     const TWITCH_BOT_OAUTH_TOKEN = ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'TWITCH_BOT_OAUTH_TOKEN'));
 
     // *********************************************
