@@ -1,6 +1,6 @@
 import purple from '@material-ui/core/colors/purple';
 import blue from '@material-ui/core/colors/blue';
-
+import { DailyTotalViewersItemData } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 // 타입----------------------------------------------------------
 export interface CustomPointOption extends Highcharts.PointOptionsObject {
   y: number;
@@ -8,11 +8,6 @@ export interface CustomPointOption extends Highcharts.PointOptionsObject {
   order: number;
   color: string;
   originValue: number;
-}
-export interface DailyTotalViewersItemData{
-  maxViewer: number;
-  creatorName: string;
-  creatorId: string;
 }
 type Color = typeof blue | typeof purple; // material ui color객체, blue: 아프리카용, purple: 트위치용
 type ColorIndex = keyof Color; // material ui color 인덱스값
@@ -88,7 +83,6 @@ export function getChartSize(afreecaTotal: number, twitchTotal: number, compensa
 // svg 관련
 /**
  * 물방울이 이어진 효과 표현하기 위한 svg filter생성 & 그림자 효과 filter  생성
- * createBlobGradationBackground 함수 내부에서 사용
  * @param renderer 
  */
 export function createSVGFilters(renderer: Highcharts.SVGRenderer): void {
@@ -131,15 +125,21 @@ export function createSVGFilters(renderer: Highcharts.SVGRenderer): void {
 /**
  * 물방울 모양 svg 엘리먼트 생성
  * circle 두개를 만들어 필터를 적용한다
- * createBlobGradationBackground 함수 내부에서 사용
+ * 배경이 될 svg요소 담고있는 그룹요소인 g#blobs-container 를 반환한다 
  * @param renderer 
  * @param blobs [afreecaChartCoord{x,y,r}, twitchChartCoord{x,y,r}]
+ * @return container:Highcharts.SVGElement
  */
-export function createBlobs(renderer: Highcharts.SVGRenderer, blobs: {x: number, y: number, r: number}[]): void{
+export function createBlobs(
+  renderer: Highcharts.SVGRenderer,
+  blobs: {x: number, y: number, r: number}[],
+): Highcharts.SVGElement {
   const blobOuterScale = 1.15;// 배경의 지름이 차트 지름의 몇배가 될 것인지
 
+  const container = renderer.g('blobs-container');
+  container.add();
   // 그림자를 먼저 생성
-  const shadowG = renderer.g('shadow-blobs').add();
+  const shadowG = renderer.g('shadow-blobs').add(container);
   blobs.forEach((blob) => {
     renderer.circle({
       cx: blob.x, cy: blob.y, r: blob.r * blobOuterScale, fill: 'white', filter: 'url(#shadow-effect)',
@@ -149,7 +149,7 @@ export function createBlobs(renderer: Highcharts.SVGRenderer, blobs: {x: number,
   // 그림자 생성 후 물방울 배경을 생성
   const g = renderer.g('blobs').attr({
     filter: 'url(#gooey-effect)', // createSVGFilters에서 작성한 filter 적용
-  }).add();
+  }).add(container);
   const middleColor = '#a4a4fa';
   const gradientColorStops = [
     { startColor: blue[200], endColor: middleColor },
@@ -172,24 +172,8 @@ export function createBlobs(renderer: Highcharts.SVGRenderer, blobs: {x: number,
       },
     }).add(g);
   });
-}
 
-/**
- * 그라데이션 && 물방울 모양 배경------SVG filters https://jsfiddle.net/jL72qh55/9/
- * 1. svg filter(#gooey-effect) 생성
- * 2. 물방울 모양&그림자 생성
- * @param renderer Highcharts.SVGRenderer
- * @param blobCoords [afreecaChartCoord, twitchChartCoord]
- */
-export function createGradationBlobBackground(
-  renderer: Highcharts.SVGRenderer,
-  blobCoords: {x: number, y: number, r: number}[],
-): void {
-  // 1. 필터 생성(블러, contrast, shadow)
-  createSVGFilters(renderer);
-
-  // 2. 물방울 모양 & 그림자 생성
-  createBlobs(renderer, blobCoords);
+  return container;
 }
 
 /**
@@ -221,5 +205,109 @@ export function createArc(
   ).attr({
     stroke: color,
     'stroke-width': strokeWidth,
-  });
+  }).addClass(`arc-${direction}`);
+}
+
+/**
+ * 그라데이션 && 물방울 모양 배경------SVG filters https://jsfiddle.net/jL72qh55/9/
+ * 1. svg filter(#gooey-effect) 생성
+ * 2. 물방울 모양&그림자 생성
+ * 3. 차트 옆 호(arc) 생성
+ * @param renderer Highcharts.SVGRenderer
+ * @param blobCoords [afreecaChartCoord, twitchChartCoord]
+ * @return 
+  container: Highcharts.SVGElement 배경과 호를 포함하고 있는 컨테이너 요소
+  afreecaArc: Highcharts.SVGElement 아프리카 차트 쪽에 그려지는 arc
+  twitchArc: Highcharts.SVGElement 트위치 차트 쪽에 그려지는 arc
+ */
+export function createBackground(
+  renderer: Highcharts.SVGRenderer,
+  blobCoords: {x: number, y: number, r: number}[],
+): {
+  container: Highcharts.SVGElement,
+  afreecaArc: Highcharts.SVGElement,
+  twitchArc: Highcharts.SVGElement,
+} {
+  // 1. 필터 생성(블러, contrast, shadow) - 필터가 존재하지 않는 경우만 생성하도록
+  if (!renderer.defs.element.querySelector('#gooey-effect')) {
+    createSVGFilters(renderer);
+  }
+
+  // 2. 물방울 모양 & 그림자 생성
+  const container = createBlobs(renderer, blobCoords);
+  // 3. 차트 옆 호(arc) 생성
+  const afreecaArc = createArc(renderer, blobCoords[0], 'left', blue[400]);
+  afreecaArc.add(container);
+  const twitchArc = createArc(renderer, blobCoords[1], 'right', purple[400]);
+  twitchArc.add(container);
+
+  return { container, afreecaArc, twitchArc };
+}
+
+interface Coord {
+  x: number;
+  y: number;
+  r: number;
+}
+interface PaneOptions{
+    size: number;
+    center: string[];
+}
+/**
+ * 플랫폼 별 총 시청자 수에 따라 차트 크기와 중심 좌표를 반환
+ * @param afreecaTotal 
+ * @param twitchTotal 
+ * @param chart 
+ * @returns 
+ *  afreecaChartCoord  아프리카 차트 x,y좌표와 반지름r
+    twitchChartCoord  트위치 차트 x,y좌표와 반지름r
+    afreecaPaneOptions 아프리카 차트 크기와 중심 정보 (pane옵션에 사용)
+    twitchPaneOptions 트위치 차트 크기와 중심 정보 (pane옵션에 사용)
+ */
+export function getCoordsAndPanes(afreecaTotal: number, twitchTotal: number, chart: Highcharts.Chart): {
+  afreecaChartCoord: Coord,
+  twitchChartCoord: Coord,
+  afreecaPaneOptions: PaneOptions,
+  twitchPaneOptions: PaneOptions,
+} {
+  const compensationPx = -30; // 차트 크기(지름) 조정값
+  const [afreecaChartSize, twitchChartSize] = getChartSize(afreecaTotal, twitchTotal, compensationPx);
+  const {
+    plotWidth, plotHeight, plotLeft, plotTop,
+  } = chart;
+  const verticalCenter = plotHeight * 0.5; // 차트 y좌표값
+  const horizontalCenter = plotWidth * 0.5; // 차트 x좌표 기본값
+  const supplementDistance = compensationPx * 0.2; // 차트 크기(지름) 조정값에 따라 차트 중심 x좌표값을 조절한다
+  const afreecaHorizontalCenter = horizontalCenter - afreecaChartSize / 2 + supplementDistance;
+  const twitchHorizontalCenter = horizontalCenter + twitchChartSize / 2 - supplementDistance;
+  // 아프리카 차트 x,y좌표와 반지름r
+  const afreecaChartCoord = {
+    x: afreecaHorizontalCenter + plotLeft,
+    y: verticalCenter + plotTop,
+    r: afreecaChartSize / 2,
+  };
+  // 트위치 차트 x,y좌표와 반지름r
+  const twitchChartCoord = {
+    x: twitchHorizontalCenter + plotLeft,
+    y: verticalCenter + plotTop,
+    r: twitchChartSize / 2,
+  };
+
+  const afreecaChartCenter = [`${afreecaHorizontalCenter}`, `${verticalCenter}`];
+  const twitchChartCenter = [`${twitchHorizontalCenter}`, `${verticalCenter}`];
+
+  const afreecaPaneOptions = {
+    size: afreecaChartSize,
+    center: afreecaChartCenter,
+  };
+  const twitchPaneOptions = {
+    size: twitchChartSize,
+    center: twitchChartCenter,
+  };
+  return {
+    afreecaChartCoord,
+    twitchChartCoord,
+    afreecaPaneOptions,
+    twitchPaneOptions,
+  };
 }

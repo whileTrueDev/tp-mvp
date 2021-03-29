@@ -1,6 +1,9 @@
 import {
   Controller, Get, Query, UsePipes, ValidationPipe,
 } from '@nestjs/common';
+import {
+  DailyTotalViewersResType, MonthlyScoresResType, WeeklyViewersResType, RankingDataType,
+} from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { GetTopTenDto } from '@truepoint/shared/dist/dto/rankings/getTopTen.dto';
 import { RankingsService, ScoreColumn } from './rankings.service';
 @Controller('rankings')
@@ -22,7 +25,7 @@ export class RankingsController {
    * }
    */
   @Get('monthly-scores')
-  getMonthlyScoresRank(): Promise<any> {
+  getMonthlyScoresRank(): Promise<MonthlyScoresResType> {
     return this.rankingsService.getMonthlyScoresRank();
   }
 
@@ -50,7 +53,7 @@ export class RankingsController {
   @UsePipes(new ValidationPipe())
   getTopTenRank(
     @Query() getTopTenDto: GetTopTenDto,
-  ): Promise<any> {
+  ): Promise<RankingDataType> {
     const { column } = getTopTenDto;
     return this.rankingsService.getTopTenRank(`${column}Score` as ScoreColumn);
   }
@@ -67,7 +70,7 @@ export class RankingsController {
    * }
    */
   @Get('daily-total-viewers')
-  getDailyTotalViewers(): Promise<any> {
+  getDailyTotalViewers(): Promise<DailyTotalViewersResType> {
     return this.rankingsService.getDailyTotalViewers();
   }
 
@@ -82,7 +85,7 @@ export class RankingsController {
    * }
    */
   @Get('weekly-viewers')
-  getWeeklyViewers(): Promise<any> {
+  getWeeklyViewers(): Promise<WeeklyViewersResType> {
     return this.rankingsService.getWeeklyViewers();
   }
 

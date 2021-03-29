@@ -1,7 +1,7 @@
 import { Divider, Typography } from '@material-ui/core';
 import React from 'react';
+import { Scores, RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { useTopTenList } from '../style/TopTenList.style';
-import { Scores, TopTenListProps } from '../types/ToptenCard.types';
 import ListItemSkeleton from './ListItemSkeleton';
 import TopTenListItem from './TopTenListItem';
 
@@ -13,6 +13,12 @@ const headerColumns = [
   { key: 'bjName', label: 'BJ이름', width: '45%' },
   { key: 'weeklyScoreGraph', label: '주간 점수 그래프', width: '35%' },
 ];
+
+export interface TopTenListProps{
+  currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
+  data: undefined | RankingDataType,
+  loading?: boolean
+}
 
 function TopTenListContainer(props: TopTenListProps): JSX.Element {
   const { loading, data, currentTab } = props;

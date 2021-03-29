@@ -8,8 +8,8 @@ import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt'
 import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 import useAxios from 'axios-hooks';
 import dayjs from 'dayjs';
+import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { useTopTenCard, useTabs, useTabItem } from './style/TopTenCard.style';
-import { RankingDataType } from './types/ToptenCard.types';
 import TopTenListContainer from './topten/TopTenListContainer';
 
 const columns = [

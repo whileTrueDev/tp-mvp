@@ -1,34 +1,19 @@
 import React, {
   useEffect, useState, useRef,
 } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Divider, Typography } from '@material-ui/core';
-
+import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import dayjs from 'dayjs';
 
 import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
+import { WeeklyViewersResType, WeeklyData } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-
-const useWeeklyViewerStyle = makeStyles((theme: Theme) => createStyles({
-  weeklyViewerContainer: {
-    position: 'relative',
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2),
-  },
-  weeklyViewerTitle: {
-    padding: theme.spacing(2),
-  },
-}));
-
-interface WeeklyData{
-  date: string;
-  totalViewer: string;
-}
+import { useWeeklyViewerStyle } from './style/WeeklyViewerRankingCard.style';
 
 const markerSize = {
   width: 14,
@@ -37,11 +22,12 @@ const markerSize = {
 
 function WeeklyViewerRankingCard(): JSX.Element {
   const classes = useWeeklyViewerStyle();
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   // 차트컨테이너 ref
   const chartRef = useRef<{chart: Highcharts.Chart, container: React.RefObject<HTMLDivElement>}>(null);
   // 주간 시청자수 데이터
-  const [{ data, error, loading }] = useAxios<{afreeca: WeeklyData[], twitch: WeeklyData[]}>('/rankings/weekly-viewers');
+  const [{ data, error, loading }] = useAxios<WeeklyViewersResType>('/rankings/weekly-viewers');
   // 차트 옵션 state
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -50,7 +36,14 @@ function WeeklyViewerRankingCard(): JSX.Element {
     },
     credits: { enabled: false },
     title: { text: undefined },
-    xAxis: { crosshair: true },
+    xAxis: {
+      crosshair: true,
+      labels: {
+        style: {
+          fontSize: `${theme.typography.caption.fontSize}`,
+        },
+      },
+    },
     yAxis: {
       title: { text: undefined },
       labels: { enabled: false },
@@ -70,6 +63,10 @@ function WeeklyViewerRankingCard(): JSX.Element {
       useHTML: true,
       shape: 'callout',
       padding: 4,
+      style: {
+        fontSize: `${theme.typography.body2.fontSize}`,
+      },
+      headerFormat: `<span style="font-size: ${theme.typography.body2.fontSize};">{point.key}</span>`,
       pointFormatter(this: Highcharts.Point) {
         const { y, series, color } = this;
         return `

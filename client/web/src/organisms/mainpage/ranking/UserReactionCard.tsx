@@ -2,9 +2,8 @@ import {
   Button, List, ListItem, TextField, Typography,
 } from '@material-ui/core';
 import React, {
-  useEffect, useRef, useCallback, useMemo,
+  useEffect, useRef, useCallback, useMemo, useLayoutEffect,
 } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { useSnackbar } from 'notistack';
@@ -15,61 +14,27 @@ import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import UserReactionListItem from './sub/UserReactionListItem';
+import { useUserReactionStyle } from './style/UserReactionCard.style';
 
-const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
-  userReactionContainer: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2),
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: theme.spacing(2),
-  },
-  list: {
-    maxHeight: theme.spacing(40),
-    overflowY: 'auto',
-    borderTop: `1px solid ${theme.palette.divider}`,
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  form: {
-    width: '100%',
-    padding: theme.spacing(2, 0),
-    '& input': {
-      padding: theme.spacing(1.5, 2),
-    },
-  },
-  formRow: {
-    marginBottom: theme.spacing(0.8),
-    '&>*': {
-      marginRight: theme.spacing(0.6),
-    },
-  },
-}));
-
+const userReactionUrl = '/user-reactions';
 export default function UserReactionCard(): JSX.Element {
   const classes = useUserReactionStyle();
   const { enqueueSnackbar } = useSnackbar();
   const formRef = useRef<HTMLFormElement>(null);
   const listContainerRef = useRef<HTMLUListElement>(null);
-  const userReactionUrl = useRef<string>('/user-reactions');
-  const defaultUsername = useRef<string>('시청자');
+
   const [{
     data: userReactionData,
     loading,
-  }, getUserReactions] = useAxios<IUserReaction[]>(userReactionUrl.current, { manual: true });
+  }, getUserReactions] = useAxios<IUserReaction[]>(userReactionUrl, { manual: true });
   const [, postUserReaction] = useAxios<IUserReaction>({
-    url: userReactionUrl.current,
+    url: userReactionUrl,
     method: 'post',
   }, { manual: true });
 
   // api요청 핸들러
   const loadUserReactions = useCallback(() => {
-    getUserReactions().then((res) => {
-      if (listContainerRef.current && listContainerRef.current.scrollTop !== 0) {
-        listContainerRef.current.scrollTop = 0; // 새로운 데이터 로드 후 ul스크롤 위치를 최상단으로
-      }
-    }).catch((e) => {
+    getUserReactions().catch((e) => {
       console.error('시청자 반응 데이터 불러오기 오류', e);
     });
   }, [getUserReactions]);
@@ -95,6 +60,13 @@ export default function UserReactionCard(): JSX.Element {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 새로운 데이터 로드 후 ul스크롤 위치를 최하단으로
+  useLayoutEffect(() => {
+    if (!listContainerRef.current) return;
+    const { scrollHeight, clientHeight } = listContainerRef.current;
+    listContainerRef.current.scrollTop = scrollHeight - clientHeight;
+  }, [userReactionData]);
+
   // 등록버튼 클릭 | 인풋창에서 엔터 누를 시 실행되는 핸들러
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -106,7 +78,7 @@ export default function UserReactionCard(): JSX.Element {
       return;
     }
     createUserReaction({
-      username: formRef.current.username.value || defaultUsername.current,
+      username: formRef.current.username.value || '시청자',
       content: formRef.current.content.value,
     });
   }, [createUserReaction, enqueueSnackbar]);

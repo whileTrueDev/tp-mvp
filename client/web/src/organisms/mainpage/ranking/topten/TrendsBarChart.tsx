@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { Scores, WeeklyTrendsItem } from '../types/ToptenCard.types';
+import { Scores, WeeklyTrendsItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 
 function getSeriesName(currentScoreName: keyof Scores) {
   switch (currentScoreName) {

@@ -5,44 +5,16 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-// import { Rankings } from '@truepoint/shared/dist/interfaces/Rankings.interface';
+import {
+  DailyTotalViewersResType,
+  MonthlyScoresResType, MonthlyScoresItem,
+  WeeklyViewersResType, RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
+} from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 
 export type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
-interface MonthlyRankData{
-  creatorName: string;
-  creatorId: string;
-  platform: 'twitch' | 'afreeca';
-  avgScore: number;
-}
-
-/**
-    smileScore 부분은 ScoreColumn이 키로 들어가는데
-    string union type을 키로 사용하는 방법 찾아봐야함
-    [key:ScoreColumn]: number; 처럼 사용할 수 없음
- */
-// interface TopTenRankData{
-//  rankingData : {
-//    creatorId: string;
-//    id: number;
-//    platform: string;
-//    creatorName: string;
-//    title: string;
-//    streamDate: Date;
-//    [key:ScoreColumn]: number;
-//  }
-//  weeklyTrends : {
-//    [key:string] :  { createDate: string; [key:ScoreColumn]: number }[]}
-//  }
-// }
-
-interface DailyTotalViewerData{
-  creatorId: string;
-  creatorName: string;
-  maxViewer: number;
-}
 
 @Injectable()
 export class RankingsService {
@@ -89,7 +61,7 @@ export class RankingsService {
   private async getMonthlyRankByColumn(
     column: ScoreColumn,
     errorHandler?: (error: any) => void,
-  ): Promise<MonthlyRankData[]> {
+  ): Promise<MonthlyScoresItem[]> {
     const decimalPlace = 2;// 평균점수 소수점 2자리까 자른다
     try {
       const baseQuery = await this.getMonthlyScoreBaseQuery();
@@ -114,11 +86,7 @@ export class RankingsService {
      admire: MonthlyRankData[]
    * }
    */
-  async getMonthlyScoresRank(): Promise<{
-    smile: MonthlyRankData[],
-    frustrate: MonthlyRankData[],
-    admire: MonthlyRankData[]
-  }> {
+  async getMonthlyScoresRank(): Promise<MonthlyScoresResType> {
     // 추후 함수별 분기처리 & 에러핸들러 추가 필요, 임시로 console.error만 실행하도록 넣어둠
     const smile = await this.getMonthlyRankByColumn('smileScore', console.error);
     const frustrate = await this.getMonthlyRankByColumn('frustrateScore', console.error);
@@ -153,7 +121,7 @@ export class RankingsService {
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
    }
    */
-  private async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<any> {
+  private async getTopTenByColumn(column: ScoreColumn, errorHandler?: (error: any) => void): Promise<RankingDataType> {
     try {
       const recentAnalysisDate = await this.getRecentAnalysysDate();
       const rankingData = await getConnection()
@@ -222,7 +190,7 @@ export class RankingsService {
     topTenCreatorIds: string[],
     column: ScoreColumn,
     errorHandler?: (error: any) => void,
-  ): Promise<any> {
+  ): Promise<WeeklyTrendsType> {
     try {
       const data = await getConnection()
         .createQueryBuilder()
@@ -264,7 +232,7 @@ export class RankingsService {
    * 감탄점수/웃음점수/답답함점수/욕점수 상위 10명 뽑아서 반환 -> 반응별랭킹 TOP 10에 사용
    * @return  { smile: TopTenRankData[],admire: TopTenRankData[],frustrate: TopTenRankData[],cuss: TopTenRankData[]}
    */
-  async getTopTenRank(column: ScoreColumn): Promise<any> {
+  async getTopTenRank(column: ScoreColumn): Promise<RankingDataType> {
     // 아직 어떤 에러처리가 필요한지 불확실하여 콘솔에 에러찍는것만 에러핸들러로 넘김
     return this.getTopTenByColumn(column, console.error);
   }
@@ -288,12 +256,10 @@ export class RankingsService {
    * }
    * 
    */
-  private async getDailyTotalViewersByPlatform(platform: 'twitch'|'afreeca', errorHandler?: (error: any) => void): Promise<
-  {
-    data: DailyTotalViewerData[],
-    total: number
-  }
-  > {
+  private async getDailyTotalViewersByPlatform(
+    platform: 'twitch'|'afreeca',
+    errorHandler?: (error: any) => void,
+  ): Promise<DailyTotalViewersData> {
     try {
       const recentAnalysisDate = await this.getRecentAnalysysDate();
       const data = await this.rankingsRepository
@@ -333,7 +299,7 @@ export class RankingsService {
    *            total: number }
    * }
    */
-  async getDailyTotalViewers(): Promise<any> {
+  async getDailyTotalViewers(): Promise<DailyTotalViewersResType> {
     const twitch = await this.getDailyTotalViewersByPlatform('twitch', console.error);
     const afreeca = await this.getDailyTotalViewersByPlatform('afreeca', console.error);
 
@@ -354,7 +320,7 @@ export class RankingsService {
    * twitch: [{date:'2021-3-2',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
    * }
    */
-  async getWeeklyViewers(): Promise<any> {
+  async getWeeklyViewers(): Promise<WeeklyViewersResType> {
     const recentAnalysisDate = await this.getRecentAnalysysDate();
     const query = `
     SELECT platform, cdate AS "date", SUM(maxViewer) AS totalViewer
