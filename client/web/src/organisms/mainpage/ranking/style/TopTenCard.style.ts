@@ -30,6 +30,9 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
       color: theme.palette.primary.main,
     },
   },
+  viewerTab: {
+    marginTop: theme.spacing(2),
+  },
   loadMoreButtonContainer: {
     textAlign: 'center',
     paddingBottom: theme.spacing(2),
@@ -109,12 +112,3 @@ export const useTabItem = makeStyles((theme: Theme) => {
     },
   });
 });
-
-export const useViewerTabButtonStyle = makeStyles((theme: Theme) => createStyles({
-  root: {
-    borderTop: '1px solid red',
-  },
-  selected: {
-    backgroundColor: 'blue',
-  },
-}));

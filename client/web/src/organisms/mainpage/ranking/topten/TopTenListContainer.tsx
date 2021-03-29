@@ -1,31 +1,41 @@
 import { Button, Divider, Typography } from '@material-ui/core';
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Scores, RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { useTopTenList } from '../style/TopTenList.style';
 import ListItemSkeleton from './ListItemSkeleton';
 import TopTenListItem from './TopTenListItem';
 
-// width 는 반드시 '80%' 와 같이 %기호가 포함된 문자열이어야 함(TopTenListItem내 칸 너비를 %로 지정함)
-const headerColumns = [
-  {
-    key: 'order', label: '순위', width: '5%', textAlign: 'center',
-  },
-  { key: 'profileImage', label: '', width: '15%' },
-  { key: 'bjName', label: 'BJ이름', width: '50%' },
-  { key: 'weeklyScoreGraph', label: '주간 점수 그래프', width: '30%' },
-];
-
+type HeaderColumn = {
+  key: string,
+  label: string,
+  width: string,
+  textAlign?: string
+}
 export interface TopTenListProps{
   currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
   data: undefined | Omit<RankingDataType, 'totalDataCount'>,
-  loading?: boolean
+  loading?: boolean,
+  weeklyGraphLabel?: string
 }
 
 function TopTenListContainer(props: TopTenListProps): JSX.Element {
-  const { loading, data, currentTab } = props;
+  const {
+    loading, data, currentTab, weeklyGraphLabel = '주간 점수 그래프',
+  } = props;
   const classes = useTopTenList();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const headerColumns: HeaderColumn[] = useMemo(() => (
+    [
+      {
+        key: 'order', label: '순위', width: '5%', textAlign: 'center',
+      },
+      { key: 'profileImage', label: '', width: '15%' },
+      { key: 'bjName', label: 'BJ이름', width: '50%' },
+      { key: 'weeklyScoreGraph', label: weeklyGraphLabel, width: '30%' },
+    ]
+  ), [weeklyGraphLabel]);
 
   const scrollToContainerTop = () => {
     if (containerRef.current) {
@@ -56,7 +66,7 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
             <ListItemSkeleton key={v} headerColumns={headerColumns} />
           ))
           : data.rankingData.map((d, index: number) => {
-            const currentScoreName = `${currentTab}Score` as keyof Scores;
+            const currentScoreName = currentTab === 'viewer' ? currentTab : `${currentTab}Score` as keyof Scores;
             const weeklyTrendsData = data.weeklyTrends[d.creatorId];
             return (
               <TopTenListItem

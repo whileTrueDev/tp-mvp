@@ -204,7 +204,7 @@ export class RankingsService {
    */
   private async getTopTenTrendsByColumn(
     topTenCreatorIds: string[],
-    column: ScoreColumn,
+    column: ScoreColumn | 'viewer',
     errorHandler?: (error: any) => void,
   ): Promise<WeeklyTrendsType> {
     try {
@@ -257,48 +257,60 @@ export class RankingsService {
   private async getTopTenByViewer(
     skip: number,
     errorHandler?: (error: any) => void,
-  ): Promise<any> {
+  ): Promise<RankingDataType> {
     try {
-      // const recentAnalysisDate = await this.getRecentAnalysysDate();
-      // const qb = await getConnection()
-      //   .createQueryBuilder()
-      //   .from(RankingsEntity, 'T1')
-      //   .select([
-      //     'T1.viewer AS viewer',
-      //     'T1.id AS id',
-      //     'T1.creatorId AS creatorId',
-      //     'T1.creatorName AS creatorName',
-      //     'T1.title AS title',
-      //     'T1.createDate AS createDate',
-      //     'T1.platform AS platform',
-      //     'twitch.logo AS twitchProfileImage',
-      //     'twitch.twitchChannelName AS twitchChannelName',
-      //     'afreeca.logo AS afreecaProfileImage',
-      //   ])
-      //   .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
-      //     .select([
-      //       'MAX(rankings.viewer) AS maxViewer',
-      //       'rankings.creatorId AS creatorId',
-      //     ])
-      //     .from(RankingsEntity, 'rankings')
-      //     .groupBy('rankings.creatorId')
-      //     .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
-      //   'T2')
-      //   .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T2.creatorId')
-      //   .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T2.creatorId')
-      //   .where('T1.creatorId = T2.creatorId')
-      //   .andWhere('T1.viewer = T2.maxViewer');
+      const recentAnalysisDate = await this.getRecentAnalysysDate();
+      const qb = await getConnection()
+        .createQueryBuilder()
+        .from(RankingsEntity, 'T1')
+        .select([
+          'T1.viewer AS viewer',
+          'T1.id AS id',
+          'T1.creatorId AS creatorId',
+          'T1.creatorName AS creatorName',
+          'T1.title AS title',
+          'T1.createDate AS createDate',
+          'T1.platform AS platform',
+          'twitch.logo AS twitchProfileImage',
+          'twitch.twitchChannelName AS twitchChannelName',
+          'afreeca.logo AS afreecaProfileImage',
+        ])
+        .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대시청자 구한 테이블(t2)
+          .select([
+            'MAX(rankings.viewer) AS maxViewer',
+            'rankings.creatorId AS creatorId',
+          ])
+          .from(RankingsEntity, 'rankings')
+          .groupBy('rankings.creatorId')
+          .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
+        'T2')
+        .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T2.creatorId')
+        .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T2.creatorId')
+        .where('T1.creatorId = T2.creatorId')
+        .andWhere('T1.viewer = T2.maxViewer');
 
-      // const dataTotalCount = await qb.clone().getCount();
-      // const data = await qb.orderBy('T2.maxViewer', 'DESC')
-      //   .offset(skip)
-      //   .limit(10)
-      //   .getRawMany();
+      const totalDataCount = await qb.clone().getCount();
+      const data = await qb.orderBy('T2.maxViewer', 'DESC')
+        .offset(skip)
+        .limit(10)
+        .getRawMany();
+
+      // 상위 10명 크리에이터의 아이디를 뽑아낸다
+      const topTenCreatorIds = data.map((d) => d.creatorId);
+      // 상위 10명 크리에이터의 최근 7개 방송 점수 동향을 구함
+      const weeklyTrends = await this.getTopTenTrendsByColumn(topTenCreatorIds, 'viewer', console.error);
+
+      return {
+        rankingData: data,
+        weeklyTrends,
+        totalDataCount,
+      };
     } catch (error) {
       console.error(error);
       if (errorHandler) {
         errorHandler(error);
       }
+      throw new InternalServerErrorException('error in getTopTenByViewer');
     }
   }
 

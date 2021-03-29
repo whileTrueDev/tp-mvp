@@ -40,23 +40,15 @@ export interface WeeklyViewersResType{
 }
 
 // 탑텐
-interface AdmireScore {
-  admireScore: number
-  }
-  interface FrustrateScore {
-  frustrateScore: number
-  }
-  interface CussScore {
-  cussScore: number
-  }
-  interface SmileScore {
-  smileScore: number
-  }
-export interface Scores extends Partial<AdmireScore>,
-Partial<FrustrateScore>,
-Partial<CussScore>,
-Partial<SmileScore> {}
-export interface TopTenDataItem extends Scores {
+
+export interface Scores{
+  admireScore?: number,
+  frustrateScore?: number,
+  cussScore?: number,
+  smileScore?: number,
+  viewer? : number,
+}
+export interface TopTenDataItem extends Scores{
   id: number,
   creatorId: string,
   creatorName: string,
@@ -65,10 +57,9 @@ export interface TopTenDataItem extends Scores {
   twitchProfileImage: null | string,
   afreecaProfileImage: null | string,
   twitchChannelName: null | string,
-  viewer?: number
 }
 export interface WeeklyTrendsItem extends Scores{
-    createDate: string;
+    createDate: string,
   }
 
 export interface WeeklyTrendsType{

@@ -3,7 +3,7 @@ import {
   Grid, Tab, Tabs, Typography,
 } from '@material-ui/core';
 import React, {
-  useState, useRef, useEffect, useCallback,
+  useState, useRef, useEffect, useCallback, useMemo,
 } from 'react';
 import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
 import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
@@ -13,24 +13,34 @@ import useAxios from 'axios-hooks';
 import dayjs from 'dayjs';
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import {
-  useTopTenCard, useTabs, useTabItem, useViewerTabButtonStyle,
+  useTopTenCard, useTabs, useTabItem,
 } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 
-const columns = [
-  { name: 'admire', label: '감탄점수', icon: <SentimentVerySatisfiedIcon /> },
-  { name: 'smile', label: '웃음점수', icon: <SentimentSatisfiedAltIcon /> },
-  { name: 'frustrate', label: '답답함점수', icon: <SentimentDissatisfiedIcon /> },
-  { name: 'cuss', label: '욕점수', icon: <SentimentVeryDissatisfiedIcon /> },
-];
+type Tab = 'admire'|'smile'|'cuss'|'frustrate'|'viewer';
+type tabColumns = {
+  name: Tab;
+  label: string;
+  icon?: string | React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
+  className?: string
+}
 function TopTenCard(): JSX.Element {
   // 스타일
   const classes = useTopTenCard();
   const tabsStyles = useTabs();
   const mainTabItemStyles = useTabItem();
-  const viewerTabButtonStyles = useViewerTabButtonStyle();
 
   const tabRef = useRef<any>(null);
+  // 탭목록
+  const columns: tabColumns[] = useMemo(() => (
+    [
+      { name: 'admire', label: '감탄점수', icon: <SentimentVerySatisfiedIcon /> },
+      { name: 'smile', label: '웃음점수', icon: <SentimentSatisfiedAltIcon /> },
+      { name: 'frustrate', label: '답답함점수', icon: <SentimentDissatisfiedIcon /> },
+      { name: 'cuss', label: '욕점수', icon: <SentimentVeryDissatisfiedIcon /> },
+      { name: 'viewer', label: '시청자수 순위', className: classes.viewerTab },
+    ]
+  ), [classes.viewerTab]);
 
   // axios요청
   // 탭 별 상위 10인 요청
@@ -44,8 +54,9 @@ function TopTenCard(): JSX.Element {
 
   // states
   const [tabIndex, setTabIndex] = useState(0); // 선택된 탭의 인덱스
-  const [currentTab, setCurrentTab] = useState<string>(''); // 현재 탭 이름 admire, smile ... 
+  const [currentTab, setCurrentTab] = useState<Tab>('admire'); // 현재 탭 이름 admire, smile ... 
   // -> topTenContainer에게 넘겨주기 위함, 해당 prop은 Score글자를 붙여서 topTenListItem 으로 전달되고, 또 하위 컴포넌트로 전달됨... 
+  const [weeklyGraphLabel, setWeeklyGraphLabel] = useState<string>('주간 점수 그래프');
 
   // 보여줄 데이터 상태
   const [dataToDisplay, setDataToDisplay] = useState<Omit<RankingDataType, 'totalDataCount'>>({
@@ -53,10 +64,10 @@ function TopTenCard(): JSX.Element {
     weeklyTrends: {},
   });
 
-  const loadInitialData = useCallback((selectedTabIndex: number) => {
+  const loadData = useCallback((column: string) => {
     refetch({
       params: {
-        column: columns[selectedTabIndex].name,
+        column,
         skip: 0,
       },
     }).then((res) => {
@@ -68,19 +79,20 @@ function TopTenCard(): JSX.Element {
 
   const onChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setTabIndex(index);
-
-    if (columns[index]) {
-      setCurrentTab(columns[index].name);
-      loadInitialData(index);
+    const currentTabName = columns[index].name;
+    setCurrentTab(currentTabName);
+    loadData(currentTabName);
+    if (currentTabName === 'viewer') {
+      setWeeklyGraphLabel('주간 시청자수 추이');
     } else {
-      // 시청자수 순위 버튼 누른 경우
+      setWeeklyGraphLabel('주간 점수 그래프');
     }
-  }, [loadInitialData]);
+  }, [columns, loadData]);
 
   const loadMoreData = useCallback(() => {
     refetch({
       params: {
-        column: columns[tabIndex].name,
+        column: currentTab,
         skip: dataToDisplay.rankingData.length,
       },
     }).then((res) => {
@@ -92,7 +104,7 @@ function TopTenCard(): JSX.Element {
     }).catch((e) => {
       console.error(e);
     });
-  }, [dataToDisplay.rankingData.length, refetch, tabIndex]);
+  }, [currentTab, dataToDisplay.rankingData.length, refetch]);
 
   useEffect(() => {
     // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
@@ -100,7 +112,7 @@ function TopTenCard(): JSX.Element {
       tabRef.current.querySelector('.MuiTabs-scroller').setAttribute('style', 'overflow: visible;');
     }
     // 초기 데이터 불러옴
-    loadInitialData(tabIndex);
+    loadData(columns[tabIndex].name);
   // 마운트 이후 한번만 실행될 훅
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -125,7 +137,6 @@ function TopTenCard(): JSX.Element {
             orientation="vertical"
             value={tabIndex}
             onChange={onChange}
-            // variant="fullWidth"
             ref={tabRef}
           >
             {columns.map((c) => (
@@ -135,13 +146,9 @@ function TopTenCard(): JSX.Element {
                 key={c.name}
                 icon={c.icon}
                 label={c.label}
+                className={c.className}
               />
             ))}
-            <Tab
-              disableRipple
-              classes={viewerTabButtonStyles}
-              label="시청자수 순위"
-            />
           </Tabs>
         </Grid>
         <Grid item xs={10}>
@@ -149,6 +156,7 @@ function TopTenCard(): JSX.Element {
             data={dataToDisplay}
             currentTab={currentTab}
             loading={loading}
+            weeklyGraphLabel={weeklyGraphLabel}
           />
           <div className={classes.loadMoreButtonContainer}>
             { data && (data.totalDataCount > dataToDisplay.rankingData.length)
