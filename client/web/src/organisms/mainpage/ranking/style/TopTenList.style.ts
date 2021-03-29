@@ -121,12 +121,6 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       height: theme.spacing(2),
       marginRight: theme.spacing(1),
     },
-    scoreText: {
-      position: 'relative',
-      textAlign: 'right',
-      fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.primary.dark,
-    },
     trendsBarContainer: {
       padding: theme.spacing(1),
       alignItems: 'flex-end',
@@ -169,6 +163,12 @@ export const useProgressBar = makeStyles((theme: Theme) => {
     },
     barColorPrimary: {
       backgroundColor: theme.palette.primary.light,
+    },
+    scoreText: {
+      position: 'relative',
+      textAlign: 'right',
+      fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.primary.dark,
     },
   });
 });

@@ -43,17 +43,7 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
       {currentScoreName === 'viewer'
         ? <Typography>{`시청자수: ${d[currentScoreName]} 명`}</Typography>
         : (
-          <div className="scoreBarContainer">
-            <ScoreBar score={d[currentScoreName] as number} />
-            <Typography
-              className={classes.scoreText}
-              style={{
-                transform: `translateX(${(10 - (d[currentScoreName] || 0)) * (-10)}%`,
-              }}
-            >
-              {d[currentScoreName] && `${(d[currentScoreName])?.toFixed(2)}`}
-            </Typography>
-          </div>
+          <ScoreBar score={d[currentScoreName] || 0} />
         )}
 
     </div>
