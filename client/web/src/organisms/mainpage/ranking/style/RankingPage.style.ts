@@ -1,5 +1,5 @@
+import grey from '@material-ui/core/colors/grey';
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
-import blueGrey from '@material-ui/core/colors/blueGrey';
 import { MYPAGE_MAIN_MIN_WIDTH } from '../../../../assets/constants';
 
 export const useRankingPageLayout = makeStyles((theme: Theme) => {
@@ -7,7 +7,7 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
 
   return createStyles({
     background: {
-      backgroundColor: blueGrey[100],
+      backgroundColor: grey[100],
     },
     container: {
       minWidth: `${MYPAGE_MAIN_MIN_WIDTH}px`,
@@ -17,7 +17,7 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
       backgroundColor: theme.palette.background.paper,
       marginBottom: theme.spacing(6),
       borderTop: borderStyle,
-      borderBottom: borderStyle
+      borderBottom: borderStyle,
     },
     left: {
     },
@@ -26,13 +26,12 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
         marginBottom: theme.spacing(4),
       },
     },
-  })
-}
-);
+  });
+});
 
 export const useCarouselStyle = makeStyles((theme: Theme) => createStyles({
   buttonIcon: {
     color: theme.palette.common.black,
     fontSize: theme.typography.h1.fontSize,
-  }
-}))
+  },
+}));
