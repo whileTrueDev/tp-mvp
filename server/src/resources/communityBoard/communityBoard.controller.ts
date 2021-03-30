@@ -11,6 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
   HttpCode,
+  Ip,
 } from '@nestjs/common';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
@@ -18,8 +19,6 @@ import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/create
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
-import { RealIP } from 'nestjs-real-ip';
-import { GetIpv4Half } from '../../utils/convertIpAddress';
 import { CommunityBoardService } from './communityBoard.service';
 import { CommunityReplyService } from './communityReply.service';
 import { CommunityPostEntity } from './entities/community-post.entity';
@@ -95,10 +94,10 @@ export class CommunityBoardController {
   @Post('posts')
   @UsePipes(new ValidationPipe({ transform: true }))
   createOnePost(
-    @RealIP() ip: string,
+    @Ip() userIp: string,
     @Body() createCommunityPostDto: CreateCommunityPostDto,
   ): Promise<CommunityPostEntity> {
-    return this.communityBoardService.createOnePost(createCommunityPostDto, GetIpv4Half(ip));
+    return this.communityBoardService.createOnePost(createCommunityPostDto, userIp);
   }
 
   /**
@@ -203,10 +202,10 @@ export class CommunityBoardController {
   @Post('replies')
   @UsePipes(new ValidationPipe({ transform: true }))
   createReply(
-    @RealIP() ip: string,
+    @Ip() userIp: string,
     @Body() createReplyDto: CreateReplyDto,
   ): Promise<CommunityReplyEntity> {
-    return this.communityReplyService.createReply(createReplyDto, GetIpv4Half(ip));
+    return this.communityReplyService.createReply(createReplyDto, userIp);
   }
 
   /**
