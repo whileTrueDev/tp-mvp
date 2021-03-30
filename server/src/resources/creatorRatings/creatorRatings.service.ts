@@ -61,7 +61,9 @@ export class CreatorRatingsService {
           creatorId,
         },
       });
-      await this.ratingsRepository.remove(exRating);
+      if (exRating) {
+        await this.ratingsRepository.remove(exRating);
+      }
       return 'ok';
     } catch (error) {
       console.error(error);
@@ -74,7 +76,7 @@ export class CreatorRatingsService {
    * creatorId의 평균평점과 횟수 조회
    * @param creatorId 
    */
-  async getRatings(creatorId: string): Promise<any> {
+  async getAverageRatings(creatorId: string): Promise<any> {
     const data = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
         'AVG(rating) AS average',
@@ -87,5 +89,31 @@ export class CreatorRatingsService {
       average: Number(data.average),
       count: Number(data.count),
     };
+  }
+
+  /**
+   * 해당ip를 가진 유저가 creatorId에 매긴 평점 조회
+   * 매긴적이 없으면 false반환
+   * 매긴적이 있으면 {rating: number}반환
+   * @param ip 
+   * @param creatorId 
+   * @returns 
+   */
+  async findOneRating(ip: string, creatorId: string): Promise<any> {
+    try {
+      const exRating = await this.ratingsRepository.findOne({
+        where: {
+          userIp: ip,
+          creatorId,
+        },
+      });
+      if (exRating) {
+        return { rating: exRating.rating };
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('error in findOneRating');
+    }
   }
 }

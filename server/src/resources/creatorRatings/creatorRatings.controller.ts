@@ -1,7 +1,6 @@
 import {
-  Body, Controller, Delete, Get, Param, Post, ValidationPipe,
+  Body, Controller, Delete, Get, Ip, Param, Post, ValidationPipe,
 } from '@nestjs/common';
-import { RealIP } from 'nestjs-real-ip';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingsService } from './creatorRatings.service';
 
@@ -23,7 +22,7 @@ export class CreatorRatingsController {
   @Post('/:creatorId')
   createRatings(
     @Param('creatorId') creatorId: string,
-    @RealIP() ip: string,
+    @Ip() ip: string,
     @Body(ValidationPipe) ratingPostDto: RatingPostDto,
   ): Promise<any> {
     return this.ratingsService.createRatings(creatorId, ratingPostDto, 'test');
@@ -39,7 +38,7 @@ export class CreatorRatingsController {
   @Delete('/:creatorId')
   deleteRatings(
     @Param('creatorId') creatorId: string,
-    @RealIP() ip: string,
+    @Ip() ip: string,
   ): Promise<any> {
     return this.ratingsService.deleteRatings(creatorId, ip);
   }
@@ -49,10 +48,25 @@ export class CreatorRatingsController {
    * @param creatorId 
    * @returns 
    */
-  @Get('/:creatorId')
-  getRatings(
+  @Get('/:creatorId/average')
+  getAverageRatings(
     @Param('creatorId') creatorId: string,
   ): Promise<any> {
-    return this.ratingsService.getRatings(creatorId);
+    return this.ratingsService.getAverageRatings(creatorId);
+  }
+
+  /**
+   * 해당ip를 가진 유저가 creatorId에 매긴 평점 조회
+   * 
+   * @param ip 
+   * @param creatorId 
+   * @returns 
+   */
+  @Get('/:creatorId')
+  getOneRating(
+    @Ip() ip: string,
+    @Param('creatorId') creatorId: string,
+  ): Promise<any> {
+    return this.ratingsService.findOneRating(ip, creatorId);
   }
 }
