@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import { CommunityReply } from '@truepoint/shared/dist/interfaces/CommunityReply.interface';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
-import * as dateFns from 'date-fns';
+import dayjs from 'dayjs';
 import EditIcon from '@material-ui/icons/Edit';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import useAxios from 'axios-hooks';
@@ -131,7 +131,7 @@ function ReplyItem({
           : (<Typography>{content}</Typography>)}
       </div>
 
-      <Typography variant="caption" className={classes.date}>{dateFns.format(new Date(createDate), 'yy-MM-dd hh:mm:ss')}</Typography>
+      <Typography variant="caption" className={classes.date}>{dayjs(createDate).format('YY-MM-DD HH:mm:ss')}</Typography>
       <div className={classes.actions}>
         {isEditMode
           ? (

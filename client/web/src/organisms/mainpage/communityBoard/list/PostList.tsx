@@ -6,8 +6,7 @@ import {
 } from '@material-ui/core/styles';
 
 // 라이브러리
-import { ko } from 'date-fns/locale';
-import * as dateFns from 'date-fns';
+import dayjs from 'dayjs';
 import classnames from 'classnames';
 // 응답타입
 import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
@@ -116,14 +115,7 @@ const boardColumns: ColumnData[] = [
 function getDateDisplay(createDate: Date|undefined): string {
   let dateDisplay = '';
   if (createDate) {
-    const date = new Date(createDate);
-    if (date.getDate() === new Date().getDate()) { // 오늘 날짜인 경우
-      // '**시간 전' 형태로 표현
-      dateDisplay = `${dateFns.formatDistanceToNow(date, { locale: ko }).replace('약 ', '')} 전`;
-    } else {
-      // 오늘 날짜가 아닌경우 '12-26'형태로 표현
-      dateDisplay = dateFns.format(date, 'MM-dd');
-    }
+    dateDisplay = dayjs(createDate).format('MM-DD');
   }
   return dateDisplay;
 }
