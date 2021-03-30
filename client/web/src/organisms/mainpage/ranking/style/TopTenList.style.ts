@@ -106,6 +106,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       justifyContent: 'space-between',
     },
     creatorName: {
+      color: theme.palette.common.black,
       fontWeight: theme.typography.fontWeightBold,
       fontSize: theme.typography.h6.fontSize,
       textOverflow: 'ellipsis',
@@ -138,6 +139,12 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       bottom: 0,
       left: 0,
     },
+    scoreText: {
+      position: 'relative',
+      textAlign: 'right',
+      fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.primary.dark,
+    },
   });
 });
 
@@ -163,12 +170,6 @@ export const useProgressBar = makeStyles((theme: Theme) => {
     },
     barColorPrimary: {
       backgroundColor: theme.palette.primary.light,
-    },
-    scoreText: {
-      position: 'relative',
-      textAlign: 'right',
-      fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.primary.dark,
     },
   });
 });

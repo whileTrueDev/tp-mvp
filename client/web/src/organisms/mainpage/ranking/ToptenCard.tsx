@@ -2,19 +2,17 @@ import {
   Button,
   Grid, Tab, Tabs, Typography,
 } from '@material-ui/core';
-import React, {
-  useState, useRef, useEffect, useCallback, useMemo,
-} from 'react';
-import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
-import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
-import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
+import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
+import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
+import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import useAxios from 'axios-hooks';
 import dayjs from 'dayjs';
-import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import {
-  useTopTenCard, useTabs, useTabItem,
-} from './style/TopTenCard.style';
+import React, {
+  useCallback, useEffect, useMemo, useRef, useState,
+} from 'react';
+import { useTabItem, useTabs, useTopTenCard } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 
 type Tab = 'admire'|'smile'|'cuss'|'frustrate'|'viewer';

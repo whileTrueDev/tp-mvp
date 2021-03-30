@@ -3,6 +3,7 @@ import { Container, Grid } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Carousel from 'react-material-ui-carousel';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
@@ -11,10 +12,12 @@ import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlySc
 import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
 import { useRankingPageLayout, useCarouselStyle } from '../../organisms/mainpage/ranking/style/RankingPage.style';
+import CreatorEvaluation from '../../organisms/mainpage/ranking/CreatorEvaluation';
 
 export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const carousel = useCarouselStyle();
+  const { path } = useRouteMatch();
   const memoAppbar = useMemo(() => <Appbar />, []);
   const memoFooter = useMemo(() => <Footer />, []);
 
@@ -36,21 +39,25 @@ export default function Ranking(): JSX.Element {
               <WeeklyViewerRankingCard />
             </Carousel>
           </Container>
-
         </div>
         <Container className={wrapper.container}>
-          <Grid container direction="column">
-            <Grid item container spacing={2}>
-              <Grid item xs={8} className={wrapper.left}>
-                <TopTenCard />
-              </Grid>
-              <Grid item xs={4} className={wrapper.right}>
-                <MonthlyScoresRankingCard />
-                <UserReactionCard />
-              </Grid>
-            </Grid>
 
-          </Grid>
+          <Switch>
+            <Route exact path={path}>
+              <Grid container spacing={2}>
+                <Grid item xs={8} className={wrapper.left}>
+                  <TopTenCard />
+                </Grid>
+                <Grid item xs={4} className={wrapper.right}>
+                  <MonthlyScoresRankingCard />
+                  <UserReactionCard />
+                </Grid>
+              </Grid>
+            </Route>
+            <Route path={`${path}/:creatorId`}>
+              <CreatorEvaluation />
+            </Route>
+          </Switch>
 
         </Container>
       </div>

@@ -1,8 +1,9 @@
-import { Typography, Chip } from '@material-ui/core';
-import React from 'react';
+import { Chip, Typography, Link } from '@material-ui/core';
 import { Scores, TopTenDataItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import ScoreBar from './ScoreBar';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useTopTenList } from '../style/TopTenList.style';
+import ScoreBar from './ScoreBar';
 
 export interface InfoComponentProps{
   data: TopTenDataItem,
@@ -15,7 +16,14 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
   return (
     <div className={classes.infoWrapper}>
       <div className={classes.nameContainer}>
-        <Typography className={classes.creatorName}>{d.creatorName}</Typography>
+
+        <Link component={RouterLink} to={`/ranking/${d.creatorId}`}>
+          <Typography
+            className={classes.creatorName}
+          >
+            {d.creatorName}
+          </Typography>
+        </Link>
         <Chip
           className={classes.chip}
           component="a"

@@ -128,7 +128,7 @@ function Index(): JSX.Element {
               <Route exact path="/community-board/:platform/view/:postId" component={CommunityPostView} />
               <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
               <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
-              <Route exact path="/ranking" component={Ranking} />
+              <Route path="/ranking" component={Ranking} />
               <Route path="/mypage" component={Mypage} />
               <Route component={PageNotFound} />
             </Switch>

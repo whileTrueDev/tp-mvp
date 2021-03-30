@@ -1,30 +1,25 @@
-import React, {
-  useEffect, useMemo, useRef, useState,
-} from 'react';
-import { useTheme } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
-import blue from '@material-ui/core/colors/blue';
 import { Typography } from '@material-ui/core';
-
+import blue from '@material-ui/core/colors/blue';
+import purple from '@material-ui/core/colors/purple';
+import { useTheme } from '@material-ui/core/styles';
+import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import useAxios from 'axios-hooks';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HCmore from 'highcharts/highcharts-more'; // polar area chart 사용 위해 필요
-
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-
-import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-
-import { useStyles as usePolatChartStyles } from './style/polarChartStyle';
 import {
-  getCoordsAndPanes,
-  toPolarAreaData,
-  polarAreaLabelFormatter,
   createBackground,
-  CustomPointOption,
+  CustomPointOption, getCoordsAndPanes,
+
+  polarAreaLabelFormatter, toPolarAreaData,
 } from './polar/polarChartUtils';
+import { useStyles as usePolatChartStyles } from './style/polarChartStyle';
 import CarouselItemHeader from './sub/CarouselItemHeader';
 
 HCmore(Highcharts);// polar area chart 사용 위해 필요
@@ -34,7 +29,7 @@ HCmore(Highcharts);// polar area chart 사용 위해 필요
  * toPolarAreaData 에서 생성된 originValue값(실제 최대시청자 값)을 툴팁에 표시한다
  * @param this Highcharts.TooltipFormatterContextObject
  */
-function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
+function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObject): string {
   const { point } = this;
   const { options: pointOptions, name } = point;
   const { originValue, order } = pointOptions as CustomPointOption;
@@ -196,24 +191,24 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     }
     return undefined;
   },
-  [data]);
+  [data, theme]);
 
   const [afreecaPercent, twitchPercent] = useMemo(() => {
     if (!data) {
-      return [0,0];
+      return [0, 0];
     }
     const totalSum = data.afreeca.total + data.twitch.total;
-    function getPercentage(num:number):number{
-      return Number(((num/totalSum)*100).toFixed(2));
+    function getPercentage(num: number): number {
+      return Number(((num / totalSum) * 100).toFixed(2));
     }
     const afreecaPercentage = getPercentage(data.afreeca.total);
     const twitchPercentage = getPercentage(data.twitch.total);
     return [afreecaPercentage, twitchPercentage];
-  },[data])
+  }, [data]);
 
   return (
     <section className={classes.polarAreaContainer}>
-      <CarouselItemHeader title="종합랭킹"/>
+      <CarouselItemHeader title="종합랭킹" />
 
       { data
         ? (

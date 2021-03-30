@@ -1,6 +1,6 @@
 import { LinearProgress, Typography } from '@material-ui/core';
 import React, { useMemo } from 'react';
-import { useProgressBar } from '../style/TopTenList.style';
+import { useProgressBar, useTopTenList } from '../style/TopTenList.style';
 
 const MIN = 0;
 const MAX = 10;
@@ -15,6 +15,7 @@ const normalize = (value: number): number => Number((((value - MIN) * 100) / (MA
 
 function ScoreBar({ score }: {score: number}): JSX.Element {
   const progressBarStyles = useProgressBar();
+  const classes = useTopTenList();
   const normalizedScore = useMemo(() => normalize(score), [score]);
   return (
     <div>
@@ -28,7 +29,7 @@ function ScoreBar({ score }: {score: number}): JSX.Element {
         value={normalizedScore}
       />
       <Typography
-        className={progressBarStyles.scoreText}
+        className={classes.scoreText}
         style={{
           transform: `translateX(${(10 - score) * (-10)}%`,
         }}
