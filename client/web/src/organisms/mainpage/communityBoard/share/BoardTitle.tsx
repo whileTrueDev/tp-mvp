@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
   },
 }));
-export default function BoardTitle({ platform }: {platform: 'afreeca'|'twitch'}): JSX.Element {
+export default function BoardTitle({ platform, boardType }: {platform: 'afreeca'|'twitch', boardType?: boolean}): JSX.Element {
   const classes = useStyles();
   if (!platform) {
     return (
@@ -39,7 +39,7 @@ export default function BoardTitle({ platform }: {platform: 'afreeca'|'twitch'})
       />
       <Typography variant="h4" className={classes.titleText}>
         {`${platform === 'afreeca' ? '아프리카' : '트위치'}
-          게시판`}
+          ${boardType ? '방송인' : '게시판'}`}
       </Typography>
     </div>
   );

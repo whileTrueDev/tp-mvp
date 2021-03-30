@@ -86,8 +86,11 @@ export class UsersService {
     const images = [];
 
     // 아프리카는 OPEN API 업데이트 이후 추가 20.11.18 hwasurr
-    // const afreecaLink = await this.afreecaRepository.findOne(user.afreecaId);
-    // if (afreecaLink) images.push({ platform: 'afreeca', logo: afreecaLink.logo });
+    if (user.afreecaId) {
+      const afreecaLink = await this.afreecaRepository.findOne(user.afreecaId);
+      if (afreecaLink) images.push({ platform: 'afreeca', logo: afreecaLink.logo });
+    }
+
     if (user.twitchId) {
       const twitchLink = await this.twitchRepository.findOne(user.twitchId);
       if (twitchLink) images.push({ platform: 'twitch', logo: twitchLink.logo });
@@ -321,12 +324,13 @@ export class UsersService {
       title: string,   // 가장 최근 방송 제목
       endDate: Date,   // 가장 최근 방송의 종료시간
       nickname: string // 크리에이터 활동명
+      logo: string // 크리에이터 로고
    * }[]
    */
   async getHighlightPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
     try {
       const matchingId = `${platform}Id`;
-      return await this.streamsRepository.createQueryBuilder('streams')
+      const dataWithoutProfileImage = await this.streamsRepository.createQueryBuilder('streams')
         .leftJoinAndSelect(UserEntity, 'users', `streams.creatorId = users.${matchingId}`)
         .select([
           'streams.creatorId AS creatorId',
@@ -334,12 +338,18 @@ export class UsersService {
           'streams.title AS title',
           'MAX(streams.endDate) AS endDate',
           'users.userId AS userId',
-          'users.nickName AS nickName',
+          'users.nickName AS nickname',
         ])
         .where('streams.platform = :platform', { platform })
         .groupBy('streams.creatorId')
         .orderBy('MAX(streams.endDate)', 'DESC')
         .getRawMany();
+
+      const userHighlightData = Promise.all(dataWithoutProfileImage.map(async (row) => {
+        const getUserProfileImage = await this.findOneProfileImage(row.userId);
+        return { ...row, logo: getUserProfileImage[0].logo };
+      }));
+      return userHighlightData;
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException('Error in getEditingPointList');

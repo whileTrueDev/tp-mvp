@@ -1,18 +1,15 @@
 import React, { useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import {
   makeStyles, createStyles, Theme, withStyles,
 } from '@material-ui/core/styles';
 import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { Button } from '@material-ui/core';
 import CreateIcon from '@material-ui/icons/Create';
-
 import useAxios from 'axios-hooks';
-
+import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FilterType } from '../../../../utils/hooks/useBoardListState';
-
 import PostList from './PostList';
 
 const filterButtonValues: Array<{key: FilterType, text: string, color: string}> = [
@@ -67,13 +64,14 @@ interface BoardProps{
   searchText: string;
   searchType: string;
   postFilterHandler: (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => void;
-  handlePostsLoad: ({ posts, total }: FindPostResType) => void;
   boardState: {
     posts: PostFound[];
+    list: EditingPointListResType[];
     page: number;
     totalRows: number;
     filter: FilterType;
   },
+  handlePostsLoad: ({ posts, total }: FindPostResType) => void;
   currentPostId? : number,
   titleComponent? : JSX.Element
 }

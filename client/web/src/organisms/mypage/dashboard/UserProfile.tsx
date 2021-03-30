@@ -10,6 +10,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
 import useDialog from '../../../utils/hooks/useDialog';
 import MainDialog from './MainDialog';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -28,8 +29,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserProfile(): JSX.Element {
   const classes = useStyles();
+  const auth = useAuthContext();
   const [profileRequestObject, refetch] = useAxios<User>({
-    url: 'users', method: 'GET',
+    url: 'users', method: 'GET', params: { userId: auth.user.userId },
   });
 
   const { open, handleOpen, handleClose } = useDialog();
