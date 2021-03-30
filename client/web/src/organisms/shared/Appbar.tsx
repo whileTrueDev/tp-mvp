@@ -10,7 +10,8 @@ import {
   MenuItem, Button, Hidden,
 } from '@material-ui/core';
 import {
-  Dashboard, MoreVert, ListAltOutlined,
+  Dashboard, MoreVert,
+  // ListAltOutlined,
 } from '@material-ui/icons';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';
@@ -117,6 +118,16 @@ export default function AppBar(): JSX.Element {
   function handleMobileMenuClose(): void {
     setMobileMoreAnchorEl(null);
   }
+  const links = [
+    {
+      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
+    },
+    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
+    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
+    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
+    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
+    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
+  ];
 
   const mobileMenu = (
     <Menu
@@ -137,15 +148,17 @@ export default function AppBar(): JSX.Element {
           <Typography>마이페이지</Typography>
         </MenuItem>
       )}
-      <MenuItem
-        className={classnames(classes.menuItem, classes.mobileText)}
-        component={Link}
-        to="/infoCBT"
-        button
-      >
-        <ListAltOutlined className={classes.mobileIcon} />
-        <Typography>CBT신청</Typography>
-      </MenuItem>
+      {links.slice(1).map((link) => (
+        <MenuItem
+          key={link.path.slice(1)}
+          className={classnames(classes.menuItem, classes.mobileText)}
+          component={Link}
+          to={link.path}
+          button
+        >
+          <Typography>{link.name}</Typography>
+        </MenuItem>
+      ))}
 
       {authContext.user.userId ? (
         <MenuItem className={classes.menuItem}>
@@ -154,32 +167,22 @@ export default function AppBar(): JSX.Element {
           </div>
         </MenuItem>
       ) : (
-        <MenuItem className={classes.menuItem}>
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.loginButton}
-            component={Link}
-            to="/login"
-          >
-            로그인
-          </Button>
-        </MenuItem>
+        null
+        // 트루포인트 2.0에서 로그인기능 사용하지 않아 로그인버튼 임시 주석처리
+        // <MenuItem className={classes.menuItem}>
+        //   <Button
+        //     variant="contained"
+        //     color="secondary"
+        //     className={classes.loginButton}
+        //     component={Link}
+        //     to="/login"
+        //   >
+        //     로그인
+        //   </Button>
+        // </MenuItem>
       )}
     </Menu>
   );
-
-  const links = [
-    {
-      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
-    },
-    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
-    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
-    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
-    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
-    { name: 'CBT신청', path: '/infoCBT', activeRouteString: '/infoCBT' },
-    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
-  ];
 
   return (
     <>
@@ -216,7 +219,8 @@ export default function AppBar(): JSX.Element {
               </div>
             </div>
 
-            <div className={classes.links}>
+            {/* 트루포인트 2.0에서 로그인 기능 사용하지 않아 로그인버튼 임시 주석처리 */}
+            {/* <div className={classes.links}>
               {authContext.user.userId && authContext.accessToken ? ( // 로그인 되어있는 경우
                 <div className={classes.userInterfaceWrapper}>
                   <HeaderLinks />
@@ -233,7 +237,7 @@ export default function AppBar(): JSX.Element {
                   로그인
                 </Button>
               )}
-            </div>
+            </div> */}
 
             <Hidden mdUp>
               <div className={classes.mobileMenu}>
