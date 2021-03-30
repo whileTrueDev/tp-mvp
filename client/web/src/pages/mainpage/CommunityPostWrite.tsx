@@ -70,6 +70,16 @@ const ErrorMessages = {
   password: '비밀번호를 입력해주세요',
   content: '내용을 입력해주세요',
 };
+// 게시판 코드
+const platformCode = {
+  afreeca: 0,
+  twitch: 1,
+};
+
+interface Params{
+  postId?: string,
+  platform: 'twitch' | 'afreeca'
+}
 
 /**
  * 글생성/ 수정 페이지 컴포넌트
@@ -88,10 +98,10 @@ export default function CommunityPostWrite(): JSX.Element {
     passwordValue, onPasswordChange,
     nicknameValue, onNicknameChange,
   } = usePostState(); // 닉네임, 비밀번호, 제목 인풋 상태
-  const { postId, platform } = useParams<any>();
+  const { postId, platform } = useParams<Params>();
   const history = useHistory();
   const { editorRef: editor, EditorContainer } = useSunEditor();
-  const { handleCreatePost, handleEditPost, handleLoadPost } = usePostWriteEditAPI(postId);
+  const { handleCreatePost, handleEditPost, handleLoadPost } = usePostWriteEditAPI(Number(postId));
   const { enqueueSnackbar } = useSnackbar();
 
   // postId의 여부로 글생성/글수정 모드 확인
@@ -121,7 +131,7 @@ export default function CommunityPostWrite(): JSX.Element {
       content: '',
       nickname: nicknameValue,
       password: passwordValue,
-      platform,
+      platform: platformCode[platform],
       category: 0, // 일반글=0, 공지글=1
     };
 
