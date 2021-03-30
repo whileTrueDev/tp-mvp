@@ -177,11 +177,12 @@ export default function CommunityPostView(): JSX.Element {
   // 댓글 다시 불러오는 함수
   const loadReplies = useCallback(() => {
     if (!currentPost) return;
-    getReplies().then((res) => {
-      // console.log(res);
-    }).catch((e) => {
-      console.error('댓글 불러오기 오류', e);
-      ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
+    getReplies().catch((e) => {
+      if (e.response) {
+        console.error(e.response.data, e.response.status);
+        ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
+      }
+      console.error(e);
     });
   }, [enqueueSnackbar, getReplies, currentPost]);
 
