@@ -58,6 +58,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '474px',
     height: 'auto',
     backgroundColor: theme.palette.background.paper,
+    [theme.breakpoints.down('md')]: {
+      width: '330px',
+    },
   },
   boxBorderSelected: {
     borderRadius: 16,

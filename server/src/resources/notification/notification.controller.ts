@@ -1,6 +1,7 @@
 import {
+  // UseGuards, 
   Controller, Get, Body, Patch, Query,
-  UseGuards, Post, UseInterceptors,
+  Post, UseInterceptors,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 
@@ -10,7 +11,7 @@ import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/
 import { NotificationPostRequest } from '@truepoint/shared/dist/dto/notification/notificationPost.dto';
 
 // Gaurd
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // service
 import { NotificationService } from './notification.service';
 // entity
@@ -27,7 +28,7 @@ export class NotificationController {
    * @param changeReadState 유저아이디와 인덱스
    */
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   updateNotificationReadState(
     @Body(new ValidationPipe()) changeReadState: ChangeReadState,
   ): Promise<boolean> {

@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 // material-ui components layout
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
@@ -84,16 +84,29 @@ export interface SidebarWithNavbarProps {
   open: boolean;
   handleOpen: () => void;
   handleClose: () => void;
+  publicMode?: string;
 }
+
 export default function SidebarWithNavbar({
   routes,
   open,
   handleOpen,
   handleClose,
+  publicMode,
 }: SidebarWithNavbarProps): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
   const history = useHistory();
+
+  const goToUrl = useCallback((layout: string, path: string) => {
+    let resultUrl;
+    if (publicMode) {
+      resultUrl = `${layout}${path}/${publicMode}`;
+    } else {
+      resultUrl = `${layout}${path}`;
+    }
+    return resultUrl;
+  }, [publicMode]);
 
   // 현재 활성화된 탭을 구하는 함수
   function isActiveRoute(pagePath: string): boolean {
@@ -127,6 +140,21 @@ export default function SidebarWithNavbar({
       <Divider />
 
       <List component="nav" aria-labelledby="nested-list-subheader">
+        {publicMode && (
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/highlight-list');
+            }}
+          >
+            <ListItemIcon>
+              <ChevronLeft />
+            </ListItemIcon>
+            <ListItemText
+              primary="목록으로 돌아가기"
+            />
+          </ListItem>
+        )}
         {routes.map((route) => (
           <div key={route.layout + route.path}>
             {route.subRoutes ? ( // 하위탭이 있는 경우
@@ -135,8 +163,8 @@ export default function SidebarWithNavbar({
                   button
                   selected={isActiveRoute(route.path)}
                   onClick={() => {
-                    if (!open) {
-                      history.push(route.subRoutes![0].layout + route.subRoutes![0].path);
+                    if (!open && route.subRoutes) {
+                      history.push(goToUrl(route.subRoutes[0].layout, route.subRoutes[0].path));
                       handleOpen();
                     }
                     handleToggle(route.layout + route.path);
@@ -166,7 +194,7 @@ export default function SidebarWithNavbar({
                         selected={isActiveRoute(subRoute.path)}
                         className={classes.nested}
                         component={Link}
-                        to={subRoute.layout + subRoute.path}
+                        to={goToUrl(subRoute.layout, subRoute.path)}
                       >
                         <ListItemText
                           className={classes.inset}
@@ -186,7 +214,7 @@ export default function SidebarWithNavbar({
                 selected={isActiveRoute(route.path)}
                 button
                 component={Link}
-                to={route.layout + route.path}
+                to={goToUrl(route.layout, route.path)}
               >
                 {route.icon && (
                   <ListItemIcon>

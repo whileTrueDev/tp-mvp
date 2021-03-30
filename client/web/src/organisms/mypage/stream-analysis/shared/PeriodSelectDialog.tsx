@@ -109,6 +109,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
 
             <div className={classes.calendar}>
               <RangeSelectCalendar
+                exampleMode
                 period={period}
                 handlePeriod={handlePeriod}
                 handleDialogClose={handleClose}
@@ -150,7 +151,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
           </Grid>
         </Grid>
 
-        <Grid container xs={12} justify="flex-end" alignItems="flex-end" className={classes.bottomWrapper}>
+        <Grid container justify="flex-end" alignItems="flex-end" className={classes.bottomWrapper}>
           <Collapse in={selectedStreams.filter((each) => !each.isRemoved).length < 2}>
             <Alert severity="error" className={classes.alertBody}>
               선택하신 기간내에 2개 이상의 방송이 포함되어야 합니다.

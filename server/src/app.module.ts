@@ -23,6 +23,9 @@ import { NoticeModule } from './resources/notice/notice.module';
 import { HealthCheckModule } from './resources/health-check/healthcheck.module';
 import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.module';
 import { CbtModule } from './resources/cbt/cbt.module';
+import { CommunityBoardModule } from './resources/communityBoard/communityBoard.module';
+import { RankingsModule } from './resources/rankings/rankings.module';
+import { UserReactionModule } from './resources/userReaction/userReaction.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -48,6 +51,9 @@ import { CbtModule } from './resources/cbt/cbt.module';
     HealthCheckModule,
     BroadcastInfoModule,
     CbtModule,
+    CommunityBoardModule,
+    RankingsModule,
+    UserReactionModule,
   ],
 })
 export class AppModule { }

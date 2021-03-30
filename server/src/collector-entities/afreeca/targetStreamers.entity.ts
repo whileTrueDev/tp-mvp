@@ -2,7 +2,9 @@ import {
   Column, CreateDateColumn, Entity, UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('AfreecaTargetStreamers')
+@Entity('AfreecaTargetStreamers', {
+  database: 'WhileTrueCollector',
+})
 export class AfreecaTargetStreamersEntity {
   @Column({ primary: true })
   creatorId: string;

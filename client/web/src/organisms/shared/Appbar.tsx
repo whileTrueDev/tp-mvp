@@ -126,7 +126,7 @@ export default function AppBar(): JSX.Element {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {authContext.user.userId.length > 1 && (
+      {authContext.user.userId.length > 1 && authContext.accessToken && (
         <MenuItem
           className={classnames(classes.menuItem, classes.mobileTextMyPage)}
           component={Link}
@@ -171,11 +171,14 @@ export default function AppBar(): JSX.Element {
 
   const links = [
     {
-      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1),
+      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
     },
+    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
+    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
     { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
     { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
     { name: 'CBT신청', path: '/infoCBT', activeRouteString: '/infoCBT' },
+    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
   ];
 
   return (
@@ -214,7 +217,7 @@ export default function AppBar(): JSX.Element {
             </div>
 
             <div className={classes.links}>
-              {authContext.user.userId ? ( // 로그인 되어있는 경우
+              {authContext.user.userId && authContext.accessToken ? ( // 로그인 되어있는 경우
                 <div className={classes.userInterfaceWrapper}>
                   <HeaderLinks />
                 </div>

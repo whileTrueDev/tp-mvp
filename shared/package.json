@@ -12,6 +12,8 @@
     "lint:commit:fix": "eslint --fix"
   },
   "dependencies": {
+    "@nestjs/common": "^7.6.13",
+    "@nestjs/mapped-types": "^0.3.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2"
   }
