@@ -88,7 +88,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
         },
       ],
     });
-  }, [data, currentScoreName, theme.palette.grey, theme.palette.background.paper]);
+  }, [data, currentScoreName, theme.palette.background.paper, theme.palette.action.disabledBackground]);
 
   return (
     <HighchartsReact

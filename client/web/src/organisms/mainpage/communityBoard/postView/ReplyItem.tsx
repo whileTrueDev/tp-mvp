@@ -28,7 +28,7 @@ const useReplyItemStyle = makeStyles((theme: Theme) => createStyles({
   nickname: {
     width: '20%',
     paddingLeft: theme.spacing(3),
-    color: theme.palette.grey[700],
+    color: theme.palette.action.active,
   },
   content: {
     width: '50%',

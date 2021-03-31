@@ -44,6 +44,22 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
   },
   editorContainer: {
+    // suneditor다크모드 미지원이라 기존 css override함
+    '& .sun-editor .se-container .se-toolbar': {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+    },
+    '& .sun-editor .se-container .se-wrapper': {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+    },
+    '& .sun-editor .se-container .se-wrapper .se-wrapper-inner': {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+    },
+    '& .sun-editor .se-container .se-toolbar .se-btn-tray .se-btn-module .se-menu-list li button': {
+      color: theme.palette.text.primary,
+    },
     marginBottom: theme.spacing(2),
   },
 }));

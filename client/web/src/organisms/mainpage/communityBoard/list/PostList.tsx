@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   cellText: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    color: theme.palette.text.primary,
   },
   listContainer: {
     position: 'relative',
