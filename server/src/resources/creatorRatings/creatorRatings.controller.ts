@@ -25,8 +25,8 @@ export class CreatorRatingsController {
     @Ip() ip: string,
     @Body(ValidationPipe) ratingPostDto: RatingPostDto,
   ): Promise<any> {
-    return this.ratingsService.createRatings(creatorId, ratingPostDto, 'test');
-    // return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
+    // return this.ratingsService.createRatings(creatorId, ratingPostDto, 'test');
+    return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
   }
 
   /**
@@ -68,5 +68,14 @@ export class CreatorRatingsController {
     @Param('creatorId') creatorId: string,
   ): Promise<any> {
     return this.ratingsService.findOneRating(ip, creatorId);
+  }
+
+  @Get('info/:platform/:creatorId')
+  test(
+    @Ip() ip: string,
+    @Param('platform') platform: 'afreeca'|'twitch',
+    @Param('creatorId') creatorId: string,
+  ): Promise<any> {
+    return this.ratingsService.getCreatorRatingInfo(ip, creatorId, platform);
   }
 }
