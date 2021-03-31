@@ -100,6 +100,9 @@ const useStyles = makeStyles((theme) => createStyles({
     fontWeight: theme.typography.fontWeightRegular,
   },
   mobileTextMyPage: { color: theme.palette.primary.main },
+  darkModeToggleButton: {
+    borderTop: `2px solid ${theme.palette.divider}`,
+  },
 }));
 
 export default function AppBar(): JSX.Element {
@@ -132,6 +135,20 @@ export default function AppBar(): JSX.Element {
     { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
   ];
 
+  const DarkModeToggleButtonContent = (
+    theme.palette.type === 'light' ? (
+      <>
+        <LightThemeIcon color="action" />
+        <Typography variant="body1">어두운 테마로 변경</Typography>
+      </>
+    ) : (
+      <>
+        <DarkThemeIcon color="action" />
+        <Typography variant="body1">밝은 테마로 변경</Typography>
+      </>
+    )
+  );
+
   const mobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -162,6 +179,15 @@ export default function AppBar(): JSX.Element {
           <Typography>{link.name}</Typography>
         </MenuItem>
       ))}
+
+      <MenuItem
+        className={classnames(classes.menuItem, classes.mobileText, classes.darkModeToggleButton)}
+        component={Button}
+        onClick={theme.handleThemeChange}
+        button
+      >
+        {DarkModeToggleButtonContent}
+      </MenuItem>
 
       {authContext.user.userId ? (
         <MenuItem className={classes.menuItem}>
@@ -246,17 +272,7 @@ export default function AppBar(): JSX.Element {
               <Button
                 onClick={theme.handleThemeChange}
               >
-                {theme.palette.type === 'light' ? (
-                  <>
-                    <LightThemeIcon color="action" />
-                    <Typography variant="body1">어두운 테마로 변경</Typography>
-                  </>
-                ) : (
-                  <>
-                    <DarkThemeIcon color="action" />
-                    <Typography variant="body1">밝은 테마로 변경</Typography>
-                  </>
-                )}
+                {DarkModeToggleButtonContent}
               </Button>
             </div>
 
