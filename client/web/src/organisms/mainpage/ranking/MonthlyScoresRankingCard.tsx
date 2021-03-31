@@ -10,7 +10,7 @@ import React from 'react';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import getPlatformColor from '../../../utils/getPlatformColor';
 import { useMonthlyScoresRankingStyle } from './style/ScoresBarChart.style';
-import ScoresBarChart from './sub/ScoresBarChart';
+import ScoresVerticalBarChart from './sub/ScoresVerticalBarChart';
 
 interface BarChartData{
   key: keyof MonthlyScoresResType,
@@ -48,7 +48,7 @@ function MonthlyScoresRankingCard(): JSX.Element {
           key, column, barColor, icon,
         } = bar;
         return (
-          <ScoresBarChart
+          <ScoresVerticalBarChart
             key={key}
             data={data ? data[key] : []}
             column={column}

@@ -2175,6 +2175,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/hash/-/hash-0.8.0.tgz#bbbff68978fefdbe68ccb533bc8cbe1d1afb5413"
   integrity sha512-kBJtf7PH6aWwZ6fka3zQ0p6SBYzx4fl1LoZXE2RrnYST9Xljm7WfKJrU4g/Xr3Beg72MLrp1AWNUmuYJTL7Cow==
 
+<<<<<<< HEAD
 "@emotion/is-prop-valid@0.8.8", "@emotion/is-prop-valid@^0.8.6":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"
@@ -2241,6 +2242,8 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
+=======
+>>>>>>> 4517c90f1168906e27f2871f12fd020acd0c47fa
 "@fortawesome/fontawesome-free@^5.15.3":
   version "5.15.3"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.15.3.tgz#c36ffa64a2a239bf948541a97b6ae8d729e09a9a"
@@ -4119,7 +4122,11 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+<<<<<<< HEAD
 "@types/react@^16", "@types/react@^16.8.12", "@types/react@^16.9.49":
+=======
+"@types/react@^16", "@types/react@^16.9.49":
+>>>>>>> 4517c90f1168906e27f2871f12fd020acd0c47fa
   version "16.14.5"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.5.tgz#2c39b5cadefaf4829818f9219e5e093325979f4d"
   integrity sha512-YRRv9DNZhaVTVRh9Wmmit7Y0UFhEVqXqCSw3uazRWMxa2x85hWQZ5BN24i7GXZbaclaLXEcodEeIHsjBA8eAMw==
@@ -4128,6 +4135,7 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
+<<<<<<< HEAD
 "@types/reactcss@*":
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@types/reactcss/-/reactcss-1.2.3.tgz#af28ae11bbb277978b99d04d1eedfd068ca71834"
@@ -4135,6 +4143,8 @@
   dependencies:
     "@types/react" "*"
 
+=======
+>>>>>>> 4517c90f1168906e27f2871f12fd020acd0c47fa
 "@types/scheduler@*":
   version "0.16.1"
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.1.tgz#18845205e86ff0038517aab7a18a62a6b9f71275"
@@ -14373,11 +14383,14 @@ nest-access-control@^2.0.2:
   dependencies:
     accesscontrol "^2.2.1"
 
+<<<<<<< HEAD
 nested-error-stacks@^2.0.0, nested-error-stacks@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/nested-error-stacks/-/nested-error-stacks-2.1.0.tgz#0fbdcf3e13fe4994781280524f8b96b0cdff9c61"
   integrity sha512-AO81vsIO1k1sM4Zrd6Hu7regmJN1NSiAja10gc4bX3F0wd+9rQmcuHQaHVQCYIEC8iFXnE+mavh23GOt7wBgug==
 
+=======
+>>>>>>> 4517c90f1168906e27f2871f12fd020acd0c47fa
 nestjs-real-ip@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/nestjs-real-ip/-/nestjs-real-ip-1.0.2.tgz#4b3d3faafcbbf0d508f33c10a9ac07adf1805ad7"
@@ -19718,7 +19731,11 @@ tslib@2.0.3:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.3.tgz#8e0741ac45fc0c226e58a17bfc3e64b9bc6ca61c"
   integrity sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==
 
+<<<<<<< HEAD
 tslib@2.1.0, tslib@>=1.9.0, tslib@^2.0.0, tslib@^2.0.1, tslib@^2.0.3:
+=======
+tslib@2.1.0, tslib@>=1.9.0, tslib@^2.0.1, tslib@^2.0.3:
+>>>>>>> 4517c90f1168906e27f2871f12fd020acd0c47fa
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==

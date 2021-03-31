@@ -12,7 +12,6 @@ export const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createS
   },
 }));
 
-
 // ScoresBarChart에 적용하는 스타일
 export const useScoreBarChartStyle = makeStyles((theme: Theme) => {
   // 별에 그라디언트 넣기 위한 색 설정
@@ -35,6 +34,7 @@ export const useScoreBarChartStyle = makeStyles((theme: Theme) => {
 
   return createStyles({
     barChartSection: {
+      backgroundColor: theme.palette.background.paper,
       position: 'relative',
       '& .fa-star': {
         position: 'absolute',
@@ -50,22 +50,22 @@ export const useScoreBarChartStyle = makeStyles((theme: Theme) => {
     header: {
       padding: theme.spacing(2),
     },
-    wrapper:{
+    wrapper: {
       display: 'flex',
-      borderBottom: `${1}px solid ${theme.palette.divider}`
+      borderBottom: `${1}px solid ${theme.palette.divider}`,
     },
     icon: {
       display: 'flex',
-      justifyContent:'center',
-      alignItems:'center',
+      justifyContent: 'center',
+      alignItems: 'center',
       marginRight: theme.spacing(1),
-      '& .MuiSvgIcon-root':{
-        fontSize: theme.typography.h4.fontSize
-      }
+      '& .MuiSvgIcon-root': {
+        fontSize: theme.typography.h4.fontSize,
+      },
     },
     title: {
       fontSize: theme.typography.h6.fontSize,
-      fontWeight: theme.typography.fontWeightBold
+      fontWeight: theme.typography.fontWeightBold,
     },
   });
 });

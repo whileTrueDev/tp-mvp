@@ -18,6 +18,8 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     };
   });
 
+  const { type } = theme.palette;
+
   return createStyles({
     topTenListWrapper: {
       position: 'relative',
@@ -27,7 +29,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       display: 'flex',
     },
     headerColumn: {
-      color: theme.palette.grey[600],
+      color: theme.palette.text.secondary,
       whiteSpace: 'nowrap',
     },
     listItems: {
@@ -75,6 +77,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     orderContainer: {
       flexDirection: 'column',
       '& p': {
+        color: theme.palette.common.black,
         fontSize: theme.typography.h5.fontSize,
       },
     },
@@ -116,6 +119,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     chip: {
       backgroundColor: theme.palette.grey[200],
       boxShadow: theme.shadows[2],
+      color: theme.palette.common.black,
     },
     platformLogoImage: {
       width: theme.spacing(2),

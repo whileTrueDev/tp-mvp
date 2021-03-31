@@ -1,11 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 
 export type FilterType = 'all'|'notice'|'recommended';
 
 interface BoardListState{
   posts: PostFound[];
   setPosts: React.Dispatch<React.SetStateAction<any[]>>;
+  list: EditingPointListResType[];
+  setList: React.Dispatch<React.SetStateAction<any[]>>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   totalRows: number;
@@ -20,6 +23,7 @@ interface BoardListState{
   initializeFilter: () => void;
   boardState: {
     posts: PostFound[];
+    list: EditingPointListResType[];
     page: number;
     totalRows: number;
     filter: FilterType;
@@ -32,6 +36,7 @@ export default function useBoardListState({
   page?: number
 }): BoardListState {
   const [posts, setPosts] = useState<PostFound[]>([]);
+  const [list, setList] = useState<EditingPointListResType[]>([]);
   const [page, setPage] = useState<number>(initialPage || 1);
   const [totalRows, setTotalRows] = useState<number>(0);
   const [currentPostId, setCurrentPostId] = useState<number|null>(null);
@@ -64,10 +69,14 @@ export default function useBoardListState({
     page,
     totalRows,
     filter,
-  }), [filter, page, posts, totalRows]);
+    list,
+  }), [filter, page, posts, totalRows, list]);
+
   return {
     posts,
     setPosts,
+    list,
+    setList,
     page,
     setPage,
     totalRows,

@@ -19,6 +19,7 @@ import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
+import PublickMypage from './pages/mainpage/PublicMypage';
 import KakaoTalk from './organisms/shared/KakaoTalkButton';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
@@ -40,6 +41,7 @@ import Notice from './pages/mainpage/Notice';
 import './assets/truepoint.css';
 import PageNotFound from './pages/others/PageNotFound';
 import Ranking from './pages/mainpage/Ranking';
+import YoutubeHighlightList from './pages/mainpage/YoutubeHighlightList';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -129,6 +131,8 @@ function Index(): JSX.Element {
               <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
               <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
               <Route path="/ranking" component={Ranking} />
+              <Route exact path="/highlight-list" component={YoutubeHighlightList} />
+              <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
               <Route path="/mypage" component={Mypage} />
               <Route component={PageNotFound} />
             </Switch>

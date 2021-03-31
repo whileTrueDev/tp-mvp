@@ -6,7 +6,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HCBrokenAxis from 'highcharts/modules/broken-axis';// yAxis break 사용하기 위해 필요
 
-import { Typography } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
 
 import { MonthlyScoresItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
@@ -16,7 +16,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 HCBrokenAxis(Highcharts);
 
-export interface ScoresBarChartProps{
+export interface ScoresVerticalBarChartProps{
   data: MonthlyScoresItem[],
   loading?: boolean,
   column? : string,
@@ -24,9 +24,9 @@ export interface ScoresBarChartProps{
   icon? : string | React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined
 }
 
-function ScoresBarChart({
-  data, loading, column, barColor, icon
-}: ScoresBarChartProps): JSX.Element {
+function ScoresVerticalBarChart({
+  data, loading, column, barColor, icon,
+}: ScoresVerticalBarChartProps): JSX.Element {
   const theme = useTheme();
   const classes = useScoreBarChartStyle();
   const chartRef = useRef<{
@@ -34,7 +34,8 @@ function ScoresBarChart({
     container: React.RefObject<HTMLDivElement>
   }>(null);
   const title = useMemo(() => (`지난 월간 ${column} 점수 순위`), [column]);
-  const creatorNameFontSize = useRef(`${theme.typography.body2.fontSize}`);
+  const creatorNameFontSize = useMemo(() => (`${theme.typography.body2.fontSize}`), [theme.typography.body2.fontSize]);
+
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       type: 'column',
@@ -52,13 +53,14 @@ function ScoresBarChart({
           },
         },
         borderRadius: 12,
+        borderColor: 'transparent',
         color: barColor,
         pointWidth: 30,
       },
     },
     legend: { enabled: false },
     tooltip: {
-      headerFormat: `<p style="font-size: ${creatorNameFontSize.current};">{point.key}</p><br/>`,
+      headerFormat: `<p style="font-size: ${creatorNameFontSize};">{point.key}</p><br/>`,
       style: {
         fontSize: `${theme.typography.body2.fontSize}`,
       },
@@ -71,13 +73,25 @@ function ScoresBarChart({
     const scores = data.map((d) => d.avgScore);
     const minInt = Math.floor(scores[scores.length - 1]); // 내림차순 5개 들어오는 값 중 마지막 == 최소값
     setChartOptions({
+      chart: {
+        backgroundColor: theme.palette.background.paper,
+      },
+      plotOptions: {
+        column: {
+          dataLabels: {
+            style: {
+              color: theme.palette.text.primary,
+            },
+          },
+        },
+      },
       xAxis: {
         categories: creatorNames,
         labels: {
           useHTML: true,
           style: {
-            fontSize: creatorNameFontSize.current,
-            color: theme.palette.common.black,
+            fontSize: creatorNameFontSize,
+            color: theme.palette.text.primary,
           },
           formatter(this: Highcharts.AxisLabelsFormatterContextObject<number>) {
             // 1,2,3위 에 별모양 폰트아이콘 붙임
@@ -100,7 +114,7 @@ function ScoresBarChart({
       },
       series: [{ type: 'column', name: `평균 ${column} 점수`, data: scores }],
     });
-  }, [column, data, theme.palette.common.black]);
+  }, [column, creatorNameFontSize, data, theme.palette.background.paper, theme.palette.text.primary]);
 
   return (
     <section className={classes.barChartSection}>
@@ -124,4 +138,4 @@ function ScoresBarChart({
   );
 }
 
-export default ScoresBarChart;
+export default ScoresVerticalBarChart;

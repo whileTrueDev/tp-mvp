@@ -10,7 +10,7 @@ export const useWeeklyViewerStyle = makeStyles((theme: Theme) => createStyles({
     color: theme.palette.text.secondary,
   },
   graphContainer: {
-    width: '80%', 
-    margin:'0 auto'
-  }
+    width: '80%',
+    margin: '0 auto',
+  },
 }));

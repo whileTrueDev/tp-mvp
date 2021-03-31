@@ -31,10 +31,17 @@ import ReplyForm from '../../organisms/mainpage/communityBoard/postView/ReplyFor
 // 스타일
 import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
 
+const SUN_EDITOR_VIEWER_CLASSNAME = 'sun-editor-editable'; // suneditor로 작성된 글을 innerHTML로 넣을 때 해당 엘리먼트에 붙어야 할 클래스네임
+
 const useStyles = makeStyles((theme: Theme) => createStyles({
   boardTitle: {},
   headerCard: {},
-  viewer: {},
+  viewer: {
+    [`& .${SUN_EDITOR_VIEWER_CLASSNAME}`]: {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+    },
+  },
   recommendContainer: {
     display: 'flex',
     justifyContent: 'center',
@@ -71,8 +78,6 @@ interface LocationState{
   page: number,
   take: number
 }
-
-const SUN_EDITOR_VIEWER_CLASSNAME = 'sun-editor-editable'; // suneditor로 작성된 글을 innerHTML로 넣을 때 해당 엘리먼트에 붙어야 할 클래스네임
 
 // 추천시간이 24시간 이내인지 확인하는 함수
 function isRecommendedWithin24Hours(createDate: string): boolean {
@@ -177,11 +182,12 @@ export default function CommunityPostView(): JSX.Element {
   // 댓글 다시 불러오는 함수
   const loadReplies = useCallback(() => {
     if (!currentPost) return;
-    getReplies().then((res) => {
-      // console.log(res);
-    }).catch((e) => {
-      console.error('댓글 불러오기 오류', e);
-      ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
+    getReplies().catch((e) => {
+      if (e.response) {
+        console.error(e.response.data, e.response.status);
+        ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
+      }
+      console.error(e);
     });
   }, [enqueueSnackbar, getReplies, currentPost]);
 

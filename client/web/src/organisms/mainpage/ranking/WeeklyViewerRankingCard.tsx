@@ -15,8 +15,6 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { useWeeklyViewerStyle } from './style/WeeklyViewerRankingCard.style';
 import CarouselItemHeader from './sub/CarouselItemHeader';
 
-
-
 function WeeklyViewerRankingCard(): JSX.Element {
   const classes = useWeeklyViewerStyle();
   const theme = useTheme();
@@ -89,6 +87,9 @@ function WeeklyViewerRankingCard(): JSX.Element {
     };
 
     setChartOptions({
+      chart: {
+        backgroundColor: theme.palette.background.paper,
+      },
       series: [
         {
           type: 'line',
@@ -111,9 +112,16 @@ function WeeklyViewerRankingCard(): JSX.Element {
           },
         },
       ],
-      xAxis: { categories: dates },
+      xAxis: {
+        categories: dates,
+        labels: {
+          style: {
+            color: theme.palette.text.primary,
+          },
+        },
+      },
     });
-  }, [data]);
+  }, [data, theme.palette.background.paper, theme.palette.text.primary]);
 
   // 에러핸들러
   if (error) {
@@ -122,16 +130,16 @@ function WeeklyViewerRankingCard(): JSX.Element {
 
   return (
     <section className={classes.weeklyViewerContainer}>
-      <CarouselItemHeader title="주간 시청자수 랭킹"/>
+      <CarouselItemHeader title="주간 시청자수 랭킹" />
 
       <div className={classes.graphContainer}>
         <HighchartsReact
-            ref={chartRef}
-            highcharts={Highcharts}
-            options={chartOptions}
-          />
+          ref={chartRef}
+          highcharts={Highcharts}
+          options={chartOptions}
+        />
       </div>
-        
+
       {loading && (
       <CenterLoading />
       )}

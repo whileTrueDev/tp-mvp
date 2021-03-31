@@ -14,7 +14,7 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     transform: 'translateY(-100%)',
   },
   left: {
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.divider,
   },
   header: {
     textAlign: 'center',

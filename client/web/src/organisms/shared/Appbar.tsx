@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import {
-  createStyles, makeStyles,
+  createStyles, makeStyles, useTheme,
 } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
@@ -10,14 +10,17 @@ import {
   MenuItem, Button, Hidden,
 } from '@material-ui/core';
 import {
-  Dashboard, MoreVert, ListAltOutlined,
+  Dashboard, MoreVert,
+  // ListAltOutlined,
+  Brightness7 as LightThemeIcon,
+  Brightness4 as DarkThemeIcon,
 } from '@material-ui/icons';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT } from '../../assets/constants';
 import THEME_TYPE from '../../interfaces/ThemeType';
-
+import { TruepointTheme } from '../../interfaces/TruepointTheme';
 // type
 import HeaderLinks from './sub/HeaderLinks';
 
@@ -97,11 +100,15 @@ const useStyles = makeStyles((theme) => createStyles({
     fontWeight: theme.typography.fontWeightRegular,
   },
   mobileTextMyPage: { color: theme.palette.primary.main },
+  darkModeToggleButton: {
+    borderTop: `2px solid ${theme.palette.divider}`,
+  },
 }));
 
 export default function AppBar(): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
+  const theme = useTheme<TruepointTheme>();
 
   // 현재 활성화된 탭을 구하는 함수
   function isActiveRoute(pagePath: string): boolean {
@@ -117,6 +124,30 @@ export default function AppBar(): JSX.Element {
   function handleMobileMenuClose(): void {
     setMobileMoreAnchorEl(null);
   }
+  const links = [
+    {
+      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
+    },
+    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
+    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
+    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
+    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
+    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
+  ];
+
+  const DarkModeToggleButtonContent = (
+    theme.palette.type === 'light' ? (
+      <>
+        <LightThemeIcon color="action" />
+        <Typography variant="body1">어두운 테마로 변경</Typography>
+      </>
+    ) : (
+      <>
+        <DarkThemeIcon color="action" />
+        <Typography variant="body1">밝은 테마로 변경</Typography>
+      </>
+    )
+  );
 
   const mobileMenu = (
     <Menu
@@ -126,7 +157,7 @@ export default function AppBar(): JSX.Element {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {authContext.user.userId.length > 1 && (
+      {authContext.user.userId.length > 1 && authContext.accessToken && (
         <MenuItem
           className={classnames(classes.menuItem, classes.mobileTextMyPage)}
           component={Link}
@@ -137,14 +168,25 @@ export default function AppBar(): JSX.Element {
           <Typography>마이페이지</Typography>
         </MenuItem>
       )}
+      {links.slice(1).map((link) => (
+        <MenuItem
+          key={link.path.slice(1)}
+          className={classnames(classes.menuItem, classes.mobileText)}
+          component={Link}
+          to={link.path}
+          button
+        >
+          <Typography>{link.name}</Typography>
+        </MenuItem>
+      ))}
+
       <MenuItem
-        className={classnames(classes.menuItem, classes.mobileText)}
-        component={Link}
-        to="/infoCBT"
+        className={classnames(classes.menuItem, classes.mobileText, classes.darkModeToggleButton)}
+        component={Button}
+        onClick={theme.handleThemeChange}
         button
       >
-        <ListAltOutlined className={classes.mobileIcon} />
-        <Typography>CBT신청</Typography>
+        {DarkModeToggleButtonContent}
       </MenuItem>
 
       {authContext.user.userId ? (
@@ -154,31 +196,22 @@ export default function AppBar(): JSX.Element {
           </div>
         </MenuItem>
       ) : (
-        <MenuItem className={classes.menuItem}>
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.loginButton}
-            component={Link}
-            to="/login"
-          >
-            로그인
-          </Button>
-        </MenuItem>
+        null
+        // 트루포인트 2.0에서 로그인기능 사용하지 않아 로그인버튼 임시 주석처리
+        // <MenuItem className={classes.menuItem}>
+        //   <Button
+        //     variant="contained"
+        //     color="secondary"
+        //     className={classes.loginButton}
+        //     component={Link}
+        //     to="/login"
+        //   >
+        //     로그인
+        //   </Button>
+        // </MenuItem>
       )}
     </Menu>
   );
-
-  const links = [
-    {
-      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1),
-    },
-    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
-    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
-    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
-    { name: 'CBT신청', path: '/infoCBT', activeRouteString: '/infoCBT' },
-    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
-  ];
 
   return (
     <>
@@ -215,8 +248,9 @@ export default function AppBar(): JSX.Element {
               </div>
             </div>
 
-            <div className={classes.links}>
-              {authContext.user.userId ? ( // 로그인 되어있는 경우
+            {/* 트루포인트 2.0에서 로그인 기능 사용하지 않아 로그인버튼 임시 주석처리 */}
+            {/* <div className={classes.links}>
+              {authContext.user.userId && authContext.accessToken ? ( // 로그인 되어있는 경우
                 <div className={classes.userInterfaceWrapper}>
                   <HeaderLinks />
                 </div>
@@ -232,6 +266,14 @@ export default function AppBar(): JSX.Element {
                   로그인
                 </Button>
               )}
+            </div> */}
+
+            <div className={classes.links}>
+              <Button
+                onClick={theme.handleThemeChange}
+              >
+                {DarkModeToggleButtonContent}
+              </Button>
             </div>
 
             <Hidden mdUp>
