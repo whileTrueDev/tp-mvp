@@ -5,7 +5,7 @@ import {
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import { MonthlyScoresResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import ScoresBarChart from './sub/ScoresBarChart';
+import ScoresVerticalBarChart from './sub/ScoresVerticalBarChart';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
@@ -28,19 +28,19 @@ function MonthlyScoresRankingCard(): JSX.Element {
   }
   return (
     <section className={classes.monthlyScores}>
-      <ScoresBarChart
+      <ScoresVerticalBarChart
         data={data ? data.smile : []}
         loading={loading}
         column="웃음"
         barColor="rgba(202, 186, 219,0.7)"
       />
-      <ScoresBarChart
+      <ScoresVerticalBarChart
         data={data ? data.admire : []}
         loading={loading}
         column="감탄"
         barColor="rgba(162, 221, 195, 0.698)"
       />
-      <ScoresBarChart
+      <ScoresVerticalBarChart
         data={data ? data.frustrate : []}
         loading={loading}
         column="답답함"

@@ -88,6 +88,9 @@ function WeeklyViewerRankingCard(): JSX.Element {
     const twitchViewerData = data.twitch.map((d: WeeklyData) => +d.totalViewer);
 
     setChartOptions({
+      chart: {
+        backgroundColor: theme.palette.background.paper,
+      },
       series: [
         {
           type: 'line',
@@ -110,9 +113,16 @@ function WeeklyViewerRankingCard(): JSX.Element {
           },
         },
       ],
-      xAxis: { categories: dates },
+      xAxis: {
+        categories: dates,
+        labels: {
+          style: {
+            color: theme.palette.text.primary,
+          },
+        },
+      },
     });
-  }, [data]);
+  }, [data, theme.palette.background.paper, theme.palette.text.primary]);
 
   // 에러핸들러
   if (error) {

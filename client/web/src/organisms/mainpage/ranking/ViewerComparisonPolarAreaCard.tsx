@@ -170,9 +170,9 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       if (twitchLogoRef.current) {
         twitchLogoRef.current.style.setProperty('left', `${(twitchArcX + twitchArcWidth) + distanceFromArc}px`);
       }
-
       // 차트옵션 변경 - 시청자수에 따라 차트 크기 조정, series 데이터 추가
       setOptions({
+        chart: { backgroundColor: theme.palette.background.paper },
         pane: [afreecaPaneOptions, twitchPaneOptions] as Highcharts.PaneOptions, // pane 타입정의가 배열을 못받게 되어있어서 임시로 타입 단언 사용함
         series: [{
           type: 'column',
@@ -195,7 +195,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     }
     return undefined;
   },
-  [data]);
+  [data, theme.palette.background.paper]);
 
   return (
     <section className={classes.polarAreaContainer}>

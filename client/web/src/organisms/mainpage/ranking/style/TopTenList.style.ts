@@ -1,5 +1,4 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-
 // TopTenList 스타일
 export const useTopTenList = makeStyles((theme: Theme) => {
   // 별에 그라디언트 넣기 위한 색 설정
@@ -16,6 +15,8 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     };
   });
 
+  const { type } = theme.palette;
+
   return createStyles({
     wrapper: {
       paddingTop: theme.spacing(2),
@@ -24,7 +25,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       display: 'flex',
     },
     headerColumn: {
-      color: theme.palette.grey[600],
+      color: theme.palette.text.secondary,
       whiteSpace: 'nowrap',
     },
     listItems: {},
@@ -97,7 +98,9 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       whiteSpace: 'nowrap',
     },
     chip: {
-      backgroundColor: theme.palette.grey[200],
+      backgroundColor: type === 'light'
+        ? theme.palette.grey[200]
+        : theme.palette.text.disabled,
       boxShadow: theme.shadows[2],
     },
     platformLogoImage: {

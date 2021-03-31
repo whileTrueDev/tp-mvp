@@ -32,7 +32,7 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
 // TopTenCard내 Tab 컴포넌트 스타일 
 export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.background.paper;
-  const defaultLabelColor = theme.palette.common.black;
+  const defaultLabelColor = theme.palette.text.primary;
   const defaultMinWith = '90%';
   const rootHeight = theme.spacing(6);
   return createStyles({

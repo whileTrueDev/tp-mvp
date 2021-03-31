@@ -35,12 +35,10 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     credits: { enabled: false },
     title: { text: undefined },
-    legend: { enabled: false },
     chart: {
-      marginLeft: 0,
-      marginRight: 0,
-      plotBackgroundColor: theme.palette.grey[300],
+      margin: 0,
     },
+    legend: { enabled: false },
     plotOptions: {
       series: {
         color: theme.palette.primary.main,
@@ -69,6 +67,11 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     if (!data) return;
     const dates = data.map((d) => d.createDate);
     setChartOptions({
+      chart: {
+        margin: 0,
+        plotBackgroundColor: theme.palette.action.disabledBackground,
+        backgroundColor: theme.palette.background.paper,
+      },
       xAxis: {
         categories: dates,
         plotLines: dates.map((value: string, index: number) => ({

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import {
-  createStyles, makeStyles,
+  createStyles, makeStyles, useTheme,
 } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
@@ -12,13 +12,15 @@ import {
 import {
   Dashboard, MoreVert,
   // ListAltOutlined,
+  Brightness7 as LightThemeIcon,
+  Brightness4 as DarkThemeIcon,
 } from '@material-ui/icons';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT } from '../../assets/constants';
 import THEME_TYPE from '../../interfaces/ThemeType';
-
+import { TruepointTheme } from '../../interfaces/TruepointTheme';
 // type
 import HeaderLinks from './sub/HeaderLinks';
 
@@ -103,6 +105,7 @@ const useStyles = makeStyles((theme) => createStyles({
 export default function AppBar(): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
+  const theme = useTheme<TruepointTheme>();
 
   // 현재 활성화된 탭을 구하는 함수
   function isActiveRoute(pagePath: string): boolean {
@@ -238,6 +241,24 @@ export default function AppBar(): JSX.Element {
                 </Button>
               )}
             </div> */}
+
+            <div className={classes.links}>
+              <Button
+                onClick={theme.handleThemeChange}
+              >
+                {theme.palette.type === 'light' ? (
+                  <>
+                    <LightThemeIcon color="action" />
+                    <Typography variant="body1">어두운 테마로 변경</Typography>
+                  </>
+                ) : (
+                  <>
+                    <DarkThemeIcon color="action" />
+                    <Typography variant="body1">밝은 테마로 변경</Typography>
+                  </>
+                )}
+              </Button>
+            </div>
 
             <Hidden mdUp>
               <div className={classes.mobileMenu}>
