@@ -1,4 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, {
+  useCallback, useEffect, useState,
+} from 'react';
 import { Rating, RatingProps } from '@material-ui/lab';
 import { Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
@@ -30,8 +32,8 @@ export interface StarRatingProps{
 - 서버에 값을 보낼때는 score * 2해서 보내기
 - null일경우 처리 따로 해야함
 */
- editRatingHandler? : (score: number|null) => (event: React.MouseEvent<HTMLElement>) => void;
- createRatingHandler? : (score: number|null) => (event: React.MouseEvent<HTMLElement>) => void;
+ editRatingHandler? : (score: number|null) => void;
+ createRatingHandler? : (score: number|null) => void;
  /** 평점 취소 핸들러 */
  cancelRatingHandler? : () => void;
  /** Rating 컴포넌트에 적용될 prop 객체 */
@@ -53,19 +55,48 @@ export default function StarRating({
 }: StarRatingProps): JSX.Element {
   const classes = useRatingStyle();
   // 점수는 10점 만점으로 들어오므로 Rating컴포넌트 value로 넘겨주기 위해서는 나누기 2 해야함
-  const [value, setValue] = useState<number|null>(score ? score / 2 : null);
+  const [value, setValue] = useState<number|null>(score ? (score / 2) : null);
   const [evaluated, setEvaluated] = useState<boolean>(score !== null);
+
   const onChange = useCallback((event, newValue) => {
     setValue(newValue);
+    console.log(newValue);
   }, []);
+
+  useEffect(() => {
+    setValue(score ? (score / 2) : null);
+    setEvaluated(score !== null);
+  }, [score]);
 
   const onCancel = useCallback(() => {
     if (cancelRatingHandler) {
+      // 서버로 보낼 평점 취소 요청
       cancelRatingHandler();
     }
     setValue(null);
     setEvaluated(false);
   }, [cancelRatingHandler]);
+
+  const onEdit = useCallback(() => {
+    console.log(value, 'onedit');
+    if (value) {
+      setEvaluated(true);
+    }
+    if (editRatingHandler) {
+      editRatingHandler(value ? (value * 2) : null);
+    }
+  }, [editRatingHandler, value]);
+
+  const onCreate = useCallback(() => {
+    console.log(value, 'on create');
+    if (value) {
+      setEvaluated(true);
+    }
+
+    if (createRatingHandler) {
+      createRatingHandler(value ? (value * 2) : null);
+    }
+  }, [createRatingHandler, value]);
 
   return (
     <div className={classes.container}>
@@ -86,7 +117,7 @@ export default function StarRating({
               <Button
                 variant="contained"
                 color="primary"
-                onClick={editRatingHandler && editRatingHandler(value)}
+                onClick={onEdit}
               >
                 수정
               </Button>
@@ -103,7 +134,7 @@ export default function StarRating({
             <Button
               variant="contained"
               color="primary"
-              onClick={createRatingHandler && createRatingHandler(value)}
+              onClick={onCreate}
             >
               평가하기
             </Button>

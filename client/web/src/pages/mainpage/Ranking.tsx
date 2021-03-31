@@ -3,7 +3,9 @@ import { Container, Grid } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import Carousel from 'react-material-ui-carousel';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import {
+  Redirect, Route, Switch, useRouteMatch,
+} from 'react-router-dom';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
@@ -54,8 +56,11 @@ export default function Ranking(): JSX.Element {
                 </Grid>
               </Grid>
             </Route>
-            <Route path={`${path}/:creatorId`}>
+            <Route exact path={`${path}/:platform/:creatorId`}>
               <CreatorEvaluation />
+            </Route>
+            <Route>
+              <Redirect to="/ranking" />
             </Route>
           </Switch>
 

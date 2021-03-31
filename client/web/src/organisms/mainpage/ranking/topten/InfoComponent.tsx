@@ -17,7 +17,7 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
     <div className={classes.infoWrapper}>
       <div className={classes.nameContainer}>
 
-        <Link component={RouterLink} to={`/ranking/${d.creatorId}`}>
+        <Link component={RouterLink} to={`/ranking/${d.platform}/${d.creatorId}`}>
           <Typography
             className={classes.creatorName}
           >

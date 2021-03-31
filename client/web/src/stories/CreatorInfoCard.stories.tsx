@@ -15,10 +15,18 @@ Default.decorators = [
   (Story) => <div style={{ maxWidth: '700px', border: '1px solid red' }}><Story /></div>,
 ];
 Default.args = {
-  creatorData: {
-    creatorId: 'creatorId',
-    platform: 'afreeca',
-    nickname: '크리에이터이름',
-    twitchChannelName: null,
+  creatorId: 'creatorId',
+  platform: 'afreeca',
+  afreecaProfileImage: 'https://profile.img.afreecatv.com/LOGO/10/1004suna/1004suna.jpg',
+  twitchProfileImage: null,
+  nickname: '크리에이터이름',
+  twitchChannelName: null,
+  averageRating: 3.3,
+  ratingCount: 122,
+  scores: {
+    admire: 4,
+    cuss: 3,
+    frustrate: 5,
+    smile: 10,
   },
 };
