@@ -121,7 +121,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
         },
       },
     });
-  }, [data, theme.palette.background.paper, theme.palette.text.primary]);
+  }, [data, theme, theme.palette.background.paper, theme.palette.text.primary]);
 
   // 에러핸들러
   if (error) {

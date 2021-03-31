@@ -18,8 +18,6 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     };
   });
 
-  const { type } = theme.palette;
-
   return createStyles({
     topTenListWrapper: {
       position: 'relative',
