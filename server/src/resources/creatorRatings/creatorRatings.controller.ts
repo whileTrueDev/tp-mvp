@@ -2,8 +2,9 @@ import {
   Body, Controller, Delete, Get, Ip, Param, Post, ValidationPipe,
 } from '@nestjs/common';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
+import { CreatorRatingInfoRes, CreatorAverageRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { CreatorRatingsService } from './creatorRatings.service';
-
+import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 @Controller('ratings')
 export class CreatorRatingsController {
   constructor(
@@ -24,7 +25,7 @@ export class CreatorRatingsController {
     @Param('creatorId') creatorId: string,
     @Ip() ip: string,
     @Body(ValidationPipe) ratingPostDto: RatingPostDto,
-  ): Promise<any> {
+  ): Promise<CreatorRatingsEntity> {
     // return this.ratingsService.createRatings(creatorId, ratingPostDto, 'test');
     return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
   }
@@ -39,7 +40,7 @@ export class CreatorRatingsController {
   deleteRatings(
     @Param('creatorId') creatorId: string,
     @Ip() ip: string,
-  ): Promise<any> {
+  ): Promise<string> {
     return this.ratingsService.deleteRatings(creatorId, ip);
   }
 
@@ -51,7 +52,7 @@ export class CreatorRatingsController {
   @Get('/:creatorId/average')
   getAverageRatings(
     @Param('creatorId') creatorId: string,
-  ): Promise<any> {
+  ): Promise<CreatorAverageRatings> {
     return this.ratingsService.getAverageRatings(creatorId);
   }
 
@@ -66,16 +67,16 @@ export class CreatorRatingsController {
   getOneRating(
     @Ip() ip: string,
     @Param('creatorId') creatorId: string,
-  ): Promise<any> {
+  ): Promise<{score: number} | false> {
     return this.ratingsService.findOneRating(ip, creatorId);
   }
 
   @Get('info/:platform/:creatorId')
-  test(
+  getCreatorRatingInfo(
     @Ip() ip: string,
     @Param('platform') platform: 'afreeca'|'twitch',
     @Param('creatorId') creatorId: string,
-  ): Promise<any> {
+  ): Promise<CreatorRatingInfoRes> {
     return this.ratingsService.getCreatorRatingInfo(ip, creatorId, platform);
   }
 }

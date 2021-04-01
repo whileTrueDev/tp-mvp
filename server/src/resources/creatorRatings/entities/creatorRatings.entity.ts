@@ -13,21 +13,21 @@ export class CreatorRatingsEntity implements CreatorRatings {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ comment: '유저가 평점을 매긴 creatorId' })
   creatorId: string;
 
-  @Column()
+  @Column({ comment: '평점을 매긴 유저의 ip' })
   userIp: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, comment: '평점을 매긴 유저의 ip, 비회원도 평점을 매길 수 있다' })
   userId: string;
 
-  @Column()
+  @Column({ comment: '유저가 해당 creator에 매긴 평점, 0~10' })
   rating: number;
 
-  @CreateDateColumn({ type: 'timestamp', comment: '테이블에 삽입된 날짜' })
+  @CreateDateColumn({ type: 'timestamp', comment: '최초 생성 날짜' })
   createDate: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', comment: '수정된 날짜' })
+  @UpdateDateColumn({ type: 'timestamp', comment: '수정된 날짜 - 수정일 기준으로 주간평점 가져온다' })
   updateDate: Date;
 }

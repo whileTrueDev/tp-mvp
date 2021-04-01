@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
+import { CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
@@ -48,7 +49,7 @@ export class CreatorRatingsService {
    * @param ip 
    * @returns 
    */
-  async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<any> {
+  async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<CreatorRatingsEntity> {
     // 우선 rankings 테이블에서 해당 creatorId가 존재하는지 찾는다
     await this.findCreator(creatorId);
 
@@ -86,7 +87,7 @@ export class CreatorRatingsService {
    * @param ip 
    * @returns 
    */
-  async deleteRatings(creatorId: string, ip: string): Promise<any> {
+  async deleteRatings(creatorId: string, ip: string): Promise<string> {
     await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
@@ -142,7 +143,7 @@ export class CreatorRatingsService {
    * @param creatorId 
    * @returns 
    */
-  async findOneRating(ip: string, creatorId: string): Promise<any> {
+  async findOneRating(ip: string, creatorId: string): Promise<{score: number} | false> {
     await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
@@ -161,21 +162,30 @@ export class CreatorRatingsService {
     }
   }
 
-  async getCreatorRatingInfo(ip: string, creatorId: string, platform: 'twitch'|'afreeca'): Promise<any> {
+  async getCreatorRatingInfo(
+    ip: string,
+    creatorId: string,
+    platform: 'twitch'|'afreeca',
+  ): Promise<CreatorRatingInfoRes> {
     const result = {
+      userRating: null,
+      ratings: {
+        average: 0,
+        count: 0,
+      },
       scores: {
         admire: 0,
         smile: 0,
         frustrate: 0,
         cuss: 0,
       },
-      userRating: null,
-      averageRating: 0,
-      ratingCount: 0,
-      afreecaProfileImage: null,
-      twitchProfileImage: null,
-      twitchChannelName: null,
-      nickname: '',
+      info: {
+        creatorId,
+        platform,
+        logo: '',
+        nickname: '',
+        twitchChannelName: null,
+      },
     };
     // 유저ip로 매긴 평점을 찾는다
     const exRating = await this.findOneRating(ip, creatorId);
@@ -184,44 +194,54 @@ export class CreatorRatingsService {
     }
     // creatorId의 평균 평점과 평가횟수를 찾는다
     const { average, count } = await this.getAverageRatings(creatorId);
-    result.averageRating = average;
-    result.ratingCount = count;
+    result.ratings = { average, count };
 
+    // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
+    const qb = this.rankingsRepository.createQueryBuilder('rankings')
+      .select([
+        'AVG(smileScore) AS smile',
+        'AVG(frustrateScore) AS frustrate',
+        'AVG(admireScore) AS admire',
+        'AVG(cussScore) AS cuss',
+      ])
+      .where('creatorId = :creatorId', { creatorId })
+      .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)');
+    let data: {
+      admire: number,
+      amile: number,
+      smile: number,
+      frustrate: number,
+      cuss: number,
+      logo: string,
+      nickname: string,
+      twitchChannelName?: string
+    };
     try {
-      // creatorId의 nickname, profileImage, channelName찾는다
       if (platform === 'twitch') {
-        const twitchCreatorInfo = await this.twitchRepository.findOne({
-          where: { twitchId: creatorId },
-          select: ['logo', 'twitchStreamerName', 'twitchChannelName'],
-        });
-        if (twitchCreatorInfo) {
-          result.twitchProfileImage = twitchCreatorInfo.logo;
-          result.twitchChannelName = twitchCreatorInfo.twitchStreamerName;
-          result.nickname = twitchCreatorInfo.twitchStreamerName;
-        }
+        data = await qb
+          .addSelect([
+            'twitch.twitchStreamerName AS nickname',
+            'twitch.twitchChannelName AS twitchChannelName',
+            'twitch.logo AS logo',
+          ])
+          .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = rankings.creatorId')
+          .getRawOne();
       } else if (platform === 'afreeca') {
-        const afreecaCreatorInfo = await this.afreecaRepository.findOne({
-          where: { afreecaId: creatorId },
-          select: ['logo', 'afreecaStreamerName'],
-        });
-        if (afreecaCreatorInfo) {
-          result.afreecaProfileImage = afreecaCreatorInfo.logo;
-          result.nickname = afreecaCreatorInfo.afreecaStreamerName;
-        }
+        data = await qb
+          .addSelect([
+            'afreeca.logo AS logo',
+            'afreeca.afreecaStreamerName AS nickname',
+          ])
+          .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = rankings.creatorId')
+          .getRawOne();
       }
-
-      // rankings 테이블에서 해당 유저의 1달내 평균 점수를 찾는다
-      const scores: {smile: number, frustrate: number, admire: number, cuss: number} = await this.rankingsRepository.createQueryBuilder('rankings')
-        .select([
-          'AVG(smileScore) AS smile',
-          'AVG(frustrateScore) AS frustrate',
-          'AVG(admireScore) AS admire',
-          'AVG(cussScore) AS cuss',
-        ])
-        .where('creatorId = :creatorId', { creatorId })
-        .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')
-        .getRawOne();
-      result.scores = scores;
+      result.scores.admire = data.admire;
+      result.scores.smile = data.smile;
+      result.scores.frustrate = data.frustrate;
+      result.scores.cuss = data.cuss;
+      result.info.logo = data.logo;
+      result.info.nickname = data.nickname;
+      result.info.twitchChannelName = data.twitchChannelName;
 
       return result;
     } catch (error) {
