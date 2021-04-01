@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-
 import {
   makeStyles, createStyles, Theme, withStyles,
 } from '@material-ui/core/styles';
