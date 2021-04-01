@@ -15,18 +15,21 @@ Default.decorators = [
   (Story) => <div style={{ maxWidth: '700px', border: '1px solid red' }}><Story /></div>,
 ];
 Default.args = {
-  creatorId: 'creatorId',
-  platform: 'afreeca',
-  afreecaProfileImage: 'https://profile.img.afreecatv.com/LOGO/10/1004suna/1004suna.jpg',
-  twitchProfileImage: null,
-  nickname: '크리에이터이름',
-  twitchChannelName: null,
-  averageRating: 3.3,
-  ratingCount: 122,
   scores: {
-    admire: 4,
-    cuss: 3,
-    frustrate: 5,
-    smile: 10,
+    admire: 4.8437222635580435,
+    smile: 5.983833379215664,
+    frustrate: 6.499277750651042,
+    cuss: 4.89383327960968,
+  },
+  userRating: 8,
+  ratings: {
+    average: 8,
+    count: 1,
+  },
+  info: {
+    platform: 'afreeca',
+    creatorId: 'bht0205',
+    logo: 'https://profile.img.afreecatv.com/LOGO/bh/bht0205/bht0205.jpg',
+    nickname: 'AZ.형태형',
   },
 };
