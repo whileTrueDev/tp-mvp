@@ -13,9 +13,9 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
     paddingBottom: theme.spacing(1),
     color: theme.palette.text.primary,
   },
-  title:{
+  title: {
     fontSize: theme.typography.h6.fontSize,
-    fontWeight: theme.typography.fontWeightBold
+    fontWeight: theme.typography.fontWeightBold,
   },
   list: {
     maxHeight: theme.spacing(30),

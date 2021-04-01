@@ -14,7 +14,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '100%',
     top: '50%',
     zIndex: 10,
-    textAlign:'center',
+    textAlign: 'center',
     '& img': {
       width: '100%',
       maxWidth: `${theme.spacing(10)}px`,
@@ -23,11 +23,11 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
       position: 'absolute',
       transform: 'translateY(-50%)',
     },
-    '& .platformName':{
+    '& .platformName': {
       fontSize: theme.typography.h6.fontSize,
-      fontWeight: theme.typography.fontWeightBold
+      fontWeight: theme.typography.fontWeightBold,
     },
-    '& .percent':{
+    '& .percent': {
       fontSize: theme.typography.h6.fontSize,
     },
 
@@ -35,12 +35,12 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
   afreecaCount: {
     transform: 'translate(-50%, -50%)',
     '& .platformName': {
-      color:getPlatformColor('afreeca')
-    }
+      color: getPlatformColor('afreeca'),
+    },
   },
   twitchCount: {
     '& .platformName': {
-      color:getPlatformColor('twitch')
-    }
+      color: getPlatformColor('twitch'),
+    },
   },
 }));
