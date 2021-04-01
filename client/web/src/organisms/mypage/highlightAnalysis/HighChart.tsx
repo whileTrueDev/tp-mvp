@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import useTheme from '@material-ui/core/styles/useTheme';
-// import DarkUnica from 'highcharts/themes/dark-unica';
-
-// DarkUnica(Highcharts);
+import DarkUnica from 'highcharts/themes/dark-unica';
+import useTruepointThemeType from '../../../utils/hooks/useTruepointThemeType';
+import THEME_TYPE from '../../../interfaces/ThemeType';
 
 type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'highlight'|'question'
 
@@ -33,7 +33,7 @@ interface ChartProps {
   chartType: MetricsType;
   highlight?: any;
   handleClick: (a: any) => void;
-  handlePage: any;
+  handlePage: (page: number) => void;
   pageSize: number;
 }
 
@@ -48,22 +48,11 @@ export default function Chart({
   pageSize,
 }: ChartProps): JSX.Element {
   const theme = useTheme();
-
+  const { themeType } = useTruepointThemeType();
   const highchartsRef = useRef<{
     chart: Highcharts.Chart
     container: React.RefObject<HTMLDivElement>
   }>(null);
-
-  if (highlight.start_index) {
-    const chartDataRef = highchartsRef.current?.chart.series[0].data[highlight.index];
-    if (chartDataRef) {
-      if (chartDataRef.selected) {
-        chartDataRef.select();
-      }
-      chartDataRef.select();
-    }
-  }
-
   const chartOptions = {
     chart: {
       renderTo: 'container',
@@ -98,24 +87,27 @@ export default function Chart({
     },
     series: [{
       data: totalData,
-      lineWidth: 4,
+      lineWidth: 3,
       lineColor: theme.palette.primary.main,
       color: theme.palette.primary.main,
       fillOpacity: 0.5,
       zones: [{
         color: theme.palette.grey[300],
-        value: dataOption.boundary, // 임계점 테스트 진행 후 진행
+        value: dataOption.boundary,
       }, {
         color: theme.palette.primary.main,
       }],
     }],
     tooltip: {
-      backgroundColor: '#ff3e7a',
-      borderColor: '#ff3e7a',
+      backgroundColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.main,
       borderRadius: 5,
       formatter(this: Highcharts.TooltipFormatterContextObject) {
         const { y } = this;
-        return `트루포인트 SCORE:${y}`;
+        if (y as number >= dataOption.boundary) {
+          return `트루포인트 SCORE:${y}`;
+        }
+        return '편짐점 구간이 아닙니다';
       },
       style: {
         color: theme.palette.common.white,
@@ -128,33 +120,31 @@ export default function Chart({
     },
     plotOptions: {
       series: {
+        // 50000이상에서 터보모드 차트 써야함
         turboThreshold: 50000,
         allowPointSelect: true,
         marker: {
           lineWidth: 3,
-          states: {
-            select: {
-              fillColor: '#ff3e7a',
-              lineColor: '#ff3e7a',
-              lineWidth: 6,
-            },
-          },
         },
-        cursor: 'pointer',
         point: {
           events: {
             click(this: PointType, event: Highcharts.PointClickEventObject) {
               const {
-                y, start_index, end_index, index,
+                y, index, x,
               } = this;
               event.preventDefault();
-              if (y as number > dataOption.boundary) {
-                handleClick({
-                  start_index,
-                  end_index,
-                  index,
-                });
-                handlePage(Math.floor(index / pageSize));
+              if (y as number >= dataOption.boundary) {
+                for (let i = 0; i < data.length; i += 1) {
+                  if (data[i].start_index <= index && data[i].end_index >= index) {
+                    handleClick({
+                      start_index: data[i].start_index,
+                      end_index: data[i].end_index,
+                      index: i,
+                      x,
+                    });
+                    handlePage(Math.floor(i / pageSize));
+                  }
+                }
               }
             },
           },
@@ -162,6 +152,33 @@ export default function Chart({
       },
     },
   };
+
+  useEffect(() => {
+    if (themeType === THEME_TYPE.DARK) {
+      DarkUnica(Highcharts);
+    }
+
+    if (highlight.start_index) {
+      const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
+      const chartDataRef = highchartsRef.current?.chart.series[0].data;
+      if (chartxAxisRef && chartDataRef) {
+        chartxAxisRef.removePlotBand('plot-band');
+        chartxAxisRef.addPlotBand({
+          from: chartDataRef[highlight.start_index].x,
+          to: chartDataRef[highlight.end_index].x,
+          color: theme.palette.grey[300],
+          id: 'plot-band',
+          label: {
+            text: '클릭한 편집점 구간',
+            style: {
+              color: theme.palette.primary.main,
+              fontWeight: 'bold',
+            },
+          },
+        });
+      }
+    }
+  }, [highlight, themeType, theme.palette]);
 
   return (
     <div>

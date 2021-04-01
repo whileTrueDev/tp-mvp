@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Paper, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import MetricsTable from '../../shared/sub/MetricsTable';
 import MetricTitle from '../../shared/sub/MetricTitle';
 import Button from '../../../atoms/Button/Button';
-import HighlightGraph from './HighlightGraph';
+// import HighlightGraph from './HighlightGraph';
 import Chart from './Chart';
 import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
@@ -107,27 +107,25 @@ export default function TruepointHighlight({
   highlightData,
   selectedStream,
 }: TruepointHighlightProps): JSX.Element {
+  const classes = styles();
   const [picked90, setPicked90] = React.useState(true);
-  const hightlight90 = highlightData.highlight_points_90.map((point: any) => ({
+  const hightlight90 = useMemo(() => highlightData.highlight_points_90.map((point: any) => ({
     ...highlightData.highlight_points[point],
-  }));
+  })), [highlightData]);
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
   const [point, setPoint] = React.useState(initialPoint);
-  const classes = styles();
 
-  // const testData = JSON.parse(sampleData);
-
-  const graphCSS = {
-    grid: {
-      width: '100%',
-      height: 'auto',
-      display: 'grid',
-      gridTemplateColumns: `repeat(${highlightData.total_index}, 1fr)`,
-      gridTemplateRows: '20px',
-      background: 'repeating-linear-gradient(90deg, #fff, #fff 1px, #E9EAF3 0, #E9EAF3 3px)',
-    },
-  };
+  // const graphCSS = {
+  //   grid: {
+  //     width: '100%',
+  //     height: 'auto',
+  //     display: 'grid',
+  //     gridTemplateColumns: `repeat(${highlightData.total_index}, 1fr)`,
+  //     gridTemplateRows: '20px',
+  //     background: 'repeating-linear-gradient(90deg, #fff, #fff 1px, #E9EAF3 0, #E9EAF3 3px)',
+  //   },
+  // };
 
   return (
     <Paper className={classes.root}>
@@ -157,14 +155,14 @@ export default function TruepointHighlight({
             />
           </Grid>
           <Grid item md={12} className={classes.graphWraper}>
-            <HighlightGraph
+            {/* <HighlightGraph
               data={picked90 ? hightlight90 : highlightData.highlight_points}
               classes={graphCSS}
               highlight={point}
               handleClick={setPoint}
               handlePage={setPage}
               pageSize={pageSize}
-            />
+            /> */}
           </Grid>
           <Grid item md={12} className={classes.contentRight}>
             <MetricsTable
