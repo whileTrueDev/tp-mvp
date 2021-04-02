@@ -1,6 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import CreatorInfoCard, { CreatorInfoCardProps } from '../organisms/mainpage/ranking/sub/CreatorInfoCard';
+import CreatorInfoCard, { CreatorInfoCardProps } from '../organisms/mainpage/ranking/creatorInfo/CreatorInfoCard';
 
 export default {
   title: 'organisms/CreatorInfoCard',

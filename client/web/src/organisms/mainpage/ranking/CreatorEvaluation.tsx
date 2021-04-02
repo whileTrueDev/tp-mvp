@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core';
 import {
   CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import CreatorInfoCard from './sub/CreatorInfoCard';
+import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
 
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {

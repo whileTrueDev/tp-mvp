@@ -1,6 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import StarRating, { StarRatingProps } from '../organisms/mainpage/ranking/sub/StarRating';
+import StarRating, { StarRatingProps } from '../organisms/mainpage/ranking/creatorInfo/StarRating';
 
 export default {
   title: 'organisms/StarRating',
