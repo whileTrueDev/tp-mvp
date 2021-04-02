@@ -23,7 +23,7 @@ export class CreatorCommentsEntity implements CreatorComments {
   @Column({ length: 12, comment: '12자 제한' })
   nickname: string;
 
-  @Column({ comment: '암호화된 비밀번호' })
+  @Column({ select: false, comment: '암호화된 비밀번호' })
   password: string;
 
   @Column()

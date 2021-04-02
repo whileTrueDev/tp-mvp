@@ -30,16 +30,37 @@ export class CreatorCommentService {
 
   async getCreatorComments(creatorId: string, skip: number, order: 'recommend'|'date'): Promise<any> {
     try {
-      const [comments, count] = await this.creatorCommentsRepository.findAndCount({
-        where: {
-          creatorId,
-        },
-        relations: ['likes', 'hates'],
-        skip,
-        take: 10,
-        order: { createDate: 'DESC' },
-      });
-      return { comments, count };
+      if (order === 'date') {
+      // 생성일 내림차순
+        const [comments, count] = await this.creatorCommentsRepository.createQueryBuilder('comment')
+          .leftJoinAndSelect('comment.likes', 'likes')
+          .leftJoinAndSelect('comment.hates', 'hates')
+          .loadRelationCountAndMap('comment.hatesCount', 'comment.hates')
+          .loadRelationCountAndMap('comment.likesCount', 'comment.likes')
+          .where('comment.creatorId = :creatorId', { creatorId })
+          .orderBy('comment.createDate', 'DESC')
+          .skip(skip)
+          .take(10)
+          .getManyAndCount();
+
+        return { comments, count };
+      }
+      if (order === 'recommend') {
+        // 수정필요
+        // relation 엔티티들이 한개씩만 들어옴 groupby 때문인가??
+        const [comments, count] = await this.creatorCommentsRepository.createQueryBuilder('comment')
+          .select()
+          .addSelect('COUNT(likes.id) AS likesCount')
+          .leftJoinAndSelect('comment.likes', 'likes')
+          .leftJoinAndSelect('comment.hates', 'hates')
+          .groupBy('comment.commentId')
+          .orderBy('likesCount', 'DESC')
+          .skip(skip)
+          .take(10)
+          .getManyAndCount();
+        return { comments, count };
+      }
+      return {};
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in getCreatorComments');

@@ -59,6 +59,14 @@ export class CreatorCommentController {
     return this.creatorCommentLikeService.like(commentId, userIp);
   }
 
+  @Post('/like/:commentId/test/:ip')
+  likeCommenttest(
+    @Param('ip') ip: string,
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ): any {
+    return this.creatorCommentLikeService.like(commentId, ip);
+  }
+
   /**
    * 방송인 평가 댓글에 좋아요 삭제
    * DELETE /creatorComment/like/:commentId
