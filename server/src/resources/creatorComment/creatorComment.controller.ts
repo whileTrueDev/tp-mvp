@@ -1,15 +1,10 @@
 import {
   Body, Controller, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, ValidationPipe,
 } from '@nestjs/common';
+import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
+import { CheckPasswordDto } from '@truepoint/shared/dist/dto/creatorComment/checkPassword.dto';
 import { CreatorCommentService } from './creatorComment.service';
 import { CreatorCommentLikeService } from './creatorCommentLike.service';
-
-export interface CreateCommentDto {
-  userId?: null|string,
-  nickname: string,
-  password: string,
-  content: string
-}
 
 @Controller('creatorComment')
 export class CreatorCommentController {
@@ -33,15 +28,40 @@ export class CreatorCommentController {
     return this.creatorCommentService.createComment(creatorId, createCommentDto);
   }
 
-  @Get('/:creatorId')
-  async getCreatorComments(
-    @Param('creatorId') creatorId: string,
+  /**
+   * 해당 userIp가 좋아요 누른 commentId 목록 반환
+   * @param userIp 
+   */
+  @Get('/likes')
+  async getLikes(
     @Ip() userIp: string,
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('order') order: 'recommend' | 'date',
   ): Promise<any> {
-    const data = await this.creatorCommentService.getCreatorComments(creatorId, skip, order);
-    return { userIp, data };
+    const hates = await this.creatorCommentLikeService.findHatesByUserIp(userIp);
+    const likes = await this.creatorCommentLikeService.findLikesByUserIp(userIp);
+    return { userIp, hates, likes };
+  }
+
+  /**
+   * 방송인 평가댓글 삭제하기
+   * DELETE /creatorComment/:commentId
+   * @param commentId 
+   * @returns 
+   */
+  @Delete('/:commentId')
+  async deleteOneComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ): Promise<any> {
+    const result = await this.creatorCommentService.deleteOneComment(commentId);
+    return result;
+  }
+
+  @Post('/password/:commentId')
+  async checkPassword(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Body(ValidationPipe) checkPasswordDto: CheckPasswordDto,
+  ): Promise<boolean> {
+    const { password } = checkPasswordDto;
+    return this.creatorCommentService.checkPassword(commentId, password);
   }
 
   /**
@@ -115,5 +135,24 @@ export class CreatorCommentController {
   @Get('test')
   findAllComments(): any {
     return this.creatorCommentService.findAllComments();
+  }
+
+  /**
+   * 방송인 평가댓글 목록 불러오기
+   * 최신순 GET /creatorComment/:creatorId?skip=0&order=date
+   * 추천순 GET /creatorComment/:creatorId?skip=0&order=recommend
+   * @param creatorId 
+   * @param skip 페이지네이션 위해 몇개 건너띄고 가져올건지
+   * @param order 'date' 인 경우 최신순으로, 'recommend'인 경우 추천많은 순으로
+   * @returns 
+   */
+  @Get('/:creatorId')
+  async getCreatorComments(
+    @Ip() userIp: string,
+    @Param('creatorId') creatorId: string,
+    @Query('skip', ParseIntPipe) skip: number,
+    @Query('order') order: 'recommend' | 'date',
+  ): Promise<any> {
+    return this.creatorCommentService.getCreatorComments(creatorId, skip, order);
   }
 }
