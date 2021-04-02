@@ -1,9 +1,10 @@
 import {
-  Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne,
+  Entity, Column, PrimaryGeneratedColumn, JoinColumn, ManyToOne, Unique,
 } from 'typeorm';
 import { CreatorCommentLikes } from '@truepoint/shared/interfaces/CreatorCommentLikes.interface';
 import { CreatorCommentsEntity } from './creatorComment.entity';
 @Entity({ name: 'CreatorCommentLikesTest' })
+@Unique('hate', ['userIp', 'commentId']) // ip당 같은 코멘트에 1번만
 export class CreatorCommentLikesEntity implements CreatorCommentLikes {
   constructor(partial: Partial<CreatorCommentsEntity>) {
     Object.assign(this, partial);
