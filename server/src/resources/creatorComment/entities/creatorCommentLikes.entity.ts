@@ -15,6 +15,7 @@ export class CreatorCommentLikesEntity implements CreatorCommentLikes {
 
   @ManyToOne((type) => CreatorCommentsEntity, (comment) => comment.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'commentId' })
+  @Column()
   commentId: number;
 
   @Column()

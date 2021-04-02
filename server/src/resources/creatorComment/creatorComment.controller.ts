@@ -32,13 +32,24 @@ export class CreatorCommentController {
    * 해당 userIp가 좋아요 누른 commentId 목록 반환
    * @param userIp 
    */
-  @Get('/likes')
+  @Get('like-list')
   async getLikes(
     @Ip() userIp: string,
   ): Promise<any> {
-    const hates = await this.creatorCommentLikeService.findHatesByUserIp(userIp);
     const likes = await this.creatorCommentLikeService.findLikesByUserIp(userIp);
-    return { userIp, hates, likes };
+    return { userIp, likes };
+  }
+
+  /**
+   * 해당 userIp가 싫어요 누른 commentId 목록 반환
+   * @param userIp 
+   */
+  @Get('hate-list')
+  async getHates(
+    @Ip() userIp: string,
+  ): Promise<any> {
+    const hates = await this.creatorCommentLikeService.findHatesByUserIp(userIp);
+    return { userIp, hates };
   }
 
   /**

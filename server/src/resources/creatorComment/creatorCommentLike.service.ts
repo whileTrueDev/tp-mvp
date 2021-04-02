@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatorCommentLikesEntity } from './entities/creatorCommentLikes.entity';
 import { CreatorCommentHatesEntity } from './entities/creatorCommentHates.entity';
-import { CreatorCommentsEntity } from './entities/creatorComment.entity';
 
 @Injectable()
 export class CreatorCommentLikeService {
@@ -120,30 +119,25 @@ export class CreatorCommentLikeService {
   // userIp가 좋아요 한 코멘트 id 목록 반환
   async findLikesByUserIp(userIp: string): Promise<any> {
     try {
-      console.log({ userIp }, 'findlikes');
-      // return this.creatorCommentsLikesRepository.find({
-      //   where: { userIp },
-      //   // select: ['commentId'],
-      //   relations: ['commentId'],
-      // });
-      return this.creatorCommentsLikesRepository
-        .createQueryBuilder('likes')
-        .select('comments.commentId')
-        .leftJoin(CreatorCommentsEntity, 'comments', 'comments.commentId = likes.commentId')
-        // .where('likes.userIp = :userIp', { userIp })
-        .getMany();
+      const data = await this.creatorCommentsLikesRepository.find({
+        where: { userIp },
+        select: ['commentId'],
+      });
+      return data.map((d) => d.commentId);
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error in find likes by userIp ${userIp}`);
     }
   }
 
-  // userIp가 좋아요 한 코멘트 id 목록 반환
+  // userIp가 싫어요 한 코멘트 id 목록 반환
   async findHatesByUserIp(userIp: string): Promise<any> {
     try {
-      return this.creatorCommentsHatesRepository.find({
+      const data = await this.creatorCommentsHatesRepository.find({
         where: { userIp },
+        select: ['commentId'],
       });
+      return data.map((d) => d.commentId);
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error in find hates by userIp ${userIp}`);
