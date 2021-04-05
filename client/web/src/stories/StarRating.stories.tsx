@@ -19,11 +19,11 @@ const Template: Story<StarRatingProps> = (args) => <StarRating {...args} />;
 export const Default = Template.bind({});
 Default.args = {
   score: 3,
-  editRatingHandler: (score: number|null) => (event: React.MouseEvent<HTMLElement>) => {
+  createRatingHandler: (score: number|null) => {
     if (!score) {
       alert('별점을 매겨주세요');
     } else {
-      alert(`수정된 별점 : ${score * 2}`);
+      alert(`수정된 별점 : ${score}`);
     }
   },
   cancelRatingHandler: () => {

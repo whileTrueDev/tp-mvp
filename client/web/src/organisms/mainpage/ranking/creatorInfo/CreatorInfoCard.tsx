@@ -50,7 +50,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
    * @param score 유저가 정한 평점
    * @param cb 버튼 눌렀을 때 loading 상태 제어할 콜백함수, () => setLoading(false)와 같은 함수가 들어올 예정
    */
-  const createOrUpdateRatingHandler = useCallback((score: number|null, cb?: () => void) => {
+  const createRatingHandler = useCallback((score: number|null, cb?: () => void) => {
     if (!score) {
       ShowSnack('평점을 매겨주세요', 'error', enqueueSnackbar);
     } else {
@@ -120,8 +120,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
           {`(${ratingCount}명)`}
         </Typography>
         <StarRating
-          editRatingHandler={createOrUpdateRatingHandler}
-          createRatingHandler={createOrUpdateRatingHandler}
+          createRatingHandler={createRatingHandler}
           cancelRatingHandler={cancelRatingHandler}
           score={userRating}
           ratingProps={{ size: 'large' }}
