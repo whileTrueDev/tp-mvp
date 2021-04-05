@@ -2,6 +2,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createStyles({
   commentItem: {
+    backgroundColor: theme.palette.background.paper,
     position: 'relative',
     padding: theme.spacing(2),
     '&:not(:last-child)': {
@@ -39,5 +40,37 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
   },
   hated: {
     color: 'blue',
+  },
+}));
+
+export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createStyles({
+  buttonWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+}));
+
+export const useCreatorCommentFormStyle = makeStyles((theme: Theme) => createStyles({
+  form: {
+    display: 'flex',
+    border: `${theme.spacing(0.5)}px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+  },
+  inputWrapper: {
+    flex: 1,
+    padding: theme.spacing(1),
+    '& .MuiInput-underline:before': {
+      borderBottom: 'none',
+    },
+  },
+  nicknameInput: {
+    marginRight: theme.spacing(1),
+  },
+  button: {
+    width: theme.spacing(20),
+    backgroundColor: theme.palette.action.active,
+    color: theme.palette.background.paper,
+    fontSize: theme.typography.h6.fontSize,
+    fontWeight: theme.typography.fontWeightBold,
   },
 }));

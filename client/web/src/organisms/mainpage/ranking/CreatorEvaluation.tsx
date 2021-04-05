@@ -7,6 +7,7 @@ import {
   CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
+import CreatorCommentList from './creatorInfo/CreatorCommentList';
 
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {
@@ -89,6 +90,7 @@ export default function CreatorEvaluation(
           scores={scores}
           userRating={userRating}
         />
+        <CreatorCommentList creatorId={creatorId} />
       </div>
     </div>
 
