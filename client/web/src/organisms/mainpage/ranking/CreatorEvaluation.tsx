@@ -12,6 +12,7 @@ import CreatorCommentList from './creatorInfo/CreatorCommentList';
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {
     border: `${theme.spacing(1)}px solid ${theme.palette.text.primary}`,
+    padding: theme.spacing(2),
   },
   goBackButton: {
   },

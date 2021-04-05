@@ -13,7 +13,7 @@ export const Default = Template.bind({});
 Default.args = {
   commentId: 1,
   creatorId: 'bht0205',
-  userId: null,
+  userId: undefined,
   nickname: '댓글 테스트',
   content: '테스트용 댓글입니다테스트용 댓글입니다테스트용 댓글입니다테스트용 댓글입니다테스트용 댓글입니다테스트용 댓글입니다테스트용 댓글입니다테스트용 댓글입니다',
   createDate: new Date(),

@@ -3,6 +3,7 @@ import {
 } from '@nestjs/common';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { CheckPasswordDto } from '@truepoint/shared/dist/dto/creatorComment/checkPassword.dto';
+import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentService } from './creatorComment.service';
 import { CreatorCommentLikeService } from './creatorCommentLike.service';
 
@@ -30,6 +31,7 @@ export class CreatorCommentController {
 
   /**
    * 해당 userIp가 좋아요 누른 commentId 목록 반환
+   * GET /creatorComment/like-list
    * @param userIp 
    */
   @Get('like-list')
@@ -42,6 +44,7 @@ export class CreatorCommentController {
 
   /**
    * 해당 userIp가 싫어요 누른 commentId 목록 반환
+   * GET /creatorComment/hate-list
    * @param userIp 
    */
   @Get('hate-list')
@@ -163,7 +166,7 @@ export class CreatorCommentController {
     @Param('creatorId') creatorId: string,
     @Query('skip', ParseIntPipe) skip: number,
     @Query('order') order: 'recommend' | 'date',
-  ): Promise<any> {
+  ): Promise<ICreatorCommentsRes> {
     return this.creatorCommentService.getCreatorComments(creatorId, skip, order);
   }
 }

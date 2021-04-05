@@ -1,4 +1,4 @@
-import { Button, Typography } from '@material-ui/core';
+import { Button, Chip, Typography } from '@material-ui/core';
 import React, { useState, useCallback } from 'react';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
@@ -6,30 +6,19 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import ko from 'dayjs/locale/ko';
 import classnames from 'classnames';
+import { ICreatorCommentData } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
 import axios from '../../../../utils/axios';
 
 dayjs.locale(ko);
 dayjs.extend(relativeTime);
-export interface CreatorCommentItemProps {
- commentId: number;
- /** 코멘트가 달린 크리에이터 아이디 */
- creatorId: string;
- /** 코멘트 작성한 유저의 아이디 */
- userId?: string | null;
- /** 코멘트 작성한 유저가 입력한 닉네임 */
- nickname: string;
- content: string;
- createDate: Date;
- /** 코멘트 좋아요 횟수 */
- likesCount: number;
- /** 코멘트 싫어요 횟수 */
- hatesCount: number;
-
+export interface CreatorCommentItemProps extends ICreatorCommentData{
  /** 좋아요 눌렀는지 여부 */
  isLiked: boolean;
   /** 싫어요 눌렀는지 여부 */
  isHated: boolean;
+ /** 추천많은 댓글인지 여부 */
+ isBest?: boolean;
 }
 
 export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.Element {
@@ -40,12 +29,13 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     content, createDate, likesCount, hatesCount,
     isHated = false,
     isLiked = false,
+    isBest = false,
   } = props;
 
   const [likeClicked, setLikeClicked] = useState<boolean>(isLiked);
   const [hateClicked, setHateClicked] = useState<boolean>(isHated);
-  const [likeDisplay, setLikeDisplay] = useState<number>(likesCount);
-  const [hateDisplay, setHateDisplay] = useState<number>(hatesCount);
+  const [likeDisplay, setLikeDisplay] = useState<number>(likesCount || 0);
+  const [hateDisplay, setHateDisplay] = useState<number>(hatesCount || 0);
 
   const createLikeRequest = useCallback(() => axios.post(`creatorComment/like/${commentId}`)
     .catch((error) => {
@@ -114,6 +104,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
   return (
     <div className={classes.commentItem}>
       <div className={classes.header}>
+        {isBest && <Chip label="★Best" color="secondary" />}
         <Typography component="span" className="nickname">{nickname}</Typography>
         <Typography component="span" className="time">{dayjs(createDate).fromNow()}</Typography>
       </div>
@@ -123,7 +114,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
       <div className={classes.actions}>
         <Button
           onClick={clickLike}
-          className={classnames({ [classes.liked]: likeClicked })}
+          className={classnames(classes.actionButton, { [classes.liked]: likeClicked })}
         >
           <ThumbUpIcon />
           <Typography
@@ -135,7 +126,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
         </Button>
         <Button
           onClick={clickHate}
-          className={classnames({ [classes.hated]: hateClicked })}
+          className={classnames(classes.actionButton, { [classes.hated]: hateClicked })}
         >
           <ThumbDownIcon />
           <Typography

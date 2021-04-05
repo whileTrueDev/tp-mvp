@@ -4,7 +4,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
   commentItem: {
     backgroundColor: theme.palette.background.paper,
     position: 'relative',
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 4),
     '&:not(:last-child)': {
       border: `1px solid ${theme.palette.divider}`,
     },
@@ -32,21 +32,33 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
       marginRight: theme.spacing(1),
     },
   },
+  actionButton: {
+    color: theme.palette.action.disabled,
+  },
   countText: {
     marginLeft: theme.spacing(1),
   },
   liked: {
-    color: 'red',
+    color: theme.palette.primary.main,
   },
   hated: {
-    color: 'blue',
+    color: theme.palette.secondary.main,
   },
 }));
 
 export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createStyles({
+  bestCommentsContainer: {
+    marginBottom: theme.spacing(2),
+  },
+  commentsContainer: {
+
+  },
   buttonWrapper: {
     display: 'flex',
     justifyContent: 'center',
+  },
+  emptyList: {
+    padding: theme.spacing(2),
   },
 }));
 
@@ -55,6 +67,7 @@ export const useCreatorCommentFormStyle = makeStyles((theme: Theme) => createSty
     display: 'flex',
     border: `${theme.spacing(0.5)}px solid ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
+    marginBottom: theme.spacing(2),
   },
   inputWrapper: {
     flex: 1,

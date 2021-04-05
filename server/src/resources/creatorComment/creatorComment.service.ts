@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
+import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
 @Injectable()
 export class CreatorCommentService {
@@ -28,9 +29,10 @@ export class CreatorCommentService {
   }
 
   // 방송인 평가댓글 목록 조회
-  async getCreatorComments(creatorId: string, skip: number, order: 'recommend'|'date'): Promise<any> {
+  async getCreatorComments(creatorId: string, skip: number, order: 'recommend'|'date'): Promise<ICreatorCommentsRes> {
     try {
-      const result: {comments: CreatorCommentsEntity[], count: number} = {
+      const take = 10;
+      const result: ICreatorCommentsRes = {
         comments: [],
         count: 0,
       };
@@ -42,7 +44,7 @@ export class CreatorCommentService {
           .where('comment.creatorId = :creatorId', { creatorId })
           .orderBy('comment.createDate', 'DESC')
           .skip(skip)
-          .take(10)
+          .take(take)
           .getManyAndCount();
         result.comments = comments;
         result.count = count;
@@ -56,8 +58,9 @@ export class CreatorCommentService {
           .where('comment.creatorId = :creatorId', { creatorId })
           .groupBy('comment.commentId')
           .orderBy('likesCount', 'DESC')
+          .having('COUNT(likes.id) >= 1')
           .skip(skip)
-          .take(10)
+          .take(3)
           .getManyAndCount();
         result.comments = comments;
         result.count = count;
