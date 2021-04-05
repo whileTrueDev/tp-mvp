@@ -7,6 +7,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import ko from 'dayjs/locale/ko';
 import classnames from 'classnames';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
+import axios from '../../../../utils/axios';
 
 dayjs.locale(ko);
 dayjs.extend(relativeTime);
@@ -29,17 +30,14 @@ export interface CreatorCommentItemProps {
  isLiked: boolean;
   /** 싫어요 눌렀는지 여부 */
  isHated: boolean;
-
- likeHandler?: () => void;
- hateHandler?: () => void;
 }
 
 export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.Element {
   const classes = useCreatorCommentItemStyle();
   const {
     nickname,
+    commentId,
     content, createDate, likesCount, hatesCount,
-    likeHandler, hateHandler,
     isHated = false,
     isLiked = false,
   } = props;
@@ -49,28 +47,70 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
   const [likeDisplay, setLikeDisplay] = useState<number>(likesCount);
   const [hateDisplay, setHateDisplay] = useState<number>(hatesCount);
 
+  const createLikeRequest = useCallback(() => axios.post(`creatorComment/like/${commentId}`)
+    .catch((error) => {
+      if (error.response) {
+        console.error(error.response.message);
+      }
+    }), [commentId]);
+  const removeLikeRequest = useCallback(() => axios.delete(`creatorComment/like/${commentId}`)
+    .catch((error) => {
+      if (error.response) {
+        console.error(error.response.message);
+      }
+    }), [commentId]);
+  const createHateRequest = useCallback(() => axios.post(`creatorComment/hate/${commentId}`)
+    .catch((error) => {
+      if (error.response) {
+        console.error(error.response.message);
+      }
+    }), [commentId]);
+  const removeHateRequest = useCallback(() => axios.delete(`creatorComment/hate/${commentId}`)
+    .catch((error) => {
+      if (error.response) {
+        console.error(error.response.message);
+      }
+    }), [commentId]);
+
   const clickLike = useCallback(() => {
-    setLikeClicked((prev) => !prev);
-    setLikeDisplay((prevLike) => (likeClicked ? prevLike - 1 : prevLike + 1));
-    if (hateClicked) {
-      setHateClicked(false);
-      setHateDisplay((prevHate) => prevHate - 1);
-    }
-    if (likeHandler) {
-      likeHandler();
-    }
-  }, [hateClicked, likeClicked, likeHandler]);
-  const clickHate = useCallback(() => {
-    setHateClicked((prev) => !prev);
-    setHateDisplay((prevHate) => (hateClicked ? prevHate - 1 : prevHate + 1));
     if (likeClicked) {
+      removeLikeRequest();
       setLikeClicked(false);
       setLikeDisplay((prevLike) => prevLike - 1);
     }
-    if (hateHandler) {
-      hateHandler();
+    if (!likeClicked) {
+      createLikeRequest();
+      setLikeClicked(true);
+      setLikeDisplay((prevLike) => prevLike + 1);
     }
-  }, [hateClicked, hateHandler, likeClicked]);
+    if (hateClicked) {
+      setHateClicked(false);
+      setHateDisplay((prevHate) => prevHate - 1);
+      if (removeHateRequest) {
+        removeHateRequest();
+      }
+    }
+  }, [createLikeRequest, hateClicked, likeClicked, removeHateRequest, removeLikeRequest]);
+
+  const clickHate = useCallback(() => {
+    if (hateClicked) {
+      removeHateRequest();
+      setHateClicked(false);
+      setHateDisplay((prevHate) => prevHate - 1);
+    }
+    if (!hateClicked) {
+      createHateRequest();
+      setHateClicked(true);
+      setHateDisplay((prevHate) => prevHate + 1);
+    }
+    if (likeClicked) {
+      setLikeClicked(false);
+      setLikeDisplay((prevLike) => prevLike - 1);
+      if (removeLikeRequest) {
+        removeLikeRequest();
+      }
+    }
+  }, [createHateRequest, hateClicked, likeClicked, removeHateRequest, removeLikeRequest]);
   return (
     <div className={classes.commentItem}>
       <div className={classes.header}>
