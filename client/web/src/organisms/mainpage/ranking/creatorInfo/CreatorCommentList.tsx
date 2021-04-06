@@ -7,7 +7,9 @@ import React, {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
-import { ICreatorCommentsRes, ICreatorCommentData } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import {
+  ICreatorCommentsRes, ICreatorCommentData, IGetLikes, IGetHates,
+} from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import CreatorCommentItem from './CreatorCommentItem';
 import { useCreatorCommentFormStyle, useCreatorCommentListStyle } from '../style/CreatorComment.style';
@@ -16,7 +18,6 @@ import RegularButton from '../../../../atoms/Button/Button';
 import axios from '../../../../utils/axios';
 
 export interface CreatorCommentListProps{
-//  data: creatorCommentData[]
   creatorId: string;
 }
 
@@ -36,8 +37,8 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
       order: 'date',
     },
   });
-  const [{ data: likeList }] = useAxios<{userIp: string, likes: number[]}>('/creatorComment/like-list');
-  const [{ data: hateList }] = useAxios<{userIp: string, hates: number[]}>('/creatorComment/hate-list');
+  const [{ data: likeList }] = useAxios<IGetLikes>('/creatorComment/like-list');
+  const [{ data: hateList }] = useAxios<IGetHates>('/creatorComment/hate-list');
   const likes = useMemo(() => (likeList ? likeList.likes : []), [likeList]);
   const hates = useMemo(() => (hateList ? hateList.hates : []), [hateList]);
 

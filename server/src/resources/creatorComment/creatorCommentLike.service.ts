@@ -15,14 +15,14 @@ export class CreatorCommentLikeService {
     private readonly creatorCommentsHatesRepository: Repository<CreatorCommentHatesEntity>,
   ) {}
 
-  // commentId, userIp가 좋아요 한 기록 찾기
+  // userIp가 commentId에 좋아요 한 like 테이블 데이터 찾기
   private async findLike(commentId: number, userIp: string): Promise<any> {
     return this.creatorCommentsLikesRepository.findOne({
       where: { commentId, userIp },
     });
   }
 
-  // commentId, userIp가 싫어요 한 기록 찾기
+  // userIp가 commentId에 싫어요 한 hate 테이블 데이터 찾기
   private async findHate(commentId: number, userIp: string): Promise<any> {
     return this.creatorCommentsHatesRepository.findOne({
       where: { commentId, userIp },
@@ -41,7 +41,7 @@ export class CreatorCommentLikeService {
 
   // 좋아요 생성
   // 기존에 싫어요를 했던 댓글인 경우 싫어요 취소
-  async like(commentId: number, userIp: string): Promise<any> {
+  async like(commentId: number, userIp: string): Promise<CreatorCommentLikesEntity> {
     try {
       const exLike = await this.findLike(commentId, userIp);
       if (exLike) {
@@ -64,13 +64,14 @@ export class CreatorCommentLikeService {
   }
 
   // 좋아요 삭제
-  async removeLike(commentId: number, userIp: string): Promise<any> {
+  async removeLike(commentId: number, userIp: string): Promise<boolean> {
     try {
       const exLike = await this.findLike(commentId, userIp);
       if (!exLike) {
         throw new BadRequestException(`userIp ${userIp} did not like on commentId ${commentId}`);
       }
-      return this.removeLikeEntity(exLike);
+      await this.removeLikeEntity(exLike);
+      return true;
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error in remove like on commentId : ${commentId}`);
@@ -79,7 +80,7 @@ export class CreatorCommentLikeService {
 
   // 싫어요 생성
   // 기존에 좋아요 했던 댓글이면 좋아요 취소
-  async hate(commentId: number, userIp: string): Promise<any> {
+  async hate(commentId: number, userIp: string): Promise<CreatorCommentHatesEntity> {
     try {
       const exHate = await this.creatorCommentsHatesRepository.findOne({
         where: { commentId, userIp },
@@ -109,7 +110,8 @@ export class CreatorCommentLikeService {
       if (!exHate) {
         throw new BadRequestException(`userIp ${userIp} did not hate on commentId ${commentId}`);
       }
-      return this.removeLikeEntity(exHate);
+      await this.removeLikeEntity(exHate);
+      return true;
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error in create like on commentId : ${commentId}`);
@@ -117,7 +119,7 @@ export class CreatorCommentLikeService {
   }
 
   // userIp가 좋아요 한 코멘트 id 목록 반환
-  async findLikesByUserIp(userIp: string): Promise<any> {
+  async findLikesByUserIp(userIp: string): Promise<number[]> {
     try {
       const data = await this.creatorCommentsLikesRepository.find({
         where: { userIp },
@@ -131,7 +133,7 @@ export class CreatorCommentLikeService {
   }
 
   // userIp가 싫어요 한 코멘트 id 목록 반환
-  async findHatesByUserIp(userIp: string): Promise<any> {
+  async findHatesByUserIp(userIp: string): Promise<number[]> {
     try {
       const data = await this.creatorCommentsHatesRepository.find({
         where: { userIp },

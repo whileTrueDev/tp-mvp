@@ -3,10 +3,12 @@ import {
 } from '@nestjs/common';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { CheckPasswordDto } from '@truepoint/shared/dist/dto/creatorComment/checkPassword.dto';
-import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import { ICreatorCommentsRes, IGetHates, IGetLikes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentService } from './creatorComment.service';
 import { CreatorCommentLikeService } from './creatorCommentLike.service';
-
+import { CreatorCommentsEntity } from './entities/creatorComment.entity';
+import { CreatorCommentHatesEntity } from './entities/creatorCommentHates.entity';
+import { CreatorCommentLikesEntity } from './entities/creatorCommentLikes.entity';
 @Controller('creatorComment')
 export class CreatorCommentController {
   constructor(
@@ -25,130 +27,22 @@ export class CreatorCommentController {
   createComment(
     @Param('creatorId') creatorId: string,
     @Body(ValidationPipe) createCommentDto: CreateCommentDto,
-  ): any {
+  ): Promise<CreatorCommentsEntity> {
     return this.creatorCommentService.createComment(creatorId, createCommentDto);
-  }
-
-  /**
-   * 해당 userIp가 좋아요 누른 commentId 목록 반환
-   * GET /creatorComment/like-list
-   * @param userIp 
-   */
-  @Get('like-list')
-  async getLikes(
-    @Ip() userIp: string,
-  ): Promise<any> {
-    const likes = await this.creatorCommentLikeService.findLikesByUserIp(userIp);
-    return { userIp, likes };
-  }
-
-  /**
-   * 해당 userIp가 싫어요 누른 commentId 목록 반환
-   * GET /creatorComment/hate-list
-   * @param userIp 
-   */
-  @Get('hate-list')
-  async getHates(
-    @Ip() userIp: string,
-  ): Promise<any> {
-    const hates = await this.creatorCommentLikeService.findHatesByUserIp(userIp);
-    return { userIp, hates };
   }
 
   /**
    * 방송인 평가댓글 삭제하기
    * DELETE /creatorComment/:commentId
    * @param commentId 
-   * @returns 
+   * @returns 삭제 성공시 true만 반환
    */
   @Delete('/:commentId')
   async deleteOneComment(
     @Param('commentId', ParseIntPipe) commentId: number,
-  ): Promise<any> {
+  ): Promise<boolean> {
     const result = await this.creatorCommentService.deleteOneComment(commentId);
     return result;
-  }
-
-  @Post('/password/:commentId')
-  async checkPassword(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Body(ValidationPipe) checkPasswordDto: CheckPasswordDto,
-  ): Promise<boolean> {
-    const { password } = checkPasswordDto;
-    return this.creatorCommentService.checkPassword(commentId, password);
-  }
-
-  /**
-   * 방송인 평가 댓글에 좋아요 추가
-   * POST /creatorComment/like/:commentId
-   * @param commentId 
-   * @param userIp 
-   * @returns 
-   */
-  @Post('/like/:commentId')
-  likeComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Ip() userIp: string,
-  ): any {
-    return this.creatorCommentLikeService.like(commentId, userIp);
-  }
-
-  @Post('/like/:commentId/test/:ip')
-  likeCommenttest(
-    @Param('ip') ip: string,
-    @Param('commentId', ParseIntPipe) commentId: number,
-  ): any {
-    return this.creatorCommentLikeService.like(commentId, ip);
-  }
-
-  /**
-   * 방송인 평가 댓글에 좋아요 삭제
-   * DELETE /creatorComment/like/:commentId
-   * @param commentId 
-   * @param userIp 
-   * @returns 
-   */
-  @Delete('/like/:commentId')
-  removeLikeOnComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Ip() userIp: string,
-  ): any {
-    return this.creatorCommentLikeService.removeLike(commentId, userIp);
-  }
-
-  /**
-   * 방송인 평가 댓글에 싫어요 추가
-   * POST /creatorComment/hate/:commentId
-   * @param commentId 
-   * @param userIp 
-   * @returns 
-   */
-  @Post('/hate/:commentId')
-  hateComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Ip() userIp: string,
-  ): any {
-    return this.creatorCommentLikeService.hate(commentId, userIp);
-  }
-
-  /**
-   * 방소인 평가 댓글에 싫어요 삭제
-   * DELETE /creatorComment/hate/:commentId
-   * @param commentId 
-   * @param userIp 
-   * @returns 
-   */
-  @Delete('/hate/:commentId')
-  removeHateOnComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Ip() userIp: string,
-  ): any {
-    return this.creatorCommentLikeService.removeHate(commentId, userIp);
-  }
-
-  @Get('test')
-  findAllComments(): any {
-    return this.creatorCommentService.findAllComments();
   }
 
   /**
@@ -168,5 +62,100 @@ export class CreatorCommentController {
     @Query('order') order: 'recommend' | 'date',
   ): Promise<ICreatorCommentsRes> {
     return this.creatorCommentService.getCreatorComments(creatorId, skip, order);
+  }
+
+  @Post('/password/:commentId')
+  async checkPassword(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Body(ValidationPipe) checkPasswordDto: CheckPasswordDto,
+  ): Promise<boolean> {
+    const { password } = checkPasswordDto;
+    return this.creatorCommentService.checkPassword(commentId, password);
+  }
+
+  /**
+   * 해당 userIp가 좋아요 누른 commentId 목록 반환
+   * GET /creatorComment/like-list
+   * @param userIp 
+   */
+  @Get('like-list')
+  async getLikes(
+    @Ip() userIp: string,
+  ): Promise<IGetLikes> {
+    const likes = await this.creatorCommentLikeService.findLikesByUserIp(userIp);
+    return { userIp, likes };
+  }
+
+  /**
+  * 해당 userIp가 싫어요 누른 commentId 목록 반환
+  * GET /creatorComment/hate-list
+  * @param userIp 
+  */
+  @Get('hate-list')
+  async getHates(
+    @Ip() userIp: string,
+  ): Promise<IGetHates> {
+    const hates = await this.creatorCommentLikeService.findHatesByUserIp(userIp);
+    return { userIp, hates };
+  }
+
+  /**
+   * 방송인 평가 댓글에 좋아요 추가
+   * POST /creatorComment/like/:commentId
+   * @param commentId 
+   * @param userIp 
+   * @returns 생성된 좋아요 row 반환
+   */
+  @Post('/like/:commentId')
+  likeComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Ip() userIp: string,
+  ): Promise<CreatorCommentLikesEntity> {
+    return this.creatorCommentLikeService.like(commentId, userIp);
+  }
+
+  /**
+   * 방송인 평가 댓글에 좋아요 삭제
+   * DELETE /creatorComment/like/:commentId
+   * @param commentId 
+   * @param userIp 
+   * @returns 성공시 true만 반환
+   */
+  @Delete('/like/:commentId')
+  removeLikeOnComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Ip() userIp: string,
+  ): Promise<boolean> {
+    return this.creatorCommentLikeService.removeLike(commentId, userIp);
+  }
+
+  /**
+   * 방송인 평가 댓글에 싫어요 추가
+   * POST /creatorComment/hate/:commentId
+   * @param commentId 
+   * @param userIp 
+   * @returns 생성된 싫어요 row 반환
+   */
+  @Post('/hate/:commentId')
+  hateComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Ip() userIp: string,
+  ): Promise<CreatorCommentHatesEntity> {
+    return this.creatorCommentLikeService.hate(commentId, userIp);
+  }
+
+  /**
+   * 방소인 평가 댓글에 싫어요 삭제
+   * DELETE /creatorComment/hate/:commentId
+   * @param commentId 
+   * @param userIp 
+   * @returns 성공시 true만 반환
+   */
+  @Delete('/hate/:commentId')
+  removeHateOnComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Ip() userIp: string,
+  ): Promise<boolean> {
+    return this.creatorCommentLikeService.removeHate(commentId, userIp);
   }
 }

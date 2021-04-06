@@ -13,7 +13,7 @@ export class CreatorCommentService {
   ) {}
 
   // 방송인 평가 댓글 생성
-  async createComment(creatorId: string, createCommentDto: CreateCommentDto): Promise<any> {
+  async createComment(creatorId: string, createCommentDto: CreateCommentDto): Promise<CreatorCommentsEntity> {
     try {
       const { password } = createCommentDto;
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -73,7 +73,7 @@ export class CreatorCommentService {
   }
 
   // 방송인 평가댓글 삭제하기
-  async deleteOneComment(commentId: number): Promise<any> {
+  async deleteOneComment(commentId: number): Promise<boolean> {
     try {
       const comment = await this.creatorCommentsRepository.findOne({
         where: {
@@ -101,12 +101,5 @@ export class CreatorCommentService {
       select: ['password'],
     });
     return bcrypt.compare(password, hashedPassword);
-  }
-
-  // test
-  async findAllComments(): Promise<any> {
-    return this.creatorCommentsRepository.find({
-      relations: ['likes', 'hates'],
-    });
   }
 }
