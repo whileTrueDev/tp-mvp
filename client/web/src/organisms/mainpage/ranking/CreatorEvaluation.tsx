@@ -15,6 +15,7 @@ const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles
     padding: theme.spacing(2),
   },
   goBackButton: {
+    marginBottom: theme.spacing(1),
   },
 }));
 

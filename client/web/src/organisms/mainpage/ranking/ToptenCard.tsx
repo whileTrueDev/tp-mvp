@@ -36,7 +36,7 @@ function TopTenCard(): JSX.Element {
       { name: 'smile', label: '웃음점수', icon: <SentimentSatisfiedAltIcon /> },
       { name: 'frustrate', label: '답답함점수', icon: <SentimentDissatisfiedIcon /> },
       { name: 'cuss', label: '욕점수', icon: <SentimentVeryDissatisfiedIcon /> },
-      { name: 'viewer', label: '시청자수 순위', className: classes.viewerTab },
+      { name: 'viewer', label: '최고 시청자수 순위', className: classes.viewerTab },
     ]
   ), [classes.viewerTab]);
 

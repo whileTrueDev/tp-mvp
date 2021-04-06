@@ -19,7 +19,7 @@ export class CreatorRatingsEntity implements CreatorRatings {
   @Column({ comment: '평점을 매긴 유저의 ip' })
   userIp: string;
 
-  @Column({ nullable: true, comment: '평점을 매긴 유저의 ip, 비회원도 평점을 매길 수 있다' })
+  @Column({ nullable: true, comment: '평점을 매긴 유저의 id, 비회원도 평점을 매길 수 있다' })
   userId: string;
 
   @Column({ comment: '유저가 해당 creator에 매긴 평점, 0~10' })

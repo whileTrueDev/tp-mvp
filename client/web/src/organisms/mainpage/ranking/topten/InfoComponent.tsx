@@ -6,6 +6,12 @@ import StarRating from '../creatorInfo/StarRating';
 import { useTopTenList } from '../style/TopTenList.style';
 import ScoreBar from './ScoreBar';
 
+export function ViewerCountDisplay(props: {viewer: number}): JSX.Element {
+  const { viewer } = props;
+  return (
+    <Typography component="span">{`최고 시청자수: ${viewer} 명`}</Typography>
+  );
+}
 export interface InfoComponentProps{
   data: TopTenDataItem,
   currentScoreName: keyof Scores
@@ -33,7 +39,7 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
       </Typography>
 
       {currentScoreName === 'viewer'
-        ? <Typography>{`시청자수: ${d[currentScoreName]} 명`}</Typography>
+        ? <ViewerCountDisplay viewer={d[currentScoreName] || 0} />
         : (
           <ScoreBar score={d[currentScoreName] || 0} />
         )}

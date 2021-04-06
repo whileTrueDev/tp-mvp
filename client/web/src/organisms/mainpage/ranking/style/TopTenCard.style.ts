@@ -108,7 +108,7 @@ export const useTabItem = makeStyles((theme: Theme) => {
         fontSize: svgFontSize,
         marginRight: theme.spacing(0.5),
       },
-
+      wordBreak: 'keep-all',
     },
   });
 });
