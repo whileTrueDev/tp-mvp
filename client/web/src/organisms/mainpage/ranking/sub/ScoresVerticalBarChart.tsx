@@ -56,6 +56,7 @@ function ScoresVerticalBarChart({
         borderColor: 'transparent',
         color: barColor,
         pointWidth: 30,
+        states: { hover: { brightness: -0.2 } },
       },
     },
     legend: { enabled: false },

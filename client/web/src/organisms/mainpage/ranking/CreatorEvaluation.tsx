@@ -13,6 +13,7 @@ const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles
     border: `${theme.spacing(1)}px solid ${theme.palette.text.primary}`,
   },
   goBackButton: {
+    marginBottom: theme.spacing(1),
   },
 }));
 

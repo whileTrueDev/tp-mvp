@@ -101,7 +101,19 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   mobileTextMyPage: { color: theme.palette.primary.main },
   darkModeToggleButton: {
-    borderTop: `2px solid ${theme.palette.divider}`,
+    position: 'relative',
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    '&$menuItem': {
+      width: '100%',
+      borderTop: `2px solid ${theme.palette.divider}`,
+      color: theme.palette.text.primary,
+    },
+  },
+  lightModeIcon: {
+    display: theme.palette.type === 'light' ? 'none' : 'block',
+  },
+  darkModeIcon: {
+    display: theme.palette.type === 'dark' ? 'none' : 'block',
   },
 }));
 
@@ -135,18 +147,11 @@ export default function AppBar(): JSX.Element {
     { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
   ];
 
-  const DarkModeToggleButtonContent = (
-    theme.palette.type === 'light' ? (
-      <>
-        <LightThemeIcon color="action" />
-        <Typography variant="body1">어두운 테마로 변경</Typography>
-      </>
-    ) : (
-      <>
-        <DarkThemeIcon color="action" />
-        <Typography variant="body1">밝은 테마로 변경</Typography>
-      </>
-    )
+  const darkModeToggleButtonContent = (
+    <>
+      <LightThemeIcon className={classes.lightModeIcon} />
+      <DarkThemeIcon className={classes.darkModeIcon} />
+    </>
   );
 
   const mobileMenu = (
@@ -186,7 +191,7 @@ export default function AppBar(): JSX.Element {
         onClick={theme.handleThemeChange}
         button
       >
-        {DarkModeToggleButtonContent}
+        {darkModeToggleButtonContent}
       </MenuItem>
 
       {authContext.user.userId ? (
@@ -270,9 +275,10 @@ export default function AppBar(): JSX.Element {
 
             <div className={classes.links}>
               <Button
+                className={classes.darkModeToggleButton}
                 onClick={theme.handleThemeChange}
               >
-                {DarkModeToggleButtonContent}
+                {darkModeToggleButtonContent}
               </Button>
             </div>
 
