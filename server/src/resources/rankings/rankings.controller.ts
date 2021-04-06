@@ -46,6 +46,7 @@ export class RankingsController {
                      creatorName: string;
                      title: string;
                      streamDate: Date;
+                     averageRating?: number;
                      [key:ScoreColumn]: number;
                    }
       weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }],

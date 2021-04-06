@@ -33,7 +33,7 @@ Default.args = {
 
 export const NullScore = Template.bind({});
 NullScore.args = {
-  score: null,
+  score: undefined,
 };
 
 export const ReadOnly = Template.bind({});

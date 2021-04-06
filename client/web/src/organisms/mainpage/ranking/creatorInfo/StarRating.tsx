@@ -37,7 +37,7 @@ const useRatingStyle = makeStyles((theme: Theme) => {
 
 export interface StarRatingProps{
   /** 10점 만점으로 들어오는 점수 */
- score: number | null;
+ score: number | undefined;
  /** true이면 별점 수정이 불가능하다, 평가, 수정, 취소버튼도 뜨지않음 */
  readOnly?: boolean;
  /** 
@@ -73,7 +73,7 @@ const labels: { [index: string]: string } = {
  * @returns 
  */
 export default function StarRating({
-  score = null,
+  score = undefined,
   readOnly = false,
   cancelRatingHandler,
   createRatingHandler,
@@ -82,7 +82,7 @@ export default function StarRating({
   const classes = useRatingStyle();
 
   // 점수는 10점 만점으로 들어오므로 Rating컴포넌트 value로 넘겨주기 위해서는 나누기 2 해야함
-  const [value, setValue] = useState<number|null>(score ? (score / 2) : null); // rating컴포넌트에 표시될 점수
+  const [value, setValue] = useState<number|undefined>(score ? (score / 2) : undefined); // rating컴포넌트에 표시될 점수
 
   const onChange = useCallback((event, newValue: number|null) => {
     if (newValue === null) { // 서버로 보낼 평점 취소 요청
@@ -92,7 +92,7 @@ export default function StarRating({
     } else if (createRatingHandler) {
       createRatingHandler(newValue ? (newValue * 2) : null);
     }
-    setValue(newValue);
+    setValue(newValue || undefined);
   }, [cancelRatingHandler, createRatingHandler]);
 
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
@@ -106,14 +106,14 @@ export default function StarRating({
   }, [value]);
 
   useEffect(() => {
-    setValue(score ? (score / 2) : null);
+    setValue(score ? (score / 2) : undefined);
   }, [score]);
 
   return (
     <div className={classnames(classes.container, { 'with-label': !readOnly })}>
       {!readOnly && (
         <Typography className={classes.label}>
-          {value !== null ? labels[value] : '평가하기'}
+          {value ? labels[value] : '평가하기'}
         </Typography>
       )}
       <Tooltip open={tooltipOpen} title="취소하기" arrow placement="right-start">

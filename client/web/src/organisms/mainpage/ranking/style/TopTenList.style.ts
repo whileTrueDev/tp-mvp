@@ -101,10 +101,13 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       whiteSpace: 'nowrap',
       overflow: 'hidden',
     },
-    nameContainer: {
+    infoHeader: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
+    },
+    nameLink: {
+      maxWidth: '40%',
     },
     creatorName: {
       color: theme.palette.common.black,
@@ -113,6 +116,13 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       textOverflow: 'ellipsis',
       overflow: 'hidden',
       whiteSpace: 'nowrap',
+      marginRight: theme.spacing(1),
+    },
+    ratingContainer: {
+      display: 'flex',
+      '&>*': {
+        fontWeight: theme.typography.fontWeightMedium,
+      },
     },
     chip: {
       backgroundColor: theme.palette.grey[200],

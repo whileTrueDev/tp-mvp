@@ -164,7 +164,7 @@ export class RankingsService {
         .groupBy('T1.creatorId')
         .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T1.creatorId')
         .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T1.creatorId')
-        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)') // 1달 내 매겨진 평점만
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)') // 1주 내 매겨진 평점만
         .where('T1.creatorId = MaxScoreTable.creatorId')
         .andWhere(`T1.${column} = MaxScoreTable.maxScore`); // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
 
@@ -294,7 +294,7 @@ export class RankingsService {
         .groupBy('T1.creatorId')
         .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T1.creatorId')
         .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T1.creatorId')
-        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')// 1달 내 매겨진 평점만
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)')// 1주 내 매겨진 평점만
         .where('T1.creatorId = MaxScoreTable.creatorId')
         .andWhere('T1.viewer = MaxScoreTable.maxViewer');
 

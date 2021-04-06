@@ -122,7 +122,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
         <StarRating
           createRatingHandler={createRatingHandler}
           cancelRatingHandler={cancelRatingHandler}
-          score={userRating}
+          score={userRating || undefined}
           ratingProps={{ size: 'large' }}
         />
       </Grid>
