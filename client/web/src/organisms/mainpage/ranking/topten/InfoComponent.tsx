@@ -1,9 +1,18 @@
-import { Typography, Chip } from '@material-ui/core';
-import React from 'react';
+import {
+  Chip, Typography, Link,
+} from '@material-ui/core';
 import { Scores, TopTenDataItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import ScoreBar from './ScoreBar';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useTopTenList } from '../style/TopTenList.style';
+import ScoreBar from './ScoreBar';
 
+export function ViewerCountDisplay(props: {viewer: number}): JSX.Element {
+  const { viewer } = props;
+  return (
+    <Typography component="span">{`최고 시청자수: ${viewer} 명`}</Typography>
+  );
+}
 export interface InfoComponentProps{
   data: TopTenDataItem,
   currentScoreName: keyof Scores
@@ -15,7 +24,14 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
   return (
     <div className={classes.infoWrapper}>
       <div className={classes.nameContainer}>
-        <Typography className={classes.creatorName}>{d.creatorName}</Typography>
+
+        <Link component={RouterLink} to={`/ranking/${d.platform}/${d.creatorId}`}>
+          <Typography
+            className={classes.creatorName}
+          >
+            {d.creatorName}
+          </Typography>
+        </Link>
         <Chip
           className={classes.chip}
           component="a"
@@ -40,17 +56,12 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
         {d.title}
       </Typography>
 
-      <div className="scoreBarContainer">
-        <ScoreBar score={d[currentScoreName] as number} />
-        <Typography
-          className={classes.scoreText}
-          style={{
-            transform: `translateX(${(10 - (d[currentScoreName] || 0)) * (-10)}%`,
-          }}
-        >
-          {`${d[currentScoreName]}`}
-        </Typography>
-      </div>
+      {currentScoreName === 'viewer'
+        ? <ViewerCountDisplay viewer={d[currentScoreName] || 0} />
+        : (
+          <ScoreBar score={d[currentScoreName] || 0} />
+        )}
+
     </div>
   );
 }

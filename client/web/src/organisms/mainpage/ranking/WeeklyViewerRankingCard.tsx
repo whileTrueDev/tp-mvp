@@ -1,7 +1,6 @@
 import React, {
   useEffect, useState, useRef,
 } from 'react';
-import { Divider, Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
@@ -14,11 +13,7 @@ import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { useWeeklyViewerStyle } from './style/WeeklyViewerRankingCard.style';
-
-const markerSize = {
-  width: 14,
-  height: 14,
-};
+import CarouselItemHeader from './sub/CarouselItemHeader';
 
 function WeeklyViewerRankingCard(): JSX.Element {
   const classes = useWeeklyViewerStyle();
@@ -32,7 +27,6 @@ function WeeklyViewerRankingCard(): JSX.Element {
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       spacingTop: 24,
-      height: 250,
     },
     credits: { enabled: false },
     title: { text: undefined },
@@ -40,7 +34,7 @@ function WeeklyViewerRankingCard(): JSX.Element {
       crosshair: true,
       labels: {
         style: {
-          fontSize: `${theme.typography.caption.fontSize}`,
+          fontSize: `${theme.typography.body2.fontSize}`,
         },
       },
     },
@@ -55,8 +49,8 @@ function WeeklyViewerRankingCard(): JSX.Element {
       itemMarginBottom: 30,
       labelFormat: ' ',
       margin: 0,
-      symbolWidth: 40,
-      symbolHeight: 20,
+      symbolWidth: theme.spacing(8),
+      symbolHeight: theme.spacing(6),
     },
     tooltip: {
       shared: true,
@@ -87,7 +81,15 @@ function WeeklyViewerRankingCard(): JSX.Element {
     const afreecaViewerData = data.afreeca.map((d: WeeklyData) => +d.totalViewer);
     const twitchViewerData = data.twitch.map((d: WeeklyData) => +d.totalViewer);
 
+    const markerSize = {
+      width: theme.spacing(3),
+      height: theme.spacing(3),
+    };
+
     setChartOptions({
+      chart: {
+        backgroundColor: theme.palette.background.paper,
+      },
       series: [
         {
           type: 'line',
@@ -110,9 +112,16 @@ function WeeklyViewerRankingCard(): JSX.Element {
           },
         },
       ],
-      xAxis: { categories: dates },
+      xAxis: {
+        categories: dates,
+        labels: {
+          style: {
+            color: theme.palette.text.primary,
+          },
+        },
+      },
     });
-  }, [data]);
+  }, [data, theme, theme.palette.background.paper, theme.palette.text.primary]);
 
   // 에러핸들러
   if (error) {
@@ -121,14 +130,16 @@ function WeeklyViewerRankingCard(): JSX.Element {
 
   return (
     <section className={classes.weeklyViewerContainer}>
-      <Typography variant="h6" className={classes.weeklyViewerTitle}>주간 시청자수 랭킹</Typography>
-      <Divider />
+      <CarouselItemHeader title="주간 시청자수 랭킹" />
 
-      <HighchartsReact
-        ref={chartRef}
-        highcharts={Highcharts}
-        options={chartOptions}
-      />
+      <div className={classes.graphContainer}>
+        <HighchartsReact
+          ref={chartRef}
+          highcharts={Highcharts}
+          options={chartOptions}
+        />
+      </div>
+
       {loading && (
       <CenterLoading />
       )}

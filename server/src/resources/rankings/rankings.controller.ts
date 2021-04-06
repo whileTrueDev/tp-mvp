@@ -1,11 +1,10 @@
 import {
-  Controller, Get, Query, UsePipes, ValidationPipe,
+  Controller, DefaultValuePipe, Get, ParseIntPipe, Query, ValidationPipe,
 } from '@nestjs/common';
 import {
   DailyTotalViewersResType, MonthlyScoresResType, WeeklyViewersResType, RankingDataType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { GetTopTenDto } from '@truepoint/shared/dist/dto/rankings/getTopTen.dto';
-import { RankingsService, ScoreColumn } from './rankings.service';
+import { ColumnType, RankingsService } from './rankings.service';
 @Controller('rankings')
 export class RankingsController {
   constructor(
@@ -34,8 +33,11 @@ export class RankingsController {
    * 반응 기준별로 감탄점수, 웃음점수, 답답함점수, 욕점수 상위 10명과 
    * 10명의 최근 7개 방송 점수 데이터 반환
    * 
-   * GET /rankings/top-ten/:column
+   * skip 파라미터는 skip개 이후 데이터를 가져오기 위해 사용
+   * 
+   * GET /rankings/top-ten?column=smile&skip=
    * @param column 'smile'| 'frustrate'| 'admire'| 'cuss'
+   * @param skip number  해당 개수만큼 데이터 이후의 데이터를 가져옴
    * @return
    * {rankingData : {
                      creatorId: string;
@@ -46,16 +48,17 @@ export class RankingsController {
                      streamDate: Date;
                      [key:ScoreColumn]: number;
                    }
-      weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }]}
+      weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }],
+      totalDataCount: number
+    }
    }
    */
   @Get('top-ten')
-  @UsePipes(new ValidationPipe())
   getTopTenRank(
-    @Query() getTopTenDto: GetTopTenDto,
+      @Query('column', new ValidationPipe()) column: ColumnType,
+      @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
   ): Promise<RankingDataType> {
-    const { column } = getTopTenDto;
-    return this.rankingsService.getTopTenRank(`${column}Score` as ScoreColumn);
+    return this.rankingsService.getTopTenRank(column, skip);
   }
 
   /**

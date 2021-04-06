@@ -130,7 +130,7 @@ function Index(): JSX.Element {
               <Route exact path="/community-board/:platform/view/:postId" component={CommunityPostView} />
               <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
               <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
-              <Route exact path="/ranking" component={Ranking} />
+              <Route path="/ranking" component={Ranking} />
               <Route exact path="/highlight-list" component={YoutubeHighlightList} />
               <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
               <Route path="/mypage" component={Mypage} />

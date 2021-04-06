@@ -1,6 +1,19 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-export const useStyles = makeStyles((theme: Theme) => {
+export const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
+  monthlyScores: {
+    border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.background.paper,
+    paddingBottom: theme.spacing(2),
+    '&>*': {
+      marginBottom: theme.spacing(2),
+    },
+  },
+}));
+
+// ScoresBarChart에 적용하는 스타일
+export const useScoreBarChartStyle = makeStyles((theme: Theme) => {
   // 별에 그라디언트 넣기 위한 색 설정
   const starColors = [
     { color: 'yellow', startColor: '#ffff00', endColor: '#c9a589' }, // 금
@@ -21,6 +34,7 @@ export const useStyles = makeStyles((theme: Theme) => {
 
   return createStyles({
     barChartSection: {
+      backgroundColor: theme.palette.background.paper,
       position: 'relative',
       '& .fa-star': {
         position: 'absolute',
@@ -36,8 +50,22 @@ export const useStyles = makeStyles((theme: Theme) => {
     header: {
       padding: theme.spacing(2),
     },
+    wrapper: {
+      display: 'flex',
+      borderBottom: `${1}px solid ${theme.palette.divider}`,
+    },
+    icon: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: theme.spacing(1),
+      '& .MuiSvgIcon-root': {
+        fontSize: theme.typography.h4.fontSize,
+      },
+    },
     title: {
-      color: theme.palette.text.secondary,
+      fontSize: theme.typography.h6.fontSize,
+      fontWeight: theme.typography.fontWeightBold,
     },
   });
 });

@@ -6,28 +6,29 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HCBrokenAxis from 'highcharts/modules/broken-axis';// yAxis break 사용하기 위해 필요
 
-import { Typography, Divider } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
 import { MonthlyScoresItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 
-import { useStyles } from '../style/ScoresBarChart.style';
+import { useScoreBarChartStyle } from '../style/ScoresBarChart.style';
 import '@fortawesome/fontawesome-free/css/all.css';
 
 HCBrokenAxis(Highcharts);
 
-export interface ScoresBarChartProps{
+export interface ScoresVerticalBarChartProps{
   data: MonthlyScoresItem[],
   loading?: boolean,
   column? : string,
   barColor? : string,
+  icon? : string | React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined
 }
 
-function ScoresBarChart({
-  data, loading, column, barColor,
-}: ScoresBarChartProps): JSX.Element {
+function ScoresVerticalBarChart({
+  data, loading, column, barColor, icon,
+}: ScoresVerticalBarChartProps): JSX.Element {
   const theme = useTheme();
-  const classes = useStyles();
+  const classes = useScoreBarChartStyle();
   const chartRef = useRef<{
     chart: Highcharts.Chart,
     container: React.RefObject<HTMLDivElement>
@@ -52,8 +53,10 @@ function ScoresBarChart({
           },
         },
         borderRadius: 12,
+        borderColor: 'transparent',
         color: barColor,
         pointWidth: 30,
+        states: { hover: { brightness: -0.2 } },
       },
     },
     legend: { enabled: false },
@@ -71,13 +74,25 @@ function ScoresBarChart({
     const scores = data.map((d) => d.avgScore);
     const minInt = Math.floor(scores[scores.length - 1]); // 내림차순 5개 들어오는 값 중 마지막 == 최소값
     setChartOptions({
+      chart: {
+        backgroundColor: theme.palette.background.paper,
+      },
+      plotOptions: {
+        column: {
+          dataLabels: {
+            style: {
+              color: theme.palette.text.primary,
+            },
+          },
+        },
+      },
       xAxis: {
         categories: creatorNames,
         labels: {
           useHTML: true,
           style: {
             fontSize: creatorNameFontSize,
-            color: theme.palette.common.black,
+            color: theme.palette.text.primary,
           },
           formatter(this: Highcharts.AxisLabelsFormatterContextObject<number>) {
             // 1,2,3위 에 별모양 폰트아이콘 붙임
@@ -100,13 +115,15 @@ function ScoresBarChart({
       },
       series: [{ type: 'column', name: `평균 ${column} 점수`, data: scores }],
     });
-  }, [column, creatorNameFontSize, data, theme.palette.common.black]);
+  }, [column, creatorNameFontSize, data, theme.palette.background.paper, theme.palette.text.primary]);
 
   return (
     <section className={classes.barChartSection}>
       <header className={classes.header}>
-        <Typography variant="h6" className={classes.title}>{title}</Typography>
-        <Divider />
+        <div className={classes.wrapper}>
+          <div className={classes.icon}>{icon}</div>
+          <Typography variant="h6" className={classes.title}>{title}</Typography>
+        </div>
       </header>
 
       <HighchartsReact
@@ -122,4 +139,4 @@ function ScoresBarChart({
   );
 }
 
-export default ScoresBarChart;
+export default ScoresVerticalBarChart;

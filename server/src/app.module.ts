@@ -26,6 +26,7 @@ import { CbtModule } from './resources/cbt/cbt.module';
 import { CommunityBoardModule } from './resources/communityBoard/communityBoard.module';
 import { RankingsModule } from './resources/rankings/rankings.module';
 import { UserReactionModule } from './resources/userReaction/userReaction.module';
+import { CreatorRatingsModule } from './resources/creatorRatings/creatorRatings.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -54,6 +55,7 @@ import { UserReactionModule } from './resources/userReaction/userReaction.module
     CommunityBoardModule,
     RankingsModule,
     UserReactionModule,
+    CreatorRatingsModule,
   ],
 })
 export class AppModule { }

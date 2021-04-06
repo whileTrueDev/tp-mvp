@@ -1,30 +1,26 @@
-import React, {
-  useEffect, useRef, useState,
-} from 'react';
-import { useTheme } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
+import { Typography } from '@material-ui/core';
 import blue from '@material-ui/core/colors/blue';
-import { Divider, Typography } from '@material-ui/core';
-
+import purple from '@material-ui/core/colors/purple';
+import { useTheme } from '@material-ui/core/styles';
+import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import useAxios from 'axios-hooks';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HCmore from 'highcharts/highcharts-more'; // polar area chart 사용 위해 필요
-
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-
-import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-
-import { useStyles as usePolatChartStyles } from './style/polarChartStyle';
 import {
-  getCoordsAndPanes,
-  toPolarAreaData,
-  polarAreaLabelFormatter,
   createBackground,
-  CustomPointOption,
+  CustomPointOption, getCoordsAndPanes,
+
+  polarAreaLabelFormatter, toPolarAreaData,
 } from './polar/polarChartUtils';
+import { useStyles as usePolatChartStyles } from './style/polarChartStyle';
+import CarouselItemHeader from './sub/CarouselItemHeader';
 
 HCmore(Highcharts);// polar area chart 사용 위해 필요
 
@@ -33,7 +29,7 @@ HCmore(Highcharts);// polar area chart 사용 위해 필요
  * toPolarAreaData 에서 생성된 originValue값(실제 최대시청자 값)을 툴팁에 표시한다
  * @param this Highcharts.TooltipFormatterContextObject
  */
-function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
+function polarAreaTooltipFormatter(this: Highcharts.TooltipFormatterContextObject): string {
   const { point } = this;
   const { options: pointOptions, name } = point;
   const { originValue, order } = pointOptions as CustomPointOption;
@@ -162,7 +158,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       // 로고 위치 조정---------------------------------------------------
       const { x: afreecaArcX } = afreecaArc.getBBox();
       const { x: twitchArcX, width: twitchArcWidth } = twitchArc.getBBox();
-      const distanceFromArc = 30; // arc에서 얼마나 떨어질것인지 px단위
+      const distanceFromArc = theme.spacing(10); // arc에서 얼마나 떨어질것인지 px단위
 
       if (afreecaLogoRef.current) {
         afreecaLogoRef.current.style.setProperty('right', `${(plotWidth - afreecaArcX) + distanceFromArc}px`);
@@ -170,9 +166,9 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
       if (twitchLogoRef.current) {
         twitchLogoRef.current.style.setProperty('left', `${(twitchArcX + twitchArcWidth) + distanceFromArc}px`);
       }
-
       // 차트옵션 변경 - 시청자수에 따라 차트 크기 조정, series 데이터 추가
       setOptions({
+        chart: { backgroundColor: theme.palette.background.paper },
         pane: [afreecaPaneOptions, twitchPaneOptions] as Highcharts.PaneOptions, // pane 타입정의가 배열을 못받게 되어있어서 임시로 타입 단언 사용함
         series: [{
           type: 'column',
@@ -195,26 +191,37 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     }
     return undefined;
   },
-  [data]);
+  [data, theme]);
+
+  const [afreecaPercent, twitchPercent] = useMemo(() => {
+    if (!data) {
+      return [0, 0];
+    }
+    const totalSum = data.afreeca.total + data.twitch.total;
+    function getPercentage(num: number): number {
+      return Number(((num / totalSum) * 100).toFixed(2));
+    }
+    const afreecaPercentage = getPercentage(data.afreeca.total);
+    const twitchPercentage = getPercentage(data.twitch.total);
+    return [afreecaPercentage, twitchPercentage];
+  }, [data]);
 
   return (
     <section className={classes.polarAreaContainer}>
-      <div className={classes.title}>
-        <Typography variant="h6">아프리카tv VS 트위치tv</Typography>
-        <Divider />
-        <Typography variant="h5">상위 10인 시청자수 합 비교</Typography>
-      </div>
+      <CarouselItemHeader title="종합랭킹" />
 
       { data
         ? (
           <div className={classes.totalCount}>
             <div className={classes.afreecaCount} ref={afreecaLogoRef}>
+              <Typography className="platformName">아프리카TV</Typography>
               <img src="/images/logo/afreecaLogo.png" alt="아프리카 로고" />
-              <Typography align="center">{`${data ? Highcharts.numberFormat(data.afreeca.total, 0, undefined, ',') : 0} 명`}</Typography>
+              <Typography className="percent">{`${afreecaPercent} %`}</Typography>
             </div>
             <div className={classes.twitchCount} ref={twitchLogoRef}>
+              <Typography className="platformName">트위치TV</Typography>
               <img src="/images/logo/twitchLogo.png" alt="트위치 로고" />
-              <Typography align="center">{`${data ? Highcharts.numberFormat(data.twitch.total, 0, undefined, ',') : 0} 명`}</Typography>
+              <Typography className="percent">{`${twitchPercent} %`}</Typography>
             </div>
           </div>
         )

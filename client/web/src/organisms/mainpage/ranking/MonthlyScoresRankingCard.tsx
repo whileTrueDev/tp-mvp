@@ -1,22 +1,37 @@
-import React from 'react';
-import {
-  makeStyles, createStyles, Theme,
-} from '@material-ui/core/styles';
+import { lighten } from '@material-ui/core/styles/colorManipulator';
+import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
+import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
+import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
+import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
+import { MonthlyScoresResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-import { MonthlyScoresResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import ScoresBarChart from './sub/ScoresBarChart';
+import React from 'react';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import getPlatformColor from '../../../utils/getPlatformColor';
+import { useMonthlyScoresRankingStyle } from './style/ScoresBarChart.style';
+import ScoresVerticalBarChart from './sub/ScoresVerticalBarChart';
 
-const useMonthlyScoresRankingStyle = makeStyles((theme: Theme) => createStyles({
-  monthlyScores: {
-    backgroundColor: theme.palette.background.paper,
-    paddingBottom: theme.spacing(2),
-    '&>*': {
-      marginBottom: theme.spacing(2),
-    },
+interface BarChartData{
+  key: keyof MonthlyScoresResType,
+  column: string,
+  barColor: string,
+  icon? : string | React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined
+}
+const barChartData: BarChartData[] = [
+  {
+    key: 'smile', column: '웃음', icon: <SentimentSatisfiedAltIcon />, barColor: lighten(getPlatformColor('afreeca'), 0.9),
   },
-}));
+  {
+    key: 'admire', column: '감탄', icon: <SentimentVerySatisfiedIcon />, barColor: 'rgb(213, 245, 231)',
+  },
+  {
+    key: 'frustrate', column: '답답함', icon: <SentimentDissatisfiedIcon />, barColor: lighten(getPlatformColor('twitch'), 0.9),
+  },
+  {
+    key: 'cuss', column: '욕', icon: <SentimentVeryDissatisfiedIcon />, barColor: lighten(getPlatformColor('afreeca'), 0.8),
+  },
+];
 function MonthlyScoresRankingCard(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useMonthlyScoresRankingStyle();
@@ -28,24 +43,21 @@ function MonthlyScoresRankingCard(): JSX.Element {
   }
   return (
     <section className={classes.monthlyScores}>
-      <ScoresBarChart
-        data={data ? data.smile : []}
-        loading={loading}
-        column="웃음"
-        barColor="rgba(202, 186, 219,0.7)"
-      />
-      <ScoresBarChart
-        data={data ? data.admire : []}
-        loading={loading}
-        column="감탄"
-        barColor="rgba(162, 221, 195, 0.698)"
-      />
-      <ScoresBarChart
-        data={data ? data.frustrate : []}
-        loading={loading}
-        column="답답함"
-        barColor="rgba(229, 160, 206, 0.726)"
-      />
+      {barChartData.map((bar) => {
+        const {
+          key, column, barColor, icon,
+        } = bar;
+        return (
+          <ScoresVerticalBarChart
+            key={key}
+            data={data ? data[key] : []}
+            column={column}
+            barColor={barColor}
+            loading={loading}
+            icon={icon}
+          />
+        );
+      })}
     </section>
   );
 }

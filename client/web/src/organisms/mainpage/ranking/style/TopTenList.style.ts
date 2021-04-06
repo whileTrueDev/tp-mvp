@@ -1,4 +1,6 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { lighten } from '@material-ui/core/styles/colorManipulator';
+import getPlatformColor from '../../../../utils/getPlatformColor';
 
 // TopTenList 스타일
 export const useTopTenList = makeStyles((theme: Theme) => {
@@ -17,20 +19,24 @@ export const useTopTenList = makeStyles((theme: Theme) => {
   });
 
   return createStyles({
-    wrapper: {
-      paddingTop: theme.spacing(2),
+    topTenListWrapper: {
+      position: 'relative',
+      padding: theme.spacing(2, 1),
     },
     header: {
       display: 'flex',
     },
     headerColumn: {
-      color: theme.palette.grey[600],
+      color: theme.palette.text.secondary,
       whiteSpace: 'nowrap',
     },
-    listItems: {},
+    listItems: {
+      padding: theme.spacing(2, 0),
+    },
     listItem: {
       display: 'flex',
-      height: theme.spacing(19),
+      height: theme.spacing(18),
+      marginBottom: theme.spacing(1),
       '&:nth-child(1) .fa-star': starStyles[0],
       '&:nth-child(2) .fa-star': starStyles[1],
       '&:nth-child(3) .fa-star': starStyles[2],
@@ -48,6 +54,16 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         MozTextFillColor: 'transparent',
       },
     },
+    background: {
+      display: 'flex',
+      borderRadius: theme.spacing(2),
+      '&.twitch': {
+        backgroundColor: lighten(getPlatformColor('twitch'), 0.9),
+      },
+      '&.afreeca': {
+        backgroundColor: lighten(getPlatformColor('afreeca'), 0.9),
+      },
+    },
     star: {
       marginBottom: (-1) * theme.spacing(1),
     },
@@ -59,6 +75,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     orderContainer: {
       flexDirection: 'column',
       '& p': {
+        color: theme.palette.common.black,
         fontSize: theme.typography.h5.fontSize,
       },
     },
@@ -90,6 +107,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       justifyContent: 'space-between',
     },
     creatorName: {
+      color: theme.palette.common.black,
       fontWeight: theme.typography.fontWeightBold,
       fontSize: theme.typography.h6.fontSize,
       textOverflow: 'ellipsis',
@@ -99,17 +117,12 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     chip: {
       backgroundColor: theme.palette.grey[200],
       boxShadow: theme.shadows[2],
+      color: theme.palette.common.black,
     },
     platformLogoImage: {
       width: theme.spacing(2),
       height: theme.spacing(2),
       marginRight: theme.spacing(1),
-    },
-    scoreText: {
-      position: 'relative',
-      textAlign: 'right',
-      fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.primary.dark,
     },
     trendsBarContainer: {
       padding: theme.spacing(1),
@@ -122,6 +135,17 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         justifyContent: 'center',
         alignItems: 'center',
       },
+    },
+    scrollTopButton: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+    },
+    scoreText: {
+      position: 'relative',
+      textAlign: 'right',
+      fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.primary.dark,
     },
   });
 });
@@ -147,7 +171,7 @@ export const useProgressBar = makeStyles((theme: Theme) => {
       ...barCommonStyle,
     },
     barColorPrimary: {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.primary.light,
     },
   });
 });

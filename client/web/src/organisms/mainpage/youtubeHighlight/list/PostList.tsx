@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     fontWeight: theme.typography.fontWeightBold,
   },
   columnButton: {
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.divider,
     '&:hover': {
       backgroundColor: theme.palette.primary.main,
     },
@@ -130,7 +130,7 @@ function PostList(props: PostListProps): JSX.Element {
           paginationType: 'stepped',
           toolbar: true,
           loadingType: 'linear',
-          searchFieldStyle: { borderRadius: 8, backgroundColor: theme.palette.grey[300] },
+          searchFieldStyle: { borderRadius: 8, backgroundColor: theme.palette.divider },
         }}
         style={{
           boxShadow: 'none',

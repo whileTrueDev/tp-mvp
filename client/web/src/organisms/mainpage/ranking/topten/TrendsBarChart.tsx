@@ -14,6 +14,8 @@ function getSeriesName(currentScoreName: keyof Scores) {
       return '욕 점수';
     case 'frustrateScore':
       return '답답함 점수';
+    case 'viewer':
+      return '시청자 수';
     default:
       return '점수';
   }
@@ -35,12 +37,10 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     credits: { enabled: false },
     title: { text: undefined },
-    legend: { enabled: false },
     chart: {
-      marginLeft: 0,
-      marginRight: 0,
-      plotBackgroundColor: theme.palette.grey[300],
+      margin: 0,
     },
+    legend: { enabled: false },
     plotOptions: {
       series: {
         color: theme.palette.primary.main,
@@ -53,14 +53,28 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     yAxis: {
       labels: { enabled: false },
       gridLineColor: 'transparent',
-      min: 0,
-      max: 10,
+      min: currentScoreName === 'viewer' ? undefined : 0,
+      max: currentScoreName === 'viewer' ? undefined : 10,
       title: { text: ' ' },
     },
     tooltip: {
       headerFormat: `<span style="font-size: ${theme.typography.body2.fontSize}">{point.key}</span><br/>`,
       style: {
         fontSize: `${theme.typography.body2.fontSize}`,
+      },
+      useHTML: true,
+      formatter(this: Highcharts.TooltipFormatterContextObject) {
+        const { y, series, key } = this;
+        const value = currentScoreName === 'viewer'
+          ? `${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명`
+          : `${Highcharts.numberFormat(y as number, 2, undefined, ',')} 점`;
+        return `
+        <div>
+          <span style=" margin-right: 20px;">${key}</span><br/>
+          <span style=" margin-right: 20px;">${series.name}</span><br/>
+          <span style="font-weight: bold">${value}</span>
+        </div>
+        `;
       },
     },
   });
@@ -69,6 +83,11 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     if (!data) return;
     const dates = data.map((d) => d.createDate);
     setChartOptions({
+      chart: {
+        margin: 0,
+        plotBackgroundColor: theme.palette.action.disabledBackground,
+        backgroundColor: theme.palette.background.paper,
+      },
       xAxis: {
         categories: dates,
         plotLines: dates.map((value: string, index: number) => ({
@@ -85,7 +104,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
         },
       ],
     });
-  }, [data, currentScoreName, theme.palette.grey, theme.palette.background.paper]);
+  }, [data, currentScoreName, theme.palette.background.paper, theme.palette.action.disabledBackground]);
 
   return (
     <HighchartsReact

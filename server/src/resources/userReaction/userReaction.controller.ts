@@ -1,11 +1,9 @@
 import {
-  Controller, Get, Post, Body, Put, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe,
+  Controller, Get, Post, Body, Put, Param, Delete, ParseIntPipe, UsePipes, ValidationPipe, Ip,
 } from '@nestjs/common';
-import { RealIP } from 'nestjs-real-ip';
 import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
 import { UpdateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/updateUserReaction.dto';
 import { UserReactionService } from './userReaction.service';
-import { convertIpv6ToIpv4 } from '../../utils/convertIpAddress';
 import { UserReactionEntity } from './entities/userReaction.entity';
 
 @Controller('user-reactions')
@@ -37,10 +35,10 @@ export class UserReactionController {
   @Post()
   @UsePipes(new ValidationPipe())
   createUserReactions(
-    @RealIP() ip: string,
+    @Ip() userIp: string,
     @Body() createUserReactionDto: CreateUserReactionDto,
   ): Promise<UserReactionEntity> {
-    return this.userReactionService.createUserReactions(createUserReactionDto, convertIpv6ToIpv4(ip));
+    return this.userReactionService.createUserReactions(createUserReactionDto, userIp);
   }
 
   /**

@@ -1,30 +1,50 @@
-import { Divider, Typography } from '@material-ui/core';
-import React from 'react';
+import { Button, Divider, Typography } from '@material-ui/core';
+import React, { useMemo, useRef } from 'react';
 import { Scores, RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { useTopTenList } from '../style/TopTenList.style';
 import ListItemSkeleton from './ListItemSkeleton';
 import TopTenListItem from './TopTenListItem';
 
-const headerColumns = [
-  {
-    key: 'order', label: '순위', width: '5%', textAlign: 'center',
-  },
-  { key: 'profileImage', label: '', width: '15%' },
-  { key: 'bjName', label: 'BJ이름', width: '45%' },
-  { key: 'weeklyScoreGraph', label: '주간 점수 그래프', width: '35%' },
-];
-
+type HeaderColumn = {
+  key: string,
+  label: string,
+  width: string,
+  textAlign?: string
+}
 export interface TopTenListProps{
   currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
-  data: undefined | RankingDataType,
-  loading?: boolean
+  data: undefined | Omit<RankingDataType, 'totalDataCount'>,
+  loading?: boolean,
+  weeklyGraphLabel?: string
 }
 
 function TopTenListContainer(props: TopTenListProps): JSX.Element {
-  const { loading, data, currentTab } = props;
+  const {
+    loading, data, currentTab, weeklyGraphLabel = '주간 점수 그래프',
+  } = props;
   const classes = useTopTenList();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const headerColumns: HeaderColumn[] = useMemo(() => (
+    [
+      {
+        key: 'order', label: '순위', width: '5%', textAlign: 'center',
+      },
+      { key: 'profileImage', label: '', width: '15%' },
+      { key: 'bjName', label: 'BJ이름', width: '50%' },
+      { key: 'weeklyScoreGraph', label: weeklyGraphLabel, width: '30%' },
+    ]
+  ), [weeklyGraphLabel]);
+
+  const scrollToContainerTop = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollIntoView();
+    }
+  };
+
   return (
-    <div className={classes.wrapper}>
+    <div className={classes.topTenListWrapper}>
       {/* 목록 헤더 */}
       <div className={classes.header}>
         {headerColumns.map((column) => (
@@ -40,13 +60,13 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
       <Divider />
 
       {/* 목록 아이템 컨테이너 */}
-      <div className={classes.listItems}>
+      <div className={classes.listItems} ref={containerRef}>
         {loading || !data
           ? (Array.from(Array(10).keys())).map((v: number) => (
             <ListItemSkeleton key={v} headerColumns={headerColumns} />
           ))
           : data.rankingData.map((d, index: number) => {
-            const currentScoreName = `${currentTab}Score` as keyof Scores;
+            const currentScoreName = currentTab === 'viewer' ? currentTab : `${currentTab}Score` as keyof Scores;
             const weeklyTrendsData = data.weeklyTrends[d.creatorId];
             return (
               <TopTenListItem
@@ -60,6 +80,13 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
             );
           })}
       </div>
+
+      {/* 위로 버튼 */}
+      <Button className={classes.scrollTopButton} onClick={scrollToContainerTop}>
+        <ArrowUpwardIcon />
+        {' '}
+        위로 이동
+      </Button>
     </div>
   );
 }
