@@ -4,10 +4,10 @@ import React, {
 import { Rating, RatingProps } from '@material-ui/lab';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { Typography } from '@material-ui/core';
+import { Typography, Tooltip } from '@material-ui/core';
 
 const useRatingStyle = makeStyles((theme: Theme) => {
-  const labelFontSize = theme.typography.caption.fontSize;
+  const labelFontSize = theme.typography.body2.fontSize;
 
   return createStyles({
     container: {
@@ -15,7 +15,7 @@ const useRatingStyle = makeStyles((theme: Theme) => {
       alignItems: 'center',
       position: 'relative',
       '&.with-label': {
-        paddingTop: labelFontSize,
+        paddingTop: theme.spacing(2.5),
       },
     },
     label: {
@@ -80,6 +80,7 @@ export default function StarRating({
   ratingProps,
 }: StarRatingProps): JSX.Element {
   const classes = useRatingStyle();
+
   // 점수는 10점 만점으로 들어오므로 Rating컴포넌트 value로 넘겨주기 위해서는 나누기 2 해야함
   const [value, setValue] = useState<number|null>(score ? (score / 2) : null); // rating컴포넌트에 표시될 점수
 
@@ -94,10 +95,13 @@ export default function StarRating({
     setValue(newValue);
   }, [cancelRatingHandler, createRatingHandler]);
 
+  const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
+  // 현재 매긴 평점과 같은 점수에 마우스 올렸을 때 '취소하기'툴팁 보여준다
   const onChangeActive = useCallback((event, hoverValue: number) => {
     if (value !== null && value === hoverValue) {
-      // console.log({ value, hoverValue });
-      // console.log('취소하기');
+      setTooltipOpen(true);
+    } else {
+      setTooltipOpen(false);
     }
   }, [value]);
 
@@ -112,16 +116,19 @@ export default function StarRating({
           {value !== null ? labels[value] : '평가하기'}
         </Typography>
       )}
-      <Rating
-        {...ratingProps}
-        name="half-rating"
-        value={value}
-        onChange={onChange}
-        onChangeActive={onChangeActive}
-        precision={readOnly ? 0.1 : 0.5}
-        readOnly={readOnly}
-        className={classnames(classes.rating)}
-      />
+      <Tooltip open={tooltipOpen} title="취소하기" arrow placement="right-start">
+        <Rating
+          {...ratingProps}
+          name="half-rating"
+          value={value}
+          onChange={onChange}
+          onChangeActive={onChangeActive}
+          precision={readOnly ? 0.1 : 0.5}
+          readOnly={readOnly}
+          className={classnames(classes.rating)}
+        />
+      </Tooltip>
+
     </div>
   );
 }
