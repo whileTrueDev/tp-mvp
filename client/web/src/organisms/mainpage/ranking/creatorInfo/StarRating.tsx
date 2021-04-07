@@ -11,7 +11,7 @@ const useRatingStyle = makeStyles((theme: Theme) => {
 
   return createStyles({
     container: {
-      display: 'flex',
+      display: 'inline-flex',
       alignItems: 'center',
       position: 'relative',
       '&.with-label': {
@@ -78,6 +78,7 @@ export default function StarRating({
   cancelRatingHandler,
   createRatingHandler,
   ratingProps,
+
 }: StarRatingProps): JSX.Element {
   const classes = useRatingStyle();
 
