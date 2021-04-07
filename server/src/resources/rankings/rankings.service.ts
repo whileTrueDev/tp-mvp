@@ -197,7 +197,7 @@ export class RankingsService {
       if (errorHandler) {
         errorHandler(error);
       }
-      throw new InternalServerErrorException(error, `error in getTopTenByColumn column:${column}`);
+      throw new InternalServerErrorException(`error in getTopTenByColumn column:${column}`);
     }
   }
 
