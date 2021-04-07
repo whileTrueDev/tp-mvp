@@ -299,7 +299,7 @@ export class RankingsService {
         .andWhere('T1.viewer = MaxScoreTable.maxViewer');
 
       const totalDataCount = await qb.clone().getCount();
-      const data = await qb
+      const data: TopTenDataItem[] = await qb
         .orderBy('MaxScoreTable.maxViewer', 'DESC')
         .offset(skip)
         .limit(10)
@@ -311,7 +311,7 @@ export class RankingsService {
       const weeklyTrends = await this.getTopTenTrendsByColumn(topTenCreatorIds, 'viewer', console.error);
 
       return {
-        rankingData: data,
+        rankingData: data.map((d) => ({ ...d, averageRating: Number(d.averageRating) })),
         weeklyTrends,
         totalDataCount,
       };
