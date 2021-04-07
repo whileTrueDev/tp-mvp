@@ -28,6 +28,7 @@ import { RankingsModule } from './resources/rankings/rankings.module';
 import { UserReactionModule } from './resources/userReaction/userReaction.module';
 import { CreatorRatingsModule } from './resources/creatorRatings/creatorRatings.module';
 import { CreatorCommentModule } from './resources/creatorComment/creatorComment.module';
+import { CreatorCategoryModule } from './resources/creator-category/creator-category.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -58,6 +59,7 @@ import { CreatorCommentModule } from './resources/creatorComment/creatorComment.
     UserReactionModule,
     CreatorRatingsModule,
     CreatorCommentModule,
+    CreatorCategoryModule,
   ],
 })
 export class AppModule { }

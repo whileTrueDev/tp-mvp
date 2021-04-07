@@ -1,8 +1,8 @@
 import { PlatformTwitch } from '@truepoint/shared/dist/interfaces/PlatformTwitch.interface';
 import {
-  Entity, Column, CreateDateColumn, UpdateDateColumn,
+  Entity, Column, CreateDateColumn, UpdateDateColumn, JoinTable, ManyToMany,
 } from 'typeorm';
-
+import { CreatorCategoryEntity } from '../../creator-category/entities/creatorCategory.entity';
 @Entity({ name: 'PlatformTwitch' })
 export class PlatformTwitchEntity implements PlatformTwitch {
   @Column({ primary: true })
@@ -27,4 +27,8 @@ export class PlatformTwitchEntity implements PlatformTwitch {
 
   @UpdateDateColumn({ type: 'timestamp', comment: '연동 정보 최신화 날짜' })
   updatedAt?: Date;
+
+  @ManyToMany((type) => CreatorCategoryEntity, (category) => category.twitchCreator)
+  @JoinTable()
+  categories?: CreatorCategoryEntity[]
 }
