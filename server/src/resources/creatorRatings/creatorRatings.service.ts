@@ -1,8 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException, Injectable, InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
-import { CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { CreatorRatingInfoRes, ListItemOrderByRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
@@ -26,7 +28,7 @@ export class CreatorRatingsService {
    * @param creatorId 
    * @returns 
    */
-  private async findCreator(creatorId: string): Promise<any> {
+  private async findCreator(creatorId: string): Promise<RankingsEntity> {
     try {
       const creator = await this.rankingsRepository.findOne({
         where: { creatorId },
@@ -162,6 +164,19 @@ export class CreatorRatingsService {
     }
   }
 
+  /**
+   * 방송인 정보페이지 상단에 사용될 정보
+   * @param ip 접속한 유저의 ip
+   * @param creatorId 조회하려는 creatorId
+   * @param platform 조회하려는 creator의 플랫폼 'twitch'|'afreeca'
+   * @returns 
+   * {
+      info: CreatorRatingCardInfo, // creator닉네임, 채널명, 프로필이미지 등의 정보
+      ratings: CreatorAverageRatings, // 해당 creator의 평균평점과 횟수 정보
+      userRating: null | number // 해당 ip로 creatorId에 매겨진 평점
+      scores: CreatorAverageScores, // 감탄, 웃음, 답답, 욕점수들
+    }
+   */
   async getCreatorRatingInfo(
     ip: string,
     creatorId: string,
@@ -248,5 +263,59 @@ export class CreatorRatingsService {
       console.error(error);
       throw new InternalServerErrorException(error, `error in getCreatorRatingInfo, creatorId : ${creatorId}`);
     }
+  }
+
+  /**
+   * 주간 집계 시청자 평점 순위별 크리에이터 목록 반환
+   * @param take 
+   * @param skip 
+   * @returns 
+   */
+  async getListOrderByRatings(take: number, skip: number): Promise<ListItemOrderByRatings[]> {
+    const data: {
+      'creatorId': string,
+      'averageRating': string,
+      'ratingCount': string,
+      'twitchNickname': string | null,
+      'twitchChannelName': string | null,
+      'twitchLogo': string | null,
+      'afreecaLogo': string | null,
+      'afreecaNickname': string | null
+    }[] = await this.ratingsRepository
+      .createQueryBuilder('Ratings')
+      .select([
+        'Ratings.creatorId AS creatorId',
+        'AVG(Ratings.rating) AS averageRating',
+        'COUNT(Ratings.id) AS ratingCount',
+      ])
+      .where('Ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)')
+      .addSelect([
+        'Twitch.twitchStreamerName AS twitchNickname',
+        'Twitch.twitchChannelName AS twitchChannelName',
+        'Twitch.logo AS twitchLogo',
+      ])
+      .addSelect([
+        'Afreeca.logo AS afreecaLogo',
+        'Afreeca.afreecaStreamerName AS afreecaNickname',
+      ])
+      .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = Ratings.creatorId')
+      .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = Ratings.creatorId')
+      .groupBy('Ratings.creatorId')
+      .orderBy('AVG(Ratings.rating)', 'DESC') // 평점 높은 순
+      .addOrderBy('COUNT(Ratings.id)', 'DESC') // 평점 같으면 평점횟수 높은 순
+      .limit(take)
+      .offset(skip)
+      .getRawMany();
+
+    const result = data.map((d) => ({
+      creatorId: d.creatorId,
+      averageRating: Number(d.averageRating),
+      ratingCount: Number(d.ratingCount),
+      nickname: d.twitchNickname || d.afreecaNickname || '',
+      logo: d.twitchLogo || d.afreecaLogo || '',
+      platform: d.twitchChannelName ? 'twitch' : 'afreeca',
+    }));
+
+    return result;
   }
 }

@@ -21,3 +21,12 @@ export interface CreatorRatingInfoRes {
   userRating: null | number
   scores: CreatorAverageScores,
 }
+
+export interface ListItemOrderByRatings{
+  creatorId: string,
+  averageRating: number,
+  ratingCount: number,
+  nickname: string,
+  logo: string,
+  platform: string
+}

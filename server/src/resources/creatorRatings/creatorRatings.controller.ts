@@ -1,5 +1,5 @@
 import {
-  Body, Controller, Delete, Get, Ip, Param, Post, ValidationPipe,
+  Body, Controller, Delete, Get, Ip, Param, ParseIntPipe, Post, ValidationPipe, Query,
 } from '@nestjs/common';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingInfoRes, CreatorAverageRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
@@ -44,6 +44,23 @@ export class CreatorRatingsController {
     return this.ratingsService.deleteRatings(creatorId, ip);
   }
 
+  @Get('info/:platform/:creatorId')
+  getCreatorRatingInfo(
+    @Ip() ip: string,
+    @Param('platform') platform: 'afreeca'|'twitch',
+    @Param('creatorId') creatorId: string,
+  ): Promise<CreatorRatingInfoRes> {
+    return this.ratingsService.getCreatorRatingInfo(ip, creatorId, platform);
+  }
+
+  @Get('list')
+  getListOrderByRatings(
+    @Query('skip', ParseIntPipe) skip: number,
+    @Query('take', ParseIntPipe) take: number,
+  ): Promise<any> {
+    return this.ratingsService.getListOrderByRatings(take, skip);
+  }
+
   /**
    * creatorId의 1달 내 평균평점과 평가횟수 조회
    * @param creatorId 
@@ -69,14 +86,5 @@ export class CreatorRatingsController {
     @Param('creatorId') creatorId: string,
   ): Promise<{score: number} | false> {
     return this.ratingsService.findOneRating(ip, creatorId);
-  }
-
-  @Get('info/:platform/:creatorId')
-  getCreatorRatingInfo(
-    @Ip() ip: string,
-    @Param('platform') platform: 'afreeca'|'twitch',
-    @Param('creatorId') creatorId: string,
-  ): Promise<CreatorRatingInfoRes> {
-    return this.ratingsService.getCreatorRatingInfo(ip, creatorId, platform);
   }
 }
