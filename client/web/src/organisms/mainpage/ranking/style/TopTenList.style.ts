@@ -109,10 +109,9 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     infoHeader: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'flex-start',
     },
     nameLink: {
-      maxWidth: '40%',
+      width: '40%',
     },
     creatorName: {
       color: theme.palette.common.black,
@@ -121,7 +120,6 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       textOverflow: 'ellipsis',
       overflow: 'hidden',
       whiteSpace: 'nowrap',
-      marginRight: theme.spacing(1),
     },
     ratingContainer: {
       display: 'flex',

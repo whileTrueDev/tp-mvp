@@ -24,8 +24,6 @@ export class CreatorCategoryService {
     const category = await this.creatorCategoryRepository.findOne({
       where: { categoryId },
     });
-    console.log(category);
-
     let result: any;
 
     if (platform === 'twitch') {

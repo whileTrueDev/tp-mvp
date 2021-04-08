@@ -30,7 +30,7 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
         </Link>
         <div className={classes.ratingContainer}>
           <StarRating score={d.averageRating} readOnly />
-          <Typography>{`주간 평점 ${d.averageRating ? d.averageRating.toFixed(2) : 0}`}</Typography>
+          <Typography noWrap>{`주간 평점 ${d.averageRating ? d.averageRating.toFixed(2) : 0}`}</Typography>
         </div>
       </div>
 
