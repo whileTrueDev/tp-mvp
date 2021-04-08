@@ -12,7 +12,9 @@ import dayjs from 'dayjs';
 import React, {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
-import { useTabItem, useTabs, useTopTenCard } from './style/TopTenCard.style';
+import {
+  useTabItem, useTabs, useTopTenCard, useHorizontalTabItemStyle, useHorizontalTabsStyle,
+} from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 
 type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer';
@@ -25,17 +27,19 @@ type MainTabColumns = {
 
 // 하위 카테고리 탭 목록
 const categoryTabColumns = [
-  { categoryId: 1, name: '버라이어티 BJ' },
-  { categoryId: 2, name: '종합게임엔터 BJ' },
-  { categoryId: 3, name: '보이는 라디오 BJ' },
-  { categoryId: 4, name: '롤 BJ' },
-  { categoryId: 5, name: '주식투자' },
+  { categoryId: 1, name: '버라이어티 BJ', icon: <SentimentVerySatisfiedIcon /> },
+  { categoryId: 2, name: '종합게임엔터 BJ', icon: <SentimentVerySatisfiedIcon /> },
+  { categoryId: 3, name: '보이는 라디오 BJ', icon: <SentimentVerySatisfiedIcon /> },
+  { categoryId: 4, name: '롤 BJ', icon: <SentimentVerySatisfiedIcon /> },
+  { categoryId: 5, name: '주식투자', icon: <SentimentVerySatisfiedIcon /> },
 ];
 function TopTenCard(): JSX.Element {
   // 스타일
   const classes = useTopTenCard();
-  const tabsStyles = useTabs();
-  const mainTabItemStyles = useTabItem();
+  const verticalTabsStyles = useTabs();
+  const verticalTabItemStyles = useTabItem();
+  const horizontalTabItemStyle = useHorizontalTabItemStyle();
+  const horizontalTabsStyle = useHorizontalTabsStyle();
 
   const tabRef = useRef<any>(null);
   // 탭목록
@@ -157,7 +161,7 @@ function TopTenCard(): JSX.Element {
           </header>
           <Tabs
             style={{ overflow: 'visible' }} // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
-            classes={tabsStyles}
+            classes={verticalTabsStyles}
             orientation="vertical"
             value={mainTabIndex}
             onChange={onMainTabChange}
@@ -166,7 +170,7 @@ function TopTenCard(): JSX.Element {
             {mainTabColumns.map((c) => (
               <Tab
                 disableRipple
-                classes={mainTabItemStyles}
+                classes={verticalTabItemStyles}
                 key={c.name}
                 icon={c.icon}
                 label={c.label}
@@ -176,11 +180,19 @@ function TopTenCard(): JSX.Element {
           </Tabs>
         </Grid>
         <Grid item xs={10}>
-          <Tabs value={categoryTabIndex} onChange={onCategoryTabChange}>
+          <Tabs
+            variant="scrollable"
+            scrollButtons="auto"
+            classes={horizontalTabsStyle}
+            value={categoryTabIndex}
+            onChange={onCategoryTabChange}
+          >
             {categoryTabColumns.map((col) => (
               <Tab
-                disableRipple
                 key={col.categoryId}
+                classes={horizontalTabItemStyle}
+                disableRipple
+                icon={col.icon}
                 label={col.name}
               />
             ))}

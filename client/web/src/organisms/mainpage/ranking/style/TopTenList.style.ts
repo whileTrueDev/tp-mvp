@@ -21,7 +21,8 @@ export const useTopTenList = makeStyles((theme: Theme) => {
   return createStyles({
     topTenListWrapper: {
       position: 'relative',
-      padding: theme.spacing(2, 1),
+      paddingTop: theme.spacing(2),
+      paddingLeft: theme.spacing(1),
     },
     header: {
       display: 'flex',
@@ -152,6 +153,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     },
     scrollTopButton: {
       position: 'absolute',
+      padding: 0,
       bottom: 0,
       left: 0,
     },
