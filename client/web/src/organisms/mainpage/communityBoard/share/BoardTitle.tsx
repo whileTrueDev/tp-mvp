@@ -23,7 +23,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
   },
 }));
-export default function BoardTitle({ platform, boardType }: {platform: 'afreeca'|'twitch', boardType?: boolean}): JSX.Element {
+
+const platformNames = {
+  afreeca: '아프리카',
+  twitch: '트위치',
+  free: '자유',
+};
+export interface BoardTitleProps {
+  platform: 'afreeca'|'twitch'|'free';
+  boardType?: boolean;
+}
+export default function BoardTitle({ platform, boardType }: BoardTitleProps): JSX.Element {
   const classes = useStyles();
   if (!platform) {
     return (
@@ -32,13 +42,18 @@ export default function BoardTitle({ platform, boardType }: {platform: 'afreeca'
   }
   return (
     <div className={classes.title}>
-      <img
-        className={classes.platformLogo}
-        src={`/images/logo/${platform}Logo.png`}
-        alt={`${platform}Logo`}
-      />
+      { (platform !== 'free')
+        ? (
+          <img
+            className={classes.platformLogo}
+            src={`/images/logo/${platform}Logo.png`}
+            alt={`${platform}Logo`}
+          />
+        )
+        : null}
+
       <Typography variant="h4" className={classes.titleText}>
-        {`${platform === 'afreeca' ? '아프리카' : '트위치'}
+        {`${platformNames[platform]}
           ${boardType ? '방송인' : '게시판'}`}
       </Typography>
     </div>

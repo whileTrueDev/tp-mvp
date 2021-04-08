@@ -88,11 +88,12 @@ const ErrorMessages = {
 const platformCode = {
   afreeca: 0,
   twitch: 1,
+  free: 2,
 };
 
 interface Params{
   postId?: string,
-  platform: 'twitch' | 'afreeca'
+  platform: 'twitch' | 'afreeca' | 'free'
 }
 
 /**
@@ -146,7 +147,7 @@ export default function CommunityPostWrite(): JSX.Element {
       content: '',
       nickname: (nicknameRef.current && nicknameRef.current.value) || '',
       password: (passwordRef.current && passwordRef.current.value) || '',
-      platform: platformCode[platform], // 아프리카=0,트위치1
+      platform: platformCode[platform], // 아프리카=0,트위치=1,자유게시판=2
       category: 0, // 일반글=0, 공지글=1
     };
 

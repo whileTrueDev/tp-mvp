@@ -15,7 +15,7 @@ import { useSnackbar } from 'notistack';
 // 타입정의
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
-import useBoardState, { FilterType } from '../../utils/hooks/useBoardListState';
+import useBoardState from '../../utils/hooks/useBoardListState';
 
 // 하위 컴포넌트
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
@@ -130,10 +130,6 @@ export default function CommunityPostView(): JSX.Element {
     changeFilter,
     handlePostsLoad,
   } = useBoardState({ page: initialPage });
-  // 게시판 전체글,공지글,추천글 필터 버튼 핸들러
-  const filterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
-    changeFilter(categoryFilter);
-  };
 
   // 개별글 내용 post.content를 표시할 element
   const viewerRef = useRef<any>();
@@ -369,10 +365,8 @@ export default function CommunityPostView(): JSX.Element {
           platform={platform}
           take={take}
           pagenationHandler={pagenationHandler}
-          searchText=""
-          searchType=""
           boardState={boardState}
-          postFilterHandler={filterHandler}
+          postFilterHandler={changeFilter}
           handlePostsLoad={handlePostsLoad}
           currentPostId={Number(postId)}
         />
