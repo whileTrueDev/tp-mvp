@@ -45,25 +45,6 @@ export class CreatorCommentController {
     return result;
   }
 
-  /**
-   * 방송인 평가댓글 목록 불러오기
-   * 최신순 GET /creatorComment/:creatorId?skip=0&order=date
-   * 추천순 GET /creatorComment/:creatorId?skip=0&order=recommend
-   * @param creatorId 
-   * @param skip 페이지네이션 위해 몇개 건너띄고 가져올건지
-   * @param order 'date' 인 경우 최신순으로, 'recommend'인 경우 추천많은 순으로
-   * @returns 
-   */
-  @Get('/:creatorId')
-  async getCreatorComments(
-    @Ip() userIp: string,
-    @Param('creatorId') creatorId: string,
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('order') order: 'recommend' | 'date',
-  ): Promise<ICreatorCommentsRes> {
-    return this.creatorCommentService.getCreatorComments(creatorId, skip, order);
-  }
-
   @Post('/password/:commentId')
   async checkPassword(
     @Param('commentId', ParseIntPipe) commentId: number,
@@ -157,5 +138,24 @@ export class CreatorCommentController {
     @Ip() userIp: string,
   ): Promise<boolean> {
     return this.creatorCommentLikeService.removeHate(commentId, userIp);
+  }
+
+  /**
+   * 방송인 평가댓글 목록 불러오기
+   * 최신순 GET /creatorComment/:creatorId?skip=0&order=date
+   * 추천순 GET /creatorComment/:creatorId?skip=0&order=recommend
+   * @param creatorId 
+   * @param skip 페이지네이션 위해 몇개 건너띄고 가져올건지
+   * @param order 'date' 인 경우 최신순으로, 'recommend'인 경우 추천많은 순으로
+   * @returns 
+   */
+     @Get('/:creatorId')
+  async getCreatorComments(
+       @Ip() userIp: string,
+       @Param('creatorId') creatorId: string,
+       @Query('skip', ParseIntPipe) skip: number,
+       @Query('order') order: 'recommend' | 'date',
+  ): Promise<ICreatorCommentsRes> {
+    return this.creatorCommentService.getCreatorComments(creatorId, skip, order);
   }
 }
