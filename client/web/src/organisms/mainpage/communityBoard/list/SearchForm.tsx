@@ -36,8 +36,7 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
-  const onClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault();
+  const doSearch = () => {
     if (inputRef.current && onSearch) {
       const selectField = value;
       const text = inputRef.current.value.trim();
@@ -49,6 +48,15 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
       inputRef.current.value = '';
     }
   };
+  const onClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    doSearch();
+  };
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      doSearch();
+    }
+  };
   return (
     <div className={className}>
       <div className={classes.root}>
@@ -56,19 +64,22 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
 
         <Paper className={classes.inputContainer}>
           <OutlinedInput
+            onKeyDown={onKeyDown}
             inputRef={inputRef}
-            endAdornment={(
-              <InputAdornment position="end">
-                <IconButton
-                  color="primary"
-                  className={classes.iconButton}
-                  aria-label="search"
-                  onClick={onClick}
-                >
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            )}
+            startAdornment={
+              (
+                <InputAdornment position="start">
+                  <IconButton
+                    color="primary"
+                    className={classes.iconButton}
+                    aria-label="search"
+                    onClick={onClick}
+                  >
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
           />
         </Paper>
       </div>

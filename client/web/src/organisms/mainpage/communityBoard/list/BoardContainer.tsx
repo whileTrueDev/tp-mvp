@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   makeStyles, createStyles, Theme, withStyles,
@@ -11,6 +11,7 @@ import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPoint
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FilterType } from '../../../../utils/hooks/useBoardListState';
 import PostList from './PostList';
+import SearchForm from './SearchForm';
 
 const filterButtonValues: Array<{key: FilterType, text: string, color: string}> = [
   { key: 'all', text: '전체글', color: 'primary' },
@@ -28,7 +29,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing(4),
   },
   controls: {
     display: 'flex',
@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   writeButton: {
     padding: theme.spacing(2, 0),
   },
+  writeButtonContainer: {
+    textAlign: 'right',
+  },
 }));
 
 const StyledToggleButton = withStyles((theme: Theme) => createStyles({
@@ -57,13 +60,11 @@ const StyledToggleButton = withStyles((theme: Theme) => createStyles({
 }))(ToggleButton);
 
 interface BoardProps{
-  platform: 'afreeca' | 'twitch',
+  platform: 'afreeca' | 'twitch' | 'free',
   take: number,
-  selectComponent?: JSX.Element,
+  // selectComponent?: JSX.Element,
   pagenationHandler: (event: React.ChangeEvent<unknown>, newPage: number) => void;
-  searchText: string;
-  searchType: string;
-  postFilterHandler: (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => void;
+  postFilterHandler: (categoryFilter: FilterType) => void;
   boardState: {
     posts: PostFound[];
     list: EditingPointListResType[];
@@ -79,9 +80,6 @@ interface BoardProps{
 export default function BoardContainer({
   platform,
   take,
-  selectComponent,
-  searchText,
-  searchType,
   pagenationHandler,
   postFilterHandler,
   handlePostsLoad,
@@ -94,6 +92,8 @@ export default function BoardContainer({
   const {
     posts, page, totalRows, filter,
   } = boardState;
+  const [searchText, setSearchText] = useState<string>('');
+  const [searchType, setSearchType] = useState<string>('');
   const url = useMemo(() => `/community/posts?platform=${platform}&category=${filter}&page=${page}&take=${take}`, [filter, platform, page, take]);
   const searchUrl = useMemo(() => `${url}&qtext=${searchText}&qtype=${searchType}`, [url, searchText, searchType]);
   const paginationCount = useMemo(() => Math.ceil(totalRows / take), [totalRows, take]);
@@ -129,6 +129,23 @@ export default function BoardContainer({
     });
   };
 
+  const onFilterChange = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
+    if (categoryFilter !== null) {
+      postFilterHandler(categoryFilter);
+    }
+    setSearchText('');
+    setSearchType('');
+  };
+
+  const onSearch = (field: any, text: string) => {
+    if (field === '제목') {
+      setSearchType('title');
+    } else if (field === '작성자') {
+      setSearchType('nickname');
+    }
+    setSearchText(text);
+  };
+
   return (
     <div className={classes.root}>
 
@@ -137,7 +154,7 @@ export default function BoardContainer({
       <div className={classes.controls}>
         <ToggleButtonGroup
           value={filter}
-          onChange={postFilterHandler}
+          onChange={onFilterChange}
           exclusive
         >
           {filterButtonValues.map((btn) => (
@@ -151,7 +168,10 @@ export default function BoardContainer({
         </ToggleButtonGroup>
 
         <div className="right">
-          {selectComponent}
+          <SearchForm
+            onSearch={onSearch}
+            selectOptions={['제목', '작성자']}
+          />
           <Button
             variant="contained"
             color="primary"
@@ -178,6 +198,17 @@ export default function BoardContainer({
         count={paginationCount}
         onChange={pagenationHandler}
       />
+      <div className={classes.writeButtonContainer}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={moveToWritePage}
+          startIcon={<CreateIcon />}
+        >
+          글쓰기
+        </Button>
+      </div>
+
     </div>
   );
 }

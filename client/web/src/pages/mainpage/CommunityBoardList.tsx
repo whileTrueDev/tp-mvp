@@ -1,28 +1,14 @@
 import {
-  Grid, IconButton, InputLabel, Typography,
+  Container,
+  Grid, Tab, Tabs,
 } from '@material-ui/core';
-import React, {
-  useCallback, useMemo, useRef, useState,
-} from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import CancelIcon from '@material-ui/icons/Cancel';
+import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
-import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
-import SelectField from '../../atoms/SelectField';
-import SearchForm from '../../organisms/mainpage/communityBoard/list/SearchForm';
-import useBoardState, { FilterType } from '../../utils/hooks/useBoardListState';
+import useBoardState from '../../utils/hooks/useBoardListState';
 import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
-
-const scrollToContainerTop = (ref: React.MutableRefObject<any>) => {
-  if (ref.current) {
-    window.scrollTo({
-      left: 0,
-      top: ref.current.offsetTop - 72, // 헤더높이 72px제외
-      behavior: 'smooth',
-    });
-  }
-};
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   centerWrapper: {
@@ -39,76 +25,133 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   hide: {
     visibility: 'hidden',
   },
+  boardListSection: {
+    backgroundColor: theme.palette.primary.main,
+  },
+  maxWidthWrapper: {
+    padding: theme.spacing(4, 6),
+    minWidth: theme.breakpoints.values.md,
+  },
+  smallLogo: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+  },
 }));
+
+const useTabs = makeStyles({
+  flexContainer: {
+    justifyContent: 'flex-end',
+  },
+  indicator: {
+    display: 'none',
+  },
+});
+
+const useTabItem = makeStyles((theme: Theme) => createStyles({
+  root: {
+    minWidth: theme.spacing(30),
+    minHeight: 'auto',
+    borderTopRightRadius: theme.spacing(1),
+    borderTopLeftRadius: theme.spacing(1),
+    [theme.breakpoints.down('sm')]: {
+      minWidth: theme.spacing(20),
+    },
+  },
+  wrapper: {
+    flexDirection: 'row',
+    color: theme.palette.background.paper,
+    fontSize: theme.typography.h6.fontSize,
+    '& svg, & img': {
+      display: 'none',
+    },
+  },
+  selected: {
+    '&$root': {
+      backgroundColor: theme.palette.background.paper,
+    },
+    '& $wrapper': {
+      color: theme.palette.text.primary,
+      '& svg, & img': {
+        display: 'block',
+      },
+    },
+  },
+}));
+
+const useTabPanel = makeStyles((theme: Theme) => createStyles({
+  tabPanel: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(10),
+  },
+}));
+interface TabPanelProps {
+  children?: React.ReactNode | JSX.Element | JSX.Element[];
+  index: any;
+  value: any;
+}
+function TabPanel(props: TabPanelProps) {
+  const {
+    children, value, index, ...other
+  } = props;
+  const classes = useTabPanel();
+
+  return (
+    <div
+      className={classes.tabPanel}
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <>
+          { children }
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
+  const tabsClasses = useTabs();
+  const tabItemClasses = useTabItem();
+  // 탭 인덱스
+  // 0번째 탭 : 자유게시판
+  // 1번째 탭 : 아프리카 게시판
+  // 2번째 탭 : 트위치 게시판
+  const [value, setValue] = React.useState<number>(0);
+  const handleChange = (event: React.ChangeEvent<Record<string, unknown>>, newValue: number) => {
+    setValue(newValue);
+  };
 
   const select = useRef<number[]>([10, 20]); // 한 페이지당 보여질 글 개수 select 옵션
-  const [take, setTake] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
-  // 검색어 state
-  const [searchState, setSearchState] = useState<{text: string, type: string}>({
-    text: '',
-    type: '',
-  });
+  const [take] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
+
+  const {
+    boardState: freeBoard,
+    pagenationHandler: freePagenationHandler,
+    handlePostsLoad: freePostLoadHandler,
+    changeFilter: changeFreeFilter,
+  } = useBoardState({}); // 자유게시판 상태, 핸들러
   const {
     boardState: afreecaBoard,
     pagenationHandler: afreecaPagenationHandler,
     handlePostsLoad: afreecaPostLoadHandler,
     changeFilter: changeAfreecaFilter,
-    initializeFilter: initializeAfreecaFilter,
   } = useBoardState({}); // 아프리카 게시판 상태, 핸들러
   const {
     boardState: twitchBoard,
     pagenationHandler: twitchPagenationHandler,
     handlePostsLoad: twitchPostLoadHandler,
     changeFilter: changeTwitchFilter,
-    initializeFilter: initializeTwitchFilter,
   } = useBoardState({});// 트위치 게시판 상태, 핸들러
 
-  // 검색버튼 눌렀을 때 스크롤 될 엘리먼트 저장
-  const scrollRef = useRef<any>();
-
-  const initializeSearchState = useCallback(() => {
-    setSearchState({ type: '', text: '' });
-  }, []);
-
-  const onSearch = useCallback((field: any, text: string) => {
-    let searchColumn = '';
-    if (field === '제목') {
-      searchColumn = 'title';
-    } else if (field === '작성자') {
-      searchColumn = 'nickname';
-    }
-    setSearchState({ text, type: searchColumn });
-    initializeAfreecaFilter();
-    initializeTwitchFilter();
-    scrollToContainerTop(scrollRef);
-  }, [initializeAfreecaFilter, initializeTwitchFilter]);
-
-  const afreecaBoardFilterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
-    initializeSearchState();
-    changeAfreecaFilter(categoryFilter);
-  };
-
-  const twitchBoardFilterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
-    initializeSearchState();
-    changeTwitchFilter(categoryFilter);
-  };
-
   // memo 적용한 컴포넌트들, dependencies에 포함된 값이 바뀔때만 리렌더링 되도록 한다
-  const SelectComponent = useMemo(() => (
-    <>
-      <InputLabel id="post-count-select-label">글개수</InputLabel>
-      <SelectField
-        labelId="post-count-select-label"
-        handleCallback={setTake}
-        value={take}
-        select={select.current}
-      />
-    </>
-
-  ), [take]);
+  const freeTitleComponent = useMemo(() => (
+    <BoardTitle platform="free" />
+  ), []);
 
   const afreecaTitleComponent = useMemo(() => (
     <BoardTitle platform="afreeca" />
@@ -117,74 +160,96 @@ export default function CommunityBoardList(): JSX.Element {
     <BoardTitle platform="twitch" />
   ), []);
 
+  const FreeBoard = useMemo(() => (
+    <BoardContainer
+      titleComponent={freeTitleComponent}
+      platform="free"
+      take={take}
+      pagenationHandler={freePagenationHandler}
+      boardState={freeBoard}
+      postFilterHandler={changeFreeFilter}
+      handlePostsLoad={freePostLoadHandler}
+    />
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), [take, freeBoard]);
   const AfreecaBoard = useMemo(() => (
     <BoardContainer
       titleComponent={afreecaTitleComponent}
       platform="afreeca"
       take={take}
-      selectComponent={SelectComponent}
       pagenationHandler={afreecaPagenationHandler}
-      searchText={searchState.text}
-      searchType={searchState.type}
       boardState={afreecaBoard}
-      postFilterHandler={afreecaBoardFilterHandler}
+      postFilterHandler={changeAfreecaFilter}
       handlePostsLoad={afreecaPostLoadHandler}
     />
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [take, searchState, afreecaBoard]);
+  ), [take, afreecaBoard]);
 
   const TwitchBoard = useMemo(() => (
     <BoardContainer
       platform="twitch"
       titleComponent={twitchTitleComponent}
       take={take}
-      selectComponent={SelectComponent}
       pagenationHandler={twitchPagenationHandler}
-      searchText={searchState.text}
-      searchType={searchState.type}
       boardState={twitchBoard}
-      postFilterHandler={twitchBoardFilterHandler}
+      postFilterHandler={changeTwitchFilter}
       handlePostsLoad={twitchPostLoadHandler}
     />
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [take, searchState, twitchBoard]);
+  ), [take, twitchBoard]);
 
   return (
     <CommunityBoardCommonLayout>
-      <ProductHero title="자유게시판" content="자유게시판입니다" />
-
-      <div
-        className={searchState.text ? classes.centerWrapper : classes.hide}
-        ref={scrollRef}
-      >
-        <Typography>{`검색한 내용 : ${searchState.text}`}</Typography>
-        <IconButton onClick={initializeSearchState}>
-          <CancelIcon />
-        </IconButton>
-      </div>
-
-      <div className={classes.centerWrapper}>
-        <Grid
-          container
-          justify="space-around"
-          alignItems="flex-start"
-        >
-          <Grid item className={classes.boardWrapper}>
-            {AfreecaBoard}
-          </Grid>
-          <Grid item className={classes.boardWrapper}>
-            {TwitchBoard}
+      <div className={classes.boardListSection}>
+        <Container maxWidth="xl" className={classes.maxWidthWrapper}>
+          <Grid container spacing={1}>
+            <Grid item xs={6}>
+              <div>
+                아프리카 핫시청자 반응
+              </div>
+            </Grid>
+            <Grid item xs={6}>
+              <div>
+                트위치 핫시청자 반응
+              </div>
+            </Grid>
           </Grid>
 
-        </Grid>
+          <div>
+            <Tabs
+              classes={tabsClasses}
+              value={value}
+              onChange={handleChange}
+            >
+              <Tab
+                classes={tabItemClasses}
+                label="자유게시판"
+                icon={<SentimentSatisfiedAltIcon className={classes.smallLogo} />}
+              />
+              <Tab
+                classes={tabItemClasses}
+                label="아프리카 게시판"
+                icon={<img className={classes.smallLogo} alt="아프리카 로고" src="images/logo/afreecaLogo.png" />}
+              />
+              <Tab
+                classes={tabItemClasses}
+                label="트위치 게시판"
+                icon={<img className={classes.smallLogo} alt="트위치 로고" src="images/logo/twitchLogo.png" />}
+              />
+            </Tabs>
+            <TabPanel value={value} index={0}>
+              {FreeBoard}
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              {AfreecaBoard}
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              {TwitchBoard}
+            </TabPanel>
+          </div>
+        </Container>
 
       </div>
-
-      <SearchForm
-        className={classes.centerWrapper}
-        onSearch={onSearch}
-        selectOptions={['제목', '작성자']}
-      />
     </CommunityBoardCommonLayout>
 
   );
