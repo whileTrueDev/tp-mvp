@@ -30,6 +30,10 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       color: theme.palette.text.secondary,
       whiteSpace: 'nowrap',
     },
+    informationText: {
+      padding: theme.spacing(4),
+      textAlign: 'center',
+    },
     listItems: {
       padding: theme.spacing(2, 0),
     },

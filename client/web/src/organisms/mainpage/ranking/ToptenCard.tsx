@@ -23,6 +23,7 @@ type MainTabColumns = {
   className?: string
 }
 
+// 하위 카테고리 탭 목록
 const categoryTabColumns = [
   { categoryId: 1, name: '버라이어티 BJ' },
   { categoryId: 2, name: '종합게임엔터 BJ' },
@@ -52,33 +53,35 @@ function TopTenCard(): JSX.Element {
   // 탭 별 상위 10인 요청
   const [{ data, loading, error }, refetch] = useAxios<RankingDataType>({
     url: '/rankings/top-ten',
-    params: { column: mainTabColumns[0].name, skip: 0 },
+    params: {
+      column: mainTabColumns[0].name,
+      skip: 0,
+      categoryId: categoryTabColumns[0].categoryId,
+    },
   });
     // 최근 분석날짜 요청
   const [{ data: recentAnalysisDate },
   ] = useAxios<Date>('/rankings/recent-analysis-date');
 
   // states
-  // **점수, 시청자수 순위 선택 state
-  const [mainTabIndex, setMainTabIndex] = useState<number>(0); // 선택된 탭의 인덱스
-  const [currentMainTab, setCurrentMainTab] = useState<MainTabName>('admire'); // 현재 탭 이름 admire, smile ... 
-  // 하위카테고리 탭
+  // 메인 탭에서 선택된 탭의 인덱스
+  const [mainTabIndex, setMainTabIndex] = useState<number>(0);
+  // 하위카테고리 탭에서 선택된 탭의 인덱스
   const [categoryTabIndex, setCategoryTabIndex] = useState<number>(0);
-
-  // -> topTenContainer에게 넘겨주기 위함, 해당 prop은 Score글자를 붙여서 topTenListItem 으로 전달되고, 또 하위 컴포넌트로 전달됨... 
+  // 랭킹목록 순위, 이름, 다음에 나오는 '주간 점수 그래프 | 주간 시청자수 그래프' 부분
   const [weeklyGraphLabel, setWeeklyGraphLabel] = useState<string>('주간 점수 그래프');
-
   // 보여줄 데이터 상태
   const [dataToDisplay, setDataToDisplay] = useState<Omit<RankingDataType, 'totalDataCount'>>({
     rankingData: [],
     weeklyTrends: {},
   });
 
-  const loadData = useCallback((column: string) => {
+  const loadData = useCallback((column: string, categoryId: number) => {
     refetch({
       params: {
         column,
         skip: 0,
+        categoryId,
       },
     }).then((res) => {
       setDataToDisplay(res.data);
@@ -90,24 +93,31 @@ function TopTenCard(): JSX.Element {
   const onMainTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setMainTabIndex(index);
     const currentTabName = mainTabColumns[index].name;
-    setCurrentMainTab(currentTabName);
-    loadData(currentTabName);
+    const currentCategoryId = categoryTabColumns[categoryTabIndex].categoryId;
+
+    loadData(currentTabName, currentCategoryId);
+
     if (currentTabName === 'viewer') {
       setWeeklyGraphLabel('주간 시청자수 추이');
     } else {
       setWeeklyGraphLabel('주간 점수 그래프');
     }
-  }, [mainTabColumns, loadData]);
+  }, [mainTabColumns, loadData, categoryTabIndex]);
 
   const onCategoryTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setCategoryTabIndex(index);
-  }, []);
+    const currentTabName = mainTabColumns[mainTabIndex].name;
+    const currentCategoryId = categoryTabColumns[index].categoryId;
+
+    loadData(currentTabName, currentCategoryId);
+  }, [loadData, mainTabColumns, mainTabIndex]);
 
   const loadMoreData = useCallback(() => {
     refetch({
       params: {
-        column: currentMainTab,
+        column: mainTabColumns[mainTabIndex].name,
         skip: dataToDisplay.rankingData.length,
+        categoryId: categoryTabColumns[categoryTabIndex].categoryId,
       },
     }).then((res) => {
       const newData = res.data;
@@ -118,7 +128,7 @@ function TopTenCard(): JSX.Element {
     }).catch((e) => {
       console.error(e);
     });
-  }, [currentMainTab, dataToDisplay.rankingData.length, refetch]);
+  }, [categoryTabIndex, dataToDisplay.rankingData.length, mainTabColumns, mainTabIndex, refetch]);
 
   useEffect(() => {
     // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
@@ -126,7 +136,7 @@ function TopTenCard(): JSX.Element {
       tabRef.current.querySelector('.MuiTabs-scroller').setAttribute('style', 'overflow: visible;');
     }
     // 초기 데이터 불러옴
-    loadData(mainTabColumns[mainTabIndex].name);
+    loadData(mainTabColumns[mainTabIndex].name, categoryTabColumns[categoryTabIndex].categoryId);
   // 마운트 이후 한번만 실행될 훅
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -177,8 +187,9 @@ function TopTenCard(): JSX.Element {
           </Tabs>
           <TopTenListContainer
             data={dataToDisplay}
-            currentTab={currentMainTab}
+            currentTab={mainTabColumns[mainTabIndex].name}
             loading={loading}
+            error={error}
             weeklyGraphLabel={weeklyGraphLabel}
           />
           <div className={classes.loadMoreButtonContainer}>
