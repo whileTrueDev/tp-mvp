@@ -2,7 +2,9 @@ import {
   Container,
   Grid, Tab, Tabs,
 } from '@material-ui/core';
-import React, { useMemo, useRef, useState } from 'react';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 import useAxios from 'axios-hooks';
@@ -123,14 +125,6 @@ export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
   const tabsClasses = useTabs();
   const tabItemClasses = useTabItem();
-  // 탭 인덱스
-  // 0번째 탭 : 자유게시판
-  // 1번째 탭 : 아프리카 게시판
-  // 2번째 탭 : 트위치 게시판
-  const [value, setValue] = React.useState<number>(0);
-  const handleChange = (event: React.ChangeEvent<Record<string, unknown>>, newValue: number) => {
-    setValue(newValue);
-  };
 
   // 아프리카 핫시청자 반응(추천글)
   const [{
@@ -168,20 +162,45 @@ export default function CommunityBoardList(): JSX.Element {
     boardState: freeBoard,
     pagenationHandler: freePagenationHandler,
     handlePostsLoad: freePostLoadHandler,
+    filter: freeboardFilter,
     changeFilter: changeFreeFilter,
   } = useBoardState({}); // 자유게시판 상태, 핸들러
   const {
     boardState: afreecaBoard,
     pagenationHandler: afreecaPagenationHandler,
     handlePostsLoad: afreecaPostLoadHandler,
+    filter: afreecaboardFilter,
     changeFilter: changeAfreecaFilter,
   } = useBoardState({}); // 아프리카 게시판 상태, 핸들러
   const {
     boardState: twitchBoard,
     pagenationHandler: twitchPagenationHandler,
     handlePostsLoad: twitchPostLoadHandler,
+    filter: twitchboardFilter,
     changeFilter: changeTwitchFilter,
   } = useBoardState({});// 트위치 게시판 상태, 핸들러
+
+  // 탭 인덱스
+  // 0번째 탭 : 자유게시판
+  // 1번째 탭 : 아프리카 게시판
+  // 2번째 탭 : 트위치 게시판
+  const [value, setValue] = React.useState<number>(0);
+  const handleChange = (event: React.ChangeEvent<Record<string, unknown>>, newValue: number) => {
+    setValue(newValue);
+    if (newValue === 0 && freeboardFilter !== 'all') { // 자유게시판
+      changeFreeFilter('all');
+    } else if (newValue === 1 && afreecaboardFilter !== 'all') { // 아프리카 게시판
+      changeAfreecaFilter('all');
+    } else if (newValue === 2 && twitchboardFilter !== 'all') { // 트위치 게시판
+      changeTwitchFilter('all');
+    }
+  };
+
+  useEffect(() => {
+    if (window.scrollY !== 0) {
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   // memo 적용한 컴포넌트들, dependencies에 포함된 값이 바뀔때만 리렌더링 되도록 한다
   const freeTitleComponent = useMemo(() => (
@@ -233,6 +252,16 @@ export default function CommunityBoardList(): JSX.Element {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ), [take, twitchBoard]);
 
+  const moveToAfreecaHotPostList = () => {
+    setValue(1);
+    changeAfreecaFilter('recommended');
+  };
+
+  const moveToTwitchHotPostList = () => {
+    setValue(2);
+    changeTwitchFilter('recommended');
+  };
+
   return (
     <CommunityBoardCommonLayout>
       <div className={classes.boardListSection}>
@@ -244,6 +273,7 @@ export default function CommunityBoardList(): JSX.Element {
                 posts={afreecaHotPosts ? afreecaHotPosts.posts : []}
                 loading={afreecaHotPostsLoading}
                 error={afreecaHotPostsError}
+                buttonHandler={moveToAfreecaHotPostList}
               />
             </Grid>
             <Grid item xs={6}>
@@ -252,6 +282,7 @@ export default function CommunityBoardList(): JSX.Element {
                 posts={twitchHotPosts ? twitchHotPosts.posts : []}
                 loading={twitchHotPostsLoading}
                 error={twitchHotPostsError}
+                buttonHandler={moveToTwitchHotPostList}
               />
             </Grid>
           </Grid>

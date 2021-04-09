@@ -109,18 +109,18 @@ export default function BoardContainer({
       getSearchList().then((res) => {
         handlePostsLoad(res.data);
       }).catch((e) => {
-        console.error(e);
+        console.error(e.response, e);
       });
     } else {
       getPostList().then((res) => {
         handlePostsLoad(res.data);
       }).catch((e) => {
-        console.error(e);
+        console.error(e.response, e);
       });
     }
   // 아래 변수가 바뀌는 경우에만 실행되는 이펙트
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, platform, page, take, hasSearchText]);
+  }, [filter, page, take, hasSearchText]);
 
   const moveToWritePage = (event: React.MouseEvent<HTMLElement>) => {
     history.push({

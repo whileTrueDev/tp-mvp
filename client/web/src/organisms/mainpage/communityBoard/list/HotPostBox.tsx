@@ -2,8 +2,11 @@ import React from 'react';
 import { PostFound } from '@truepoint/shared/res/FindPostResType.interface';
 import { Button, Divider, Typography } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import HotPostItem from './HotPostItem';
+import { getBoardPlatformNameByCode } from './PostList';
+import axios from '../../../../utils/axios';
 
 const useHotPostBoxStyle = makeStyles((theme: Theme) => {
   const decorationColor = '#ccae79';
@@ -16,7 +19,7 @@ const useHotPostBoxStyle = makeStyles((theme: Theme) => {
       '&:before': {
         content: "' '",
         display: 'block',
-        width: '15%',
+        width: '20%',
         maxWidth: theme.spacing(15),
         minWidth: theme.spacing(10),
         height: '10%',
@@ -26,13 +29,13 @@ const useHotPostBoxStyle = makeStyles((theme: Theme) => {
         left: 0,
         top: 0,
         transformOrigin: 'left top',
-        transform: 'rotate(-30deg) translate(-35%,25%)',
+        transform: 'rotate(-30deg) translate(-40%,40%)',
       },
       '&:after': {
         content: "' '",
         display: 'block',
-        width: '15%',
-        maxWidth: theme.spacing(20),
+        width: '20%',
+        maxWidth: theme.spacing(15),
         minWidth: theme.spacing(10),
         height: '10%',
         backgroundColor: decorationColor,
@@ -41,7 +44,7 @@ const useHotPostBoxStyle = makeStyles((theme: Theme) => {
         right: 0,
         bottom: 0,
         transformOrigin: 'right bottom',
-        transform: 'rotate(-30deg) translate(35%,-25%)',
+        transform: 'rotate(-30deg) translate(40%,-40%)',
       },
     },
     listContainer: {
@@ -62,16 +65,28 @@ export interface HotPostBoxProps {
  posts: PostFound[],
  error: any,
  loading: boolean,
- platform: 'twitch' | 'afreeca'
+ platform: 'twitch' | 'afreeca',
+ buttonHandler?: () => void
 }
 
 export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
   const classes = useHotPostBoxStyle();
+  const history = useHistory();
   const {
-    posts, error, loading, platform,
+    posts, error, loading, platform, buttonHandler,
   } = props;
 
   const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="32" height="32" />;
+  const moveToPost = (postId: number | undefined, platformCode: number | undefined) => () => {
+    const postPlatform = getBoardPlatformNameByCode(platformCode);
+    axios.post(`/community/posts/${postId}/hit`).then(() => {
+      history.push({
+        pathname: `/community-board/${postPlatform}/view/${postId}`,
+      });
+    }).catch((e) => {
+      console.error(e);
+    });
+  };
 
   return (
     <section className={classes.hotPostBox}>
@@ -81,13 +96,20 @@ export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
           <Typography component="span" color="primary">핫</Typography>
           <Typography component="span"> 시청자 반응</Typography>
         </div>
-        <Button color="primary">+더보기</Button>
+        <Button color="primary" onClick={buttonHandler}>+더보기</Button>
       </div>
       <div className={classes.listContainer}>
         {error && <Typography>데이터를 불러올 수 없습니다..</Typography>}
         {loading && <CenterLoading />}
         {!loading && !error && posts
-        && posts.map((post) => <HotPostItem key={post.postId} icon={icon} post={post} />)}
+        && posts.map((post) => (
+          <HotPostItem
+            key={post.postId}
+            icon={icon}
+            post={post}
+            onClick={moveToPost(post.postId, post.platform)}
+          />
+        ))}
       </div>
     </section>
   );
