@@ -123,7 +123,7 @@ function getDateDisplay(createDate: Date|undefined): string {
   return dateDisplay;
 }
 
-function getBoardPlatformNameByCode(platform: number | undefined): string {
+export function getBoardPlatformNameByCode(platform: number | undefined): string {
   switch (platform) {
     case 0:
       return 'afreeca';

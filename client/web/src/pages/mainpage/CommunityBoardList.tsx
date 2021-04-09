@@ -5,10 +5,13 @@ import {
 import React, { useMemo, useRef, useState } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
+import useAxios from 'axios-hooks';
+import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
 import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
 import useBoardState from '../../utils/hooks/useBoardListState';
 import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
+import HotPostBox from '../../organisms/mainpage/communityBoard/list/HotPostBox';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   centerWrapper: {
@@ -35,6 +38,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   smallLogo: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+  },
+  hotPostSection: {
+    marginBottom: theme.spacing(6),
   },
 }));
 
@@ -126,6 +132,35 @@ export default function CommunityBoardList(): JSX.Element {
     setValue(newValue);
   };
 
+  // 아프리카 핫시청자 반응(추천글)
+  const [{
+    data: afreecaHotPosts,
+    loading: afreecaHotPostsLoading,
+    error: afreecaHotPostsError,
+  }] = useAxios<FindPostResType>({
+    url: '/community/posts',
+    params: {
+      platform: 'afreeca',
+      page: 0,
+      take: 5,
+      category: 'recommended',
+    },
+  });
+  // 트위치 핫시청자 반응(추천글)
+  const [{
+    data: twitchHotPosts,
+    loading: twitchHotPostsLoading,
+    error: twitchHotPostsError,
+  }] = useAxios<FindPostResType>({
+    url: '/community/posts',
+    params: {
+      platform: 'twitch',
+      page: 0,
+      take: 5,
+      category: 'recommended',
+    },
+  });
+
   const select = useRef<number[]>([10, 20]); // 한 페이지당 보여질 글 개수 select 옵션
   const [take] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
 
@@ -202,16 +237,22 @@ export default function CommunityBoardList(): JSX.Element {
     <CommunityBoardCommonLayout>
       <div className={classes.boardListSection}>
         <Container maxWidth="xl" className={classes.maxWidthWrapper}>
-          <Grid container spacing={1}>
+          <Grid container spacing={10} className={classes.hotPostSection}>
             <Grid item xs={6}>
-              <div>
-                아프리카 핫시청자 반응
-              </div>
+              <HotPostBox
+                platform="afreeca"
+                posts={afreecaHotPosts ? afreecaHotPosts.posts : []}
+                loading={afreecaHotPostsLoading}
+                error={afreecaHotPostsError}
+              />
             </Grid>
             <Grid item xs={6}>
-              <div>
-                트위치 핫시청자 반응
-              </div>
+              <HotPostBox
+                platform="twitch"
+                posts={twitchHotPosts ? twitchHotPosts.posts : []}
+                loading={twitchHotPostsLoading}
+                error={twitchHotPostsError}
+              />
             </Grid>
           </Grid>
 
