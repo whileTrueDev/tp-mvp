@@ -4,25 +4,41 @@ import {
 } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  title: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    '&>*': {
-      marginRight: theme.spacing(1),
+const useStyles = makeStyles((theme: Theme) => {
+  const defaultIconBackgroundSize = theme.spacing(10);
+  return createStyles({
+    title: {
+      position: 'relative',
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-end',
+      '&>*': {
+        marginRight: theme.spacing(1),
+      },
+      padding: theme.spacing(2, 0),
     },
-    padding: theme.spacing(2, 0),
-  },
-  platformLogo: {
-    width: '100%',
-    maxWidth: '50px',
-    minHeight: '100%',
-  },
-  titleText: {
+    platformLogo: {
+      width: '100%',
+      maxWidth: '50px',
+      minHeight: '100%',
+    },
+    titleText: {
+      zIndex: 1,
+    },
+    subTitleText: {
 
-  },
-}));
+    },
+    bg: {
+      position: 'absolute',
+      left: defaultIconBackgroundSize * (-0.5),
+      top: 0,
+      width: defaultIconBackgroundSize,
+      height: defaultIconBackgroundSize,
+      backgroundSize: `${defaultIconBackgroundSize}px ${defaultIconBackgroundSize}px`,
+      opacity: 0.3,
+    },
+  });
+});
 
 const platformNames = {
   afreeca: '아프리카',
@@ -32,8 +48,13 @@ const platformNames = {
 export interface BoardTitleProps {
   platform: 'afreeca'|'twitch'|'free';
   boardType?: boolean;
+  imageSrc?: string;
+  title?: string;
+  subTitle?: string;
 }
-export default function BoardTitle({ platform, boardType }: BoardTitleProps): JSX.Element {
+export default function BoardTitle({
+  platform, boardType, imageSrc, title, subTitle,
+}: BoardTitleProps): JSX.Element {
   const classes = useStyles();
   if (!platform) {
     return (
@@ -42,20 +63,30 @@ export default function BoardTitle({ platform, boardType }: BoardTitleProps): JS
   }
   return (
     <div className={classes.title}>
-      { (platform !== 'free')
-        ? (
+      {boardType ? (
+        <>
           <img
             className={classes.platformLogo}
             src={`/images/logo/${platform}Logo.png`}
             alt={`${platform}Logo`}
           />
-        )
-        : null}
-
-      <Typography variant="h4" className={classes.titleText}>
-        {`${platformNames[platform]}
+          <Typography variant="h4" className={classes.titleText}>
+            {`${platformNames[platform]}
           ${boardType ? '방송인' : '게시판'}`}
-      </Typography>
+          </Typography>
+        </>
+      ) : (
+        <>
+          {imageSrc && <div className={classes.bg} style={{ backgroundImage: `url(${imageSrc})` }} />}
+          <Typography variant="h2" className={classes.titleText}>
+            {title}
+          </Typography>
+          <Typography variant="subtitle1" className={classes.subTitleText}>
+            {subTitle}
+          </Typography>
+        </>
+      )}
+
     </div>
   );
 }

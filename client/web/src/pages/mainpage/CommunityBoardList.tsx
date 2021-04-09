@@ -121,6 +121,21 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+const titleContents = {
+  free: {
+    title: '자유 게시판',
+    subTitle: '인터넷 방송과 관련하여 자유롭게 소통하는 곳입니다',
+  },
+  afreeca: {
+    title: '아프리카 게시판',
+    subTitle: '인터넷 방송과 관련하여 자유롭게 소통하는 곳입니다',
+  },
+  twitch: {
+    title: '트위치 게시판',
+    subTitle: '인터넷 방송과 관련하여 자유롭게 소통하는 곳입니다',
+  },
+};
+
 export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
   const tabsClasses = useTabs();
@@ -202,16 +217,36 @@ export default function CommunityBoardList(): JSX.Element {
     }
   }, []);
 
+  const icons = {
+    free: <SentimentSatisfiedAltIcon className={classes.smallLogo} />,
+    afreeca: <img className={classes.smallLogo} alt="아프리카 로고" src="images/logo/afreecaLogo.png" />,
+    twitch: <img className={classes.smallLogo} alt="트위치 로고" src="images/logo/twitchLogo.png" />,
+  };
+
   // memo 적용한 컴포넌트들, dependencies에 포함된 값이 바뀔때만 리렌더링 되도록 한다
   const freeTitleComponent = useMemo(() => (
-    <BoardTitle platform="free" />
+    <BoardTitle
+      platform="free"
+      title={titleContents.free.title}
+      subTitle={titleContents.free.subTitle}
+    />
   ), []);
 
   const afreecaTitleComponent = useMemo(() => (
-    <BoardTitle platform="afreeca" />
+    <BoardTitle
+      platform="afreeca"
+      imageSrc="images/logo/afreecaLogo.png"
+      title={titleContents.afreeca.title}
+      subTitle={titleContents.afreeca.subTitle}
+    />
   ), []);
   const twitchTitleComponent = useMemo(() => (
-    <BoardTitle platform="twitch" />
+    <BoardTitle
+      platform="twitch"
+      imageSrc="images/logo/twitchLogo.png"
+      title={titleContents.twitch.title}
+      subTitle={titleContents.twitch.subTitle}
+    />
   ), []);
 
   const FreeBoard = useMemo(() => (
@@ -296,17 +331,17 @@ export default function CommunityBoardList(): JSX.Element {
               <Tab
                 classes={tabItemClasses}
                 label="자유게시판"
-                icon={<SentimentSatisfiedAltIcon className={classes.smallLogo} />}
+                icon={icons.free}
               />
               <Tab
                 classes={tabItemClasses}
                 label="아프리카 게시판"
-                icon={<img className={classes.smallLogo} alt="아프리카 로고" src="images/logo/afreecaLogo.png" />}
+                icon={icons.afreeca}
               />
               <Tab
                 classes={tabItemClasses}
                 label="트위치 게시판"
-                icon={<img className={classes.smallLogo} alt="트위치 로고" src="images/logo/twitchLogo.png" />}
+                icon={icons.twitch}
               />
             </Tabs>
             <TabPanel value={value} index={0}>

@@ -13,10 +13,10 @@ import { FilterType } from '../../../../utils/hooks/useBoardListState';
 import PostList from './PostList';
 import SearchForm from './SearchForm';
 
-const filterButtonValues: Array<{key: FilterType, text: string, color: string}> = [
-  { key: 'all', text: '전체글', color: 'primary' },
-  { key: 'notice', text: '공지글', color: 'default' },
-  { key: 'recommended', text: '추천글', color: 'secondary' },
+const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
+  { key: 'all', text: '전체글', class: 'all' },
+  { key: 'notice', text: '공지글', class: 'notice' },
+  { key: 'recommended', text: '추천글', class: 'recommended' },
 ];
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -52,17 +52,41 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const StyledToggleButton = withStyles((theme: Theme) => createStyles({
   root: {
+    minWidth: theme.spacing(18),
+    [theme.breakpoints.down('sm')]: {
+      minWidth: theme.spacing(9),
+    },
+    marginRight: theme.spacing(2),
     '&.Mui-selected': {
+      border: 'none',
       color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.main,
+    },
+    '&.all': {
+      backgroundColor: theme.palette.background.paper,
+    },
+    '&.notice': {
+      backgroundColor: theme.palette.action.disabled,
+    },
+    '&.recommended': {
       backgroundColor: theme.palette.primary.main,
     },
   },
 }))(ToggleButton);
 
+const useToggleButtonGroupsStyle = makeStyles((theme: Theme) => createStyles({
+  root: {},
+  groupedHorizontal: {
+    '&:not(:last-child), &:not(:first-child), &': {
+      borderRadius: theme.spacing(1),
+      border: `1px solid ${theme.palette.divider}`,
+    },
+  },
+}));
+
 interface BoardProps{
   platform: 'afreeca' | 'twitch' | 'free',
   take: number,
-  // selectComponent?: JSX.Element,
   pagenationHandler: (event: React.ChangeEvent<unknown>, newPage: number) => void;
   postFilterHandler: (categoryFilter: FilterType) => void;
   boardState: {
@@ -89,6 +113,7 @@ export default function BoardContainer({
 }: BoardProps): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
+  const toggleButtonGroupClasses = useToggleButtonGroupsStyle();
   const {
     posts, page, totalRows, filter,
   } = boardState;
@@ -155,12 +180,14 @@ export default function BoardContainer({
         <ToggleButtonGroup
           value={filter}
           onChange={onFilterChange}
+          classes={toggleButtonGroupClasses}
           exclusive
         >
           {filterButtonValues.map((btn) => (
             <StyledToggleButton
               value={btn.key}
               key={btn.key}
+              className={btn.class}
             >
               {btn.text}
             </StyledToggleButton>
