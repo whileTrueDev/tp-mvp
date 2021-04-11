@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   controls: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(3),
     '&>.right': {
       display: 'flex',
       alignItems: 'center',
@@ -58,17 +58,31 @@ const StyledToggleButton = withStyles((theme: Theme) => createStyles({
     },
     marginRight: theme.spacing(2),
     '&.Mui-selected': {
+      position: 'relative',
+      '&:before': {
+        display: 'block',
+        position: 'absolute',
+        content: '" "',
+        width: theme.spacing(1),
+        height: theme.spacing(1),
+        backgroundColor: 'red',
+        borderRadius: '50%',
+        left: theme.spacing(2),
+        top: '50%',
+        transform: 'translateY(-50%)',
+      },
       border: 'none',
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.primary.main,
     },
     '&.all': {
+      color: theme.palette.text.primary,
       backgroundColor: theme.palette.background.paper,
     },
     '&.notice': {
+      color: theme.palette.text.primary,
       backgroundColor: theme.palette.action.disabled,
     },
     '&.recommended': {
+      color: theme.palette.text.primary,
       backgroundColor: theme.palette.primary.main,
     },
   },

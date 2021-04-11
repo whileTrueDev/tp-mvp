@@ -5,7 +5,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import SelectField from '../../../../atoms/SelectField';
+// import SelectField from '../../../../atoms/SelectField';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -14,10 +14,18 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   inputContainer: {
     display: 'flex',
+    boxShadow: 'none',
     marginLeft: theme.spacing(1),
   },
   input: {
     paddingLeft: theme.spacing(1),
+    marginRight: theme.spacing(2),
+    border: `3px solid ${theme.palette.text.primary}`,
+    borderRadius: theme.spacing(1),
+    minWidth: theme.spacing(54),
+    [theme.breakpoints.down('sm')]: {
+      minWidth: theme.spacing(27),
+    },
   },
   iconButton: {
     padding: theme.spacing(0, 1),
@@ -32,7 +40,7 @@ interface SearchFormProps extends React.DetailedHTMLProps<React.FormHTMLAttribut
 export default function SearchForm({ onSearch, selectOptions, className }: SearchFormProps): JSX.Element {
   const inputRef = useRef<HTMLSelectElement>();
   const select = useRef(selectOptions);
-  const [value, setValue] = useState(select.current[0]);
+  const [value] = useState(select.current[0]);
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -60,10 +68,11 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
   return (
     <div className={className}>
       <div className={classes.root}>
-        <SelectField value={value} select={select.current} handleCallback={setValue} />
+        {/* <SelectField value={value} select={select.current} handleCallback={setValue} /> */}
 
         <Paper className={classes.inputContainer}>
           <OutlinedInput
+            className={classes.input}
             onKeyDown={onKeyDown}
             inputRef={inputRef}
             startAdornment={
