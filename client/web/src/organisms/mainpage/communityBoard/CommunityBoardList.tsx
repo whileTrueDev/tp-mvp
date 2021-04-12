@@ -9,11 +9,11 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 import useAxios from 'axios-hooks';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
-import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
-import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
-import useBoardState from '../../utils/hooks/useBoardListState';
-import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
-import HotPostBox from '../../organisms/mainpage/communityBoard/list/HotPostBox';
+import BoardContainer from './list/BoardContainer';
+import useBoardState from '../../../utils/hooks/useBoardListState';
+import BoardTitle from './share/BoardTitle';
+import HotPostBox from './list/HotPostBox';
+import useBoardContext from '../../../utils/hooks/useBoardContext';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   centerWrapper: {
@@ -140,6 +140,7 @@ export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
   const tabsClasses = useTabs();
   const tabItemClasses = useTabItem();
+  const { platform: currentPlatform, changePlatform } = useBoardContext();
 
   // 아프리카 핫시청자 반응(추천글)
   const [{
@@ -200,16 +201,29 @@ export default function CommunityBoardList(): JSX.Element {
   // 1번째 탭 : 아프리카 게시판
   // 2번째 탭 : 트위치 게시판
   const [value, setValue] = React.useState<number>(0);
-  const handleChange = (event: React.ChangeEvent<Record<string, unknown>>, newValue: number) => {
+  const handleChange = (_: any, newValue: number) => {
     setValue(newValue);
-    if (newValue === 0 && freeboardFilter !== 'all') { // 자유게시판
-      changeFreeFilter('all');
-    } else if (newValue === 1 && afreecaboardFilter !== 'all') { // 아프리카 게시판
-      changeAfreecaFilter('all');
-    } else if (newValue === 2 && twitchboardFilter !== 'all') { // 트위치 게시판
-      changeTwitchFilter('all');
+    if (newValue === 0) {
+      changePlatform('free');
+      if (freeboardFilter !== 'all') changeFreeFilter('all');
+    } else if (newValue === 1) {
+      changePlatform('afreeca');
+      if (afreecaboardFilter !== 'all') changeAfreecaFilter('all');
+    } else if (newValue === 2) {
+      changePlatform('twitch');
+      if (twitchboardFilter !== 'all') changeTwitchFilter('all');
     }
   };
+
+  useEffect(() => {
+    if (currentPlatform === 'free') {
+      setValue(0);
+    } else if (currentPlatform === 'afreeca') {
+      setValue(1);
+    } else if (currentPlatform === 'twitch') {
+      setValue(2);
+    }
+  }, [currentPlatform]);
 
   useEffect(() => {
     if (window.scrollY !== 0) {
@@ -298,66 +312,64 @@ export default function CommunityBoardList(): JSX.Element {
   };
 
   return (
-    <CommunityBoardCommonLayout>
-      <div className={classes.boardListSection}>
-        <Container maxWidth="xl" className={classes.maxWidthWrapper}>
-          <Grid container spacing={10} className={classes.hotPostSection}>
-            <Grid item xs={6}>
-              <HotPostBox
-                platform="afreeca"
-                posts={afreecaHotPosts ? afreecaHotPosts.posts : []}
-                loading={afreecaHotPostsLoading}
-                error={afreecaHotPostsError}
-                buttonHandler={moveToAfreecaHotPostList}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <HotPostBox
-                platform="twitch"
-                posts={twitchHotPosts ? twitchHotPosts.posts : []}
-                loading={twitchHotPostsLoading}
-                error={twitchHotPostsError}
-                buttonHandler={moveToTwitchHotPostList}
-              />
-            </Grid>
+    <div className={classes.boardListSection}>
+      <Container maxWidth="xl" className={classes.maxWidthWrapper}>
+        <Grid container spacing={10} className={classes.hotPostSection}>
+          <Grid item xs={6}>
+            <HotPostBox
+              platform="afreeca"
+              posts={afreecaHotPosts ? afreecaHotPosts.posts : []}
+              loading={afreecaHotPostsLoading}
+              error={afreecaHotPostsError}
+              buttonHandler={moveToAfreecaHotPostList}
+            />
           </Grid>
+          <Grid item xs={6}>
+            <HotPostBox
+              platform="twitch"
+              posts={twitchHotPosts ? twitchHotPosts.posts : []}
+              loading={twitchHotPostsLoading}
+              error={twitchHotPostsError}
+              buttonHandler={moveToTwitchHotPostList}
+            />
+          </Grid>
+        </Grid>
 
-          <div>
-            <Tabs
-              classes={tabsClasses}
-              value={value}
-              onChange={handleChange}
-            >
-              <Tab
-                classes={tabItemClasses}
-                label="자유게시판"
-                icon={icons.free}
-              />
-              <Tab
-                classes={tabItemClasses}
-                label="아프리카 게시판"
-                icon={icons.afreeca}
-              />
-              <Tab
-                classes={tabItemClasses}
-                label="트위치 게시판"
-                icon={icons.twitch}
-              />
-            </Tabs>
-            <TabPanel value={value} index={0}>
-              {FreeBoard}
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              {AfreecaBoard}
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-              {TwitchBoard}
-            </TabPanel>
-          </div>
-        </Container>
+        <div>
+          <Tabs
+            classes={tabsClasses}
+            value={value}
+            onChange={handleChange}
+          >
+            <Tab
+              classes={tabItemClasses}
+              label="자유게시판"
+              icon={icons.free}
+            />
+            <Tab
+              classes={tabItemClasses}
+              label="아프리카 게시판"
+              icon={icons.afreeca}
+            />
+            <Tab
+              classes={tabItemClasses}
+              label="트위치 게시판"
+              icon={icons.twitch}
+            />
+          </Tabs>
+          <TabPanel value={value} index={0}>
+            {FreeBoard}
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            {AfreecaBoard}
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            {TwitchBoard}
+          </TabPanel>
+        </div>
+      </Container>
 
-      </div>
-    </CommunityBoardCommonLayout>
+    </div>
 
   );
 }

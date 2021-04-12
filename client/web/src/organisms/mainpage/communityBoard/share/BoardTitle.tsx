@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => {
   });
 });
 
-const platformNames = {
+export const PLATFORM_NAMES = {
   afreeca: '아프리카',
   twitch: '트위치',
   free: '자유',
@@ -71,7 +71,7 @@ export default function BoardTitle({
             alt={`${platform}Logo`}
           />
           <Typography variant="h4" className={classes.titleText}>
-            {`${platformNames[platform]}
+            {`${PLATFORM_NAMES[platform]}
           ${boardType ? '방송인' : '게시판'}`}
           </Typography>
         </>

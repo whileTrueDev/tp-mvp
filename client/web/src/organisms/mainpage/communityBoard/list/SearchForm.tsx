@@ -22,10 +22,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     marginRight: theme.spacing(2),
     border: `3px solid ${theme.palette.text.primary}`,
     borderRadius: theme.spacing(1),
-    minWidth: theme.spacing(54),
-    [theme.breakpoints.down('sm')]: {
-      minWidth: theme.spacing(27),
-    },
   },
   iconButton: {
     padding: theme.spacing(0, 1),
