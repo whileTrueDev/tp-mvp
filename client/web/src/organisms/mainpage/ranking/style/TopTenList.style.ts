@@ -122,6 +122,10 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       whiteSpace: 'nowrap',
     },
     ratingContainer: {
+      color: theme.palette.common.black,
+      '& .MuiRating-iconEmpty': {
+        color: theme.palette.grey[500],
+      },
       display: 'flex',
       '&>*': {
         fontWeight: theme.typography.fontWeightMedium,
