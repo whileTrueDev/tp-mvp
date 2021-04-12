@@ -1,11 +1,12 @@
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn, OneToMany,
+  CreateDateColumn, PrimaryGeneratedColumn, OneToMany, Index,
 } from 'typeorm';
 import { CreatorComments } from '@truepoint/shared/interfaces/CreatorComments.interface';
 import { CreatorCommentLikesEntity } from './creatorCommentLikes.entity';
 import { CreatorCommentHatesEntity } from './creatorCommentHates.entity';
 @Entity({ name: 'CreatorCommentsTest' })
+@Index('IX_creatorId', ['creatorId'])
 export class CreatorCommentsEntity implements CreatorComments {
   constructor(partial: Partial<CreatorCommentsEntity>) {
     Object.assign(this, partial);
