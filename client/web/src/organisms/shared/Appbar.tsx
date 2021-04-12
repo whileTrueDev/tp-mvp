@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => createStyles({
   link: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(4),
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.text.primary,
     opacity: 0.8,
     '&:hover': { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
   },
@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme) => createStyles({
   mobileTextMyPage: { color: theme.palette.primary.main },
   darkModeToggleButton: {
     position: 'relative',
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.text.primary,
     '&$menuItem': {
       width: '100%',
       borderTop: `2px solid ${theme.palette.divider}`,
