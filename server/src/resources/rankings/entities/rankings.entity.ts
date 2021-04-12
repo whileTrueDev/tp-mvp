@@ -1,10 +1,11 @@
 import { Rankings } from '@truepoint/shared/interfaces/Rankings.interface';
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn,
+  CreateDateColumn, PrimaryGeneratedColumn, Index,
 } from 'typeorm';
 
 @Entity({ name: 'Rankings' })
+@Index('IX_creatorId_createDate', ['creatorId', 'createDate'])
 export class RankingsEntity implements Rankings {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,6 +23,7 @@ export class RankingsEntity implements Rankings {
   title: string;
 
   @CreateDateColumn({ type: 'timestamp', comment: '테이블에 삽입된 날짜' })
+  @Column()
   createDate: Date;
 
   @Column({ type: 'timestamp', comment: '방송이 종료된 날짜' })
