@@ -140,16 +140,6 @@ export class RankingsService {
       const recentAnalysisDate = await this.getRecentAnalysysDate();
       const qb = await getConnection()
         .createQueryBuilder()
-        .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
-          .select([
-            `MAX(rankings.${column}) AS maxScore`,
-            'rankings.creatorId AS creatorId',
-          ])
-          .from(RankingsEntity, 'rankings')
-          .groupBy('rankings.creatorId')
-          .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
-        'MaxScoreTable')
-        .from(RankingsEntity, 'T1')
         .select([
           `T1.${column} AS ${column}`,
           'T1.id AS id',
@@ -163,6 +153,16 @@ export class RankingsService {
           'afreeca.logo AS afreecaProfileImage',
           'AVG(ratings.rating) AS averageRating',
         ])
+        .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
+          .select([
+            `MAX(rankings.${column}) AS maxScore`,
+            'rankings.creatorId AS creatorId',
+          ])
+          .from(RankingsEntity, 'rankings')
+          .groupBy('rankings.creatorId')
+          .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
+        'MaxScoreTable')
+        .from(RankingsEntity, 'T1')
         .groupBy('T1.creatorId')
         .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T1.creatorId')
         .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T1.creatorId')
@@ -224,16 +224,17 @@ export class RankingsService {
         .createQueryBuilder()
         .select([
           'T.creatorId',
-          'T.createDate',
+          'T.streamDate',
           `T.${column}`,
+          'T.rnk',
         ])
         .from((subQuery) => subQuery
           .from(RankingsEntity, 'R')
           .select([
             `R.${column} AS ${column}`,
-            'DATE_FORMAT(R.createDate,"%Y-%c-%e") AS createDate',
+            'DATE_FORMAT(R.streamDate,"%Y-%c-%e") AS streamDate',
             'R.creatorId AS creatorId',
-            'RANK() OVER(PARTITION BY R.creatorId ORDER BY R.createDate DESC) AS rnk',
+            `RANK() OVER(PARTITION BY R.creatorId ORDER BY R.streamDate DESC, R.${column} DESC) AS rnk`,
           ])
           .where(`R.creatorId IN ('${topTenCreatorIds.join("','")}')`),
         'T')
@@ -243,8 +244,8 @@ export class RankingsService {
       // 가져온 데이터를 { creatorId: [ {createDate: "2021-3-5", cussScore: 9.861}, ... ], } 형태로 변환함
       const result = topTenCreatorIds.reduce((obj, key) => ({ ...obj, [key]: [] }), {});
       data.reverse().forEach((d) => {
-        const { creatorId, createDate } = d;
-        result[creatorId].push({ createDate, [column]: d[column] });
+        const { creatorId, streamDate } = d;
+        result[creatorId].push({ createDate: streamDate, [column]: d[column] });
       });
 
       return result;
