@@ -86,7 +86,7 @@ export default function StarRating({
 }: StarRatingProps): JSX.Element {
   const classes = useRatingStyle();
 
-  const [evaluated, setEvaluated] = useState<boolean>(score === undefined);
+  const [evaluated, setEvaluated] = useState<boolean>(score !== undefined);
   // 점수는 10점 만점으로 들어오므로 Rating컴포넌트 value로 넘겨주기 위해서는 나누기 2 해야함
   const [value, setValue] = useState<number>(score ? (score / 2) : 0); // rating컴포넌트에 표시될 점수
 
