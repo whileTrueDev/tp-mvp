@@ -166,7 +166,7 @@ export class RankingsService {
         .groupBy('T1.creatorId')
         .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T1.creatorId')
         .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T1.creatorId')
-        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)') // 1주 내 매겨진 평점만
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)') // 1주 내 매겨진 평점만
         .leftJoin('afreeca.categories', 'afreecaCategories')
         .leftJoin('twitch.categories', 'twitchCategories')
         .where('T1.creatorId = MaxScoreTable.creatorId')
@@ -303,7 +303,7 @@ export class RankingsService {
         .groupBy('T1.creatorId')
         .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T1.creatorId')
         .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T1.creatorId')
-        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)')// 1주 내 매겨진 평점만
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)')// 1주 내 매겨진 평점만
         .leftJoin('afreeca.categories', 'afreecaCategories')
         .leftJoin('twitch.categories', 'twitchCategories')
         .where('T1.creatorId = MaxScoreTable.creatorId')
