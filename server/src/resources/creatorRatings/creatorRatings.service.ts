@@ -109,7 +109,6 @@ export class CreatorRatingsService {
   }
 
   /**
-   * 기준 기간(현재로부터 1달 이내) 내에 매겨진(updateDate가 1달 내인)
    * creatorId의 평균평점과 횟수 조회
    * @param creatorId 
    * @return {
@@ -125,7 +124,6 @@ export class CreatorRatingsService {
           'Count(id) AS count',
         ])
         .where('creatorId = :creatorId', { creatorId })
-        .andWhere('updateDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')
         .getRawOne();
       return {
         average: Number(data.average),
@@ -288,7 +286,7 @@ export class CreatorRatingsService {
         'AVG(Ratings.rating) AS averageRating',
         'COUNT(Ratings.id) AS ratingCount',
       ])
-      .where('Ratings.updateDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)')
+      .where('Ratings.createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)')
       .addSelect([
         'Twitch.twitchStreamerName AS twitchNickname',
         'Twitch.twitchChannelName AS twitchChannelName',

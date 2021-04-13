@@ -1,7 +1,7 @@
 import { CreatorRatings } from '@truepoint/shared/dist/interfaces/CreatorRatings.interface';
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn, Unique,
+  CreateDateColumn, PrimaryGeneratedColumn, Unique,
 } from 'typeorm';
 
 @Entity({ name: 'CreatorRatings' })
@@ -26,9 +26,6 @@ export class CreatorRatingsEntity implements CreatorRatings {
   @Column({ comment: '유저가 해당 creator에 매긴 평점, 0~10' })
   rating: number;
 
-  @CreateDateColumn({ type: 'timestamp', comment: '최초 생성 날짜' })
+  @CreateDateColumn({ type: 'timestamp', comment: '생성 날짜' })
   createDate: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', comment: '수정된 날짜 - 수정일 기준으로 주간평점 가져온다' })
-  updateDate: Date;
 }
