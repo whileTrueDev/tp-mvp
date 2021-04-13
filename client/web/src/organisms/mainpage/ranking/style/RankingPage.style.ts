@@ -6,8 +6,7 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
 
   return createStyles({
     background: {
-      backgroundColor: theme.palette.action.hover,
-      padding: theme.spacing(4, 0),
+      backgroundColor: theme.palette.primary.main,
     },
     container: {
       minWidth: `${MYPAGE_MAIN_MIN_WIDTH}px`,
