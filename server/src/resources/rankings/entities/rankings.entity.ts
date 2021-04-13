@@ -23,7 +23,6 @@ export class RankingsEntity implements Rankings {
   title: string;
 
   @CreateDateColumn({ type: 'timestamp', comment: '테이블에 삽입된 날짜' })
-  @Column()
   createDate: Date;
 
   @Column({ type: 'timestamp', comment: '방송이 종료된 날짜' })
