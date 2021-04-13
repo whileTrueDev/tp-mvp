@@ -1,12 +1,18 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Container, Typography } from '@material-ui/core';
+import { RANKING_PAGE_CONTAINER_WIDTH } from '../../../../assets/constants';
 
 const useStyle = makeStyles((theme: Theme) => createStyles({
   headerImages: {
-    position: 'relative',
     width: '100%',
+    backgroundColor: theme.palette.primary.main,
+  },
+  container: {
+    minWidth: RANKING_PAGE_CONTAINER_WIDTH,
+    maxWidth: RANKING_PAGE_CONTAINER_WIDTH,
     height: theme.spacing(30),
+    position: 'relative',
     '& .bg-img': {
       position: 'absolute',
       backgroundPosition: 'center center',
@@ -45,8 +51,8 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
 export default function HeaderDecoration(): JSX.Element {
   const classes = useStyle();
   return (
-    <>
-      <div className={classes.headerImages}>
+    <div className={classes.headerImages}>
+      <Container className={classes.container}>
         <div className="bg-img zigzag" />
         <div className="bg-img dog" />
 
@@ -58,8 +64,8 @@ export default function HeaderDecoration(): JSX.Element {
           지내자!
         </Typography>
         <Typography className={`${classes.text} bottom`}>멍멍</Typography>
-      </div>
-    </>
+      </Container>
+    </div>
 
   );
 }

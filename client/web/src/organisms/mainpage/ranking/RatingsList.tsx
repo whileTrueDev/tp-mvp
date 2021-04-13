@@ -23,10 +23,10 @@ export default function RatingsList(): JSX.Element {
       <List className={classes.listItemContainer}>
         <ListItem>
           <Grid container>
-            <Grid item xs={2}><Typography align="center">순위</Typography></Grid>
-            <Grid item xs={5}><Typography align="center">스트리머</Typography></Grid>
-            <Grid item xs={4}><Typography align="center">평점</Typography></Grid>
-            <Grid item xs={1}><Typography align="center" /></Grid>
+            <Grid item xs={2}><Typography className={classes.headerText}>순위</Typography></Grid>
+            <Grid item xs={5}><Typography className={classes.headerText}>스트리머</Typography></Grid>
+            <Grid item xs={4}><Typography className={classes.headerText}>평점</Typography></Grid>
+            <Grid item xs={1}><Typography className={classes.headerText} /></Grid>
           </Grid>
         </ListItem>
         {loading ? <CenterLoading /> : null}

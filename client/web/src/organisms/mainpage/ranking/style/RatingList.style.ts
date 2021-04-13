@@ -80,6 +80,9 @@ export const useRatingsListStyles = makeStyles((theme: Theme) => {
     text: {
       padding: theme.spacing(2),
     },
-
+    headerText: {
+      textAlign: 'center',
+      color: theme.palette.common.black,
+    },
   });
 });

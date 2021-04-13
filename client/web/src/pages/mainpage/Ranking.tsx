@@ -30,9 +30,7 @@ export default function Ranking(): JSX.Element {
   return (
     <div className={wrapper.background}>
       {memoAppbar}
-      <Container className={wrapper.container}>
-        {headerDecoration}
-      </Container>
+      {headerDecoration}
 
       <div className={wrapper.top}>
         <Container className={wrapper.container}>

@@ -1,11 +1,14 @@
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
+import { RANKING_PAGE_CONTAINER_WIDTH } from '../../../../assets/constants';
 
 export const useRankingPageLayout = makeStyles((theme: Theme) => {
+  const { type } = theme.palette;
   const borderStyle = `${theme.spacing(1)}px solid ${theme.palette.common.black}`;
-  const rankingPageContainerWidth = `${1920 - 190}px`;
+  const rankingPageContainerWidth = RANKING_PAGE_CONTAINER_WIDTH;
+
   return createStyles({
     background: {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: type === 'light' ? theme.palette.primary.main : theme.palette.background.paper,
     },
     container: {
       minWidth: rankingPageContainerWidth,
