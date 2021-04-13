@@ -5,6 +5,7 @@ import { Rating, RatingProps } from '@material-ui/lab';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { Typography, Tooltip } from '@material-ui/core';
+import yellow from '@material-ui/core/colors/yellow';
 
 const useRatingStyle = makeStyles((theme: Theme) => {
   const labelFontSize = theme.typography.body2.fontSize;
@@ -31,6 +32,9 @@ const useRatingStyle = makeStyles((theme: Theme) => {
     },
     rating: {
       marginRight: theme.spacing(1),
+      '& .MuiRating-iconFilled': {
+        color: yellow[400],
+      },
     },
   });
 });

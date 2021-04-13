@@ -15,7 +15,7 @@ const rawTheme: ThemeOptions = {
     primary: {
       light: '#fcf3c3',
       main: '#f29551',
-      // dark: '#4b5ac7',
+      dark: '#ff5400',
       contrastText: '#fff',
     },
 

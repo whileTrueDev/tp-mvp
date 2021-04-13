@@ -17,6 +17,7 @@ import { useRankingPageLayout, useCarouselStyle } from '../../organisms/mainpage
 import CreatorEvaluation from '../../organisms/mainpage/ranking/CreatorEvaluation';
 import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
 import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
+import FooterDecoration from '../../organisms/mainpage/ranking/sub/FooterDecoration';
 
 export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
@@ -25,10 +26,14 @@ export default function Ranking(): JSX.Element {
   const memoAppbar = useMemo(() => <Appbar />, []);
   const memoFooter = useMemo(() => <Footer />, []);
   const headerDecoration = useMemo(() => <HeaderDecoration />, []);
+  const footerDecoration = useMemo(() => <FooterDecoration />, []);
   return (
     <div className={wrapper.background}>
       {memoAppbar}
-      {headerDecoration}
+      <Container className={wrapper.container}>
+        {headerDecoration}
+      </Container>
+
       <div className={wrapper.top}>
         <Container className={wrapper.container}>
           <Carousel
@@ -44,8 +49,8 @@ export default function Ranking(): JSX.Element {
           </Carousel>
         </Container>
       </div>
-      <Container className={wrapper.container}>
 
+      <Container className={wrapper.container}>
         <Switch>
           <Route exact path={path}>
             <Grid container spacing={2}>
@@ -67,8 +72,9 @@ export default function Ranking(): JSX.Element {
             <Redirect to="/ranking" />
           </Route>
         </Switch>
-
+        {footerDecoration}
       </Container>
+
       {memoFooter}
     </div>
 

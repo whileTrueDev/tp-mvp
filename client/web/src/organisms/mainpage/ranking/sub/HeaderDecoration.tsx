@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Container, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
 const useStyle = makeStyles((theme: Theme) => createStyles({
   headerImages: {
@@ -12,7 +12,6 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
       backgroundPosition: 'center center',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'contain',
-      backgroundAttatchment: 'fixed',
     },
     '& .zigzag': {
       bottom: 0,
@@ -46,7 +45,7 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
 export default function HeaderDecoration(): JSX.Element {
   const classes = useStyle();
   return (
-    <Container>
+    <>
       <div className={classes.headerImages}>
         <div className="bg-img zigzag" />
         <div className="bg-img dog" />
@@ -60,7 +59,7 @@ export default function HeaderDecoration(): JSX.Element {
         </Typography>
         <Typography className={`${classes.text} bottom`}>멍멍</Typography>
       </div>
-    </Container>
+    </>
 
   );
 }

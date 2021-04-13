@@ -43,7 +43,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     legend: { enabled: false },
     plotOptions: {
       series: {
-        color: theme.palette.primary.main,
+        color: theme.palette.primary.dark,
       },
     },
     xAxis: {
