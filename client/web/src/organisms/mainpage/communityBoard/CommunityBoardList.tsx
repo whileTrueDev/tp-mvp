@@ -14,6 +14,7 @@ import useBoardState from '../../../utils/hooks/useBoardListState';
 import BoardTitle from './share/BoardTitle';
 import HotPostBox from './list/HotPostBox';
 import useBoardContext from '../../../utils/hooks/useBoardContext';
+import BoardHeaderImage from './list/BoardHeaderImage';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   centerWrapper: {
@@ -313,6 +314,7 @@ export default function CommunityBoardList(): JSX.Element {
 
   return (
     <div className={classes.boardListSection}>
+      <BoardHeaderImage />
       <Container maxWidth="xl" className={classes.maxWidthWrapper}>
         <Grid container spacing={10} className={classes.hotPostSection}>
           <Grid item xs={6}>
