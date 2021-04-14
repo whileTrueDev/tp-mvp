@@ -63,24 +63,23 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
 
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems} ref={containerRef}>
-        { (loading || !data)
-          ? (
-            Array.from(Array(10).keys())).map((v: number) => (
-              <ListItemSkeleton key={v} headerColumns={headerColumns} />
-          )) : data.rankingData.map((d, index: number) => {
-            const currentScoreName = currentTab === 'viewer' ? currentTab : `${currentTab}Score` as keyof Scores;
-            const weeklyTrendsData = data.weeklyTrends[d.creatorId];
-            return (
-              <TopTenListItem
-                key={d.id}
-                index={index}
-                data={d}
-                headerColumns={headerColumns}
-                currentScoreName={currentScoreName}
-                weeklyTrendsData={weeklyTrendsData}
-              />
-            );
-          })}
+        {data && data.rankingData.map((d, index: number) => {
+          const currentScoreName = currentTab === 'viewer' ? currentTab : `${currentTab}Score` as keyof Scores;
+          const weeklyTrendsData = data.weeklyTrends[d.creatorId];
+          return (
+            <TopTenListItem
+              key={d.id}
+              index={index}
+              data={d}
+              headerColumns={headerColumns}
+              currentScoreName={currentScoreName}
+              weeklyTrendsData={weeklyTrendsData}
+            />
+          );
+        })}
+        {loading && (Array.from(Array(10).keys())).map((v: number) => (
+          <ListItemSkeleton key={v} headerColumns={headerColumns} />
+        ))}
         {!loading && data
         && data.rankingData.length === 0
         && <Typography className={classes.informationText}>데이터가 없습니다.</Typography>}
