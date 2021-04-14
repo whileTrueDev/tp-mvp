@@ -1,7 +1,8 @@
 import {
-  ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Grid,
+  ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Grid, Link,
 } from '@material-ui/core';
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { ListItemOrderByRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import Rating from '@material-ui/lab/Rating';
 import classnames from 'classnames';
@@ -14,6 +15,7 @@ export interface RatingsListItemProps extends ListItemOrderByRatings{
 export default function RatingsListItem(props: RatingsListItemProps): JSX.Element {
   const {
     averageRating, nickname, logo, order,
+    creatorId, platform,
   } = props;
   const classes = useRatingsListItemStyles();
   return (
@@ -27,12 +29,11 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
             <Avatar className={classes.avatarImage} alt={`${nickname} 프로필 이미지`} src={logo} />
           </ListItemAvatar>
           <ListItemText primary={(
-            <Typography
-              component="span"
-              className={classes.creatorName}
-            >
-              {nickname}
-            </Typography>
+            <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
+              <Typography className={classes.creatorName}>
+                {nickname}
+              </Typography>
+            </Link>
         )}
           />
         </Grid>
