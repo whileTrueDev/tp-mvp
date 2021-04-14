@@ -22,7 +22,12 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
       marginRight: theme.spacing(1),
       fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.text.primary,
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
     },
+    black: { color: contrastColor },
     ratingText: {
       textAlign: 'center',
       fontSize: theme.typography.body1.fontSize,
