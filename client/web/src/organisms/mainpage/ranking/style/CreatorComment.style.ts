@@ -5,9 +5,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
     backgroundColor: theme.palette.background.paper,
     position: 'relative',
     padding: theme.spacing(2, 4),
-    '&:not(:last-child)': {
-      border: `1px solid ${theme.palette.divider}`,
-    },
+    border: `1px solid ${theme.palette.divider}`,
   },
   header: {
     '&>*': {
