@@ -6,11 +6,11 @@ import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 import useAxios from 'axios-hooks';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import BoardContainer from './list/BoardContainer';
 import useBoardState from '../../../utils/hooks/useBoardListState';
+import SmileIcon from '../../../atoms/svgIcons/SmileIcon';
 import BoardTitle from './share/BoardTitle';
 import HotPostBox from './list/HotPostBox';
 import useBoardContext from '../../../utils/hooks/useBoardContext';
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     visibility: 'hidden',
   },
   boardListSection: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
   },
   maxWidthWrapper: {
     padding: theme.spacing(4, 6),
@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   smallLogo: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+    color: theme.palette.primary.main,
   },
   hotPostSection: {
     marginBottom: theme.spacing(6),
@@ -233,7 +234,7 @@ export default function CommunityBoardList(): JSX.Element {
   }, []);
 
   const icons = {
-    free: <SentimentSatisfiedAltIcon className={classes.smallLogo} />,
+    free: <SmileIcon className={classes.smallLogo} />,
     afreeca: <img className={classes.smallLogo} alt="아프리카 로고" src="images/logo/afreecaLogo.png" />,
     twitch: <img className={classes.smallLogo} alt="트위치 로고" src="images/logo/twitchLogo.png" />,
   };
@@ -242,6 +243,7 @@ export default function CommunityBoardList(): JSX.Element {
   const freeTitleComponent = useMemo(() => (
     <BoardTitle
       platform="free"
+      imageSrc="images/rankingPage/smileIconImage.svg"
       title={titleContents.free.title}
       subTitle={titleContents.free.subTitle}
     />
