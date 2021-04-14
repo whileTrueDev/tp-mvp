@@ -2,32 +2,58 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createStyles({
   commentItem: {
-    backgroundColor: theme.palette.background.paper,
     position: 'relative',
     padding: theme.spacing(2, 4),
-    '&:not(:last-child)': {
-      border: `1px solid ${theme.palette.divider}`,
-    },
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
   header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  userInfo: {
+    display: 'flex',
     '&>*': {
       marginRight: theme.spacing(1),
     },
     '& .nickname': {
-
+      fontSize: theme.typography.body1.fontSize,
+      fontWeight: theme.typography.fontWeightMedium,
     },
-    '& .time': {
+    '& .userId': {
       color: theme.palette.text.secondary,
     },
-    marginBottom: theme.spacing(1),
+  },
+  smallAvatar: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+  },
+  largeAvatar: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+  headerActions: {
+    '& button': {
+      width: theme.spacing(7),
+      height: theme.spacing(3),
+    },
+  },
+  reportButton: {
+
   },
   content: {
 
   },
   actions: {
-    position: 'absolute',
-    right: theme.spacing(2),
-    top: theme.spacing(1),
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  nestedComments: {
+
+  },
+  recommendIcons: {
     '&>*:not(:last-child)': {
       marginRight: theme.spacing(1),
     },
@@ -47,10 +73,22 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
 }));
 
 export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createStyles({
-  bestCommentsContainer: {
-    marginBottom: theme.spacing(2),
-  },
   commentsContainer: {
+
+  },
+  commentFilterContainer: {
+
+  },
+  commentFilterButton: {
+    fontSize: theme.typography.h6.fontSize,
+    color: theme.palette.text.disabled,
+    '&.selected': {
+      color: theme.palette.text.primary,
+      fontWeight: theme.typography.fontWeightBold,
+    },
+  },
+  commentListContainer: {
+    minHeight: theme.spacing(45),
 
   },
   buttonWrapper: {
@@ -64,9 +102,9 @@ export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createSty
 
 export const useCreatorCommentFormStyle = makeStyles((theme: Theme) => createStyles({
   form: {
-    display: 'flex',
-    border: `${theme.spacing(0.5)}px solid ${theme.palette.divider}`,
+    border: `1px solid ${theme.palette.divider}`,
     backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(2.5),
     marginBottom: theme.spacing(2),
   },
   inputWrapper: {
@@ -79,9 +117,16 @@ export const useCreatorCommentFormStyle = makeStyles((theme: Theme) => createSty
   nicknameInput: {
     marginRight: theme.spacing(1),
   },
+  contentTextArea: {
+    '& .MuiInput-underline:before': {
+      borderBottom: 'none',
+    },
+  },
+  buttonWrapper: {
+    textAlign: 'right',
+  },
   button: {
-    width: theme.spacing(20),
-    backgroundColor: theme.palette.action.active,
+    backgroundColor: theme.palette.secondary.main,
     color: theme.palette.background.paper,
     fontSize: theme.typography.h6.fontSize,
     fontWeight: theme.typography.fontWeightBold,
