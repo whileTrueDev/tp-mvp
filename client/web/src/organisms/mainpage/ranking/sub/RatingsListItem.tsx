@@ -30,10 +30,10 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
           </ListItemAvatar>
           <ListItemText primary={(
             <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
-              <Typography className={classnames({
-                [classes.creatorName]: true,
-                [classes.black]: order && order < 5,
-              })}
+              <Typography
+                className={classnames(
+                  classes.creatorName, { [classes.black]: order && order < 5 },
+                )}
               >
                 {nickname}
               </Typography>
