@@ -9,12 +9,36 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
       position: 'relative',
       padding: theme.spacing(4),
       border: commonBorderStyle,
+      background: 'url("/images/rankingPage/streamer_detail_bg_1.svg") no-repeat 100% 100%',
+      backgroundSize: 'contain',
     },
     right: {
-      padding: theme.spacing(4),
       border: commonBorderStyle,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      padding: theme.spacing(0, 1),
     },
-    creatorScoresContainer: {
+    scoreItemContainer: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    scoreLabelContainer: {
+      width: '30%',
+      marginRight: theme.spacing(1),
+      padding: theme.spacing(3, 0, 3, 6),
+      border: `1px solid ${theme.palette.divider}`,
+      borderRadius: theme.spacing(1),
+      display: 'flex',
+      justifyContent: 'flex-start',
+      '&>:nth-child(1)': {
+        marginRight: theme.spacing(1),
+      },
+    },
+    scoreLabelText: {
+      fontSize: theme.typography.h6.fontSize,
+    },
+    scoreBarContainer: {
       flex: 1,
     },
     avatarContainer: {
@@ -30,20 +54,36 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     textContainer: {
       display: 'flex',
       flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      '& .upper-text': {
+        display: 'flex',
+        width: '100%',
+      },
+    },
+    nameContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      maxWidth: '40%',
+      textOverflow: 'ellipsis',
     },
     nickname: {
       fontSize: theme.typography.h4.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       marginRight: theme.spacing(2),
+      wordBreak: 'break-word',
     },
     ratingContainer: {
-
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
     },
     averageRatingText: {
       fontSize: theme.typography.h6.fontSize,
     },
     creatorDescription: {
-
+      width: '100%',
     },
     chipLink: {
       position: 'absolute',
@@ -54,3 +94,9 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     },
   });
 });
+
+export const useExLargeRatingStyle = makeStyles((theme: Theme) => createStyles({
+  sizeLarge: {
+    fontSize: theme.typography.h3.fontSize,
+  },
+}));

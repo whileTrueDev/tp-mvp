@@ -4,6 +4,7 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+
 import AdmireIcon from '../../../../atoms/svgIcons/AdmireIcon';
 import CussIcon from '../../../../atoms/svgIcons/CussIcon';
 import FrustratedIcon from '../../../../atoms/svgIcons/FrustratedIcon';
@@ -12,7 +13,7 @@ import StarRating from './StarRating';
 import ScoreBar from '../topten/ScoreBar';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import { useCreatorInfoCardStyles } from '../style/CreatorInfoCard.style';
+import { useCreatorInfoCardStyles, useExLargeRatingStyle } from '../style/CreatorInfoCard.style';
 
 export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
   updateAverageRating?: () => void
@@ -42,6 +43,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
   } = info;
   const { average: averageRating, count: ratingCount } = ratings;
   const classes = useCreatorInfoCardStyles();
+  const largeRating = useExLargeRatingStyle();
 
   /**
    * 평점 생성, 수정 핸들러 함수
@@ -95,16 +97,16 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
   return (
     <Grid container className={classes.creatorInfoContainer}>
       {/* 왼쪽 크리에이터 기본설명, 평점 */}
-      <Grid container item className={classes.left} xs={6}>
+      <Grid container item className={classes.left} xs={7}>
         <Grid item className={classes.avatarContainer} xs={4}>
           <Avatar className={classes.avatar} src={logo} />
         </Grid>
 
         <Grid item className={classes.textContainer} xs={8}>
-          <div className="top">
-            <Typography className={classes.nickname}>
-              {nickname}
-            </Typography>
+          <div className="upper-text">
+            <div className={classes.nameContainer}>
+              <Typography className={classes.nickname}>{nickname}</Typography>
+            </div>
             <div className={classes.ratingContainer}>
               <Typography className={classes.averageRatingText}>
                 평균★
@@ -115,11 +117,14 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
                 createRatingHandler={createRatingHandler}
                 cancelRatingHandler={cancelRatingHandler}
                 score={userRating || undefined}
-                ratingProps={{ size: 'large' }}
+                ratingProps={{
+                  size: 'large',
+                  classes: largeRating,
+                }}
               />
             </div>
           </div>
-          <div className={classes.creatorDescription}>testtext</div>
+          <div className={classes.creatorDescription} />
 
         </Grid>
 
@@ -138,16 +143,18 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
       </Grid>
 
       {/* 오른쪽 크리에이터 점수 */}
-      <Grid item className={classes.right} xs={6}>
+      <Grid item className={classes.right} xs={5}>
         {scoreLables.map((score) => (
-          <Grid container key={score.name}>
-            <Grid item xs={2}>
-              <Typography>
+          <Grid container key={score.name} className={classes.scoreItemContainer}>
+            <Grid item className={classes.scoreLabelContainer}>
+              <Typography className={classes.scoreLabelText}>
                 {score.icon}
+              </Typography>
+              <Typography className={classes.scoreLabelText}>
                 {score.label}
               </Typography>
             </Grid>
-            <Grid item xs={10}>
+            <Grid item className={classes.scoreBarContainer}>
               <ScoreBar score={scores[score.name]} />
             </Grid>
           </Grid>

@@ -182,7 +182,7 @@ export const useProgressBar = makeStyles((theme: Theme) => {
 
   return createStyles({
     root: {
-      height: theme.spacing(2),
+      height: theme.spacing(3),
       ...barCommonStyle,
     },
     colorPrimary: {

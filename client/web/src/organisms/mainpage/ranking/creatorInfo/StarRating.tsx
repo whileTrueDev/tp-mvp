@@ -8,7 +8,7 @@ import { Typography, Tooltip } from '@material-ui/core';
 import yellow from '@material-ui/core/colors/yellow';
 
 const useRatingStyle = makeStyles((theme: Theme) => {
-  const labelFontSize = theme.typography.body2.fontSize;
+  const labelFontSize = theme.typography.body1.fontSize;
 
   return createStyles({
     container: {
@@ -16,12 +16,12 @@ const useRatingStyle = makeStyles((theme: Theme) => {
       alignItems: 'center',
       position: 'relative',
       '&.with-label': {
-        paddingTop: theme.spacing(2.5),
+        paddingBottom: theme.spacing(3),
       },
     },
     label: {
       position: 'absolute',
-      top: 0,
+      bottom: 0,
       left: 0,
       fontSize: labelFontSize,
     },
@@ -67,6 +67,7 @@ const labels: { [index: string]: string } = {
   4: '재미있어요',
   4.5: '훌륭해요',
   5: '최고예요',
+  askEvaluate: '별점을 남겨주세요',
 };
 
 /**
@@ -119,11 +120,6 @@ export default function StarRating({
 
   return (
     <div className={classnames(classes.container, { 'with-label': !readOnly })}>
-      {!readOnly && (
-        <Typography className={classes.label}>
-          {evaluated ? labels[value] : '평가하기'}
-        </Typography>
-      )}
       <Tooltip open={tooltipOpen} title="취소하기" arrow placement="right-start">
         <Rating
           {...ratingProps}
@@ -136,6 +132,11 @@ export default function StarRating({
           className={classnames(classes.rating)}
         />
       </Tooltip>
+      {!readOnly && (
+        <Typography className={classes.label} color={evaluated ? 'textPrimary' : 'error'}>
+          {evaluated ? labels[value] : labels.askEvaluate}
+        </Typography>
+      )}
 
     </div>
   );
