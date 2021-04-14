@@ -61,6 +61,7 @@ export default function Ranking(): JSX.Element {
                 <UserReactionCard />
               </Grid>
             </Grid>
+            {footerDecoration}
           </Route>
           {/* 방송인 정보 페이지 */}
           <Route exact path={`${path}/:platform/:creatorId`}>
@@ -70,7 +71,7 @@ export default function Ranking(): JSX.Element {
             <Redirect to="/ranking" />
           </Route>
         </Switch>
-        {footerDecoration}
+
       </Container>
 
       {memoFooter}

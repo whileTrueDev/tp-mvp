@@ -11,28 +11,12 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
   container: {
     minWidth: RANKING_PAGE_CONTAINER_WIDTH,
     maxWidth: RANKING_PAGE_CONTAINER_WIDTH,
+    backgroundImage: 'url(/images/rankingPage/header_bg.svg)',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPositionY: 'bottom',
     height: theme.spacing(30),
     position: 'relative',
-    '& .bg-img': {
-      position: 'absolute',
-      backgroundPosition: 'center center',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'contain',
-    },
-    '& .zigzag': {
-      bottom: 0,
-      left: 0,
-      width: '26%',
-      minHeight: '149px',
-      backgroundImage: 'url(images/rankingPage/zigzag.svg)',
-    },
-    '& .dog': {
-      right: 0,
-      bottom: 0,
-      width: '18%',
-      minHeight: '219px',
-      backgroundImage: 'url(images/rankingPage/dog.svg)',
-    },
   },
   text: {
     position: 'absolute',
@@ -53,9 +37,6 @@ export default function HeaderDecoration(): JSX.Element {
   return (
     <div className={classes.headerImages}>
       <Container className={classes.container}>
-        <div className="bg-img zigzag" />
-        <div className="bg-img dog" />
-
         <Typography className={`${classes.text} top`}>
           싸우지 말고
           {' '}
