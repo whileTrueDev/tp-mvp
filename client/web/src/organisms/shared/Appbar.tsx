@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => createStyles({
     opacity: 0.8,
     '&:hover': { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
   },
-  selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
+  selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1, '& $linkText': { fontSize: theme.typography.h6.fontSize } },
   linkText: { fontWeight: 'bold' },
   logo: {
     width: 214,
