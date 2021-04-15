@@ -2,6 +2,7 @@ import { Button, Divider, Typography } from '@material-ui/core';
 import React, { useMemo, useRef } from 'react';
 import { Scores, RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { AxiosError } from 'axios';
 import { useTopTenList } from '../style/TopTenList.style';
 import ListItemSkeleton from './ListItemSkeleton';
 import TopTenListItem from './TopTenListItem';
@@ -17,11 +18,12 @@ export interface TopTenListProps{
   data: undefined | Omit<RankingDataType, 'totalDataCount'>,
   loading?: boolean,
   weeklyGraphLabel?: string
+  error?: AxiosError<any> | undefined
 }
 
 function TopTenListContainer(props: TopTenListProps): JSX.Element {
   const {
-    loading, data, currentTab, weeklyGraphLabel = '주간 점수 그래프',
+    loading, error, data, currentTab, weeklyGraphLabel = '주간 점수 그래프',
   } = props;
   const classes = useTopTenList();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -61,24 +63,27 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
 
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems} ref={containerRef}>
-        {loading || !data
-          ? (Array.from(Array(10).keys())).map((v: number) => (
-            <ListItemSkeleton key={v} headerColumns={headerColumns} />
-          ))
-          : data.rankingData.map((d, index: number) => {
-            const currentScoreName = currentTab === 'viewer' ? currentTab : `${currentTab}Score` as keyof Scores;
-            const weeklyTrendsData = data.weeklyTrends[d.creatorId];
-            return (
-              <TopTenListItem
-                key={d.id}
-                index={index}
-                data={d}
-                headerColumns={headerColumns}
-                currentScoreName={currentScoreName}
-                weeklyTrendsData={weeklyTrendsData}
-              />
-            );
-          })}
+        {data && data.rankingData.map((d, index: number) => {
+          const currentScoreName = currentTab === 'viewer' ? currentTab : `${currentTab}Score` as keyof Scores;
+          const weeklyTrendsData = data.weeklyTrends[d.creatorId];
+          return (
+            <TopTenListItem
+              key={d.id}
+              index={index}
+              data={d}
+              headerColumns={headerColumns}
+              currentScoreName={currentScoreName}
+              weeklyTrendsData={weeklyTrendsData}
+            />
+          );
+        })}
+        {loading && (Array.from(Array(10).keys())).map((v: number) => (
+          <ListItemSkeleton key={v} headerColumns={headerColumns} />
+        ))}
+        {!loading && data
+        && data.rankingData.length === 0
+        && <Typography className={classes.informationText}>데이터가 없습니다.</Typography>}
+        {error && <Typography className={classes.informationText}>에러가 발생했습니다.</Typography>}
       </div>
 
       {/* 위로 버튼 */}

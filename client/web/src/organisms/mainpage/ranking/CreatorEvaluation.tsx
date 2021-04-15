@@ -6,11 +6,13 @@ import { Button } from '@material-ui/core';
 import {
   CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import CreatorInfoCard from './sub/CreatorInfoCard';
+import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
+import CreatorCommentList from './creatorInfo/CreatorCommentList';
 
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {
     border: `${theme.spacing(1)}px solid ${theme.palette.text.primary}`,
+    padding: theme.spacing(2),
   },
   goBackButton: {
     marginBottom: theme.spacing(1),
@@ -90,6 +92,7 @@ export default function CreatorEvaluation(
           scores={scores}
           userRating={userRating}
         />
+        <CreatorCommentList creatorId={creatorId} />
       </div>
     </div>
 

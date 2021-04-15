@@ -10,11 +10,12 @@ import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
-import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
+// import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
 import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
 import { useRankingPageLayout, useCarouselStyle } from '../../organisms/mainpage/ranking/style/RankingPage.style';
 import CreatorEvaluation from '../../organisms/mainpage/ranking/CreatorEvaluation';
+import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
 
 export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
@@ -51,11 +52,13 @@ export default function Ranking(): JSX.Element {
                   <TopTenCard />
                 </Grid>
                 <Grid item xs={4} className={wrapper.right}>
-                  <MonthlyScoresRankingCard />
+                  <RatingsList />
+                  {/* <MonthlyScoresRankingCard /> */}
                   <UserReactionCard />
                 </Grid>
               </Grid>
             </Route>
+            {/* 방송인 정보 페이지 */}
             <Route exact path={`${path}/:platform/:creatorId`}>
               <CreatorEvaluation />
             </Route>

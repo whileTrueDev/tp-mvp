@@ -1,8 +1,8 @@
 import { PlatformAfreeca } from '@truepoint/shared/dist/interfaces/PlatformAfreeca.interface';
 import {
-  Entity, Column, CreateDateColumn, UpdateDateColumn,
+  Entity, Column, CreateDateColumn, UpdateDateColumn, JoinTable, ManyToMany,
 } from 'typeorm';
-
+import { CreatorCategoryEntity } from '../../creator-category/entities/creatorCategory.entity';
 @Entity({ name: 'PlatformAfreeca' })
 export class PlatformAfreecaEntity implements PlatformAfreeca {
   @Column({ primary: true })
@@ -22,4 +22,8 @@ export class PlatformAfreecaEntity implements PlatformAfreeca {
 
   @UpdateDateColumn({ type: 'timestamp', comment: '연동 정보 최신화 날짜' })
   updatedAt?: Date;
+
+  @ManyToMany((type) => CreatorCategoryEntity, (category) => category.afreecaCreator)
+  @JoinTable()
+  categories?: CreatorCategoryEntity[]
 }

@@ -1,10 +1,11 @@
 import { Rankings } from '@truepoint/shared/interfaces/Rankings.interface';
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn,
+  CreateDateColumn, PrimaryGeneratedColumn, Index,
 } from 'typeorm';
 
 @Entity({ name: 'Rankings' })
+@Index('IX_creatorId_createDate', ['creatorId', 'createDate'])
 export class RankingsEntity implements Rankings {
   @PrimaryGeneratedColumn()
   id: number;

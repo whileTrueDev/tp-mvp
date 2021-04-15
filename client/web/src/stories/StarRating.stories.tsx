@@ -1,6 +1,6 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import StarRating, { StarRatingProps } from '../organisms/mainpage/ranking/sub/StarRating';
+import StarRating, { StarRatingProps } from '../organisms/mainpage/ranking/creatorInfo/StarRating';
 
 export default {
   title: 'organisms/StarRating',
@@ -19,11 +19,11 @@ const Template: Story<StarRatingProps> = (args) => <StarRating {...args} />;
 export const Default = Template.bind({});
 Default.args = {
   score: 3,
-  editRatingHandler: (score: number|null) => (event: React.MouseEvent<HTMLElement>) => {
+  createRatingHandler: (score: number|null) => {
     if (!score) {
       alert('별점을 매겨주세요');
     } else {
-      alert(`수정된 별점 : ${score * 2}`);
+      alert(`수정된 별점 : ${score}`);
     }
   },
   cancelRatingHandler: () => {
@@ -33,7 +33,7 @@ Default.args = {
 
 export const NullScore = Template.bind({});
 NullScore.args = {
-  score: null,
+  score: undefined,
 };
 
 export const ReadOnly = Template.bind({});

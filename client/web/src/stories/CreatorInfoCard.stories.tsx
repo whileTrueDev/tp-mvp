@@ -1,6 +1,7 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import CreatorInfoCard, { CreatorInfoCardProps } from '../organisms/mainpage/ranking/sub/CreatorInfoCard';
+import { SnackbarProvider } from 'notistack';
+import CreatorInfoCard, { CreatorInfoCardProps } from '../organisms/mainpage/ranking/creatorInfo/CreatorInfoCard';
 
 export default {
   title: 'organisms/CreatorInfoCard',
@@ -12,7 +13,7 @@ const Template: Story<CreatorInfoCardProps> = (args) => <CreatorInfoCard {...arg
 export const Default = Template.bind({});
 Default.decorators = [
   // eslint-disable-next-line no-shadow
-  (Story) => <div style={{ maxWidth: '700px', border: '1px solid red' }}><Story /></div>,
+  (Story) => <SnackbarProvider><Story /></SnackbarProvider>,
 ];
 Default.args = {
   scores: {

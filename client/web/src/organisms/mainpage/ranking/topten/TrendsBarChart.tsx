@@ -81,7 +81,16 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
 
   useEffect(() => {
     if (!data) return;
-    const dates = data.map((d) => d.createDate);
+    let source: WeeklyTrendsItem[] = [];
+    // 데이터가 7개 이하인 경우 빈칸 null로 채움
+    if (data.length < 7) {
+      const gap = 7 - data.length;
+      source = [...data, ...Array(gap).fill({ createDate: null, [currentScoreName]: null })];
+    } else {
+      source = [...data];
+    }
+
+    const dates = source.map((d) => d.createDate);
     setChartOptions({
       chart: {
         margin: 0,
@@ -99,7 +108,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
       series: [
         {
           type: 'line',
-          data: data.map((d) => d[currentScoreName] as number),
+          data: source.map((d) => d[currentScoreName] as number),
           name: getSeriesName(currentScoreName),
         },
       ],

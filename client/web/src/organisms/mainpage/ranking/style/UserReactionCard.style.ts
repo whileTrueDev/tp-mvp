@@ -18,7 +18,7 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => createStyles({
     fontWeight: theme.typography.fontWeightBold,
   },
   list: {
-    maxHeight: theme.spacing(30),
+    maxHeight: theme.spacing(35.5),
     overflowY: 'auto',
     borderTop: `1px solid ${theme.palette.divider}`,
     borderBottom: `1px solid ${theme.palette.divider}`,

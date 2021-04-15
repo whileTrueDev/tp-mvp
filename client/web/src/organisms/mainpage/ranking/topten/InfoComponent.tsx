@@ -1,9 +1,8 @@
-import {
-  Chip, Typography, Link,
-} from '@material-ui/core';
+import { Typography, Link } from '@material-ui/core';
 import { Scores, TopTenDataItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import StarRating from '../creatorInfo/StarRating';
 import { useTopTenList } from '../style/TopTenList.style';
 import ScoreBar from './ScoreBar';
 
@@ -23,35 +22,18 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
   const classes = useTopTenList();
   return (
     <div className={classes.infoWrapper}>
-      <div className={classes.nameContainer}>
-
-        <Link component={RouterLink} to={`/ranking/${d.platform}/${d.creatorId}`}>
-          <Typography
-            className={classes.creatorName}
-          >
+      <div className={classes.infoHeader}>
+        <Link className={classes.nameLink} component={RouterLink} to={`/ranking/${d.platform}/${d.creatorId}`}>
+          <Typography noWrap className={classes.creatorName}>
             {d.creatorName}
           </Typography>
         </Link>
-        <Chip
-          className={classes.chip}
-          component="a"
-          target="_blank"
-          rel="noopener"
-          avatar={(
-            <img
-              src={`/images/logo/${d.platform}Logo.png`}
-              className={classes.platformLogoImage}
-              alt={`${d.platform}로고`}
-            />
-          )}
-          size="small"
-          clickable
-          href={d.platform === 'afreeca'
-            ? `https://bj.afreecatv.com/${d.creatorId}`
-            : `https://www.twitch.tv/${d.twitchChannelName}`}
-          label="방송 보러 가기"
-        />
+        <div className={classes.ratingContainer}>
+          <StarRating score={d.averageRating} readOnly />
+          <Typography noWrap>{`주간 평점 ${d.averageRating ? d.averageRating.toFixed(2) : 0}`}</Typography>
+        </div>
       </div>
+
       <Typography className={classes.title}>
         {d.title}
       </Typography>

@@ -5,7 +5,7 @@ import { Scores, TopTenDataItem, WeeklyTrendsItem } from '@truepoint/shared/dist
 import { useTopTenList } from '../style/TopTenList.style';
 import InfoComponent from './InfoComponent';
 import TrendsBarChart from './TrendsBarChart';
-
+import '@fortawesome/fontawesome-free/css/all.css';
 /**
  * '80%' -> 80으로 반환하는 함수
  * @param strPercentNum '80%' 처럼 %가 포함된 문자열

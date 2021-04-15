@@ -21,7 +21,8 @@ export const useTopTenList = makeStyles((theme: Theme) => {
   return createStyles({
     topTenListWrapper: {
       position: 'relative',
-      padding: theme.spacing(2, 1),
+      paddingTop: theme.spacing(2),
+      paddingLeft: theme.spacing(1),
     },
     header: {
       display: 'flex',
@@ -29,6 +30,10 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     headerColumn: {
       color: theme.palette.text.secondary,
       whiteSpace: 'nowrap',
+    },
+    informationText: {
+      padding: theme.spacing(4),
+      textAlign: 'center',
     },
     listItems: {
       padding: theme.spacing(2, 0),
@@ -101,10 +106,12 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       whiteSpace: 'nowrap',
       overflow: 'hidden',
     },
-    nameContainer: {
+    infoHeader: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
+    },
+    nameLink: {
+      width: '40%',
     },
     creatorName: {
       color: theme.palette.common.black,
@@ -113,6 +120,16 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       textOverflow: 'ellipsis',
       overflow: 'hidden',
       whiteSpace: 'nowrap',
+    },
+    ratingContainer: {
+      color: theme.palette.common.black,
+      '& .MuiRating-iconEmpty': {
+        color: theme.palette.grey[500],
+      },
+      display: 'flex',
+      '&>*': {
+        fontWeight: theme.typography.fontWeightMedium,
+      },
     },
     chip: {
       backgroundColor: theme.palette.grey[200],
@@ -138,6 +155,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     },
     scrollTopButton: {
       position: 'absolute',
+      padding: 0,
       bottom: 0,
       left: 0,
     },
