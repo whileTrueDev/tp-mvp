@@ -4,7 +4,7 @@ const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 500,
-    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+    backgroundColor: theme.palette.background.paper,
     [theme.breakpoints.down('sm')]: {
       height: 400,
     },
@@ -25,7 +25,7 @@ const styles = makeStyles((theme) => ({
   mainTitle: {
     fontSize: 55,
     fontWeight: 900,
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.primary.main,
     margin: 0,
     [theme.breakpoints.down('md')]: {
       wordBreak: 'keep-all',
@@ -41,7 +41,7 @@ const styles = makeStyles((theme) => ({
   mainContent: {
     fontSize: 20,
     margin: 0,
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.text.primary,
     [theme.breakpoints.down('md')]: {
       wordBreak: 'keep-all',
     },
@@ -55,6 +55,23 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
       display: 'none',
+    },
+    '& .small-tv': {
+      width: '50%',
+      maxWidth: '304px',
+    },
+    '& .large-tv-wrapper': {
+      marginTop: `-${theme.spacing(5)}px`,
+      position: 'relative',
+      '& .large-tv': {
+        width: '100%',
+        maxWidth: '553px',
+      },
+      '& .logo-in-tv': {
+        position: 'absolute',
+        top: theme.spacing(9),
+        left: theme.spacing(8),
+      },
     },
   },
   mainSVGEffect: {

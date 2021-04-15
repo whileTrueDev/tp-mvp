@@ -27,7 +27,6 @@ import HeaderLinks from './sub/HeaderLinks';
 const useStyles = makeStyles((theme) => createStyles({
   root: {
     flexGrow: 1,
-    background: theme.palette.primary.main,
     position: 'fixed',
     width: '100%',
     zIndex: 1200,
@@ -38,6 +37,7 @@ const useStyles = makeStyles((theme) => createStyles({
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
     borderBottom: 'none',
+    backgroundColor: theme.palette.background.paper,
   },
   toolbar: {
     display: 'flex',
@@ -61,8 +61,8 @@ const useStyles = makeStyles((theme) => createStyles({
   selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
   linkText: { fontWeight: 'bold' },
   logo: {
-    width: 170,
-    height: 24,
+    width: 214,
+    height: 74,
     margin: `0px ${theme.spacing(4)}px`,
   },
   appbarSpace: {
