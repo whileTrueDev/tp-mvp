@@ -2,18 +2,18 @@ import React, { useCallback } from 'react';
 import {
   Grid, Avatar, Typography, Chip,
 } from '@material-ui/core';
-import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
-import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
-import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
-import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
-import classnames from 'classnames';
 import { useSnackbar } from 'notistack';
 import { CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+
+import AdmireIcon from '../../../../atoms/svgIcons/AdmireIcon';
+import CussIcon from '../../../../atoms/svgIcons/CussIcon';
+import FrustratedIcon from '../../../../atoms/svgIcons/FrustratedIcon';
+import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
 import StarRating from './StarRating';
 import ScoreBar from '../topten/ScoreBar';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import { useCreatorInfoCardStyles } from '../style/CreatorInfoCard.style';
+import { useCreatorInfoCardStyles, useExLargeRatingStyle } from '../style/CreatorInfoCard.style';
 
 export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
   updateAverageRating?: () => void
@@ -22,10 +22,10 @@ export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
 type columns = 'admire' | 'smile'|'frustrate'|'cuss';
 
 const scoreLables: {name: columns, label: string, icon?: any}[] = [
-  { name: 'admire', label: '감탄점수', icon: <SentimentVerySatisfiedIcon /> },
-  { name: 'smile', label: '웃음점수', icon: <SentimentSatisfiedAltIcon /> },
-  { name: 'frustrate', label: '답답함점수', icon: <SentimentDissatisfiedIcon /> },
-  { name: 'cuss', label: '욕점수', icon: <SentimentVeryDissatisfiedIcon /> },
+  { name: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
+  { name: 'smile', label: '웃음점수', icon: <SmileIcon /> },
+  { name: 'frustrate', label: '답답함점수', icon: <FrustratedIcon /> },
+  { name: 'cuss', label: '욕점수', icon: <CussIcon /> },
 ];
 
 /**
@@ -43,11 +43,12 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
   } = info;
   const { average: averageRating, count: ratingCount } = ratings;
   const classes = useCreatorInfoCardStyles();
+  const largeRating = useExLargeRatingStyle();
 
   /**
    * 평점 생성, 수정 핸들러 함수
    * 평점을 매기고, 평균평점을 새로 불러온다
-   * @param score 유저가 정한 평점
+  //  * @param score 유저가 정한 평점
    * @param cb 버튼 눌렀을 때 loading 상태 제어할 콜백함수, () => setLoading(false)와 같은 함수가 들어올 예정
    */
   const createRatingHandler = useCallback((score: number|null, cb?: () => void) => {
@@ -94,53 +95,72 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
       });
   }, [creatorId, updateAverageRating]);
   return (
-    <Grid container className={classes.creatorInfoContainer} spacing={4}>
-      <Grid className={classes.avatarContainer} item xs={2}>
-        <Avatar className={classes.avatar} src={logo} />
-      </Grid>
-      <Grid item xs={4} className={classes.textContainer}>
-        <div className={classnames(classes.nameContainer)}>
-          <Typography className="nickname">{nickname}</Typography>
-          <Chip
-            className="chip"
-            component="a"
-            target="_blank"
-            rel="noopener"
-            size="small"
-            clickable
-            href={platform === 'afreeca'
-              ? `https://bj.afreecatv.com/${creatorId}`
-              : `https://www.twitch.tv/${twitchChannelName}`}
-            label="방송 보러 가기"
-          />
-        </div>
-        <Typography className={classes.averageRatingText}>
-          평균★
-          {averageRating}
-          {`(${ratingCount}명)`}
-        </Typography>
-        <StarRating
-          createRatingHandler={createRatingHandler}
-          cancelRatingHandler={cancelRatingHandler}
-          score={userRating || undefined}
-          ratingProps={{ size: 'large' }}
+    <Grid container className={classes.creatorInfoContainer}>
+      {/* 왼쪽 크리에이터 기본설명, 평점 */}
+      <Grid container item className={classes.left} xs={7}>
+        <Grid item className={classes.avatarContainer} xs={4}>
+          <Avatar className={classes.avatar} src={logo} />
+        </Grid>
+
+        <Grid item className={classes.textContainer} xs={8}>
+          <div className="upper-text">
+            <div className={classes.nameContainer}>
+              <Typography className={classes.nickname}>{nickname}</Typography>
+            </div>
+            <div className={classes.ratingContainer}>
+              <Typography className={classes.averageRatingText}>
+                평균★
+                {averageRating}
+                {`(${ratingCount}명)`}
+              </Typography>
+              <StarRating
+                createRatingHandler={createRatingHandler}
+                cancelRatingHandler={cancelRatingHandler}
+                score={userRating || undefined}
+                ratingProps={{
+                  size: 'large',
+                  classes: largeRating,
+                }}
+              />
+            </div>
+          </div>
+          <div className={classes.creatorDescription} />
+
+        </Grid>
+
+        <Chip
+          className={classes.chipLink}
+          component="a"
+          target="_blank"
+          rel="noopener"
+          size="small"
+          clickable
+          href={platform === 'afreeca'
+            ? `https://bj.afreecatv.com/${creatorId}`
+            : `https://www.twitch.tv/${twitchChannelName}`}
+          label="방송 보러 가기"
         />
       </Grid>
-      <Grid item xs={6}>
+
+      {/* 오른쪽 크리에이터 점수 */}
+      <Grid item className={classes.right} xs={5}>
         {scoreLables.map((score) => (
-          <Grid container key={score.name}>
-            <Grid item xs={2}>
-              <Typography>
+          <Grid container key={score.name} className={classes.scoreItemContainer}>
+            <Grid item className={classes.scoreLabelContainer}>
+              <Typography className={classes.scoreLabelText}>
                 {score.icon}
+              </Typography>
+              <Typography className={classes.scoreLabelText}>
                 {score.label}
               </Typography>
             </Grid>
-            <Grid item xs={10}>
+            <Grid item className={classes.scoreBarContainer}>
               <ScoreBar score={scores[score.name]} />
             </Grid>
           </Grid>
         ))}
       </Grid>
+
     </Grid>
   );
 }

@@ -27,7 +27,6 @@ import HeaderLinks from './sub/HeaderLinks';
 const useStyles = makeStyles((theme) => createStyles({
   root: {
     flexGrow: 1,
-    background: theme.palette.primary.main,
     position: 'fixed',
     width: '100%',
     zIndex: 1200,
@@ -38,6 +37,7 @@ const useStyles = makeStyles((theme) => createStyles({
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
     borderBottom: 'none',
+    backgroundColor: theme.palette.background.paper,
   },
   toolbar: {
     display: 'flex',
@@ -54,15 +54,15 @@ const useStyles = makeStyles((theme) => createStyles({
   link: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(4),
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.text.primary,
     opacity: 0.8,
     '&:hover': { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
   },
-  selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
+  selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1, '& $linkText': { fontSize: theme.typography.h6.fontSize } },
   linkText: { fontWeight: 'bold' },
   logo: {
-    width: 170,
-    height: 24,
+    width: 214,
+    height: 74,
     margin: `0px ${theme.spacing(4)}px`,
   },
   appbarSpace: {
@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme) => createStyles({
   mobileTextMyPage: { color: theme.palette.primary.main },
   darkModeToggleButton: {
     position: 'relative',
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.text.primary,
     '&$menuItem': {
       width: '100%',
       borderTop: `2px solid ${theme.palette.divider}`,

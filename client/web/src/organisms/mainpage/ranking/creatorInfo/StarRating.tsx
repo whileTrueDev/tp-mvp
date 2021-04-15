@@ -5,9 +5,10 @@ import { Rating, RatingProps } from '@material-ui/lab';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { Typography, Tooltip } from '@material-ui/core';
+import yellow from '@material-ui/core/colors/yellow';
 
 const useRatingStyle = makeStyles((theme: Theme) => {
-  const labelFontSize = theme.typography.body2.fontSize;
+  const labelFontSize = theme.typography.body1.fontSize;
 
   return createStyles({
     container: {
@@ -15,12 +16,12 @@ const useRatingStyle = makeStyles((theme: Theme) => {
       alignItems: 'center',
       position: 'relative',
       '&.with-label': {
-        paddingTop: theme.spacing(2.5),
+        paddingBottom: theme.spacing(3),
       },
     },
     label: {
       position: 'absolute',
-      top: 0,
+      bottom: 0,
       left: 0,
       fontSize: labelFontSize,
     },
@@ -31,6 +32,9 @@ const useRatingStyle = makeStyles((theme: Theme) => {
     },
     rating: {
       marginRight: theme.spacing(1),
+      '& .MuiRating-iconFilled': {
+        color: yellow[400],
+      },
     },
   });
 });
@@ -63,6 +67,7 @@ const labels: { [index: string]: string } = {
   4: '재미있어요',
   4.5: '훌륭해요',
   5: '최고예요',
+  askEvaluate: '별점을 남겨주세요',
 };
 
 /**
@@ -82,7 +87,7 @@ export default function StarRating({
 }: StarRatingProps): JSX.Element {
   const classes = useRatingStyle();
 
-  const [evaluated, setEvaluated] = useState<boolean>(score === undefined);
+  const [evaluated, setEvaluated] = useState<boolean>(score !== undefined);
   // 점수는 10점 만점으로 들어오므로 Rating컴포넌트 value로 넘겨주기 위해서는 나누기 2 해야함
   const [value, setValue] = useState<number>(score ? (score / 2) : 0); // rating컴포넌트에 표시될 점수
 
@@ -115,11 +120,6 @@ export default function StarRating({
 
   return (
     <div className={classnames(classes.container, { 'with-label': !readOnly })}>
-      {!readOnly && (
-        <Typography className={classes.label}>
-          {evaluated ? labels[value] : '평가하기'}
-        </Typography>
-      )}
       <Tooltip open={tooltipOpen} title="취소하기" arrow placement="right-start">
         <Rating
           {...ratingProps}
@@ -132,6 +132,11 @@ export default function StarRating({
           className={classnames(classes.rating)}
         />
       </Tooltip>
+      {!readOnly && (
+        <Typography className={classes.label} color={evaluated ? 'textPrimary' : 'error'}>
+          {evaluated ? labels[value] : labels.askEvaluate}
+        </Typography>
+      )}
 
     </div>
   );

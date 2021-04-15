@@ -28,9 +28,12 @@ export default function ProductHero(): JSX.Element {
               ))}
             </div>
           </Grid>
-          <Grid item md={3} className={classes.imgWraper}>
-            <img src="/images/main/heromain.svg" alt="HeroMain" className={classes.mainSVGEffect} />
-            <img src="/images/main/herosub.svg" alt="HeroSub" className={classes.subSVGEffect} />
+          <Grid item md={4} className={classes.imgWraper}>
+            <img src="/images/main/main_tv_small.png" alt="small tv" className="small-tv" />
+            <div className="large-tv-wrapper">
+              <img className="large-tv" src="/images/main/main_tv_large.png" alt="large tv" />
+              <img className="logo-in-tv" src="/images/logo/logo_truepoint_v2_light.png" alt="logo" />
+            </div>
           </Grid>
         </Grid>
       </Container>

@@ -1,6 +1,4 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { lighten } from '@material-ui/core/styles/colorManipulator';
-import getPlatformColor from '../../../../utils/getPlatformColor';
 
 // TopTenList 스타일
 export const useTopTenList = makeStyles((theme: Theme) => {
@@ -17,6 +15,9 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       backgroundImage: `linear-gradient(${startColor}, ${endColor})`,
     };
   });
+
+  const twitchItemBackgroundColor = '#c8add8';
+  const afreecaItemBackgroundColor = '#a2b9e1';
 
   return createStyles({
     topTenListWrapper: {
@@ -63,10 +64,10 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       display: 'flex',
       borderRadius: theme.spacing(2),
       '&.twitch': {
-        backgroundColor: lighten(getPlatformColor('twitch'), 0.9),
+        backgroundColor: twitchItemBackgroundColor,
       },
       '&.afreeca': {
-        backgroundColor: lighten(getPlatformColor('afreeca'), 0.9),
+        backgroundColor: afreecaItemBackgroundColor,
       },
     },
     star: {
@@ -127,6 +128,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         color: theme.palette.grey[500],
       },
       display: 'flex',
+      alignItems: 'center',
       '&>*': {
         fontWeight: theme.typography.fontWeightMedium,
       },
@@ -176,10 +178,11 @@ export const useProgressBar = makeStyles((theme: Theme) => {
     borderBottomRightRadius: baseBorderRadius,
     boxShadow: theme.shadows[2],
   };
+  const barColor = '#f2c751';
 
   return createStyles({
     root: {
-      height: theme.spacing(2),
+      height: theme.spacing(3),
       ...barCommonStyle,
     },
     colorPrimary: {
@@ -189,7 +192,7 @@ export const useProgressBar = makeStyles((theme: Theme) => {
       ...barCommonStyle,
     },
     barColorPrimary: {
-      backgroundColor: theme.palette.primary.light,
+      backgroundColor: barColor,
     },
   });
 });

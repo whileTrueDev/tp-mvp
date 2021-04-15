@@ -2,16 +2,18 @@ import {
   Button,
   Grid, Tab, Tabs, Typography,
 } from '@material-ui/core';
-import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
-import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
-import SentimentVeryDissatisfiedIcon from '@material-ui/icons/SentimentVeryDissatisfied';
-import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
+
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import useAxios from 'axios-hooks';
 import dayjs from 'dayjs';
 import React, {
   useCallback, useEffect, useMemo, useRef, useState,
 } from 'react';
+import AdmireIcon from '../../../atoms/svgIcons/AdmireIcon';
+import SmileIcon from '../../../atoms/svgIcons/SmileIcon';
+import CussIcon from '../../../atoms/svgIcons/CussIcon';
+import FrustratedIcon from '../../../atoms/svgIcons/FrustratedIcon';
+import TVIcon from '../../../atoms/svgIcons/TVIcon';
 import {
   useTabItem, useTabs, useTopTenCard, useHorizontalTabItemStyle, useHorizontalTabsStyle,
 } from './style/TopTenCard.style';
@@ -27,11 +29,11 @@ type MainTabColumns = {
 
 // 하위 카테고리 탭 목록
 const categoryTabColumns = [
-  { categoryId: 1, name: '버라이어티 BJ', icon: <SentimentVerySatisfiedIcon /> },
-  { categoryId: 2, name: '종합게임엔터 BJ', icon: <SentimentVerySatisfiedIcon /> },
-  { categoryId: 3, name: '보이는 라디오 BJ', icon: <SentimentVerySatisfiedIcon /> },
-  { categoryId: 4, name: '롤 BJ', icon: <SentimentVerySatisfiedIcon /> },
-  { categoryId: 5, name: '주식투자', icon: <SentimentVerySatisfiedIcon /> },
+  { categoryId: 1, name: '버라이어티 BJ', icon: <TVIcon /> },
+  { categoryId: 2, name: '종합게임엔터 BJ', icon: <TVIcon /> },
+  { categoryId: 3, name: '보이는 라디오 BJ', icon: <TVIcon /> },
+  { categoryId: 4, name: '롤 BJ', icon: <TVIcon /> },
+  { categoryId: 5, name: '주식투자', icon: <TVIcon /> },
 ];
 function TopTenCard(): JSX.Element {
   // 스타일
@@ -45,11 +47,14 @@ function TopTenCard(): JSX.Element {
   // 탭목록
   const mainTabColumns: MainTabColumns[] = useMemo(() => (
     [
-      { name: 'admire', label: '감탄점수', icon: <SentimentVerySatisfiedIcon /> },
-      { name: 'smile', label: '웃음점수', icon: <SentimentSatisfiedAltIcon /> },
-      { name: 'frustrate', label: '답답함점수', icon: <SentimentDissatisfiedIcon /> },
-      { name: 'cuss', label: '욕점수', icon: <SentimentVeryDissatisfiedIcon /> },
-      { name: 'viewer', label: '최고 시청자수 순위', className: classes.viewerTab },
+      {
+        name: 'viewer', label: '최고 시청자수', className: classes.viewerTab, icon: <TVIcon />,
+      },
+      { name: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
+      { name: 'smile', label: '웃음점수', icon: <SmileIcon /> },
+      { name: 'frustrate', label: '답답함점수', icon: <FrustratedIcon /> },
+      { name: 'cuss', label: '욕점수', icon: <CussIcon /> },
+
     ]
   ), [classes.viewerTab]);
 

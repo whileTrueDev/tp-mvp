@@ -1,15 +1,18 @@
 import {
-  Button, Card, TextField, Typography,
+  Button, TextField, Typography,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
+import classnames from 'classnames';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import {
   ICreatorCommentsRes, ICreatorCommentData, IGetLikes, IGetHates,
 } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import CheckIcon from '@material-ui/icons/Check';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import CreatorCommentItem from './CreatorCommentItem';
 import { useCreatorCommentFormStyle, useCreatorCommentListStyle } from '../style/CreatorComment.style';
@@ -17,6 +20,19 @@ import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import RegularButton from '../../../../atoms/Button/Button';
 import axios from '../../../../utils/axios';
 
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  commentSectionWrapper: {
+    padding: theme.spacing(8),
+    paddingBottom: theme.spacing(20),
+    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
+    backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_2.svg), url(/images/rankingPage/streamer_detail_bg_3.svg)',
+    backgroundRepeat: 'no-repeat, no-repeat',
+    backgroundPosition: 'left center, left bottom',
+    backgroundSize: '100% 100%, contain',
+  },
+}));
+
+type CommentFilter = 'date' | 'recommend';
 export interface CreatorCommentListProps{
   creatorId: string;
 }
@@ -26,9 +42,10 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   const { enqueueSnackbar } = useSnackbar();
   const formStyle = useCreatorCommentFormStyle();
   const listStyle = useCreatorCommentListStyle();
+  const classes = useStyles();
   const { creatorId } = props;
   const [commentList, setCommentList] = useState<ICreatorCommentData[]>([]);
-  const [recommendedComments, setRecommendedComments] = useState<ICreatorCommentData[]>([]);
+  const [clickedFilterButtonIndex, setClickedFilterButtonIndex] = useState<number>(0); // 0 : 최신순(date), 1 : 인기순(recommend)
   const [{ data: commentData, loading }, getCommentData] = useAxios<ICreatorCommentsRes>({
     url: `/creatorComment/${creatorId}`,
     method: 'get',
@@ -42,19 +59,24 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   const likes = useMemo(() => (likeList ? likeList.likes : []), [likeList]);
   const hates = useMemo(() => (hateList ? hateList.hates : []), [hateList]);
 
-  const loadComments = useCallback(() => {
-    getCommentData().then((res) => {
+  const loadComments = useCallback((filter: CommentFilter) => {
+    getCommentData({
+      params: {
+        skip: 0,
+        order: filter,
+      },
+    }).then((res) => {
       setCommentList(res.data.comments);
     }).catch((error) => {
       console.error(error);
     });
   }, [getCommentData]);
 
-  const loadMoreComments = useCallback(() => {
+  const loadMoreComments = useCallback(() => (filter: CommentFilter) => {
     getCommentData({
       params: {
         skip: commentList.length,
-        order: 'date',
+        order: filter,
       },
     }).then((res) => {
       setCommentList((prevList) => [...prevList, ...res.data.comments]);
@@ -65,16 +87,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
 
   useEffect(() => {
     // 최신순 댓글 목록 가져오기
-    loadComments();
-    // 추천많은 댓글 3개 가져오기
-    axios.get(`/creatorComment/${creatorId}`, {
-      params: {
-        skip: 0,
-        order: 'recommend',
-      },
-    }).then((res) => {
-      setRecommendedComments(res.data.comments);
-    }).catch((error) => console.error(error));
+    loadComments('date');
   // 한번만 실행
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -104,51 +117,65 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
         nicknameInput.value = '';
         passwordInput.value = '';
         contentInput.value = '';
-        loadComments();
+        loadComments(clickedFilterButtonIndex === 0 ? 'date' : 'recommend');
       })
       .catch((error) => console.error(error));
   };
 
+  const handleDateFilter = useCallback(() => {
+    setClickedFilterButtonIndex(0);
+    loadComments('date');
+  }, [loadComments]);
+
+  const handleRecommendFilter = useCallback(() => {
+    setClickedFilterButtonIndex(1);
+    loadComments('recommend');
+  }, [loadComments]);
+
   return (
-    <div>
-      <div className={listStyle.bestCommentsContainer}>
-        {recommendedComments.length
-          ? recommendedComments.map((d) => (
-            <CreatorCommentItem
-              key={d.commentId}
-              {...d}
-              isBest
-              isLiked={likes.includes(d.commentId)}
-              isHated={hates.includes(d.commentId)}
-            />
-          ))
-          : null}
-      </div>
+    <div className={classes.commentSectionWrapper}>
 
       <form className={formStyle.form} onSubmit={onSubmit}>
-        <div className={formStyle.inputWrapper}>
-          <div>
-            <TextField label="닉네임" name="nickname" variant="outlined" placeholder="닉네임" inputProps={{ maxLength: 8 }} className={formStyle.nicknameInput} />
-            {authContext.user.userId
-              ? null
-              : <TextField label="비밀번호" name="password" type="password" placeholder="비밀번호" variant="outlined" inputProps={{ maxLength: 4 }} />}
-          </div>
-
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            inputProps={{ maxLength: 240 }}
-            name="content"
-            placeholder="이 크리에이터에 관한 댓글을 남겨주세요"
-          />
+        <div>
+          <TextField label="닉네임" name="nickname" variant="outlined" placeholder="닉네임" inputProps={{ maxLength: 8 }} className={formStyle.nicknameInput} />
+          {authContext.user.userId
+            ? null
+            : <TextField label="비밀번호" name="password" type="password" placeholder="비밀번호" variant="outlined" inputProps={{ maxLength: 4 }} />}
         </div>
 
-        <Button type="submit" className={formStyle.button}>입력</Button>
+        <TextField
+          className={formStyle.contentTextArea}
+          fullWidth
+          multiline
+          rows={4}
+          inputProps={{ maxLength: 240 }}
+          name="content"
+          placeholder="내용을 입력해주세요"
+        />
+        <div className={formStyle.buttonWrapper}>
+          <Button type="submit" className={formStyle.button}>등록</Button>
+        </div>
       </form>
 
       <div className={listStyle.commentsContainer}>
-        {
+        <div className={listStyle.commentFilterContainer}>
+          <Button
+            startIcon={<CheckIcon />}
+            className={classnames(listStyle.commentFilterButton, { selected: clickedFilterButtonIndex === 0 })}
+            onClick={handleDateFilter}
+          >
+            최신순
+          </Button>
+          <Button
+            startIcon={<CheckIcon />}
+            className={classnames(listStyle.commentFilterButton, { selected: clickedFilterButtonIndex === 1 })}
+            onClick={handleRecommendFilter}
+          >
+            인기순
+          </Button>
+        </div>
+        <div className={listStyle.commentListContainer}>
+          {
           commentList.length
             ? commentList.map((d) => (
               <CreatorCommentItem
@@ -159,11 +186,11 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
               />
             ))
             : (
-              <Card className={listStyle.emptyList}>
-                <Typography>아직 댓글이 없어요! 첫 댓글을 남겨보세요.</Typography>
-              </Card>
+              <Typography className={listStyle.emptyList}>아직 댓글이 없어요! 첫 댓글을 남겨보세요.</Typography>
             )
         }
+        </div>
+
       </div>
 
       <div className={listStyle.buttonWrapper}>

@@ -33,7 +33,7 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     },
   },
   viewerTab: {
-    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   loadMoreButtonContainer: {
     textAlign: 'center',
@@ -95,7 +95,7 @@ export const useTabItem = makeStyles((theme: Theme) => {
         display: 'block',
       },
       '& $wrapper': {
-        color: theme.palette.primary.main,
+        color: theme.palette.secondary.main,
       },
     },
     wrapper: {

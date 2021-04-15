@@ -5,7 +5,7 @@ const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: 280,
-    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+    backgroundColor: theme.palette.primary.main,
     minWidth: MYPAGE_MAIN_MIN_WIDTH,
   },
   wraper: {

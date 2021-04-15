@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Divider, Grid, List, ListItem, Typography,
+  Grid, List, ListItem, Typography,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import RatingsListItem, { RatingsListItemProps } from './sub/RatingsListItem';
@@ -19,14 +19,14 @@ export default function RatingsList(): JSX.Element {
 
   return (
     <section className={classes.ratingsListSection}>
-      <Typography className={classes.title}>주간 집계 시청자 평점 순위</Typography>
+      <Typography className={classes.title}>주간 평점 순위</Typography>
       <List className={classes.listItemContainer}>
         <ListItem>
           <Grid container>
-            <Grid item xs={2}><Typography align="center">순위</Typography></Grid>
-            <Grid item xs={5}><Typography align="center">스트리머</Typography></Grid>
-            <Grid item xs={4}><Typography align="center">평점</Typography></Grid>
-            <Grid item xs={1}><Typography align="center" /></Grid>
+            <Grid item xs={2}><Typography className={classes.headerText}>순위</Typography></Grid>
+            <Grid item xs={5}><Typography className={classes.headerText}>스트리머</Typography></Grid>
+            <Grid item xs={4}><Typography className={classes.headerText}>평점</Typography></Grid>
+            <Grid item xs={1}><Typography className={classes.headerText} /></Grid>
           </Grid>
         </ListItem>
         {loading ? <CenterLoading /> : null}
@@ -36,9 +36,6 @@ export default function RatingsList(): JSX.Element {
           ? data.map((d, index) => (
             <React.Fragment key={d.creatorId}>
               <RatingsListItem {...d} order={index + 1} />
-              {(index === data.length - 1)
-                ? null
-                : <Divider variant="middle" component="li" />}
             </React.Fragment>
           ))
           : <Typography className={classes.text}>데이터가 없습니다</Typography>}

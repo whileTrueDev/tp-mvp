@@ -2,6 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const styles = makeStyles((theme) => ({
   root: {
+    backgroundColor: theme.palette.primary.main,
     padding: theme.spacing(10, 10),
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(10, 1),

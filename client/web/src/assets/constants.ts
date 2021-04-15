@@ -2,7 +2,7 @@
 // Layouts - 사이드바, 네비바
 
 // 상단 네비바 높이
-export const COMMON_APP_BAR_HEIGHT = 72;
+export const COMMON_APP_BAR_HEIGHT = 72 + 36;
 export const SM_APP_BAR_HEIGHT = 62;
 
 // 마이페이지 상단 네비바 높이
@@ -22,3 +22,6 @@ export const MYPAGE_MAIN_MIN_WIDTH = 1400;
 // 마이페이지 - 메인영역 최소 높이
 export const MYPAGE_MAIN_MIN_HEIGHT = `calc(100vh - ${COMMON_APP_BAR_HEIGHT}px)`;
 // *****************************************
+
+// 랭킹페이지 컨테이너 최대너비
+export const RANKING_PAGE_CONTAINER_WIDTH = `${1920 - 190}px`;

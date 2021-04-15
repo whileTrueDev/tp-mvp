@@ -11,11 +11,24 @@ import CreatorCommentList from './creatorInfo/CreatorCommentList';
 
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {
-    border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
-    padding: theme.spacing(2),
+    position: 'relative',
+    backgroundColor: theme.palette.background.paper,
+    border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
+    borderRadius: theme.spacing(0.5),
+    // border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
+    // padding: theme.spacing(2),
   },
   goBackButton: {
-    marginBottom: theme.spacing(1),
+    position: 'absolute',
+    zIndex: 1,
+    top: '50%',
+    left: `-${theme.spacing(9)}px`,
+    width: theme.spacing(15),
+    height: theme.spacing(15),
+    borderRadius: '50%',
+  },
+  arrowIcon: {
+    fontSize: theme.typography.h2.fontSize,
   },
 }));
 
@@ -73,27 +86,26 @@ export default function CreatorEvaluation(
   }, []);
 
   return (
-    <div>
+    <div className={classes.creatorEvaluationCardContainer}>
       <Button
-        color="primary"
         className={classes.goBackButton}
-        variant="contained"
         onClick={history.goBack}
+        aria-label="뒤로가기"
       >
-        뒤로가기
-
-      </Button>
-      <div className={classes.creatorEvaluationCardContainer}>
-
-        <CreatorInfoCard
-          updateAverageRating={updateAverageRating}
-          info={info}
-          ratings={ratings}
-          scores={scores}
-          userRating={userRating}
+        <img
+          alt="뒤로가기 화살표 이미지"
+          src="/images/rankingPage/backArrowImage.png"
+          srcSet="images/rankingPage/backArrowImage@2x.png 2x"
         />
-        <CreatorCommentList creatorId={creatorId} />
-      </div>
+      </Button>
+      <CreatorInfoCard
+        updateAverageRating={updateAverageRating}
+        info={info}
+        ratings={ratings}
+        scores={scores}
+        userRating={userRating}
+      />
+      <CreatorCommentList creatorId={creatorId} />
     </div>
 
   );
