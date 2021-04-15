@@ -55,6 +55,7 @@ export default function CheckPasswordForm({
     }).then((res) => {
       if (res.data === true) {
         successHandler();
+        closeDialog();
         // 글수정인 경우 비밀번호 맞음 -> write/postId로 이동
         // 글삭제인 경우 -> 글 삭제
       } else {

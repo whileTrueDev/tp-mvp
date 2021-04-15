@@ -20,7 +20,6 @@ import CustomDialog from '../../../atoms/Dialog/Dialog';
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import dateExpression from '../../../utils/dateExpression';
-import useAuthContext from '../../../utils/hooks/useAuthContext';
 import CheckPasswordForm from '../shared/CheckPasswordForm';
 import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
@@ -81,7 +80,6 @@ export default function FeatureDetail({
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
-  const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
 
   // ******************************************************************
@@ -114,7 +112,8 @@ export default function FeatureDetail({
   // Next Feature
   const nextFeature = data[currentIndex + 1];
 
-  const [dialogState, setDialogState] = useState<{open: boolean, context: 'edit'|'delete'}>({ open: false, context: 'edit' });
+  type DialogState = { open: boolean, context: 'previous-move'|'next-move'|'edit'|'delete' };
+  const [dialogState, setDialogState] = useState<DialogState>({ open: false, context: 'next-move' });
   const handleCheckDialogClose = () => setDialogState((prev) => ({ ...prev, open: false }));
   // 글 수정버튼 눌렀을 때 다이얼로그 상태 변경
   const handleCheckDialogOpenEdit = useCallback(() => {
@@ -123,6 +122,14 @@ export default function FeatureDetail({
   // 글 삭제버튼 눌렀을 때 다이얼로그 상태 변경
   const handleCheckDialogOpenDelete = useCallback(() => {
     setDialogState({ open: true, context: 'delete' });
+  }, []);
+  // 이전글 눌렀을 때 다이얼로그 상태 변경
+  const handleCheckDialogOpenPreviousMove = useCallback(() => {
+    setDialogState({ open: true, context: 'previous-move' });
+  }, []);
+  // 다음글 눌렀을 때 다이얼로그 상태 변경
+  const handleCheckDialogOpenNextMove = useCallback(() => {
+    setDialogState({ open: true, context: 'next-move' });
   }, []);
 
   // ******************************************************************
@@ -147,11 +154,18 @@ export default function FeatureDetail({
       });
   }, [deleteRequest, enqueueSnackbar, featureListRefetch, history, selectedSuggestionId]);
 
-  const dialogSubmitFunction = useMemo(() => (
-    dialogState.context === 'edit'
-      ? moveToEditPage
-      : handleDelete
-  ), [dialogState.context, handleDelete, moveToEditPage]);
+  const dialogSubmitFunction = useMemo(() => {
+    if (dialogState.context === 'previous-move') {
+      return () => onOtherFeatureClick(previousFeature.suggestionId);
+    }
+    if (dialogState.context === 'next-move') {
+      return () => onOtherFeatureClick(nextFeature.suggestionId);
+    }
+    if (dialogState.context === 'edit') return moveToEditPage;
+    if (dialogState.context === 'delete') return handleDelete;
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return () => {};
+  }, [dialogState.context, handleDelete, moveToEditPage, onOtherFeatureClick, previousFeature, nextFeature]);
 
   if (!currentFeatureData) {
     return (
@@ -192,11 +206,7 @@ export default function FeatureDetail({
               )}
             </Typography>
             <Typography variant="body1" color="textSecondary" style={{ color: '#0000008a' }}>
-              {currentFeatureData.author?.userId && (
-                <span>
-                  {currentFeatureData.userIp}
-                </span>
-              )}
+              {currentFeatureData.userIp && (<span>{currentFeatureData.userIp}</span>)}
             </Typography>
           </div>
           <Typography color="textSecondary" component="div" style={{ color: '#0000008a' }}>
@@ -230,20 +240,6 @@ export default function FeatureDetail({
           </Button>
         </div>
 
-        {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
-        <CustomDialog
-          open={dialogState.open}
-          onClose={handleCheckDialogClose}
-        >
-          <CheckPasswordForm
-            closeDialog={handleCheckDialogClose}
-            checkPassword={checkPassword}
-            successHandler={dialogSubmitFunction}
-          >
-            {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
-          </CheckPasswordForm>
-        </CustomDialog>
-
         {/* 내용 섹션 */}
         {loading && (
           <div className={classnames(classes.contentsText, classes.loadingWrapper)}>
@@ -258,13 +254,11 @@ export default function FeatureDetail({
       </Paper>
 
       {/* 댓글 작성하기 */}
-      {currentFeatureData.author?.userId === authContext.user.userId && (
-        <FeatureReplyInput
-          currentSuggestion={currentFeatureData}
-          refetch={featureListRefetch}
-          avatarLogo={currentFeatureData.author?.profileImage || ''}
-        />
-      )}
+      <FeatureReplyInput
+        currentSuggestion={currentFeatureData}
+        refetch={featureListRefetch}
+        avatarLogo=""
+      />
       {!loading && featureDetailData && (
       <div style={{ marginTop: 16 }}>
         {featureDetailData.replies && featureDetailData.replies
@@ -291,11 +285,10 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (previousFeature.isLock) {
-              if (previousFeature.author?.userId === authContext.user.userId) {
-                onOtherFeatureClick(previousFeature.suggestionId);
-              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
-            } else {
-              onOtherFeatureClick(previousFeature.suggestionId);
+              handleCheckDialogOpenPreviousMove();
+              // if (previousFeature.author?.userId === authContext.user.userId) {
+              //   onOtherFeatureClick(previousFeature.suggestionId);
+              // } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             }
           }}
         >
@@ -325,11 +318,12 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (nextFeature.isLock) {
-              if (nextFeature.author?.userId === authContext.user.userId) {
-                onOtherFeatureClick(nextFeature.suggestionId);
-              } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
-            } else {
-              onOtherFeatureClick(nextFeature.suggestionId);
+              handleCheckDialogOpenNextMove();
+            //   if (nextFeature.author?.userId === authContext.user.userId) {
+            //     onOtherFeatureClick(nextFeature.suggestionId);
+            //   } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+            // } else {
+            //   onOtherFeatureClick(nextFeature.suggestionId);
             }
           }}
         >
@@ -343,6 +337,20 @@ export default function FeatureDetail({
           <KeyboardArrowRight />
         </Button>
       </div>
+
+      {/* 글 수정/삭제/이전&다음글이동 비밀번호 확인 다이얼로그 */}
+      <CustomDialog
+        open={dialogState.open}
+        onClose={handleCheckDialogClose}
+      >
+        <CheckPasswordForm
+          closeDialog={handleCheckDialogClose}
+          checkPassword={checkPassword}
+          successHandler={dialogSubmitFunction}
+        >
+          {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
+        </CheckPasswordForm>
+      </CustomDialog>
 
     </div>
   );
