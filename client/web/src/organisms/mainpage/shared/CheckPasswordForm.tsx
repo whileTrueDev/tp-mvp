@@ -1,9 +1,10 @@
 import { Button } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
+import { AxiosPromise, AxiosRequestConfig } from 'axios';
+import { RefetchOptions } from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
-import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
   form: {
@@ -23,21 +24,21 @@ const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
     justifyContent: 'space-between',
   },
 }));
+
 export default function CheckPasswordForm({
   closeDialog,
-  postId,
+  checkPassword,
   successHandler,
   children,
 }: {
   closeDialog: () => void,
-  postId: number,
+  checkPassword: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>;
   successHandler: () => void,
   children?: JSX.Element| JSX.Element[]
 }): JSX.Element {
   const classes = useCheckPasswordFormStyle();
   const passwordRef = useRef<HTMLInputElement>(null);
   const { enqueueSnackbar } = useSnackbar();
-  const [, checkPassword] = useAxios({ url: `/community/posts/${postId}/password`, method: 'post' }, { manual: true });
   const handleCancel = () => {
     closeDialog();
   };
@@ -69,6 +70,8 @@ export default function CheckPasswordForm({
     <form className={classes.form}>
       {children}
       <input
+        // eslint-disable-next-line jsx-a11y/no-autofocus
+        autoFocus
         type="password"
         className={classes.input}
         ref={passwordRef}

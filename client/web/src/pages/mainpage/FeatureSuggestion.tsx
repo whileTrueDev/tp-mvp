@@ -1,23 +1,20 @@
-import React, { useEffect } from 'react';
-import classnames from 'classnames';
-import useAxios from 'axios-hooks';
+import { CircularProgress, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Typography, CircularProgress, Paper,
-} from '@material-ui/core';
-import { useHistory, useParams } from 'react-router-dom';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import ProductHero from '../../organisms/mainpage/shared/ProductHero';
-import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
-import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
-import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
+import useAxios from 'axios-hooks';
+import classnames from 'classnames';
+import React, { useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import Button from '../../atoms/Button/Button';
+import { FeatureProgressChip } from '../../atoms/Chip/FeatureProgressChip';
+import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
+import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
+import { FEATURE_SUGGESTION_OPTIONS } from '../../organisms/mainpage/featureSuggestion/FeatureWriteForm';
+import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCategoryButtonGroup';
+import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
-import useAuthContext from '../../utils/hooks/useAuthContext';
 import useScrollTop from '../../utils/hooks/useScrollTop';
-import { FeatureProgressChip } from '../../atoms/Chip/FeatureProgressChip';
-import { FEATURE_SUGGESTION_OPTIONS } from '../../organisms/mainpage/featureSuggestion/FeatureWriteForm';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -46,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function FeatureSuggestionPage(): JSX.Element {
-  const authContext = useAuthContext();
   const classes = useStyles();
   const history = useHistory();
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
@@ -139,11 +135,9 @@ export default function FeatureSuggestionPage(): JSX.Element {
           {/* 기능제안 글 목록 */}
           <div className={classnames(classes.contents, classes.buttonSection)}>
             <div>
-              {authContext.user.userId && (
-                <Button onClick={handleWriteClick}>
-                  글쓰기
-                </Button>
-              )}
+              <Button onClick={handleWriteClick}>
+                글쓰기
+              </Button>
             </div>
             <div className={classes.chipArea}>
               {FeatureProgressChip(0)}

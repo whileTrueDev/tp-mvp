@@ -1,25 +1,22 @@
-import React, { useRef } from 'react';
-import classnames from 'classnames';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-  Typography, Checkbox, FormControlLabel, CircularProgress, Backdrop,
-} from '@material-ui/core';
-import InputLabel from '@material-ui/core/InputLabel';
+import { Backdrop, CircularProgress, Typography } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
-import useAxios from 'axios-hooks';
-import { useSnackbar } from 'notistack';
-
-import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
-import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
-import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import { Editor } from '@toast-ui/react-editor';
-import Button from '../../../atoms/Button/Button';
-import useAuthContext from '../../../utils/hooks/useAuthContext';
-import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor } from '@toast-ui/react-editor';
+import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
+import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
+import useAxios from 'axios-hooks';
+import classnames from 'classnames';
+import { useSnackbar } from 'notistack';
+import React, { useRef } from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
+import Button from '../../../atoms/Button/Button';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,27 +50,22 @@ export default function FeatureWriteForm(): JSX.Element {
   const authContext = useAuthContext();
   const history = useHistory();
   const param = useParams<{id: string} | undefined>();
-  const location = useLocation<FeatureSuggestion[]>();
+  const location = useLocation<{featureDetailData: FeatureSuggestion; isEdit: boolean}>();
   const { enqueueSnackbar } = useSnackbar();
 
   // ******************************************************
   // 기능제안 state
   const editorRef = useRef<Editor>(null);
-  const [featureLock, setFeatureLock] = React.useState<boolean>(false);
-  const [featureSource, setFeatureSource] = React.useState<Pick<FeatureSuggestion, 'title' | 'category'>>({
+  type FeatureSource = Pick<FeatureSuggestion, 'password' | 'title' | 'category'>;
+  const [featureSource, setFeatureSource] = React.useState<FeatureSource>({
     title: '',
+    password: '',
     category: FEATURE_SUGGESTION_OPTIONS[0].value,
   });
-  const handleTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFeatureSource({ ...featureSource, title: event.target.value });
-  };
-
-  const handleCategory = (event: any) => {
-    setFeatureSource({ ...featureSource, category: event.target.value });
-  };
-
-  const handleLockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFeatureLock(event.target.checked);
+  const handleChange = (
+    key: keyof FeatureSource,
+  ) => (e: React.ChangeEvent<any>) => {
+    setFeatureSource({ ...featureSource, [key]: e.target.value });
   };
 
   // ******************************************************
@@ -83,13 +75,15 @@ export default function FeatureWriteForm(): JSX.Element {
   );
 
   function handlePostSubmit() {
-    if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
+    if (editorRef.current
+      && editorRef.current.getInstance().getHtml()
+      && featureSource.title && featureSource.password) {
       const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPostDto = {
         ...featureSource,
         userId: authContext.user.userId,
         author: authContext.user.userId,
-        isLock: featureLock, // 비밀글 여부
+        isLock: true, // 비밀글 여부
         content: contents,
       };
 
@@ -99,6 +93,8 @@ export default function FeatureWriteForm(): JSX.Element {
         .catch((err) => ShowSnack('기능제안 등록 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
     } else if (!(editorRef.current && editorRef.current.getInstance().getHtml())) {
       ShowSnack('내용을 입력해주세요!!', 'warning', enqueueSnackbar);
+    } else if (!featureSource.password) {
+      ShowSnack('게시글 비밀번호를 입력해주세요!!', 'warning', enqueueSnackbar);
     } else {
       ShowSnack('제목을 입력해주세요!!', 'warning', enqueueSnackbar);
     }
@@ -114,11 +110,12 @@ export default function FeatureWriteForm(): JSX.Element {
     if (editorRef.current && editorRef.current.getInstance().getHtml() && featureSource.title) {
       const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPatchDto = {
-        ...featureSource,
+        title: featureSource.title,
+        category: featureSource.category,
         suggestionId: Number(targetSuggestionId),
         userId: authContext.user.userId,
         author: authContext.user.userId,
-        isLock: featureLock, // 비밀글 여부 비밀글인 경우 true.
+        isLock: true, // 비밀글 여부 비밀글인 경우 true.
         content: contents,
       };
 
@@ -139,18 +136,16 @@ export default function FeatureWriteForm(): JSX.Element {
 
   // 취소 버튼 클릭 핸들러
   const handleCancelButton = () => {
-    history.push('/feature-suggestion');
+    history.goBack();
   };
 
   React.useEffect(() => {
     if (param && param.id) { // 글 수정하기 작업시
-      // 비밀글 여부를 기존 글의 비밀글 여부로 변경
-      setFeatureLock(Boolean(location.state[0].isLock));
       // 글 제목, 카테고리를 기존 글의 그것으로 변경
       setFeatureSource({
         ...featureSource,
-        title: location.state[0].title,
-        category: location.state[0].category,
+        title: location.state?.featureDetailData?.title,
+        category: location.state?.featureDetailData?.category,
       });
     }
   // 한번만 실행되어야 함.
@@ -162,7 +157,7 @@ export default function FeatureWriteForm(): JSX.Element {
       <Typography className={classnames(classes.contents, classes.writeForm)} variant="h4">글쓰기</Typography>
       {/* 분류 선택 */}
       <div className={classnames(classes.contents, classes.flex)}>
-        <Typography style={{ marginRight: 16 }} variant="h6">분류</Typography>
+        <Typography style={{ marginRight: 16 }} variant="h6">분류*</Typography>
         <FormControl variant="outlined">
           <InputLabel htmlFor="outlined-age-native-simple">카테고리</InputLabel>
           <Select
@@ -170,7 +165,7 @@ export default function FeatureWriteForm(): JSX.Element {
             id="feature-category"
             label="카테고리"
             value={featureSource.category}
-            onChange={handleCategory}
+            onChange={handleChange('category')}
             inputProps={{
               name: '카테고리',
               id: 'outlined-age-native-simple',
@@ -179,13 +174,13 @@ export default function FeatureWriteForm(): JSX.Element {
             {FEATURE_SUGGESTION_OPTIONS.map((option) => (
               <option key={option.id} value={option.value}>{option.value}</option>
             ))}
-
           </Select>
         </FormControl>
       </div>
+
       {/* 제목 작성 */}
       <div className={classnames(classes.contents, classes.flex)}>
-        <Typography style={{ marginRight: 16 }} variant="h6">제목</Typography>
+        <Typography style={{ marginRight: 16 }} variant="h6">제목*</Typography>
         <TextField
           className={classes.titleInput}
           id="feature-title"
@@ -194,9 +189,10 @@ export default function FeatureWriteForm(): JSX.Element {
           rowsMax={1}
           variant="outlined"
           placeholder="제목을 입력해주세요."
-          onChange={handleTitle}
+          onChange={handleChange('title')}
         />
       </div>
+
       {/* 기능 제안 내용 입력 */}
       <div className={classes.contents}>
 
@@ -204,28 +200,33 @@ export default function FeatureWriteForm(): JSX.Element {
           previewStyle="vertical"
           height="500px"
           initialEditType="wysiwyg"
-          initialValue={location.state && location.state.length > 0 ? location.state[0].content : ''}
+          initialValue={location.state ? location.state.featureDetailData?.content : ''}
           ref={editorRef}
         />
         <Backdrop className={classes.backdrop} open={postLoading || patchLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
       </div>
+
+      {/* 패스워드 작성 */}
+      {location.state?.isEdit ? (null) : (
+        <div className={classnames(classes.contents, classes.buttonSet)}>
+          <TextField
+            id="feature-password"
+            inputProps={{ maxLength: 4 }}
+            value={featureSource.password}
+            variant="outlined"
+            type="password"
+            name="password"
+            margin="dense"
+            placeholder="최대 4글자"
+            label="게시글비밀번호*"
+            onChange={handleChange('password')}
+          />
+        </div>
+      )}
+
       <div className={classes.buttonSet}>
-        <FormControlLabel
-          label="비밀글"
-          control={(
-            <Checkbox
-              checked={featureLock}
-              onChange={handleLockChange}
-              color="primary"
-            />
-            )}
-          style={{
-            verticalAlign: 'bottom',
-            display: 'inline-flex',
-          }}
-        />
         <Button
           color="default"
           className={classnames(classes.contents, classes.button)}

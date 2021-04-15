@@ -18,6 +18,9 @@ export class FeatureSuggestionPostDto {
   userId: string;
 
   @IsString()
+  password: string;
+
+  @IsString()
   author: string;
 
   @IsBoolean()

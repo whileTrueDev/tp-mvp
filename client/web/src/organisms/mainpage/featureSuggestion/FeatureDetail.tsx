@@ -1,28 +1,29 @@
-import React, { useEffect } from 'react';
-import classnames from 'classnames';
-import useAxios from 'axios-hooks';
-import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button, Paper, Typography, CircularProgress,
+  Button, CircularProgress, Paper, Typography,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Create, Delete, KeyboardArrowLeft, KeyboardArrowRight,
 } from '@material-ui/icons';
-import { Link, useHistory } from 'react-router-dom';
-import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import { Viewer } from '@toast-ui/react-editor';
 import LockIcon from '@material-ui/icons/Lock';
+import { Viewer } from '@toast-ui/react-editor';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
+import useAxios from 'axios-hooks';
+import classnames from 'classnames';
 import { useSnackbar } from 'notistack';
-import useAuthContext from '../../../utils/hooks/useAuthContext';
-import transformIdToAsterisk from '../../../utils/transformAsterisk';
-import dateExpression from '../../../utils/dateExpression';
-import FeatureReplyInput from './sub/FeatureReplyInput';
-import FeatureReply from './sub/FeatureReply';
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
+import { useHistory } from 'react-router-dom';
+import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
+import CustomDialog from '../../../atoms/Dialog/Dialog';
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import CustomDialog from '../../../atoms/Dialog/Dialog';
-import useDialog from '../../../utils/hooks/useDialog';
-import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
+import dateExpression from '../../../utils/dateExpression';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
+import CheckPasswordForm from '../shared/CheckPasswordForm';
+import FeatureReply from './sub/FeatureReply';
+import FeatureReplyInput from './sub/FeatureReplyInput';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -95,6 +96,10 @@ export default function FeatureDetail({
   const [, deleteRequest] = useAxios(
     { url: '/feature-suggestion', method: 'delete' }, { manual: true },
   );
+  // 비밀번호 확인 요청
+  const [, checkPassword] = useAxios({
+    url: `/feature-suggestion/${selectedSuggestionId}/password`, method: 'POST',
+  }, { manual: true });
   // length of title to render on Next/Previous button
   const TITLE_LENGTH = 15;
 
@@ -109,20 +114,30 @@ export default function FeatureDetail({
   // Next Feature
   const nextFeature = data[currentIndex + 1];
 
-  // // 스크롤 상단으로
-  // const paperRef = useRef<HTMLDivElement>();
-  // useEffect(() => {
-  //   if (paperRef.current) {
-  //     // window.scrollTo(0, paperRef.current.scrollHeight + 100);
-  //     window.scrollTo(0, 0);
-  //   }
-  // });
-  const confirmDialog = useDialog();
+  const [dialogState, setDialogState] = useState<{open: boolean, context: 'edit'|'delete'}>({ open: false, context: 'edit' });
+  const handleCheckDialogClose = () => setDialogState((prev) => ({ ...prev, open: false }));
+  // 글 수정버튼 눌렀을 때 다이얼로그 상태 변경
+  const handleCheckDialogOpenEdit = useCallback(() => {
+    setDialogState({ open: true, context: 'edit' });
+  }, []);
+  // 글 삭제버튼 눌렀을 때 다이얼로그 상태 변경
+  const handleCheckDialogOpenDelete = useCallback(() => {
+    setDialogState({ open: true, context: 'delete' });
+  }, []);
+
+  // ******************************************************************
+  // 수정 페이지로 이동
+  const moveToEditPage = useCallback(() => {
+    history.push(`/feature-suggestion/write/${currentFeatureData.suggestionId}`,
+      { featureDetailData, isEdit: true });
+  }, [currentFeatureData.suggestionId, featureDetailData, history]);
+
   // ******************************************************************
   // 삭제
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     deleteRequest({ data: { id: selectedSuggestionId } })
       .then(() => {
+        handleCheckDialogClose();
         ShowSnack('올바르게 삭제되었습니다.', 'success', enqueueSnackbar);
         featureListRefetch();
         history.push('/feature-suggestion');
@@ -130,7 +145,13 @@ export default function FeatureDetail({
       .catch(() => {
         ShowSnack('삭제 도중 오류가 발생했습니다. 잠시후 다시 시도해주세요.', 'error', enqueueSnackbar);
       });
-  };
+  }, [deleteRequest, enqueueSnackbar, featureListRefetch, history, selectedSuggestionId]);
+
+  const dialogSubmitFunction = useMemo(() => (
+    dialogState.context === 'edit'
+      ? moveToEditPage
+      : handleDelete
+  ), [dialogState.context, handleDelete, moveToEditPage]);
 
   if (!currentFeatureData) {
     return (
@@ -171,11 +192,9 @@ export default function FeatureDetail({
               )}
             </Typography>
             <Typography variant="body1" color="textSecondary" style={{ color: '#0000008a' }}>
-              {currentFeatureData.author.userId && (
+              {currentFeatureData.author?.userId && (
                 <span>
-                  {authContext.user.userId === currentFeatureData.author.userId
-                    ? currentFeatureData.author.userId
-                    : transformIdToAsterisk(currentFeatureData.author.userId, 1.8)}
+                  {currentFeatureData.userIp}
                 </span>
               )}
             </Typography>
@@ -192,31 +211,38 @@ export default function FeatureDetail({
             </Typography>
           </Typography>
         </div>
-        {currentFeatureData.author.userId === authContext.user.userId
-        && (
-          <div className={classes.editDeleteButtonSet}>
-            <Button
-              className={classes.editDeleteButton}
-              component={Link}
-              to={{
-                pathname: `/feature-suggestion/write/${currentFeatureData.suggestionId}`,
-                state: [featureDetailData],
-              }}
-              variant="outlined"
-            >
-              <Create />
-              수정
-            </Button>
-            <Button
-              className={classes.editDeleteButton}
-              variant="outlined"
-              onClick={confirmDialog.handleOpen}
-            >
-              <Delete />
-              삭제
-            </Button>
-          </div>
-        )}
+        <div className={classes.editDeleteButtonSet}>
+          <Button
+            className={classes.editDeleteButton}
+            variant="outlined"
+            onClick={handleCheckDialogOpenEdit}
+          >
+            <Create />
+            수정
+          </Button>
+          <Button
+            className={classes.editDeleteButton}
+            variant="outlined"
+            onClick={handleCheckDialogOpenDelete}
+          >
+            <Delete />
+            삭제
+          </Button>
+        </div>
+
+        {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
+        <CustomDialog
+          open={dialogState.open}
+          onClose={handleCheckDialogClose}
+        >
+          <CheckPasswordForm
+            closeDialog={handleCheckDialogClose}
+            checkPassword={checkPassword}
+            successHandler={dialogSubmitFunction}
+          >
+            {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
+          </CheckPasswordForm>
+        </CustomDialog>
 
         {/* 내용 섹션 */}
         {loading && (
@@ -226,32 +252,17 @@ export default function FeatureDetail({
         )}
         {!loading && featureDetailData && (
           <div className={classes.contentsText}>
-            {/* 비밀글 + 자신이 작성한 글이 아닌 경우 비밀글 처리 */}
-            {featureDetailData.isLock && featureDetailData.author.userId !== authContext.user.userId ? (
-              <div className={classes.secretText}>
-                <Typography>비밀글의 경우 본인만 확인할 수 있습니다.</Typography>
-                <Button
-                  className={classes.listButton}
-                  size="large"
-                  variant="outlined"
-                  onClick={onBackClick}
-                >
-                  목록
-                </Button>
-              </div>
-            ) : ( // 비밀글이 아닌경우 또는 비밀글 + 자신이 작성한 글인 경우 Viewer 렌더링
-              <Viewer initialValue={featureDetailData.content} />
-            )}
+            <Viewer initialValue={featureDetailData.content} />
           </div>
         )}
       </Paper>
 
       {/* 댓글 작성하기 */}
-      {currentFeatureData.author.userId === authContext.user.userId && (
+      {currentFeatureData.author?.userId === authContext.user.userId && (
         <FeatureReplyInput
           currentSuggestion={currentFeatureData}
           refetch={featureListRefetch}
-          avatarLogo={currentFeatureData.author.profileImage || ''}
+          avatarLogo={currentFeatureData.author?.profileImage || ''}
         />
       )}
       {!loading && featureDetailData && (
@@ -260,9 +271,9 @@ export default function FeatureDetail({
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .map((reply) => (
             <FeatureReply
-              avatarLogo={reply.author.profileImage}
-              key={reply.author.userId + reply.createdAt}
-              author={reply.author.userId}
+              avatarLogo={reply.author?.profileImage}
+              key={reply.author?.userId + reply.createdAt}
+              author={reply.author?.userId}
               content={reply.content}
               createdAt={reply.createdAt}
               replyId={reply.replyId}
@@ -280,7 +291,7 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (previousFeature.isLock) {
-              if (previousFeature.author.userId === authContext.user.userId) {
+              if (previousFeature.author?.userId === authContext.user.userId) {
                 onOtherFeatureClick(previousFeature.suggestionId);
               } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             } else {
@@ -314,7 +325,7 @@ export default function FeatureDetail({
           variant="outlined"
           onClick={() => {
             if (nextFeature.isLock) {
-              if (nextFeature.author.userId === authContext.user.userId) {
+              if (nextFeature.author?.userId === authContext.user.userId) {
                 onOtherFeatureClick(nextFeature.suggestionId);
               } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             } else {
@@ -333,16 +344,6 @@ export default function FeatureDetail({
         </Button>
       </div>
 
-      <CustomDialog
-        fullWidth
-        maxWidth="sm"
-        open={confirmDialog.open}
-        onClose={confirmDialog.handleClose}
-        buttons
-        callback={handleDelete}
-      >
-        <Typography>해당 기능제안을 삭제하시겠습니까?</Typography>
-      </CustomDialog>
     </div>
   );
 }

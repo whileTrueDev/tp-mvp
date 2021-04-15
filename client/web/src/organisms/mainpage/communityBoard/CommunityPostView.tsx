@@ -24,7 +24,7 @@ import CustomDialog from '../../../atoms/Dialog/Dialog';
 import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
 import BoardContainer from './list/BoardContainer';
 import PostInfoCard from './postView/PostInfoCard';
-import CheckPasswordForm from './postView/CheckPasswordForm';
+import CheckPasswordForm from '../shared/CheckPasswordForm';
 import RepliesSection from './postView/RepliesSection';
 import ReplyForm from './postView/ReplyForm';
 // 스타일
@@ -268,6 +268,8 @@ export default function CommunityPostView(): JSX.Element {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const onDialogClose = useCallback(() => {}, []);
 
+  const [, checkPassword] = useAxios({ url: `/community/posts/${postId}/password`, method: 'post' }, { manual: true });
+
   return (
     <Container maxWidth="md">
       <BoardTitle platform={platform} title={`${PLATFORM_NAMES[platform]}게시판`} />
@@ -330,7 +332,7 @@ export default function CommunityPostView(): JSX.Element {
       >
         <CheckPasswordForm
           closeDialog={closeDialog}
-          postId={Number(postId)}
+          checkPassword={checkPassword}
           successHandler={dialogSubmitFunction}
         >
           {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
