@@ -18,6 +18,7 @@ export class CommunityBoardService {
   private PLATFORM_CODE = {
     afreeca: 0,
     twitch: 1,
+    free: 2,
   }
 
   // 게시글 일반글, 공지글 구분용

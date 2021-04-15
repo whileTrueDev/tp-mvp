@@ -24,7 +24,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   header: {
     justifyContent: 'center',
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    '& $cellText': {
+      color: theme.palette.common.white,
+    },
   },
   row: {
     display: 'flex',
@@ -121,6 +123,19 @@ function getDateDisplay(createDate: Date|undefined): string {
   return dateDisplay;
 }
 
+export function getBoardPlatformNameByCode(platform: number | undefined): string {
+  switch (platform) {
+    case 0:
+      return 'afreeca';
+    case 1:
+      return 'twitch';
+    case 2:
+      return 'free';
+    default:
+      return 'free';
+  }
+}
+
 function PostList(props: PostListProps): JSX.Element {
   const {
     take, page,
@@ -151,7 +166,7 @@ function PostList(props: PostListProps): JSX.Element {
     }))), [classes.replies, posts]);
 
   const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
-    const postPlatform = platform === 0 ? 'afreeca' : 'twitch';
+    const postPlatform = getBoardPlatformNameByCode(platform);
     axios.post(`/community/posts/${postId}/hit`).then(() => {
       history.push({
         pathname: `/community-board/${postPlatform}/view/${postId}`,

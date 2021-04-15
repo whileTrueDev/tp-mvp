@@ -15,19 +15,18 @@ import { useSnackbar } from 'notistack';
 // 타입정의
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
-import useBoardState, { FilterType } from '../../utils/hooks/useBoardListState';
+import useBoardState from '../../../utils/hooks/useBoardListState';
 
 // 하위 컴포넌트
-import ShowSnack from '../../atoms/snackbar/ShowSnack';
-import CenterLoading from '../../atoms/Loading/CenterLoading';
-import CustomDialog from '../../atoms/Dialog/Dialog';
-import CommunityBoardCommonLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
-import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
-import BoardContainer from '../../organisms/mainpage/communityBoard/list/BoardContainer';
-import PostInfoCard from '../../organisms/mainpage/communityBoard/postView/PostInfoCard';
-import CheckPasswordForm from '../../organisms/mainpage/communityBoard/postView/CheckPasswordForm';
-import RepliesSection from '../../organisms/mainpage/communityBoard/postView/RepliesSection';
-import ReplyForm from '../../organisms/mainpage/communityBoard/postView/ReplyForm';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import CenterLoading from '../../../atoms/Loading/CenterLoading';
+import CustomDialog from '../../../atoms/Dialog/Dialog';
+import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
+import BoardContainer from './list/BoardContainer';
+import PostInfoCard from './postView/PostInfoCard';
+import CheckPasswordForm from './postView/CheckPasswordForm';
+import RepliesSection from './postView/RepliesSection';
+import ReplyForm from './postView/ReplyForm';
 // 스타일
 import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
 
@@ -103,12 +102,17 @@ const snackMessages = {
   },
 };
 
+interface Params{
+  postId: string,
+  platform: 'twitch' | 'afreeca' | 'free'
+}
+
 export default function CommunityPostView(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const history = useHistory();
 
-  const { postId, platform } = useParams<any>();
+  const { postId, platform } = useParams<Params>();
 
   const location = useLocation<LocationState>();
   const take = location.state ? location.state.take : 5;
@@ -130,10 +134,6 @@ export default function CommunityPostView(): JSX.Element {
     changeFilter,
     handlePostsLoad,
   } = useBoardState({ page: initialPage });
-  // 게시판 전체글,공지글,추천글 필터 버튼 핸들러
-  const filterHandler = (event: React.MouseEvent<HTMLElement>, categoryFilter: FilterType) => {
-    changeFilter(categoryFilter);
-  };
 
   // 개별글 내용 post.content를 표시할 element
   const viewerRef = useRef<any>();
@@ -269,115 +269,110 @@ export default function CommunityPostView(): JSX.Element {
   const onDialogClose = useCallback(() => {}, []);
 
   return (
-    <CommunityBoardCommonLayout>
-      <Container maxWidth="md">
+    <Container maxWidth="md">
+      <BoardTitle platform={platform} title={`${PLATFORM_NAMES[platform]}게시판`} />
 
-        <BoardTitle platform={platform} />
+      {currentPost ? (
+        <PostInfoCard
+          post={currentPost}
+          repliesCount={replies ? replies.total : 0}
+        />
+      ) : (
+        <CenterLoading />
+      )}
 
-        {currentPost ? (
-          <PostInfoCard
-            post={currentPost}
-            repliesCount={replies ? replies.total : 0}
-          />
-        ) : (
-          <CenterLoading />
-        )}
+      <Paper className={classes.viewer}>
+        <div ref={viewerRef} className={SUN_EDITOR_VIEWER_CLASSNAME} />
+        <div className={classes.recommendContainer}>
+          <Card className={classes.recommendCard}>
+            <CardContent>
+              <Typography>{`추천 ${recommendCount || currentPost?.recommend || 0}`}</Typography>
+            </CardContent>
+            <CardActions>
+              <Button onClick={handleRecommend} variant="contained" color="primary">
+                추천하기
+              </Button>
+            </CardActions>
+          </Card>
+        </div>
+      </Paper>
 
-        <Paper className={classes.viewer}>
-          <div ref={viewerRef} className={SUN_EDITOR_VIEWER_CLASSNAME} />
-          <div className={classes.recommendContainer}>
-            <Card className={classes.recommendCard}>
-              <CardContent>
-                <Typography>{`추천 ${recommendCount || currentPost?.recommend || 0}`}</Typography>
-              </CardContent>
-              <CardActions>
-                <Button onClick={handleRecommend} variant="contained" color="primary">
-                  추천하기
-                </Button>
-              </CardActions>
-            </Card>
-          </div>
-        </Paper>
-
-        <div className={classes.buttonsContainer}>
+      <div className={classes.buttonsContainer}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={moveToBoardList}
+        >
+          전체 게시판 목록보기
+        </Button>
+        <div className={classes.postButtons}>
           <Button
             variant="contained"
             color="primary"
-            onClick={moveToBoardList}
+            onClick={editPostButtonHandler}
           >
-            전체 게시판 목록보기
+            글수정
           </Button>
-          <div className={classes.postButtons}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={editPostButtonHandler}
-            >
-              글수정
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={deletePostButtonHandler}
-            >
-              글삭제
-            </Button>
-          </div>
-        </div>
-
-        {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
-        <CustomDialog
-          open={dialogState.open}
-          onClose={onDialogClose}
-        >
-          <CheckPasswordForm
-            closeDialog={closeDialog}
-            postId={postId}
-            successHandler={dialogSubmitFunction}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={deletePostButtonHandler}
           >
-            {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
-          </CheckPasswordForm>
-        </CustomDialog>
-        {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
-
-        <div className={classes.repliesContainer}>
-          <RepliesSection
-            totalReplyCount={replies ? replies.total : 0}
-            replies={replies ? replies.replies : []}
-            loadReplies={loadReplies}
-          />
-
-          { replyPaginationCount > 1
-            ? (
-              <Pagination
-                className={classes.replyPagenation}
-                shape="rounded"
-                page={replyPage}
-                count={replyPaginationCount}
-                onChange={changeReplyPage}
-              />
-            )
-            : null}
-
-          <ReplyForm
-            postId={postId}
-            afterCreateReplyHandler={loadReplies}
-          />
+            글삭제
+          </Button>
         </div>
+      </div>
 
-        <BoardContainer
-          platform={platform}
-          take={take}
-          pagenationHandler={pagenationHandler}
-          searchText=""
-          searchType=""
-          boardState={boardState}
-          postFilterHandler={filterHandler}
-          handlePostsLoad={handlePostsLoad}
-          currentPostId={Number(postId)}
+      {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
+      <CustomDialog
+        open={dialogState.open}
+        onClose={onDialogClose}
+      >
+        <CheckPasswordForm
+          closeDialog={closeDialog}
+          postId={Number(postId)}
+          successHandler={dialogSubmitFunction}
+        >
+          {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
+        </CheckPasswordForm>
+      </CustomDialog>
+      {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
+
+      <div className={classes.repliesContainer}>
+        <RepliesSection
+          totalReplyCount={replies ? replies.total : 0}
+          replies={replies ? replies.replies : []}
+          loadReplies={loadReplies}
         />
-      </Container>
 
-    </CommunityBoardCommonLayout>
+        { replyPaginationCount > 1
+          ? (
+            <Pagination
+              className={classes.replyPagenation}
+              shape="rounded"
+              page={replyPage}
+              count={replyPaginationCount}
+              onChange={changeReplyPage}
+            />
+          )
+          : null}
+
+        <ReplyForm
+          postId={postId}
+          afterCreateReplyHandler={loadReplies}
+        />
+      </div>
+
+      <BoardContainer
+        platform={platform}
+        take={take}
+        pagenationHandler={pagenationHandler}
+        boardState={boardState}
+        postFilterHandler={changeFilter}
+        handlePostsLoad={handlePostsLoad}
+        currentPostId={Number(postId)}
+      />
+    </Container>
+
   );
 }
