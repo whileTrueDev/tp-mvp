@@ -1,9 +1,12 @@
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import {
+  makeStyles, createStyles, Theme,
+} from '@material-ui/core/styles';
 import yellow from '@material-ui/core/colors/yellow';
+// import { lighten } from '@material-ui/core/styles/colorManipulator';
 
 // listItem 컴포넌트
 export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
-  const contrastColor = theme.palette.common.black;
+  const contrastColor = theme.palette.text.primary;
 
   return createStyles({
     listItem: {
@@ -25,7 +28,6 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
       backgroundImage: 'url(images/rankingPage/rankingBox-3.png)',
     },
     [`listItem-${4}`]: {
-      backgroundImage: 'url(images/rankingPage/rankingBox-4.png)',
     },
     avatarImage: {
       marginRight: theme.spacing(2),
@@ -69,7 +71,7 @@ export const useRatingsListStyles = makeStyles((theme: Theme) => {
     ratingsListSection: {
       border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
       borderRadius: theme.spacing(0.5),
-      backgroundColor: theme.palette.grey[200],
+      backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.background.paper,
       padding: theme.spacing(2, 0),
     },
     title: {
@@ -87,7 +89,7 @@ export const useRatingsListStyles = makeStyles((theme: Theme) => {
     },
     headerText: {
       textAlign: 'center',
-      color: theme.palette.common.black,
+      color: theme.palette.text.primary,
     },
   });
 });
