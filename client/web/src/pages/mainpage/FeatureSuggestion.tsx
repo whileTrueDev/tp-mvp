@@ -17,6 +17,7 @@ import Footer from '../../organisms/shared/footer/Footer';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import { FeatureProgressChip } from '../../atoms/Chip/FeatureProgressChip';
+import { FEATURE_SUGGESTION_OPTIONS } from '../../organisms/mainpage/featureSuggestion/FeatureWriteForm';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -128,11 +129,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
           {!selectedSuggestionId && (
             <div className={classes.contents}>
               <FilterCategoryButtonGroup
-                categories={!loading && featureListData
-                  ? Array
-                    .from(new Set(featureListData.map((d) => d.category)))
-                    .sort()
-                  : []}
+                categories={FEATURE_SUGGESTION_OPTIONS.map((options) => options.value)}
                 onChange={handleCategorySelect}
                 selected={selectedCategory}
               />

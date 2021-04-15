@@ -41,6 +41,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export const FEATURE_SUGGESTION_OPTIONS = [
+  { id: 0, value: '사이트 관련' },
+  { id: 1, value: '인방랭킹' },
+  { id: 2, value: '유튜브 편집점' },
+  { id: 3, value: '기타' },
+];
+
 export default function FeatureWriteForm(): JSX.Element {
   const classes = useStyles();
   const authContext = useAuthContext();
@@ -55,7 +62,7 @@ export default function FeatureWriteForm(): JSX.Element {
   const [featureLock, setFeatureLock] = React.useState<boolean>(false);
   const [featureSource, setFeatureSource] = React.useState<Pick<FeatureSuggestion, 'title' | 'category'>>({
     title: '',
-    category: '홈페이지 개선',
+    category: FEATURE_SUGGESTION_OPTIONS[0].value,
   });
   const handleTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFeatureSource({ ...featureSource, title: event.target.value });
@@ -169,10 +176,10 @@ export default function FeatureWriteForm(): JSX.Element {
               id: 'outlined-age-native-simple',
             }}
           >
-            <option value="홈페이지 개선">홈페이지 개선</option>
-            <option value="하이라이트 관련">하이라이트 관련</option>
-            <option value="지속적으로 추가">지속적으로 추가</option>
-            <option value="기타">기타</option>
+            {FEATURE_SUGGESTION_OPTIONS.map((option) => (
+              <option key={option.id} value={option.value}>{option.value}</option>
+            ))}
+
           </Select>
         </FormControl>
       </div>
