@@ -67,7 +67,12 @@ export default function CheckPasswordForm({
     });
   };
   return (
-    <form className={classes.form}>
+    <form
+      className={classes.form}
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+    >
       {children}
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
@@ -77,6 +82,10 @@ export default function CheckPasswordForm({
         ref={passwordRef}
         placeholder="비밀번호를 입력해주세요"
         maxLength={4}
+        lang="en"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleSubmitPassword();
+        }}
       />
       <div className={classes.buttonContainer}>
         <Button variant="contained" onClick={handleCancel}>취소</Button>
