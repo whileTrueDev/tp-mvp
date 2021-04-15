@@ -18,7 +18,7 @@ export class FeatureSuggestionPostDto {
   userId: string;
 
   @IsString()
-  password: string;
+  password?: string;
 
   @IsString()
   author: string;

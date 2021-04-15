@@ -1,4 +1,6 @@
-import { Backdrop, CircularProgress, Typography } from '@material-ui/core';
+import {
+  Backdrop, Checkbox, CircularProgress, FormControlLabel, Typography,
+} from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -17,6 +19,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom';
 import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import useToggle from '../../../utils/hooks/useToggle';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,7 +53,7 @@ export default function FeatureWriteForm(): JSX.Element {
   const authContext = useAuthContext();
   const history = useHistory();
   const param = useParams<{id: string} | undefined>();
-  const location = useLocation<{featureDetailData: FeatureSuggestion; isEdit: boolean}>();
+  const location = useLocation<{featureDetailData: FeatureSuggestion; isEdit: boolean;}>();
   const { enqueueSnackbar } = useSnackbar();
 
   // ******************************************************
@@ -67,6 +70,7 @@ export default function FeatureWriteForm(): JSX.Element {
   ) => (e: React.ChangeEvent<any>) => {
     setFeatureSource({ ...featureSource, [key]: e.target.value });
   };
+  const featureLock = useToggle();
 
   // ******************************************************
   // 기능제안 등록
@@ -76,14 +80,13 @@ export default function FeatureWriteForm(): JSX.Element {
 
   function handlePostSubmit() {
     if (editorRef.current
-      && editorRef.current.getInstance().getHtml()
-      && featureSource.title && featureSource.password) {
+      && editorRef.current.getInstance().getHtml() && featureSource.title) {
       const contents = editorRef.current.getInstance().getHtml();
       const data: FeatureSuggestionPostDto = {
         ...featureSource,
         userId: authContext.user.userId,
         author: authContext.user.userId,
-        isLock: true, // 비밀글 여부
+        isLock: featureLock.toggle, // 비밀글 여부
         content: contents,
       };
 
@@ -91,12 +94,12 @@ export default function FeatureWriteForm(): JSX.Element {
         .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
         .then(() => history.push('/feature-suggestion'))
         .catch((err) => ShowSnack('기능제안 등록 중 오류가 발생했습니다. 문의 바랍니다.', 'error', enqueueSnackbar));
+    } else if (!featureSource.title) {
+      ShowSnack('제목을 입력해주세요!!', 'warning', enqueueSnackbar);
     } else if (!(editorRef.current && editorRef.current.getInstance().getHtml())) {
       ShowSnack('내용을 입력해주세요!!', 'warning', enqueueSnackbar);
-    } else if (!featureSource.password) {
+    } else if (featureLock.toggle && !featureSource.password) {
       ShowSnack('게시글 비밀번호를 입력해주세요!!', 'warning', enqueueSnackbar);
-    } else {
-      ShowSnack('제목을 입력해주세요!!', 'warning', enqueueSnackbar);
     }
   }
 
@@ -115,7 +118,7 @@ export default function FeatureWriteForm(): JSX.Element {
         suggestionId: Number(targetSuggestionId),
         userId: authContext.user.userId,
         author: authContext.user.userId,
-        isLock: true, // 비밀글 여부 비밀글인 경우 true.
+        isLock: featureLock.toggle, // 비밀글 여부 비밀글인 경우 true.
         content: contents,
       };
 
@@ -141,6 +144,8 @@ export default function FeatureWriteForm(): JSX.Element {
 
   React.useEffect(() => {
     if (param && param.id) { // 글 수정하기 작업시
+      // 비밀글 여부를 기존 글의 비밀글 여부로 변경
+      featureLock.setToggle(location.state ? !!location.state.featureDetailData.isLock : false);
       // 글 제목, 카테고리를 기존 글의 그것으로 변경
       setFeatureSource({
         ...featureSource,
@@ -211,6 +216,21 @@ export default function FeatureWriteForm(): JSX.Element {
       {/* 패스워드 작성 */}
       {location.state?.isEdit ? (null) : (
         <div className={classnames(classes.contents, classes.buttonSet)}>
+          <FormControlLabel
+            label="비밀글"
+            control={(
+              <Checkbox
+                checked={featureLock.toggle}
+                onChange={featureLock.handleToggle}
+                color="primary"
+              />
+            )}
+            style={{
+              verticalAlign: 'bottom',
+              display: 'inline-flex',
+            }}
+          />
+          {featureLock.toggle && (
           <TextField
             id="feature-password"
             inputProps={{ maxLength: 4 }}
@@ -223,6 +243,7 @@ export default function FeatureWriteForm(): JSX.Element {
             label="게시글비밀번호*"
             onChange={handleChange('password')}
           />
+          )}
         </div>
       )}
 

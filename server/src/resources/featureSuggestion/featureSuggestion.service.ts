@@ -66,7 +66,10 @@ export class FeatureSuggestionService {
    */
   async insert(fsDto: FeatureSuggestionPostDto, userIp: string): Promise<FeatureSuggestionEntity> {
     const author = await this.usersRepository.findOne(fsDto.author);
-    const password = await bcrypt.hash(fsDto.password, 10);
+    let password = '';
+    if (fsDto.password) {
+      password = await bcrypt.hash(fsDto.password, 10);
+    }
     return this.FeatureSuggestionRepository.save({
       ...fsDto, author, userIp, password,
     });
