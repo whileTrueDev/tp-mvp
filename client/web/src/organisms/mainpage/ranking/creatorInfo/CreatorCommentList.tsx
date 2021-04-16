@@ -37,6 +37,8 @@ export interface CreatorCommentListProps{
   creatorId: string;
 }
 
+const filters = ['recommend', 'date'];
+
 export default function CreatorCommentList(props: CreatorCommentListProps): JSX.Element {
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
@@ -45,7 +47,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   const classes = useStyles();
   const { creatorId } = props;
   const [commentList, setCommentList] = useState<ICreatorCommentData[]>([]);
-  const [clickedFilterButtonIndex, setClickedFilterButtonIndex] = useState<number>(0); // 0 : 최신순(date), 1 : 인기순(recommend)
+  const [clickedFilterButtonIndex, setClickedFilterButtonIndex] = useState<number>(0); //  0 : 인기순(recommend), 1 : 최신순(date)
   const [{ data: commentData, loading }, getCommentData] = useAxios<ICreatorCommentsRes>({
     url: `/creatorComment/${creatorId}`,
     method: 'get',
@@ -72,22 +74,21 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     });
   }, [getCommentData]);
 
-  const loadMoreComments = useCallback(() => (filter: CommentFilter) => {
+  const loadMoreComments = useCallback(() => {
     getCommentData({
       params: {
         skip: commentList.length,
-        order: filter,
+        order: filters[clickedFilterButtonIndex],
       },
     }).then((res) => {
       setCommentList((prevList) => [...prevList, ...res.data.comments]);
     }).catch((error) => {
       console.error(error);
     });
-  }, [commentList.length, getCommentData]);
+  }, [clickedFilterButtonIndex, commentList.length, getCommentData]);
 
   useEffect(() => {
-    // 최신순 댓글 목록 가져오기
-    loadComments('date');
+    loadComments('recommend');
   // 한번만 실행
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -117,19 +118,19 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
         nicknameInput.value = '';
         passwordInput.value = '';
         contentInput.value = '';
-        loadComments(clickedFilterButtonIndex === 0 ? 'date' : 'recommend');
+        loadComments(clickedFilterButtonIndex === 1 ? 'date' : 'recommend');
       })
       .catch((error) => console.error(error));
   };
 
-  const handleDateFilter = useCallback(() => {
+  const handleRecommendFilter = useCallback(() => {
     setClickedFilterButtonIndex(0);
-    loadComments('date');
+    loadComments('recommend');
   }, [loadComments]);
 
-  const handleRecommendFilter = useCallback(() => {
+  const handleDateFilter = useCallback(() => {
     setClickedFilterButtonIndex(1);
-    loadComments('recommend');
+    loadComments('date');
   }, [loadComments]);
 
   return (
@@ -162,17 +163,18 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
           <Button
             startIcon={<CheckIcon />}
             className={classnames(listStyle.commentFilterButton, { selected: clickedFilterButtonIndex === 0 })}
-            onClick={handleDateFilter}
-          >
-            최신순
-          </Button>
-          <Button
-            startIcon={<CheckIcon />}
-            className={classnames(listStyle.commentFilterButton, { selected: clickedFilterButtonIndex === 1 })}
             onClick={handleRecommendFilter}
           >
             인기순
           </Button>
+          <Button
+            startIcon={<CheckIcon />}
+            className={classnames(listStyle.commentFilterButton, { selected: clickedFilterButtonIndex === 1 })}
+            onClick={handleDateFilter}
+          >
+            최신순
+          </Button>
+
         </div>
         <div className={listStyle.commentListContainer}>
           {

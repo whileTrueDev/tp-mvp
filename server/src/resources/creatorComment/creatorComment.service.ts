@@ -50,7 +50,7 @@ export class CreatorCommentService {
         result.count = count;
       }
       if (order === 'recommend') {
-        const [comments, count] = await this.creatorCommentsRepository.createQueryBuilder('comment')
+        const qb = await this.creatorCommentsRepository.createQueryBuilder('comment')
           .addSelect('COUNT(likes.id) AS likesCount')
           .leftJoin('comment.likes', 'likes')
           .loadRelationCountAndMap('comment.hatesCount', 'comment.hates')
@@ -58,13 +58,14 @@ export class CreatorCommentService {
           .where('comment.creatorId = :creatorId', { creatorId })
           .groupBy('comment.commentId')
           .orderBy('likesCount', 'DESC')
-          .having('COUNT(likes.id) >= 1')
+          // .addOrderBy('createDate', 'DESC') // 포함시 오류발생. 현재 typeorm에서 commentId ASC로 정렬해서 보내줌. 수정필요
           .skip(skip)
-          .take(3)
-          .getManyAndCount();
+          .take(take);
+        const [comments, count] = await qb.getManyAndCount();
         result.comments = comments;
         result.count = count;
       }
+
       return result;
     } catch (error) {
       console.error(error);
