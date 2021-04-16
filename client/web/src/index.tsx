@@ -28,15 +28,13 @@ import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
 import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
 import CommunityBoard from './pages/mainpage/CommunityBoard';
-// import CommunityBoardList from './pages/mainpage/CommunityBoardList';
-// import CommunityPostView from './pages/mainpage/CommunityPostView';
-// import CommunityPostWrite from './pages/mainpage/CommunityPostWrite';
+
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
-// import useAutoLogin from './utils/hooks/useAutoLogin';
+import useAutoLogin from './utils/hooks/useAutoLogin';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 import './assets/truepoint.css';
@@ -78,8 +76,7 @@ function Index(): JSX.Element {
   // *******************************************
   // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
 
-  // 트루포인트 2.0 에서 로그인 기능이 없어서 임시 주석처리함
-  // useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
+  useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
 
   // *******************************************
   // 화면 렌더링시 최상단 으로 고정
