@@ -2,23 +2,18 @@ import {
   Button, Typography,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
-import { useSnackbar } from 'notistack';
 import React, {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
 import classnames from 'classnames';
-import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import {
   ICreatorCommentsRes, ICreatorCommentData, IGetLikes, IGetHates,
 } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
-import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import CreatorCommentItem from './CreatorCommentItem';
 import { useCreatorCommentListStyle } from '../style/CreatorComment.style';
-import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import RegularButton from '../../../../atoms/Button/Button';
-import axios from '../../../../utils/axios';
 import CommentForm from '../sub/CommentForm';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -41,8 +36,6 @@ export interface CreatorCommentListProps{
 const filters = ['recommend', 'date'];
 
 export default function CreatorCommentList(props: CreatorCommentListProps): JSX.Element {
-  const authContext = useAuthContext();
-  const { enqueueSnackbar } = useSnackbar();
   const listStyle = useCreatorCommentListStyle();
   const classes = useStyles();
   const { creatorId } = props;
@@ -93,52 +86,8 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const nicknameInput = form.nickname;
-    const passwordInput = form.password;
-    const contentInput = form.content;
-
-    const createCommentDto: CreateCommentDto = {
-      userId: authContext.user.userId ? authContext.user.userId : null,
-      nickname: '',
-      password: '',
-      content: '',
-    };
-
-    if (authContext.user.userId) { // 로그인 된 상태일 경우
-      const nickname = e.currentTarget.nickname.value.trim();
-      const content = e.currentTarget.content.value.trim();
-      if (!nickname || !content) {
-        ShowSnack('닉네임, 내용을 입력해주세요', 'error', enqueueSnackbar);
-        return;
-      }
-      createCommentDto.nickname = nickname;
-      createCommentDto.content = content;
-    } else { // 비로그인 상태일 경우
-      const nickname = e.currentTarget.nickname.value.trim();
-      const password = e.currentTarget.password.value.trim();
-      const content = e.currentTarget.content.value.trim();
-      if (!nickname || !password || !content) {
-        ShowSnack('닉네임, 비밀번호, 내용을 입력해주세요', 'error', enqueueSnackbar);
-        return;
-      }
-      createCommentDto.nickname = nickname;
-      createCommentDto.password = password;
-      createCommentDto.content = content;
-    }
-
-    axios.post(`/creatorComment/${creatorId}`, { ...createCommentDto })
-      .then((res) => {
-        if (!authContext.user.userName) {
-          nicknameInput.value = '';
-          passwordInput.value = '';
-        }
-        contentInput.value = '';
-        loadComments(clickedFilterButtonIndex === 1 ? 'date' : 'recommend');
-      })
-      .catch((error) => console.error(error));
+  const submitSuccessCallback = () => {
+    loadComments(clickedFilterButtonIndex === 1 ? 'date' : 'recommend');
   };
 
   const handleRecommendFilter = useCallback(() => {
@@ -154,7 +103,10 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   return (
     <div className={classes.commentSectionWrapper}>
 
-      <CommentForm submitHandler={onSubmit} />
+      <CommentForm
+        postUrl={`/creatorComment/${creatorId}`}
+        submitSuccessCallback={submitSuccessCallback}
+      />
 
       <div className={listStyle.commentsContainer}>
         <div className={listStyle.commentFilterContainer}>
