@@ -24,6 +24,7 @@ export class AuthService {
       userName: payload.userName,
       roles: payload.roles,
       userDI: payload.userDI,
+      nickName: payload.nickName,
     });
   }
 
@@ -66,7 +67,7 @@ export class AuthService {
   public async login(user: UserLoginPayload, stayLogedIn: boolean): Promise<LoginToken> {
     // access token 발급
     const accessToken = this.createAccessToken({
-      userId: user.userId, userName: user.name, roles: user.roles, userDI: user.userDI,
+      userId: user.userId, userName: user.name, roles: user.roles, userDI: user.userDI, nickName: user.nickName,
     });
     // 로그인 상태 유지에 따라 다른 유지기간의 refresh token 발급
     const refreshToken = this.createRefreshToken(user.userId, stayLogedIn);
@@ -119,6 +120,7 @@ export class AuthService {
       userName: userInfo.name,
       roles: userInfo.roles,
       userDI: userInfo.userDI,
+      nickName: userInfo.nickName,
     });
 
     // ***************************************************************
