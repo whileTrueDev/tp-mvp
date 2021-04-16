@@ -5,6 +5,8 @@ import * as bcrypt from 'bcrypt';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
+import { UserEntity } from '../users/entities/user.entity';
+
 @Injectable()
 export class CreatorCommentService {
   constructor(
@@ -36,34 +38,56 @@ export class CreatorCommentService {
         comments: [],
         count: 0,
       };
+
+      const baseQueryBuilder = await this.creatorCommentsRepository.createQueryBuilder('comment')
+        .select([
+          'comment.commentId AS commentId',
+          'comment.creatorId AS creatorId',
+          'comment.userId AS userId',
+          'comment.nickname AS nickname',
+          'comment.content AS content',
+          'comment.createDate AS createDate',
+          'users.profileImage AS profileImage',
+          'COUNT(hates.id) AS hatesCount',
+          'COUNT(likes.id) AS likesCount',
+        ])
+        .leftJoin(UserEntity, 'users', 'users.userId = comment.userId')
+        .leftJoin('comment.likes', 'likes')
+        .leftJoin('comment.hates', 'hates')
+        .where('comment.creatorId = :creatorId', { creatorId })
+        .groupBy('comment.commentId');
+
+      const testCount = await baseQueryBuilder.clone().getCount();
+      result.count = testCount;
+
       if (order === 'date') {
-      // 생성일 내림차순
-        const [comments, count] = await this.creatorCommentsRepository.createQueryBuilder('comment')
-          .loadRelationCountAndMap('comment.hatesCount', 'comment.hates')
-          .loadRelationCountAndMap('comment.likesCount', 'comment.likes')
-          .where('comment.creatorId = :creatorId', { creatorId })
+        const comments = await baseQueryBuilder
           .orderBy('comment.createDate', 'DESC')
-          .skip(skip)
-          .take(take)
-          .getManyAndCount();
-        result.comments = comments;
-        result.count = count;
+          .offset(skip)
+          .limit(take)
+          .getRawMany();
+        result.comments = comments.map((c) => (
+          {
+            ...c,
+            likesCount: Number(c.likesCount),
+            hatesCount: Number(c.hatesCount),
+          }
+        ));
       }
       if (order === 'recommend') {
-        const qb = await this.creatorCommentsRepository.createQueryBuilder('comment')
-          .addSelect('COUNT(likes.id) AS likesCount')
-          .leftJoin('comment.likes', 'likes')
-          .loadRelationCountAndMap('comment.hatesCount', 'comment.hates')
-          .loadRelationCountAndMap('comment.likesCount', 'comment.likes')
-          .where('comment.creatorId = :creatorId', { creatorId })
-          .groupBy('comment.commentId')
-          .orderBy('likesCount', 'DESC')
-          // .addOrderBy('createDate', 'DESC') // 포함시 오류발생. 현재 typeorm에서 commentId ASC로 정렬해서 보내줌. 수정필요
-          .skip(skip)
-          .take(take);
-        const [comments, count] = await qb.getManyAndCount();
-        result.comments = comments;
-        result.count = count;
+        const comments = await baseQueryBuilder
+          .orderBy('COUNT(likes.id)', 'DESC')
+          .addOrderBy('comment.createDate', 'DESC')
+          .offset(skip)
+          .limit(take)
+          .getRawMany();
+        result.comments = comments.map((c) => (
+          {
+            ...c,
+            likesCount: Number(c.likesCount),
+            hatesCount: Number(c.hatesCount),
+          }
+        ));
       }
 
       return result;
@@ -73,7 +97,7 @@ export class CreatorCommentService {
     }
   }
 
-  // 방송인 평가댓글 삭제하기
+  // 방송인 평가댓글 삭제하기 - deleteFlag를 true로
   async deleteOneComment(commentId: number): Promise<boolean> {
     try {
       const comment = await this.creatorCommentsRepository.findOne({
@@ -85,7 +109,10 @@ export class CreatorCommentService {
       if (!comment) {
         throw new BadRequestException(`no comment with commentId:${commentId}`);
       }
-      await this.creatorCommentsRepository.delete(comment);
+      await this.creatorCommentsRepository.save({
+        ...comment,
+        deleteFlag: true,
+      });
       return true;
     } catch (error) {
       console.error(error);

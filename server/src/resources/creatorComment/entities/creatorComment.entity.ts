@@ -33,6 +33,12 @@ export class CreatorCommentsEntity implements CreatorComments {
   @CreateDateColumn({ type: 'timestamp' })
   createDate: Date;
 
+  @Column({ default: false, comment: '삭제여부' })
+  deleteFlag: boolean;
+
+  @Column({ default: 0, comment: '신고 누적 횟수' })
+  reportCount: number;
+
   // likes
   @OneToMany((type) => CreatorCommentLikesEntity, (like) => like.commentId)
   likes? : CreatorCommentLikesEntity[];
