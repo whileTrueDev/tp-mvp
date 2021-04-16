@@ -24,7 +24,7 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @ManyToOne((type) => UserEntity, (user) => user.userId)
   author: UserEntity;
 
-  @Column()
+  @Column({ comment: '작성자 Ip' })
   userIp: string;
 
   @Column({ type: 'varchar', select: false, comment: '암호화된 비밀번호' })

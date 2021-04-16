@@ -22,31 +22,32 @@ export class FeatureSuggestionReplyService {
   // **************************************************
   // 기능제안 답변
   // get - 모든 feature suggestion reply 조회 (단일 조회가 의미가 없다.)
-  async findAll(req: ReplyGet): Promise<FeatureSuggestionReplyEntity[]> {
+  async findAll(query: ReplyGet): Promise<FeatureSuggestionReplyEntity[]> {
     return this.featureSuggestionReplyRepository
       .find({
-        where: { suggestionId: req.id },
+        where: { suggestionId: query.id },
         order: { createdAt: 'ASC' },
         relations: ['author'],
       });
   }
 
   // post - feature suggestion reply 생성 # 관리자이므로 userId가 존재하지 않는다.
-  async insertOne(data: ReplyPost): Promise<FeatureSuggestionReplyEntity> {
+  async insertOne(data: ReplyPost, userIp?: string): Promise<FeatureSuggestionReplyEntity> {
     const author = await this.usersRepository.findOne(data.author);
     // 답변을 달고자 하는 기능제안 글
     const currentSuggestion = await this.featureSuggestionRepository.findOne(data.suggestionId);
 
     // 해당 기능 제안 글의 상태가 미확인 인 경우 검토중으로 변경 (1=검토중)
+    // 관리자인 경우에만 추가.
     if (currentSuggestion.state === 0) {
-      this.featureSuggestionRepository.save({
-        ...currentSuggestion, state: 1,
-      });
+      // this.featureSuggestionRepository.save({
+      //   ...currentSuggestion,
+      // });
     }
 
     const result = await this
       .featureSuggestionReplyRepository
-      .save({ ...data, author });
+      .save({ ...data, author, userIp });
     return result;
   }
 

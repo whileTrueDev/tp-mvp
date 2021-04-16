@@ -108,19 +108,21 @@ export class FeatureSuggestionController {
   // ********************************* feature suggestion reply *****************************
   @Get('reply')
    async getReply(
-    @Query(ValidationPipe) req: ReplyGet,
+    @Query(ValidationPipe) query: ReplyGet,
    ): Promise<FeatureSuggestionReplyEntity[]> {
-     return this.featureSuggestionReplyService.findAll(req);
+     const reply = await this.featureSuggestionReplyService.findAll(query);
+     return reply;
    }
 
   @Post('reply')
   @UseInterceptors(ClassSerializerInterceptor)
   async createReply(
     @Body(ValidationPipe) data: ReplyPost,
+    @Ip() userIp: string,
   ): Promise<FeatureSuggestionReplyEntity> {
     return this
       .featureSuggestionReplyService
-      .insertOne(data);
+      .insertOne(data, userIp);
   }
 
   @Patch('reply')

@@ -267,12 +267,9 @@ export default function FeatureDetail({
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .map((reply) => (
             <FeatureReply
-              avatarLogo={reply.author?.profileImage}
-              key={reply.author?.userId + reply.createdAt}
-              author={reply.author?.userId}
-              content={reply.content}
-              createdAt={reply.createdAt}
-              replyId={reply.replyId}
+              key={reply.replyId}
+              suggestionId={featureDetailData.suggestionId}
+              reply={reply}
               refetch={featureListRefetch}
             />
           ))}
