@@ -5,7 +5,7 @@ import React from 'react';
 export const FeatureProgressChip = (value: number): React.ReactNode => {
   const theme = useTheme();
   switch (value) {
-    case 1: return (<Chip style={{ margin: 4, color: theme.palette.common.black, borderColor: 'rgba(0, 0, 0, 0.23)' }} color="secondary" label="검토중" />);
+    case 1: return (<Chip style={{ margin: 4, borderColor: 'rgba(0, 0, 0, 0.23)' }} color="secondary" label="검토중" />);
     case 2: return (<Chip style={{ margin: 4, borderColor: 'rgba(0, 0, 0, 0.23)' }} color="primary" label="개발확정" />);
     case 3: return (
       <Chip
@@ -15,6 +15,6 @@ export const FeatureProgressChip = (value: number): React.ReactNode => {
         label="개발보류"
       />
     );
-    default: return (<Chip style={{ margin: 4, borderColor: 'rgba(0, 0, 0, 0.23)' }} variant="outlined" label="미확인" />);
+    default: return (<Chip style={{ margin: 4, color: theme.palette.common.black, borderColor: 'rgba(0, 0, 0, 0.23)' }} variant="outlined" label="미확인" />);
   }
 };

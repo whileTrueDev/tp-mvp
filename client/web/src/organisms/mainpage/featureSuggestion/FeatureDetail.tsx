@@ -248,7 +248,9 @@ export default function FeatureDetail({
         )}
         {!loading && featureDetailData && (
           <div className={classes.contentsText}>
-            <Viewer initialValue={featureDetailData.content} />
+            <Viewer
+              initialValue={featureDetailData.content}
+            />
           </div>
         )}
       </Paper>
