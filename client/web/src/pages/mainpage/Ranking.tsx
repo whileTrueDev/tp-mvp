@@ -64,9 +64,7 @@ export default function Ranking(): JSX.Element {
         </Route>
         {/* 방송인 정보 페이지 */}
         <Route exact path={`${path}/:platform/:creatorId`}>
-          <Container className={wrapper.container}>
-            <CreatorEvaluation />
-          </Container>
+          <CreatorEvaluation containerClassName={wrapper.container} />
         </Route>
         <Route>
           <Redirect to="/ranking" />
