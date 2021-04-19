@@ -1,11 +1,12 @@
-import { CircularProgress, Paper, Typography } from '@material-ui/core';
+import {
+  CircularProgress, Paper, Typography, Button,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import Button from '../../atoms/Button/Button';
 import { FeatureProgressChip } from '../../atoms/Chip/FeatureProgressChip';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
@@ -15,15 +16,23 @@ import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
+import createPostItStyles from '../../utils/style/createPostitStyles';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
+    backgroundColor: theme.palette.primary.main,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  featureContainer: { width: 968, margin: '64px auto' },
+  featureContainer: {
+    position: 'relative',
+    width: 968,
+    margin: '64px auto',
+    padding: theme.spacing(6, 4),
+    '&:before': createPostItStyles(theme, 'left top'),
+  },
   contents: { marginTop: theme.spacing(2) },
   buttonSection: {
     display: 'flex',
@@ -31,15 +40,21 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   chipArea: {
+    width: '100%',
     marginBottom: theme.spacing(1),
     display: 'flex',
-    justifyContent: 'flex-end',
-    alignContent: 'flex-end',
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
   },
   detailLoading: {
     height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column',
   },
   tableContainer: { marginTop: theme.spacing(1) },
+  writeButtonWrapper: { textAlign: 'right', marginTop: theme.spacing(1) },
+  writeButton: {
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[500],
+    color: theme.palette.text.primary,
+  },
 }));
 
 export default function FeatureSuggestionPage(): JSX.Element {
@@ -90,14 +105,12 @@ export default function FeatureSuggestionPage(): JSX.Element {
   return (
     <div>
       <Appbar />
-      <ProductHero
-        title="기능제안"
-        content={`트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해주세요.
-        궁금하신 사항은 고객센터로 연락 부탁드립니다.`}
-      />
+      <ProductHero />
       <section className={classes.featureSection}>
-        <div className={classes.featureContainer}>
-          <Typography variant="h4">기능제안</Typography>
+        <Paper elevation={0} className={classes.featureContainer}>
+          <Typography style={{ fontWeight: 'bold', lineHeight: 2.5 }} variant="h6">기능제안 게시판</Typography>
+          <Typography>트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해 주세요.</Typography>
+          <Typography>궁금하신 사항은 고객센터로 연락 부탁드립니다.</Typography>
 
           {/* 기능제안 개별 보기 */}
           {selectedSuggestionId && loading && (
@@ -134,16 +147,11 @@ export default function FeatureSuggestionPage(): JSX.Element {
 
           {/* 기능제안 글 목록 */}
           <div className={classnames(classes.contents, classes.buttonSection)}>
-            <div>
-              <Button onClick={handleWriteClick}>
-                글쓰기
-              </Button>
-            </div>
             <div className={classes.chipArea}>
-              {FeatureProgressChip(0)}
-              {FeatureProgressChip(1)}
-              {FeatureProgressChip(2)}
               {FeatureProgressChip(3)}
+              {FeatureProgressChip(2)}
+              {FeatureProgressChip(1)}
+              {FeatureProgressChip(0)}
             </div>
           </div>
           <div className={classes.tableContainer}>
@@ -164,7 +172,13 @@ export default function FeatureSuggestionPage(): JSX.Element {
             />
 
           </div>
-        </div>
+
+          <div className={classes.writeButtonWrapper}>
+            <Button className={classes.writeButton} disableElevation variant="contained" onClick={handleWriteClick}>
+              글쓰기
+            </Button>
+          </div>
+        </Paper>
       </section>
       <Footer />
 

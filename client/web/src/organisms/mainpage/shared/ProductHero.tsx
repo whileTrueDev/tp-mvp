@@ -4,8 +4,8 @@ import shortid from 'shortid';
 import styles from './ProductHero.style';
 
 export interface ProductHeroProps {
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
   learnMoreOnClick?: () => void;
 }
 export default function ProductHero({
@@ -16,13 +16,14 @@ export default function ProductHero({
   return (
     <div className={classes.root}>
       <Container className={classes.wraper}>
+        <div className={classes.heroLogo} />
         <div className={classes.main}>
-          {title.split('\n').map((row) => (
+          {title && title.split('\n').map((row) => (
             <h1 key={shortid.generate()} className={classes.mainTitle}>{row}</h1>
           ))}
         </div>
         <div className={classes.main}>
-          {content.split('\n').map((row) => (
+          {content && content.split('\n').map((row) => (
             <p key={shortid.generate()} className={classes.mainContent}>{row}</p>
           ))}
         </div>

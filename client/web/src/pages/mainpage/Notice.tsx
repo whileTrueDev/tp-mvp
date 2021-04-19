@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useHistory, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
@@ -11,16 +11,22 @@ import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCat
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
+import createPostItStyles from '../../utils/style/createPostitStyles';
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
+    backgroundColor: theme.palette.primary.main,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
   noticeContainer: {
-    width: 968, margin: '64px auto',
+    position: 'relative',
+    width: 968,
+    margin: '64px auto',
+    padding: theme.spacing(6, 4),
+    '&:before': createPostItStyles(theme, 'left top'),
   },
   contents: { marginTop: theme.spacing(2) },
 }));
@@ -62,13 +68,11 @@ export default function Notice(): JSX.Element {
   return (
     <main>
       <Appbar />
-      <ProductHero
-        title="공지사항"
-        content="기능 개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
-      />
+      <ProductHero />
       <section className={classes.noticeSection}>
-        <div className={classes.noticeContainer}>
-          <Typography variant="h4">공지사항</Typography>
+        <Paper elevation={0} className={classes.noticeContainer}>
+          <Typography style={{ fontWeight: 'bold', lineHeight: 2.5 }} variant="h6">공지사항</Typography>
+          <Typography>기능개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다.</Typography>
 
           {/* 공지사항 개별 보기 */}
           {selectedNoticeId && !loading && data && (
@@ -125,7 +129,7 @@ export default function Notice(): JSX.Element {
               handlePageSize={setPageSize}
             />
           </div>
-        </div>
+        </Paper>
       </section>
       <Footer />
     </main>

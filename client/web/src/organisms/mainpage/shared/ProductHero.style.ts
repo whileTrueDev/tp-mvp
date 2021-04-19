@@ -1,12 +1,21 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { MYPAGE_MAIN_MIN_WIDTH } from '../../../assets/constants';
+import { MYPAGE_MAIN_MIN_WIDTH, MAIN_HERO_HEIGHT } from '../../../assets/constants';
 
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 280,
-    backgroundColor: theme.palette.primary.main,
+    height: MAIN_HERO_HEIGHT,
+    backgroundColor: theme.palette.background.paper,
     minWidth: MYPAGE_MAIN_MIN_WIDTH,
+  },
+  heroLogo: {
+    height: MAIN_HERO_HEIGHT,
+    background: theme.palette.type === 'light'
+      ? ('url("/images/logo/logo_truepoint_v2_desert_light.png")')
+      : ('url("/images/logo/logo_truepoint_v2_desert_dark.png")'),
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
   },
   wraper: {
     width: 968,
