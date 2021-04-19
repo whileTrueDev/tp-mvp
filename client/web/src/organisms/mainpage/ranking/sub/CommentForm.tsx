@@ -1,4 +1,4 @@
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, Typography } from '@material-ui/core';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
 import React from 'react';
@@ -11,7 +11,7 @@ export interface CommentFormProps {
   /** 댓글 생성하는 라우터 url */
   postUrl: string,
   /** 댓글 생성 post요청 성공 후 실행 할 콜백함수(다시 댓글목록 불러오는 함수 등) */
-  submitSuccessCallback: () => void
+  submitSuccessCallback?: () => void
 }
 
 export default function CommentForm(props: CommentFormProps): JSX.Element {
@@ -35,7 +35,7 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
     };
 
     if (authContext.user.userId) { // 로그인 된 상태일 경우
-      const nickname = e.currentTarget.nickname.value.trim();
+      const nickname = authContext.user.nickName;
       const content = e.currentTarget.content.value.trim();
       if (!nickname || !content) {
         ShowSnack('닉네임, 내용을 입력해주세요', 'error', enqueueSnackbar);
@@ -63,26 +63,32 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
           passwordInput.value = '';
         }
         contentInput.value = '';
-        submitSuccessCallback();
+        if (submitSuccessCallback) {
+          submitSuccessCallback();
+        }
       })
       .catch((error) => console.error(error));
   };
   return (
     <form className={formStyle.form} onSubmit={onSubmit}>
-      <div>
-        <TextField
-          label="닉네임"
-          name="nickname"
-          variant="outlined"
-          placeholder="닉네임"
-          inputProps={{ maxLength: 8 }}
-          className={formStyle.nicknameInput}
-          defaultValue={authContext.user.userName}
-        />
-        {authContext.user.userId
-          ? null
-          : <TextField label="비밀번호" name="password" type="password" placeholder="비밀번호" variant="outlined" inputProps={{ maxLength: 4 }} />}
-      </div>
+      {authContext.user.userId
+        ? (
+          <Typography>{authContext.user.nickName}</Typography>
+        )
+        : (
+          <div>
+            <TextField
+              label="닉네임"
+              name="nickname"
+              variant="outlined"
+              placeholder="닉네임"
+              inputProps={{ maxLength: 8 }}
+              className={formStyle.nicknameInput}
+              defaultValue={authContext.user.userName}
+            />
+            <TextField label="비밀번호" name="password" type="password" placeholder="비밀번호" variant="outlined" inputProps={{ maxLength: 4 }} autoComplete="on" />
+          </div>
+        )}
       <TextField
         className={formStyle.contentTextArea}
         fullWidth

@@ -102,7 +102,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
 
   return (
     <div className={classes.commentSectionWrapper}>
-
       <CommentForm
         postUrl={`/creatorComment/${creatorId}`}
         submitSuccessCallback={submitSuccessCallback}

@@ -6,8 +6,21 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
   return createStyles({
     commentItem: {
       position: 'relative',
-      padding: theme.spacing(2, 4),
-      borderBottom: `1px solid ${theme.palette.divider}`,
+      padding: theme.spacing(2, 0),
+      '&:not(:first-child)': {
+        borderTop: `1px solid ${theme.palette.divider}`,
+      },
+      '&.child': {
+        marginLeft: theme.spacing(6),
+        paddingLeft: theme.spacing(4),
+        borderTop: `1px solid ${theme.palette.divider}`,
+        '&::before': {
+          content: '"ㄴ"',
+          position: 'absolute',
+          left: theme.spacing(2),
+          top: theme.spacing(2),
+        },
+      },
     },
     header: {
       display: 'flex',
@@ -59,8 +72,14 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     },
     actions: {
       display: 'flex',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
       alignItems: 'center',
+      '.child &': {
+        justifyContent: 'flex-end',
+      },
+    },
+    replyIcon: {
+      transform: 'rotate(180deg)',
     },
     nestedComments: {
 
@@ -82,6 +101,18 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     hated: {
       color: theme.palette.secondary.main,
     },
+    commentFormContainer: {
+      display: 'none',
+      '&.open': {
+        display: 'block',
+      },
+    },
+    replyList: {
+      display: 'none',
+      '&.open': {
+        display: 'block',
+      },
+    },
   });
 });
 
@@ -102,7 +133,6 @@ export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createSty
   },
   commentListContainer: {
     minHeight: theme.spacing(45),
-
   },
   buttonWrapper: {
     display: 'flex',
