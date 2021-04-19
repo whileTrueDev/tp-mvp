@@ -151,6 +151,13 @@ export class CreatorCommentController {
     return this.creatorCommentVoteService.removeHate(commentId, userIp, userId);
   }
 
+  @Post('report/:commentId')
+  reportComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ): Promise<boolean> {
+    return this.creatorCommentService.report(commentId);
+  }
+
   /**
    * 대댓글(자식댓글)목록 가져오기
    * @param commentId 부모댓글 commentId

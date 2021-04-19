@@ -210,6 +210,11 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
       })
       .catch((error) => console.error(error));
   };
+  const report = () => {
+    // 신고 post
+    // 추천처럼 하루 1번만 가능하도록 하기(로컬스토리지 이용)
+    // axios.
+  };
 
   const time = dayjs(createDate).format('YYYY-MM-DD HH:mm:ss');
   return (
@@ -224,6 +229,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
           <Button
             aria-label="신고하기"
             className={classes.reportButton}
+            onClick={report}
           >
             <img
               src="/images/rankingPage/reportIcon.png"

@@ -201,4 +201,23 @@ export class CreatorCommentService {
     });
     return bcrypt.compare(password, hashedPassword);
   }
+
+  // 댓글 신고
+  async report(commentId: number): Promise<boolean> {
+    try {
+      const comment = await this.creatorCommentsRepository.findOne({ where: { commentId } });
+      if (!comment) {
+        throw new BadRequestException(`no comment with commentId ${commentId}`);
+      }
+
+      await this.creatorCommentsRepository.save({
+        ...comment,
+        reportCount: comment.reportCount + 1,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
 }
