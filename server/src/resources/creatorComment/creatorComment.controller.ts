@@ -98,8 +98,9 @@ export class CreatorCommentController {
   likeComment(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
+    @Body('userId') userId: string|undefined,
   ): Promise<CreatorCommentVoteEntity> {
-    return this.creatorCommentVoteService.like(commentId, userIp);
+    return this.creatorCommentVoteService.like(commentId, userIp, userId);
   }
 
   /**
@@ -113,8 +114,9 @@ export class CreatorCommentController {
   removeLikeOnComment(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
+    @Body('userId') userId: string|undefined,
   ): Promise<boolean> {
-    return this.creatorCommentVoteService.removeLike(commentId, userIp);
+    return this.creatorCommentVoteService.removeLike(commentId, userIp, userId);
   }
 
   /**
@@ -128,8 +130,9 @@ export class CreatorCommentController {
   hateComment(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
+    @Body('userId') userId: string|undefined,
   ): Promise<CreatorCommentVoteEntity> {
-    return this.creatorCommentVoteService.hate(commentId, userIp);
+    return this.creatorCommentVoteService.hate(commentId, userIp, userId);
   }
 
   /**
@@ -143,8 +146,9 @@ export class CreatorCommentController {
   removeHateOnComment(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
+    @Body('userId') userId: string|undefined,
   ): Promise<boolean> {
-    return this.creatorCommentVoteService.removeHate(commentId, userIp);
+    return this.creatorCommentVoteService.removeHate(commentId, userIp, userId);
   }
 
   /**

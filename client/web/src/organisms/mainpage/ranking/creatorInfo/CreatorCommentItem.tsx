@@ -53,30 +53,30 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     setRepliesCount(repliesCount || 0);
   }, [repliesCount]);
 
-  const createLikeRequest = useCallback(() => axios.post(`creatorComment/like/${commentId}`)
+  const createLikeRequest = useCallback(() => axios.post(`creatorComment/like/${commentId}`, { userId: authContext.user.userId })
     .catch((error) => {
       if (error.response) {
         console.error(error.response.message);
       }
-    }), [commentId]);
-  const removeLikeRequest = useCallback(() => axios.delete(`creatorComment/like/${commentId}`)
+    }), [authContext.user.userId, commentId]);
+  const removeLikeRequest = useCallback(() => axios.delete(`creatorComment/like/${commentId}`, { data: { userId: authContext.user.userId } })
     .catch((error) => {
       if (error.response) {
         console.error(error.response.message);
       }
-    }), [commentId]);
-  const createHateRequest = useCallback(() => axios.post(`creatorComment/hate/${commentId}`)
+    }), [authContext.user.userId, commentId]);
+  const createHateRequest = useCallback(() => axios.post(`creatorComment/hate/${commentId}`, { userId: authContext.user.userId })
     .catch((error) => {
       if (error.response) {
         console.error(error.response.message);
       }
-    }), [commentId]);
-  const removeHateRequest = useCallback(() => axios.delete(`creatorComment/hate/${commentId}`)
+    }), [authContext.user.userId, commentId]);
+  const removeHateRequest = useCallback(() => axios.delete(`creatorComment/hate/${commentId}`, { data: { userId: authContext.user.userId } })
     .catch((error) => {
       if (error.response) {
         console.error(error.response.message);
       }
-    }), [commentId]);
+    }), [authContext.user.userId, commentId]);
 
   const clickLike = useCallback(() => {
     if (likeClicked) {
