@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Query, Param,
+  Controller, Get, Query, Param, ParseIntPipe,
 } from '@nestjs/common';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
@@ -41,7 +41,7 @@ export class BroadcastInfoController {
    @Get('bycreator')
   async getStreamsByCreatorId(
     @Query('creatorId') creatorId: string,
-    @Query('limit') limit: number,
+    @Query('limit', ParseIntPipe) limit: number,
   ): Promise<RecentStreamResType> {
     const result = await this.broadcastService.getStreamsByCreatorId(creatorId, limit);
     return result;

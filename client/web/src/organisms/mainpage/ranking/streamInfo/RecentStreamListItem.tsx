@@ -41,13 +41,11 @@ export default function RecentStreamListItem({
           </Typography>
           <Typography variant="body1" component="span" className={classes.subtitle} align="center">
             <img src="/images/rankingPage/thumb_up.png" alt="추천" width={24} height={24} />
-            0
-            {/* {` ${stream.likeCount || 0}`} */}
+            {` ${stream.likeCount ? stream.likeCount.toLocaleString() : 0}`}
           </Typography>
           <Typography variant="body1" component="span" className={classes.subtitle}>
             <img src="/images/rankingPage/thumb_down.png" alt="추천" width={24} height={24} />
-            0
-            {/* {` ${stream.hateCount || 0}`} */}
+            {` ${stream.hateCount ? stream.hateCount.toLocaleString() : 0}`}
           </Typography>
         </Typography>
       </Tooltip>

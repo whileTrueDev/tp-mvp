@@ -20,12 +20,18 @@ const RECENT_STREAM_DATA = {
   viewer: 1819,
   marginLeft: 20,
   height: 80,
+  likeCount: 1,
+  hateCount: 1,
 };
 const defaultArgs: RecentStreamListItemProps = {
   stream: {
     ...RECENT_STREAM_DATA,
   },
 };
+
+export const Default = Template.bind({});
+Default.args = defaultArgs;
+
 const longTitleArgs: RecentStreamListItemProps = {
   stream: {
     ...RECENT_STREAM_DATA,
@@ -33,8 +39,17 @@ const longTitleArgs: RecentStreamListItemProps = {
   },
 };
 
-export const Default = Template.bind({});
-Default.args = defaultArgs;
-
 export const LongTitle = Template.bind({});
 LongTitle.args = longTitleArgs;
+
+const bigVoteArgs: RecentStreamListItemProps = {
+  stream: {
+    ...RECENT_STREAM_DATA,
+    title: '방송제목123123',
+    likeCount: 100000000,
+    hateCount: 100000000,
+  },
+};
+
+export const BigVote = Template.bind({});
+BigVote.args = bigVoteArgs;

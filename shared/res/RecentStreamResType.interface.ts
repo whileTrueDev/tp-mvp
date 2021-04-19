@@ -3,6 +3,8 @@ export interface RecentStream {
   title: string;
   startDate: string;
   viewer: number;
+  likeCount: number;
+  hateCount: number
 }
 
 export type RecentStreamResType = RecentStream[]

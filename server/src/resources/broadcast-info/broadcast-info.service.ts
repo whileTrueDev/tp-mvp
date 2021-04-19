@@ -76,15 +76,19 @@ export class BroadcastInfoService {
    */
   async getStreamsByCreatorId(creatorId: string, limit = 5): Promise<RecentStreamResType> {
     const result = await this.streamsRepository
-      .createQueryBuilder('streams')
-      .select(
-        ['streamId', 'title', 'startDate', 'viewer'],
-      )
-      .where('streams.creatorId = :creatorId', { creatorId })
-      .orderBy('streams.startDate', 'DESC')
-      .take(limit)
-      .execute()
-      .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));
+      .query(
+        `SELECT
+          streamId, title, startDate, viewer,
+          IFNULL(SUM(vote), 0) AS likeCount,
+          IFNULL(COUNT(*) - SUM(vote), 0) AS hateCount
+        FROM Streams as s
+        LEFT JOIN StreamVotes as sv ON s.streamId = sv.streamStreamId
+        WHERE s.creatorId = ?
+        GROUP BY streamId
+        ORDER BY s.startDate DESC
+        LIMIT ?`, [creatorId, limit],
+      );
+
     return result;
   }
 }
