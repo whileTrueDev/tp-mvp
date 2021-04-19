@@ -16,6 +16,7 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
     backgroundPositionY: 'bottom',
     height: theme.spacing(30),
     position: 'relative',
+    margin: 'auto',
   },
 }));
 export default function HeaderDecoration(): JSX.Element {
