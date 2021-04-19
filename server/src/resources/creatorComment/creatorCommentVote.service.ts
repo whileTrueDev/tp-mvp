@@ -3,45 +3,44 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreatorCommentLikesEntity } from './entities/creatorCommentLikes.entity';
-import { CreatorCommentHatesEntity } from './entities/creatorCommentHates.entity';
+// import { CreatorCommentLikesEntity } from './entities/creatorCommentLikes.entity';
+// import { CreatorCommentHatesEntity } from './entities/creatorCommentHates.entity';
+import { CreatorCommentVoteEntity } from './entities/creatorCommentVote.entity';
 
 @Injectable()
-export class CreatorCommentLikeService {
+export class CreatorCommentVoteService {
   constructor(
-    @InjectRepository(CreatorCommentLikesEntity)
-    private readonly creatorCommentsLikesRepository: Repository<CreatorCommentLikesEntity>,
-    @InjectRepository(CreatorCommentHatesEntity)
-    private readonly creatorCommentsHatesRepository: Repository<CreatorCommentHatesEntity>,
+    @InjectRepository(CreatorCommentVoteEntity)
+    private readonly creatorCommentVoteRepository: Repository<CreatorCommentVoteEntity>,
   ) {}
 
   // userIp가 commentId에 좋아요 한 like 테이블 데이터 찾기
   private async findLike(commentId: number, userIp: string): Promise<any> {
-    return this.creatorCommentsLikesRepository.findOne({
-      where: { commentId, userIp },
+    return this.creatorCommentVoteRepository.findOne({
+      where: { commentId, userIp, vote: true },
     });
   }
 
   // userIp가 commentId에 싫어요 한 hate 테이블 데이터 찾기
   private async findHate(commentId: number, userIp: string): Promise<any> {
-    return this.creatorCommentsHatesRepository.findOne({
-      where: { commentId, userIp },
+    return this.creatorCommentVoteRepository.findOne({
+      where: { commentId, userIp, vote: false },
     });
   }
 
   // likeEntity 삭제
-  private async removeLikeEntity(likeEntity: CreatorCommentLikesEntity) {
-    return this.creatorCommentsLikesRepository.remove(likeEntity);
+  private async removeLikeEntity(likeEntity: CreatorCommentVoteEntity) {
+    return this.creatorCommentVoteRepository.remove(likeEntity);
   }
 
   // hateEntity 삭제
-  private async removeHateEntity(hateEntity: CreatorCommentHatesEntity) {
-    return this.creatorCommentsHatesRepository.remove(hateEntity);
+  private async removeHateEntity(hateEntity: CreatorCommentVoteEntity) {
+    return this.creatorCommentVoteRepository.remove(hateEntity);
   }
 
   // 좋아요 생성
   // 기존에 싫어요를 했던 댓글인 경우 싫어요 취소
-  async like(commentId: number, userIp: string): Promise<CreatorCommentLikesEntity> {
+  async like(commentId: number, userIp: string): Promise<CreatorCommentVoteEntity> {
     try {
       const exLike = await this.findLike(commentId, userIp);
       if (exLike) {
@@ -50,10 +49,10 @@ export class CreatorCommentLikeService {
 
       const exHate = await this.findHate(commentId, userIp);
       if (exHate) {
-        await this.removeHateEntity(exHate);
+        return this.creatorCommentVoteRepository.save({ ...exHate, vote: true });
       }
 
-      return this.creatorCommentsLikesRepository.save({ commentId, userIp });
+      return this.creatorCommentVoteRepository.save({ commentId, userIp, vote: true });
     } catch (error) {
       console.error(error);
       if (error.code === 400) {
@@ -80,20 +79,18 @@ export class CreatorCommentLikeService {
 
   // 싫어요 생성
   // 기존에 좋아요 했던 댓글이면 좋아요 취소
-  async hate(commentId: number, userIp: string): Promise<CreatorCommentHatesEntity> {
+  async hate(commentId: number, userIp: string): Promise<CreatorCommentVoteEntity> {
     try {
-      const exHate = await this.creatorCommentsHatesRepository.findOne({
-        where: { commentId, userIp },
-      });
+      const exHate = await this.findHate(commentId, userIp);
       if (exHate) {
         throw new BadRequestException(`ip ${userIp} already hated comment ${commentId}`);
       }
 
       const exLike = await this.findLike(commentId, userIp);
       if (exLike) {
-        await this.removeLikeEntity(exLike);
+        return this.creatorCommentVoteRepository.save({ ...exLike, vote: false });
       }
-      return this.creatorCommentsHatesRepository.save({ commentId, userIp });
+      return this.creatorCommentVoteRepository.save({ commentId, userIp, vote: false });
     } catch (error) {
       console.error(error);
       if (error.code === 400) {
@@ -110,7 +107,7 @@ export class CreatorCommentLikeService {
       if (!exHate) {
         throw new BadRequestException(`userIp ${userIp} did not hate on commentId ${commentId}`);
       }
-      await this.removeLikeEntity(exHate);
+      await this.removeHateEntity(exHate);
       return true;
     } catch (error) {
       console.error(error);
@@ -121,7 +118,7 @@ export class CreatorCommentLikeService {
   // userIp가 좋아요 한 코멘트 id 목록 반환
   async findLikesByUserIp(userIp: string): Promise<number[]> {
     try {
-      const data = await this.creatorCommentsLikesRepository.find({
+      const data = await this.creatorCommentVoteRepository.find({
         where: { userIp },
         select: ['commentId'],
       });
@@ -135,7 +132,7 @@ export class CreatorCommentLikeService {
   // userIp가 싫어요 한 코멘트 id 목록 반환
   async findHatesByUserIp(userIp: string): Promise<number[]> {
     try {
-      const data = await this.creatorCommentsHatesRepository.find({
+      const data = await this.creatorCommentVoteRepository.find({
         where: { userIp },
         select: ['commentId'],
       });
