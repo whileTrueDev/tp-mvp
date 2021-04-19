@@ -91,7 +91,10 @@ export default function CreatorEvaluation({
 
   return (
     <>
-      <RecentStreamList />
+      <RecentStreamList
+        creatorId={creatorId}
+        platform={platform}
+      />
       <Container className={containerClassName}>
         <div className={classes.creatorEvaluationCardContainer}>
           <Button

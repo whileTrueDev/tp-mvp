@@ -1,162 +1,77 @@
-import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import dayjs from 'dayjs';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useMediaQuery, useTheme } from '@material-ui/core';
+import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
+import useAxios from 'axios-hooks';
+import React, { useMemo } from 'react';
+import useRecentStreamStyles from '../style/RecentStream.styles';
+import RecentStreamListItem from './RecentStreamListItem';
 
-const useStyles = makeStyles((theme) => ({
-  section: {
-    borderTop: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
-    borderBottom: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
-    borderRadius: theme.spacing(0.5),
-    marginBottom: theme.spacing(5),
-  },
-  title: {
-    textDecoration: 'none',
-    color: theme.palette.text.secondary,
-    transition: theme.transitions.create(
-      'color', { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.short },
-    ),
-    '&:hover': {
-      color: theme.palette.text.primary,
-    },
-  },
-}));
-
-const dotPositions = [
-  { left: 135, top: 50 },
-  { left: 215, top: 125 },
-  { left: 250, top: 235 },
-  { left: 220, top: 350 },
-  { left: 125, top: 445 },
+const listPositions = [
+  { marginLeft: 16, height: 85 },
+  { marginLeft: 70, height: 100 },
+  { marginLeft: 110, height: 100 },
+  { marginLeft: 80, height: 90 },
+  { marginLeft: 16, height: undefined },
 ];
+export interface RecentStreamListProps {
+  platform: string;
+  creatorId: string;
+}
+export default function RecentStreamList({
+  creatorId,
+  platform,
+}: RecentStreamListProps): React.ReactElement {
+  const classes = useRecentStreamStyles();
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
-const data = [
-  {
-    marginLeft: 0,
-    height: 80,
-    title: '인내심 테스트',
-    createDate: new Date('2021-04-13'),
-    maxViewer: 3534,
-    likeCount: 130,
-    hateCount: 130,
-  },
-  {
-    title: '괴물과 싸우는 자는',
-    marginLeft: 70,
-    height: 110,
-    createDate: new Date('2021-04-13'),
-    maxViewer: 3534,
-    likeCount: 130,
-    hateCount: 130,
-  },
-  {
-    title: '남탓 알파고',
-    createDate: new Date('2021-04-13'),
-    maxViewer: 3534,
-    likeCount: 130,
-    hateCount: 130,
-    marginLeft: 110,
-    height: 125,
-  },
-  {
-    title: '갱왔습니다',
-    createDate: new Date('2021-04-13'),
-    maxViewer: 3534,
-    likeCount: 130,
-    hateCount: 130,
-    marginLeft: 80,
-    height: 85,
-  },
-  {
-    title: '호주 워킹홀리데이 연습생 썰',
-    createDate: new Date('2021-04-13'),
-    maxViewer: 3534,
-    likeCount: 130,
-    hateCount: 130,
-    marginLeft: 0,
-    height: undefined,
-  },
-];
+  const [{ data, error }] = useAxios<RecentStreamResType>({
+    url: '/broadcast-info/bycreator',
+    method: 'GET',
+    params: { creatorId, limit: 5 },
+  });
 
-export default function RecentStreamList(): React.ReactElement {
-  const classes = useStyles();
+  function createListData(d: RecentStreamResType) {
+    return d.map((_d, idx) => ({
+      ..._d,
+      marginLeft: listPositions[idx].marginLeft,
+      height: listPositions[idx].height,
+    }));
+  }
+
+  const dataSource = useMemo(() => {
+    if (!data) return [];
+    return createListData(data);
+  }, [data]);
 
   return (
-    <section className={classes.section} id="broad-list" style={{ minHeight: 600, position: 'relative', paddingTop: 24 }}>
-      <img
-        style={{
-          position: 'absolute',
-          width: 500,
-          height: 500,
-          left: -230,
-        }}
-        src="/images/rankingPage/broadPage/twitch_logo_bg.png"
-        srcSet="images/rankingPage/broadPage/twitch_logo_bg2x.png 2x"
-        alt=""
-        draggable={false}
-      />
-      <img
-        style={{
-          position: 'absolute',
-          width: 300,
-          height: 300,
-          left: -110,
-          top: 124,
-        }}
-        src="/images/rankingPage/broadPage/twitch_logo_blur.png"
-        srcSet="images/rankingPage/broadPage/twitch_logo_blur2x.png 2x"
-        alt=""
-        draggable={false}
-      />
-      <img
-        style={{
-          position: 'absolute',
-          width: 520,
-          height: 480,
-          left: -250,
-        }}
-        src="/images/rankingPage/broadPage/twitch_logo_ring.png"
-        srcSet="images/rankingPage/broadPage/twitch_logo_ring2x.png 2x"
-        alt=""
-        draggable={false}
-      />
-      {dotPositions.map((dot) => (
-        <img
-          key={dot.left}
-          style={{
-            position: 'absolute',
-            left: dot.left,
-            top: dot.top,
-          }}
-          src="/images/rankingPage/broadPage/twitch_logo_circle.png"
-          srcSet="images/rankingPage/broadPage/twitch_logo_circle2x.png 2x"
-          alt=""
-          draggable={false}
-        />
-      ))}
-      <div style={{ display: 'box', marginLeft: 200, marginTop: 24 }}>
-        {data.map((stream) => (
-          <div style={{ marginLeft: stream.marginLeft, height: stream.height }}>
-            <Typography to={window.location.pathname} component={Link} variant="h5" className={classes.title}>
-              {stream.title}
-              <Typography variant="body1" component="span" style={{ marginLeft: 16 }}>
-                {dayjs(stream.createDate).format('YYYY-MM-DD')}
-              </Typography>
-              <Typography variant="body1" component="span" style={{ marginLeft: 16 }}>
-                {`최고 시청자 수 : ${stream.maxViewer} 명`}
-              </Typography>
-              <Typography variant="body1" component="span" style={{ marginLeft: 16 }}>
-                {`좋아요 ${stream.likeCount}`}
-              </Typography>
-              <Typography variant="body1" component="span" style={{ marginLeft: 16 }}>
-                {`싫어요 ${stream.likeCount}`}
-              </Typography>
-            </Typography>
-          </div>
+    <section className={classes.section} id="broad-list">
+      <div className={classes.itembox}>
+        {!error && dataSource && dataSource.map((stream) => (
+          <RecentStreamListItem key={stream.title} stream={stream} />
         ))}
       </div>
 
+      {/* 우측 스트리머 프로필이미지 */}
+      <img
+        draggable={false}
+        style={{
+          position: 'absolute', right: 0, top: 0, height: 600 - 16,
+        }}
+        src={theme.palette.type === 'light' ? '/images/rankingPage/broadPage/랄로배경.png' : '/images/rankingPage/broadPage/랄로배경2.png'}
+        alt=""
+      />
+
+      {/* 플랫폼 로고 이미지 */}
+      {isSm ? (null) : (
+        <img
+          src={theme.palette.type === 'light' ? '/images/rankingPage/broadPage/twitch_bg_light.png' : '/images/rankingPage/broadPage/twitch_bg_dark.png'}
+          style={{
+            position: 'absolute', left: -230, top: 24, width: 500, height: 500,
+          }}
+          alt=""
+        />
+      )}
     </section>
+
   );
 }

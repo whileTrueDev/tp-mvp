@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
+import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
@@ -15,7 +16,7 @@ Injectable();
 export class BroadcastInfoService {
   constructor(
     @InjectRepository(StreamsEntity)
-      private readonly streamsTest2Repository: Repository<StreamsEntity>,
+      private readonly streamsRepository: Repository<StreamsEntity>,
   ) {}
 
   /**
@@ -34,7 +35,7 @@ export class BroadcastInfoService {
     const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
     const compeleteAnalysisFlag = 0; // needAnalysis , 분석 완료 값을 비교하기 위한 체크값 (현재 0 이 완료이므로 0 으로 설정)
 
-    const TermStreamsData: StreamDataType[] = await this.streamsTest2Repository
+    const TermStreamsData: StreamDataType[] = await this.streamsRepository
       .createQueryBuilder('streams')
       .innerJoin(
         StreamSummaryEntity,
@@ -59,11 +60,29 @@ export class BroadcastInfoService {
    * @param userId 
    */
   async getStreamsByUserId(userId: string): Promise<BroadcastDataForDownload[]> {
-    const result: BroadcastDataForDownload[] = await this.streamsTest2Repository
+    const result: BroadcastDataForDownload[] = await this.streamsRepository
       .createQueryBuilder('streams')
       .select(['streams.streamId, streams.platform, streams.title, streams.startDate, streams.endDate, streams.creatorId'])
       .where('streams.userId = :userId', { userId })
       .orderBy('streams.startDate', 'DESC')
+      .execute()
+      .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));
+    return result;
+  }
+
+  /**
+   * creatorId 해당 이용자의 전체 방송 목록 조회하여 날짜 내림차순으로 반환
+   * @param userId 
+   */
+  async getStreamsByCreatorId(creatorId: string, limit = 5): Promise<RecentStreamResType> {
+    const result = await this.streamsRepository
+      .createQueryBuilder('streams')
+      .select(
+        ['streamId', 'title', 'startDate', 'viewer'],
+      )
+      .where('streams.creatorId = :creatorId', { creatorId })
+      .orderBy('streams.startDate', 'DESC')
+      .take(limit)
       .execute()
       .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));
     return result;
