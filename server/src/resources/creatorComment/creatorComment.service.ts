@@ -147,12 +147,11 @@ export class CreatorCommentService {
         ])
         .leftJoin(UserEntity, 'users', 'users.userId = comment.userId')
         .leftJoin('comment.votes', 'likes')
-        .andWhere('comment.deleteFlag = 0')
-        .groupBy('comment.commentId')
-        .addGroupBy('likes.vote');
+        .groupBy('comment.commentId');
 
       const replies = await commentBaseQuery
         .where('comment.parentCommentId = :commentId', { commentId })
+        .andWhere('comment.deleteFlag = 0')
         .orderBy('comment.createDate', 'DESC')
         .getRawMany();
 

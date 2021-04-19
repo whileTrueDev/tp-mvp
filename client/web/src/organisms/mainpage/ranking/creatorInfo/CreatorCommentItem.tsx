@@ -206,6 +206,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
         if (reloadComments) {
           reloadComments();
         }
+        setConfirmDialogOpen(false);
       })
       .catch((error) => console.error(error));
   };
@@ -296,7 +297,14 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
             {
               (replies.length > 0) && (
                 replies.map((reply) => (
-                  <CreatorCommentItem key={reply.commentId} {...reply} isChildComment isLiked={false} isHated={false} />
+                  <CreatorCommentItem
+                    key={reply.commentId}
+                    {...reply}
+                    isChildComment
+                    reloadComments={getRepliesRequest}
+                    isLiked={false}
+                    isHated={false}
+                  />
                 ))
               )
             }
