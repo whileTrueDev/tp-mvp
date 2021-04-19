@@ -3,9 +3,8 @@ import {
   CreateDateColumn, PrimaryGeneratedColumn, OneToMany, Index, ManyToOne, JoinColumn,
 } from 'typeorm';
 import { CreatorComments } from '@truepoint/shared/interfaces/CreatorComments.interface';
-import { CreatorCommentLikesEntity } from './creatorCommentLikes.entity';
-import { CreatorCommentHatesEntity } from './creatorCommentHates.entity';
-@Entity({ name: 'CreatorCommentsTest' })
+import { CreatorCommentVoteEntity } from './creatorCommentVote.entity';
+@Entity({ name: 'CreatorCommentsTest2' })
 @Index('IX_creatorId', ['creatorId'])
 export class CreatorCommentsEntity implements CreatorComments {
   constructor(partial: Partial<CreatorCommentsEntity>) {
@@ -47,11 +46,6 @@ export class CreatorCommentsEntity implements CreatorComments {
   @OneToMany((type) => CreatorCommentsEntity, (comment) => comment.parentCommentId)
   childrenComments?: CreatorCommentsEntity[];
 
-  // likes
-  @OneToMany((type) => CreatorCommentLikesEntity, (like) => like.commentId)
-  likes? : CreatorCommentLikesEntity[];
-
-  // hates
-  @OneToMany((type) => CreatorCommentHatesEntity, (hate) => hate.commentId)
-  hates? : CreatorCommentHatesEntity[];
+  @OneToMany((type) => CreatorCommentVoteEntity, (vote) => vote.commentId)
+  votes? : CreatorCommentVoteEntity[];
 }
