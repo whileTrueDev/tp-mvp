@@ -86,7 +86,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const submitSuccessCallback = () => {
+  const reloadComments = () => {
     loadComments(clickedFilterButtonIndex === 1 ? 'date' : 'recommend');
   };
 
@@ -104,7 +104,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     <div className={classes.commentSectionWrapper}>
       <CommentForm
         postUrl={`/creatorComment/${creatorId}`}
-        submitSuccessCallback={submitSuccessCallback}
+        submitSuccessCallback={reloadComments}
       />
 
       <div className={listStyle.commentsContainer}>
@@ -134,6 +134,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
                 {...d}
                 isLiked={likes.includes(d.commentId)}
                 isHated={hates.includes(d.commentId)}
+                reloadComments={reloadComments}
               />
             ))
             : (
