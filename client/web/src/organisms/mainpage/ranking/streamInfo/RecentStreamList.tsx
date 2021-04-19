@@ -1,4 +1,4 @@
-import { useMediaQuery, useTheme } from '@material-ui/core';
+import { Typography, useMediaQuery, useTheme } from '@material-ui/core';
 import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios from 'axios-hooks';
 import React, { useMemo } from 'react';
@@ -64,7 +64,7 @@ export default function RecentStreamList({
       {/* 플랫폼 로고 이미지 */}
       {isSm ? (null) : (
         <img
-          src={theme.palette.type === 'light' ? '/images/rankingPage/broadPage/twitch_bg_light.png' : '/images/rankingPage/broadPage/twitch_bg_dark.png'}
+          src={`/images/rankingPage/broadPage/${platform}_bg_${theme.palette.type}.png`}
           style={{
             position: 'absolute', left: -230, top: 24, width: 500, height: 500,
           }}
