@@ -37,7 +37,7 @@ SELECT
   followerCount, 
   ROUND(TIMESTAMPDIFF(MINUTE, startedAt, endedAt) / 60, 1) AS airTime
 FROM TwitchStreams
-WHERE streamerId IN ${conditionQuery})
+WHERE streamerId IN ${conditionQuery})  
 AND endedAt > DATE_SUB(NOW(), INTERVAL 7 DAY)
 AND ${FLAG_COLUMN} = 1
 ) AS A
@@ -80,7 +80,7 @@ const getCreators = () => new Promise((resolve, reject) => {
 // 4. 2번 map을 통해서 streamData에 대해 userId를 대응시킨다.
 const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) => {
   const conditionQuery = creators.reduce((str, element, index) => `${index == 0 ? `(${str}` : `${str},`}'${element.twitchId}'`, '');
-
+  const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
   if(conditionQuery === ''){
     resolve([]);
     return;
@@ -90,11 +90,12 @@ const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) =
     .then((inrow) => {
       const streams = inrow.result;
       const streamData = streams.map((element) => {
-        // const userId = userMap[element.creatorId];
-        const userId = userMap.hasOwnProperty(`${element.creatorId}`) ? userMap[element.creatorId] : null;
+        const userId = userMap.hasOwnProperty(`${element.creatorId}`) ? userMap[element.creatorId] : '';
+        const title = element.title.replace(reg, '');
         return {
           ...element,
           userId,
+          title
         };
       });
       resolve(streamData);
@@ -113,7 +114,7 @@ const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) =
 const loadStream = (streamData) => new Promise((resolve, reject) => {
   if (streamData.length == 0) {
     reject({
-      type: false,
+      type: true,
       func: 'loadStream',
       msg: `no streams | ${new Date().toLocaleString()}`,
     });
@@ -194,7 +195,8 @@ const main = () => new Promise((resolve, reject) => {
           error,
         });
       } else {
-        console.log(`twitch-collector : ${error.msg}`);
+        console.log(`twitch-collector`);
+        console.log(error)
       }
       resolve();
     });
