@@ -5,16 +5,23 @@ import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/crea
 import { CheckPasswordDto } from '@truepoint/shared/dist/dto/creatorComment/checkPassword.dto';
 import { ICreatorCommentsRes, IGetHates, IGetLikes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentService } from './creatorComment.service';
-import { CreatorCommentLikeService } from './creatorCommentLike.service';
+import { CreatorCommentVoteService } from './creatorCommentVote.service';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
-import { CreatorCommentHatesEntity } from './entities/creatorCommentHates.entity';
-import { CreatorCommentLikesEntity } from './entities/creatorCommentLikes.entity';
+import { CreatorCommentVoteEntity } from './entities/creatorCommentVote.entity';
 @Controller('creatorComment')
 export class CreatorCommentController {
   constructor(
     private readonly creatorCommentService: CreatorCommentService,
-    private readonly creatorCommentLikeService: CreatorCommentLikeService,
+    private readonly creatorCommentVoteService: CreatorCommentVoteService,
   ) {}
+
+  @Post('/replies/:commentId')
+  CreateChildrenComment(
+    @Param('commentId', ParseIntPipe) commentId: number,
+    @Body(ValidationPipe) createCommentDto: CreateCommentDto,
+  ): Promise<CreatorCommentsEntity> {
+    return this.creatorCommentService.createChildrenComment(commentId, createCommentDto);
+  }
 
   /**
    * 방송인 평가 댓글 작성
@@ -63,7 +70,7 @@ export class CreatorCommentController {
   async getLikes(
     @Ip() userIp: string,
   ): Promise<IGetLikes> {
-    const likes = await this.creatorCommentLikeService.findLikesByUserIp(userIp);
+    const likes = await this.creatorCommentVoteService.findLikesByUserIp(userIp);
     return { userIp, likes };
   }
 
@@ -76,7 +83,7 @@ export class CreatorCommentController {
   async getHates(
     @Ip() userIp: string,
   ): Promise<IGetHates> {
-    const hates = await this.creatorCommentLikeService.findHatesByUserIp(userIp);
+    const hates = await this.creatorCommentVoteService.findHatesByUserIp(userIp);
     return { userIp, hates };
   }
 
@@ -91,8 +98,8 @@ export class CreatorCommentController {
   likeComment(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
-  ): Promise<CreatorCommentLikesEntity> {
-    return this.creatorCommentLikeService.like(commentId, userIp);
+  ): Promise<CreatorCommentVoteEntity> {
+    return this.creatorCommentVoteService.like(commentId, userIp);
   }
 
   /**
@@ -107,7 +114,7 @@ export class CreatorCommentController {
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
   ): Promise<boolean> {
-    return this.creatorCommentLikeService.removeLike(commentId, userIp);
+    return this.creatorCommentVoteService.removeLike(commentId, userIp);
   }
 
   /**
@@ -121,8 +128,8 @@ export class CreatorCommentController {
   hateComment(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
-  ): Promise<CreatorCommentHatesEntity> {
-    return this.creatorCommentLikeService.hate(commentId, userIp);
+  ): Promise<CreatorCommentVoteEntity> {
+    return this.creatorCommentVoteService.hate(commentId, userIp);
   }
 
   /**
@@ -137,7 +144,19 @@ export class CreatorCommentController {
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
   ): Promise<boolean> {
-    return this.creatorCommentLikeService.removeHate(commentId, userIp);
+    return this.creatorCommentVoteService.removeHate(commentId, userIp);
+  }
+
+  /**
+   * 대댓글(자식댓글)목록 가져오기
+   * @param commentId 부모댓글 commentId
+   * @returns 
+   */
+  @Get('/replies/:commentId')
+  async getReplies(
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ): Promise<any> {
+    return this.creatorCommentService.getReplies(commentId);
   }
 
   /**
@@ -149,7 +168,7 @@ export class CreatorCommentController {
    * @param order 'date' 인 경우 최신순으로, 'recommend'인 경우 추천많은 순으로
    * @returns 
    */
-     @Get('/:creatorId')
+  @Get('/:creatorId')
   async getCreatorComments(
        @Ip() userIp: string,
        @Param('creatorId') creatorId: string,
