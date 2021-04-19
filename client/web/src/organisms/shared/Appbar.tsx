@@ -274,12 +274,12 @@ export default function AppBar(): JSX.Element {
             </div> */}
 
             <div className={classes.links}>
-              <Button
+              <IconButton
                 className={classes.darkModeToggleButton}
                 onClick={theme.handleThemeChange}
               >
                 {darkModeToggleButtonContent}
-              </Button>
+              </IconButton>
             </div>
 
             <Hidden mdUp>
