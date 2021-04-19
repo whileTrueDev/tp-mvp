@@ -47,14 +47,19 @@ export class CreatorCommentService {
           'comment.nickname AS nickname',
           'comment.content AS content',
           'comment.createDate AS createDate',
+          'comment.deleteFlag AS deleteFlag',
           'users.profileImage AS profileImage',
           'COUNT(hates.id) AS hatesCount',
           'COUNT(likes.id) AS likesCount',
+          'COUNT(childrenComments.commentId) AS childrenCommentCount',
         ])
         .leftJoin(UserEntity, 'users', 'users.userId = comment.userId')
         .leftJoin('comment.likes', 'likes')
         .leftJoin('comment.hates', 'hates')
+        .leftJoin('comment.childrenComments', 'childrenComments')
         .where('comment.creatorId = :creatorId', { creatorId })
+        .andWhere('comment.deleteFlag = :deleteFlag', { deleteFlag: false })
+        .andWhere('comment.parentCommentId IS NULL')
         .groupBy('comment.commentId');
 
       const testCount = await baseQueryBuilder.clone().getCount();
@@ -71,6 +76,7 @@ export class CreatorCommentService {
             ...c,
             likesCount: Number(c.likesCount),
             hatesCount: Number(c.hatesCount),
+            childrenCommentCount: Number(c.childrenCommentCount),
           }
         ));
       }
@@ -86,6 +92,7 @@ export class CreatorCommentService {
             ...c,
             likesCount: Number(c.likesCount),
             hatesCount: Number(c.hatesCount),
+            childrenCommentCount: Number(c.childrenCommentCount),
           }
         ));
       }
