@@ -28,6 +28,7 @@ function ScoreBar({ score }: {score: number}): JSX.Element {
         classes={progressBarStyles}
         value={normalizedScore}
       />
+      {score && (
       <Typography
         className={classes.scoreText}
         style={{
@@ -36,6 +37,8 @@ function ScoreBar({ score }: {score: number}): JSX.Element {
       >
         {`${score.toFixed(2)}`}
       </Typography>
+      )}
+
     </div>
 
   );
