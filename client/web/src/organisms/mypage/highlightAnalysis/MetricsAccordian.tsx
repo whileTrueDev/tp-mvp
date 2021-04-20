@@ -10,11 +10,11 @@ import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/category
 import shortid from 'shortid';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import MetricTitle from '../../shared/sub/MetricTitle';
-import MetricsTable from '../../shared/sub/MetricsTable';
+// import MetricsTable from '../../shared/sub/MetricsTable';
 import HighlightExport from '../../shared/sub/HighlightExport';
 import { initialPoint } from './TruepointHighlight';
 import ScorePicker from './ScorePicker';
-import Chart from './Chart';
+// import Chart from './Chart';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -78,7 +78,7 @@ interface MetricsAccordianProps {
   highlightData: any;
   selectedStream: StreamDataType|null;
 }
-type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
+// type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
 export default function MetricsAccordian(
   {
     highlightData,
@@ -87,31 +87,31 @@ export default function MetricsAccordian(
   }: MetricsAccordianProps,
 ): JSX.Element {
   const classes = styles();
-  const [page, setPage] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(5);
-  const [point, setPoint] = React.useState(initialPoint);
-  const [page2, setPage2] = React.useState(0);
-  const [pageSize2, setPageSize2] = React.useState(5);
-  const [point2, setPoint2] = React.useState(initialPoint);
-  const [page3, setPage3] = React.useState(0);
-  const [pageSize3, setPageSize3] = React.useState(5);
-  const [point3, setPoint3] = React.useState(initialPoint);
+  // const [page, setPage] = React.useState(0);
+  // const [pageSize, setPageSize] = React.useState(5);
+  // const [point, setPoint] = React.useState(initialPoint);
+  // const [page2, setPage2] = React.useState(0);
+  // const [pageSize2, setPageSize2] = React.useState(5);
+  // const [point2, setPoint2] = React.useState(initialPoint);
+  // const [page3, setPage3] = React.useState(0);
+  // const [pageSize3, setPageSize3] = React.useState(5);
+  // const [point3, setPoint3] = React.useState(initialPoint);
   const [chatPicked90, setChatPicked90] = React.useState(true);
   const [smilePicked90, setSmilePicked90] = React.useState(true);
   const [categoryPicked90, setCategoryPicked90] = React.useState(true);
   // 상위 10% 편집점 데이터
-  const chatHightlight90 = highlightData.chat_points_90.map((atPoint: any) => ({
-    ...highlightData.chat_points[atPoint],
-  }));
-  const smileHightlight90 = highlightData.funny_points_90.map((atPoint: any) => ({
-    ...highlightData.funny_points[atPoint],
-  }));
-  function selectCategory90(selected: string): any {
-    const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any, index: number) => ({
-      ...highlightData[`${selected}_points`][atPoint], tableData: { id: index },
-    }));
-    return categoryHightlight90;
-  }
+  // const chatHightlight90 = highlightData.chat_points_90.map((atPoint: any) => ({
+  //   ...highlightData.chat_points[atPoint],
+  // }));
+  // const smileHightlight90 = highlightData.funny_points_90.map((atPoint: any) => ({
+  //   ...highlightData.funny_points[atPoint],
+  // }));
+  // function selectCategory90(selected: string): any {
+  //   const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any, index: number) => ({
+  //     ...highlightData[`${selected}_points`][atPoint], tableData: { id: index },
+  //   }));
+  //   return categoryHightlight90;
+  // }
 
   const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
   const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {
@@ -155,17 +155,17 @@ export default function MetricsAccordian(
                 />
               </Grid>
               <Grid item md={12}>
-                <Chart
+                {/* <Chart
                   data={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
                   chartType="chat"
                   highlight={point}
                   handleClick={setPoint}
                   handlePage={setPage}
                   pageSize={pageSize}
-                />
+                /> */}
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
-                <MetricsTable
+                {/* <MetricsTable
                   metrics={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
                   handleClick={setPoint}
                   row={point}
@@ -174,7 +174,7 @@ export default function MetricsAccordian(
                   handlePage={setPage}
                   handlePageSize={setPageSize}
                   type="채팅 기반 편집점"
-                />
+                /> */}
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}
@@ -219,17 +219,17 @@ export default function MetricsAccordian(
                 />
               </Grid>
               <Grid item md={12}>
-                <Chart
+                {/* <Chart
                   data={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
                   chartType="smile"
                   highlight={point2}
                   handleClick={setPoint2}
                   handlePage={setPage2}
                   pageSize={pageSize2}
-                />
+                /> */}
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
-                <MetricsTable
+                {/* <MetricsTable
                   metrics={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
                   handleClick={setPoint2}
                   row={point2}
@@ -238,7 +238,7 @@ export default function MetricsAccordian(
                   handlePage={setPage2}
                   handlePageSize={setPageSize2}
                   type="웃음 발생 수 기반 편집점"
-                />
+                /> */}
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}
@@ -311,7 +311,7 @@ export default function MetricsAccordian(
             </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
-                <Chart
+                {/* <Chart
                   data={categoryPicked90
                     ? selectCategory90(selectedCategory.category)
                     : highlightData[`${selectedCategory.category}_points`]}
@@ -320,10 +320,10 @@ export default function MetricsAccordian(
                   handleClick={setPoint3}
                   handlePage={setPage3}
                   pageSize={pageSize3}
-                />
+                /> */}
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
-                <MetricsTable
+                {/* <MetricsTable
                   metrics={categoryPicked90
                     ? selectCategory90(selectedCategory.category)
                     : highlightData[`${selectedCategory.category}_points`]}
@@ -334,7 +334,7 @@ export default function MetricsAccordian(
                   handlePage={setPage3}
                   handlePageSize={setPageSize3}
                   type="카테고리 기반 편집점"
-                />
+                /> */}
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}

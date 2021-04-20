@@ -23,24 +23,33 @@ const styles = makeStyles((theme) => ({
 // @hwasurr - 10.13 eslint 버그 수정중 disalbe함. 이후 rowData 타입 올바르게 작성해주십시오.
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function highlightTerm(rowData: any): string {
-  function getFormatDate(date: Date): string {
-    const getHours = date.getHours();
+  function getFormatDate(date: Date, index: number, isStart: boolean): string {
+    let duringDay;
+    if (isStart) {
+      duringDay = parseInt(`${(index - 1) / 2880}`, 10);
+    } else {
+      duringDay = parseInt(`${(index + 1) / 2880}`, 10);
+    }
+    const getHours = date.getHours() + (duringDay * 24);
     const getMinutes = date.getMinutes();
     const getSeconds = date.getSeconds();
     const hours = getHours >= 10 ? String(getHours) : `0${getHours}`;
     const minutes = getMinutes >= 10 ? String(getMinutes) : `0${getMinutes}`;
     const seconds = getSeconds >= 10 ? String(getSeconds) : `0${getSeconds}`;
-    return `${hours}:${minutes}:${seconds}`;
+
+    return `${hours}시${minutes}분${seconds}초`;
   }
 
-  const { start_date, end_date } = rowData;
+  const {
+    start_date, end_date, start_index, end_index,
+  } = rowData;
   const startTime = new Date(start_date);
   const endTime = new Date(end_date);
   const addEndTime = new Date(endTime.setSeconds(endTime.getSeconds() + 30));
-  const resultStartTime = getFormatDate(startTime);
-  const resultEndTime = getFormatDate(addEndTime);
+  const resultStartTime = getFormatDate(startTime, start_index, true);
+  const resultEndTime = getFormatDate(addEndTime, end_index, false);
 
-  return `${resultStartTime}~${resultEndTime}`;
+  return `${resultStartTime} ~ ${resultEndTime}`;
 }
 
 // @hwasurr - 10.13 eslint 버그 수정중 disalbe함. 이후 row ,arr 타입 올바르게 작성해주십시오.

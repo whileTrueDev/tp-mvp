@@ -57,6 +57,7 @@ export default function Chart({
     chart: {
       renderTo: 'container',
       type: 'area',
+      zoomType: 'x',
     },
     credits: {
       enabled: false,
@@ -68,8 +69,17 @@ export default function Chart({
       crosshair: true,
       type: 'datetime',
       labels: {
-        format: '{value:%H:%M:%S}',
         align: 'center',
+        formatter(this: Highcharts.AxisLabelsFormatterContextObject<number>) {
+          const { value } = this;
+          const oneDayMillisec = 24 * 36e5;
+          const duringDay = parseInt(`${value / oneDayMillisec}`, 10);
+          const time = new Highcharts.Time({});
+          const OriginH = Number(time.dateFormat('%H시%M분%S초', value).slice(0, 2));
+          const originMtoS = time.dateFormat('%H시%M분%S초', value).slice(3);
+          const returnDate = `${OriginH + (24 * duringDay)}시${originMtoS}`;
+          return returnDate;
+        },
       },
     },
     yAxis: {
@@ -107,7 +117,7 @@ export default function Chart({
         if (y as number >= dataOption.boundary) {
           return `트루포인트 SCORE:${y}`;
         }
-        return '편짐점 구간이 아닙니다';
+        return false;
       },
       style: {
         color: theme.palette.common.white,
@@ -120,8 +130,7 @@ export default function Chart({
     },
     plotOptions: {
       series: {
-        // 50000이상에서 터보모드 차트 써야함
-        turboThreshold: 50000,
+        turboThreshold: 50000, // 50000이상에서 터보모드 차트 써야함
         allowPointSelect: true,
         marker: {
           lineWidth: 3,
@@ -158,9 +167,16 @@ export default function Chart({
       DarkUnica(Highcharts);
     }
 
+    Highcharts.setOptions({
+      lang: {
+        resetZoom: '초기화',
+      },
+    });
+
     if (highlight.start_index) {
       const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
       const chartDataRef = highchartsRef.current?.chart.series[0].data;
+
       if (chartxAxisRef && chartDataRef) {
         chartxAxisRef.removePlotBand('plot-band');
         chartxAxisRef.addPlotBand({

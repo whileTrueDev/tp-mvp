@@ -5,13 +5,14 @@ import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType
 import MetricsTable from '../../shared/sub/MetricsTable';
 import MetricTitle from '../../shared/sub/MetricTitle';
 import Button from '../../../atoms/Button/Button';
-// import HighlightGraph from './HighlightGraph';
-import Chart from './Chart';
+// import Chart from './Chart';
 import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';
 import Highcharts from './HighChart';
-import sampleData from './sample/sample.json';
+// import sampleData from './sample/sample_short.json';
+// import sampleData from './sample/sample.json';
+import sampleData from './sample/sample_long.json';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -109,23 +110,17 @@ export default function TruepointHighlight({
 }: TruepointHighlightProps): JSX.Element {
   const classes = styles();
   const [picked90, setPicked90] = React.useState(true);
-  const hightlight90 = useMemo(() => highlightData.highlight_points_90.map((point: any) => ({
-    ...highlightData.highlight_points[point],
-  })), [highlightData]);
+  // const hightlight90 = useMemo(() => highlightData.highlight_points_90.map((point: any) => ({
+  //   ...highlightData.highlight_points[point],
+  // })), [highlightData]);
+
+  // testcode
+  const highlight97 = useMemo(() => sampleData.highlight_points_97.map((point: number) => ({
+    ...sampleData.highlight_points[point],
+  })), []);
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
   const [point, setPoint] = React.useState(initialPoint);
-
-  // const graphCSS = {
-  //   grid: {
-  //     width: '100%',
-  //     height: 'auto',
-  //     display: 'grid',
-  //     gridTemplateColumns: `repeat(${highlightData.total_index}, 1fr)`,
-  //     gridTemplateRows: '20px',
-  //     background: 'repeating-linear-gradient(90deg, #fff, #fff 1px, #E9EAF3 0, #E9EAF3 3px)',
-  //   },
-  // };
 
   return (
     <Paper className={classes.root}>
@@ -134,7 +129,8 @@ export default function TruepointHighlight({
           mainTitle="편집점 분석 대시보드"
           subTitle="트루포인트의 편집점"
           iconSrc="/images/logo/truepointLogo.png"
-          pointNumber={picked90 ? highlightData.highlight_points_90.length : highlightData.highlight_points.length}
+          // pointNumber={picked90 ? highlightData.highlight_points_90.length : highlightData.highlight_points.length}
+          pointNumber={picked90 ? sampleData.highlight_points_97.length : sampleData.highlight_points.length}
         />
         <Grid container direction="column" justify="center">
           <Grid item md={12}>
@@ -145,8 +141,15 @@ export default function TruepointHighlight({
               setPageSize={setPageSize}
               setPoint={setPoint}
             />
-            <Chart
-              data={picked90 ? hightlight90 : highlightData.highlight_points}
+            {/* test code */}
+            <Highcharts
+              // data={picked90 ? hightlight90 : highlightData.highlight_points}
+              data={picked90 ? highlight97 : sampleData.highlight_points}
+              // data={sampleData.highlight_points}
+              totalData={sampleData.highlight_total_data}
+              dataOption={{
+                boundary: picked90 ? sampleData.boundary_97.highlight : sampleData.boundary.highlight,
+              }}
               chartType="highlight"
               highlight={point}
               handleClick={setPoint}
@@ -154,19 +157,9 @@ export default function TruepointHighlight({
               pageSize={pageSize}
             />
           </Grid>
-          <Grid item md={12} className={classes.graphWraper}>
-            {/* <HighlightGraph
-              data={picked90 ? hightlight90 : highlightData.highlight_points}
-              classes={graphCSS}
-              highlight={point}
-              handleClick={setPoint}
-              handlePage={setPage}
-              pageSize={pageSize}
-            /> */}
-          </Grid>
           <Grid item md={12} className={classes.contentRight}>
             <MetricsTable
-              metrics={picked90 ? hightlight90 : highlightData.highlight_points}
+              metrics={picked90 ? highlight97 : sampleData.highlight_points}
               handleClick={setPoint}
               row={point}
               page={page}
@@ -197,20 +190,6 @@ export default function TruepointHighlight({
             </div>
           </Grid>
         </Grid>
-        {/* test code */}
-        <Highcharts
-          // data={picked90 ? hightlight90 : highlightData.highlight_points}
-          data={sampleData.agree_points}
-          totalData={sampleData.agree_total_data}
-          dataOption={{
-            boundary: sampleData.boundary.agree,
-          }}
-          chartType="highlight"
-          highlight={point}
-          handleClick={setPoint}
-          handlePage={setPage}
-          pageSize={pageSize}
-        />
       </Grid>
     </Paper>
   );
