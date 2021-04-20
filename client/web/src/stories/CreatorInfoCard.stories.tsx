@@ -22,7 +22,6 @@ Default.args = {
     frustrate: 6.499277750651042,
     cuss: 4.89383327960968,
   },
-  userRating: 8,
   ratings: {
     average: 8,
     count: 1,

@@ -52,6 +52,7 @@ export class CreatorRatingsService {
    * @returns 
    */
   async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<CreatorRatingsEntity> {
+    const { userId, rating } = ratingPostDto;
     // 우선 rankings 테이블에서 해당 creatorId가 존재하는지 찾는다
     await this.findCreator(creatorId);
 
@@ -59,22 +60,22 @@ export class CreatorRatingsService {
     // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
     try {
       const exRating = await this.ratingsRepository.findOne({
-        where: {
-          userIp: ip,
-          creatorId,
-        },
+        where: { userIp: ip, creatorId },
       });
+
       if (exRating) {
         const updatedRating = await this.ratingsRepository.save({
           ...exRating,
-          rating: ratingPostDto.rating,
+          rating,
+          userId: userId || null,
         });
         return updatedRating;
       }
       const newRating = await this.ratingsRepository.save({
         creatorId,
         userIp: ip,
-        ...ratingPostDto,
+        userId: userId || null,
+        rating,
       });
       return newRating;
     } catch (error) {
@@ -89,7 +90,7 @@ export class CreatorRatingsService {
    * @param ip 
    * @returns 
    */
-  async deleteRatings(creatorId: string, ip: string): Promise<string> {
+  async deleteRatings(creatorId: string, ip: string, userId?: string): Promise<string> {
     await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
@@ -181,7 +182,6 @@ export class CreatorRatingsService {
     platform: 'twitch'|'afreeca',
   ): Promise<CreatorRatingInfoRes> {
     const result = {
-      userRating: null,
       ratings: {
         average: 0,
         count: 0,
@@ -200,11 +200,6 @@ export class CreatorRatingsService {
         twitchChannelName: null,
       },
     };
-    // 유저ip로 매긴 평점을 찾는다
-    const exRating = await this.findOneRating(ip, creatorId);
-    if (exRating) {
-      result.userRating = exRating.score;
-    }
     // creatorId의 평균 평점과 평가횟수를 찾는다
     const { average, count } = await this.getAverageRatings(creatorId);
     result.ratings = { average, count };
