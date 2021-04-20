@@ -209,8 +209,8 @@ export class CreatorRatingsService {
     const { average, count } = await this.getAverageRatings(creatorId);
     result.ratings = { average, count };
 
-    // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
-    const qb = this.rankingsRepository.createQueryBuilder('rankings')
+    // 크리에이터의 1달 내 평균점수(최근 분석일로부터?), 닉네임, 로고 정보를 찾는다
+    const qb = await this.rankingsRepository.createQueryBuilder('rankings')
       .select([
         'AVG(smileScore) AS smile',
         'AVG(frustrateScore) AS frustrate',
@@ -218,43 +218,36 @@ export class CreatorRatingsService {
         'AVG(cussScore) AS cuss',
       ])
       .where('creatorId = :creatorId', { creatorId })
-      .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)');
-    let data: {
-      admire: number,
-      amile: number,
-      smile: number,
-      frustrate: number,
-      cuss: number,
-      logo: string,
-      nickname: string,
-      twitchChannelName?: string
-    };
+      // .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')
+      .getRawOne();
+
+    result.scores.admire = qb.admire;
+    result.scores.smile = qb.smile;
+    result.scores.frustrate = qb.frustrate;
+    result.scores.cuss = qb.cuss;
+
     try {
       if (platform === 'twitch') {
-        data = await qb
-          .addSelect([
-            'twitch.twitchStreamerName AS nickname',
-            'twitch.twitchChannelName AS twitchChannelName',
-            'twitch.logo AS logo',
-          ])
-          .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = rankings.creatorId')
-          .getRawOne();
+        const twitchData = await this.twitchRepository.findOne({
+          where: {
+            twitchId: creatorId,
+          },
+          select: ['twitchStreamerName', 'twitchChannelName', 'logo'],
+        });
+
+        result.info.logo = twitchData.logo;
+        result.info.nickname = twitchData.twitchChannelName;
+        result.info.twitchChannelName = twitchData.twitchChannelName;
       } else if (platform === 'afreeca') {
-        data = await qb
-          .addSelect([
-            'afreeca.logo AS logo',
-            'afreeca.afreecaStreamerName AS nickname',
-          ])
-          .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = rankings.creatorId')
-          .getRawOne();
+        const afreecaData = await this.afreecaRepository.findOne({
+          where: {
+            afreecaId: creatorId,
+          },
+          select: ['logo', 'afreecaStreamerName'],
+        });
+        result.info.logo = afreecaData.logo;
+        result.info.nickname = afreecaData.afreecaStreamerName;
       }
-      result.scores.admire = data.admire;
-      result.scores.smile = data.smile;
-      result.scores.frustrate = data.frustrate;
-      result.scores.cuss = data.cuss;
-      result.info.logo = data.logo;
-      result.info.nickname = data.nickname;
-      result.info.twitchChannelName = data.twitchChannelName;
 
       return result;
     } catch (error) {
