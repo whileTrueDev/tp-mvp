@@ -45,7 +45,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
   const {
     nickname,
     commentId,
-    content, createDate, likesCount, hatesCount, childrenCommentCount,
+    content, createDate, likesCount, hatesCount,
     profileImage,
     reloadComments,
     isHated = false,
@@ -68,7 +68,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
   const { toggle: replyListOpen, handleToggle: handleReplyListOpen } = useToggle();
 
   const [replies, setReplies] = useState<ICreatorCommentData[]>([]);
-  const [repliesCount, setRepliesCount] = useState<number>(childrenCommentCount || 0);
+  const [repliesCount, setRepliesCount] = useState<number>(0);
 
   useEffect(() => {
     setRepliesCount(repliesCount || 0);
