@@ -1,11 +1,12 @@
 import {
   ListItem, Avatar, ListItemAvatar, ListItemText, Typography,
 } from '@material-ui/core';
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import dayjs from 'dayjs';
 import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
+import DeleteButton from './DeleteButton';
 
 const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
   itemPrimaryText: {
@@ -25,10 +26,14 @@ const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
 
 function UserReactionListItem({ data }: {data: IUserReaction}): JSX.Element {
   const classes = useUserReactionListItemStyle();
-  const { username, content } = data;
-  // const ip = transformIdToAsterisk(data.ip, 2);
-  const { ip } = data;
+  const {
+    username, content, ip, id,
+  } = data;
   const date = dayjs(data.createDate).format('hh:mm A');
+
+  const onDeleteButtonClick = useCallback(() => {
+    console.log(`open password confirm popup of reaction id ${id}`);
+  }, []);
   return (
     <ListItem alignItems="flex-start">
       <ListItemAvatar>
@@ -39,7 +44,11 @@ function UserReactionListItem({ data }: {data: IUserReaction}): JSX.Element {
         primary={(
           <>
             <Typography>{`${username} (${ip})`}</Typography>
-            <Typography variant="caption" component="span">{date}</Typography>
+            <div>
+              <Typography variant="caption" component="span">{date}</Typography>
+              <DeleteButton onClick={onDeleteButtonClick} />
+            </div>
+
           </>
     )}
         secondary={

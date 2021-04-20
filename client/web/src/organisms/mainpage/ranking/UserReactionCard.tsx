@@ -46,6 +46,7 @@ export default function UserReactionCard(): JSX.Element {
       if (formRef.current) {
         formRef.current.username.value = '';
         formRef.current.content.value = '';
+        formRef.current.password.value = '';
         formRef.current.content.focus();
       }
       loadUserReactions();
@@ -73,12 +74,13 @@ export default function UserReactionCard(): JSX.Element {
     if (!formRef.current) {
       return;
     }
-    if (formRef.current.content.value === '') {
-      ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
+    if (formRef.current.content.value.trim() === '' || formRef.current.password.value.trim() === '') {
+      ShowSnack('비밀번호와 내용을 입력해주세요', 'error', enqueueSnackbar);
       return;
     }
     createUserReaction({
-      username: formRef.current.username.value || '시청자',
+      username: formRef.current.username.value.trim() || '시청자',
+      password: formRef.current.password.value,
       content: formRef.current.content.value,
     });
   }, [createUserReaction, enqueueSnackbar]);
@@ -102,28 +104,35 @@ export default function UserReactionCard(): JSX.Element {
       <div className={classes.formRow}>
         <TextField
           name="username"
-          placeholder="사용자명"
+          placeholder="닉네임"
           inputProps={{ maxLength: 8 }}
           variant="outlined"
         />
-        <Button type="submit" size="large" variant="contained" color="primary">
-          등록
-        </Button>
+        <TextField
+          name="password"
+          type="password"
+          placeholder="비밀번호"
+          inputProps={{ maxLength: 4 }}
+          variant="outlined"
+        />
+
       </div>
       <TextField
         name="content"
         placeholder="여러분들의 의견을 올려주세요"
         inputProps={{ maxLength: 50 }}
         variant="outlined"
-        fullWidth
       />
+      <Button type="submit" size="large" variant="contained" color="primary">
+        등록
+      </Button>
     </form>
   ), [classes.form, classes.formRow, handleSubmit]);
 
   return (
     <section className={classes.userReactionContainer}>
       <header className={classes.header}>
-        <Typography className={classes.title}>핫 시청자 반응</Typography>
+        <Typography className={classes.title}>잡담방</Typography>
         <Button variant="outlined" onClick={loadUserReactions}>
           <RefreshIcon />
           새로고침
