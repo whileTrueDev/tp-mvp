@@ -170,6 +170,12 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     }
   }, [getRepliesRequest, handleReplyListOpen, replies.length, repliesCount, replyListOpen]);
 
+  useEffect(() => {
+    // 댓글 마운트 시 대댓글 불러오기
+    getRepliesRequest();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const replySubmitCallback = useCallback(() => {
     // 대댓글 생성 요청 성공 후 실행할 일들
     getRepliesRequest();// 대댓글 다시 불러오기,

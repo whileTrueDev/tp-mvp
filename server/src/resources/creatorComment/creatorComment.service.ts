@@ -74,20 +74,17 @@ export class CreatorCommentService {
           'comment.createDate AS createDate',
           'comment.deleteFlag AS deleteFlag',
           'users.profileImage AS profileImage',
-          'COUNT(CASE WHEN likes.vote = 1 THEN 1 END) AS likesCount',
-          'COUNT(CASE WHEN likes.vote = 0 THEN 1 END) AS hatesCount',
-          'COUNT(childrenComments.commentId) AS childrenCommentCount',
+          'IFNULL(SUM(likes.vote), 0) AS likesCount',
+          'IFNULL(COUNT(*) - SUM(likes.vote), 0) AS hatesCount',
         ])
         .leftJoin(UserEntity, 'users', 'users.userId = comment.userId')
         .leftJoin('comment.votes', 'likes')
-        .leftJoin('comment.childrenComments', 'childrenComments')
         .where('comment.creatorId = :creatorId', { creatorId })
         .andWhere('comment.deleteFlag = 0')
         .andWhere('comment.parentCommentId IS NULL')
         .groupBy('comment.commentId');
 
-      const testCount = await baseQueryBuilder.clone().getCount();
-      result.count = testCount;
+      result.count = await baseQueryBuilder.clone().getCount();
 
       if (order === 'date') {
         const comments = await baseQueryBuilder
@@ -101,7 +98,6 @@ export class CreatorCommentService {
             ...c,
             likesCount: Number(c.likesCount),
             hatesCount: Number(c.hatesCount),
-            childrenCommentCount: Number(c.childrenCommentCount),
           }
         ));
       }
@@ -117,7 +113,6 @@ export class CreatorCommentService {
             ...c,
             likesCount: Number(c.likesCount),
             hatesCount: Number(c.hatesCount),
-            childrenCommentCount: Number(c.childrenCommentCount),
           }
         ));
       }
@@ -142,8 +137,8 @@ export class CreatorCommentService {
           'comment.createDate AS createDate',
           'comment.deleteFlag AS deleteFlag',
           'users.profileImage AS profileImage',
-          'COUNT(CASE WHEN likes.vote = 1 THEN 1 END) AS likesCount',
-          'COUNT(CASE WHEN likes.vote = 0 THEN 1 END) AS hatesCount',
+          'IFNULL(SUM(likes.vote), 0) AS likesCount',
+          'IFNULL(COUNT(*) - SUM(likes.vote), 0) AS hatesCount',
         ])
         .leftJoin(UserEntity, 'users', 'users.userId = comment.userId')
         .leftJoin('comment.votes', 'likes')
