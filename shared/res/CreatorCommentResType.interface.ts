@@ -4,6 +4,7 @@ export interface ICreatorCommentData extends CreatorComments{
   likesCount?: number;
   hatesCount?: number;
   createDate: Date;
+  profileImage?: string;
 }
 
 export interface ICreatorCommentsRes {
