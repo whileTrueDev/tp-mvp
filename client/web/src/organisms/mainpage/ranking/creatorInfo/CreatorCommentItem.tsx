@@ -20,9 +20,9 @@ import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 export interface CreatorCommentItemProps extends ICreatorCommentData{
  /** 좋아요 눌렀는지 여부 */
- isLiked: boolean;
+ isLiked?: boolean;
   /** 싫어요 눌렀는지 여부 */
- isHated: boolean;
+ isHated?: boolean;
  /** 추천많은 댓글인지 여부 */
  isBest?: boolean;
  /** 자식댓글 (대댓글) 인지 여부 */
@@ -74,64 +74,34 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     setRepliesCount(repliesCount || 0);
   }, [repliesCount]);
 
-  const createLikeRequest = useCallback(() => axios.post(`creatorComment/like/${commentId}`, { userId: authContext.user.userId })
-    .catch((error) => {
-      if (error.response) {
-        console.error(error.response.message);
-      }
-    }), [authContext.user.userId, commentId]);
-  const removeLikeRequest = useCallback(() => axios.delete(`creatorComment/like/${commentId}`, { data: { userId: authContext.user.userId } })
-    .catch((error) => {
-      if (error.response) {
-        console.error(error.response.message);
-      }
-    }), [authContext.user.userId, commentId]);
-  const createHateRequest = useCallback(() => axios.post(`creatorComment/hate/${commentId}`, { userId: authContext.user.userId })
-    .catch((error) => {
-      if (error.response) {
-        console.error(error.response.message);
-      }
-    }), [authContext.user.userId, commentId]);
-  const removeHateRequest = useCallback(() => axios.delete(`creatorComment/hate/${commentId}`, { data: { userId: authContext.user.userId } })
-    .catch((error) => {
-      if (error.response) {
-        console.error(error.response.message);
-      }
-    }), [authContext.user.userId, commentId]);
+  const handleVoteResult = useCallback((result: {like: number, hate: number}): void => {
+    setLikeClicked(result.like === 1);
+    setHateClicked(result.hate === 1);
+    if (result.like !== 0) {
+      setLikeNumber((prev) => prev + result.like);
+    }
+    if (result.hate !== 0) {
+      setHateNumber((prev) => prev + result.hate);
+    }
+  }, []);
 
   const clickLike = useCallback(() => {
-    if (likeClicked) {
-      removeLikeRequest();
-      setLikeClicked(false);
-      setLikeNumber((prevLike) => prevLike - 1);
-    }
-    if (!likeClicked) {
-      createLikeRequest();
-      setLikeClicked(true);
-      setLikeNumber((prevLike) => prevLike + 1);
-    }
-    if (hateClicked) {
-      setHateClicked(false);
-      setHateNumber((prevHate) => prevHate - 1);
-    }
-  }, [createLikeRequest, hateClicked, likeClicked, removeLikeRequest]);
+    axios.post(`creatorComment/vote/${commentId}`, { vote: 1, userId: authContext.user.userId })
+      .then((res) => {
+        const result = res.data;
+        handleVoteResult(result);
+      })
+      .catch((error) => console.error(error));
+  }, [authContext.user.userId, commentId, handleVoteResult]);
 
   const clickHate = useCallback(() => {
-    if (hateClicked) {
-      removeHateRequest();
-      setHateClicked(false);
-      setHateNumber((prevHate) => prevHate - 1);
-    }
-    if (!hateClicked) {
-      createHateRequest();
-      setHateClicked(true);
-      setHateNumber((prevHate) => prevHate + 1);
-    }
-    if (likeClicked) {
-      setLikeClicked(false);
-      setLikeNumber((prevLike) => prevLike - 1);
-    }
-  }, [createHateRequest, hateClicked, likeClicked, removeHateRequest]);
+    axios.post(`creatorComment/vote/${commentId}`, { vote: 0, userId: authContext.user.userId })
+      .then((res) => {
+        const result = res.data;
+        handleVoteResult(result);
+      })
+      .catch((error) => console.error(error));
+  }, [authContext.user.userId, commentId, handleVoteResult]);
 
   const handleDeleteButton = useCallback(() => {
     // console.log(commentId, userId);
@@ -338,8 +308,6 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
                     {...reply}
                     isChildComment
                     reloadComments={getRepliesRequest}
-                    isLiked={false}
-                    isHated={false}
                   />
                 ))
               )

@@ -3,11 +3,11 @@ import {
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import React, {
-  useCallback, useEffect, useMemo, useState,
+  useCallback, useEffect, useState,
 } from 'react';
 import classnames from 'classnames';
 import {
-  ICreatorCommentsRes, ICreatorCommentData, IGetLikes, IGetHates,
+  ICreatorCommentsRes, ICreatorCommentData,
 } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
@@ -49,11 +49,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
       order: 'date',
     },
   });
-  const [{ data: likeList }] = useAxios<IGetLikes>('/creatorComment/like-list');
-  const [{ data: hateList }] = useAxios<IGetHates>('/creatorComment/hate-list');
-  const likes = useMemo(() => (likeList ? likeList.likes : []), [likeList]);
-  const hates = useMemo(() => (hateList ? hateList.hates : []), [hateList]);
-
   const loadComments = useCallback((filter: CommentFilter) => {
     getCommentData({
       params: {
@@ -132,8 +127,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
               <CreatorCommentItem
                 key={d.commentId}
                 {...d}
-                isLiked={likes.includes(d.commentId)}
-                isHated={hates.includes(d.commentId)}
                 reloadComments={reloadComments}
               />
             ))
