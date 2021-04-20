@@ -236,7 +236,7 @@ export class CreatorRatingsService {
         });
 
         result.info.logo = twitchData.logo;
-        result.info.nickname = twitchData.twitchChannelName;
+        result.info.nickname = twitchData.twitchStreamerName;
         result.info.twitchChannelName = twitchData.twitchChannelName;
       } else if (platform === 'afreeca') {
         const afreecaData = await this.afreecaRepository.findOne({
