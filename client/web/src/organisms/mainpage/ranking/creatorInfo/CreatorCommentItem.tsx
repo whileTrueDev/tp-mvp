@@ -32,6 +32,12 @@ export interface CreatorCommentItemProps extends ICreatorCommentData{
  reloadComments? : () => void;
 }
 
+export function isReportedIn24Hours(date: string): boolean {
+  const now = dayjs();
+  const targetDate = dayjs(date);
+  return now.diff(targetDate, 'hour') < 24;
+}
+
 export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const authContext = useAuthContext();
@@ -210,11 +216,29 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
       })
       .catch((error) => console.error(error));
   };
-  const report = () => {
-    // 신고 post
-    // 추천처럼 하루 1번만 가능하도록 하기(로컬스토리지 이용)
-    // axios.
-  };
+
+  const report = useCallback(() => {
+    const reportList: {id: number, date: string}[] = JSON.parse(localStorage.getItem('reportList') || '[]');
+    const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
+    const commentIds = commentsRecentlyReported.map((item) => item.id);
+
+    const currentCommentId = commentId;
+
+    if (commentIds.includes(currentCommentId)) {
+      ShowSnack('이미 신고한 댓글입니다', 'error', enqueueSnackbar);
+      localStorage.setItem('reportList', JSON.stringify([...commentsRecentlyReported]));
+      return;
+    }
+    // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
+    axios.post(`/creatorComment/report/${commentId}`)
+      .then((res) => {
+        localStorage.setItem('reportList', JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]));
+      })
+      .catch((err) => {
+        ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);
+        console.error(err);
+      });
+  }, [commentId, enqueueSnackbar]);
 
   const time = dayjs(createDate).format('YYYY-MM-DD HH:mm:ss');
   return (
