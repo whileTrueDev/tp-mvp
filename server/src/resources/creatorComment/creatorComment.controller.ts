@@ -3,11 +3,10 @@ import {
 } from '@nestjs/common';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { CheckPasswordDto } from '@truepoint/shared/dist/dto/creatorComment/checkPassword.dto';
-import { ICreatorCommentsRes, IGetHates, IGetLikes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentService } from './creatorComment.service';
 import { CreatorCommentVoteService } from './creatorCommentVote.service';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
-import { CreatorCommentVoteEntity } from './entities/creatorCommentVote.entity';
 @Controller('creatorComment')
 export class CreatorCommentController {
   constructor(
@@ -62,93 +61,29 @@ export class CreatorCommentController {
   }
 
   /**
-   * 해당 userIp가 좋아요 누른 commentId 목록 반환
-   * GET /creatorComment/like-list
-   * @param userIp 
-   */
-  @Get('like-list')
-  async getLikes(
-    @Ip() userIp: string,
-  ): Promise<IGetLikes> {
-    const likes = await this.creatorCommentVoteService.findLikesByUserIp(userIp);
-    return { userIp, likes };
-  }
-
-  /**
-  * 해당 userIp가 싫어요 누른 commentId 목록 반환
-  * GET /creatorComment/hate-list
-  * @param userIp 
-  */
-  @Get('hate-list')
-  async getHates(
-    @Ip() userIp: string,
-  ): Promise<IGetHates> {
-    const hates = await this.creatorCommentVoteService.findHatesByUserIp(userIp);
-    return { userIp, hates };
-  }
-
-  /**
-   * 방송인 평가 댓글에 좋아요 추가
-   * POST /creatorComment/like/:commentId
+   * 방송인 평가 댓글에 좋아요/싫어요 요청
+   * POST /creatorComment/vote/:commentId
    * @param commentId 
    * @param userIp 
-   * @returns 생성된 좋아요 row 반환
+   * @param userId 
+   * @param vote 0 | 1, 0인경우 해당 comment 싫어요, 1인경우 해당 comment 좋아요 요청
+   * @returns 
+   * {like: 0 , hate: 1} : 싫어요 생성 (아무것도 눌리지 않은 상태에서 싫어요 누른 경우)
+   * {like: 0 , hate: -1} : 싫어요 삭제 (싫어요 눌려있던 상태에서 싫어요 누른 경우)
+   * {like: -1 , hate: 1} : 좋아요 -> 싫어요 수정(좋아요 눌려있던 상태에서 싫어요 누른 경우)
+   * {like: 1 , hate: 0} : 좋아요 생성(아무것도 눌리지 않은 상태에서 좋아요 누른 경우)
+   * {like: -1 , hate: 0} : 좋아요 삭제 (좋아요 눌려있던 상태에서 좋아요 누른 경우)
+   * {like: 1 , hate: -1} : 싫어요 -> 좋아요 수정(싫어요 눌려있던 상태에서 좋아요 누른 경우)
+   * 
    */
-  @Post('/like/:commentId')
-  likeComment(
+  @Post('vote/:commentId')
+  vote(
     @Param('commentId', ParseIntPipe) commentId: number,
     @Ip() userIp: string,
     @Body('userId') userId: string|undefined,
-  ): Promise<CreatorCommentVoteEntity> {
-    return this.creatorCommentVoteService.like(commentId, userIp, userId);
-  }
-
-  /**
-   * 방송인 평가 댓글에 좋아요 삭제
-   * DELETE /creatorComment/like/:commentId
-   * @param commentId 
-   * @param userIp 
-   * @returns 성공시 true만 반환
-   */
-  @Delete('/like/:commentId')
-  removeLikeOnComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Ip() userIp: string,
-    @Body('userId') userId: string|undefined,
-  ): Promise<boolean> {
-    return this.creatorCommentVoteService.removeLike(commentId, userIp, userId);
-  }
-
-  /**
-   * 방송인 평가 댓글에 싫어요 추가
-   * POST /creatorComment/hate/:commentId
-   * @param commentId 
-   * @param userIp 
-   * @returns 생성된 싫어요 row 반환
-   */
-  @Post('/hate/:commentId')
-  hateComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Ip() userIp: string,
-    @Body('userId') userId: string|undefined,
-  ): Promise<CreatorCommentVoteEntity> {
-    return this.creatorCommentVoteService.hate(commentId, userIp, userId);
-  }
-
-  /**
-   * 방소인 평가 댓글에 싫어요 삭제
-   * DELETE /creatorComment/hate/:commentId
-   * @param commentId 
-   * @param userIp 
-   * @returns 성공시 true만 반환
-   */
-  @Delete('/hate/:commentId')
-  removeHateOnComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Ip() userIp: string,
-    @Body('userId') userId: string|undefined,
-  ): Promise<boolean> {
-    return this.creatorCommentVoteService.removeHate(commentId, userIp, userId);
+    @Body('vote', ParseIntPipe) vote: 1|0, // vote:1 이면 추천, vote:0이면 비추천
+  ): Promise<{like: number, hate: number}> {
+    return this.creatorCommentVoteService.vote(commentId, userIp, userId, vote);
   }
 
   @Post('report/:commentId')

@@ -1,10 +1,8 @@
 import {
-  BadRequestException, Injectable, InternalServerErrorException,
+  Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-// import { CreatorCommentLikesEntity } from './entities/creatorCommentLikes.entity';
-// import { CreatorCommentHatesEntity } from './entities/creatorCommentHates.entity';
 import { CreatorCommentVoteEntity } from './entities/creatorCommentVote.entity';
 
 @Injectable()
@@ -14,146 +12,87 @@ export class CreatorCommentVoteService {
     private readonly creatorCommentVoteRepository: Repository<CreatorCommentVoteEntity>,
   ) {}
 
-  // userIp가 commentId에 좋아요 한 like 테이블 데이터 찾기
-  private async findLike(commentId: number, userIp: string, userId: string|undefined): Promise<any> {
+  private async findVote(commentId: number,
+    userIp: string, userId: string | undefined): Promise<CreatorCommentVoteEntity> {
     if (userId) {
       return this.creatorCommentVoteRepository.findOne({
-        where: { commentId, userId, vote: true },
+        where: { commentId, userId },
       });
     }
     return this.creatorCommentVoteRepository.findOne({
-      where: { commentId, userIp, vote: true },
+      where: { commentId, userIp },
     });
   }
 
-  // userIp가 commentId에 싫어요 한 hate 테이블 데이터 찾기
-  private async findHate(commentId: number, userIp: string, userId: string|undefined): Promise<any> {
-    if (userId) {
-      return this.creatorCommentVoteRepository.findOne({
-        where: { commentId, userId, vote: false },
-      });
-    }
-    return this.creatorCommentVoteRepository.findOne({
-      where: { commentId, userIp, vote: false },
+  private async createHateRecord(commentId: number,
+    userIp: string, userId: string|undefined): Promise<CreatorCommentVoteEntity> {
+    return this.creatorCommentVoteRepository.save({
+      commentId, userIp, userId, vote: false,
     });
   }
 
-  // likeEntity 삭제
-  private async removeLikeEntity(likeEntity: CreatorCommentVoteEntity) {
-    return this.creatorCommentVoteRepository.remove(likeEntity);
+  private async createLikeRecord(commentId: number,
+    userIp: string, userId: string|undefined): Promise<CreatorCommentVoteEntity> {
+    return this.creatorCommentVoteRepository.save({
+      commentId, userIp, userId, vote: true,
+    });
   }
 
-  // hateEntity 삭제
-  private async removeHateEntity(hateEntity: CreatorCommentVoteEntity) {
-    return this.creatorCommentVoteRepository.remove(hateEntity);
+  private async removeVoteRecord(voteRecord: CreatorCommentVoteEntity): Promise<any> {
+    return this.creatorCommentVoteRepository.remove(voteRecord);
   }
 
-  // 좋아요 생성
-  // 기존에 싫어요를 했던 댓글인 경우 싫어요 취소
-  async like(commentId: number, userIp: string, userId: string|undefined): Promise<CreatorCommentVoteEntity> {
+  private async toggleVoteRecord(voteRecord: CreatorCommentVoteEntity): Promise<CreatorCommentVoteEntity> {
+    return this.creatorCommentVoteRepository.save({
+      ...voteRecord, vote: !voteRecord.vote,
+    });
+  }
+
+  async vote(commentId: number,
+    userIp: string,
+    userId: string|undefined,
+    vote: 1|0): Promise<{like: number, hate: number}> {
+    const voteRecord = await this.findVote(commentId, userIp, userId);
+    const result = {
+      hate: 0,
+      like: 0,
+    };
     try {
-      const exLike = await this.findLike(commentId, userIp, userId);
-      if (exLike) {
-        throw new BadRequestException(`ip ${userIp} already liked comment ${commentId}`);
+      if (vote === 0) { // 싫어요 요청을 한 경우  
+        if (!voteRecord) { // 좋아요 싫어요 아무것도 누르지 않은 경우
+          // 싫어요 레코드 생성
+          await this.createHateRecord(commentId, userIp, userId);
+          result.hate += 1;
+        } else if (voteRecord.vote === false) { // 이미 싫어요를 눌렀다면 
+          // 싫어요 레코드 삭제
+          await this.removeVoteRecord(voteRecord);
+          result.hate -= 1;
+        } else if (voteRecord.vote === true) { // 이미 좋아요를 눌렀다면
+          // 좋아요 레코드를 싫어요로 수정
+          await this.toggleVoteRecord(voteRecord);
+          result.hate += 1;
+          result.like -= 1;
+        }
+      } else if (vote === 1) { // 좋아요 요청을 한 경우
+        if (!voteRecord) { // 좋아요 싫어요 아무것도 누르지 않은 경우
+          // 좋아요 레코드 생성
+          await this.createLikeRecord(commentId, userIp, userId);
+          result.like += 1;
+        } else if (voteRecord.vote === true) { // 이미 좋아요를 눌렀다면 
+          // 좋아요 레코드 삭제
+          await this.removeVoteRecord(voteRecord);
+          result.like -= 1;
+        } else if (voteRecord.vote === false) { // 이미 싫어요 눌렀다면
+          // 싫어요 레코드를 좋아요로 수정
+          await this.toggleVoteRecord(voteRecord);
+          result.hate -= 1;
+          result.like += 1;
+        }
       }
-
-      const exHate = await this.findHate(commentId, userIp, userId);
-      if (exHate) {
-        return this.creatorCommentVoteRepository.save({ ...exHate, vote: true });
-      }
-
-      return this.creatorCommentVoteRepository.save({
-        commentId, userIp, userId, vote: true,
-      });
+      return result;
     } catch (error) {
       console.error(error);
-      if (error.code === 400) {
-        throw new BadRequestException(error);
-      }
-      throw new InternalServerErrorException(error, `error in create like on commentId : ${commentId}`);
-    }
-  }
-
-  // 좋아요 삭제
-  async removeLike(commentId: number, userIp: string, userId: string|undefined): Promise<boolean> {
-    try {
-      const exLike = await this.findLike(commentId, userIp, userId);
-      if (!exLike) {
-        throw new BadRequestException(`userIp ${userIp} did not like on commentId ${commentId}`);
-      }
-      await this.removeLikeEntity(exLike);
-      return true;
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, `error in remove like on commentId : ${commentId}`);
-    }
-  }
-
-  // 싫어요 생성
-  // 기존에 좋아요 했던 댓글이면 좋아요 취소
-  async hate(commentId: number, userIp: string, userId: string|undefined): Promise<CreatorCommentVoteEntity> {
-    try {
-      const exHate = await this.findHate(commentId, userIp, userId);
-      if (exHate) {
-        throw new BadRequestException(`ip ${userIp} already hated comment ${commentId}`);
-      }
-
-      const exLike = await this.findLike(commentId, userIp, userId);
-      if (exLike) {
-        return this.creatorCommentVoteRepository.save({ ...exLike, vote: false });
-      }
-      return this.creatorCommentVoteRepository.save({
-        commentId, userIp, userId, vote: false,
-      });
-    } catch (error) {
-      console.error(error);
-      if (error.code === 400) {
-        throw new BadRequestException(error);
-      }
-      throw new InternalServerErrorException(error, `error in create hate on commentId : ${commentId}`);
-    }
-  }
-
-  // 싫어요 삭제
-  async removeHate(commentId: number, userIp: string, userId: string|undefined): Promise<any> {
-    try {
-      const exHate = await this.findHate(commentId, userIp, userId);
-      if (!exHate) {
-        throw new BadRequestException(`userIp ${userIp} did not hate on commentId ${commentId}`);
-      }
-      await this.removeHateEntity(exHate);
-      return true;
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, `error in create like on commentId : ${commentId}`);
-    }
-  }
-
-  // userIp가 좋아요 한 코멘트 id 목록 반환
-  async findLikesByUserIp(userIp: string): Promise<number[]> {
-    try {
-      const data = await this.creatorCommentVoteRepository.find({
-        where: { userIp },
-        select: ['commentId'],
-      });
-      return data.map((d) => d.commentId);
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, `error in find likes by userIp ${userIp}`);
-    }
-  }
-
-  // userIp가 싫어요 한 코멘트 id 목록 반환
-  async findHatesByUserIp(userIp: string): Promise<number[]> {
-    try {
-      const data = await this.creatorCommentVoteRepository.find({
-        where: { userIp },
-        select: ['commentId'],
-      });
-      return data.map((d) => d.commentId);
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, `error in find hates by userIp ${userIp}`);
+      throw new InternalServerErrorException(error);
     }
   }
 }
