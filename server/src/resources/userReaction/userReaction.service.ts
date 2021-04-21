@@ -1,8 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
 import { UpdateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/updateUserReaction.dto';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { UserReactionEntity } from './entities/userReaction.entity';
 
 @Injectable()
@@ -20,9 +21,21 @@ export class UserReactionService {
   async getUserReactions(): Promise<UserReactionEntity[]> {
     const data = await this.userReactionRepository.find({
       order: { createDate: 'DESC' },
-      take: 10,
+      take: 20,
     });
     return data.reverse();
+  }
+
+  // 비밀번호 확인
+  private async checkPassword(id: number, password: string): Promise<boolean> {
+    const data = await this.userReactionRepository.findOne({
+      where: { id },
+      select: ['password'],
+    });
+    if (!data) {
+      throw new BadRequestException(`no data with id ${id}`);
+    }
+    return bcrypt.compare(password, data.password);
   }
 
   /**
@@ -37,8 +50,12 @@ export class UserReactionService {
     createUserReactionDto: CreateUserReactionDto,
     ip: string,
   ): Promise<UserReactionEntity> {
+    const { password } = createUserReactionDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newReaction = {
       ...createUserReactionDto,
+      password: hashedPassword,
       ip,
     };
     try {
@@ -102,7 +119,7 @@ export class UserReactionService {
   async findOneUserReaction(id: number): Promise<UserReactionEntity> {
     const data = await this.userReactionRepository.findOne({ id });
     if (!data) {
-      throw new NotFoundException(`no data with id ${id}`);
+      throw new BadRequestException(`no data with id ${id}`);
     }
     return data;
   }

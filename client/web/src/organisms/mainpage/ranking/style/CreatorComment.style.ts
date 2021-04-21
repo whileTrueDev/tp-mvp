@@ -1,120 +1,105 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
-  const deleteButtonSize = theme.spacing(2);
+export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createStyles({
+  commentItem: {
+    position: 'relative',
+    padding: theme.spacing(2, 0),
+    '&:not(:first-child)': {
+      borderTop: `1px solid ${theme.palette.divider}`,
+    },
+    '&.child': {
+      marginLeft: theme.spacing(6),
+      paddingLeft: theme.spacing(4),
+      borderTop: `1px solid ${theme.palette.divider}`,
+      '&::before': {
+        content: '"ㄴ"',
+        position: 'absolute',
+        left: theme.spacing(2),
+        top: theme.spacing(2),
+      },
+    },
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing(1),
+  },
+  userInfo: {
+    display: 'flex',
+    '&>*': {
+      marginRight: theme.spacing(1),
+    },
+    '& .nickname': {
+      fontSize: theme.typography.body1.fontSize,
+      fontWeight: theme.typography.fontWeightMedium,
+    },
+    '& .userId': {
+      color: theme.palette.text.secondary,
+    },
+  },
+  smallAvatar: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+  },
+  largeAvatar: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+  headerActions: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  reportButton: {
 
-  return createStyles({
-    commentItem: {
-      position: 'relative',
-      padding: theme.spacing(2, 0),
-      '&:not(:first-child)': {
-        borderTop: `1px solid ${theme.palette.divider}`,
-      },
-      '&.child': {
-        marginLeft: theme.spacing(6),
-        paddingLeft: theme.spacing(4),
-        borderTop: `1px solid ${theme.palette.divider}`,
-        '&::before': {
-          content: '"ㄴ"',
-          position: 'absolute',
-          left: theme.spacing(2),
-          top: theme.spacing(2),
-        },
-      },
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: theme.spacing(1),
-    },
-    userInfo: {
-      display: 'flex',
-      '&>*': {
-        marginRight: theme.spacing(1),
-      },
-      '& .nickname': {
-        fontSize: theme.typography.body1.fontSize,
-        fontWeight: theme.typography.fontWeightMedium,
-      },
-      '& .userId': {
-        color: theme.palette.text.secondary,
-      },
-    },
-    smallAvatar: {
-      width: theme.spacing(3),
-      height: theme.spacing(3),
-    },
-    largeAvatar: {
-      width: theme.spacing(7),
-      height: theme.spacing(7),
-    },
-    headerActions: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    deleteButton: {
-      marginLeft: theme.spacing(1),
-      width: deleteButtonSize,
-      minWidth: deleteButtonSize,
-      height: deleteButtonSize,
-      backgroundColor: theme.palette.text.secondary,
-      color: theme.palette.common.white,
-    },
-    deleteButtonIconImage: {
-      fontSize: theme.typography.body2.fontSize,
-    },
-    reportButton: {
+  },
+  content: {
 
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    '.child &': {
+      justifyContent: 'flex-end',
     },
-    content: {
+  },
+  replyIcon: {
+    transform: 'rotate(180deg)',
+  },
+  nestedComments: {
 
+  },
+  recommendIcons: {
+    '&>*:not(:last-child)': {
+      marginRight: theme.spacing(1),
     },
-    actions: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      '.child &': {
-        justifyContent: 'flex-end',
-      },
+  },
+  actionButton: {
+    color: theme.palette.action.disabled,
+  },
+  countText: {
+    marginLeft: theme.spacing(1),
+  },
+  liked: {
+    color: theme.palette.primary.main,
+  },
+  hated: {
+    color: theme.palette.secondary.main,
+  },
+  commentFormContainer: {
+    display: 'none',
+    '&.open': {
+      display: 'block',
     },
-    replyIcon: {
-      transform: 'rotate(180deg)',
+  },
+  replyList: {
+    display: 'none',
+    '&.open': {
+      display: 'block',
     },
-    nestedComments: {
-
-    },
-    recommendIcons: {
-      '&>*:not(:last-child)': {
-        marginRight: theme.spacing(1),
-      },
-    },
-    actionButton: {
-      color: theme.palette.action.disabled,
-    },
-    countText: {
-      marginLeft: theme.spacing(1),
-    },
-    liked: {
-      color: theme.palette.primary.main,
-    },
-    hated: {
-      color: theme.palette.secondary.main,
-    },
-    commentFormContainer: {
-      display: 'none',
-      '&.open': {
-        display: 'block',
-      },
-    },
-    replyList: {
-      display: 'none',
-      '&.open': {
-        display: 'block',
-      },
-    },
-  });
-});
+  },
+}));
 
 export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createStyles({
   commentsContainer: {

@@ -19,4 +19,7 @@ export class UserReactionEntity implements UserReaction {
 
   @CreateDateColumn({ type: 'timestamp' })
   createDate: Date;
+
+  @Column({ select: false, comment: 'bcrypt로 암호화된 비밀번호' })
+  password: string;
 }
