@@ -54,9 +54,9 @@ export interface TopTenDataItem extends Scores{
   creatorName: string,
   title: string,
   platform: 'afreeca'|'twitch',
-  twitchProfileImage: null | string,
-  afreecaProfileImage: null | string,
-  twitchChannelName: null | string,
+  twitchProfileImage?: string | null,
+  afreecaProfileImage?: string | null,
+  twitchChannelName?: string | null,
   averageRating?: number,
 }
 export interface WeeklyTrendsItem extends Scores{
