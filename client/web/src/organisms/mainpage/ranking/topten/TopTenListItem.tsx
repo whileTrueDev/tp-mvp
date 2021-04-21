@@ -64,6 +64,11 @@ function TopTenListItem(props: Props): JSX.Element {
             ? <i className="fas fa-star" />
             : null}
           <Typography>{index + 1}</Typography>
+          <img
+            className={classnames(classes.platformLogo, { twitch: platform === 'twitch' }, { afreeca: platform === 'afreeca' })}
+            src={`/images/logo/${platform === 'twitch' ? 'twitchLogo_no_bg' : 'afreecaLogo'}.png`}
+            alt={`${platform}로고`}
+          />
         </div>
 
         <div

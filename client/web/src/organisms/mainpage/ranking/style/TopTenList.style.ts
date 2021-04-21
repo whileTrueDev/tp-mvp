@@ -60,6 +60,17 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         MozTextFillColor: 'transparent',
       },
     },
+    platformLogo: {
+      width: '100%',
+      height: 'auto',
+      '&.afreeca': {
+        maxWidth: theme.spacing(4),
+        maxHeight: theme.spacing(4),
+      },
+      '&.twitch': {
+
+      },
+    },
     background: {
       display: 'flex',
       borderRadius: theme.spacing(2),
@@ -80,6 +91,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     },
     orderContainer: {
       flexDirection: 'column',
+      position: 'relative',
       '& p': {
         color: theme.palette.common.black,
         fontSize: theme.typography.h5.fontSize,
