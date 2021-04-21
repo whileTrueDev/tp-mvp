@@ -92,12 +92,16 @@ export default function UserReactionCard(): JSX.Element {
       { userReactionData && userReactionData.length !== 0
       /* 데이터가 있는 경우 */
         ? userReactionData.map((data) => (
-          <UserReactionListItem key={data.id} data={data} />
+          <UserReactionListItem
+            key={data.id}
+            data={data}
+            reloadItems={loadUserReactions}
+          />
         ))
       /* 데이터가 없는 경우 */
         : <ListItem>데이터가 없습니다</ListItem>}
     </List>
-  ), [classes.list, loading, userReactionData]);
+  ), [classes.list, loadUserReactions, loading, userReactionData]);
 
   const formComponent = useMemo(() => (
     <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
