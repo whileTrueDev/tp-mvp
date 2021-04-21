@@ -2,7 +2,7 @@ import {
   Avatar, Button, Typography,
 } from '@material-ui/core';
 import React, {
-  useState, useCallback, useEffect,
+  useState, useCallback, useEffect, useRef,
 } from 'react';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
@@ -12,6 +12,7 @@ import { useSnackbar } from 'notistack';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
 import axios from '../../../../utils/axios';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import useDialog from '../../../../utils/hooks/useDialog';
 import CommentForm from '../sub/CommentForm';
 import useToggle from '../../../../utils/hooks/useToggle';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
@@ -55,10 +56,10 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     userId, // 코멘트를 작성한 유저의 userId, undefined인 경우 비로그인하여 작성한 댓글
   } = props;
 
-  // const passwordInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+  const { open: passwordDialogOpen, handleOpen: openPasswordDialog, handleClose: closePasswordDialog } = useDialog();
+  const { open: confirmDialogOpen, handleOpen: openConfirmDialog, handleClose: closeConfirmDialog } = useDialog();
 
   const [likeClicked, setLikeClicked] = useState<boolean>(isLiked);
   const [hateClicked, setHateClicked] = useState<boolean>(isHated);
@@ -109,16 +110,16 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     if (authContext.user.userId && userId === authContext.user.userId) {
       // 로그인 되어 있는 경우 && 댓글작성자와 로그인유저가 동일한 경우
       // 댓글 삭제하시겠습니까 팝업
-      setConfirmDialogOpen(true);
+      openConfirmDialog();
       // 확인 => 삭제, 취소 => 취소
     } else {
       // 댓글작성자와 로그인한 유저가 다른 경우, 로그인 하지 않은 경우
-      setPasswordDialogOpen(true);
+      openPasswordDialog();
       // 비밀번호 확인 팝업
       // 비밀번호 맞으면 댓글 삭제하시겠습니까 팝업 
       // 비밀번호 틀리면 비밀번호 틀렸습니다 스낵바
     }
-  }, [authContext.user.userId, userId]);
+  }, [authContext.user.userId, openConfirmDialog, openPasswordDialog, userId]);
 
   const openCommentWriteForm = useCallback(() => {
     handleCommentFormOpen();
@@ -158,7 +159,9 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
 
   const checkPasswordBeforeDelete = () => {
     // 비밀번호 input 값 받아서 비밀번호 확인 요청,
-    const password = ''; // inputref value
+    if (!passwordInputRef.current) return;
+
+    const password = passwordInputRef.current.value; // inputref value
     if (password.trim().length === 0) {
       ShowSnack('비밀번호를 입력해주세요', 'error', enqueueSnackbar);
       return;
@@ -168,9 +171,12 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
       .then((res) => {
         const passwordMatch: boolean = res.data;
         if (passwordMatch) {
-          setPasswordDialogOpen(false);
-          setConfirmDialogOpen(true);
+          closePasswordDialog();
+          openConfirmDialog();
         } else {
+          if (passwordInputRef.current) {
+            passwordInputRef.current.value = '';
+          }
           ShowSnack('비밀번호가 틀렸습니다. 다시 확인해주세요', 'error', enqueueSnackbar);
         }
       })
@@ -185,7 +191,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
         if (reloadComments) {
           reloadComments();
         }
-        setConfirmDialogOpen(false);
+        closeConfirmDialog();
       })
       .catch((error) => console.error(error));
   };
@@ -314,17 +320,14 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
 
       <PasswordConfirmDialog
         open={passwordDialogOpen}
-        onClose={() => {
-          setPasswordDialogOpen(false);
-        }}
+        onClose={closePasswordDialog}
+        passwordInputRef={passwordInputRef}
         callback={checkPasswordBeforeDelete}
       />
 
       <DeleteConfirmDialog
         open={confirmDialogOpen}
-        onClose={() => {
-          setConfirmDialogOpen(false);
-        }}
+        onClose={closeConfirmDialog}
         callback={deleteComment}
       />
     </div>

@@ -1,33 +1,28 @@
 import { Typography } from '@material-ui/core';
-import React, { useRef } from 'react';
+import React from 'react';
 import CustomDialog from '../../../../atoms/Dialog/Dialog';
 
 export interface PasswordConfirmDialogProps {
  open: boolean;
- onClose?: () => void,
- callback? : () => void
+ onClose: () => void,
+ callback? : () => void,
+ passwordInputRef: React.RefObject<HTMLInputElement>
 }
 
 export default function PasswordConfirmDialog(props: PasswordConfirmDialogProps): JSX.Element {
-  const passwordInputRef = useRef<HTMLInputElement>(null);
-  const { open, onClose, callback } = props;
+  const {
+    open, onClose, callback, passwordInputRef,
+  } = props;
 
   return (
     <CustomDialog
       open={open}
-      onClose={() => {
-        if (passwordInputRef.current) {
-          passwordInputRef.current.value = '';
-        }
-        if (onClose) {
-          onClose();
-        }
-      }}
+      onClose={onClose}
       title="비밀번호 확인"
       callback={callback}
     >
       <Typography>비밀번호를 입력해주세요</Typography>
-      <input ref={passwordInputRef} />
+      <input ref={passwordInputRef} type="password" />
     </CustomDialog>
   );
 }
