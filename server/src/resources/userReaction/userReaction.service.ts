@@ -27,7 +27,7 @@ export class UserReactionService {
   }
 
   // 비밀번호 확인
-  private async checkPassword(id: number, password: string): Promise<boolean> {
+  async checkPassword(id: number, password: string): Promise<boolean> {
     const data = await this.userReactionRepository.findOne({
       where: { id },
       select: ['password'],
