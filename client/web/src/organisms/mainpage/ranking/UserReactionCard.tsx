@@ -1,10 +1,10 @@
 import {
-  Button, List, ListItem, TextField, Typography,
+  Button, Grid, List, ListItem, TextField, Typography,
 } from '@material-ui/core';
 import React, {
-  useEffect, useRef, useCallback, useMemo, useLayoutEffect,
+  useEffect, useRef, useCallback, useLayoutEffect,
 } from 'react';
-
+import SendIcon from '@material-ui/icons/Send';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
@@ -85,54 +85,6 @@ export default function UserReactionCard(): JSX.Element {
     });
   }, [createUserReaction, enqueueSnackbar]);
 
-  // 컴포넌트들
-  const listComponent = useMemo(() => (
-    <List className={classes.list} ref={listContainerRef}>
-      {loading && <CenterLoading />}
-      { userReactionData && userReactionData.length !== 0
-      /* 데이터가 있는 경우 */
-        ? userReactionData.map((data) => (
-          <UserReactionListItem
-            key={data.id}
-            data={data}
-            reloadItems={loadUserReactions}
-          />
-        ))
-      /* 데이터가 없는 경우 */
-        : <ListItem>데이터가 없습니다</ListItem>}
-    </List>
-  ), [classes.list, loadUserReactions, loading, userReactionData]);
-
-  const formComponent = useMemo(() => (
-    <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
-      <div className={classes.formRow}>
-        <TextField
-          name="username"
-          placeholder="닉네임"
-          inputProps={{ maxLength: 8 }}
-          variant="outlined"
-        />
-        <TextField
-          name="password"
-          type="password"
-          placeholder="비밀번호"
-          inputProps={{ maxLength: 4 }}
-          variant="outlined"
-        />
-
-      </div>
-      <TextField
-        name="content"
-        placeholder="여러분들의 의견을 올려주세요"
-        inputProps={{ maxLength: 50 }}
-        variant="outlined"
-      />
-      <Button type="submit" size="large" variant="contained" color="primary">
-        등록
-      </Button>
-    </form>
-  ), [classes.form, classes.formRow, handleSubmit]);
-
   return (
     <section className={classes.userReactionContainer}>
       <header className={classes.header}>
@@ -142,8 +94,62 @@ export default function UserReactionCard(): JSX.Element {
           새로고침
         </Button>
       </header>
-      {listComponent}
-      {formComponent}
+
+      <List className={classes.list} ref={listContainerRef}>
+        {loading && <CenterLoading />}
+        { userReactionData && userReactionData.length !== 0
+        /* 데이터가 있는 경우 */
+          ? userReactionData.map((data) => (
+            <UserReactionListItem
+              key={data.id}
+              data={data}
+              reloadItems={loadUserReactions}
+            />
+          ))
+        /* 데이터가 없는 경우 */
+          : <ListItem>데이터가 없습니다</ListItem>}
+      </List>
+
+      <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
+        <Grid container className={classes.row}>
+          <TextField
+            className={classes.nicknameField}
+            name="username"
+            placeholder="닉네임"
+            inputProps={{ maxLength: 8 }}
+            variant="outlined"
+          />
+          <TextField
+            className={classes.passwordField}
+            name="password"
+            type="password"
+            placeholder="비밀번호"
+            inputProps={{ maxLength: 4 }}
+            variant="outlined"
+          />
+        </Grid>
+        <Grid container className={classes.row}>
+          <TextField
+            name="content"
+            className={classes.contentField}
+            placeholder="여러분들의 의견을 올려주세요"
+            inputProps={{ maxLength: 50 }}
+            variant="outlined"
+            multiline
+            rows={2}
+          />
+          <div>
+            <Button
+              className={classes.submitButton}
+              type="submit"
+              variant="outlined"
+            >
+              <SendIcon className={classes.submitButtonIcon} />
+            </Button>
+          </div>
+        </Grid>
+
+      </form>
     </section>
 
   );

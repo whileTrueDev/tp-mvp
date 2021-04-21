@@ -3,7 +3,7 @@ import {
 } from 'typeorm';
 import { UserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
 
-@Entity({ name: 'UserReactionsTest' })
+@Entity({ name: 'UserReactionsTest2' })
 export class UserReactionEntity implements UserReaction {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
