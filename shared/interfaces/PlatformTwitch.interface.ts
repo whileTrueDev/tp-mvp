@@ -1,3 +1,5 @@
+import { CreatorCategory } from './CreatorCategory.interface';
+
 export interface PlatformTwitch {
   twitchId: string;
 
@@ -12,4 +14,6 @@ export interface PlatformTwitch {
   createdAt?: Date;
 
   updatedAt?: Date;
+
+  categories?: CreatorCategory[];
 }

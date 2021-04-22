@@ -100,6 +100,7 @@ export class AfreecaLinker {
     await this.usersService.linkAfreeca({
       refreshToken, afreecaId: userId,
     });
-    await this.usersService.linkUserToPlatform(userId, 'afreeca', userId);
+    // entity 변경으로 제거된 메서드. by hwasurr 210420 -> 연동 기능 필요할 때 새롭게 만드는 것이 더 좋을 듯.
+    // await this.usersService.linkUserToPlatform(userId, 'afreeca', userId);
   }
 }

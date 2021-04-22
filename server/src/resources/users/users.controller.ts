@@ -1,25 +1,27 @@
 import {
-  // UseGuards,
-  Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, Req, ForbiddenException, Delete, Param,
+  Body,
+  ClassSerializerInterceptor, Controller,
+  Delete, Get,
+  Param, Patch, Post,
+  Query, Req, UseInterceptors,
 } from '@nestjs/common';
-// DTOs
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
+// DTOs
+import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registerUserByAdminDto.dto';
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
-import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
-import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
+import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
+import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
+import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
+import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 // import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
-import { UsersService } from './users.service';
 import { AuthService } from '../auth/auth.service';
-
-import { UserEntity } from './entities/user.entity';
-import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';
 import { SubscribeEntity } from './entities/subscribe.entity';
-import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
+import { UserEntity } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -87,12 +89,14 @@ export class UsersController {
   async updateUser(
     @Req() req: LogedInExpressRequest,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-  ): Promise<number> {
-    if (req.user.userId && req.user.userId === updateUserDto.userId) {
-      return this.usersService.updateOne(updateUserDto);
-    }
+  ): Promise<UserEntity> {
+    return this.usersService.updateOne(updateUserDto);
+    // 로그인 되어있지 않아도 변경 가능
+    //   if (req.user.userId && req.user.userId === updateUserDto.userId) {
+    //   return this.usersService.updateOne(updateUserDto);
+    // }
     // 로그인 되어있지 않거나, 로그인한 유저와 변경요청한 유저가 다른 경우
-    throw new ForbiddenException('Forbidden for you');
+    // throw new ForbiddenException('Forbidden for you');
   }
 
   @Delete()
@@ -165,7 +169,7 @@ export class UsersController {
     output  : [userId1, userId2, ... ]
   */
   @Get('/id-list')
-  getAllUserIdList(): Promise<{userId: string}[]> {
+  getAllUserIdList(): Promise<UserEntity[]> {
     return this.usersService.findAllUserList();
   }
 
@@ -210,5 +214,12 @@ export class UsersController {
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<UserEntity> {
     return this.usersService.register(createUserDto);
+  }
+
+  @Post('/byadmin')
+  async registerUserByAdmin(
+    @Body(ValidationPipe) registerUserByAdminDto: RegisterUserByAdminDto,
+  ): Promise<any> {
+    return this.usersService.registerByAdmin(registerUserByAdminDto);
   }
 }

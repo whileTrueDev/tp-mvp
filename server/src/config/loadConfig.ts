@@ -7,14 +7,14 @@
 import AWS from 'aws-sdk';
 import { TruepointDbSecret, DbSecret, CollectorDbSecret } from '../interfaces/Secrets.interface';
 
-const region = 'ap-northeast-2';
+export const AWS_REGION = 'ap-northeast-2';
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
 // Create a Secrets Manager client
-const client = new AWS.SecretsManager({ region });
+const client = new AWS.SecretsManager({ region: AWS_REGION });
 
 // In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
 // See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
