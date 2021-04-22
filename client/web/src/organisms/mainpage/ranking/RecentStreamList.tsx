@@ -1,11 +1,11 @@
 import { useMediaQuery, useTheme } from '@material-ui/core';
 import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios from 'axios-hooks';
-import React, { useMemo } from 'react'
-import useRecentStreamStyles from './style/RecentStream.styles';
-import RecentStreamListItem from './streamInfo/RecentStreamListItem';
+import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
+import useRecentStreamStyles from './style/RecentStream.styles';
+import RecentStreamListItem from './streamInfo/RecentStreamListItem';
 import RecentStreamListLeftDecorator from './streamInfo/RecentStreamListLeftDecorator';
 
 const listPositions = [
@@ -20,10 +20,10 @@ export default function RecentStreamList(): React.ReactElement {
   const classes = useRecentStreamStyles();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
 
-  const [userData] = useAxios<User>({ url: '/users', method:'get', params: { creatorId }});
+  const [userData] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
 
   const [{ data, error }] = useAxios<RecentStreamResType>({
     url: '/broadcast-info/bycreator',

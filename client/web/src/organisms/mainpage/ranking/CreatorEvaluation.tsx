@@ -1,6 +1,8 @@
 import { Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import {
+  CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes,
+} from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import useAxios from 'axios-hooks';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
