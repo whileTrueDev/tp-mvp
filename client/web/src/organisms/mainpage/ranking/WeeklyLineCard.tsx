@@ -10,11 +10,11 @@ import useAxios from 'axios-hooks';
 import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import { useWeeklyViewerStyle } from './style/WeeklyViewerRankingCard.style';
+import { useWeeklyLineCardStyle } from './style/WeeklyLineCard.style';
 import CarouselItemHeader from './sub/CarouselItemHeader';
 
 function WeeklyLineCard(): JSX.Element {
-  const classes = useWeeklyViewerStyle();
+  const classes = useWeeklyLineCardStyle();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   // 차트컨테이너 ref
@@ -129,7 +129,7 @@ function WeeklyLineCard(): JSX.Element {
   }
 
   return (
-    <section className={classes.weeklyViewerContainer}>
+    <section className={classes.weeklyContainer}>
       <CarouselItemHeader title="주간 평점 평균" />
 
       <div className={classes.graphContainer}>
