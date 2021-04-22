@@ -21,11 +21,17 @@ export interface CreatorRatingInfoRes {
   scores: CreatorAverageScores,
 }
 
-export interface ListItemOrderByRatings{
+export interface WeeklyRatingRankingItem{
   creatorId: string,
+  platform: 'afreeca'|'twitch',
+  rankChange: number,
   averageRating: number,
-  ratingCount: number,
   nickname: string,
   logo: string,
-  platform: string
+}
+
+export interface WeeklyRatingRankingRes {
+  startDate: string;
+  endDate: string;
+  rankingList: WeeklyRatingRankingItem[];
 }
