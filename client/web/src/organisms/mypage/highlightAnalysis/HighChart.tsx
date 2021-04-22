@@ -177,8 +177,10 @@ export default function Chart({
     if (highlight.start_index) {
       const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
       const chartDataRef = highchartsRef.current?.chart.series[0].data;
+      // const zoomButton = highchartsRef.current?.chart;
+      // console.log(zoomButton);
 
-      if (chartxAxisRef && chartDataRef) {
+      if (chartxAxisRef && chartDataRef && chartDataRef[highlight.start_index].x) {
         chartxAxisRef.removePlotBand('plot-band');
         chartxAxisRef.addPlotBand({
           from: chartDataRef[highlight.start_index].x - 36000,
@@ -194,6 +196,8 @@ export default function Chart({
             },
           },
         });
+      } else {
+        // console.log('fuck');
       }
     }
   }, [highlight, themeType, theme.palette]);

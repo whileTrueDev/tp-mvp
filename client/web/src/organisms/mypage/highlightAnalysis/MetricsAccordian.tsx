@@ -12,7 +12,7 @@ import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType
 import MetricTitle from '../../shared/sub/MetricTitle';
 import MetricsTable from '../../shared/sub/MetricsTable';
 import HighlightExport from '../../shared/sub/HighlightExport';
-import Highcharts from './HighChart';
+// import Highcharts from './HighChart';
 import { initialPoint } from './TruepointHighlight';
 import ScorePicker from './ScorePicker';
 
@@ -78,7 +78,7 @@ interface MetricsAccordianProps {
   highlightData: any;
   selectedStream: StreamDataType|null;
 }
-type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
+// type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
 
 export default function MetricsAccordian(
   {
@@ -137,6 +137,8 @@ export default function MetricsAccordian(
   //       return highlightData.agree_total_data;
   //   }
   // }, [highlightData]);
+
+  // console.log(highlightData);
 
   return (
     <Paper>
@@ -337,7 +339,7 @@ export default function MetricsAccordian(
             </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
-                <Highcharts
+                {/* <Highcharts
                   data={categoryPicked97 ? selectCategory97(selectedCategory.category) : highlightData[`${selectedCategory.category}_points`]}
                   totalData={highlightData[`${selectedCategory.category}_total_data`]}
                   // totalData={getCategoryTotalData(selectedCategory)}
@@ -349,7 +351,7 @@ export default function MetricsAccordian(
                   handleClick={setPoint3}
                   handlePage={setPage3}
                   pageSize={pageSize3}
-                />
+                /> */}
               </Grid>
 
               <Grid item md={12} className={classes.contentRight}>
