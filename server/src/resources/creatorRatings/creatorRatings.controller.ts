@@ -86,6 +86,15 @@ export class CreatorRatingsController {
     return this.ratingsService.getAverageRatings(creatorId);
   }
 
+  @Get('/weekly-average')
+  weeklyAverageRating(): Promise<{
+    dates: string[],
+    afreeca: number[],
+    twitch: number[]
+  }> {
+    return this.ratingsService.weeklyAverageRating();
+  }
+
   /**
    * 해당ip를 가진 유저가 creatorId에 매긴 평점 조회
    * 

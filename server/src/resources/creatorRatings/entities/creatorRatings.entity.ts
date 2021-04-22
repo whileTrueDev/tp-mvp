@@ -4,7 +4,7 @@ import {
   CreateDateColumn, PrimaryGeneratedColumn, Unique,
 } from 'typeorm';
 
-@Entity({ name: 'CreatorRatingsTest' })
+@Entity({ name: 'CreatorRatingsTest2' })
 @Unique('UX_creatorId_userIp', ['creatorId', 'userIp'])
 export class CreatorRatingsEntity implements CreatorRatings {
   constructor(partial: Partial<CreatorRatingsEntity>) {

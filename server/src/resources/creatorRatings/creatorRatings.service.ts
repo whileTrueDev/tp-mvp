@@ -1,14 +1,16 @@
 import {
   BadRequestException, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
+import dayjs from 'dayjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, getConnection } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingInfoRes, ListItemOrderByRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { RankingsEntity } from '../rankings/entities/rankings.entity';
+
 @Injectable()
 export class CreatorRatingsService {
   constructor(
@@ -304,5 +306,65 @@ export class CreatorRatingsService {
     }));
 
     return result;
+  }
+
+  // 어제 ~ 8일이전(1주일간) 날짜 'YYYY-MM-DD' 문자열로 반환
+  // return ['2021-04-14','2021-04-15','2021-04-16','2021-04-17','2021-04-18','2021-04-19','2021-04-20']
+  private getWeekDates(): string[] {
+    return new Array(7).fill('').map((val, index) => (
+      dayjs().subtract(index + 2, 'days').format('YYYY-MM-DD')
+    )).reverse();
+  }
+
+  private filterDataByPlatform(
+    data: {platform: 'twitch' | 'afreeca'}[],
+    platform: 'twitch' | 'afreeca',
+  ): any[] {
+    return data.filter((d) => d.platform === platform);
+  }
+
+  private getAvgRatingList(
+    dates: string[],
+    data: {date: string, avgRating: string}[],
+  ): number[] {
+    return dates.map((date) => {
+      const item = data.find((d) => d.date === date);
+      if (item) return Number(item.avgRating);
+      return 0;
+    });
+  }
+
+  async weeklyAverageRating(): Promise<{
+    dates: string[],
+    afreeca: number[],
+    twitch: number[]
+  }> {
+    const dates = this.getWeekDates();
+    const query = `
+    SELECT 
+      DATE_FORMAT(createDate, '%Y-%m-%d') AS "date", 
+      CAST(AVG(rating) as decimal(10,2)) AS avgRating,
+      platform
+    FROM CreatorRatingsTest2
+    Where
+      DATE_FORMAT(createDate, '%Y-%m-%d') 
+      BETWEEN (curdate() - interval 8 day)
+      AND (curdate() - interval 1 day)
+    GROUP BY date, platform
+    Order By date ASC
+    `;
+    const data = await getConnection().query(query);
+
+    const afreecaData = this.filterDataByPlatform(data, 'afreeca');
+    const twitchData = this.filterDataByPlatform(data, 'twitch');
+
+    const afreecaAvgRatings = this.getAvgRatingList(dates, afreecaData);
+    const twitchAvgRatings = this.getAvgRatingList(dates, twitchData);
+
+    return {
+      dates,
+      afreeca: afreecaAvgRatings,
+      twitch: twitchAvgRatings,
+    };
   }
 }
