@@ -22,9 +22,8 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
   },
   header: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2, 2, 5, 2),
+    padding: theme.spacing(4, 2, 5, 2),
     marginBottom: theme.spacing(1),
-    marginTop: theme.spacing(-7),
     '&>:nth-child(1)': {
       fontSize: theme.typography.h4.fontSize,
     },
@@ -132,7 +131,7 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
   },
   root: {
     display: 'inline-flex',
-    height: theme.spacing(8),
+    height: theme.spacing(9),
     backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
     borderRadius: theme.spacing(1),
     paddingTop: theme.spacing(0.5),

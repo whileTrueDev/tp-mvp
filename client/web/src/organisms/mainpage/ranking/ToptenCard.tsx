@@ -194,88 +194,86 @@ function TopTenCard(): JSX.Element {
       <Typography className={classes.recentAnalysisDate}>
         {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
       </Typography>
-      <div className={classes.topTenWrapper}>
-        <Grid container justify="flex-end">
+      <Grid container component="section" className={classes.topTenWrapper}>
+        <Grid item xs={2} className={classes.left}>
+          <header className={classes.header}>
+            <Typography>반응별 랭킹</Typography>
+            <Typography variant="h4">TOP 10</Typography>
+          </header>
           <Tabs
-            classes={platformTabsStyle}
-            value={platformTabIndex}
-            onChange={onPlatformTabChange}
+            style={{ overflow: 'visible' }} // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
+            classes={verticalTabsStyles}
+            orientation="vertical"
+            value={mainTabIndex}
+            onChange={onMainTabChange}
+            ref={tabRef}
           >
-            {platformTabColumns.map((col) => (
-              <Tab classes={platformTabItemStyle} key={col.platform} label={col.label} />
+            {mainTabColumns.map((c) => (
+              <Tab
+                disableRipple
+                classes={verticalTabItemStyles}
+                key={c.column}
+                icon={c.icon}
+                label={c.label}
+                className={c.className}
+              />
             ))}
           </Tabs>
         </Grid>
-        <Grid container component="section">
-          <Grid item xs={2} className={classes.left}>
-            <header className={classes.header}>
-              <Typography>반응별 랭킹</Typography>
-              <Typography variant="h4">TOP 10</Typography>
-            </header>
+        <Grid item xs={10}>
+          <Grid container justify="flex-end">
             <Tabs
-              style={{ overflow: 'visible' }} // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
-              classes={verticalTabsStyles}
-              orientation="vertical"
-              value={mainTabIndex}
-              onChange={onMainTabChange}
-              ref={tabRef}
+              classes={platformTabsStyle}
+              value={platformTabIndex}
+              onChange={onPlatformTabChange}
             >
-              {mainTabColumns.map((c) => (
+              {platformTabColumns.map((col) => (
+                <Tab classes={platformTabItemStyle} key={col.platform} label={col.label} />
+              ))}
+            </Tabs>
+          </Grid>
+          <Grid container justify="center">
+            <Tabs
+              variant="scrollable"
+              scrollButtons="auto"
+              classes={horizontalTabsStyle}
+              value={categoryTabIndex}
+              onChange={onCategoryTabChange}
+            >
+              {categoryTabColumns.map((col) => (
                 <Tab
+                  key={col.categoryId}
+                  classes={horizontalTabItemStyle}
                   disableRipple
-                  classes={verticalTabItemStyles}
-                  key={c.column}
-                  icon={c.icon}
-                  label={c.label}
-                  className={c.className}
+                  label={col.label}
                 />
               ))}
             </Tabs>
           </Grid>
-          <Grid item xs={10}>
-            <Grid container justify="center">
-              <Tabs
-                variant="scrollable"
-                scrollButtons="auto"
-                classes={horizontalTabsStyle}
-                value={categoryTabIndex}
-                onChange={onCategoryTabChange}
-              >
-                {categoryTabColumns.map((col) => (
-                  <Tab
-                    key={col.categoryId}
-                    classes={horizontalTabItemStyle}
-                    disableRipple
-                    label={col.label}
-                  />
-                ))}
-              </Tabs>
-            </Grid>
 
-            <TopTenListContainer
-              data={dataToDisplay}
-              currentTab={mainTabColumns[mainTabIndex].column}
-              loading={loading}
-              error={error}
-              weeklyGraphLabel={weeklyGraphLabel}
-            />
-            <div className={classes.loadMoreButtonContainer}>
-              { data && (data.totalDataCount > dataToDisplay.rankingData.length)
-                ? (
-                  <Button
-                    className={classes.loadMoreButton}
-                    onClick={loadMoreData}
-                    variant="outlined"
-                    color="primary"
-                  >
-                    더보기
-                  </Button>
-                )
-                : null}
-            </div>
-          </Grid>
+          <TopTenListContainer
+            data={dataToDisplay}
+            currentTab={mainTabColumns[mainTabIndex].column}
+            loading={loading}
+            error={error}
+            weeklyGraphLabel={weeklyGraphLabel}
+          />
+          <div className={classes.loadMoreButtonContainer}>
+            { data && (data.totalDataCount > dataToDisplay.rankingData.length)
+              ? (
+                <Button
+                  className={classes.loadMoreButton}
+                  onClick={loadMoreData}
+                  variant="outlined"
+                  color="primary"
+                >
+                  더보기
+                </Button>
+              )
+              : null}
+          </div>
         </Grid>
-      </div>
+      </Grid>
     </>
   );
 }
