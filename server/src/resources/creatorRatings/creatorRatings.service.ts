@@ -52,7 +52,7 @@ export class CreatorRatingsService {
    * @returns 
    */
   async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<CreatorRatingsEntity> {
-    const { userId, rating } = ratingPostDto;
+    const { userId, rating, platform } = ratingPostDto;
     // 우선 rankings 테이블에서 해당 creatorId가 존재하는지 찾는다
     await this.findCreator(creatorId);
 
@@ -76,6 +76,7 @@ export class CreatorRatingsService {
         userIp: ip,
         userId: userId || null,
         rating,
+        platform,
       });
       return newRating;
     } catch (error) {

@@ -28,4 +28,7 @@ export class CreatorRatingsEntity implements CreatorRatings {
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성 날짜' })
   createDate: Date;
+
+  @Column({ comment: '평점이 매겨진 creatorId의 플랫폼, afreeca | twitch' })
+  platform: string;
 }

@@ -69,7 +69,11 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
     if (!score) {
       ShowSnack('평점을 매겨주세요', 'error', enqueueSnackbar);
     } else {
-      axios.post(`ratings/${creatorId}`, { rating: score, userId: authContext.user.userId })
+      axios.post(`ratings/${creatorId}`, {
+        rating: score,
+        userId: authContext.user.userId,
+        platform,
+      })
         .then(() => {
           if (updateAverageRating) {
             updateAverageRating();
@@ -85,7 +89,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
           }
         });
     }
-  }, [authContext.user.userId, creatorId, enqueueSnackbar, updateAverageRating]);
+  }, [authContext.user.userId, creatorId, enqueueSnackbar, platform, updateAverageRating]);
 
   /**
    * 평점 매긴거 취소하는 핸들러
@@ -124,7 +128,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
             <div className={classes.ratingContainer}>
               <Typography className={classes.averageRatingText}>
                 평균★
-                {averageRating}
+                {averageRating.toFixed(2)}
                 {`(${ratingCount}명)`}
               </Typography>
               <StarRating
