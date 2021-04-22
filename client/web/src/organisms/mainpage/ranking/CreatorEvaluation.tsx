@@ -1,14 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import useAxios from 'axios-hooks';
-import { Button, Container } from '@material-ui/core';
-import {
-  CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
-} from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
-import RecentStreamList from './streamInfo/RecentStreamList';
+import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
 
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {
@@ -31,17 +28,11 @@ const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles
   },
 }));
 
-interface CreatorEvaluationProps {
-  containerClassName: string;
-}
-
 /**
  * 인방랭킹 목록에서 크리에이터 이름 눌렀을 때 보여질 방송인정보 페이지 컴포넌트
  * @returns 
  */
-export default function CreatorEvaluation({
-  containerClassName,
-}: CreatorEvaluationProps): JSX.Element {
+export default function CreatorEvaluation(): JSX.Element {
   const classes = useCreatorEvalutationCardStyle();
   const history = useHistory();
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
@@ -90,35 +81,26 @@ export default function CreatorEvaluation({
   }, []);
 
   return (
-    <>
-      <RecentStreamList
-        creatorId={creatorId}
-        platform={platform}
+    <div className={classes.creatorEvaluationCardContainer}>
+      <Button
+        className={classes.goBackButton}
+        onClick={history.goBack}
+        aria-label="뒤로가기"
+      >
+        <img
+          alt="뒤로가기 화살표 이미지"
+          src="/images/rankingPage/backArrowImage.png"
+          srcSet="images/rankingPage/backArrowImage@2x.png 2x"
+        />
+      </Button>
+      <CreatorInfoCard
+        updateAverageRating={updateAverageRating}
+        info={info}
+        ratings={ratings}
+        scores={scores}
+        userRating={userRating}
       />
-      <Container className={containerClassName}>
-        <div className={classes.creatorEvaluationCardContainer}>
-          <Button
-            className={classes.goBackButton}
-            onClick={history.goBack}
-            aria-label="뒤로가기"
-          >
-            <img
-              alt="뒤로가기 화살표 이미지"
-              src="/images/rankingPage/backArrowImage.png"
-              srcSet="images/rankingPage/backArrowImage@2x.png 2x"
-            />
-          </Button>
-          <CreatorInfoCard
-            updateAverageRating={updateAverageRating}
-            info={info}
-            ratings={ratings}
-            scores={scores}
-            userRating={userRating}
-          />
-          <CreatorCommentList creatorId={creatorId} />
-        </div>
-      </Container>
-    </>
-
+      <CreatorCommentList creatorId={creatorId} />
+    </div>
   );
 }

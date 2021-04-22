@@ -1,9 +1,12 @@
 import { useMediaQuery, useTheme } from '@material-ui/core';
 import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios from 'axios-hooks';
-import React, { useMemo } from 'react';
-import useRecentStreamStyles from '../style/RecentStream.styles';
-import RecentStreamListItem from './RecentStreamListItem';
+import React, { useMemo } from 'react'
+import useRecentStreamStyles from './style/RecentStream.styles';
+import RecentStreamListItem from './streamInfo/RecentStreamListItem';
+import { useParams } from 'react-router-dom';
+import { User } from '@truepoint/shared/dist/interfaces/User.interface';
+import RecentStreamListLeftDecorator from './streamInfo/RecentStreamListLeftDecorator';
 
 const listPositions = [
   { marginLeft: 16, height: 85 },
@@ -12,17 +15,15 @@ const listPositions = [
   { marginLeft: 80, height: 90 },
   { marginLeft: 16, height: undefined },
 ];
-export interface RecentStreamListProps {
-  platform: string;
-  creatorId: string;
-}
-export default function RecentStreamList({
-  creatorId,
-  platform,
-}: RecentStreamListProps): React.ReactElement {
+
+export default function RecentStreamList(): React.ReactElement {
   const classes = useRecentStreamStyles();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+  
+  const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
+
+  const [userData] = useAxios<User>({ url: '/users', method:'get', params: { creatorId }});
 
   const [{ data, error }] = useAxios<RecentStreamResType>({
     url: '/broadcast-info/bycreator',
@@ -47,29 +48,25 @@ export default function RecentStreamList({
     <section className={classes.section} id="broad-list">
       <div className={classes.itembox}>
         {!error && dataSource && dataSource.map((stream) => (
-          <RecentStreamListItem key={stream.title} stream={stream} />
+          <RecentStreamListItem key={stream.streamId} stream={stream} />
         ))}
       </div>
 
       {/* 우측 스트리머 프로필이미지 */}
+      {!userData.loading && userData.data && (
       <img
         draggable={false}
         style={{
           position: 'absolute', right: 0, top: 0, height: 600 - 16,
         }}
-        src={theme.palette.type === 'light' ? '/images/rankingPage/broadPage/랄로배경.png' : '/images/rankingPage/broadPage/랄로배경2.png'}
+        src={theme.palette.type === 'light' ? userData.data.detail?.heroImageLight : userData.data.detail?.heroImageDark}
         alt=""
       />
+      )}
 
       {/* 플랫폼 로고 이미지 */}
       {isSm ? (null) : (
-        <img
-          src={`/images/rankingPage/broadPage/${platform}_bg_${theme.palette.type}.png`}
-          style={{
-            position: 'absolute', left: -230, top: 24, width: 500, height: 500,
-          }}
-          alt=""
-        />
+        <RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />
       )}
     </section>
 

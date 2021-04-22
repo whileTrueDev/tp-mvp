@@ -61,21 +61,21 @@ export default function UserProfile(): JSX.Element {
               src="/images/logo/afreecaLogo.png"
               alt=""
               draggable={false}
-              style={{ filter: profileRequestObject.data.afreecaId ? 'none' : 'grayscale(100%)' }}
+              style={{ filter: profileRequestObject.data.afreeca?.afreecaId ? 'none' : 'grayscale(100%)' }}
             />
             <img
               className={classes.platformLogo}
               src="/images/logo/twitchLogo.png"
               alt=""
               draggable={false}
-              style={{ filter: profileRequestObject.data.twitchId ? 'none' : 'grayscale(100%)' }}
+              style={{ filter: profileRequestObject.data.twitch?.twitchId ? 'none' : 'grayscale(100%)' }}
             />
             <img
               className={classes.platformLogo}
               src="/images/logo/youtubeLogo.png"
               alt=""
               draggable={false}
-              style={{ filter: profileRequestObject.data.youtubeId ? 'none' : 'grayscale(100%)' }}
+              style={{ filter: profileRequestObject.data.youtube?.youtubeId ? 'none' : 'grayscale(100%)' }}
             />
           </div>
           {/* 이름 */}
@@ -109,9 +109,9 @@ export default function UserProfile(): JSX.Element {
       )}
       {/* 아프리카 / 트위치 / 유튜브 중 아이디가 한개도 없는 경우 */}
       {!profileRequestObject.loading && profileRequestObject.data
-      && !(profileRequestObject.data.afreecaId
-          || profileRequestObject.data.youtubeId
-          || profileRequestObject.data.twitchId
+      && !(profileRequestObject.data.afreeca?.afreecaId
+          || profileRequestObject.data.youtube?.youtubeId
+          || profileRequestObject.data.twitch?.twitchId
       ) && (
       <MainDialog
         open={open}

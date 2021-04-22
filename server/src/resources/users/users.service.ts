@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   forwardRef, HttpException, HttpStatus,
   Inject, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
@@ -72,12 +73,26 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async findOne(userId: string): Promise<UserEntity> {
-    const user = await this.usersRepository.findOne(userId, {
-      order: { createdAt: 'DESC' },
-      relations: ['twitch', 'afreeca', 'youtube', 'afreeca.categories', 'twitch.categories', 'detail'],
-    });
-    return user;
+  async findOne({ userId, creatorId }: {userId?: string; creatorId?: string}): Promise<UserEntity> {
+    if (creatorId) {
+      const user = await this.usersRepository.findOne({
+        where: [
+          { afreeca: creatorId },
+          { twitch: creatorId },
+        ],
+        order: { createdAt: 'DESC' },
+        relations: ['twitch', 'afreeca', 'youtube', 'afreeca.categories', 'twitch.categories', 'detail'],
+      });
+      return user;
+    }
+    if (userId) {
+      const user = await this.usersRepository.findOne(userId, {
+        order: { createdAt: 'DESC' },
+        relations: ['twitch', 'afreeca', 'youtube', 'afreeca.categories', 'twitch.categories', 'detail'],
+      });
+      return user;
+    }
+    throw new BadRequestException('userId or creatorId parameter is required');
   }
 
   /**

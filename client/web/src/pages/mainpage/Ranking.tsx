@@ -14,6 +14,7 @@ import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
 import { useRankingPageLayout, useCarouselStyle } from '../../organisms/mainpage/ranking/style/RankingPage.style';
 import CreatorEvaluation from '../../organisms/mainpage/ranking/CreatorEvaluation';
+import RecentStreamList from '../../organisms/mainpage/ranking/RecentStreamList';
 import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
 import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
 import FooterDecoration from '../../organisms/mainpage/ranking/sub/FooterDecoration';
@@ -64,7 +65,12 @@ export default function Ranking(): JSX.Element {
         </Route>
         {/* 방송인 정보 페이지 */}
         <Route exact path={`${path}/:platform/:creatorId`}>
-          <CreatorEvaluation containerClassName={wrapper.container} />
+          {/* 최근 방송 정보 섹션 */}
+          <RecentStreamList />
+
+          <Container className={wrapper.container}>
+            <CreatorEvaluation />
+          </Container>
         </Route>
         <Route>
           <Redirect to="/ranking" />

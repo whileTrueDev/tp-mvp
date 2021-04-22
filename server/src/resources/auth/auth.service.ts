@@ -42,7 +42,7 @@ export class AuthService {
   public async validateUser(
     userId: string, plainPassword: string,
   ): Promise<UserLoginPayload> {
-    const user = await this.usersService.findOne(userId);
+    const user = await this.usersService.findOne({ userId });
 
     if (user) {
       const isCorrectPass = await bcrypt.compare(plainPassword, user.password);
@@ -112,7 +112,7 @@ export class AuthService {
       );
     }
     // 유저 정보 로드
-    const userInfo = await this.usersService.findOne(verifiedPrevRefreshToken.userId);
+    const userInfo = await this.usersService.findOne({ userId: verifiedPrevRefreshToken.userId });
     // 새로운 accessToken, refreshToken 생성
     const newAccessToken = this.createAccessToken({
       userId: userInfo.userId,

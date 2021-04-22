@@ -41,9 +41,11 @@ export class UsersController {
   async findUser(
     @Req() req: LogedInExpressRequest,
     @Query('userId') userId: string,
+    @Query('creatorId') creatorId: string,
   ): Promise<UserEntity> {
-    if (userId) return this.usersService.findOne(userId);
-    return this.usersService.findOne(req.user.userId);
+    if (userId) return this.usersService.findOne({ userId });
+    if (!userId && creatorId) return this.usersService.findOne({ creatorId });
+    return this.usersService.findOne({ userId: req.user.userId });
   }
 
   /**
