@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Accordion, AccordionSummary,
@@ -10,11 +10,11 @@ import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/category
 import shortid from 'shortid';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import MetricTitle from '../../shared/sub/MetricTitle';
-// import MetricsTable from '../../shared/sub/MetricsTable';
+import MetricsTable from '../../shared/sub/MetricsTable';
 import HighlightExport from '../../shared/sub/HighlightExport';
+import Highcharts from './HighChart';
 import { initialPoint } from './TruepointHighlight';
 import ScorePicker from './ScorePicker';
-// import Chart from './Chart';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -78,7 +78,8 @@ interface MetricsAccordianProps {
   highlightData: any;
   selectedStream: StreamDataType|null;
 }
-// type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
+type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
+
 export default function MetricsAccordian(
   {
     highlightData,
@@ -87,39 +88,56 @@ export default function MetricsAccordian(
   }: MetricsAccordianProps,
 ): JSX.Element {
   const classes = styles();
-  // const [page, setPage] = React.useState(0);
-  // const [pageSize, setPageSize] = React.useState(5);
-  // const [point, setPoint] = React.useState(initialPoint);
-  // const [page2, setPage2] = React.useState(0);
-  // const [pageSize2, setPageSize2] = React.useState(5);
-  // const [point2, setPoint2] = React.useState(initialPoint);
-  // const [page3, setPage3] = React.useState(0);
-  // const [pageSize3, setPageSize3] = React.useState(5);
-  // const [point3, setPoint3] = React.useState(initialPoint);
-  const [chatPicked90, setChatPicked90] = React.useState(true);
-  const [smilePicked90, setSmilePicked90] = React.useState(true);
-  const [categoryPicked90, setCategoryPicked90] = React.useState(true);
-  // 상위 10% 편집점 데이터
-  // const chatHightlight90 = highlightData.chat_points_90.map((atPoint: any) => ({
-  //   ...highlightData.chat_points[atPoint],
-  // }));
-  // const smileHightlight90 = highlightData.funny_points_90.map((atPoint: any) => ({
-  //   ...highlightData.funny_points[atPoint],
-  // }));
-  // function selectCategory90(selected: string): any {
-  //   const categoryHightlight90 = highlightData[`${selected}_points_90`].map((atPoint: any, index: number) => ({
-  //     ...highlightData[`${selected}_points`][atPoint], tableData: { id: index },
-  //   }));
-  //   return categoryHightlight90;
-  // }
+  const [page, setPage] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(5);
+  const [point, setPoint] = React.useState(initialPoint);
+  const [page2, setPage2] = React.useState(0);
+  const [pageSize2, setPageSize2] = React.useState(5);
+  const [point2, setPoint2] = React.useState(initialPoint);
+  const [page3, setPage3] = React.useState(0);
+  const [pageSize3, setPageSize3] = React.useState(5);
+  const [point3, setPoint3] = React.useState(initialPoint);
+  const [chatPicked97, setChatPicked90] = React.useState(true);
+  const [smilePicked97, setSmilePicked90] = React.useState(true);
+  const [categoryPicked97, setCategoryPicked90] = React.useState(true);
+  const [selectedCategory, setSelectedCategory] = React.useState(categories[0]);
 
-  const [selectedCategory, setSelectedCategory] = React.useState<CategoryGetRequest>(categories[0]);
-  const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {
-    setSelectedCategory(clickedCategory);
+  const chatHightlight97 = useMemo(() => highlightData.chat_points_97.map((atPoint: number) => ({
+    ...highlightData.chat_points[atPoint],
+  })), [highlightData]);
+
+  const smileHightlight97 = useMemo(() => highlightData.funny_points_97.map((atPoint: number) => ({
+    ...highlightData.funny_points[atPoint],
+  })), [highlightData]);
+
+  const selectCategory97 = useCallback((selected: string) => {
+    const categoryHightlight97 = highlightData[`${selected}_points_97`].map((atPoint: number, index: number) => ({
+      ...highlightData[`${selected}_points`][atPoint], tableData: { id: index },
+    }));
+    return categoryHightlight97;
+  }, [highlightData]);
+
+  const handleCategorySelect = useCallback((clickedCategory: CategoryGetRequest) => {
     setPoint3(initialPoint);
     setPage3(0);
     setPageSize3(5);
-  };
+    setSelectedCategory(clickedCategory);
+  }, []);
+
+  // 혹시나
+  // const getCategoryTotalData = useCallback((clickedCategory: CategoryGetRequest) => {
+  //   switch (clickedCategory.category) {
+  //     case 'disgust':
+  //       return highlightData.disgust_total_data;
+  //     case 'question':
+  //       return highlightData.question_total_data;
+  //     case 'surprise':
+  //       return highlightData.surprise_total_data;
+  //     default:
+  //       return highlightData.agree_total_data;
+  //   }
+  // }, [highlightData]);
+
   return (
     <Paper>
       <Accordion>
@@ -133,7 +151,7 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="채팅 편집점"
               iconSrc="/images/analyticsPage/logo_chat.svg"
-              pointNumber={chatPicked90 ? highlightData.chat_points_90.length : highlightData.chat_points.length}
+              pointNumber={chatPicked97 ? highlightData.chat_points_97.length : highlightData.chat_points.length}
             />
             <Grid container direction="column" justify="center">
               <Grid container direction="row" justify="space-between" alignItems="center">
@@ -147,7 +165,7 @@ export default function MetricsAccordian(
                   입니다
                 </Typography>
                 <ScorePicker
-                  picked90={chatPicked90}
+                  picked90={chatPicked97}
                   setPicked90={setChatPicked90}
                   setPage={setPage}
                   setPageSize={setPageSize}
@@ -155,9 +173,13 @@ export default function MetricsAccordian(
                 />
               </Grid>
               <Grid item md={12}>
-                {/* <Chart
-                  data={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
-                  chartType="chat"
+                {/* <Highcharts
+                  data={chatPicked97 ? chatHightlight97 : highlightData.chat_points}
+                  totalData={highlightData.chat_total_data}
+                  dataOption={{
+                    boundary: chatPicked97 ? highlightData.boundary_97.count : highlightData.boundary.count,
+                  }}
+                  chartType="highlight"
                   highlight={point}
                   handleClick={setPoint}
                   handlePage={setPage}
@@ -165,8 +187,8 @@ export default function MetricsAccordian(
                 /> */}
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
-                {/* <MetricsTable
-                  metrics={chatPicked90 ? chatHightlight90 : highlightData.chat_points}
+                <MetricsTable
+                  metrics={chatPicked97 ? chatHightlight97 : highlightData.chat_points}
                   handleClick={setPoint}
                   row={point}
                   page={page}
@@ -174,7 +196,7 @@ export default function MetricsAccordian(
                   handlePage={setPage}
                   handlePageSize={setPageSize}
                   type="채팅 기반 편집점"
-                /> */}
+                />
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}
@@ -197,7 +219,7 @@ export default function MetricsAccordian(
             <MetricTitle
               subTitle="웃음 편집점"
               iconSrc="/images/analyticsPage/logo_smile.svg"
-              pointNumber={smilePicked90 ? highlightData.funny_points_90.length : highlightData.funny_points.length}
+              pointNumber={smilePicked97 ? highlightData.funny_points_97.length : highlightData.funny_points.length}
             />
             <Grid container direction="column" justify="center">
               <Grid container direction="row" justify="space-between" alignItems="center">
@@ -211,7 +233,7 @@ export default function MetricsAccordian(
                   입니다
                 </Typography>
                 <ScorePicker
-                  picked90={smilePicked90}
+                  picked90={smilePicked97}
                   setPicked90={setSmilePicked90}
                   setPage2={setPage2}
                   setPageSize2={setPageSize2}
@@ -219,9 +241,13 @@ export default function MetricsAccordian(
                 />
               </Grid>
               <Grid item md={12}>
-                {/* <Chart
-                  data={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
-                  chartType="smile"
+                {/* <Highcharts
+                  data={smilePicked97 ? smileHightlight97 : highlightData.highlight_points}
+                  totalData={highlightData.highlight_total_data}
+                  dataOption={{
+                    boundary: smilePicked97 ? highlightData.boundary_97.funny_sum : highlightData.boundary.funny_sum,
+                  }}
+                  chartType="highlight"
                   highlight={point2}
                   handleClick={setPoint2}
                   handlePage={setPage2}
@@ -229,8 +255,8 @@ export default function MetricsAccordian(
                 /> */}
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
-                {/* <MetricsTable
-                  metrics={smilePicked90 ? smileHightlight90 : highlightData.funny_points}
+                <MetricsTable
+                  metrics={smilePicked97 ? smileHightlight97 : highlightData.funny_points}
                   handleClick={setPoint2}
                   row={point2}
                   page={page2}
@@ -238,7 +264,7 @@ export default function MetricsAccordian(
                   handlePage={setPage2}
                   handlePageSize={setPageSize2}
                   type="웃음 발생 수 기반 편집점"
-                /> */}
+                />
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}
@@ -262,10 +288,10 @@ export default function MetricsAccordian(
               subTitle="카테고리 편집점"
               iconSrc="/images/analyticsPage/logo_search.svg"
               pointNumber={
-                categoryPicked90
-                  ? highlightData[`${selectedCategory.category}_points_90`].length
+                categoryPicked97
+                  ? highlightData[`${selectedCategory.category}_points_97`].length
                   : highlightData[`${selectedCategory.category}_points`].length
-}
+              }
             />
             <div style={{
               display: 'inline-flex', flexDirection: 'row', alignItems: 'center', height: 80,
@@ -302,7 +328,7 @@ export default function MetricsAccordian(
                 입니다
               </Typography>
               <ScorePicker
-                picked90={categoryPicked90}
+                picked90={categoryPicked97}
                 setPicked90={setCategoryPicked90}
                 setPage3={setPage3}
                 setPageSize3={setPageSize3}
@@ -311,21 +337,25 @@ export default function MetricsAccordian(
             </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
-                {/* <Chart
-                  data={categoryPicked90
-                    ? selectCategory90(selectedCategory.category)
-                    : highlightData[`${selectedCategory.category}_points`]}
+                <Highcharts
+                  data={categoryPicked97 ? selectCategory97(selectedCategory.category) : highlightData[`${selectedCategory.category}_points`]}
+                  totalData={highlightData[`${selectedCategory.category}_total_data`]}
+                  // totalData={getCategoryTotalData(selectedCategory)}
+                  dataOption={{
+                    boundary: categoryPicked97 ? highlightData.boundary_97[`${selectedCategory.category}_sum`] : highlightData.boundary[`${selectedCategory.category}_sum`],
+                  }}
                   chartType={selectedCategory.category as MetricsType}
                   highlight={point3}
                   handleClick={setPoint3}
                   handlePage={setPage3}
                   pageSize={pageSize3}
-                /> */}
+                />
               </Grid>
+
               <Grid item md={12} className={classes.contentRight}>
-                {/* <MetricsTable
-                  metrics={categoryPicked90
-                    ? selectCategory90(selectedCategory.category)
+                <MetricsTable
+                  metrics={categoryPicked97
+                    ? selectCategory97(selectedCategory.category)
                     : highlightData[`${selectedCategory.category}_points`]}
                   handleClick={setPoint3}
                   row={point3}
@@ -334,7 +364,7 @@ export default function MetricsAccordian(
                   handlePage={setPage3}
                   handlePageSize={setPageSize3}
                   type="카테고리 기반 편집점"
-                /> */}
+                />
                 <div className={classes.buttonWraper}>
                   <HighlightExport
                     selectedStream={selectedStream}

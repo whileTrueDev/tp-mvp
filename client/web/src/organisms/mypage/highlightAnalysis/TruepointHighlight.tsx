@@ -10,9 +10,9 @@ import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';
 import Highcharts from './HighChart';
-// import sampleData from './sample/sample_short.json';
+import sampleData from './sample/sample_short.json';
 // import sampleData from './sample/sample.json';
-import sampleData from './sample/sample_long.json';
+// import sampleData from './sample/sample_long.json';
 
 const styles = makeStyles((theme) => ({
   root: {

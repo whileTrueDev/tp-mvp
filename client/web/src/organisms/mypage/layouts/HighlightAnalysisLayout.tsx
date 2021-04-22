@@ -12,7 +12,7 @@ import { Chip } from '@material-ui/core';
 import Calendar from '../highlightAnalysis/Calendar';
 import StreamList from '../highlightAnalysis/StreamList';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
-import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
+// import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
 // shared and atoms
 import Button from '../../../atoms/Button/Button';
@@ -25,6 +25,9 @@ import YoutubeIcon from '../../../atoms/stream-analysis-icons/YoutubeIcon';
 import TwitchIcon from '../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 import Loading from '../../shared/sub/Loading';
+import sampleData from '../highlightAnalysis/sample/sample_short.json';
+// import sampleData from '../highlightAnalysis/sample/sample.json';
+// import sampleData from '../highlightAnalysis/sample/sample_long.json';
 
 export default function HighlightAnalysisLayout(): JSX.Element {
   const classes = useHighlightAnalysisLayoutStyles();
@@ -34,7 +37,6 @@ export default function HighlightAnalysisLayout(): JSX.Element {
   const handleClickedDate = (newDate: Date) => {
     setClickedDate(newDate);
   };
-
   // 캘린더의 해당 날짜의 방송 데이터들
   const [dayStreamsList, setDayStreamsList] = React.useState<StreamDataType[]>([]);
 
@@ -201,13 +203,13 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       <Loading clickOpen={isClicked} />
       { !isClicked && highlightData && categoriesData && (
         <>
-          <TruepointHighlight
+          {/* <TruepointHighlight
             selectedStream={selectedStream}
-            highlightData={highlightData}
-          />
+            highlightData={sampleData}
+          /> */}
           <MetricsAccordian
             selectedStream={selectedStream}
-            highlightData={highlightData}
+            highlightData={sampleData}
             categories={categoriesData}
           />
         </>

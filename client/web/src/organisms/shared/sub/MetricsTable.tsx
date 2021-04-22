@@ -45,7 +45,7 @@ export function highlightTerm(rowData: any): string {
   } = rowData;
   const startTime = new Date(start_date);
   const endTime = new Date(end_date);
-  const addEndTime = new Date(endTime.setSeconds(endTime.getSeconds() + 30));
+  const addEndTime = new Date(endTime.setSeconds(endTime.getSeconds()));
   const resultStartTime = getFormatDate(startTime, start_index, true);
   const resultEndTime = getFormatDate(addEndTime, end_index, false);
 

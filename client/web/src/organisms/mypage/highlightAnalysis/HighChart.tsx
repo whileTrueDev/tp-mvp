@@ -81,6 +81,7 @@ export default function Chart({
           return returnDate;
         },
       },
+      // minRange: 3600000,
     },
     yAxis: {
       title: {
@@ -180,15 +181,16 @@ export default function Chart({
       if (chartxAxisRef && chartDataRef) {
         chartxAxisRef.removePlotBand('plot-band');
         chartxAxisRef.addPlotBand({
-          from: chartDataRef[highlight.start_index].x,
-          to: chartDataRef[highlight.end_index].x,
-          color: theme.palette.grey[300],
+          from: chartDataRef[highlight.start_index].x - 36000,
+          to: chartDataRef[highlight.end_index].x + 36000,
+          color: theme.palette.grey[200],
           id: 'plot-band',
           label: {
             text: '클릭한 편집점 구간',
             style: {
               color: theme.palette.primary.main,
               fontWeight: 'bold',
+              fontSize: '16px',
             },
           },
         });
