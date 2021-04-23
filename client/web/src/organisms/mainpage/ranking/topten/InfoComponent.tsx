@@ -30,7 +30,7 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
         </Link>
         <div className={classes.ratingContainer}>
           <StarRating ratingProps={{ size: 'large' }} score={d.averageRating} readOnly />
-          <Typography noWrap>{`주간 평점 ${d.averageRating ? d.averageRating.toFixed(2) : 0}`}</Typography>
+          <Typography noWrap>{`${currentScoreName === 'rating' ? '일일 평균 평점' : '주간 평점'} ${d.averageRating ? d.averageRating.toFixed(2) : 0}`}</Typography>
         </div>
       </div>
 
@@ -38,11 +38,8 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
         {d.title}
       </Typography>
 
-      {currentScoreName === 'viewer'
-        ? <ViewerCountDisplay viewer={d[currentScoreName] || 0} />
-        : (
-          <ScoreBar score={d[currentScoreName] || 0} />
-        )}
+      {currentScoreName === 'viewer' && <ViewerCountDisplay viewer={d[currentScoreName] || 0} />}
+      {!['viewer', 'rating'].includes(currentScoreName) && <ScoreBar score={d[currentScoreName] || 0} />}
 
     </div>
   );

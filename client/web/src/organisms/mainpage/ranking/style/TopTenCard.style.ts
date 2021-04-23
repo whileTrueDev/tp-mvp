@@ -33,9 +33,6 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
       color: theme.palette.primary.main,
     },
   },
-  viewerTab: {
-    marginBottom: theme.spacing(2),
-  },
   loadMoreButtonContainer: {
     textAlign: 'center',
     padding: theme.spacing(2, 0),

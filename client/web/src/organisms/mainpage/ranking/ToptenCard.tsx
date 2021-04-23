@@ -4,11 +4,13 @@ import {
 } from '@material-ui/core';
 
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import useAxios from 'axios-hooks';
+import useAxios, { RefetchOptions } from 'axios-hooks';
 import dayjs from 'dayjs';
 import React, {
-  useCallback, useEffect, useMemo, useRef, useState,
+  useCallback, useEffect, useRef, useState,
 } from 'react';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import { AxiosPromise, AxiosRequestConfig } from 'axios';
 import AdmireIcon from '../../../atoms/svgIcons/AdmireIcon';
 import SmileIcon from '../../../atoms/svgIcons/SmileIcon';
 import CussIcon from '../../../atoms/svgIcons/CussIcon';
@@ -20,13 +22,23 @@ import {
 } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 
-type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer';
+export type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer'|'rating';
 type MainTabColumns = {
   column: MainTabName;
   label: string;
   icon?: string | React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
   className?: string
 }
+
+// 탭목록
+const mainTabColumns: MainTabColumns[] = [
+  { column: 'viewer', label: '평균 시청자수', icon: <TVIcon /> },
+  { column: 'rating', label: '시청자 평점', icon: <StarBorderIcon /> },
+  { column: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
+  { column: 'smile', label: '웃음점수', icon: <SmileIcon /> },
+  { column: 'frustrate', label: '답답함점수', icon: <FrustratedIcon /> },
+  { column: 'cuss', label: '욕점수', icon: <CussIcon /> },
+];
 
 // 하위 카테고리 탭 목록
 const categoryTabColumns = [
@@ -46,7 +58,7 @@ const platformTabColumns: {label: string, platform: PlatformFilterType}[] = [
 ];
 
 interface loadDataArgs {
-  column: string;
+  column: MainTabName;
   categoryId: number;
   platform: PlatformFilterType;
 }
@@ -61,23 +73,10 @@ function TopTenCard(): JSX.Element {
   const platformTabsStyle = usePlatformTabsStyle();
   const platformTabItemStyle = usePlatformTabItemStyle();
   const tabRef = useRef<any>(null);
-  // 탭목록
-  const mainTabColumns: MainTabColumns[] = useMemo(() => (
-    [
-      {
-        column: 'viewer', label: '평균 시청자수', className: classes.viewerTab, icon: <TVIcon />,
-      },
-      { column: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
-      { column: 'smile', label: '웃음점수', icon: <SmileIcon /> },
-      { column: 'frustrate', label: '답답함점수', icon: <FrustratedIcon /> },
-      { column: 'cuss', label: '욕점수', icon: <CussIcon /> },
-
-    ]
-  ), [classes.viewerTab]);
 
   // axios요청
   // 탭 별 상위 10인 요청
-  const [{ data, loading, error }, refetch] = useAxios<RankingDataType>({
+  const [{ loading, error }, refetch] = useAxios<RankingDataType>({
     url: '/rankings/top-ten',
     params: {
       column: mainTabColumns[0].column,
@@ -85,7 +84,19 @@ function TopTenCard(): JSX.Element {
       categoryId: categoryTabColumns[0].categoryId,
     },
   });
-    // 최근 분석날짜 요청
+  // 시청자 평점 탭(일일평점) 요청
+  const [{
+    loading: dailyRatingLoading,
+    error: dailyRatingError,
+  }, getDailyRatingData] = useAxios<RankingDataType>({
+    url: '/ratings/daily-ranking',
+    params: {
+      skip: 0,
+      categoryId: categoryTabColumns[0].categoryId,
+    },
+  }, { manual: true });
+
+  // 최근 분석날짜 요청
   const [{ data: recentAnalysisDate },
   ] = useAxios<Date>('/rankings/recent-analysis-date');
 
@@ -99,14 +110,25 @@ function TopTenCard(): JSX.Element {
   // 랭킹목록 순위, 이름, 다음에 나오는 '주간 점수 그래프 | 주간 시청자수 그래프' 부분
   const [weeklyGraphLabel, setWeeklyGraphLabel] = useState<string>('주간 점수 그래프');
   // 보여줄 데이터 상태
-  const [dataToDisplay, setDataToDisplay] = useState<Omit<RankingDataType, 'totalDataCount'>>({
+  const [dataToDisplay, setDataToDisplay] = useState<RankingDataType>({
     rankingData: [],
     weeklyTrends: {},
+    totalDataCount: 0,
   });
+  // 탭변경 로딩
+  const [tabChangeLoading, setTabChangeLoading] = useState<boolean>(false);
 
   const loadData = useCallback((args: loadDataArgs) => {
     const { column, categoryId, platform } = args;
-    refetch({
+    let request: (config?: AxiosRequestConfig | undefined,
+      options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
+    setTabChangeLoading(true);
+    if (column === 'rating') {
+      request = getDailyRatingData;
+    } else {
+      request = refetch;
+    }
+    request({
       params: {
         column,
         skip: 0,
@@ -115,10 +137,12 @@ function TopTenCard(): JSX.Element {
       },
     }).then((res) => {
       setDataToDisplay(res.data);
+      setTabChangeLoading(false);
     }).catch((e) => {
       console.error(e);
+      setTabChangeLoading(false);
     });
-  }, [refetch]);
+  }, [getDailyRatingData, refetch]);
 
   const onMainTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setMainTabIndex(index);
@@ -129,10 +153,12 @@ function TopTenCard(): JSX.Element {
 
     if (column === 'viewer') {
       setWeeklyGraphLabel('주간 시청자수 추이');
+    } else if (column === 'rating') {
+      setWeeklyGraphLabel('일일 평균 평점 추이');
     } else {
       setWeeklyGraphLabel('주간 점수 그래프');
     }
-  }, [mainTabColumns, categoryTabIndex, platformTabIndex, loadData]);
+  }, [categoryTabIndex, platformTabIndex, loadData]);
 
   const onCategoryTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setCategoryTabIndex(index);
@@ -141,7 +167,7 @@ function TopTenCard(): JSX.Element {
     const { platform } = platformTabColumns[platformTabIndex];
 
     loadData({ column, categoryId, platform });
-  }, [loadData, mainTabColumns, mainTabIndex, platformTabIndex]);
+  }, [loadData, mainTabIndex, platformTabIndex]);
 
   const onPlatformTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setPlatformTabIndex(index);
@@ -150,10 +176,18 @@ function TopTenCard(): JSX.Element {
     const { platform } = platformTabColumns[index];
 
     loadData({ column, categoryId, platform });
-  }, [categoryTabIndex, loadData, mainTabColumns, mainTabIndex]);
+  }, [categoryTabIndex, loadData, mainTabIndex]);
 
   const loadMoreData = useCallback(() => {
-    refetch({
+    let request: (config?: AxiosRequestConfig | undefined,
+      options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
+
+    if (mainTabColumns[mainTabIndex].column === 'rating') {
+      request = getDailyRatingData;
+    } else {
+      request = refetch;
+    }
+    request({
       params: {
         column: mainTabColumns[mainTabIndex].column,
         skip: dataToDisplay.rankingData.length,
@@ -165,11 +199,13 @@ function TopTenCard(): JSX.Element {
       setDataToDisplay((prev) => ({
         rankingData: [...prev.rankingData, ...newData.rankingData],
         weeklyTrends: { ...prev.weeklyTrends, ...newData.weeklyTrends },
+        totalDataCount: newData.totalDataCount,
       }));
     }).catch((e) => {
       console.error(e);
     });
-  }, [categoryTabIndex, dataToDisplay.rankingData.length, mainTabColumns, mainTabIndex, platformTabIndex, refetch]);
+  }, [categoryTabIndex, dataToDisplay.rankingData.length,
+    getDailyRatingData, mainTabIndex, platformTabIndex, refetch]);
 
   useEffect(() => {
     // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
@@ -254,12 +290,14 @@ function TopTenCard(): JSX.Element {
           <TopTenListContainer
             data={dataToDisplay}
             currentTab={mainTabColumns[mainTabIndex].column}
-            loading={loading}
-            error={error}
+            loading={loading || dailyRatingLoading}
+            tabChanging={tabChangeLoading}
+            error={error || dailyRatingError}
             weeklyGraphLabel={weeklyGraphLabel}
           />
           <div className={classes.loadMoreButtonContainer}>
-            { data && (data.totalDataCount > dataToDisplay.rankingData.length)
+            { (dataToDisplay.rankingData.length !== 0)
+            && (dataToDisplay.totalDataCount > dataToDisplay.rankingData.length)
               ? (
                 <Button
                   className={classes.loadMoreButton}
