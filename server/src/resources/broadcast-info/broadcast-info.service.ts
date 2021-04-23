@@ -14,6 +14,9 @@ import { CreateStreamVoteDto } from '@truepoint/shared/dto/broadcast-info/Create
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
 import { StreamVotesEntity } from './entities/streamVotes.entity';
+import { UserEntity } from '../users/entities/user.entity';
+import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
+import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 
 Injectable();
 export class BroadcastInfoService {
@@ -25,6 +28,12 @@ export class BroadcastInfoService {
     private readonly streamsRepository: Repository<StreamsEntity>,
     @InjectRepository(StreamVotesEntity)
     private readonly streamVoteRepo: Repository<StreamVotesEntity>,
+    @InjectRepository(PlatformAfreecaEntity)
+    private readonly afreecaRepo: Repository<PlatformAfreecaEntity>,
+    @InjectRepository(PlatformTwitchEntity)
+    private readonly twitchRepo: Repository<PlatformTwitchEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepo: Repository<UserEntity>,
   ) {
     this.streamsTableName = this.configService.get('NODE_ENV') === 'production' ? this.streamsRepository.metadata.tableName : 'Streams';
   }
@@ -142,12 +151,23 @@ export class BroadcastInfoService {
     return this.streamVoteRepo.count({ vote: dto.vote === 'up' });
   }
 
+  /**
+   * 좋아요/싫어요를 취소합니다.
+   * @param id 취소할 vote아이디
+   * @returns 1 | 0
+   */
   async cancelVote(id: number): Promise<number> {
     // 1. vote 취소
     const result = await this.streamVoteRepo.delete(id);
     return result.affected;
   }
 
+  /**
+   * 해당 방송에 해당 IP를 가진 유저가 진행한 좋아요/싫어요 내역을 조회합니다.
+   * @param ip 요청자 IP
+   * @param streamId 좋아요/싫어요 표시한 방송ID
+   * @returns StreamVoteEntity
+   */
   async checkIsVotedByIp(ip: string, streamId: string): Promise<StreamVotesEntity> {
     return this.streamVoteRepo.findOne({
       where: {
@@ -158,5 +178,22 @@ export class BroadcastInfoService {
         createDate: 'DESC',
       },
     });
+  }
+
+  async getTodayTopViewerUserByPlatform(): Promise<any> {
+    const result = await this.streamsRepository.createQueryBuilder('stream')
+      .innerJoin(UserEntity, 'u', 'u.userId = stream.userId')
+      .leftJoin(PlatformAfreecaEntity, 'a', 'a.afreecaId = u.userId')
+      .leftJoin(PlatformTwitchEntity, 't', 't.twitchChannelName = u.userId')
+      .select(['creatorId', 'platform', 'nickName'])
+      .groupBy('stream.platform')
+      .addSelect('max(viewer)', 'viewer')
+      .addSelect('a.logo', 'afreecaLogo')
+      .addSelect('t.logo', 'twitchLogo')
+      .where('"2021-04-22" = DATE(stream.startDate)') // 테스트용 (오늘데이터가 없어 확인불가하여 테스트용으로 하드코딩)
+      // .where('CURDATE() = DATE(stream.startDate)') // 배포용
+      .execute();
+
+    return result;
   }
 }

@@ -1,6 +1,8 @@
-import React from 'react';
+import { TodayTopViewerUsersRes } from '@truepoint/shared/dist/res/TodayTopViewerUsersRes.interface';
+import React, { useMemo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
+import useAxios from 'axios-hooks';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   bg: {
@@ -30,6 +32,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export default function BoardHeaderImage(): JSX.Element {
   const classes = useStyles();
+  const [{ data }] = useAxios<TodayTopViewerUsersRes>('broadcast-info/today-top-viewer');
+
+  const twitchTopUser = useMemo(() => data?.find((x) => x.platform === 'twitch'), [data]);
+  console.log(twitchTopUser);
+  const afreecaTopUser = useMemo(() => data?.find((x) => x.platform === 'afreeca'), [data]);
+  console.log(afreecaTopUser);
 
   return (
     <div className={classes.bg}>

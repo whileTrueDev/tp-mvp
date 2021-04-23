@@ -1,3 +1,4 @@
+import { TodayTopViewerUsersRes } from '@truepoint/shared/dist/res/TodayTopViewerUsersRes.interface';
 import { CreateStreamVoteDto } from '@truepoint/shared/dist/dto/broadcast-info/CreateStreamVote.dto';
 import {
   Body,
@@ -35,11 +36,21 @@ export class BroadcastInfoController {
     );
   }
 
+  /**
+   * 방송에 대한 좋아요 / 싫어요를 추가합니다.
+   * @param ip 요청자 IP
+   * @param dto CreateSteramVoteDto
+   * @returns 1 | 0
+   */
   @Post('vote')
   vote(@Ip() ip: string, @Body(ValidationPipe) dto: CreateStreamVoteDto): Promise<number> {
     return this.broadcastService.vote({ ...dto, ip });
   }
 
+  /**
+   * 방송에대한 좋아요 / 싫어요를 삭제합니다.
+   * @param id 삭제할 vote의 고유ID
+   */
   @Delete('vote')
   cancelVote(@Query('id') id: number): Promise<number> {
     return this.broadcastService.cancelVote(id);
@@ -71,7 +82,30 @@ export class BroadcastInfoController {
   }
 
   /**
-   * 
+   * 플랫폼(아프리카/트위치) 별로 오늘 최고 시청자를 기록한 유저정보를 가져옵니다.
+   * @returns {TodayTopViewerUsersRes}
+   * @example 데이터 예시 [
+      {
+          "creatorId": "joey1114",
+          "platform": "afreeca",
+          "nickName": "저라뎃",
+          "viewer": 18056
+      },
+      {
+          "creatorId": "597621638",
+          "platform": "twitch",
+          "nickName": "소행성612",
+          "viewer": 12826
+      }
+    ]
+   */
+  @Get('today-top-viewer')
+  getTodayTopViewerUserByPlatform(): Promise<TodayTopViewerUsersRes> {
+    return this.broadcastService.getTodayTopViewerUserByPlatform();
+  }
+
+  /**
+   * 1개의 스트림에 대한 정보를 반환
    * @param platform twitch | afreeca
    * @param streamId 
    * @returns 
