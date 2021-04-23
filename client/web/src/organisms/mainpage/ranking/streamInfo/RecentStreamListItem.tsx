@@ -32,7 +32,7 @@ export default function RecentStreamListItem({
       <Tooltip
         title={stream.title.length > 25 ? <Typography variant="body2">{stream.title}</Typography> : ''}
       >
-        <Typography onClick={onClick} variant="h4" className={classes.title}>
+        <Typography onClick={onClick} variant="h4" className={classes.title} component="span">
           {stream.title.length > 25 ? `${stream.title.slice(0, 25)}...` : stream.title}
           <Typography variant="body1" component="span" className={classes.subtitle}>
             {dayjs(stream.startDate).format('YYYY-MM-DD')}
