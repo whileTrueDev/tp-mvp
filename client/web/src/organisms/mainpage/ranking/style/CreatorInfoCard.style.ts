@@ -86,9 +86,7 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
       width: '100%',
     },
     chipLink: {
-      position: 'absolute',
-      right: theme.spacing(2),
-      top: theme.spacing(2),
+      margin: theme.spacing(0, 1),
       fontSize: theme.typography.body1.fontSize,
       padding: theme.spacing(2),
     },

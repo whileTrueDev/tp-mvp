@@ -50,6 +50,8 @@ export default function DescriptionField({
       displayValue={description || '없음'}
       field={(
         <TextField
+          multiline
+          rowsMax={3}
           value={desc}
           onChange={handleChange}
           variant="outlined"

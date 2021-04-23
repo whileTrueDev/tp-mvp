@@ -2,13 +2,13 @@ import {
   BadRequestException, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingInfoRes, ListItemOrderByRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
+import { Repository } from 'typeorm';
+import { RankingsEntity } from '../rankings/entities/rankings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
-import { RankingsEntity } from '../rankings/entities/rankings.entity';
+import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 @Injectable()
 export class CreatorRatingsService {
   constructor(

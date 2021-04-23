@@ -1,3 +1,4 @@
+import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
   CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
@@ -9,11 +10,17 @@ import CreatorCommentList from './creatorInfo/CreatorCommentList';
 import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 
+interface CreatorEvaluationProps {
+  userData?: User;
+}
+
 /**
  * 인방랭킹 목록에서 크리에이터 이름 눌렀을 때 보여질 방송인정보 페이지 컴포넌트
  * @returns 
  */
-export default function CreatorEvaluation(): JSX.Element {
+export default function CreatorEvaluation({
+  userData,
+}: CreatorEvaluationProps): JSX.Element {
   const classes = useCreatorEvalutationCardStyle();
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
   const [, getCreatorRatingInfo] = useAxios<CreatorRatingInfoRes>(`/ratings/info/${platform}/${creatorId}`, { manual: true });
@@ -65,6 +72,7 @@ export default function CreatorEvaluation(): JSX.Element {
       <GoBackButton />
       <CreatorInfoCard
         updateAverageRating={updateAverageRating}
+        user={userData}
         info={info}
         ratings={ratings}
         scores={scores}

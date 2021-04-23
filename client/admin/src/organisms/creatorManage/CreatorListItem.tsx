@@ -1,5 +1,8 @@
-import { makeStyles } from '@material-ui/core';
+import classnames from 'classnames';
+import { makeStyles, Tooltip } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import { Comment, Image } from '@material-ui/icons';
+import { UserDetail } from '@truepoint/shared/dist/interfaces/UserDetail.interface';
 import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
@@ -8,6 +11,12 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       textDecoration: 'underline',
     },
+  },
+  icon: {
+    verticalAlign: 'middle',
+  },
+  success: {
+    color: theme.palette.success.main,
   },
 }));
 
@@ -18,6 +27,7 @@ interface CreatorListItemProps {
   twitchId?: string;
   afreecaId?: string;
   youtubeId?: string;
+  detail?: UserDetail
 }
 
 export default function CreatorListItem({
@@ -27,6 +37,7 @@ export default function CreatorListItem({
   twitchId,
   afreecaId,
   youtubeId,
+  detail,
 }: CreatorListItemProps): React.ReactElement {
   const classes = useStyles();
   return (
@@ -35,6 +46,18 @@ export default function CreatorListItem({
         {twitchId ? (<img style={{ marginRight: 4 }} alt="twitch" width={20} height={20} src="/logos/twitchLogo.png" />) : (null)}
         {afreecaId ? (<img style={{ marginRight: 4 }} alt="afreeca" width={20} height={20} src="/logos/afreecaLogo.png" />) : (null)}
         {youtubeId ? (<img style={{ marginRight: 4 }} alt="youtube" width={20} height={20} src="/logos/youtubeLogo.png" />) : (null)}
+      </span>
+      <span>
+        {detail?.description && (
+        <Tooltip title="상세 설명 있음">
+          <Comment color="secondary" fontSize="small" className={classes.icon} />
+        </Tooltip>
+        )}
+        {(detail?.heroImageLight || detail?.heroImageDark) && (
+        <Tooltip title={`대문이미지 ${detail?.heroImageLight ? '라이트모드' : ''} ${detail?.heroImageDark ? ',다크모드' : ''} 있음`}>
+          <Image fontSize="small" className={classnames(classes.icon, classes.success)} />
+        </Tooltip>
+        )}
       </span>
       {`${userId} / ${nickName}`}
     </Typography>

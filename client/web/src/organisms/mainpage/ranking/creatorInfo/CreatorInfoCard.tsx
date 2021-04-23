@@ -1,21 +1,22 @@
-import React, { useCallback } from 'react';
 import {
-  Grid, Avatar, Typography, Chip,
+  Avatar, Chip, Grid, Typography,
 } from '@material-ui/core';
-import { useSnackbar } from 'notistack';
+import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-
+import { useSnackbar } from 'notistack';
+import React, { useCallback } from 'react';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import AdmireIcon from '../../../../atoms/svgIcons/AdmireIcon';
 import CussIcon from '../../../../atoms/svgIcons/CussIcon';
 import FrustratedIcon from '../../../../atoms/svgIcons/FrustratedIcon';
 import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
-import StarRating from './StarRating';
-import ScoreBar from '../topten/ScoreBar';
 import axios from '../../../../utils/axios';
-import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import { useCreatorInfoCardStyles, useExLargeRatingStyle } from '../style/CreatorInfoCard.style';
+import ScoreBar from '../topten/ScoreBar';
+import StarRating from './StarRating';
 
 export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
+  user?: User;
   updateAverageRating?: () => void
 }
 
@@ -36,7 +37,7 @@ const scoreLables: {name: columns, label: string, icon?: any}[] = [
 export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const {
-    info, ratings, scores, userRating, updateAverageRating,
+    info, ratings, scores, userRating, updateAverageRating, user,
   } = props;
   const {
     platform, creatorId, logo, nickname, twitchChannelName,
@@ -94,10 +95,37 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
         }
       });
   }, [creatorId, updateAverageRating]);
+
   return (
     <Grid container className={classes.creatorInfoContainer}>
       {/* 왼쪽 크리에이터 기본설명, 평점 */}
       <Grid container item className={classes.left} xs={7}>
+        <Grid item xs={12} style={{ textAlign: 'right' }}>
+          {user?.detail?.youtubeChannelAddress ? (
+            <Chip
+              className={classes.chipLink}
+              component="a"
+              target="_blank"
+              rel="noopener"
+              size="small"
+              clickable
+              href={user?.detail?.youtubeChannelAddress}
+              label="Youtube 가기"
+            />
+          ) : (null)}
+          <Chip
+            className={classes.chipLink}
+            component="a"
+            target="_blank"
+            rel="noopener"
+            size="small"
+            clickable
+            href={platform === 'afreeca'
+              ? `https://bj.afreecatv.com/${creatorId}`
+              : `https://www.twitch.tv/${twitchChannelName}`}
+            label="방송 보러 가기"
+          />
+        </Grid>
         <Grid item className={classes.avatarContainer} xs={4}>
           <Avatar className={classes.avatar} src={logo} />
         </Grid>
@@ -124,22 +152,13 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
               />
             </div>
           </div>
-          <div className={classes.creatorDescription} />
 
+          <div className={classes.creatorDescription}>
+            <Typography component="pre">
+              {user?.detail ? String(user.detail.description) : ''}
+            </Typography>
+          </div>
         </Grid>
-
-        <Chip
-          className={classes.chipLink}
-          component="a"
-          target="_blank"
-          rel="noopener"
-          size="small"
-          clickable
-          href={platform === 'afreeca'
-            ? `https://bj.afreecatv.com/${creatorId}`
-            : `https://www.twitch.tv/${twitchChannelName}`}
-          label="방송 보러 가기"
-        />
       </Grid>
 
       {/* 오른쪽 크리에이터 점수 */}

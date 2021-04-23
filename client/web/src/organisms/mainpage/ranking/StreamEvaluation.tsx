@@ -14,8 +14,8 @@ export default function StreamEvaluation(): React.ReactElement {
   const classes = useCreatorEvalutationCardStyle();
   const location = useLocation<User>();
   const { platform, streamId } = useParams<{creatorId: string, platform: 'afreeca'|'twitch', streamId: string}>();
-
   const creatorInfo = location.state;
+
   const [{ data: streamData, loading }, refetch] = useAxios<RecentStream>({ url: `broadcast-info/${platform}/${streamId}`, method: 'get' });
 
   // ****************************************
