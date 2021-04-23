@@ -47,7 +47,7 @@ export interface Scores{
   cussScore?: number,
   smileScore?: number,
   viewer? : number,
-  ratings? : number,
+  rating? : number,
 }
 export interface TopTenDataItem extends Scores{
   id: number,
