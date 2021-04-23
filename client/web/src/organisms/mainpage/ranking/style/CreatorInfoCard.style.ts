@@ -92,6 +92,12 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
       fontSize: theme.typography.body1.fontSize,
       padding: theme.spacing(2),
     },
+    logo: {
+      marginRight: theme.spacing(1),
+      width: theme.spacing(3),
+      height: theme.spacing(3),
+      verticalAlign: 'middle',
+    },
   });
 });
 

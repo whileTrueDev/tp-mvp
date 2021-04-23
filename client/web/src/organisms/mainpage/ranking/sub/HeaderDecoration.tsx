@@ -6,6 +6,7 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
   headerImages: {
     width: '100%',
     backgroundColor: theme.palette.primary.main,
+    overflowX: 'hidden',
   },
   container: {
     minWidth: RANKING_PAGE_CONTAINER_WIDTH,
@@ -16,7 +17,8 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
     backgroundPositionY: 'bottom',
     height: theme.spacing(30),
     position: 'relative',
-    margin: 'auto',
+    marginLeft: 'auto',
+    marginRight: -12,
   },
 }));
 export default function HeaderDecoration(): JSX.Element {

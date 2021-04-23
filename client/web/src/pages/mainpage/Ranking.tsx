@@ -18,6 +18,7 @@ import RecentStreamList from '../../organisms/mainpage/ranking/RecentStreamList'
 import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
 import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
 import FooterDecoration from '../../organisms/mainpage/ranking/sub/FooterDecoration';
+import StreamEvaluation from '../../organisms/mainpage/ranking/StreamEvaluation';
 
 export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
@@ -72,6 +73,13 @@ export default function Ranking(): JSX.Element {
             <CreatorEvaluation />
           </Container>
         </Route>
+        {/* 최근 방송 정보 섹션 */}
+        <Route exact path={`${path}/:platform/:creatorId/:streamId`}>
+          <Container className={wrapper.container}>
+            <StreamEvaluation />
+          </Container>
+        </Route>
+
         <Route>
           <Redirect to="/ranking" />
         </Route>

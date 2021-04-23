@@ -7,17 +7,27 @@ import { Repository } from 'typeorm';
 
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
-import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
+import { RecentStream, RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 // database entities
+import { ConfigService } from '@nestjs/config';
+import { CreateStreamVoteDto } from '@truepoint/shared/dto/broadcast-info/CreateStreamVote.dto';
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+import { StreamVotesEntity } from './entities/streamVotes.entity';
 
 Injectable();
 export class BroadcastInfoService {
+  streamsTableName: string;
+
   constructor(
+    private readonly configService: ConfigService,
     @InjectRepository(StreamsEntity)
-      private readonly streamsRepository: Repository<StreamsEntity>,
-  ) {}
+    private readonly streamsRepository: Repository<StreamsEntity>,
+    @InjectRepository(StreamVotesEntity)
+    private readonly streamVoteRepo: Repository<StreamVotesEntity>,
+  ) {
+    this.streamsTableName = this.configService.get('NODE_ENV') === 'production' ? this.streamsRepository.metadata.tableName : 'Streams';
+  }
 
   /**
    * 입력 받은 기간 내 분석이 끝난 방송 정보 리스트 조회 함수
@@ -78,11 +88,11 @@ export class BroadcastInfoService {
     const result = await this.streamsRepository
       .query(
         `SELECT
-          streamId, title, startDate, viewer,
+          streamId, title, startDate, endDate, viewer, chatCount,
           IFNULL(SUM(vote), 0) AS likeCount,
           IFNULL(COUNT(*) - SUM(vote), 0) AS hateCount
-        FROM Streams as s
-        LEFT JOIN StreamVotes as sv ON s.streamId = sv.streamStreamId
+        FROM ${this.streamsTableName} as s
+        LEFT JOIN ${this.streamVoteRepo.metadata.tableName} as sv ON s.streamId = sv.streamStreamId
         WHERE s.creatorId = ?
         GROUP BY streamId
         ORDER BY s.startDate DESC
@@ -90,5 +100,63 @@ export class BroadcastInfoService {
       );
 
     return result;
+  }
+
+  /**
+   * 1개의 스트림을 조회합니다.
+   * @param streamId 스트림 고유 ID
+   * @returns StreamEntity
+   */
+  async findOneSteam(platform: string, streamId: string): Promise<RecentStream> {
+    const result = await this.streamsRepository
+      .query(
+        `SELECT streamId, title, startDate, endDate, viewer, chatCount,
+          IFNULL(SUM(vote), 0) AS likeCount,
+          IFNULL(COUNT(*) - SUM(vote), 0) AS hateCount
+        FROM ${this.streamsTableName} as s
+        LEFT JOIN ${this.streamVoteRepo.metadata.tableName} as sv ON s.streamId = sv.streamStreamId
+        WHERE s.platform = ? AND s.streamId = ?`, [platform, streamId],
+      );
+    if (result.length === 0) return null;
+    return result[0];
+  }
+
+  /**
+   * 방송에 대한 좋아요/싫어요를 생성합니다.
+   * @param dto CreateStreamVoteDto
+   * @returns 좋아요/싫어요 반영 이후 좋아요/싫어요 숫자
+   */
+  async vote(dto: CreateStreamVoteDto & { ip: string }): Promise<number> {
+    // id 를 보내야 한다.
+    const stream = { streamId: dto.streamId, platform: dto.platform };
+    // *********************************
+    // 있으면 업데이트, 없으면 등록
+    const data = this.streamVoteRepo.create({
+      id: dto.id,
+      userIp: dto.ip,
+      vote: dto.vote === 'up',
+      stream,
+    });
+    await this.streamVoteRepo.save(data);
+
+    return this.streamVoteRepo.count({ vote: dto.vote === 'up' });
+  }
+
+  async cancelVote(id: number): Promise<number> {
+    // 1. vote 취소
+    const result = await this.streamVoteRepo.delete(id);
+    return result.affected;
+  }
+
+  async checkIsVotedByIp(ip: string, streamId: string): Promise<StreamVotesEntity> {
+    return this.streamVoteRepo.findOne({
+      where: {
+        userIp: ip,
+        stream: streamId,
+      },
+      order: {
+        createDate: 'DESC',
+      },
+    });
   }
 }

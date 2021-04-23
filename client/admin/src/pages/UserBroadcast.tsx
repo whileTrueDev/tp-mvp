@@ -14,7 +14,7 @@ const UserBroadcast = (): JSX.Element => {
   const location: Record<string, any> = useLocation();
   const history = useHistory();
   const { nickName } = location.state;
-  const [{ data, loading }] = useAxios<BroadcastDataForDownload[]>(`${url}/${userId}`);
+  const [{ data, loading }] = useAxios<BroadcastDataForDownload[]>(`${url}/byuser/${userId}`);
 
   return (
     <div>

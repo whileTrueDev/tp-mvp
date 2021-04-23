@@ -2,7 +2,7 @@ import { useMediaQuery, useTheme } from '@material-ui/core';
 import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios from 'axios-hooks';
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useRecentStreamStyles from './style/RecentStream.styles';
 import RecentStreamListItem from './streamInfo/RecentStreamListItem';
@@ -18,6 +18,7 @@ const listPositions = [
 
 export default function RecentStreamList(): React.ReactElement {
   const classes = useRecentStreamStyles();
+  const history = useHistory();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -48,7 +49,13 @@ export default function RecentStreamList(): React.ReactElement {
     <section className={classes.section} id="broad-list">
       <div className={classes.itembox}>
         {!error && dataSource && dataSource.map((stream) => (
-          <RecentStreamListItem key={stream.streamId} stream={stream} />
+          <RecentStreamListItem
+            key={stream.streamId}
+            stream={stream}
+            onClick={() => {
+              history.push(`${window.location.pathname}/${stream.streamId}`, userData.data);
+            }}
+          />
         ))}
       </div>
 

@@ -6,9 +6,10 @@ import { BroadcastInfoController } from './broadcast-info.controller';
 
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+import { StreamVotesEntity } from './entities/streamVotes.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([StreamsEntity, StreamSummaryEntity]),
+    TypeOrmModule.forFeature([StreamsEntity, StreamSummaryEntity, StreamVotesEntity]),
     TypeOrmConfigService,
   ],
   controllers: [BroadcastInfoController],

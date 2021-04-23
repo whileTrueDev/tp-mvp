@@ -9,6 +9,7 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
   return createStyles({
     background: {
       backgroundColor: type === 'light' ? theme.palette.primary.main : theme.palette.background.paper,
+      minHeight: '100vh',
     },
     container: {
       minWidth: rankingPageContainerWidth,
