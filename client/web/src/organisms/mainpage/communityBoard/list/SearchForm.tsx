@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
   },
   inputContainer: {
+    '& .MuiOutlinedInput-notchedOutline': {
+      border: `3px solid ${theme.palette.text.primary}`,
+    },
     display: 'flex',
     boxShadow: 'none',
     marginLeft: theme.spacing(1),
@@ -20,11 +23,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   input: {
     paddingLeft: theme.spacing(1),
     marginRight: theme.spacing(2),
-    border: `3px solid ${theme.palette.text.primary}`,
-    borderRadius: theme.spacing(1),
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.background.paper,
   },
   iconButton: {
     padding: theme.spacing(0, 1),
+    color: theme.palette.text.primary,
   },
 }));
 
@@ -71,11 +74,11 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
             className={classes.input}
             onKeyDown={onKeyDown}
             inputRef={inputRef}
+            placeholder="글찾기~"
             startAdornment={
               (
                 <InputAdornment position="start">
                   <IconButton
-                    color="primary"
                     className={classes.iconButton}
                     aria-label="search"
                     onClick={onClick}

@@ -46,11 +46,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   listContainer: {
     position: 'relative',
+    backgroundColor: theme.palette.divider,
   },
   listItem: { // button 엘리먼트 사용하고 있어서 기본 기본스타일 제거
     width: '100%',
     position: 'relative',
-    backgroundColor: 'transparent',
+    backgroundColor: theme.palette.background.paper,
+    marginBottom: theme.spacing(1),
     cursor: 'pointer',
     border: 'none',
     padding: 0,
@@ -108,7 +110,7 @@ interface ColumnData {
 const boardColumns: ColumnData[] = [
   { key: 'postNumber', text: '번호', width: '8%' },
   { key: 'title', text: '제목', width: '44%' },
-  { key: 'nickname', text: '작성자', width: '17%' },
+  { key: 'nickname', text: '글쓴이', width: '17%' },
   { key: 'createDate', text: '작성일', width: '15%' },
   { key: 'hit', text: '조회', width: '8%' },
   { key: 'recommend', text: '추천', width: '8%' },
