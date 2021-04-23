@@ -17,10 +17,10 @@ import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 
 export type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
-export type ColumnType = 'smile'| 'frustrate'| 'admire'| 'cuss' | 'viewer';
+export type ColumnType = 'smile'| 'frustrate'| 'admire'| 'cuss' | 'viewer' | 'rating';
 export type PlatformType = 'all' | 'twitch' | 'afreeca';
 
-interface getTopTenByColumnArgs{
+export interface getTopTenByColumnArgs{
   column: ColumnType,
   skip: number,
   categoryId: number,
@@ -283,7 +283,7 @@ export class RankingsService {
           .from(RankingsEntity, 'R')
           .select([
             `R.${targetColumn} AS ${targetColumn}`,
-            'DATE_FORMAT(R.streamDate,"%Y-%c-%e") AS streamDate',
+            'DATE_FORMAT(R.streamDate,"%Y-%m-%d") AS streamDate',
             'R.creatorId AS creatorId',
             `RANK() OVER(PARTITION BY R.creatorId ORDER BY R.streamDate DESC, R.${targetColumn} DESC) AS rnk`,
           ])
@@ -414,7 +414,7 @@ export class RankingsService {
     FROM(
       SELECT A.*, ROW_NUMBER() OVER (partition by cdate, platform order by maxViewer DESC) AS "rank"
       FROM (
-        SELECT creatorId, createDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(createDate,"%Y-%c-%e") AS cdate
+        SELECT creatorId, createDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(createDate,"%Y-%m-%d") AS cdate
         FROM Rankings
         WHERE createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 WEEK)
         Group by creatorId, cdate

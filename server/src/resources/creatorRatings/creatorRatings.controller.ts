@@ -1,10 +1,12 @@
 import {
-  Body, Controller, Delete, Get, Ip, Param, Post, ValidationPipe,
+  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, ValidationPipe,
 } from '@nestjs/common';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingInfoRes, CreatorAverageRatings, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interface';
 import { CreatorRatingsService } from './creatorRatings.service';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
+import { PlatformType } from '../rankings/rankings.service';
 @Controller('ratings')
 export class CreatorRatingsController {
   constructor(
@@ -92,6 +94,19 @@ export class CreatorRatingsController {
   @Get('/weekly-ranking')
   getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
     return this.ratingsService.getWeeklyRatingsRanking();
+  }
+
+  @Get('/daily-ranking')
+  getDailyRatingRankings(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+      @Query('categoryId', new DefaultValuePipe(1), ParseIntPipe) categoryId: number,
+      @Query('platform', new DefaultValuePipe('all')) platform: PlatformType,
+  ): Promise<RankingDataType> {
+    return this.ratingsService.getDailyRatingRankings({
+      skip,
+      categoryId,
+      platform,
+    });
   }
 
   /**

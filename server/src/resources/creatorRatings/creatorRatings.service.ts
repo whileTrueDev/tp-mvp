@@ -3,14 +3,15 @@ import {
 } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getConnection } from 'typeorm';
+import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
+import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { RankingsEntity } from '../rankings/entities/rankings.entity';
-
+import { PlatformType } from '../rankings/rankings.service';
 @Injectable()
 export class CreatorRatingsService {
   constructor(
@@ -385,5 +386,134 @@ export class CreatorRatingsService {
       endDate: dates[dates.length - 1],
       rankingList: result,
     };
+  }
+
+  async getDailyRatingRankings(
+    { skip, categoryId, platform: platformType }: {
+      skip: number,
+      categoryId: number,
+      platform: PlatformType
+    },
+  ): Promise<RankingDataType> {
+    try {
+      const baseQuery = await this.ratingsRepository
+        .createQueryBuilder('ratings')
+        .select([
+          'ratings.id AS id',
+          'ratings.creatorId AS creatorId',
+          'AVG(ratings.rating) AS rating',
+          'ratings.platform AS platform',
+        ])
+        .where('DATE_FORMAT(ratings.createDate, \'%Y-%m-%d\') = (curdate() - interval 1 day)')
+        .groupBy('ratings.creatorId')
+        .orderBy('AVG(ratings.rating)', 'DESC')
+        .addOrderBy('COUNT(ratings.id)', 'DESC');
+
+      let qb: SelectQueryBuilder<CreatorRatingsEntity>;
+      if (platformType === 'all') {
+        qb = await baseQuery
+          .addSelect([
+            'Twitch.logo AS twitchProfileImage',
+            'Twitch.twitchStreamerName AS twitchStreamerName',
+            'Twitch.twitchChannelName AS twitchChannelName',
+            'Afreeca.logo AS afreecaProfileImage',
+            'Afreeca.afreecaStreamerName AS afreecaStreamerName',
+          ])
+          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+      } else if (platformType === 'afreeca') {
+        qb = await baseQuery
+          .addSelect([
+            'Afreeca.logo AS afreecaProfileImage',
+            'Afreeca.afreecaStreamerName AS afreecaStreamerName',
+          ])
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .andWhere('ratings.platform =:platformType', { platformType: 'afreeca' })
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+      } else if (platformType === 'twitch') {
+        qb = await baseQuery
+          .addSelect([
+            'Twitch.logo AS twitchProfileImage',
+            'Twitch.twitchStreamerName AS twitchStreamerName',
+            'Twitch.twitchChannelName AS twitchChannelName',
+          ])
+          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere('ratings.platform =:platformType', { platformType: 'twitch' })
+          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+      }
+
+      const totalData = await qb.clone().getRawMany();
+      const totalCount = totalData.length;
+
+      const data = await qb
+        .offset(skip)
+        .limit(10)
+        .getRawMany();
+
+      const rankingData = data.map((d) => ({
+        id: d.id,
+        creatorId: d.creatorId,
+        creatorName: d.platform === 'twitch' ? d.twitchStreamerName : d.afreecaStreamerName,
+        platform: d.platform,
+        twitchProfileImage: d.twitchProfileImage,
+        afreecaProfileImage: d.afreecaProfileImage,
+        twitchChannelName: d.twitchChannelName,
+        averageRating: d.rating,
+      }));
+
+      const selectedCreatorsId = data.map((d) => d.creatorId);
+      const dates = this.getWeekDates();
+
+      const weekData = await this.getRatingTrendsInWeek(selectedCreatorsId, dates);
+
+      return {
+        rankingData,
+        weeklyTrends: weekData,
+        totalDataCount: totalCount,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  // dates에 해당하는 크리에이터 일간 평균 평점
+  async getRatingTrendsInWeek(ids: string[], dates: string[]): Promise<WeeklyTrendsType> {
+    const data = await this.ratingsRepository.createQueryBuilder('ratings')
+      .select([
+        'ratings.creatorId AS creatorId',
+        'AVG(ratings.rating) AS avgRating',
+        'DATE_FORMAT(ratings.createDate, "%Y-%m-%d") AS date',
+      ])
+      .where(`ratings.creatorId IN ('${ids.join("','")}')`)
+      .andWhere(`DATE_FORMAT(ratings.createDate, "%Y-%m-%d") IN ('${dates.join("','")}')`)
+      .groupBy('ratings.creatorId')
+      .addGroupBy('date')
+      .orderBy('ratings.creatorId')
+      .addOrderBy('date', 'ASC')
+      .getRawMany();
+
+    // 데이터를 
+    // {[creatorId] : [{"createDate": "2021-04-16","rating": 3.25}, ... ]}
+    // 형태로 바꿈
+    const result = ids.reduce((resultObj, id) => ({
+      ...resultObj,
+      [id]: dates.map((d) => {
+        const dateMatchedItem: {date: string; avgRating: number} = data.find((item) => (
+          item.date === d && item.creatorId === id
+        ));
+        return {
+          createDate: d,
+          rating: dateMatchedItem ? dateMatchedItem.avgRating : 0,
+        };
+      }),
+    }), {});
+
+    return result;
   }
 }
