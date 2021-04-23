@@ -60,6 +60,7 @@ export default function StreamEvaluation(): React.ReactElement {
       />
       )}
 
+      {/* 댓글창 추가 필요 210423 by hwasurr */}
     </div>
   );
 }
