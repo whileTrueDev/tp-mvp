@@ -190,8 +190,8 @@ export class BroadcastInfoService {
       .addSelect('max(viewer)', 'viewer')
       .addSelect('a.logo', 'afreecaLogo')
       .addSelect('t.logo', 'twitchLogo')
-      .where('"2021-04-22" = DATE(stream.startDate)') // 테스트용 (오늘데이터가 없어 확인불가하여 테스트용으로 하드코딩)
-      // .where('CURDATE() = DATE(stream.startDate)') // 배포용
+      // .where('"2021-04-19" = DATE(stream.startDate)') // 테스트용 (오늘데이터가 없어 확인불가하여 테스트용으로 하드코딩)
+      .where('CURDATE() = DATE(stream.startDate)') // 배포용
       .execute();
 
     return result;
