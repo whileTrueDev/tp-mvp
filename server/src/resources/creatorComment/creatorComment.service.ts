@@ -99,7 +99,7 @@ export class CreatorCommentService {
           .groupBy('comment.commentId'),
         'C')
         .leftJoin(UserEntity, 'users', 'users.userId = C.userId')
-        .leftJoin(CreatorCommentsEntity, 'childrenComments', 'childrenComments.parentCommentId = C.commentId')
+        .leftJoin(CreatorCommentsEntity, 'childrenComments', '(childrenComments.parentCommentId = C.commentId and childrenComments.deleteFlag = 0)')
         .groupBy('C.commentId');
 
       const totalCount = await baseQueryBuilder.clone().getRawMany();
