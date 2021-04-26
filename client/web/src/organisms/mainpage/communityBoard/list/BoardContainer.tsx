@@ -3,7 +3,9 @@ import { useHistory } from 'react-router-dom';
 import {
   makeStyles, createStyles, Theme, withStyles,
 } from '@material-ui/core/styles';
-import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import {
+  Pagination, PaginationItem, ToggleButton, ToggleButtonGroup,
+} from '@material-ui/lab';
 import { Button } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import useAxios from 'axios-hooks';
@@ -29,6 +31,25 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: theme.spacing(2),
+    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? '100' : 'A400'],
+    marginBottom: theme.spacing(2),
+    '& .MuiPagination-ul>*:first-child>.MuiPaginationItem-root': {
+      border: '1px solid currentColor',
+    },
+    '& .MuiPagination-ul>*:last-child>.MuiPaginationItem-root': {
+      border: '1px solid currentColor',
+    },
+  },
+  paginationItem: {
+    '&.MuiPaginationItem-root': {
+      color: theme.palette.text.secondary,
+      border: 'none',
+      fontSize: theme.typography.body1.fontSize,
+    },
+    '&.Mui-selected': {
+      color: theme.palette.text.primary,
+    },
   },
   controls: {
     display: 'flex',
@@ -235,10 +256,16 @@ export default function BoardContainer({
 
       <Pagination
         className={classes.pagination}
-        shape="rounded"
+        variant="outlined"
         page={page}
         count={paginationCount}
         onChange={pagenationHandler}
+        renderItem={(item) => (
+          <PaginationItem
+            className={classes.paginationItem}
+            {...item}
+          />
+        )}
       />
       <div className={classes.writeButtonContainer}>
         <Button

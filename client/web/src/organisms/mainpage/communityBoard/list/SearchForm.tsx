@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     paddingLeft: theme.spacing(1),
     marginRight: theme.spacing(2),
     backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.background.paper,
+    width: theme.spacing(50),
+    [theme.breakpoints.down('md')]: {
+      width: theme.spacing(30),
+    },
   },
   iconButton: {
     padding: theme.spacing(0, 1),

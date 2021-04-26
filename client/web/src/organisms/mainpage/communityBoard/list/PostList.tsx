@@ -1,6 +1,6 @@
 import React, { useMemo, memo } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Paper, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
@@ -18,8 +18,7 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 const rowHeightBase = 6; // row(listItem)하나당 높이 기준픽셀
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    marginBottom: theme.spacing(2),
+  postList: {
   },
   header: {
     justifyContent: 'center',
@@ -46,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   listContainer: {
     position: 'relative',
-    backgroundColor: theme.palette.divider,
+    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? '100' : 'A400'],
   },
   listItem: { // button 엘리먼트 사용하고 있어서 기본 기본스타일 제거
     width: '100%',
@@ -58,9 +57,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: 0,
     '&:hover': {
       backgroundColor: theme.palette.grey[100],
-    },
-    '&+&': {
-      borderTop: `1px solid ${theme.palette.divider}`,
     },
   },
   replies: {
@@ -183,7 +179,7 @@ function PostList(props: PostListProps): JSX.Element {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.postList}>
       {/* 헤더 컬럼 */}
       <div className={classnames(classes.row, classes.header)}>
         {boardColumns.map((col) => (
@@ -200,7 +196,7 @@ function PostList(props: PostListProps): JSX.Element {
       </div>
 
       {/* 글 목록 컨테이너 */}
-      <Paper
+      <div
         className={classes.listContainer}
         style={{ minHeight: `${theme.spacing(rowHeightBase) * take}px` }}
       >
@@ -239,7 +235,7 @@ function PostList(props: PostListProps): JSX.Element {
           : null}
         {/* 로딩중인 경우 */}
         {loading ? <CenterLoading /> : null}
-      </Paper>
+      </div>
     </div>
   );
 }
