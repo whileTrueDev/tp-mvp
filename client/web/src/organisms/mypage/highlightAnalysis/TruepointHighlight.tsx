@@ -10,9 +10,6 @@ import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';
 import Highcharts from './HighChart';
-import sampleData from './sample/sample_short.json';
-// import sampleData from './sample/sample.json';
-// import sampleData from './sample/sample_long.json';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -110,14 +107,9 @@ export default function TruepointHighlight({
 }: TruepointHighlightProps): JSX.Element {
   const classes = styles();
   const [picked90, setPicked90] = React.useState(true);
-  // const hightlight90 = useMemo(() => highlightData.highlight_points_90.map((point: any) => ({
-  //   ...highlightData.highlight_points[point],
-  // })), [highlightData]);
-
-  // testcode
-  const highlight97 = useMemo(() => sampleData.highlight_points_97.map((point: number) => ({
-    ...sampleData.highlight_points[point],
-  })), []);
+  const highlight97 = useMemo(() => highlightData.highlight_points_97.map((point: number) => ({
+    ...highlightData.highlight_points[point],
+  })), [highlightData]);
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
   const [point, setPoint] = React.useState(initialPoint);
@@ -129,8 +121,7 @@ export default function TruepointHighlight({
           mainTitle="편집점 분석 대시보드"
           subTitle="트루포인트의 편집점"
           iconSrc="/images/logo/truepointLogo.png"
-          // pointNumber={picked90 ? highlightData.highlight_points_90.length : highlightData.highlight_points.length}
-          pointNumber={picked90 ? sampleData.highlight_points_97.length : sampleData.highlight_points.length}
+          pointNumber={picked90 ? highlightData.highlight_points_97.length : highlightData.highlight_points.length}
         />
         <Grid container direction="column" justify="center">
           <Grid item md={12}>
@@ -141,14 +132,11 @@ export default function TruepointHighlight({
               setPageSize={setPageSize}
               setPoint={setPoint}
             />
-            {/* test code */}
             <Highcharts
-              // data={picked90 ? hightlight90 : highlightData.highlight_points}
-              data={picked90 ? highlight97 : sampleData.highlight_points}
-              // data={sampleData.highlight_points}
-              totalData={sampleData.highlight_total_data}
+              data={picked90 ? highlight97 : highlightData.highlight_points}
+              totalData={highlightData.highlight_total_data}
               dataOption={{
-                boundary: picked90 ? sampleData.boundary_97.highlight : sampleData.boundary.highlight,
+                boundary: picked90 ? highlightData.boundary_97.highlight : highlightData.boundary.highlight,
               }}
               chartType="highlight"
               highlight={point}
@@ -159,7 +147,7 @@ export default function TruepointHighlight({
           </Grid>
           <Grid item md={12} className={classes.contentRight}>
             <MetricsTable
-              metrics={picked90 ? highlight97 : sampleData.highlight_points}
+              metrics={picked90 ? highlight97 : highlightData.highlight_points}
               handleClick={setPoint}
               row={point}
               page={page}

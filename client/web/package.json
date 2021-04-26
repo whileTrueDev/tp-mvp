@@ -23,6 +23,7 @@
     "highcharts": "^9.0.1",
     "highcharts-react-official": "^3.0.0",
     "history": "^5.0.0",
+    "immutable": "^4.0.0-rc.12",
     "js-file-download": "^0.4.12",
     "jwt-decode": "^3.0.0-beta.2",
     "material-table": "^1.69.0",

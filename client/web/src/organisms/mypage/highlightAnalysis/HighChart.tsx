@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import useTheme from '@material-ui/core/styles/useTheme';
@@ -29,7 +29,7 @@ interface PointType extends Highcharts.Point {
 interface ChartProps {
   data: DataType[];
   dataOption: {boundary: number};
-  totalData: ToTalDataType[];
+  totalData: ToTalDataType[]
   chartType: MetricsType;
   highlight?: any;
   handleClick: (a: any) => void;
@@ -53,7 +53,8 @@ export default function Chart({
     chart: Highcharts.Chart
     container: React.RefObject<HTMLDivElement>
   }>(null);
-  const chartOptions = {
+
+  const [chartOptions, setChartOptions] = useState<any>({
     chart: {
       renderTo: 'container',
       type: 'area',
@@ -65,6 +66,12 @@ export default function Chart({
     title: {
       text: undefined,
     },
+    series: [{
+      lineWidth: 3,
+      lineColor: theme.palette.primary.main,
+      color: theme.palette.primary.main,
+      fillOpacity: 0.5,
+    }],
     xAxis: {
       crosshair: true,
       type: 'datetime',
@@ -81,7 +88,7 @@ export default function Chart({
           return returnDate;
         },
       },
-      // minRange: 3600000,
+      // minRange: 3600000, -> 줌인 최소값 설정
     },
     yAxis: {
       title: {
@@ -89,26 +96,7 @@ export default function Chart({
       },
       allowDecimals: false,
       type: 'linear',
-      plotLines: [{
-        value: dataOption.boundary,
-        width: 2,
-        color: theme.palette.primary.main,
-        dashStyle: 'dash',
-      }],
     },
-    series: [{
-      data: totalData,
-      lineWidth: 3,
-      lineColor: theme.palette.primary.main,
-      color: theme.palette.primary.main,
-      fillOpacity: 0.5,
-      zones: [{
-        color: theme.palette.grey[300],
-        value: dataOption.boundary,
-      }, {
-        color: theme.palette.primary.main,
-      }],
-    }],
     tooltip: {
       backgroundColor: theme.palette.primary.main,
       borderColor: theme.palette.primary.main,
@@ -131,7 +119,7 @@ export default function Chart({
     },
     plotOptions: {
       series: {
-        turboThreshold: 50000, // 50000이상에서 터보모드 차트 써야함
+        turboThreshold: 500000, // 500000이상에서 터보모드 차트 써야함
         allowPointSelect: true,
         marker: {
           lineWidth: 3,
@@ -161,7 +149,7 @@ export default function Chart({
         },
       },
     },
-  };
+  });
 
   useEffect(() => {
     if (themeType === THEME_TYPE.DARK) {
@@ -173,18 +161,20 @@ export default function Chart({
         resetZoom: '초기화',
       },
     });
+    const chartRef = highchartsRef.current?.chart;
 
     if (highlight.start_index) {
       const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
       const chartDataRef = highchartsRef.current?.chart.series[0].data;
-      // const zoomButton = highchartsRef.current?.chart;
-      // console.log(zoomButton);
+      const clickedxAxisData = totalData[highlight.start_index].x;
 
-      if (chartxAxisRef && chartDataRef && chartDataRef[highlight.start_index].x) {
-        chartxAxisRef.removePlotBand('plot-band');
+      if (chartxAxisRef && chartDataRef && chartRef) {
+        if (chartxAxisRef.min! > clickedxAxisData || clickedxAxisData > chartxAxisRef.max!) {
+          chartRef.zoomOut();
+        }
         chartxAxisRef.addPlotBand({
-          from: chartDataRef[highlight.start_index].x - 36000,
-          to: chartDataRef[highlight.end_index].x + 36000,
+          from: totalData[highlight.start_index].x - 36000,
+          to: totalData[highlight.end_index].x + 36000,
           color: theme.palette.grey[200],
           id: 'plot-band',
           label: {
@@ -196,11 +186,32 @@ export default function Chart({
             },
           },
         });
-      } else {
-        // console.log('fuck');
       }
     }
-  }, [highlight, themeType, theme.palette]);
+
+    setChartOptions({
+      series: [{
+        data: totalData,
+        zones: [{
+          color: theme.palette.grey[300],
+          value: dataOption.boundary,
+        }, {
+          color: theme.palette.primary.main,
+        }],
+      }],
+      yAxis: {
+        plotLines: [{
+          value: dataOption.boundary,
+          width: 2,
+          color: theme.palette.primary.main,
+          dashStyle: 'dash',
+          zIndex: 3,
+        }],
+      },
+    });
+
+    return (() => chartRef?.xAxis[0].removePlotBand('plot-band'));
+  }, [highlight, themeType, theme.palette, totalData, dataOption]);
 
   return (
     <div>

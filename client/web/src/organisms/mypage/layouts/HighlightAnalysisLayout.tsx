@@ -12,7 +12,7 @@ import { Chip } from '@material-ui/core';
 import Calendar from '../highlightAnalysis/Calendar';
 import StreamList from '../highlightAnalysis/StreamList';
 import useHighlightAnalysisLayoutStyles from './HighlightAnalysisLayout.style';
-// import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
+import TruepointHighlight from '../highlightAnalysis/TruepointHighlight';
 import MetricsAccordian from '../highlightAnalysis/MetricsAccordian';
 // shared and atoms
 import Button from '../../../atoms/Button/Button';
@@ -203,10 +203,10 @@ export default function HighlightAnalysisLayout(): JSX.Element {
       <Loading clickOpen={isClicked} />
       { !isClicked && highlightData && categoriesData && (
         <>
-          {/* <TruepointHighlight
+          <TruepointHighlight
             selectedStream={selectedStream}
             highlightData={sampleData}
-          /> */}
+          />
           <MetricsAccordian
             selectedStream={selectedStream}
             highlightData={sampleData}

@@ -9,10 +9,11 @@ import Paper from '@material-ui/core/Paper';
 import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 import shortid from 'shortid';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
+import { List } from 'immutable';
 import MetricTitle from '../../shared/sub/MetricTitle';
 import MetricsTable from '../../shared/sub/MetricsTable';
 import HighlightExport from '../../shared/sub/HighlightExport';
-// import Highcharts from './HighChart';
+import Highcharts from './HighChart';
 import { initialPoint } from './TruepointHighlight';
 import ScorePicker from './ScorePicker';
 
@@ -78,7 +79,7 @@ interface MetricsAccordianProps {
   highlightData: any;
   selectedStream: StreamDataType|null;
 }
-// type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
+type MetricsType = 'chat'|'funny'|'agree'|'surprise'|'disgust'|'question'
 
 export default function MetricsAccordian(
   {
@@ -108,7 +109,8 @@ export default function MetricsAccordian(
 
   const smileHightlight97 = useMemo(() => highlightData.funny_points_97.map((atPoint: number) => ({
     ...highlightData.funny_points[atPoint],
-  })), [highlightData]);
+  }
+  )), [highlightData]);
 
   const selectCategory97 = useCallback((selected: string) => {
     const categoryHightlight97 = highlightData[`${selected}_points_97`].map((atPoint: number, index: number) => ({
@@ -117,28 +119,29 @@ export default function MetricsAccordian(
     return categoryHightlight97;
   }, [highlightData]);
 
-  const handleCategorySelect = useCallback((clickedCategory: CategoryGetRequest) => {
+  const handleCategorySelect = (clickedCategory: CategoryGetRequest) => {
     setPoint3(initialPoint);
     setPage3(0);
     setPageSize3(5);
     setSelectedCategory(clickedCategory);
-  }, []);
+  };
 
-  // 혹시나
-  // const getCategoryTotalData = useCallback((clickedCategory: CategoryGetRequest) => {
-  //   switch (clickedCategory.category) {
-  //     case 'disgust':
-  //       return highlightData.disgust_total_data;
-  //     case 'question':
-  //       return highlightData.question_total_data;
-  //     case 'surprise':
-  //       return highlightData.surprise_total_data;
-  //     default:
-  //       return highlightData.agree_total_data;
-  //   }
-  // }, [highlightData]);
+  const categoryTotalData = useMemo(() => List(highlightData[`${selectedCategory.category}_total_data`]).toJS(), [selectedCategory.category, highlightData]);
 
-  // console.log(highlightData);
+  // immutable.js 쓰기 => 아래 커스텀 deep freeze는 성능상 안좋음
+  // function deepFreeze(obj: any): readonly {x: number, y: number}[] {
+  //   const data = Object.getOwnPropertyNames(obj);
+
+  //   data.forEach((name: any) => {
+  //     const d = obj[name];
+  //     if (typeof d === 'object' && d !== null) {
+  //       deepFreeze(d);
+  //     }
+  //   });
+  //   return Object.freeze(obj);
+  // }
+
+  // deepFreeze(highlightData.agree_total_data);
 
   return (
     <Paper>
@@ -175,18 +178,18 @@ export default function MetricsAccordian(
                 />
               </Grid>
               <Grid item md={12}>
-                {/* <Highcharts
+                <Highcharts
                   data={chatPicked97 ? chatHightlight97 : highlightData.chat_points}
                   totalData={highlightData.chat_total_data}
                   dataOption={{
                     boundary: chatPicked97 ? highlightData.boundary_97.count : highlightData.boundary.count,
                   }}
-                  chartType="highlight"
+                  chartType="chat"
                   highlight={point}
                   handleClick={setPoint}
                   handlePage={setPage}
                   pageSize={pageSize}
-                /> */}
+                />
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
@@ -243,18 +246,18 @@ export default function MetricsAccordian(
                 />
               </Grid>
               <Grid item md={12}>
-                {/* <Highcharts
+                <Highcharts
                   data={smilePicked97 ? smileHightlight97 : highlightData.highlight_points}
                   totalData={highlightData.highlight_total_data}
                   dataOption={{
                     boundary: smilePicked97 ? highlightData.boundary_97.funny_sum : highlightData.boundary.funny_sum,
                   }}
-                  chartType="highlight"
+                  chartType="funny"
                   highlight={point2}
                   handleClick={setPoint2}
                   handlePage={setPage2}
                   pageSize={pageSize2}
-                /> */}
+                />
               </Grid>
               <Grid item md={12} className={classes.contentRight}>
                 <MetricsTable
@@ -339,19 +342,22 @@ export default function MetricsAccordian(
             </Grid>
             <Grid container direction="column" justify="center">
               <Grid item md={12}>
-                {/* <Highcharts
-                  data={categoryPicked97 ? selectCategory97(selectedCategory.category) : highlightData[`${selectedCategory.category}_points`]}
-                  totalData={highlightData[`${selectedCategory.category}_total_data`]}
-                  // totalData={getCategoryTotalData(selectedCategory)}
+                <Highcharts
+                  data={categoryPicked97
+                    ? selectCategory97(selectedCategory.category)
+                    : highlightData[`${selectedCategory.category}_points`]}
+                  totalData={categoryTotalData}
                   dataOption={{
-                    boundary: categoryPicked97 ? highlightData.boundary_97[`${selectedCategory.category}_sum`] : highlightData.boundary[`${selectedCategory.category}_sum`],
+                    boundary: categoryPicked97
+                      ? highlightData.boundary_97[`${selectedCategory.category}_sum`]
+                      : highlightData.boundary[`${selectedCategory.category}_sum`],
                   }}
                   chartType={selectedCategory.category as MetricsType}
                   highlight={point3}
                   handleClick={setPoint3}
                   handlePage={setPage3}
                   pageSize={pageSize3}
-                /> */}
+                />
               </Grid>
 
               <Grid item md={12} className={classes.contentRight}>
