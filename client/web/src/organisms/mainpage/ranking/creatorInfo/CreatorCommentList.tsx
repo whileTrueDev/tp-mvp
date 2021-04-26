@@ -6,15 +6,26 @@ import React, {
   useCallback, useEffect, useState,
 } from 'react';
 import classnames from 'classnames';
+import { useSnackbar } from 'notistack';
+import dayjs from 'dayjs';
 import {
   ICreatorCommentsRes, ICreatorCommentData,
 } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
-import CreatorCommentItem from './CreatorCommentItem';
+import CommentItem from '../sub/CommentItem';
 import { useCreatorCommentListStyle } from '../style/CreatorComment.style';
 import RegularButton from '../../../../atoms/Button/Button';
 import CommentForm from '../sub/CommentForm';
+import axios from '../../../../utils/axios';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
+
+export function isReportedIn24Hours(date: string): boolean {
+  const now = dayjs();
+  const targetDate = dayjs(date);
+  return now.diff(targetDate, 'hour') < 24;
+}
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   commentSectionWrapper: {
@@ -36,7 +47,9 @@ export interface CreatorCommentListProps{
 const filters = ['recommend', 'date'];
 
 export default function CreatorCommentList(props: CreatorCommentListProps): JSX.Element {
+  const { enqueueSnackbar } = useSnackbar();
   const listStyle = useCreatorCommentListStyle();
+  const authContext = useAuthContext();
   const classes = useStyles();
   const { creatorId } = props;
   const [commentList, setCommentList] = useState<ICreatorCommentData[]>([]);
@@ -81,9 +94,9 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const reloadComments = () => {
+  const reloadComments = useCallback(() => {
     loadComments(clickedFilterButtonIndex === 1 ? 'date' : 'recommend');
-  };
+  }, [clickedFilterButtonIndex, loadComments]);
 
   const handleRecommendFilter = useCallback(() => {
     setClickedFilterButtonIndex(0);
@@ -95,11 +108,76 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     loadComments('date');
   }, [loadComments]);
 
+  const onReport = useCallback((commentId: number) => {
+    const reportList: {id: number, date: string}[] = JSON.parse(localStorage.getItem('reportList') || '[]');
+    const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
+    const commentIds = commentsRecentlyReported.map((item) => item.id);
+
+    const currentCommentId = commentId;
+
+    if (commentIds.includes(currentCommentId)) {
+      ShowSnack('이미 신고한 댓글입니다', 'error', enqueueSnackbar);
+      localStorage.setItem('reportList', JSON.stringify([...commentsRecentlyReported]));
+      return;
+    }
+    // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
+    axios.post(`/creatorComment/report/${commentId}`)
+      .then((res) => {
+        localStorage.setItem('reportList', JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]));
+      })
+      .catch((err) => {
+        ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);
+        console.error(err);
+      });
+  }, [enqueueSnackbar]);
+
+  const onClickLike = useCallback((commentId: number) => axios.post(
+    `creatorComment/vote/${commentId}`,
+    { vote: 1, userId: authContext.user.userId },
+  )
+    .then((res) => {
+      const result = res.data;
+      return new Promise(((resolve, reject) => {
+        resolve(result);
+      }));
+    })
+    .catch((error) => console.error(error)), [authContext.user.userId]);
+
+  const onClickHate = useCallback((commentId: number) => axios.post(
+    `creatorComment/vote/${commentId}`,
+    { vote: 0, userId: authContext.user.userId },
+  )
+    .then((res) => {
+      const result = res.data;
+      return new Promise(((resolve, reject) => {
+        resolve(result);
+      }));
+    })
+    .catch((error) => console.error(error)), [authContext.user.userId]);
+
+  const onDelete = useCallback((commentId: number) => (
+    axios.delete(`/creatorComment/${commentId}`)
+      .then((res) => new Promise((resolve, reject) => resolve(res)))
+      .catch((error) => console.error(error))
+  ), []);
+
+  const loadChildrenComments = useCallback((commentId: number) => axios.get(`creatorComment/replies/${commentId}`)
+    .then((res) => new Promise((resolve, reject) => {
+      resolve(res);
+    }))
+    .catch((error) => console.error(error)), []);
+
+  const checkPasswordRequest = useCallback((commentId, password) => axios.post(`/creatorComment/password/${commentId}`, { password })
+    .then((res) => new Promise((resolve, reject) => {
+      resolve(res);
+    })),
+  []);
+
   return (
     <div className={classes.commentSectionWrapper}>
       <CommentForm
         postUrl={`/creatorComment/${creatorId}`}
-        submitSuccessCallback={reloadComments}
+        callback={reloadComments}
       />
 
       <div className={listStyle.commentsContainer}>
@@ -124,10 +202,17 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
           {
           commentList.length
             ? commentList.map((d) => (
-              <CreatorCommentItem
+              <CommentItem
                 key={d.commentId}
                 {...d}
+                onReport={onReport}
+                onClickLike={onClickLike}
+                onClickHate={onClickHate}
+                onDelete={onDelete}
                 reloadComments={reloadComments}
+                loadChildrenComments={loadChildrenComments}
+                checkPasswordRequest={checkPasswordRequest}
+                childrenCommentPostBaseUrl="/creatorComment/replies"
               />
             ))
             : (

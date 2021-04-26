@@ -1,13 +1,13 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import CreatorCommentItem, { CreatorCommentItemProps } from '../organisms/mainpage/ranking/creatorInfo/CreatorCommentItem';
+import CommentItem, { CommentItemProps } from '../organisms/mainpage/ranking/sub/CommentItem';
 
 export default {
   title: 'organisms/CreatorCommentItem',
-  component: CreatorCommentItem,
+  component: CommentItem,
 } as Meta;
 
-const Template: Story<CreatorCommentItemProps> = (args) => <CreatorCommentItem {...args} />;
+const Template: Story<CommentItemProps> = (args) => <CommentItem {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

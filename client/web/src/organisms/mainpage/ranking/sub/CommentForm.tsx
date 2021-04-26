@@ -3,19 +3,25 @@ import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/crea
 import { useSnackbar } from 'notistack';
 import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import axios from '../../../../utils/axios';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import { useCreatorCommentFormStyle } from '../style/CreatorComment.style';
-import axios from '../../../../utils/axios';
 
 export interface CommentFormProps {
-  /** 댓글 생성하는 라우터 url */
-  postUrl: string,
-  /** 댓글 생성 post요청 성공 후 실행 할 콜백함수(다시 댓글목록 불러오는 함수 등) */
-  submitSuccessCallback?: () => void
+  /** */
+  postUrl: string;
+  callback?: () => void;
 }
 
+/**
+ * 댓글 작성 폼 컴포넌트
+ * props로 댓글 생성 요청 url과
+ * 댓글 생성 후 실행할 callback함수를 받는다
+ * @param props 
+ * @returns 
+ */
 export default function CommentForm(props: CommentFormProps): JSX.Element {
-  const { submitSuccessCallback, postUrl } = props;
+  const { postUrl = '', callback } = props;
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const formStyle = useCreatorCommentFormStyle();
@@ -63,8 +69,9 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
           passwordInput.value = '';
         }
         contentInput.value = '';
-        if (submitSuccessCallback) {
-          submitSuccessCallback();
+
+        if (callback) {
+          callback();
         }
       })
       .catch((error) => console.error(error));

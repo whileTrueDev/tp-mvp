@@ -1,13 +1,5 @@
-export interface CreatorComments{
-  commentId: number;
+import { CommentBase } from './CommentBase.interface';
 
+export interface CreatorComments extends CommentBase{
   creatorId: string;
-
-  userId?: string;
-
-  nickname: string;
-
-  password: string;
-
-  content: string;
 }

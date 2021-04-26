@@ -2,7 +2,7 @@ import {
   Entity, Column,
   CreateDateColumn, PrimaryGeneratedColumn, OneToMany, Index, ManyToOne, JoinColumn,
 } from 'typeorm';
-import { CreatorComments } from '@truepoint/shared/interfaces/CreatorComments.interface';
+import { CreatorComments } from '@truepoint/shared/dist/interfaces/CreatorComments.interface';
 import { CreatorCommentVoteEntity } from './creatorCommentVote.entity';
 @Entity({ name: 'CreatorCommentsTest2' })
 @Index('IX_creatorId', ['creatorId'])
