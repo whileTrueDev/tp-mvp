@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
@@ -64,31 +64,50 @@ export class CreatorCommentService {
         count: 0,
       };
 
-      const baseQueryBuilder = await this.creatorCommentsRepository.createQueryBuilder('comment')
+      const baseQueryBuilder = await getConnection()
+        .createQueryBuilder()
         .select([
-          'comment.commentId AS commentId',
-          'comment.creatorId AS creatorId',
-          'comment.userId AS userId',
-          'comment.nickname AS nickname',
-          'comment.content AS content',
-          'comment.createDate AS createDate',
-          'comment.deleteFlag AS deleteFlag',
+          'C.commentId AS commentId',
+          'C.creatorId AS creatorId',
+          'C.userId AS userId',
+          'C.nickname AS nickname',
+          'C.content AS content',
+          'C.createDate AS createDate',
+          'C.deleteFlag AS deleteFlag',
           'users.profileImage AS profileImage',
-          'IFNULL(SUM(likes.vote), 0) AS likesCount',
-          'IFNULL(COUNT(*) - SUM(likes.vote), 0) AS hatesCount',
+          'COUNT(childrenComments.commentId) AS childrenCount',
+          'C.likesCount AS likesCount',
+          'C.hatesCount AS hatesCount',
         ])
-        .leftJoin(UserEntity, 'users', 'users.userId = comment.userId')
-        .leftJoin('comment.votes', 'likes')
-        .where('comment.creatorId = :creatorId', { creatorId })
-        .andWhere('comment.deleteFlag = 0')
-        .andWhere('comment.parentCommentId IS NULL')
-        .groupBy('comment.commentId');
+        .from((subQuery) => subQuery
+          .select([
+            'comment.commentId AS commentId',
+            'comment.creatorId AS creatorId',
+            'comment.userId AS userId',
+            'comment.nickname AS nickname',
+            'comment.content AS content',
+            'comment.createDate AS createDate',
+            'comment.deleteFlag AS deleteFlag',
+            'IFNULL(SUM(likes.vote), 0) AS likesCount',
+            'IFNULL(COUNT(*) - SUM(likes.vote), 0) AS hatesCount',
+          ])
+          .from(CreatorCommentsEntity, 'comment')
+          .leftJoin('comment.votes', 'likes')
+          .where('comment.creatorId = :creatorId', { creatorId })
+          .andWhere('comment.deleteFlag = 0')
+          .andWhere('comment.parentCommentId IS NULL')
+          .groupBy('comment.commentId'),
+        'C')
+        .leftJoin(UserEntity, 'users', 'users.userId = C.userId')
+        .leftJoin(CreatorCommentsEntity, 'childrenComments', 'childrenComments.parentCommentId = C.commentId')
+        .groupBy('C.commentId');
 
-      result.count = await baseQueryBuilder.clone().getCount();
+      const totalCount = await baseQueryBuilder.clone().getRawMany();
+      result.count = totalCount.length;
 
       if (order === 'date') {
         const comments = await baseQueryBuilder
-          .orderBy('comment.createDate', 'DESC')
+          .orderBy('C.createDate', 'DESC')
           .offset(skip)
           .limit(take)
           .getRawMany();
@@ -98,13 +117,14 @@ export class CreatorCommentService {
             ...c,
             likesCount: Number(c.likesCount),
             hatesCount: Number(c.hatesCount),
+            childrenCount: Number(c.childrenCount),
           }
         ));
       }
       if (order === 'recommend') {
         const comments = await baseQueryBuilder
-          .orderBy('COUNT(likes.id)', 'DESC')
-          .addOrderBy('comment.createDate', 'DESC')
+          .orderBy('C.likesCount', 'DESC')
+          .addOrderBy('C.createDate', 'DESC')
           .offset(skip)
           .limit(take)
           .getRawMany();
@@ -113,6 +133,7 @@ export class CreatorCommentService {
             ...c,
             likesCount: Number(c.likesCount),
             hatesCount: Number(c.hatesCount),
+            childrenCount: Number(c.childrenCount),
           }
         ));
       }

@@ -48,6 +48,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     nickname,
     commentId,
     content, createDate, likesCount, hatesCount,
+    childrenCount = 0,
     profileImage,
     reloadComments,
     isHated = false,
@@ -70,7 +71,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
   const { toggle: replyListOpen, handleToggle: handleReplyListOpen } = useToggle();
 
   const [replies, setReplies] = useState<ICreatorCommentData[]>([]);
-  const [repliesCount, setRepliesCount] = useState<number>(0);
+  const [repliesCount, setRepliesCount] = useState<number>(childrenCount);
 
   useEffect(() => {
     setRepliesCount(repliesCount || 0);
@@ -141,12 +142,6 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
       getRepliesRequest();
     }
   }, [getRepliesRequest, handleReplyListOpen, replies.length, repliesCount, replyListOpen]);
-
-  useEffect(() => {
-    // 댓글 마운트 시 대댓글 불러오기
-    getRepliesRequest();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const replySubmitCallback = useCallback(() => {
     // 대댓글 생성 요청 성공 후 실행할 일들
