@@ -35,13 +35,14 @@ export class CommunityReplyService {
     }
   }
 
-  async createReply(createReplyDto: CreateReplyDto, ip: string): Promise<CommunityReplyEntity> {
+  async createReply(postId: number, createReplyDto: CreateReplyDto, ip: string): Promise<CommunityReplyEntity> {
     try {
       const { password } = createReplyDto;
       const hashedPassword = await bcrypt.hash(password, 10);
       const reply = await this.communityReplyRepository.save({
         ...createReplyDto,
         password: hashedPassword,
+        postId,
         ip,
       });
       return reply;

@@ -197,15 +197,15 @@ export class CommunityBoardController {
    *          nickname: string; 12자
               password: string; 4자
               content: string; 100자
-              postId: number;
    */
-  @Post('replies')
+  @Post('/posts/:postId/replies')
   @UsePipes(new ValidationPipe({ transform: true }))
   createReply(
     @Ip() userIp: string,
+    @Param('postId', ParseIntPipe) postId: number,
     @Body() createReplyDto: CreateReplyDto,
   ): Promise<CommunityReplyEntity> {
-    return this.communityReplyService.createReply(createReplyDto, userIp);
+    return this.communityReplyService.createReply(postId, createReplyDto, userIp);
   }
 
   /**
