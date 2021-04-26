@@ -67,7 +67,7 @@ export default function Notice(): JSX.Element {
   }, [selectedNoticeId]);
   return (
     <main>
-      <Appbar />
+      <Appbar variant="transparent" />
       <ProductHero />
       <section className={classes.noticeSection}>
         <Paper elevation={0} className={classes.noticeContainer}>

@@ -102,9 +102,10 @@ export default function FeatureSuggestionPage(): JSX.Element {
     // 선택된 기능제안 Id 변경시 스크롤 최상단으로
     window.scrollTo(0, 0);
   }, [selectedSuggestionId]);
+
   return (
     <div>
-      <Appbar />
+      <Appbar variant="transparent" />
       <ProductHero />
       <section className={classes.featureSection}>
         <Paper elevation={0} className={classes.featureContainer}>

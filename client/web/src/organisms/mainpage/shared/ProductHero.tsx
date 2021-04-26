@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import React from 'react';
 import { Container, Button } from '@material-ui/core';
 import shortid from 'shortid';
@@ -14,7 +15,7 @@ export default function ProductHero({
   const classes = styles();
 
   return (
-    <div className={classes.root}>
+    <div className={classnames(classes.root, classes.heroBg)}>
       <Container className={classes.wraper}>
         <div className={classes.heroLogo} />
         <div className={classes.main}>
