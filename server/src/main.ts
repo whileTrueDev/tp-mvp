@@ -1,11 +1,12 @@
 import helmet from 'helmet';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
 // import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import colorizedMorgan from './middleware/colorizedMorgan';
 
 async function bootstrap() {
   // **********************************************
@@ -24,7 +25,7 @@ async function bootstrap() {
   app.use(helmet());
 
   // Set morgan Logger
-  app.use(morgan('common'));
+  app.use(colorizedMorgan);
 
   // cookie parser
   app.use(cookieParser('@#@$MYSIGN#@$#$')); // cookie parser 설정
