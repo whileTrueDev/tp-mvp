@@ -1,6 +1,6 @@
 import { Button } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 
 const useDeleteButtonStyles = makeStyles((theme: Theme) => {
@@ -13,6 +13,9 @@ const useDeleteButtonStyles = makeStyles((theme: Theme) => {
       height: deleteButtonSize,
       backgroundColor: theme.palette.text.secondary,
       color: theme.palette.common.white,
+      '&:hover': {
+        color: theme.palette.type === 'light' ? theme.palette.common.black : theme.palette.common.white,
+      },
     },
     deleteButtonIconImage: {
       fontSize: theme.typography.body2.fontSize,
