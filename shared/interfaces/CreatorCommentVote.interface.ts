@@ -1,4 +1,4 @@
-export interface CreatorCommentLikes{
+export interface CreatorCommentVote{
   id: number;
 
   commentId: number;
@@ -6,4 +6,6 @@ export interface CreatorCommentLikes{
   userId?: string;
 
   userIp: string;
+
+  vote: boolean;
 }

@@ -52,6 +52,7 @@ export class CreatorRatingsService {
    * @returns 
    */
   async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<CreatorRatingsEntity> {
+    const { userId, rating } = ratingPostDto;
     // 우선 rankings 테이블에서 해당 creatorId가 존재하는지 찾는다
     await this.findCreator(creatorId);
 
@@ -59,22 +60,22 @@ export class CreatorRatingsService {
     // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
     try {
       const exRating = await this.ratingsRepository.findOne({
-        where: {
-          userIp: ip,
-          creatorId,
-        },
+        where: { userIp: ip, creatorId },
       });
+
       if (exRating) {
         const updatedRating = await this.ratingsRepository.save({
           ...exRating,
-          rating: ratingPostDto.rating,
+          rating,
+          userId: userId || null,
         });
         return updatedRating;
       }
       const newRating = await this.ratingsRepository.save({
         creatorId,
         userIp: ip,
-        ...ratingPostDto,
+        userId: userId || null,
+        rating,
       });
       return newRating;
     } catch (error) {
@@ -89,7 +90,7 @@ export class CreatorRatingsService {
    * @param ip 
    * @returns 
    */
-  async deleteRatings(creatorId: string, ip: string): Promise<string> {
+  async deleteRatings(creatorId: string, ip: string, userId?: string): Promise<string> {
     await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
@@ -181,7 +182,6 @@ export class CreatorRatingsService {
     platform: 'twitch'|'afreeca',
   ): Promise<CreatorRatingInfoRes> {
     const result = {
-      userRating: null,
       ratings: {
         average: 0,
         count: 0,
@@ -200,17 +200,12 @@ export class CreatorRatingsService {
         twitchChannelName: null,
       },
     };
-    // 유저ip로 매긴 평점을 찾는다
-    const exRating = await this.findOneRating(ip, creatorId);
-    if (exRating) {
-      result.userRating = exRating.score;
-    }
     // creatorId의 평균 평점과 평가횟수를 찾는다
     const { average, count } = await this.getAverageRatings(creatorId);
     result.ratings = { average, count };
 
-    // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
-    const qb = this.rankingsRepository.createQueryBuilder('rankings')
+    // 크리에이터의 1달 내 평균점수(최근 분석일로부터?), 닉네임, 로고 정보를 찾는다
+    const qb = await this.rankingsRepository.createQueryBuilder('rankings')
       .select([
         'AVG(smileScore) AS smile',
         'AVG(frustrateScore) AS frustrate',
@@ -218,43 +213,36 @@ export class CreatorRatingsService {
         'AVG(cussScore) AS cuss',
       ])
       .where('creatorId = :creatorId', { creatorId })
-      .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)');
-    let data: {
-      admire: number,
-      amile: number,
-      smile: number,
-      frustrate: number,
-      cuss: number,
-      logo: string,
-      nickname: string,
-      twitchChannelName?: string
-    };
+      // .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')
+      .getRawOne();
+
+    result.scores.admire = qb.admire;
+    result.scores.smile = qb.smile;
+    result.scores.frustrate = qb.frustrate;
+    result.scores.cuss = qb.cuss;
+
     try {
       if (platform === 'twitch') {
-        data = await qb
-          .addSelect([
-            'twitch.twitchStreamerName AS nickname',
-            'twitch.twitchChannelName AS twitchChannelName',
-            'twitch.logo AS logo',
-          ])
-          .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = rankings.creatorId')
-          .getRawOne();
+        const twitchData = await this.twitchRepository.findOne({
+          where: {
+            twitchId: creatorId,
+          },
+          select: ['twitchStreamerName', 'twitchChannelName', 'logo'],
+        });
+
+        result.info.logo = twitchData.logo;
+        result.info.nickname = twitchData.twitchStreamerName;
+        result.info.twitchChannelName = twitchData.twitchChannelName;
       } else if (platform === 'afreeca') {
-        data = await qb
-          .addSelect([
-            'afreeca.logo AS logo',
-            'afreeca.afreecaStreamerName AS nickname',
-          ])
-          .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = rankings.creatorId')
-          .getRawOne();
+        const afreecaData = await this.afreecaRepository.findOne({
+          where: {
+            afreecaId: creatorId,
+          },
+          select: ['logo', 'afreecaStreamerName'],
+        });
+        result.info.logo = afreecaData.logo;
+        result.info.nickname = afreecaData.afreecaStreamerName;
       }
-      result.scores.admire = data.admire;
-      result.scores.smile = data.smile;
-      result.scores.frustrate = data.frustrate;
-      result.scores.cuss = data.cuss;
-      result.info.logo = data.logo;
-      result.info.nickname = data.nickname;
-      result.info.twitchChannelName = data.twitchChannelName;
 
       return result;
     } catch (error) {

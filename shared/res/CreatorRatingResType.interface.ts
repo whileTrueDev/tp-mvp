@@ -18,7 +18,6 @@ export interface CreatorAverageScores{
 export interface CreatorRatingInfoRes {
   info: CreatorRatingCardInfo,
   ratings: CreatorAverageRatings,
-  userRating: null | number
   scores: CreatorAverageScores,
 }
 

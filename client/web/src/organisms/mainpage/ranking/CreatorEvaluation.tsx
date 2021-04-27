@@ -15,8 +15,6 @@ const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles
     backgroundColor: theme.palette.background.paper,
     border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
     borderRadius: theme.spacing(0.5),
-    // border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
-    // padding: theme.spacing(2),
   },
   goBackButton: {
     position: 'absolute',
@@ -60,9 +58,6 @@ export default function CreatorEvaluation(
     frustrate: 0,
     cuss: 0,
   });
-  // 요청한 사람이 매긴 평점
-  const [userRating, setUserRating] = useState<null|number>(null);
-
   // 유저가 평점을 매긴 후 평균평점을 다시 불러온다
   const updateAverageRating = useCallback(() => {
     refetchAverageRating()
@@ -79,7 +74,6 @@ export default function CreatorEvaluation(
         setInfo((prevInfo) => ({ ...prevInfo, ...res.data.info }));
         setRatings(res.data.ratings);
         setScores(res.data.scores);
-        setUserRating(res.data.userRating);
       })
       .catch((error) => console.error(error));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +97,6 @@ export default function CreatorEvaluation(
         info={info}
         ratings={ratings}
         scores={scores}
-        userRating={userRating}
       />
       <CreatorCommentList creatorId={creatorId} />
     </div>
