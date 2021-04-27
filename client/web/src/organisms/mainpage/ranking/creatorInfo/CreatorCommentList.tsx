@@ -205,6 +205,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
               <CommentItem
                 key={d.commentId}
                 {...d}
+                targetId={d.commentId}
                 onReport={onReport}
                 onClickLike={onClickLike}
                 onClickHate={onClickHate}

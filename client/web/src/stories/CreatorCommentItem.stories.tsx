@@ -11,7 +11,7 @@ const Template: Story<CommentItemProps> = (args) => <CommentItem {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  commentId: 1,
+  targetId: 1,
   creatorId: 'bht0205',
   userId: undefined,
   nickname: '댓글 테스트',

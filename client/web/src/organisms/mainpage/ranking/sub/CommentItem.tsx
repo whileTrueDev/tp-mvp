@@ -6,7 +6,6 @@ import React, {
 } from 'react';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
-import { ICreatorCommentData } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import ReplyIcon from '@material-ui/icons/Reply';
 import { useSnackbar } from 'notistack';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
@@ -19,54 +18,75 @@ import DeleteButton from './DeleteButton';
 import PasswordConfirmDialog from './PasswordConfirmDialog';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 
-export interface CommentItemCommonProps{
-   /** 좋아요 눌렀는지 여부 */
- isLiked?: boolean;
- /** 싫어요 눌렀는지 여부 */
-isHated?: boolean;
-/** 추천많은 댓글인지 여부 */
-isBest?: boolean;
-/** 자식댓글 (대댓글) 인지 여부 */
-childComment?: boolean;
+export interface CommentItemProps extends Record<string, any>{
+  /** 대상이 되는 댓글(commentId), 글(postId), 크리에이터(creatorId) */
+  targetId: number;
 
-/** 신고하기 버튼 핸들러 */
-onReport?: (commentId: number) => void;
+  /** 댓글 고유 id */
+  commentId: number;
 
-/** 좋아용 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
-onClickLike?: (commentId: number) => Promise<any>;
-/** 싫어요 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
-onClickHate?: (commentId: number) => Promise<any>;
-/** 삭제 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
-onDelete?: (commentId: number) => Promise<any>;
-/** 자식댓글보기 핸들러 */
-loadChildrenComments?: (commentId: number) => Promise<any>;
-/** 비밀번호 확인 핸들러 */
-checkPasswordRequest?: (commentId: any, password: any) => Promise<any>
-/** 댓글 다시 불러오기 핸들러 */
-reloadComments?: () => void
-/** 자식댓글 생성 요청 url */
-childrenCommentPostBaseUrl?: string
+  /** 댓글 작성자 id */
+  userId?: string;
+  /** 댓글 작성자 nickname */
+  nickname: string;
+  /** 댓글 내용 */
+  content: string;
+  /** 댓글 생성일자 */
+  createDate: Date;
+  /** 댓글 작성자 프로필 이미지 */
+  profileImage?: string;
+
+  /** 댓글 좋아요 개수 */
+  likesCount?: number;
+  /** 댓글 싫어요 개수 */
+  hatesCount?: number;
+
+  /** 대댓글 개수 */
+  childrenCount?: number;
+
+  /** 좋아요 눌렀는지 여부 */
+  isLiked?: boolean;
+  /** 싫어요 눌렀는지 여부 */
+  isHated?: boolean;
+  /** 자식댓글 (대댓글) 인지 여부 */
+  childComment?: boolean;
+
+  /** 신고하기 버튼 핸들러 */
+  onReport?: (commentId: number) => void;
+
+  /** 좋아용 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
+  onClickLike?: (commentId: number) => Promise<any>;
+  /** 싫어요 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
+  onClickHate?: (commentId: number) => Promise<any>;
+  /** 삭제 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
+  onDelete?: (commentId: number) => Promise<any>;
+  /** 자식댓글보기 핸들러 */
+  loadChildrenComments?: (commentId: number) => Promise<any>;
+  /** 비밀번호 확인 핸들러 */
+  checkPasswordRequest?: (commentId: any, password: any) => Promise<any>
+  /** 댓글 다시 불러오기 핸들러 */
+  reloadComments?: () => void
+  /** 자식댓글 생성 요청 url */
+  childrenCommentPostBaseUrl?: string
 }
-
-export interface CreatorCommentItem extends CommentItemCommonProps, ICreatorCommentData{}
-// export interface BoardCommentItem extends CommentItemCommonProps, CommunityReply{}
-
-export type CommentItemProps = CreatorCommentItem;
 
 export default function CommentItem(props: CommentItemProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const authContext = useAuthContext();
   const classes = useCreatorCommentItemStyle();
   const {
+    userId, // 코멘트를 작성한 유저의 userId, undefined인 경우 비로그인하여 작성한 댓글
     nickname,
-    commentId,
-    content, createDate, likesCount, hatesCount,
-    childrenCount = 0,
     profileImage,
+    commentId,
+    content,
+    createDate,
+    likesCount,
+    hatesCount,
+    childrenCount = 0,
     isHated = false,
     isLiked = false,
     childComment = false,
-    userId, // 코멘트를 작성한 유저의 userId, undefined인 경우 비로그인하여 작성한 댓글
     onReport,
     onClickLike,
     onClickHate,
@@ -90,7 +110,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
   const { toggle: commentFormOpen, handleToggle: handleCommentFormOpen } = useToggle();
   const { toggle: replyListOpen, handleToggle: handleReplyListOpen } = useToggle();
 
-  const [replies, setReplies] = useState<ICreatorCommentData[]>([]);
+  const [replies, setReplies] = useState<CommentItemProps[]>([]);
   const [repliesCount, setRepliesCount] = useState<number>(childrenCount);
 
   useEffect(() => {
@@ -217,6 +237,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
   }, [commentId, onReport]);
 
   const time = dayjs(createDate).format('YYYY-MM-DD HH:mm:ss');
+
   return (
     <div className={classnames(classes.commentItem, { child: childComment })}>
       <div className={classes.header}>
@@ -245,6 +266,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
 
       <Typography className={classes.content}>
         {content}
+        {commentId}
       </Typography>
 
       <div className={classes.actions}>
@@ -261,6 +283,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           </div>
         )}
 
+        {(onClickLike && onClickHate) && (
         <div className={classes.recommendIcons}>
           <Button
             onClick={clickLike}
@@ -287,6 +310,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
             </Typography>
           </Button>
         </div>
+        )}
 
       </div>
 
@@ -306,6 +330,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
                     childComment
                     key={reply.commentId}
                     {...reply}
+                    targetId={reply.targetId}
                     onReport={onReport}
                     onClickLike={onClickLike}
                     onClickHate={onClickHate}

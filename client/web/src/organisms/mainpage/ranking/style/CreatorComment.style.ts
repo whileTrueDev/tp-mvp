@@ -3,7 +3,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createStyles({
   commentItem: {
     position: 'relative',
-    padding: theme.spacing(2, 0),
+    padding: theme.spacing(2),
     '&:not(:first-child)': {
       borderTop: `1px solid ${theme.palette.divider}`,
     },
