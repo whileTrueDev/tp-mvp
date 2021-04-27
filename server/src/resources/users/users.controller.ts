@@ -1,7 +1,9 @@
 import {
-  // UseGuards,
-  Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, Req, ForbiddenException, Delete, Param, UseGuards,
+  Body,
+  ClassSerializerInterceptor, Controller,
+  Delete, Get,
+  Param, Patch, Post,
+  Query, Req, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
@@ -12,10 +14,10 @@ import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
-import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
-import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 // import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
+import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from '../auth/auth.service';
 import { SubscribeEntity } from './entities/subscribe.entity';
