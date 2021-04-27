@@ -4,7 +4,7 @@ import React, {
 import { CommunityReply } from '@truepoint/shared/dist/interfaces/CommunityReply.interface';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
-  Paper, Typography,
+  Paper,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import CommentItem from '../../ranking/sub/CommentItem';
@@ -12,9 +12,13 @@ import { isReportedIn24Hours } from '../../ranking/creatorInfo/CreatorCommentLis
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
+interface ReplyType extends CommunityReply{
+  childrenComments?: number;
+  parentReplyId?: null | number;
+}
 interface SectionProps{
   totalReplyCount?: number,
-  replies: CommunityReply[] | undefined,
+  replies: ReplyType[] | undefined,
   loadReplies: () => void
 }
 
@@ -57,7 +61,6 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const {
-    totalReplyCount = 0,
     replies = [],
     loadReplies,
   } = props;
@@ -103,25 +106,30 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
       });
   }, [enqueueSnackbar]);
 
+  const loadChildrenComments = useCallback((commentId: number) => axios.get(`/community/replies/child/${commentId}`)
+    .then((res) => new Promise((resolve, reject) => {
+      resolve(res);
+    }))
+    .catch((error) => console.error(error)), []);
+
   return (
     <section className={classes.replyContainer}>
-
-      <div className={classes.controls}>
-        <Typography>{`전체댓글 : ${totalReplyCount} 개`}</Typography>
-      </div>
-
       <Paper>
         {/* 댓글목록 */}
         {replies.map((reply) => (
           <CommentItem
             key={reply.replyId}
+            idProperty="replyId"
             {...reply}
             commentId={reply.replyId}
             targetId={reply.postId}
             onDelete={onDelete}
             onReport={onReport}
+            childrenCount={reply.childrenComments}
             reloadComments={loadReplies}
             checkPasswordRequest={checkPasswordRequest}
+            loadChildrenComments={loadChildrenComments}
+            childrenCommentPostBaseUrl="/community/replies/child"
           />
         ))}
       </Paper>
