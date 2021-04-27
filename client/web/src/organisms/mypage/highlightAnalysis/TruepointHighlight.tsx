@@ -5,7 +5,6 @@ import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType
 import MetricsTable from '../../shared/sub/MetricsTable';
 import MetricTitle from '../../shared/sub/MetricTitle';
 import Button from '../../../atoms/Button/Button';
-// import Chart from './Chart';
 import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';

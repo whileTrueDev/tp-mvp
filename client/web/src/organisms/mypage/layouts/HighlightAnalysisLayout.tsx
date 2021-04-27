@@ -205,11 +205,11 @@ export default function HighlightAnalysisLayout(): JSX.Element {
         <>
           <TruepointHighlight
             selectedStream={selectedStream}
-            highlightData={sampleData}
+            highlightData={sampleData} // 해당 부분 S3와 연동
           />
           <MetricsAccordian
             selectedStream={selectedStream}
-            highlightData={sampleData}
+            highlightData={sampleData} // 해당 부분 S3와 연동
             categories={categoriesData}
           />
         </>
