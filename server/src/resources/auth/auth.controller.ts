@@ -2,22 +2,16 @@ import {
   BadRequestException,
   Body,
   // UseGuards,
-  Controller,
-
-  Delete, ForbiddenException, Get,
-  HttpException, HttpStatus,
-  InternalServerErrorException, Post, Query,
-
-  Req, Request,
-  Res,
-  UseFilters,
+  Controller, Request, Post, Get, Query,
+  HttpException, HttpStatus, Res, BadRequestException,
+  Body, Req, Delete, UseFilters, InternalServerErrorException, ForbiddenException, UseGuards,
 } from '@nestjs/common';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import express from 'express';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import {
-  LogedInExpressRequest,
+  LogedInExpressRequest, UserLoginPayload,
 } from '../../interfaces/logedInUser.interface';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import getFrontHost from '../../utils/getFrontHost';
@@ -30,7 +24,7 @@ import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
 import { AfreecaLinker } from './strategies/afreeca.linker';
 // 가드 임시 주석처리
-// import { LocalAuthGuard } from '../../guards/local-auth.guard';
+import { LocalAuthGuard } from '../../guards/local-auth.guard';
 // import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 // import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
@@ -54,32 +48,31 @@ export class AuthController {
     return { success: false };
   }
 
-  // 로그인 컨트롤러 임시 주석처리
   // 로그인 컨트롤러
-  // @UseGuards(LocalAuthGuard)
-  // @Post('login')
-  // async login(
-  //   @Body('stayLogedIn') stayLogedIn: boolean,
-  //   @Request() req: express.Request,
-  //   @Res() res: express.Response,
-  // ): Promise<void> {
-  //   const user = req.user as UserLoginPayload;
-  //   const {
-  //     accessToken, refreshToken,
-  //   } = await this.authService.login(user, stayLogedIn);
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async login(
+    @Body('stayLogedIn') stayLogedIn: boolean,
+    @Request() req: express.Request,
+    @Res() res: express.Response,
+  ): Promise<void> {
+    const user = req.user as UserLoginPayload;
+    const {
+      accessToken, refreshToken,
+    } = await this.authService.login(user, stayLogedIn);
 
-  //   // *************************************
-  //   // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
+    // *************************************
+    // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
 
-  //   // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
-  //   // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
-  //   if (user.twitchId) this.usersService.refreshTwitchInfo(user.twitchId);
-  //   if (user.youtubeId) this.usersService.refreshYoutubeInfo(user.youtubeId);
+    // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
+    // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
+    if (user.twitchId) this.usersService.refreshTwitchInfo(user.twitchId);
+    if (user.youtubeId) this.usersService.refreshYoutubeInfo(user.youtubeId);
 
-  //   // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
-  //   res.cookie('refresh_token', refreshToken, { httpOnly: true });
-  //   res.send({ access_token: accessToken });
-  // }
+    // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
+    res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    res.send({ access_token: accessToken });
+  }
 
   /**
    * 패스워드가 맞는지 확인하여 true , false를 반환하는 컨트롤러로,

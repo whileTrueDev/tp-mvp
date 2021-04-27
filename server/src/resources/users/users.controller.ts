@@ -1,9 +1,7 @@
 import {
-  Body,
-  ClassSerializerInterceptor, Controller,
-  Delete, Get,
-  Param, Patch, Post,
-  Query, Req, UseInterceptors,
+  // UseGuards,
+  Controller, Post, Body, Get, UseInterceptors,
+  ClassSerializerInterceptor, Query, Patch, Req, ForbiddenException, Delete, Param, UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
@@ -17,6 +15,7 @@ import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interfac
 import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
 import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 // import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from '../auth/auth.service';
 import { SubscribeEntity } from './entities/subscribe.entity';
@@ -36,7 +35,7 @@ export class UsersController {
    * @param userId 유저 정보를 열람하고자 하는 유저의 아이디
    */
   @Get()
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async findUser(
     @Req() req: LogedInExpressRequest,

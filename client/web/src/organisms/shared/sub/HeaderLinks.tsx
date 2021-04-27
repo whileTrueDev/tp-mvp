@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   icon: {
     width: 32,
     height: 32,
-    color: theme.palette.type === 'dark' ? theme.palette.background.paper : theme.palette.common.white,
+    color: theme.palette.text.primary,
   },
 }));
 

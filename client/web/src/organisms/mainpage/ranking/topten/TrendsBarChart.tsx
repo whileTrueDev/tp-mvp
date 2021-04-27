@@ -16,9 +16,56 @@ function getSeriesName(currentScoreName: keyof Scores) {
       return '답답함 점수';
     case 'viewer':
       return '시청자 수';
+    case 'rating':
+      return '일일 평균 평점';
     default:
       return '점수';
   }
+}
+
+function getMinMax(currentScoreName: keyof Scores): {min: number|undefined, max: number|undefined} {
+  switch (currentScoreName) {
+    case 'viewer':
+      return { min: undefined, max: undefined };
+    case 'rating':
+      return { min: 0, max: 5 };
+    default:
+      return { min: 3, max: 10 };
+  }
+}
+export interface CustomPointOption extends Highcharts.PointOptionsObject {
+  y: number;
+  originValue: number;
+}
+
+function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
+  const {
+    y, series, key, point,
+  } = this;
+  const { options } = point;
+  const customOption = options as CustomPointOption;
+  const { originValue } = customOption;
+
+  let value: string;
+  switch (series.name) {
+    case '시청자 수':
+      value = `${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명`;
+      break;
+    case '일일 평균 평점':
+      value = `${Highcharts.numberFormat(y as number, 2, undefined, ',')} 점`;
+      break;
+    default:
+      value = `${Highcharts.numberFormat(originValue as number, 2, undefined, ',')} 점`;
+      break;
+  }
+
+  return `
+  <div>
+    <span style=" margin-right: 20px;">${key}</span><br/>
+    <span style=" margin-right: 20px;">${series.name}</span><br/>
+    <span style="font-weight: bold">${value}</span>
+  </div>
+  `;
 }
 export interface TrendsBarChartProps{
   data: WeeklyTrendsItem[],
@@ -53,8 +100,6 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     yAxis: {
       labels: { enabled: false },
       gridLineColor: 'transparent',
-      min: currentScoreName === 'viewer' ? undefined : 0,
-      max: currentScoreName === 'viewer' ? undefined : 10,
       title: { text: ' ' },
     },
     tooltip: {
@@ -63,19 +108,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
         fontSize: `${theme.typography.body2.fontSize}`,
       },
       useHTML: true,
-      formatter(this: Highcharts.TooltipFormatterContextObject) {
-        const { y, series, key } = this;
-        const value = currentScoreName === 'viewer'
-          ? `${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명`
-          : `${Highcharts.numberFormat(y as number, 2, undefined, ',')} 점`;
-        return `
-        <div>
-          <span style=" margin-right: 20px;">${key}</span><br/>
-          <span style=" margin-right: 20px;">${series.name}</span><br/>
-          <span style="font-weight: bold">${value}</span>
-        </div>
-        `;
-      },
+      formatter: tooltipFormatter,
     },
   });
 
@@ -91,6 +124,22 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     }
 
     const dates = source.map((d) => d.createDate);
+
+    // 감정점수 데이터일 경우 3점 이하는 3점 위치에 고정
+    const tempData = source.map((d) => {
+      const originValue = d[currentScoreName] as number;
+      let y: number;
+      if (currentScoreName.includes('Score') && originValue < 3) {
+        y = 3;
+      } else {
+        y = originValue;
+      }
+      return {
+        y,
+        originValue,
+      };
+    });
+
     setChartOptions({
       chart: {
         margin: 0,
@@ -105,10 +154,14 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
           value: index - 0.5,
         })),
       },
+      yAxis: {
+        min: getMinMax(currentScoreName).min,
+        max: getMinMax(currentScoreName).max,
+      },
       series: [
         {
           type: 'line',
-          data: source.map((d) => d[currentScoreName] as number),
+          data: tempData,
           name: getSeriesName(currentScoreName),
         },
       ],

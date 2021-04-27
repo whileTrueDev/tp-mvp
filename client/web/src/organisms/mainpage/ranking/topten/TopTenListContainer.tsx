@@ -14,16 +14,19 @@ type HeaderColumn = {
   textAlign?: string
 }
 export interface TopTenListProps{
-  currentTab: string, // 'smile'|'frustrate'|'cuss'|'admire',
-  data: undefined | Omit<RankingDataType, 'totalDataCount'>,
+  currentTab: 'smile' |'frustrate'|'cuss'|'admire'|'viewer'|'rating', // 'smile'|'frustrate'|'cuss'|'admire',
+  data: undefined | RankingDataType,
   loading?: boolean,
+  tabChanging? : boolean,
   weeklyGraphLabel?: string
   error?: AxiosError<any> | undefined
 }
 
 function TopTenListContainer(props: TopTenListProps): JSX.Element {
   const {
-    loading, error, data, currentTab, weeklyGraphLabel = '주간 점수 그래프',
+    loading, error, data, currentTab,
+    tabChanging = false,
+    weeklyGraphLabel = '주간 점수 그래프',
   } = props;
   const classes = useTopTenList();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,8 +66,11 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
 
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems} ref={containerRef}>
-        {data && data.rankingData.map((d, index: number) => {
-          const currentScoreName = currentTab === 'viewer' ? currentTab : `${currentTab}Score` as keyof Scores;
+        {!tabChanging && data && data.rankingData.map((d, index: number) => {
+          const currentScoreName = ['viewer', 'rating'].includes(currentTab)
+            ? currentTab as keyof Scores
+            : `${currentTab}Score` as keyof Scores;
+
           const weeklyTrendsData = data.weeklyTrends[d.creatorId];
           return (
             <TopTenListItem
@@ -77,10 +83,10 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
             />
           );
         })}
-        {loading && (Array.from(Array(10).keys())).map((v: number) => (
+        {(loading || tabChanging) && (Array.from(Array(10).keys())).map((v: number) => (
           <ListItemSkeleton key={v} headerColumns={headerColumns} />
         ))}
-        {!loading && data
+        {!loading && !tabChanging && data
         && data.rankingData.length === 0
         && <Typography className={classes.informationText}>데이터가 없습니다.</Typography>}
         {error && <Typography className={classes.informationText}>에러가 발생했습니다.</Typography>}

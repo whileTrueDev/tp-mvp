@@ -1,11 +1,10 @@
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn, OneToMany, Index,
+  CreateDateColumn, PrimaryGeneratedColumn, OneToMany, Index, ManyToOne, JoinColumn,
 } from 'typeorm';
 import { CreatorComments } from '@truepoint/shared/interfaces/CreatorComments.interface';
-import { CreatorCommentLikesEntity } from './creatorCommentLikes.entity';
-import { CreatorCommentHatesEntity } from './creatorCommentHates.entity';
-@Entity({ name: 'CreatorCommentsTest' })
+import { CreatorCommentVoteEntity } from './creatorCommentVote.entity';
+@Entity({ name: 'CreatorCommentsTest2' })
 @Index('IX_creatorId', ['creatorId'])
 export class CreatorCommentsEntity implements CreatorComments {
   constructor(partial: Partial<CreatorCommentsEntity>) {
@@ -33,11 +32,20 @@ export class CreatorCommentsEntity implements CreatorComments {
   @CreateDateColumn({ type: 'timestamp' })
   createDate: Date;
 
-  // likes
-  @OneToMany((type) => CreatorCommentLikesEntity, (like) => like.commentId)
-  likes? : CreatorCommentLikesEntity[];
+  @Column({ default: false, comment: '삭제여부' })
+  deleteFlag: boolean;
 
-  // hates
-  @OneToMany((type) => CreatorCommentHatesEntity, (hate) => hate.commentId)
-  hates? : CreatorCommentHatesEntity[];
+  @Column({ default: 0, comment: '신고 누적 횟수' })
+  reportCount: number;
+
+  @ManyToOne((type) => CreatorCommentsEntity)
+  @JoinColumn({ name: 'parentCommentId', referencedColumnName: 'commentId' })
+  @Column({ nullable: true, default: null, comment: '해당 값이 존재하는 경우 자식댓글(대댓글)이고, 해당 값이 null인 경우는 부모댓글. 부모 댓글의 commentId ' })
+  parentCommentId: number;
+
+  @OneToMany((type) => CreatorCommentsEntity, (comment) => comment.parentCommentId)
+  childrenComments?: CreatorCommentsEntity[];
+
+  @OneToMany((type) => CreatorCommentVoteEntity, (vote) => vote.commentId)
+  votes? : CreatorCommentVoteEntity[];
 }

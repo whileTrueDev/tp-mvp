@@ -1,10 +1,10 @@
 import {
-  Button, List, ListItem, TextField, Typography,
+  Button, Grid, List, ListItem, TextField, Typography,
 } from '@material-ui/core';
 import React, {
-  useEffect, useRef, useCallback, useMemo, useLayoutEffect,
+  useEffect, useRef, useCallback, useLayoutEffect,
 } from 'react';
-
+import SendIcon from '@material-ui/icons/Send';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { useSnackbar } from 'notistack';
 import useAxios from 'axios-hooks';
@@ -46,6 +46,7 @@ export default function UserReactionCard(): JSX.Element {
       if (formRef.current) {
         formRef.current.username.value = '';
         formRef.current.content.value = '';
+        formRef.current.password.value = '';
         formRef.current.content.focus();
       }
       loadUserReactions();
@@ -73,64 +74,82 @@ export default function UserReactionCard(): JSX.Element {
     if (!formRef.current) {
       return;
     }
-    if (formRef.current.content.value === '') {
-      ShowSnack('내용을 입력해주세요', 'error', enqueueSnackbar);
+    if (formRef.current.content.value.trim() === '' || formRef.current.password.value.trim() === '') {
+      ShowSnack('비밀번호와 내용을 입력해주세요', 'error', enqueueSnackbar);
       return;
     }
     createUserReaction({
-      username: formRef.current.username.value || '시청자',
+      username: formRef.current.username.value.trim() || '시청자',
+      password: formRef.current.password.value,
       content: formRef.current.content.value,
     });
   }, [createUserReaction, enqueueSnackbar]);
 
-  // 컴포넌트들
-  const listComponent = useMemo(() => (
-    <List className={classes.list} ref={listContainerRef}>
-      {loading && <CenterLoading />}
-      { userReactionData && userReactionData.length !== 0
-      /* 데이터가 있는 경우 */
-        ? userReactionData.map((data) => (
-          <UserReactionListItem key={data.id} data={data} />
-        ))
-      /* 데이터가 없는 경우 */
-        : <ListItem>데이터가 없습니다</ListItem>}
-    </List>
-  ), [classes.list, loading, userReactionData]);
-
-  const formComponent = useMemo(() => (
-    <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
-      <div className={classes.formRow}>
-        <TextField
-          name="username"
-          placeholder="사용자명"
-          inputProps={{ maxLength: 8 }}
-          variant="outlined"
-        />
-        <Button type="submit" size="large" variant="contained" color="primary">
-          등록
-        </Button>
-      </div>
-      <TextField
-        name="content"
-        placeholder="여러분들의 의견을 올려주세요"
-        inputProps={{ maxLength: 50 }}
-        variant="outlined"
-        fullWidth
-      />
-    </form>
-  ), [classes.form, classes.formRow, handleSubmit]);
-
   return (
     <section className={classes.userReactionContainer}>
       <header className={classes.header}>
-        <Typography className={classes.title}>핫 시청자 반응</Typography>
+        <Typography className={classes.title}>잡담방</Typography>
         <Button variant="outlined" onClick={loadUserReactions}>
           <RefreshIcon />
           새로고침
         </Button>
       </header>
-      {listComponent}
-      {formComponent}
+
+      <List className={classes.list} ref={listContainerRef}>
+        {loading && <CenterLoading />}
+        { userReactionData && userReactionData.length !== 0
+        /* 데이터가 있는 경우 */
+          ? userReactionData.map((data) => (
+            <UserReactionListItem
+              key={data.id}
+              data={data}
+              reloadItems={loadUserReactions}
+            />
+          ))
+        /* 데이터가 없는 경우 */
+          : <ListItem>데이터가 없습니다</ListItem>}
+      </List>
+
+      <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
+        <Grid container className={classes.row}>
+          <TextField
+            className={classes.nicknameField}
+            name="username"
+            placeholder="닉네임"
+            inputProps={{ maxLength: 8 }}
+            variant="outlined"
+          />
+          <TextField
+            className={classes.passwordField}
+            name="password"
+            type="password"
+            placeholder="비밀번호"
+            inputProps={{ maxLength: 4 }}
+            variant="outlined"
+          />
+        </Grid>
+        <Grid container className={classes.row}>
+          <TextField
+            name="content"
+            className={classes.contentField}
+            placeholder="여러분들의 의견을 올려주세요"
+            inputProps={{ maxLength: 50 }}
+            variant="outlined"
+            multiline
+            rows={2}
+          />
+          <div>
+            <Button
+              className={classes.submitButton}
+              type="submit"
+              variant="outlined"
+            >
+              <SendIcon className={classes.submitButtonIcon} />
+            </Button>
+          </div>
+        </Grid>
+
+      </form>
     </section>
 
   );
