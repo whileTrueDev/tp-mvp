@@ -111,7 +111,10 @@ export class CommunityReplyService {
   async removeReply(replyId: number): Promise<boolean> {
     try {
       const reply = await this.findOneReply(replyId);
-      await this.communityReplyRepository.remove(reply);
+      await this.communityReplyRepository.save({
+        ...reply,
+        deleteFlag: true,
+      });
       return true;
     } catch (error) {
       console.error(error);

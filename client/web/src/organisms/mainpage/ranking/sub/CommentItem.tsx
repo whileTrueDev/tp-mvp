@@ -270,7 +270,6 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
 
       <Typography className={classes.content}>
         {content}
-        {commentId}
       </Typography>
 
       <div className={classes.actions}>
@@ -334,6 +333,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
                     childComment
                     key={reply[idProperty]}
                     {...reply}
+                    commentId={reply[idProperty]}
                     targetId={reply.targetId}
                     onReport={onReport}
                     onClickLike={onClickLike}
