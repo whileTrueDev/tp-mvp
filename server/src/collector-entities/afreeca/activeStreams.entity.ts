@@ -12,7 +12,7 @@ import {
 @Entity('AfreecaActiveStreams')
 export class AfreecaActiveStreamsEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id?: string;
 
   @Column()
   creatorId: string;
@@ -27,8 +27,8 @@ export class AfreecaActiveStreamsEntity {
   is_private?: boolean;
 
   @Column({ type: 'timestamp' })
-  startDate: Date;
+  startDate?: Date;
 
   @Column({ type: 'timestamp' })
-  endDate: Date;
+  endDate?: Date;
 }

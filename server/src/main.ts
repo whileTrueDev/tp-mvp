@@ -24,7 +24,7 @@ async function bootstrap() {
   app.use(helmet());
 
   // Set morgan Logger
-  app.use(morgan('common'));
+  app.use(morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev'));
 
   // cookie parser
   app.use(cookieParser('@#@$MYSIGN#@$#$')); // cookie parser 설정

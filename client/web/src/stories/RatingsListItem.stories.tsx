@@ -1,8 +1,12 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
+import { MemoryRouter } from 'react-router';
 import RatingsListItem, { RatingsListItemProps } from '../organisms/mainpage/ranking/sub/RatingsListItem';
 
 export default {
+  decorators: [
+    (story) => <MemoryRouter>{story()}</MemoryRouter>,
+  ],
   title: 'organisms/RatingsListItem',
   component: RatingsListItem,
 } as Meta;

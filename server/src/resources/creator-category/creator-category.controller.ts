@@ -1,7 +1,12 @@
 import {
-  Body, Controller, Post,
+  Body, Controller, Get, Post,
 } from '@nestjs/common';
+import { AddCreatorToCategoryDto } from '@truepoint/shared/dist/dto/category/addCreatorToCategoryPost.dto';
+import { ValidationPipe } from '../../pipes/validation.pipe';
+import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
+import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { CreatorCategoryService } from './creator-category.service';
+import { CreatorCategoryEntity } from './entities/creatorCategory.entity';
 
 @Controller('creator-category')
 export class CreatorCategoryController {
@@ -9,23 +14,31 @@ export class CreatorCategoryController {
     private readonly categoryService: CreatorCategoryService,
   ) {}
 
+  // *************************************************
+  // 카테고리
+
+  @Get('/')
+  findCategories(): Promise<CreatorCategoryEntity[]> {
+    return this.categoryService.findAllCategories();
+  }
+
+  // add category
+  @Post('/')
+  createCategory(
+    @Body('name', ValidationPipe) name: string,
+  ): any {
+    return this.categoryService.createCategory(name);
+  }
+
+  // *************************************************
+  // 크리에이터 - 카테고리
   /**
    * add creator
    */
   @Post('/creator')
   addCreatorToCategory(
-    @Body('creatorId') creatorId: string,
-    @Body('platform') platform: string,
-    @Body('categoryId') categoryId: number,
-  ): any {
-    return this.categoryService.addCreatorToCategory(platform, creatorId, categoryId);
-  }
-
-  // add category
-  @Post('/category')
-  createCategory(
-    @Body('name') name: string,
-  ): any {
-    return this.categoryService.createCategory(name);
+    @Body(ValidationPipe) dto: AddCreatorToCategoryDto,
+  ): Promise<PlatformTwitchEntity | PlatformAfreecaEntity> {
+    return this.categoryService.addCreatorToCategory(dto);
   }
 }
