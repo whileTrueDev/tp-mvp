@@ -1,10 +1,12 @@
 import {
-  Body, Controller, Delete, Get, Ip, Param, ParseIntPipe, Post, ValidationPipe, Query,
+  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, ValidationPipe,
 } from '@nestjs/common';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
-import { CreatorRatingInfoRes, CreatorAverageRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { CreatorRatingInfoRes, CreatorAverageRatings, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interface';
 import { CreatorRatingsService } from './creatorRatings.service';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
+import { PlatformType } from '../rankings/rankings.service';
 @Controller('ratings')
 export class CreatorRatingsController {
   constructor(
@@ -61,20 +63,6 @@ export class CreatorRatingsController {
   }
 
   /**
-   * 주간 집계 시청자 평점 순위별 크리에이터 목록 반환
-   * @param skip 
-   * @param take 
-   * @returns 
-   */
-  @Get('list')
-  getListOrderByRatings(
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('take', ParseIntPipe) take: number,
-  ): Promise<any> {
-    return this.ratingsService.getListOrderByRatings(take, skip);
-  }
-
-  /**
    * creatorId의 1달 내 평균평점과 평가횟수 조회
    * @param creatorId 
    * @returns 
@@ -84,6 +72,41 @@ export class CreatorRatingsController {
     @Param('creatorId') creatorId: string,
   ): Promise<CreatorAverageRatings> {
     return this.ratingsService.getAverageRatings(creatorId);
+  }
+
+  /**
+   * 7일간 플랫폼별 평균 평점 추이값 리턴
+   * @returns 
+   */
+  @Get('/weekly-average')
+  weeklyAverageRating(): Promise<{
+    dates: string[],
+    afreeca: number[],
+    twitch: number[]
+  }> {
+    return this.ratingsService.weeklyAverageRating();
+  }
+
+  /**
+   * 주간 평점별 상위 10인과 랭킹변동순위 리턴
+   * @returns 
+   */
+  @Get('/weekly-ranking')
+  getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
+    return this.ratingsService.getWeeklyRatingsRanking();
+  }
+
+  @Get('/daily-ranking')
+  getDailyRatingRankings(
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+      @Query('categoryId', new DefaultValuePipe(1), ParseIntPipe) categoryId: number,
+      @Query('platform', new DefaultValuePipe('all')) platform: PlatformType,
+  ): Promise<RankingDataType> {
+    return this.ratingsService.getDailyRatingRankings({
+      skip,
+      categoryId,
+      platform,
+    });
   }
 
   /**
