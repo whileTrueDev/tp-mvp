@@ -76,6 +76,11 @@ export default function CreatorEvaluation(
         setScores(res.data.scores);
       })
       .catch((error) => console.error(error));
+
+    // 화면 상단으로 
+    if (window.scrollY !== 0) {
+      window.scrollTo(0, 0);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

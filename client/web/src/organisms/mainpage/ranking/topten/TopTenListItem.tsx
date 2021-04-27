@@ -1,8 +1,10 @@
-import { Typography, Avatar } from '@material-ui/core';
+import { Typography, Avatar, Link } from '@material-ui/core';
 import classnames from 'classnames';
 import React, { useMemo } from 'react';
 import { Scores, TopTenDataItem, WeeklyTrendsItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import { Link as RouterLink } from 'react-router-dom';
 import { useTopTenList } from '../style/TopTenList.style';
+
 import InfoComponent from './InfoComponent';
 import TrendsBarChart from './TrendsBarChart';
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -35,7 +37,7 @@ function TopTenListItem(props: Props): JSX.Element {
   const {
     data: d, index, headerColumns, currentScoreName, weeklyTrendsData,
   } = props;
-  const { platform } = d;
+  const { platform, creatorId } = d;
 
   // 주간점수그래프 부분 제외한 너비
   const backgroundWidth = useMemo(() => 100 - getPercentNumber(headerColumns[3].width), [headerColumns]);
@@ -68,11 +70,14 @@ function TopTenListItem(props: Props): JSX.Element {
           className={classnames(classes.avatarContainer, classes.center)}
           style={{ width: toPercentString(innerBackgroundWidths[1]) }}
         >
-          <Avatar
-            alt={d.creatorName}
-            className={classes.avatarImage}
-            src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
-          />
+          <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
+            <Avatar
+              alt={d.creatorName}
+              className={classes.avatarImage}
+              src={d.afreecaProfileImage || d.twitchProfileImage || undefined}
+            />
+          </Link>
+
         </div>
 
         <div

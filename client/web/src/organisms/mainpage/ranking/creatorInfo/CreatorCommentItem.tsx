@@ -4,7 +4,6 @@ import {
 import React, {
   useState, useCallback, useEffect, useRef,
 } from 'react';
-import CloseIcon from '@material-ui/icons/Close';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
 import { ICreatorCommentData } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
@@ -13,10 +12,13 @@ import { useSnackbar } from 'notistack';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
 import axios from '../../../../utils/axios';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import useDialog from '../../../../utils/hooks/useDialog';
 import CommentForm from '../sub/CommentForm';
 import useToggle from '../../../../utils/hooks/useToggle';
-import CustomDialog from '../../../../atoms/Dialog/Dialog';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import DeleteButton from '../sub/DeleteButton';
+import PasswordConfirmDialog from '../sub/PasswordConfirmDialog';
+import DeleteConfirmDialog from '../sub/DeleteConfirmDialog';
 
 export interface CreatorCommentItemProps extends ICreatorCommentData{
  /** 좋아요 눌렀는지 여부 */
@@ -56,8 +58,8 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  const [passwordDialogOpen, setPasswordDialogOpen] = useState<boolean>(false);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+  const { open: passwordDialogOpen, handleOpen: openPasswordDialog, handleClose: closePasswordDialog } = useDialog();
+  const { open: confirmDialogOpen, handleOpen: openConfirmDialog, handleClose: closeConfirmDialog } = useDialog();
 
   const [likeClicked, setLikeClicked] = useState<boolean>(isLiked);
   const [hateClicked, setHateClicked] = useState<boolean>(isHated);
@@ -108,16 +110,16 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
     if (authContext.user.userId && userId === authContext.user.userId) {
       // 로그인 되어 있는 경우 && 댓글작성자와 로그인유저가 동일한 경우
       // 댓글 삭제하시겠습니까 팝업
-      setConfirmDialogOpen(true);
+      openConfirmDialog();
       // 확인 => 삭제, 취소 => 취소
     } else {
       // 댓글작성자와 로그인한 유저가 다른 경우, 로그인 하지 않은 경우
-      setPasswordDialogOpen(true);
+      openPasswordDialog();
       // 비밀번호 확인 팝업
       // 비밀번호 맞으면 댓글 삭제하시겠습니까 팝업 
       // 비밀번호 틀리면 비밀번호 틀렸습니다 스낵바
     }
-  }, [authContext.user.userId, userId]);
+  }, [authContext.user.userId, openConfirmDialog, openPasswordDialog, userId]);
 
   const openCommentWriteForm = useCallback(() => {
     handleCommentFormOpen();
@@ -157,13 +159,11 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
 
   const checkPasswordBeforeDelete = () => {
     // 비밀번호 input 값 받아서 비밀번호 확인 요청,
-    if (!passwordInputRef.current) {
-      return;
-    }
-    const password = passwordInputRef.current.value;
+    if (!passwordInputRef.current) return;
+
+    const password = passwordInputRef.current.value; // inputref value
     if (password.trim().length === 0) {
       ShowSnack('비밀번호를 입력해주세요', 'error', enqueueSnackbar);
-      passwordInputRef.current.value = '';
       return;
     }
 
@@ -171,9 +171,12 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
       .then((res) => {
         const passwordMatch: boolean = res.data;
         if (passwordMatch) {
-          setPasswordDialogOpen(false);
-          setConfirmDialogOpen(true);
+          closePasswordDialog();
+          openConfirmDialog();
         } else {
+          if (passwordInputRef.current) {
+            passwordInputRef.current.value = '';
+          }
           ShowSnack('비밀번호가 틀렸습니다. 다시 확인해주세요', 'error', enqueueSnackbar);
         }
       })
@@ -188,7 +191,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
         if (reloadComments) {
           reloadComments();
         }
-        setConfirmDialogOpen(false);
+        closeConfirmDialog();
       })
       .catch((error) => console.error(error));
   };
@@ -238,9 +241,7 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
             />
           </Button>
           <Typography component="span" className="time" color="textSecondary">{time}</Typography>
-          <Button className={classes.deleteButton} aria-label="삭제하기" onClick={handleDeleteButton}>
-            <CloseIcon className={classes.deleteButtonIconImage} />
-          </Button>
+          <DeleteButton onClick={handleDeleteButton} />
         </div>
       </div>
 
@@ -316,31 +317,18 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
         </>
       )}
 
-      <CustomDialog
+      <PasswordConfirmDialog
         open={passwordDialogOpen}
-        onClose={() => {
-          if (passwordInputRef.current) {
-            passwordInputRef.current.value = '';
-          }
-          setPasswordDialogOpen(false);
-        }}
-        title="비밀번호 확인"
+        onClose={closePasswordDialog}
+        passwordInputRef={passwordInputRef}
         callback={checkPasswordBeforeDelete}
-      >
-        <Typography>비밀번호를 입력해주세요</Typography>
-        <input ref={passwordInputRef} />
-      </CustomDialog>
+      />
 
-      <CustomDialog
+      <DeleteConfirmDialog
         open={confirmDialogOpen}
-        onClose={() => {
-          setConfirmDialogOpen(false);
-        }}
-        title="댓글 삭제"
+        onClose={closeConfirmDialog}
         callback={deleteComment}
-      >
-        <Typography>정말로 삭제하시겠습니까?</Typography>
-      </CustomDialog>
+      />
     </div>
   );
 }
