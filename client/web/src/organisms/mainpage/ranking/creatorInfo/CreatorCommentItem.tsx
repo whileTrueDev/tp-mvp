@@ -242,7 +242,6 @@ export default function CreatorCommentItem(props: CreatorCommentItemProps): JSX.
           </Button>
           <Typography component="span" className="time" color="textSecondary">{time}</Typography>
           <DeleteButton onClick={handleDeleteButton} />
-
         </div>
       </div>
 
