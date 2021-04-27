@@ -10,6 +10,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
     '&.child': {
       marginLeft: theme.spacing(6),
       paddingLeft: theme.spacing(4),
+      paddingRight: 0,
       borderTop: `1px solid ${theme.palette.divider}`,
       '&::before': {
         content: '"ㄴ"',

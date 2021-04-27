@@ -215,8 +215,8 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
                 onClickHate={onClickHate}
                 onDelete={onDelete}
                 reloadComments={reloadComments}
-                loadChildrenComments={loadChildrenComments}
                 checkPasswordRequest={checkPasswordRequest}
+                loadChildrenComments={loadChildrenComments}
                 childrenCommentPostBaseUrl="/creatorComment/replies"
               />
             ))

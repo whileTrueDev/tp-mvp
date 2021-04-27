@@ -25,6 +25,9 @@ export interface CommentItemProps extends Record<string, any>{
   /** 댓글 고유 id */
   commentId: number;
 
+  /** 반복문에서 key 값으로 사용될 prop 명(commentId, replyId 등 고유 id 값의 프로퍼티명) */
+  idProperty?: string;
+
   /** 댓글 작성자 id */
   userId?: string;
   /** 댓글 작성자 nickname */
@@ -95,6 +98,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
     checkPasswordRequest,
     reloadComments,
     childrenCommentPostBaseUrl: childrenCommentPostUrl = '',
+    idProperty = 'commentId',
   } = props;
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -328,7 +332,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
                 replies.map((reply) => (
                   <CommentItem
                     childComment
-                    key={reply.commentId}
+                    key={reply[idProperty]}
                     {...reply}
                     targetId={reply.targetId}
                     onReport={onReport}
