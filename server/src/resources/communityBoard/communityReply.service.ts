@@ -52,11 +52,15 @@ export class CommunityReplyService {
     }
   }
 
-  async createChildReply(
+  async createChildReply({
+    parentReplyId,
+    createReplyDto,
+    ip,
+  }: {
     parentReplyId: number,
     createReplyDto: CreateReplyDto,
     ip: string,
-  ): Promise<CommunityReplyEntity> {
+  }): Promise<CommunityReplyEntity> {
     const parentReply = await this.findOneReply(parentReplyId);
     const targetPostId = parentReply.postId;
     const { password } = createReplyDto;
@@ -115,23 +119,53 @@ export class CommunityReplyService {
     }
   }
 
+  async findChildReplies(
+    parentReplyId: number,
+  ): Promise<CommunityReplyEntity[]> {
+    try {
+      const childrenReplies = await this.communityReplyRepository.find({
+        where: {
+          parentReplyId,
+          deleteFlag: false,
+        },
+        order: {
+          createDate: 'DESC',
+        },
+      });
+      return childrenReplies;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   async findReplies({ postId, page, take }: {
     postId: number,
     page: number,
     take: number
   }): Promise<FindReplyResType> {
     try {
-      const [replies, total] = await this.communityReplyRepository.findAndCount({
+      const totalCount = await this.communityReplyRepository.count({
         where: {
           postId,
+          deleteFlag: 0,
+          parentReplyId: null,
         },
-        take,
-        skip: (page - 1) * take,
-        order: { createDate: 'DESC' },
       });
+
+      const replies = await this.communityReplyRepository.createQueryBuilder('reply')
+        .select()
+        .loadRelationCountAndMap('reply.childrenComments', 'reply.childrenComments')
+        .where('reply.postId =:postId', { postId })
+        .andWhere('reply.deleteFlag = 0')
+        .andWhere('reply.parentReplyId IS NULL')
+        .orderBy('reply.createDate', 'DESC')
+        .offset((page - 1) * take)
+        .limit(take)
+        .getMany();
       return {
         replies,
-        total,
+        total: totalCount,
       };
     } catch (error) {
       console.error(error);

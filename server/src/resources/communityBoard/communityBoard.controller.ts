@@ -32,6 +32,17 @@ export class CommunityBoardController {
   ) {}
 
   /**
+   * 대댓글 조회 GET /community/replies/child/:replyId
+   * 
+   */
+  @Get('/replies/child/:replyId')
+  findChildReplies(
+    @Param('replyId', ParseIntPipe) replyId: number,
+  ): Promise<CommunityReplyEntity[]> {
+    return this.communityReplyService.findChildReplies(replyId);
+  }
+
+  /**
    * 댓글조회 GET /community/replies?postId=&page=&take=
    * @param postId 댓글 조회할 글id
    * @param page 댓글 페이지
@@ -199,13 +210,27 @@ export class CommunityBoardController {
               content: string; 100자
    */
   @Post('/posts/:postId/replies')
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(new ValidationPipe())
   createReply(
     @Ip() userIp: string,
     @Param('postId', ParseIntPipe) postId: number,
     @Body() createReplyDto: CreateReplyDto,
   ): Promise<CommunityReplyEntity> {
     return this.communityReplyService.createReply(postId, createReplyDto, userIp);
+  }
+
+  @Post('replies/child/:replyId')
+  @UsePipes(new ValidationPipe())
+  createChildReply(
+    @Ip() userIp: string,
+    @Param('replyId', ParseIntPipe) replyId: number,
+    @Body() createReplyDto: CreateReplyDto,
+  ): Promise<CommunityReplyEntity> {
+    return this.communityReplyService.createChildReply({
+      parentReplyId: replyId,
+      createReplyDto,
+      ip: userIp,
+    });
   }
 
   /**
@@ -222,6 +247,11 @@ export class CommunityBoardController {
     return this.communityReplyService.checkReplyPassword(replyId, password);
   }
 
+  /**
+   * 대댓글 생성 POST /replies/report/:replyId
+   * @param replyId 
+   * @returns 
+   */
   @Post('replies/report/:replyId')
   async reportReply(
     @Param('replyId', ParseIntPipe) replyId: number,
