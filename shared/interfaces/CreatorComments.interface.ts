@@ -5,9 +5,11 @@ export interface CreatorComments{
 
   nickname: string;
 
+  content: string;
+
   password: string;
 
-  content: string;
+  createDate: Date;
 
   creatorId: string;
 }

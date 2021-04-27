@@ -14,9 +14,6 @@ export class CreatorCommentsEntity implements CreatorComments {
   @PrimaryGeneratedColumn()
   commentId: number;
 
-  @Column({ comment: '댓글이 달린 크리에이터 아이디' })
-  creatorId: string;
-
   @Column({ nullable: true, comment: '댓글을 단 userId' })
   userId: string;
 
@@ -37,6 +34,9 @@ export class CreatorCommentsEntity implements CreatorComments {
 
   @Column({ default: 0, comment: '신고 누적 횟수' })
   reportCount: number;
+
+  @Column({ comment: '댓글이 달린 크리에이터 아이디' })
+  creatorId: string;
 
   @ManyToOne((type) => CreatorCommentsEntity)
   @JoinColumn({ name: 'parentCommentId', referencedColumnName: 'commentId' })
