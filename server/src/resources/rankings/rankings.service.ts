@@ -18,6 +18,15 @@ import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity'
 
 export type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
 export type ColumnType = 'smile'| 'frustrate'| 'admire'| 'cuss' | 'viewer';
+export type PlatformType = 'all' | 'twitch' | 'afreeca';
+
+interface getTopTenByColumnArgs{
+  column: ColumnType,
+  skip: number,
+  categoryId: number,
+  platform: PlatformType
+}
+
 @Injectable()
 export class RankingsService {
   constructor(
@@ -110,9 +119,10 @@ export class RankingsService {
    * 점수순으로 내림차순하여 10개를 가지고온다
    * 자기 조인 예시
    * 
-   * @param column "smileScore" | "frustrateScore" | "admireScore" | "cussScore"
+   * @param column "smile" | "frustrate" | "admire" | "cuss" | "viewer"
    * @param skip 해당 숫자만큼 이후의 데이터를 가져옴
    * @param categoryId 크리에이터 필터링 할 categoryId
+   * @param platform 'twitch' | 'afreeca' | 'all'
    * @param errorHandler (error: any) => void 에러핸들링 할 함수
    * @return {
       rankingData : {
@@ -125,60 +135,97 @@ export class RankingsService {
                      averageRating? number;
                      [key:ScoreColumn]: number;
                    }
-      weeklyTrends : {[key:string] : [ { createDate: string; [key:ScoreColumn]: number }],
+      weeklyTrends : {[key:string] : [ { createDate: string; [key:targetColumn]: number }],
       totalDataCount: number
     }
    }
    */
   private async getTopTenByColumn(
-    column: ScoreColumn,
-    skip: number,
-    categoryId: number,
+    args: getTopTenByColumnArgs,
     errorHandler?: (error: any) => void,
   ): Promise<RankingDataType> {
+    const {
+      column, skip, categoryId, platform: platformType,
+    } = args;
+
+    const targetColumn = column === 'viewer'
+      ? column
+      : `${column}Score`;
+
     try {
+      // 최근분석날짜
       const recentAnalysisDate = await this.getRecentAnalysysDate();
-      const qb = await getConnection()
+      // 공통쿼리
+      const baseQuery = await getConnection()
         .createQueryBuilder()
         .select([
-          `T1.${column} AS ${column}`,
+          `T1.${targetColumn} AS ${targetColumn}`,
           'T1.id AS id',
           'T1.creatorId AS creatorId',
           'T1.creatorName AS creatorName',
           'T1.title AS title',
           'T1.createDate AS createDate',
           'T1.platform AS platform',
-          'twitch.logo AS twitchProfileImage',
-          'twitch.twitchChannelName AS twitchChannelName',
-          'afreeca.logo AS afreecaProfileImage',
           'AVG(ratings.rating) AS averageRating',
         ])
         .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
           .select([
-            `MAX(rankings.${column}) AS maxScore`,
+            `MAX(rankings.${targetColumn}) AS maxScore`,
             'rankings.creatorId AS creatorId',
           ])
           .from(RankingsEntity, 'rankings')
           .groupBy('rankings.creatorId')
-          .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
-        'MaxScoreTable')
+          .where(`createDate > DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
+        'MaxValueTable')
         .from(RankingsEntity, 'T1')
         .groupBy('T1.creatorId')
-        .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T1.creatorId')
-        .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T1.creatorId')
+        .where('T1.creatorId = MaxValueTable.creatorId')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)') // 1주 내 매겨진 평점만
-        .leftJoin('afreeca.categories', 'afreecaCategories')
-        .leftJoin('twitch.categories', 'twitchCategories')
-        .where('T1.creatorId = MaxScoreTable.creatorId')
-        .andWhere(`afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId}`)
-        .andWhere(`T1.${column} = MaxScoreTable.maxScore`); // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
+        .andWhere(`T1.${targetColumn} = MaxValueTable.maxScore`); // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
+
+      let qb: SelectQueryBuilder<RankingsEntity>;
+      if (platformType === 'all') {
+        // 전체(아프리카 + 트위치) 추가 쿼리
+        qb = await baseQuery
+          .addSelect([
+            'Twitch.logo AS twitchProfileImage',
+            'Twitch.twitchChannelName AS twitchChannelName',
+            'Afreeca.logo AS afreecaProfileImage',
+          ])
+          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+      } else if (platformType === 'twitch') {
+        // 트위치 추가 쿼리
+        qb = await baseQuery
+          .addSelect([
+            'Twitch.logo AS twitchProfileImage',
+            'Twitch.twitchChannelName AS twitchChannelName',
+          ])
+          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere('T1.platform =:platformType', { platformType: 'twitch' })
+          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+      } else if (platformType === 'afreeca') {
+        // 아프리카 추가 쿼리
+        qb = await baseQuery
+          .addSelect([
+            'Afreeca.logo AS afreecaProfileImage',
+          ])
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .andWhere('T1.platform =:platformType', { platformType: 'afreeca' })
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+      }
 
       // 해당 조건에 맞는 offset, limit 적용하지 않은 총 데이터 개수
       const totalData = await qb.clone().getRawMany();
       const totalDataCount = totalData.length;
 
       const rankingData: TopTenDataItem[] = await qb
-        .orderBy(`T1.${column}`, 'DESC')
+        .orderBy(`T1.${targetColumn}`, 'DESC')
         .offset(skip)
         .limit(10)
         .getRawMany();
@@ -216,25 +263,29 @@ export class RankingsService {
    */
   private async getTopTenTrendsByColumn(
     topTenCreatorIds: string[],
-    column: ScoreColumn | 'viewer',
+    column: ColumnType,
     errorHandler?: (error: any) => void,
   ): Promise<WeeklyTrendsType> {
     try {
+      const targetColumn = column === 'viewer'
+        ? column
+        : `${column}Score`;
+
       const data = await getConnection()
         .createQueryBuilder()
         .select([
           'T.creatorId',
           'T.streamDate',
-          `T.${column}`,
+          `T.${targetColumn}`,
           'T.rnk',
         ])
         .from((subQuery) => subQuery
           .from(RankingsEntity, 'R')
           .select([
-            `R.${column} AS ${column}`,
+            `R.${targetColumn} AS ${targetColumn}`,
             'DATE_FORMAT(R.streamDate,"%Y-%c-%e") AS streamDate',
             'R.creatorId AS creatorId',
-            `RANK() OVER(PARTITION BY R.creatorId ORDER BY R.streamDate DESC, R.${column} DESC) AS rnk`,
+            `RANK() OVER(PARTITION BY R.creatorId ORDER BY R.streamDate DESC, R.${targetColumn} DESC) AS rnk`,
           ])
           .where(`R.creatorId IN ('${topTenCreatorIds.join("','")}')`),
         'T')
@@ -245,7 +296,7 @@ export class RankingsService {
       const result = topTenCreatorIds.reduce((obj, key) => ({ ...obj, [key]: [] }), {});
       data.reverse().forEach((d) => {
         const { creatorId, streamDate } = d;
-        result[creatorId].push({ createDate: streamDate, [column]: d[column] });
+        result[creatorId].push({ createDate: streamDate, [targetColumn]: d[targetColumn] });
       });
 
       return result;
@@ -258,102 +309,19 @@ export class RankingsService {
   }
 
   /**
-   * 탑텐 랭킹에서 시청자수 순위로 데이터 가져오기
-   * @param skip 
-   * @param categoryId
-   * @param errorHandler 
-   * 
-   * @return
-  // rankingData: Array<TopTenDataItem>,
-  // weeklyTrends: WeeklyTrendsType,
-  // totalDataCount: number
-   */
-  private async getTopTenByViewer(
-    skip: number,
-    categoryId: number,
-    errorHandler?: (error: any) => void,
-  ): Promise<RankingDataType> {
-    try {
-      const recentAnalysisDate = await this.getRecentAnalysysDate();
-      const qb = await getConnection()
-        .createQueryBuilder()
-        .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대시청자 구한 테이블(t2)
-          .select([
-            'MAX(rankings.viewer) AS maxViewer',
-            'rankings.creatorId AS creatorId',
-          ])
-          .from(RankingsEntity, 'rankings')
-          .groupBy('rankings.creatorId')
-          .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
-        'MaxScoreTable')
-        .from(RankingsEntity, 'T1')
-        .select([
-          'T1.viewer AS viewer',
-          'T1.id AS id',
-          'T1.creatorId AS creatorId',
-          'T1.creatorName AS creatorName',
-          'T1.title AS title',
-          'T1.createDate AS createDate',
-          'T1.platform AS platform',
-          'twitch.logo AS twitchProfileImage',
-          'twitch.twitchChannelName AS twitchChannelName',
-          'afreeca.logo AS afreecaProfileImage',
-          'AVG(ratings.rating) AS averageRating',
-        ])
-        .groupBy('T1.creatorId')
-        .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = T1.creatorId')
-        .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = T1.creatorId')
-        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)')// 1주 내 매겨진 평점만
-        .leftJoin('afreeca.categories', 'afreecaCategories')
-        .leftJoin('twitch.categories', 'twitchCategories')
-        .where('T1.creatorId = MaxScoreTable.creatorId')
-        .andWhere(`afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId}`)
-        .andWhere('T1.viewer = MaxScoreTable.maxViewer');
-
-      // 해당 조건에 맞는 offset, limit 적용하지 않은 총 데이터 개수
-      const totalData = await qb.clone().getRawMany();
-      const totalDataCount = totalData.length;
-
-      const data: TopTenDataItem[] = await qb
-        .orderBy('T1.viewer', 'DESC')
-        .offset(skip)
-        .limit(10)
-        .getRawMany();
-
-      // 상위 10명 크리에이터의 아이디를 뽑아낸다
-      const topTenCreatorIds = data.map((d) => d.creatorId);
-      // 상위 10명 크리에이터의 최근 7개 방송 점수 동향을 구함
-      const weeklyTrends = await this.getTopTenTrendsByColumn(topTenCreatorIds, 'viewer', console.error);
-
-      return {
-        rankingData: data.map((d) => ({ ...d, averageRating: Number(d.averageRating) })),
-        weeklyTrends,
-        totalDataCount,
-      };
-    } catch (error) {
-      console.error(error);
-      if (errorHandler) {
-        errorHandler(error);
-      }
-      throw new InternalServerErrorException('error in getTopTenByViewer');
-    }
-  }
-
-  /**
-   * * 감탄점수/웃음점수/답답함점수/욕점수 상위 10명 뽑아서 반환 -> 반응별랭킹 TOP 10에 사용
+   * * 감탄점수/웃음점수/답답함점수/욕점수/시청자수 상위 10명 뽑아서 반환 -> 반응별랭킹 TOP 10에 사용
    * @param column 
    * @param skip 
    * @param categoryId 
    */
-  async getTopTenRank(column: ColumnType, skip: number, categoryId: number): Promise<RankingDataType> {
+  async getTopTenRank(column: ColumnType,
+    skip: number,
+    categoryId: number,
+    platform: PlatformType): Promise<RankingDataType> {
     // 아직 어떤 에러처리가 필요한지 불확실하여 콘솔에 에러찍는것만 에러핸들러로 넘김
-
-    if (column === 'viewer') {
-      return this.getTopTenByViewer(skip, categoryId, console.error);
-    }
-    const targetColumn = `${column}Score` as ScoreColumn;
-
-    return this.getTopTenByColumn(targetColumn, skip, categoryId, console.error);
+    return this.getTopTenByColumn({
+      column, skip, categoryId, platform,
+    }, console.error);
   }
 
   /**
