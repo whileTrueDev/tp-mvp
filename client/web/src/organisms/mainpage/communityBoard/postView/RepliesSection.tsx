@@ -6,8 +6,11 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
   Paper, Typography,
 } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 import CommentItem from '../../ranking/sub/CommentItem';
+import { isReportedIn24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
 import axios from '../../../../utils/axios';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 interface SectionProps{
   totalReplyCount?: number,
@@ -51,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
  * @param props 
  */
 export default function RepliesSection(props: SectionProps): JSX.Element {
+  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const {
     totalReplyCount = 0,
@@ -72,6 +76,33 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
       .catch((error) => console.error(error))
   ), []);
 
+  const onReport = useCallback((replyId: number) => {
+    const BOARD_REPLY_REPORT_LIST_KEY = 'communityReplyReport';
+    const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(BOARD_REPLY_REPORT_LIST_KEY) || '[]');
+    const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
+    const commentIds = commentsRecentlyReported.map((item) => item.id);
+
+    const currentCommentId = replyId;
+
+    if (commentIds.includes(currentCommentId)) {
+      ShowSnack('이미 신고한 댓글입니다', 'error', enqueueSnackbar);
+      localStorage.setItem(BOARD_REPLY_REPORT_LIST_KEY, JSON.stringify([...commentsRecentlyReported]));
+      return;
+    }
+    // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
+    axios.post(`/community/replies/report/${replyId}`)
+      .then((res) => {
+        localStorage.setItem(
+          BOARD_REPLY_REPORT_LIST_KEY,
+          JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]),
+        );
+      })
+      .catch((err) => {
+        ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);
+        console.error(err);
+      });
+  }, [enqueueSnackbar]);
+
   return (
     <section className={classes.replyContainer}>
 
@@ -82,17 +113,16 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
       <Paper>
         {/* 댓글목록 */}
         {replies.map((reply) => (
-          <>
-            <CommentItem
-              key={reply.replyId}
-              {...reply}
-              commentId={reply.replyId}
-              targetId={reply.postId}
-              onDelete={onDelete}
-              reloadComments={loadReplies}
-              checkPasswordRequest={checkPasswordRequest}
-            />
-          </>
+          <CommentItem
+            key={reply.replyId}
+            {...reply}
+            commentId={reply.replyId}
+            targetId={reply.postId}
+            onDelete={onDelete}
+            onReport={onReport}
+            reloadComments={loadReplies}
+            checkPasswordRequest={checkPasswordRequest}
+          />
         ))}
       </Paper>
 

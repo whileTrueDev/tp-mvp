@@ -222,6 +222,13 @@ export class CommunityBoardController {
     return this.communityReplyService.checkReplyPassword(replyId, password);
   }
 
+  @Post('replies/report/:replyId')
+  async reportReply(
+    @Param('replyId', ParseIntPipe) replyId: number,
+  ): Promise<boolean> {
+    return this.communityReplyService.report(replyId);
+  }
+
   /**
    * 댓글삭제 DELETE /community/replies/:replyId
    * @param replyId 삭제할 댓글 id

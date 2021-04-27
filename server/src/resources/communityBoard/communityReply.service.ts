@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  HttpException, HttpStatus, Injectable,
+  HttpException, HttpStatus, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 
 import * as bcrypt from 'bcrypt';
@@ -49,6 +49,44 @@ export class CommunityReplyService {
     } catch (error) {
       console.error(error);
       throw new HttpException('error in createReply', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async createChildReply(
+    parentReplyId: number,
+    createReplyDto: CreateReplyDto,
+    ip: string,
+  ): Promise<CommunityReplyEntity> {
+    const parentReply = await this.findOneReply(parentReplyId);
+    const targetPostId = parentReply.postId;
+    const { password } = createReplyDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      const childReply = await this.communityReplyRepository.save({
+        ...createReplyDto,
+        password: hashedPassword,
+        postId: targetPostId,
+        parentReplyId: parentReply.replyId,
+        ip,
+      });
+      return childReply;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async report(replyId: number): Promise<boolean> {
+    const reply = await this.findOneReply(replyId);
+    try {
+      await this.communityReplyRepository.save({
+        ...reply,
+        reportCount: reply.reportCount + 1,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
