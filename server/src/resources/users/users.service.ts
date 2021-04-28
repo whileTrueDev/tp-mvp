@@ -100,7 +100,9 @@ export class UsersService {
    * @param userId 프로필 이미지 정보를 열람하고자 하는 유저 아이디
    */
   async findOneProfileImage(userId: string): Promise<ProfileImages> {
-    const user = await this.usersRepository.findOne(userId);
+    const user = await this.usersRepository.findOne(userId, {
+      relations: ['twitch', 'afreeca', 'youtube'],
+    });
     const images = [];
 
     // 아프리카는 OPEN API 업데이트 이후 추가 20.11.18 hwasurr
