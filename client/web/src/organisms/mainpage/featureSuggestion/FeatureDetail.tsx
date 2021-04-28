@@ -288,6 +288,8 @@ export default function FeatureDetail({
               // if (previousFeature.author?.userId === authContext.user.userId) {
               //   onOtherFeatureClick(previousFeature.suggestionId);
               // } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+            } else {
+              onOtherFeatureClick(previousFeature.suggestionId);
             }
           }}
         >
@@ -323,6 +325,8 @@ export default function FeatureDetail({
             //   } else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
             // } else {
             //   onOtherFeatureClick(nextFeature.suggestionId);
+            } else {
+              onOtherFeatureClick(nextFeature.suggestionId);
             }
           }}
         >
