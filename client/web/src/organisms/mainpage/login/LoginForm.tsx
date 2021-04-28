@@ -1,21 +1,19 @@
-import React, { useRef, useState } from 'react';
-import classnames from 'classnames';
-import { useHistory, Link } from 'react-router-dom';
-import useAxios from 'axios-hooks';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
-  Button, TextField, Checkbox, FormControlLabel, Tooltip, Typography, Grid,
+  Button, Checkbox, FormControlLabel, Grid, TextField, Tooltip, Typography,
 } from '@material-ui/core';
-import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import CheckedCheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
+import useAxios from 'axios-hooks';
+import classnames from 'classnames';
+import React, { useRef, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
-import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
-
-import useDialog from '../../../utils/hooks/useDialog';
-import useAuthContext from '../../../utils/hooks/useAuthContext';
 import kakaoChattingURL from '../../../constants/kakao';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
+import useDialog from '../../../utils/hooks/useDialog';
 
 const useStyles = makeStyles((theme) => ({
   upperSpace: { marginTop: theme.spacing(4) },
@@ -106,7 +104,7 @@ export default function LoginForm(): JSX.Element {
         className={classnames(classes.formWidth, classes.alignCenter)}
       >
         <div>
-          { theme.palette.type === 'light' ? <TruepointLogo width={280} /> : <TruepointLogoLight width={280} /> }
+          <TruepointLogo width={280} />
         </div>
         <Grid
           container

@@ -1,16 +1,14 @@
-import {
-  Button, Container, Grid, Typography, Link as MuiLink,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
+import {
+  Button, Container, Grid, Typography,
+} from '@material-ui/core';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
+import TruepointLogo from '../../../atoms/TruepointLogo';
 
-const styles = makeStyles((theme) => ({
+const styles = makeStyles((theme: Theme) => ({
   root: {
-    width: '90%',
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '20px auto',
+    backgroundColor: theme.palette.background.paper,
   },
   iconsWrapper: {
     height: 60,
@@ -20,6 +18,14 @@ const styles = makeStyles((theme) => ({
   icons: {
     display: 'flex',
     alignItems: 'center',
+  },
+  icon: {
+    width: 220 / 2,
+    height: 80 / 2,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: theme.spacing(1),
   },
   name: {
     fontWeight: 700,
@@ -93,8 +99,8 @@ export default function Footer(): JSX.Element {
   const classes = styles();
 
   return (
-    <Container>
-      <div className={classes.root}>
+    <div className={classes.root}>
+      <Container>
         <Grid
           container
           direction="row"
@@ -103,9 +109,12 @@ export default function Footer(): JSX.Element {
           className={classes.iconsWrapper}
         >
           <Grid item md={6} sm={6} xs={12} className={classes.icons}>
-            <MuiLink className={classes.name} variant="body2" component={Link} to="/">
+            <a href="/" className={classes.icon}>
+              <TruepointLogo width={220 / 2} height={80 / 2} />
+            </a>
+            {/* <Typography className={classes.name} variant="body2">
               TruePoint
-            </MuiLink>
+            </Typography> */}
             <br />
           </Grid>
           <Grid item md={6} sm={6} xs={12}>
@@ -163,7 +172,7 @@ export default function Footer(): JSX.Element {
           </strong>
           {' All rights Reserved'}
         </Typography>
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 }

@@ -8,6 +8,7 @@ const collectorPool = mysql.createPool({
   password: process.env.COLLECTOR_DB_PASSWORD,
   database: process.env.COLLECTOR_DB_DATABASE,
   port: process.env.COLLECTOR_DB_PORT,
+  charset: process.env.COLLECTOR_DB_CHARSET
   /**
      * The maximum number of connection requests the pool will queue
      * before returning an error from getConnection.
@@ -22,6 +23,7 @@ const truepointProdPool = mysql.createPool({
   password: process.env.TP_DB_PASSWORD,
   database: process.env.TP_DB_DATABASE,
   port: process.env.TP_DB_PORT,
+  charset: process.env.TP_DB_CHARSET
   /**
      * The maximum number of connection requests the pool will queue
      * before returning an error from getConnection.
@@ -36,6 +38,7 @@ const truepointDevPool = mysql.createPool({
   password: process.env.TP_DB_DEV_PASSWORD,
   database: process.env.TP_DB_DEV_DATABASE,
   port: process.env.TP_DB_DEV_PORT,
+  charset: process.env.TP_DB_DEV_CHARSET
   /**
      * The maximum number of connection requests the pool will queue
      * before returning an error from getConnection.

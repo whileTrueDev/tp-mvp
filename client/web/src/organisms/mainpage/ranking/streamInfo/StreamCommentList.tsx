@@ -1,42 +1,32 @@
 import { Typography } from '@material-ui/core';
-import useAxios from 'axios-hooks';
-import React, {
-  useCallback, useEffect, useState,
-} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSnackbar } from 'notistack';
-import dayjs from 'dayjs';
-import {
-  ICreatorCommentsRes, ICreatorCommentData,
-} from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
-import CommentItem from '../sub/CommentItem';
-import { useCreatorCommentListStyle, useCommentContainerStyles } from '../style/CreatorComment.style';
+import { IStreamCommentData, IStreamCommentsRes } from '@truepoint/shared/dist/res/StreamCommentResType.interface';
+import useAxios from 'axios-hooks';
 import RegularButton from '../../../../atoms/Button/Button';
+import { useCommentContainerStyles, useCreatorCommentListStyle } from '../style/CreatorComment.style';
 import CommentForm from '../sub/CommentForm';
-import axios from '../../../../utils/axios';
-import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import CommentItem from '../sub/CommentItem';
 import CommentSortButtons, { CommentFilter, filters } from '../sub/CommentSortButtons';
+import axios from '../../../../utils/axios';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import { isReportedIn24Hours } from '../creatorInfo/CreatorCommentList';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
-export function isReportedIn24Hours(date: string): boolean {
-  const now = dayjs();
-  const targetDate = dayjs(date);
-  return now.diff(targetDate, 'hour') < 24;
+export interface StreamCommentListProps {
+  streamId: string;
 }
 
-export interface CreatorCommentListProps{
-  creatorId: string;
-}
-
-export default function CreatorCommentList(props: CreatorCommentListProps): JSX.Element {
+export default function StreamCommentList(props: StreamCommentListProps): JSX.Element {
+  const { streamId } = props;
   const { enqueueSnackbar } = useSnackbar();
   const listStyle = useCreatorCommentListStyle();
-  const authContext = useAuthContext();
   const classes = useCommentContainerStyles();
-  const { creatorId } = props;
-  const [commentList, setCommentList] = useState<ICreatorCommentData[]>([]);
+  const authContext = useAuthContext();
+  const [commentList, setCommentList] = useState<IStreamCommentData[]>([]);
   const [clickedFilterButtonIndex, setClickedFilterButtonIndex] = useState<number>(0); //  0 : 인기순(recommend), 1 : 최신순(date)
-  const [{ data: commentData, loading }, getCommentData] = useAxios<ICreatorCommentsRes>({
-    url: `/creatorComment/${creatorId}`,
+  const [{ data: commentData, loading }, getCommentData] = useAxios<IStreamCommentsRes>({
+    url: `/streamComment/${streamId}`,
     method: 'get',
     params: {
       skip: 0,
@@ -90,8 +80,8 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   }, [loadComments]);
 
   const onReport = useCallback((commentId: number) => {
-    const CREATOR_COMMENT_REPORT_LIST_KEY = 'cretorCommentReport';
-    const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(CREATOR_COMMENT_REPORT_LIST_KEY) || '[]');
+    const STREAM_COMMENT_REPORT_LIST_KEY = 'streamCommentReport';
+    const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(STREAM_COMMENT_REPORT_LIST_KEY) || '[]');
     const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
     const commentIds = commentsRecentlyReported.map((item) => item.id);
 
@@ -99,14 +89,14 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
 
     if (commentIds.includes(currentCommentId)) {
       ShowSnack('이미 신고한 댓글입니다', 'error', enqueueSnackbar);
-      localStorage.setItem(CREATOR_COMMENT_REPORT_LIST_KEY, JSON.stringify([...commentsRecentlyReported]));
+      localStorage.setItem(STREAM_COMMENT_REPORT_LIST_KEY, JSON.stringify([...commentsRecentlyReported]));
       return;
     }
     // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
     axios.post(`/creatorComment/report/${commentId}`)
       .then((res) => {
         localStorage.setItem(
-          CREATOR_COMMENT_REPORT_LIST_KEY,
+          STREAM_COMMENT_REPORT_LIST_KEY,
           JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]),
         );
       })
@@ -117,7 +107,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   }, [enqueueSnackbar]);
 
   const onClickLike = useCallback((commentId: number) => axios.post(
-    `creatorComment/vote/${commentId}`,
+    `streamComment/vote/${commentId}`,
     { vote: 1, userId: authContext.user.userId || null },
   )
     .then((res) => {
@@ -129,7 +119,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     .catch((error) => console.error(error)), [authContext.user.userId]);
 
   const onClickHate = useCallback((commentId: number) => axios.post(
-    `creatorComment/vote/${commentId}`,
+    `streamComment/vote/${commentId}`,
     { vote: 0, userId: authContext.user.userId || null },
   )
     .then((res) => {
@@ -141,27 +131,26 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     .catch((error) => console.error(error)), [authContext.user.userId]);
 
   const onDelete = useCallback((commentId: number) => (
-    axios.delete(`/creatorComment/${commentId}`)
+    axios.delete(`/streamComment/${commentId}`)
       .then((res) => new Promise((resolve, reject) => resolve(res)))
       .catch((error) => console.error(error))
   ), []);
 
-  const loadChildrenComments = useCallback((commentId: number) => axios.get(`creatorComment/replies/${commentId}`)
+  const loadChildrenComments = useCallback((commentId: number) => axios.get(`streamComment/replies/${commentId}`)
     .then((res) => new Promise((resolve, reject) => {
       resolve(res);
     }))
     .catch((error) => console.error(error)), []);
 
-  const checkPasswordRequest = useCallback((commentId, password) => axios.post(`/creatorComment/password/${commentId}`, { password })
+  const checkPasswordRequest = useCallback((commentId, password) => axios.post(`/streamComment/password/${commentId}`, { password })
     .then((res) => new Promise((resolve, reject) => {
       resolve(res);
     })),
   []);
-
   return (
     <div className={classes.commentSectionWrapper}>
       <CommentForm
-        postUrl={`/creatorComment/${creatorId}`}
+        postUrl={`/streamComment/${streamId}`}
         callback={reloadComments}
       />
 
@@ -186,7 +175,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
                 reloadComments={reloadComments}
                 checkPasswordRequest={checkPasswordRequest}
                 loadChildrenComments={loadChildrenComments}
-                childrenCommentPostBaseUrl="/creatorComment/replies"
+                childrenCommentPostBaseUrl="/streamComment/replies"
               />
             ))
             : (

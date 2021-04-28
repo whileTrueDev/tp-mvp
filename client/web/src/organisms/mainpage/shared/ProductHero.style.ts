@@ -25,7 +25,7 @@ const styles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'left',
+    alignItems: 'stretch',
     height: 'inherit',
     position: 'relative',
   },

@@ -1,16 +1,15 @@
-import React, { useRef } from 'react';
-import classnames from 'classnames';
-import { Link } from 'react-router-dom';
-import { Typography, Button, TextField } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Button, TextField, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
+import classnames from 'classnames';
+import React, { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
-import transformIdToAsterisk from '../../../utils/transformAsterisk';
-import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import TruepointLogo from '../../../atoms/TruepointLogo';
-import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
 import useDialog from '../../../utils/hooks/useDialog';
+import useIamportCertification from '../../../utils/hooks/useIamportCertification';
+import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -35,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FindAccountForm(): JSX.Element {
   const classes = useStyles();
-  const theme = useTheme();
   // **************************************************
   // 스텝 할당을 위한 스테이트
   const [activeStep, setActiveStep] = React.useState(0);
@@ -121,7 +119,7 @@ export default function FindAccountForm(): JSX.Element {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      { theme.palette.type === 'light' ? <TruepointLogo width={350} /> : <TruepointLogoLight width={350} /> }
+      <TruepointLogo width={350} />
       {helperTextDialog.open && helperText && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />
