@@ -2,7 +2,7 @@ import {
   Controller, Get, Post, Body,
   Patch, Delete, ValidationPipe,
   ParseIntPipe, UseInterceptors,
-  ClassSerializerInterceptor, Query,
+  ClassSerializerInterceptor, Query, Ip, HttpCode, Param,
 } from '@nestjs/common';
 import { FeatureSuggestionStateUpdateDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionStateUpdate.dto';
 import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
@@ -42,7 +42,6 @@ export class FeatureSuggestionController {
    */
   @Get('list')
   async findAllList(): Promise<FeatureSuggestionEntity[]> {
-    console.error('hi from feature-suggestion / list');
     return this.featureSuggestionService.findAllList();
   }
 
@@ -53,8 +52,9 @@ export class FeatureSuggestionController {
   @Post()
   async insertOne(
     @Body(ValidationPipe) featureSuggestionPostDto: FeatureSuggestionPostDto,
+    @Ip() userIp: string,
   ): Promise<FeatureSuggestionEntity> {
-    return this.featureSuggestionService.insert(featureSuggestionPostDto);
+    return this.featureSuggestionService.insert(featureSuggestionPostDto, userIp);
   }
 
   /**
@@ -90,23 +90,39 @@ export class FeatureSuggestionController {
     return this.featureSuggestionService.stateUpdate(data);
   }
 
+  /**
+   * 글 수정시 비밀번호 확인
+   * @param postId 
+   * @param password 
+   */
+   @HttpCode(200)
+   @Post(':suggetstionId/password')
+  async checkSuggestionPassword(
+     @Param('suggetstionId', ParseIntPipe) suggetstionId: number,
+     @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.featureSuggestionService.checkSuggestionPassword(suggetstionId, password);
+  }
+
   // ****************************************************************************************
   // ********************************* feature suggestion reply *****************************
   @Get('reply')
-  async getReply(
-    @Query(ValidationPipe) req: ReplyGet,
-  ): Promise<FeatureSuggestionReplyEntity[]> {
-    return this.featureSuggestionReplyService.findAll(req);
-  }
+   async getReply(
+    @Query(ValidationPipe) query: ReplyGet,
+   ): Promise<FeatureSuggestionReplyEntity[]> {
+     const reply = await this.featureSuggestionReplyService.findAll(query);
+     return reply;
+   }
 
   @Post('reply')
   @UseInterceptors(ClassSerializerInterceptor)
   async createReply(
     @Body(ValidationPipe) data: ReplyPost,
+    @Ip() userIp: string,
   ): Promise<FeatureSuggestionReplyEntity> {
     return this
       .featureSuggestionReplyService
-      .insertOne(data);
+      .insertOne(data, userIp);
   }
 
   @Patch('reply')

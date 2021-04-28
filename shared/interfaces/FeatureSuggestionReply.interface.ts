@@ -9,6 +9,8 @@ export interface FeatureSuggestionReply {
 
   author: User;
 
+  userIp: string;
+
   createdAt: Date;
 
 }

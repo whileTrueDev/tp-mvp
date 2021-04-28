@@ -30,7 +30,7 @@ const ShowSnack = (message: string, type: 'success' | 'info' | 'warning' | 'erro
   } : {
     anchorOrigin: {
       vertical: 'bottom',
-      horizontal: 'left',
+      horizontal: 'center',
     },
   };
 
