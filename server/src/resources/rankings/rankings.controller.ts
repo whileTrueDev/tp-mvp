@@ -4,7 +4,7 @@ import {
 import {
   DailyTotalViewersResType, MonthlyScoresResType, WeeklyViewersResType, RankingDataType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { ColumnType, RankingsService } from './rankings.service';
+import { ColumnType, RankingsService, PlatformType } from './rankings.service';
 @Controller('rankings')
 export class RankingsController {
   constructor(
@@ -60,8 +60,9 @@ export class RankingsController {
       @Query('column', new ValidationPipe()) column: ColumnType,
       @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
       @Query('categoryId', new DefaultValuePipe(1), ParseIntPipe) categoryId: number,
+      @Query('platform', new DefaultValuePipe('all')) platform: PlatformType,
   ): Promise<RankingDataType> {
-    return this.rankingsService.getTopTenRank(column, skip, categoryId);
+    return this.rankingsService.getTopTenRank(column, skip, categoryId, platform);
   }
 
   /**

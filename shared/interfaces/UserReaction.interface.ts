@@ -4,4 +4,5 @@ export interface UserReaction{
   ip: string;
   content: string;
   createDate: Date;
+  password: string;
 }

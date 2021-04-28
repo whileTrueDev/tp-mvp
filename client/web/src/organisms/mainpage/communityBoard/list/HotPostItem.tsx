@@ -4,12 +4,13 @@ import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const useHotPostItemStyles = makeStyles((theme: Theme) => createStyles({
-  button: {
+  hotPostItem: {
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: theme.palette.action.hover,
     color: theme.palette.text.primary,
-    padding: theme.spacing(2),
+    padding: theme.spacing(0.25, 1),
+    borderRadius: theme.spacing(1),
     '&:not(:last-child)': {
       marginBottom: theme.spacing(0.5),
     },
@@ -41,7 +42,7 @@ export default function HotPostItem(props: HotPostItemProps): JSX.Element {
   const { title, nickname } = post;
 
   return (
-    <Button onClick={onClick} fullWidth className={classes.button}>
+    <Button onClick={onClick} fullWidth className={classes.hotPostItem}>
       <Grid container spacing={2}>
         <Grid item xs={8} container alignItems="center" className={classes.titleWrapper}>
           {icon}

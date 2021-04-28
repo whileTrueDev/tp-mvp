@@ -15,7 +15,7 @@ import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecorat
 import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
-import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
+import WeeklyLineCard from '../../organisms/mainpage/ranking/WeeklyLineCard';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 
@@ -45,7 +45,7 @@ export default function Ranking(): JSX.Element {
                 navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
               >
                 <ViewerComparisonPolarAreaCard />
-                <WeeklyViewerRankingCard />
+                <WeeklyLineCard />
               </Carousel>
             </Container>
           </div>

@@ -19,7 +19,7 @@ export interface AuthContextValue {
 }
 
 const defaultUserValue = {
-  userId: '', userDI: '', userName: '', roles: '',
+  userId: '', userDI: '', userName: '', roles: '', nickName: '',
 };
 const AuthContext = React.createContext<AuthContextValue>({
   user: defaultUserValue,

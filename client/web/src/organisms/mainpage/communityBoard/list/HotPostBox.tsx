@@ -57,6 +57,12 @@ const useHotPostBoxStyle = makeStyles((theme: Theme) => {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
+      '& span': {
+        fontSize: theme.typography.h6.fontSize,
+      },
+      '& span:nth-child(2)': {
+        color: theme.palette.primary.dark,
+      },
     },
   });
 });
@@ -76,7 +82,7 @@ export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
     posts, error, loading, platform, buttonHandler,
   } = props;
 
-  const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="32" height="32" />;
+  const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="24" height="24" />;
   const moveToPost = (postId: number | undefined, platformCode: number | undefined) => () => {
     const postPlatform = getBoardPlatformNameByCode(platformCode);
     axios.post(`/community/posts/${postId}/hit`).then(() => {
@@ -93,8 +99,9 @@ export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
       <Divider />
       <div className={classes.header}>
         <div>
-          <Typography component="span" color="primary">핫</Typography>
-          <Typography component="span"> 시청자 반응</Typography>
+          <Typography component="span">{platform === 'twitch' ? '트위치' : '아프리카'}</Typography>
+          <Typography component="span" color="primary">HOT</Typography>
+          <Typography component="span"> 게시물</Typography>
         </div>
         <Button color="primary" onClick={buttonHandler}>+더보기</Button>
       </div>

@@ -1,8 +1,8 @@
-import { CreateStreamVoteDto } from '@truepoint/shared/dist/dto/broadcast-info/CreateStreamVote.dto';
 import {
   Body,
   Controller, Delete, Get, Ip, Param, ParseIntPipe, Post, Query,
 } from '@nestjs/common';
+import { CreateStreamVoteDto } from '@truepoint/shared/dist/dto/broadcast-info/CreateStreamVote.dto';
 import { FindOneStreamDto } from '@truepoint/shared/dist/dto/broadcast-info/FindOneStream.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';

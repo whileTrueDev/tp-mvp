@@ -47,16 +47,17 @@ export interface Scores{
   cussScore?: number,
   smileScore?: number,
   viewer? : number,
+  rating? : number,
 }
 export interface TopTenDataItem extends Scores{
   id: number,
   creatorId: string,
   creatorName: string,
-  title: string,
+  title?: string,
   platform: 'afreeca'|'twitch',
-  twitchProfileImage: null | string,
-  afreecaProfileImage: null | string,
-  twitchChannelName: null | string,
+  twitchProfileImage?: string | null,
+  afreecaProfileImage?: string | null,
+  twitchChannelName?: string | null,
   averageRating?: number,
 }
 export interface WeeklyTrendsItem extends Scores{
