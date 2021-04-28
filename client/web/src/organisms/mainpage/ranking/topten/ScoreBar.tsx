@@ -30,6 +30,7 @@ function ScoreBar({ score }: {score: number}): JSX.Element {
       />
       {score && (
       <Typography
+        component="span"
         className={classes.scoreText}
         style={{
           transform: `translateX(${(10 - score) * (-10)}%`,

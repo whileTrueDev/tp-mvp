@@ -4,7 +4,7 @@ import {
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
 import { StreamVotesEntity } from './streamVotes.entity';
 
-@Entity({ name: 'Streams_copy' })
+@Entity({ name: 'Streams_copy2' })
 export class StreamsEntity implements Stream {
   @PrimaryColumn()
   streamId: string;

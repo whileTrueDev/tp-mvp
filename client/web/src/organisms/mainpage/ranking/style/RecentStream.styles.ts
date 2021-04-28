@@ -30,6 +30,7 @@ const useRecentStreamStyles = makeStyles((theme) => ({
       'color', { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.short },
     ),
     '&:hover': {
+      cursor: 'pointer',
       color: theme.palette.text.primary,
     },
   },

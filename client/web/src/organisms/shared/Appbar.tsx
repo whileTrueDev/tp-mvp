@@ -284,30 +284,12 @@ export default function AppBar({
             </div>
 
             <div className={classes.links}>
-              <Button
+              <IconButton
                 className={classes.darkModeToggleButton}
                 onClick={theme.handleThemeChange}
               >
                 {darkModeToggleButtonContent}
-              </Button>
-              {authContext.user.userId && authContext.accessToken ? ( // 로그인 되어있는 경우
-                <div className={classes.userInterfaceWrapper}>
-                  <HeaderLinks />
-                </div>
-              ) : ( // 로그인 되어있지 않은 경우
-                null
-                // <Button
-                //   disableElevation
-                //   variant="contained"
-                //   color="secondary"
-                //   className={classes.loginButton}
-                //   component={Link}
-                //   to="/login"
-                // >
-                //   로그인
-                // </Button>
-              )}
-
+              </IconButton>
             </div>
 
             <Hidden mdUp>

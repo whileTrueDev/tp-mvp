@@ -59,6 +59,7 @@ export default function CreatorList(): React.ReactElement {
               afreecaId={user.afreeca?.afreecaId}
               youtubeId={user.youtube?.youtubeId}
               twitchId={user.twitch?.twitchId}
+              detail={user.detail}
             />
           ))}
       </Box>

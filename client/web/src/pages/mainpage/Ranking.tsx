@@ -1,23 +1,23 @@
-import React, { useMemo } from 'react';
 import { Container, Grid } from '@material-ui/core';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import React, { useMemo } from 'react';
 import Carousel from 'react-material-ui-carousel';
 import {
   Redirect, Route, Switch, useRouteMatch,
 } from 'react-router-dom';
+import CreatorDetails from '../../organisms/mainpage/ranking/CreatorDetails';
+import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
+import StreamEvaluation from '../../organisms/mainpage/ranking/StreamEvaluation';
+import { useCarouselStyle, useRankingPageLayout } from '../../organisms/mainpage/ranking/style/RankingPage.style';
+import FooterDecoration from '../../organisms/mainpage/ranking/sub/FooterDecoration';
+import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
+import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
+import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
+import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
+import WeeklyLineCard from '../../organisms/mainpage/ranking/WeeklyLineCard';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
-import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
-import WeeklyLineCard from '../../organisms/mainpage/ranking/WeeklyLineCard';
-import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
-import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
-import { useRankingPageLayout, useCarouselStyle } from '../../organisms/mainpage/ranking/style/RankingPage.style';
-import CreatorEvaluation from '../../organisms/mainpage/ranking/CreatorEvaluation';
-import RecentStreamList from '../../organisms/mainpage/ranking/RecentStreamList';
-import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
-import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
-import FooterDecoration from '../../organisms/mainpage/ranking/sub/FooterDecoration';
 
 export default function Ranking(): JSX.Element {
   const wrapper = useRankingPageLayout();
@@ -63,15 +63,18 @@ export default function Ranking(): JSX.Element {
           </Container>
           {footerDecoration}
         </Route>
-        {/* 방송인 정보 페이지 */}
+        {/* 방송 정보를 포함한 방송인 정보 페이지 */}
         <Route exact path={`${path}/:platform/:creatorId`}>
-          {/* 최근 방송 정보 섹션 */}
-          <RecentStreamList />
+          <CreatorDetails />
+        </Route>
 
+        {/* 최근 방송 정보 섹션 */}
+        <Route exact path={`${path}/:platform/:creatorId/:streamId`}>
           <Container className={wrapper.container}>
-            <CreatorEvaluation />
+            <StreamEvaluation />
           </Container>
         </Route>
+
         <Route>
           <Redirect to="/ranking" />
         </Route>

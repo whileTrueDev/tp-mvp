@@ -1,12 +1,12 @@
 import { useMediaQuery, useTheme } from '@material-ui/core';
-import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
-import useAxios from 'axios-hooks';
-import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import useRecentStreamStyles from './style/RecentStream.styles';
+import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
+import useAxios, { ResponseValues } from 'axios-hooks';
+import React, { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
 import RecentStreamListItem from './streamInfo/RecentStreamListItem';
 import RecentStreamListLeftDecorator from './streamInfo/RecentStreamListLeftDecorator';
+import useRecentStreamStyles from './style/RecentStream.styles';
 
 const listPositions = [
   { marginLeft: 16, height: 85 },
@@ -15,15 +15,20 @@ const listPositions = [
   { marginLeft: 80, height: 90 },
   { marginLeft: 16, height: undefined },
 ];
-
-export default function RecentStreamList(): React.ReactElement {
+interface RecentStreamListProps {
+  userData: ResponseValues<User, any>;
+  creatorId: string;
+  platform: 'twitch' | 'afreeca',
+}
+export default function RecentStreamList({
+  userData,
+  creatorId,
+  platform,
+}: RecentStreamListProps): React.ReactElement {
   const classes = useRecentStreamStyles();
+  const history = useHistory();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
-
-  const [userData] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
 
   const [{ data, error }] = useAxios<RecentStreamResType>({
     url: '/broadcast-info/bycreator',
@@ -48,7 +53,13 @@ export default function RecentStreamList(): React.ReactElement {
     <section className={classes.section} id="broad-list">
       <div className={classes.itembox}>
         {!error && dataSource && dataSource.map((stream) => (
-          <RecentStreamListItem key={stream.streamId} stream={stream} />
+          <RecentStreamListItem
+            key={stream.streamId}
+            stream={stream}
+            onClick={() => {
+              history.push(`${window.location.pathname}/${stream.streamId}`, userData.data);
+            }}
+          />
         ))}
       </div>
 
@@ -65,9 +76,7 @@ export default function RecentStreamList(): React.ReactElement {
       )}
 
       {/* 플랫폼 로고 이미지 */}
-      {isSm ? (null) : (
-        <RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />
-      )}
+      {isSm ? (null) : (<RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />)}
     </section>
 
   );

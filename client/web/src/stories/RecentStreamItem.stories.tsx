@@ -17,6 +17,8 @@ const RECENT_STREAM_DATA = {
   streamId: '42358077230',
   title: '일요일의 철면수심',
   startDate: '2021-04-18 18:04:57',
+  endDate: '2021-04-18 19:34:32',
+  chatCount: 1234,
   viewer: 1819,
   marginLeft: 20,
   height: 80,
@@ -24,6 +26,7 @@ const RECENT_STREAM_DATA = {
   hateCount: 1,
 };
 const defaultArgs: RecentStreamListItemProps = {
+  onClick: () => alert('click handler'),
   stream: {
     ...RECENT_STREAM_DATA,
   },
@@ -33,6 +36,7 @@ export const Default = Template.bind({});
 Default.args = defaultArgs;
 
 const longTitleArgs: RecentStreamListItemProps = {
+  onClick: () => alert('click handler'),
   stream: {
     ...RECENT_STREAM_DATA,
     title: '?랭크솔랭화내지말자랭크솔랭화내지말자랭크솔랭화내지말자랭크솔랭화내지말자랭크솔랭화내지말자',
@@ -43,6 +47,7 @@ export const LongTitle = Template.bind({});
 LongTitle.args = longTitleArgs;
 
 const bigVoteArgs: RecentStreamListItemProps = {
+  onClick: () => alert('click handler'),
   stream: {
     ...RECENT_STREAM_DATA,
     title: '방송제목123123',

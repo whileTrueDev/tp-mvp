@@ -22,8 +22,8 @@ export class StreamVotesEntity {
   userIp: string;
 
   @Column({ nullable: true, comment: '추천한 유저 ID' })
-  userId: string;
+  userId?: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createDate: Date;
+  createDate?: Date;
 }

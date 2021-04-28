@@ -57,15 +57,15 @@ export class UserEntity implements User {
   profileImage?: string;
 
   @OneToOne(() => PlatformYoutubeEntity, (platformYoutube) => platformYoutube.youtubeId, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'youtubeId' })
   youtube?: PlatformYoutubeEntity;
 
   @OneToOne(() => PlatformTwitchEntity, (platformTwitch) => platformTwitch.twitchId, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'twitchId' })
   twitch?: PlatformTwitchEntity;
 
   @OneToOne(() => PlatformAfreecaEntity, (platformAfreeca) => platformAfreeca.afreecaId, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'afreecaId' })
   afreeca?: PlatformAfreecaEntity;
 
   @CreateDateColumn({ type: 'timestamp' })

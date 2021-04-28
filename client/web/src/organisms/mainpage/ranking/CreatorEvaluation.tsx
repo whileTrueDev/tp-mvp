@@ -1,42 +1,27 @@
-import { Button } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
   CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import useAxios from 'axios-hooks';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import GoBackButton from '../../../atoms/Button/GoBackButton';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
 import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
+import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 
-const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
-  creatorEvaluationCardContainer: {
-    position: 'relative',
-    backgroundColor: theme.palette.background.paper,
-    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
-    borderRadius: theme.spacing(0.5),
-  },
-  goBackButton: {
-    position: 'absolute',
-    zIndex: 1,
-    top: '50%',
-    left: `-${theme.spacing(9)}px`,
-    width: theme.spacing(15),
-    height: theme.spacing(15),
-    borderRadius: '50%',
-  },
-  arrowIcon: {
-    fontSize: theme.typography.h2.fontSize,
-  },
-}));
+interface CreatorEvaluationProps {
+  userData?: User;
+}
 
 /**
  * 인방랭킹 목록에서 크리에이터 이름 눌렀을 때 보여질 방송인정보 페이지 컴포넌트
  * @returns 
  */
-export default function CreatorEvaluation(): JSX.Element {
+export default function CreatorEvaluation({
+  userData,
+}: CreatorEvaluationProps): JSX.Element {
   const classes = useCreatorEvalutationCardStyle();
-  const history = useHistory();
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
   const [, getCreatorRatingInfo] = useAxios<CreatorRatingInfoRes>(`/ratings/info/${platform}/${creatorId}`, { manual: true });
   const [, refetchAverageRating] = useAxios<CreatorAverageRatings>(`/ratings/${creatorId}/average`, { manual: true });
@@ -85,19 +70,10 @@ export default function CreatorEvaluation(): JSX.Element {
 
   return (
     <div className={classes.creatorEvaluationCardContainer}>
-      <Button
-        className={classes.goBackButton}
-        onClick={history.goBack}
-        aria-label="뒤로가기"
-      >
-        <img
-          alt="뒤로가기 화살표 이미지"
-          src="/images/rankingPage/backArrowImage.png"
-          srcSet="images/rankingPage/backArrowImage@2x.png 2x"
-        />
-      </Button>
+      <GoBackButton />
       <CreatorInfoCard
         updateAverageRating={updateAverageRating}
+        user={userData}
         info={info}
         ratings={ratings}
         scores={scores}
