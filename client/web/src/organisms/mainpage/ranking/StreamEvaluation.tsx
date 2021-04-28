@@ -50,7 +50,6 @@ export default function StreamEvaluation(): React.ReactElement {
     <div className={classes.creatorEvaluationCardContainer}>
       <GoBackButton />
 
-      {!loading && streamData && (
       <StreamInfoCard
         creator={creatorInfo}
         stream={streamData}
@@ -59,7 +58,6 @@ export default function StreamEvaluation(): React.ReactElement {
         onDownVote={() => handleVote('down')}
         onVoteCancel={handleVoteDelete}
       />
-      )}
 
       <StreamCommentList streamId={streamId} />
     </div>
