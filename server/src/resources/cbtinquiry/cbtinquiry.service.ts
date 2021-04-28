@@ -11,6 +11,10 @@ export class CbtInquiryService {
     private readonly cbtinquiryRepository: Repository<CbtInquiryEntity>,
   ) {}
 
+  public async findAll(): Promise<CbtInquiryEntity[]> {
+    return this.cbtinquiryRepository.find();
+  }
+
   /**
    * 문의 생성 service method.
    * @param createCbtInquiryDto 문의 생성 DTO

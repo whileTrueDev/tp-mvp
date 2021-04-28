@@ -9,11 +9,12 @@ import {
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
-import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
+import WeeklyLineCard from '../../organisms/mainpage/ranking/WeeklyLineCard';
 import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
 import { useRankingPageLayout, useCarouselStyle } from '../../organisms/mainpage/ranking/style/RankingPage.style';
 import CreatorEvaluation from '../../organisms/mainpage/ranking/CreatorEvaluation';
+import RecentStreamList from '../../organisms/mainpage/ranking/RecentStreamList';
 import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
 import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
 import FooterDecoration from '../../organisms/mainpage/ranking/sub/FooterDecoration';
@@ -44,7 +45,7 @@ export default function Ranking(): JSX.Element {
                 navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
               >
                 <ViewerComparisonPolarAreaCard />
-                <WeeklyViewerRankingCard />
+                <WeeklyLineCard />
               </Carousel>
             </Container>
           </div>
@@ -64,6 +65,9 @@ export default function Ranking(): JSX.Element {
         </Route>
         {/* 방송인 정보 페이지 */}
         <Route exact path={`${path}/:platform/:creatorId`}>
+          {/* 최근 방송 정보 섹션 */}
+          <RecentStreamList />
+
           <Container className={wrapper.container}>
             <CreatorEvaluation />
           </Container>

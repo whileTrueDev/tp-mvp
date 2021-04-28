@@ -24,7 +24,7 @@ function ReplyForm({
   const nicknameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const contentRef = useRef<HTMLTextAreaElement>(null);
-  const [, postCreatReply] = useAxios({ url: '/community/replies', method: 'post' }, { manual: true });
+  const [, postCreatReply] = useAxios({ url: `/community/${postId}/replies`, method: 'post' }, { manual: true });
 
   // 댓글생성dto가 비어있는지 확인 && axios요청하는 함수
   const doPostReply = useCallback(() => {
@@ -47,7 +47,7 @@ function ReplyForm({
       // 값이 다 있다면 댓글생성 요청
       const createReplyDto: CreateReplyDto = {
         ...replyContent,
-        postId: Number(postId),
+        // postId: Number(postId),
       };
       postCreatReply({
         data: createReplyDto,

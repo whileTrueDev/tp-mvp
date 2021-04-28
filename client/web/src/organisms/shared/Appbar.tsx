@@ -202,7 +202,6 @@ export default function AppBar(): JSX.Element {
         </MenuItem>
       ) : (
         null
-        // 트루포인트 2.0에서 로그인기능 사용하지 않아 로그인버튼 임시 주석처리
         // <MenuItem className={classes.menuItem}>
         //   <Button
         //     variant="contained"
@@ -253,26 +252,6 @@ export default function AppBar(): JSX.Element {
               </div>
             </div>
 
-            {/* 트루포인트 2.0에서 로그인 기능 사용하지 않아 로그인버튼 임시 주석처리 */}
-            {/* <div className={classes.links}>
-              {authContext.user.userId && authContext.accessToken ? ( // 로그인 되어있는 경우
-                <div className={classes.userInterfaceWrapper}>
-                  <HeaderLinks />
-                </div>
-              ) : ( // 로그인 되어있지 않은 경우
-                <Button
-                  disableElevation
-                  variant="contained"
-                  color="secondary"
-                  className={classes.loginButton}
-                  component={Link}
-                  to="/login"
-                >
-                  로그인
-                </Button>
-              )}
-            </div> */}
-
             <div className={classes.links}>
               <Button
                 className={classes.darkModeToggleButton}
@@ -280,6 +259,24 @@ export default function AppBar(): JSX.Element {
               >
                 {darkModeToggleButtonContent}
               </Button>
+              {authContext.user.userId && authContext.accessToken ? ( // 로그인 되어있는 경우
+                <div className={classes.userInterfaceWrapper}>
+                  <HeaderLinks />
+                </div>
+              ) : ( // 로그인 되어있지 않은 경우
+                null
+                // <Button
+                //   disableElevation
+                //   variant="contained"
+                //   color="secondary"
+                //   className={classes.loginButton}
+                //   component={Link}
+                //   to="/login"
+                // >
+                //   로그인
+                // </Button>
+              )}
+
             </div>
 
             <Hidden mdUp>

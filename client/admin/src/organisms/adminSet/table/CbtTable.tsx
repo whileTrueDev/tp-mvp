@@ -6,6 +6,7 @@ import {
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
 import MaterialTable, { Icons } from 'material-table';
+import { useHistory } from 'react-router';
 
 const tableIcons: Icons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
@@ -36,8 +37,6 @@ const tableIcons: Icons = {
   */
 interface Props {
   tableData: any;
-  handleOpen: () => void;
-  handleData: (Data: any) => void;
 }
 
 /*
@@ -99,8 +98,9 @@ const localization = {
     */
 export default function CbtTable(props: Props): JSX.Element {
   const {
-    tableData, handleOpen, handleData,
+    tableData,
   } = props;
+  const history = useHistory();
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
@@ -120,8 +120,7 @@ export default function CbtTable(props: Props): JSX.Element {
                   color="secondary"
                   variant="contained"
                   onClick={() => {
-                    handleOpen();
-                    handleData(rowData);
+                    history.push('/admin/creator');
                   }}
                 >
                   가입시키기

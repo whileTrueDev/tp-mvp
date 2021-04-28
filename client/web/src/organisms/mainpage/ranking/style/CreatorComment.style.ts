@@ -3,8 +3,22 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createStyles({
   commentItem: {
     position: 'relative',
-    padding: theme.spacing(2, 4),
-    borderBottom: `1px solid ${theme.palette.divider}`,
+    padding: theme.spacing(2),
+    '&:not(:first-child)': {
+      borderTop: `1px solid ${theme.palette.divider}`,
+    },
+    '&.child': {
+      marginLeft: theme.spacing(6),
+      paddingLeft: theme.spacing(4),
+      paddingRight: 0,
+      borderTop: `1px solid ${theme.palette.divider}`,
+      '&::before': {
+        content: '"ㄴ"',
+        position: 'absolute',
+        left: theme.spacing(2),
+        top: theme.spacing(2),
+      },
+    },
   },
   header: {
     display: 'flex',
@@ -17,12 +31,24 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
     '&>*': {
       marginRight: theme.spacing(1),
     },
-    '& .nickname': {
-      fontSize: theme.typography.body1.fontSize,
-      fontWeight: theme.typography.fontWeightMedium,
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing(1),
     },
-    '& .userId': {
-      color: theme.palette.text.secondary,
+    userInfo: {
+      display: 'flex',
+      '&>*': {
+        marginRight: theme.spacing(1),
+      },
+      '& .nickname': {
+        fontSize: theme.typography.body1.fontSize,
+        fontWeight: theme.typography.fontWeightMedium,
+      },
+      '& .userId': {
+        color: theme.palette.text.secondary,
+      },
     },
   },
   smallAvatar: {
@@ -34,10 +60,8 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
     height: theme.spacing(7),
   },
   headerActions: {
-    '& button': {
-      width: theme.spacing(7),
-      height: theme.spacing(3),
-    },
+    display: 'flex',
+    alignItems: 'center',
   },
   reportButton: {
 
@@ -47,11 +71,16 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
   },
   actions: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    '.child &': {
+      justifyContent: 'flex-end',
+    },
+  },
+  replyIcon: {
+    transform: 'rotate(180deg)',
   },
   nestedComments: {
-
   },
   recommendIcons: {
     '&>*:not(:last-child)': {
@@ -69,6 +98,18 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
   },
   hated: {
     color: theme.palette.secondary.main,
+  },
+  commentFormContainer: {
+    display: 'none',
+    '&.open': {
+      display: 'block',
+    },
+  },
+  replyList: {
+    display: 'none',
+    '&.open': {
+      display: 'block',
+    },
   },
 }));
 
@@ -89,7 +130,6 @@ export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createSty
   },
   commentListContainer: {
     minHeight: theme.spacing(45),
-
   },
   buttonWrapper: {
     display: 'flex',

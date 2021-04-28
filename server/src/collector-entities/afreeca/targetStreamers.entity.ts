@@ -13,11 +13,11 @@ export class AfreecaTargetStreamersEntity {
   creatorName: string;
 
   @Column({ length: 150 })
-  refreshToken: string;
+  refreshToken?: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
+  updatedAt?: Date;
 }

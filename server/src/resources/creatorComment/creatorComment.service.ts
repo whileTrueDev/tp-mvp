@@ -1,16 +1,43 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
+import { UserEntity } from '../users/entities/user.entity';
 @Injectable()
 export class CreatorCommentService {
   constructor(
     @InjectRepository(CreatorCommentsEntity)
     private readonly creatorCommentsRepository: Repository<CreatorCommentsEntity>,
   ) {}
+
+  // 방송인 평가 대댓글 생성(자식 댓글 생성)
+  async createChildrenComment(
+    commentId: number,
+    createCommentDto: CreateCommentDto,
+  ): Promise<CreatorCommentsEntity> {
+    const parentComment = await this.creatorCommentsRepository.findOne({ where: { commentId } });
+    if (!parentComment) {
+      throw new BadRequestException(`no comment with commentId ${commentId}`);
+    }
+    try {
+      const { password } = createCommentDto;
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const newComment = await this.creatorCommentsRepository.save({
+        ...createCommentDto,
+        password: hashedPassword,
+        creatorId: parentComment.creatorId,
+        parentCommentId: commentId,
+      });
+      return newComment;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
 
   // 방송인 평가 댓글 생성
   async createComment(creatorId: string, createCommentDto: CreateCommentDto): Promise<CreatorCommentsEntity> {
@@ -36,35 +63,81 @@ export class CreatorCommentService {
         comments: [],
         count: 0,
       };
-      if (order === 'date') {
-      // 생성일 내림차순
-        const [comments, count] = await this.creatorCommentsRepository.createQueryBuilder('comment')
-          .loadRelationCountAndMap('comment.hatesCount', 'comment.hates')
-          .loadRelationCountAndMap('comment.likesCount', 'comment.likes')
+
+      const baseQueryBuilder = await getConnection()
+        .createQueryBuilder()
+        .select([
+          'C.commentId AS commentId',
+          'C.creatorId AS creatorId',
+          'C.userId AS userId',
+          'C.nickname AS nickname',
+          'C.content AS content',
+          'C.createDate AS createDate',
+          'C.deleteFlag AS deleteFlag',
+          'users.profileImage AS profileImage',
+          'COUNT(childrenComments.commentId) AS childrenCount',
+          'C.likesCount AS likesCount',
+          'C.hatesCount AS hatesCount',
+        ])
+        .from((subQuery) => subQuery
+          .select([
+            'comment.commentId AS commentId',
+            'comment.creatorId AS creatorId',
+            'comment.userId AS userId',
+            'comment.nickname AS nickname',
+            'comment.content AS content',
+            'comment.createDate AS createDate',
+            'comment.deleteFlag AS deleteFlag',
+            'IFNULL(SUM(likes.vote), 0) AS likesCount',
+            'IFNULL(COUNT(*) - SUM(likes.vote), 0) AS hatesCount',
+          ])
+          .from(CreatorCommentsEntity, 'comment')
+          .leftJoin('comment.votes', 'likes')
           .where('comment.creatorId = :creatorId', { creatorId })
-          .orderBy('comment.createDate', 'DESC')
-          .skip(skip)
-          .take(take)
-          .getManyAndCount();
-        result.comments = comments;
-        result.count = count;
+          .andWhere('comment.deleteFlag = 0')
+          .andWhere('comment.parentCommentId IS NULL')
+          .groupBy('comment.commentId'),
+        'C')
+        .leftJoin(UserEntity, 'users', 'users.userId = C.userId')
+        .leftJoin(CreatorCommentsEntity, 'childrenComments', '(childrenComments.parentCommentId = C.commentId and childrenComments.deleteFlag = 0)')
+        .groupBy('C.commentId');
+
+      const totalCount = await baseQueryBuilder.clone().getRawMany();
+      result.count = totalCount.length;
+
+      if (order === 'date') {
+        const comments = await baseQueryBuilder
+          .orderBy('C.createDate', 'DESC')
+          .offset(skip)
+          .limit(take)
+          .getRawMany();
+
+        result.comments = comments.map((c) => (
+          {
+            ...c,
+            likesCount: Number(c.likesCount),
+            hatesCount: Number(c.hatesCount),
+            childrenCount: Number(c.childrenCount),
+          }
+        ));
       }
       if (order === 'recommend') {
-        const [comments, count] = await this.creatorCommentsRepository.createQueryBuilder('comment')
-          .addSelect('COUNT(likes.id) AS likesCount')
-          .leftJoin('comment.likes', 'likes')
-          .loadRelationCountAndMap('comment.hatesCount', 'comment.hates')
-          .loadRelationCountAndMap('comment.likesCount', 'comment.likes')
-          .where('comment.creatorId = :creatorId', { creatorId })
-          .groupBy('comment.commentId')
-          .orderBy('likesCount', 'DESC')
-          .having('COUNT(likes.id) >= 1')
-          .skip(skip)
-          .take(3)
-          .getManyAndCount();
-        result.comments = comments;
-        result.count = count;
+        const comments = await baseQueryBuilder
+          .orderBy('C.likesCount', 'DESC')
+          .addOrderBy('C.createDate', 'DESC')
+          .offset(skip)
+          .limit(take)
+          .getRawMany();
+        result.comments = comments.map((c) => (
+          {
+            ...c,
+            likesCount: Number(c.likesCount),
+            hatesCount: Number(c.hatesCount),
+            childrenCount: Number(c.childrenCount),
+          }
+        ));
       }
+
       return result;
     } catch (error) {
       console.error(error);
@@ -72,7 +145,46 @@ export class CreatorCommentService {
     }
   }
 
-  // 방송인 평가댓글 삭제하기
+  // 대댓글 목록 최신순 가져오기
+  async getReplies(commentId: number): Promise<any> {
+    try {
+      const commentBaseQuery = this.creatorCommentsRepository.createQueryBuilder('comment')
+        .select([
+          'comment.commentId AS commentId',
+          'comment.creatorId AS creatorId',
+          'comment.userId AS userId',
+          'comment.nickname AS nickname',
+          'comment.content AS content',
+          'comment.createDate AS createDate',
+          'comment.deleteFlag AS deleteFlag',
+          'users.profileImage AS profileImage',
+          'IFNULL(SUM(likes.vote), 0) AS likesCount',
+          'IFNULL(COUNT(*) - SUM(likes.vote), 0) AS hatesCount',
+        ])
+        .leftJoin(UserEntity, 'users', 'users.userId = comment.userId')
+        .leftJoin('comment.votes', 'likes')
+        .groupBy('comment.commentId');
+
+      const replies = await commentBaseQuery
+        .where('comment.parentCommentId = :commentId', { commentId })
+        .andWhere('comment.deleteFlag = 0')
+        .orderBy('comment.createDate', 'DESC')
+        .getRawMany();
+
+      return replies.map((c) => (
+        {
+          ...c,
+          likesCount: Number(c.likesCount),
+          hatesCount: Number(c.hatesCount),
+        }
+      ));
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  // 방송인 평가댓글 삭제하기 - deleteFlag를 true로
   async deleteOneComment(commentId: number): Promise<boolean> {
     try {
       const comment = await this.creatorCommentsRepository.findOne({
@@ -84,7 +196,10 @@ export class CreatorCommentService {
       if (!comment) {
         throw new BadRequestException(`no comment with commentId:${commentId}`);
       }
-      await this.creatorCommentsRepository.delete(comment);
+      await this.creatorCommentsRepository.save({
+        ...comment,
+        deleteFlag: true,
+      });
       return true;
     } catch (error) {
       console.error(error);
@@ -101,5 +216,24 @@ export class CreatorCommentService {
       select: ['password'],
     });
     return bcrypt.compare(password, hashedPassword);
+  }
+
+  // 댓글 신고
+  async report(commentId: number): Promise<boolean> {
+    try {
+      const comment = await this.creatorCommentsRepository.findOne({ where: { commentId } });
+      if (!comment) {
+        throw new BadRequestException(`no comment with commentId ${commentId}`);
+      }
+
+      await this.creatorCommentsRepository.save({
+        ...comment,
+        reportCount: comment.reportCount + 1,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error);
+    }
   }
 }

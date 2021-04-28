@@ -7,4 +7,7 @@ export class CreateUserReactionDto {
   @IsString()
   @MaxLength(50)
   content: string;
+
+  @IsString()
+  password: string;
 }

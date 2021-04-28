@@ -121,9 +121,9 @@ export default function Settings(): JSX.Element {
           )}
           {!userDataRequest.loading ? (
             <ManagePlatformLink
-              twitchId={userDataRequest.data?.twitchId}
-              afreecaId={userDataRequest.data?.afreecaId}
-              youtubeId={userDataRequest.data?.youtubeId}
+              twitchId={userDataRequest.data?.twitch?.twitchId}
+              afreecaId={userDataRequest.data?.afreeca?.afreecaId}
+              youtubeId={userDataRequest.data?.youtube?.youtubeId}
               userDataRefetch={doUserFetch}
             />
           ) : (<CircularProgress />)}

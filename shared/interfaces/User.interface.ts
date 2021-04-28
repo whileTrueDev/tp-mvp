@@ -1,4 +1,8 @@
+import { PlatformAfreeca } from './PlatformAfreeca.interface';
+import { PlatformTwitch } from './PlatformTwitch.interface';
+import { PlatformYoutube } from './PlatformYoutube.interface';
 import { Subscribe } from './Subscribe.interface';
+import { UserDetail } from './UserDetail.interface';
 
 export interface User {
   userId: string;
@@ -23,11 +27,11 @@ export interface User {
 
   profileImage?: string;
 
-  twitchId?: string;
+  twitch?: PlatformTwitch;
 
-  afreecaId?: string;
+  afreeca?: PlatformAfreeca;
 
-  youtubeId?: string;
+  youtube?: PlatformYoutube;
 
   marketingAgreement: boolean;
 
@@ -36,4 +40,6 @@ export interface User {
   updatedAt?: Date;
 
   subscribe?: Subscribe[];
+
+  detail?: UserDetail;
 }

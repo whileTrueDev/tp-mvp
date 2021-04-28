@@ -11,7 +11,7 @@ const MAX = 10;
  * @param value 0~100 사이의 숫자
  * @returns MIN~MAX 사이로 변환된 값
  */
-const normalize = (value: number): number => Number((((value - MIN) * 100) / (MAX - MIN)).toFixed(2));
+const normalize = (value: number): number => Number((((value - MIN) * 100) / (MAX - MIN) || 0).toFixed(2));
 
 function ScoreBar({ score }: {score: number}): JSX.Element {
   const progressBarStyles = useProgressBar();
@@ -28,14 +28,17 @@ function ScoreBar({ score }: {score: number}): JSX.Element {
         classes={progressBarStyles}
         value={normalizedScore}
       />
+      {score && (
       <Typography
         className={classes.scoreText}
         style={{
           transform: `translateX(${(10 - score) * (-10)}%`,
         }}
       >
-        {`${score.toFixed(2)}`}
+        {score ? `${score.toFixed(2)}` : 0}
       </Typography>
+      )}
+
     </div>
 
   );
