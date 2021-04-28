@@ -1,9 +1,9 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
 import {
-  Container, Grid, Typography, Button, useTheme,
+  Button, Container, Grid, Typography, Link as MuiLink,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -20,14 +20,6 @@ const styles = makeStyles((theme) => ({
   icons: {
     display: 'flex',
     alignItems: 'center',
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: theme.spacing(1),
   },
   name: {
     fontWeight: 700,
@@ -99,7 +91,6 @@ const styles = makeStyles((theme) => ({
 
 export default function Footer(): JSX.Element {
   const classes = styles();
-  const theme = useTheme();
 
   return (
     <Container>
@@ -112,16 +103,9 @@ export default function Footer(): JSX.Element {
           className={classes.iconsWrapper}
         >
           <Grid item md={6} sm={6} xs={12} className={classes.icons}>
-            <a href="/" className={classes.icon}>
-              {theme.palette.type === 'dark' ? (
-                <img src="/images/logo/new_tp_logo_raw.png" id="logo" alt="" width={35} height={35} />
-              ) : (
-                <img src="/images/logo/new_tp_logo_raw.png" id="logo" alt="" width={35} height={35} />
-              )}
-            </a>
-            <Typography className={classes.name} variant="body2">
+            <MuiLink className={classes.name} variant="body2" component={Link} to="/">
               TruePoint
-            </Typography>
+            </MuiLink>
             <br />
           </Grid>
           <Grid item md={6} sm={6} xs={12}>
