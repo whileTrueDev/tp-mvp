@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import classnames from 'classnames';
-import { Link } from 'react-router-dom';
+import {
+  Button, Hidden, IconButton, Menu,
+  MenuItem, Typography,
+} from '@material-ui/core';
+import MuiAppBar from '@material-ui/core/AppBar';
 import {
   createStyles, makeStyles, useTheme,
 } from '@material-ui/core/styles';
-import MuiAppBar from '@material-ui/core/AppBar';
 import {
-  IconButton, Typography, Menu,
-  MenuItem, Button, Hidden,
-} from '@material-ui/core';
-import {
-  Dashboard, MoreVert,
-  // ListAltOutlined,
-  Brightness7 as LightThemeIcon,
   Brightness4 as DarkThemeIcon,
+  // ListAltOutlined,
+  Brightness7 as LightThemeIcon, Dashboard, MoreVert,
 } from '@material-ui/icons';
-import TruepointLogo from '../../atoms/TruepointLogo';
-import TruepointLogoLight from '../../atoms/TruepointLogoLight';
-import useAuthContext from '../../utils/hooks/useAuthContext';
+import classnames from 'classnames';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT } from '../../assets/constants';
-import THEME_TYPE from '../../interfaces/ThemeType';
+import TruepointLogo from '../../atoms/TruepointLogo';
 import { TruepointTheme } from '../../interfaces/TruepointTheme';
+import useAuthContext from '../../utils/hooks/useAuthContext';
 // type
 import HeaderLinks from './sub/HeaderLinks';
 
@@ -258,11 +255,7 @@ export default function AppBar({
               <div className={classes.leftspace} />
             </Hidden>
             <div className={classes.left}>
-              {localStorage.getItem('themeType') === THEME_TYPE.LIGHT ? (
-                <TruepointLogoLight className={classes.logo} />
-              ) : (
-                <TruepointLogo className={classes.logo} />
-              )}
+              <TruepointLogo className={classes.logo} />
 
               <div className={classes.links}>
                 {links.map((link) => (
