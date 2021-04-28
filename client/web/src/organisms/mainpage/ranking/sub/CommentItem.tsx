@@ -264,7 +264,6 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           </Button>
           <Typography component="span" className="time" color="textSecondary">{time}</Typography>
           <DeleteButton onClick={handleDeleteButton} />
-
         </div>
       </div>
 

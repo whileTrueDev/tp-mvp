@@ -165,6 +165,7 @@ export const useRatingsListStyles = makeStyles((theme: Theme) => {
       textShadow: `-1px -1px 0 ${textStrokeColor}, 1px -1px 0 ${textStrokeColor}, -1px 1px 0 ${textStrokeColor}, 1px 1px 0 ${textStrokeColor}`,
     },
     subTitle: {
+      height: theme.spacing(4),
       textAlign: 'center',
       fontSize: theme.typography.h6.fontSize,
     },

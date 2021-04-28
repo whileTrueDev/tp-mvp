@@ -18,7 +18,7 @@ export default function RatingsList(): JSX.Element {
     <section className={classes.ratingsListSection}>
       <Typography className={classes.title}>주간 평점 순위</Typography>
       <Typography className={classes.subTitle}>
-        {`(${data ? data.startDate : ''} ~ ${data ? data.endDate : ''}) 기준`}
+        {data && `(${data.startDate} ~ ${data.endDate}) 기준`}
       </Typography>
       <List className={classes.listItemContainer}>
         <ListItem>

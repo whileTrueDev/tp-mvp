@@ -1,4 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body, Controller, Get, Post,
+} from '@nestjs/common';
 import { CreateCbtInquiryDto } from '@truepoint/shared/dist/dto/cbtinquiry/createCbtInquiry.dto';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { SlackService } from '../slack/slack.service';
@@ -11,6 +13,11 @@ export class CbtInquiryController {
     private readonly cbtinquiryService: CbtInquiryService,
     private readonly slackService: SlackService,
   ) {}
+
+  @Get()
+  public async findAll(): Promise<CbtInquiryEntity[]> {
+    return this.cbtinquiryService.findAll();
+  }
 
   @Post()
   public async createInquiry(

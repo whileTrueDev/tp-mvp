@@ -15,6 +15,8 @@ import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/t
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
+import { S3Module } from '../s3/s3.module';
+import { UserDetailEntity } from './entities/userDetail.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -22,6 +24,7 @@ import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
       PlatformTwitchEntity,
       PlatformYoutubeEntity,
       UserEntity,
+      UserDetailEntity,
       UserTokenEntity,
       SubscribeEntity,
       StreamsEntity,
@@ -33,6 +36,7 @@ import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
       TwitchTargetStreamersEntity,
     ], 'WhileTrueCollectorDB'), // collectorDB Entity 연결
     forwardRef(() => AuthModule), // Resolve circular dependencies between Modules
+    S3Module,
   ],
   providers: [
     UsersService,

@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
 import { Button } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
+  CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
+import useAxios from 'axios-hooks';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
+import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
 
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
-    border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
+    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
     borderRadius: theme.spacing(0.5),
   },
   goBackButton: {
@@ -34,8 +34,7 @@ const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles
  * 인방랭킹 목록에서 크리에이터 이름 눌렀을 때 보여질 방송인정보 페이지 컴포넌트
  * @returns 
  */
-export default function CreatorEvaluation(
-): JSX.Element {
+export default function CreatorEvaluation(): JSX.Element {
   const classes = useCreatorEvalutationCardStyle();
   const history = useHistory();
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
@@ -105,6 +104,5 @@ export default function CreatorEvaluation(
       />
       <CreatorCommentList creatorId={creatorId} />
     </div>
-
   );
 }

@@ -31,12 +31,24 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
     '&>*': {
       marginRight: theme.spacing(1),
     },
-    '& .nickname': {
-      fontSize: theme.typography.body1.fontSize,
-      fontWeight: theme.typography.fontWeightMedium,
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing(1),
     },
-    '& .userId': {
-      color: theme.palette.text.secondary,
+    userInfo: {
+      display: 'flex',
+      '&>*': {
+        marginRight: theme.spacing(1),
+      },
+      '& .nickname': {
+        fontSize: theme.typography.body1.fontSize,
+        fontWeight: theme.typography.fontWeightMedium,
+      },
+      '& .userId': {
+        color: theme.palette.text.secondary,
+      },
     },
   },
   smallAvatar: {
@@ -69,7 +81,6 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
     transform: 'rotate(180deg)',
   },
   nestedComments: {
-
   },
   recommendIcons: {
     '&>*:not(:last-child)': {

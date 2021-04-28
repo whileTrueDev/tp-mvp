@@ -44,6 +44,9 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     borderRadius: theme.spacing(2),
     padding: theme.spacing(2, 5),
     color: theme.palette.grey[500],
+    '&:hover': {
+      border: `2px solid ${theme.palette.primary.main}`,
+    },
   },
 }));
 
