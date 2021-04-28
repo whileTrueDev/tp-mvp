@@ -1,21 +1,19 @@
-import React from 'react';
 import {
-  TablePagination, TableCell, TableRow, TableBody, Typography,
+  TableBody, TableCell, TablePagination, TableRow, Typography,
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import shortid from 'shortid';
-import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import LockIcon from '@material-ui/icons/Lock';
-import { useSnackbar } from 'notistack';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
+import useAxios from 'axios-hooks';
+import React, { useState } from 'react';
+import shortid from 'shortid';
+import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
+import CustomDialog from '../../../atoms/Dialog/Dialog';
 import Table from '../../../atoms/Table/MaterialTable';
-import transformIdToAsterisk from '../../../utils/transformAsterisk';
-import useAuthContext from '../../../utils/hooks/useAuthContext';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
-
-// attoms snackbar
-import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
+import useDialog from '../../../utils/hooks/useDialog';
+import CheckPasswordForm from '../shared/CheckPasswordForm';
 
 const TABLE_ROW_HEIGHT = 45;
 const useStyles = makeStyles((theme) => ({
@@ -58,8 +56,16 @@ export default function FeatureTable({
   const theme = useTheme();
 
   // 현재 사용자와 기능제안 글쓴이가 같은 사람인지 체크하기 위해
-  const auth = useAuthContext();
-  const { enqueueSnackbar } = useSnackbar();
+  const confirmDialog = useDialog();
+
+  // 비밀번호 확인 요청
+  const [selectedSuggestionId, setSelectedSuggestionId] = useState<number>();
+  function handleSelect(suggestionId: number) {
+    setSelectedSuggestionId(suggestionId);
+  }
+  const [, checkPassword] = useAxios({
+    url: `/feature-suggestion/${selectedSuggestionId}/password`, method: 'POST',
+  }, { manual: true });
 
   return (
     <>
@@ -115,9 +121,9 @@ export default function FeatureTable({
                   className={classes.tableRow}
                   key={shortid.generate()}
                   onClick={() => {
+                    handleSelect(eachRow.suggestionId);
                     if (eachRow.isLock) {
-                      if (eachRow.author.userId === auth.user.userId) handleClick(eachRow.suggestionId);
-                      else ShowSnack('비밀글은 작성자만 볼 수 있습니다.', 'error', enqueueSnackbar);
+                      confirmDialog.handleOpen();
                     } else handleClick(eachRow.suggestionId);
                   }}
                 >
@@ -128,9 +134,7 @@ export default function FeatureTable({
                     {eachRow.category}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="center">
-                    {auth.user.userId === eachRow.author.userId
-                      ? eachRow.author.userId
-                      : transformIdToAsterisk(eachRow.author.userId, 1.8)}
+                    {eachRow.userIp}
                   </TableCell>
                   <TableCell className={classes.tableCell} scope="row" align="left">
 
@@ -185,6 +189,17 @@ export default function FeatureTable({
         }}
         style={{ boxShadow: 'none' }}
       />
+
+      <CustomDialog open={confirmDialog.open} onClose={confirmDialog.handleClose}>
+        <CheckPasswordForm
+          closeDialog={confirmDialog.handleClose}
+          checkPassword={checkPassword}
+          successHandler={() => {
+            handleClick(selectedSuggestionId);
+            confirmDialog.handleClose();
+          }}
+        />
+      </CustomDialog>
     </>
   );
 }
