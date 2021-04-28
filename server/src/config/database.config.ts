@@ -17,6 +17,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: database.username,
       password: database.password,
       database: database.dbname,
+      charset: 'utf8mb4',
       timezone: 'Asia/Seoul',
       synchronize: true,
       entities: [`${__dirname}/../resources/**/*.entity{.ts,.js}`],
