@@ -201,17 +201,18 @@ export default function AppBar(): JSX.Element {
           </div>
         </MenuItem>
       ) : (
-        <MenuItem className={classes.menuItem}>
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.loginButton}
-            component={Link}
-            to="/login"
-          >
-            로그인
-          </Button>
-        </MenuItem>
+        null
+        // <MenuItem className={classes.menuItem}>
+        //   <Button
+        //     variant="contained"
+        //     color="secondary"
+        //     className={classes.loginButton}
+        //     component={Link}
+        //     to="/login"
+        //   >
+        //     로그인
+        //   </Button>
+        // </MenuItem>
       )}
     </Menu>
   );
@@ -263,16 +264,17 @@ export default function AppBar(): JSX.Element {
                   <HeaderLinks />
                 </div>
               ) : ( // 로그인 되어있지 않은 경우
-                <Button
-                  disableElevation
-                  variant="contained"
-                  color="secondary"
-                  className={classes.loginButton}
-                  component={Link}
-                  to="/login"
-                >
-                  로그인
-                </Button>
+                null
+                // <Button
+                //   disableElevation
+                //   variant="contained"
+                //   color="secondary"
+                //   className={classes.loginButton}
+                //   component={Link}
+                //   to="/login"
+                // >
+                //   로그인
+                // </Button>
               )}
 
             </div>

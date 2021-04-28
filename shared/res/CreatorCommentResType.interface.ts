@@ -5,6 +5,7 @@ export interface ICreatorCommentData extends CreatorComments{
   hatesCount?: number;
   createDate: Date;
   profileImage?: string;
+  childrenCount?: number;
 }
 
 export interface ICreatorCommentsRes {

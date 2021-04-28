@@ -138,6 +138,8 @@ const titleContents = {
   },
 };
 
+const MAX_HOT_POST_TAKE = 8;
+
 export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
   const tabsClasses = useTabs();
@@ -154,7 +156,7 @@ export default function CommunityBoardList(): JSX.Element {
     params: {
       platform: 'afreeca',
       page: 0,
-      take: 5,
+      take: MAX_HOT_POST_TAKE,
       category: 'recommended',
     },
   });
@@ -168,12 +170,12 @@ export default function CommunityBoardList(): JSX.Element {
     params: {
       platform: 'twitch',
       page: 0,
-      take: 5,
+      take: MAX_HOT_POST_TAKE,
       category: 'recommended',
     },
   });
 
-  const select = useRef<number[]>([10, 20]); // 한 페이지당 보여질 글 개수 select 옵션
+  const select = useRef<number[]>([15]); // 한 페이지당 보여질 글 개수 select 옵션
   const [take] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
 
   const {
