@@ -6,6 +6,7 @@ import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import StreamCommentList from './streamInfo/StreamCommentList';
 import StreamInfoCard from './streamInfo/StreamInfoCard';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 
@@ -49,7 +50,6 @@ export default function StreamEvaluation(): React.ReactElement {
     <div className={classes.creatorEvaluationCardContainer}>
       <GoBackButton />
 
-      {!loading && streamData && (
       <StreamInfoCard
         creator={creatorInfo}
         stream={streamData}
@@ -58,9 +58,8 @@ export default function StreamEvaluation(): React.ReactElement {
         onDownVote={() => handleVote('down')}
         onVoteCancel={handleVoteDelete}
       />
-      )}
 
-      {/* 댓글창 추가 필요 210423 by hwasurr */}
+      <StreamCommentList streamId={streamId} />
     </div>
   );
 }
