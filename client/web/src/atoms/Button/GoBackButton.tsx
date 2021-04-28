@@ -35,7 +35,7 @@ export default function GoBackButton({
       <img
         alt="뒤로가기 화살표 이미지"
         src="/images/rankingPage/backArrowImage.png"
-        srcSet="images/rankingPage/backArrowImage@2x.png 2x"
+        srcSet="/images/rankingPage/backArrowImage@2x.png 2x"
       />
     </Button>
   );
