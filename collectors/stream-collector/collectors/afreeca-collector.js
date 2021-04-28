@@ -77,7 +77,7 @@ const getCreators = () => new Promise((resolve, reject) => {
 // 4. 2번 map을 통해서 streamData에 대해 userId를 대응시킨다.
 const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) => {
   const conditionQuery = creators.reduce((str, element, index) => `${index === 0 ? `(${str}` : `${str},`}'${element.afreecaId}'`, '');
-  const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
+  const reg = /[\(\)\'\"]/gi;
   if (conditionQuery === '') {
     resolve([]);
     return;
