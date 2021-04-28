@@ -45,10 +45,11 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      padding: theme.spacing(2),
     },
     avatar: {
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
-      width: '80%',
+      width: '100%',
       height: 'auto',
     },
     textContainer: {

@@ -66,4 +66,19 @@ export class UserReactionController {
   ): Promise<boolean> {
     return this.userReactionService.deleteUserReaction(id);
   }
+
+  /**
+   * 비밀번호 확인 POST /user-reactions/password/:id
+   * @param id 
+   * @param password 
+   * @returns 
+   * 비밀번호 맞으면 true, 틀리면 false반환
+   */
+  @Post('password/:id')
+  checkPassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.userReactionService.checkPassword(id, password);
+  }
 }

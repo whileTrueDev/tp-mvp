@@ -17,7 +17,7 @@ cbt 회원목록 관리 에대한 최상위 부모 컴포넌트 입니다.
 export default function AdminCbt(): JSX.Element {
   // 데이터 가져오기
   const [{ loading: cbtLoading, data: getData }, reload] = useAxios(
-    { url: '/cbt/list', method: 'GET' },
+    { url: '/cbtinquiry', method: 'GET' },
   );
   useEffect(() => {
     reload();

@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) => {
       zIndex: 1,
     },
     subTitleText: {
-
+      fontSize: theme.typography.h5.fontSize,
     },
     bg: {
       position: 'absolute',

@@ -21,6 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       userName: payload.name,
       userDI: payload.userDI,
       roles: payload.roles,
+      nickName: payload.nickName,
     };
     return reqAttachTargetUser;
   }

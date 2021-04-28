@@ -1,22 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
 import { Button } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
-  CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
+  CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
+import useAxios from 'axios-hooks';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
+import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
 
 const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles({
   creatorEvaluationCardContainer: {
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
-    border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
+    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
     borderRadius: theme.spacing(0.5),
-    // border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
-    // padding: theme.spacing(2),
   },
   goBackButton: {
     position: 'absolute',
@@ -36,8 +34,7 @@ const useCreatorEvalutationCardStyle = makeStyles((theme: Theme) => createStyles
  * 인방랭킹 목록에서 크리에이터 이름 눌렀을 때 보여질 방송인정보 페이지 컴포넌트
  * @returns 
  */
-export default function CreatorEvaluation(
-): JSX.Element {
+export default function CreatorEvaluation(): JSX.Element {
   const classes = useCreatorEvalutationCardStyle();
   const history = useHistory();
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
@@ -60,9 +57,6 @@ export default function CreatorEvaluation(
     frustrate: 0,
     cuss: 0,
   });
-  // 요청한 사람이 매긴 평점
-  const [userRating, setUserRating] = useState<null|number>(null);
-
   // 유저가 평점을 매긴 후 평균평점을 다시 불러온다
   const updateAverageRating = useCallback(() => {
     refetchAverageRating()
@@ -79,9 +73,13 @@ export default function CreatorEvaluation(
         setInfo((prevInfo) => ({ ...prevInfo, ...res.data.info }));
         setRatings(res.data.ratings);
         setScores(res.data.scores);
-        setUserRating(res.data.userRating);
       })
       .catch((error) => console.error(error));
+
+    // 화면 상단으로 
+    if (window.scrollY !== 0) {
+      window.scrollTo(0, 0);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -103,10 +101,8 @@ export default function CreatorEvaluation(
         info={info}
         ratings={ratings}
         scores={scores}
-        userRating={userRating}
       />
       <CreatorCommentList creatorId={creatorId} />
     </div>
-
   );
 }

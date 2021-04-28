@@ -3,9 +3,11 @@ import { useHistory } from 'react-router-dom';
 import {
   makeStyles, createStyles, Theme, withStyles,
 } from '@material-ui/core/styles';
-import { Pagination, ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import {
+  Pagination, PaginationItem, ToggleButton, ToggleButtonGroup,
+} from '@material-ui/lab';
 import { Button } from '@material-ui/core';
-import CreateIcon from '@material-ui/icons/Create';
+import SendIcon from '@material-ui/icons/Send';
 import useAxios from 'axios-hooks';
 import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
@@ -15,8 +17,8 @@ import SearchForm from './SearchForm';
 
 const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
   { key: 'all', text: '전체글', class: 'all' },
-  { key: 'notice', text: '공지글', class: 'notice' },
-  { key: 'recommended', text: '추천글', class: 'recommended' },
+  { key: 'notice', text: '공지', class: 'notice' },
+  { key: 'recommended', text: '핫글', class: 'recommended' },
 ];
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
@@ -29,6 +31,25 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: theme.spacing(2),
+    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? '100' : 'A400'],
+    marginBottom: theme.spacing(2),
+    '& .MuiPagination-ul>*:first-child>.MuiPaginationItem-root': {
+      border: '1px solid currentColor',
+    },
+    '& .MuiPagination-ul>*:last-child>.MuiPaginationItem-root': {
+      border: '1px solid currentColor',
+    },
+  },
+  paginationItem: {
+    '&.MuiPaginationItem-root': {
+      color: theme.palette.text.secondary,
+      border: 'none',
+      fontSize: theme.typography.body1.fontSize,
+    },
+    '&.Mui-selected': {
+      color: theme.palette.text.primary,
+    },
   },
   controls: {
     display: 'flex',
@@ -52,10 +73,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 const StyledToggleButton = withStyles((theme: Theme) => createStyles({
   root: {
+    height: theme.spacing(7),
     minWidth: theme.spacing(18),
     [theme.breakpoints.down('sm')]: {
       minWidth: theme.spacing(9),
     },
+    fontSize: theme.typography.h5.fontSize,
     marginRight: theme.spacing(2),
     '&.Mui-selected': {
       position: 'relative',
@@ -77,11 +100,11 @@ const StyledToggleButton = withStyles((theme: Theme) => createStyles({
       backgroundColor: theme.palette.background.paper,
     },
     '&.notice': {
-      color: theme.palette.text.primary,
+      color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.action.disabled,
     },
     '&.recommended': {
-      color: theme.palette.text.primary,
+      color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.main,
     },
   },
@@ -218,7 +241,7 @@ export default function BoardContainer({
             onClick={moveToWritePage}
             className={classes.writeButton}
           >
-            <CreateIcon />
+            <SendIcon />
           </Button>
         </div>
       </div>
@@ -233,17 +256,23 @@ export default function BoardContainer({
 
       <Pagination
         className={classes.pagination}
-        shape="rounded"
+        variant="outlined"
         page={page}
         count={paginationCount}
         onChange={pagenationHandler}
+        renderItem={(item) => (
+          <PaginationItem
+            className={classes.paginationItem}
+            {...item}
+          />
+        )}
       />
       <div className={classes.writeButtonContainer}>
         <Button
           variant="contained"
           color="primary"
           onClick={moveToWritePage}
-          startIcon={<CreateIcon />}
+          startIcon={<SendIcon />}
         >
           글쓰기
         </Button>

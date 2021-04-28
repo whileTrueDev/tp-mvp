@@ -9,12 +9,12 @@ import {
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import UserReactionCard from '../../organisms/mainpage/ranking/UserReactionCard';
-import WeeklyViewerRankingCard from '../../organisms/mainpage/ranking/WeeklyViewerRankingCard';
-// import MonthlyScoresRankingCard from '../../organisms/mainpage/ranking/MonthlyScoresRankingCard';
+import WeeklyLineCard from '../../organisms/mainpage/ranking/WeeklyLineCard';
 import TopTenCard from '../../organisms/mainpage/ranking/ToptenCard';
 import ViewerComparisonPolarAreaCard from '../../organisms/mainpage/ranking/ViewerComparisonPolarAreaCard';
 import { useRankingPageLayout, useCarouselStyle } from '../../organisms/mainpage/ranking/style/RankingPage.style';
 import CreatorEvaluation from '../../organisms/mainpage/ranking/CreatorEvaluation';
+import RecentStreamList from '../../organisms/mainpage/ranking/RecentStreamList';
 import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
 import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
 import FooterDecoration from '../../organisms/mainpage/ranking/sub/FooterDecoration';
@@ -32,25 +32,24 @@ export default function Ranking(): JSX.Element {
       {memoAppbar}
       {headerDecoration}
 
-      <div className={wrapper.top}>
-        <Container className={wrapper.container}>
-          <Carousel
-            NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon} />}
-            PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon} />}
-            indicators={false}
-            animation="slide"
-            autoPlay={false}
-            navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
-          >
-            <ViewerComparisonPolarAreaCard />
-            <WeeklyViewerRankingCard />
-          </Carousel>
-        </Container>
-      </div>
-
-      <Container className={wrapper.container}>
-        <Switch>
-          <Route exact path={path}>
+      <Switch>
+        <Route exact path={path}>
+          <div className={wrapper.top}>
+            <Container className={wrapper.container}>
+              <Carousel
+                NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon} />}
+                PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon} />}
+                indicators={false}
+                animation="slide"
+                autoPlay={false}
+                navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
+              >
+                <ViewerComparisonPolarAreaCard />
+                <WeeklyLineCard />
+              </Carousel>
+            </Container>
+          </div>
+          <Container className={wrapper.container}>
             <Grid container spacing={2}>
               <Grid item xs={8} className={wrapper.left}>
                 <TopTenCard />
@@ -61,18 +60,22 @@ export default function Ranking(): JSX.Element {
                 <UserReactionCard />
               </Grid>
             </Grid>
-            {footerDecoration}
-          </Route>
-          {/* 방송인 정보 페이지 */}
-          <Route exact path={`${path}/:platform/:creatorId`}>
-            <CreatorEvaluation />
-          </Route>
-          <Route>
-            <Redirect to="/ranking" />
-          </Route>
-        </Switch>
+          </Container>
+          {footerDecoration}
+        </Route>
+        {/* 방송인 정보 페이지 */}
+        <Route exact path={`${path}/:platform/:creatorId`}>
+          {/* 최근 방송 정보 섹션 */}
+          <RecentStreamList />
 
-      </Container>
+          <Container className={wrapper.container}>
+            <CreatorEvaluation />
+          </Container>
+        </Route>
+        <Route>
+          <Redirect to="/ranking" />
+        </Route>
+      </Switch>
 
       {memoFooter}
     </div>

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Grid, Avatar, Typography, Chip,
 } from '@material-ui/core';
@@ -14,6 +14,7 @@ import ScoreBar from '../topten/ScoreBar';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import { useCreatorInfoCardStyles, useExLargeRatingStyle } from '../style/CreatorInfoCard.style';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
 
 export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
   updateAverageRating?: () => void
@@ -34,9 +35,10 @@ const scoreLables: {name: columns, label: string, icon?: any}[] = [
  * @returns 
  */
 export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Element {
+  const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const {
-    info, ratings, scores, userRating, updateAverageRating,
+    info, ratings, scores, updateAverageRating,
   } = props;
   const {
     platform, creatorId, logo, nickname, twitchChannelName,
@@ -44,6 +46,18 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
   const { average: averageRating, count: ratingCount } = ratings;
   const classes = useCreatorInfoCardStyles();
   const largeRating = useExLargeRatingStyle();
+
+  const [userRating, setUserRating] = useState<number|undefined>(); // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
+
+  useEffect(() => {
+    axios.get(`ratings/${creatorId}`)
+      .then((res) => {
+        if (res.data) {
+          setUserRating(res.data.score);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [creatorId]);
 
   /**
    * 평점 생성, 수정 핸들러 함수
@@ -55,7 +69,11 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
     if (!score) {
       ShowSnack('평점을 매겨주세요', 'error', enqueueSnackbar);
     } else {
-      axios.post(`ratings/${creatorId}`, { rating: score })
+      axios.post(`ratings/${creatorId}`, {
+        rating: score,
+        userId: authContext.user.userId,
+        platform,
+      })
         .then(() => {
           if (updateAverageRating) {
             updateAverageRating();
@@ -71,14 +89,14 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
           }
         });
     }
-  }, [creatorId, enqueueSnackbar, updateAverageRating]);
+  }, [authContext.user.userId, creatorId, enqueueSnackbar, platform, updateAverageRating]);
 
   /**
    * 평점 매긴거 취소하는 핸들러
    * @param cb 버튼 눌렀을 때 loading 상태 제어할 콜백함수, () => setLoading(false)와 같은 함수가 들어올 예정
    */
   const cancelRatingHandler = useCallback((cb?: () => void) => {
-    axios.delete(`ratings/${creatorId}`)
+    axios.delete(`ratings/${creatorId}`, { data: { userId: authContext.user.userId } })
       .then(() => {
         if (updateAverageRating) {
           updateAverageRating();
@@ -93,7 +111,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
           cb();
         }
       });
-  }, [creatorId, updateAverageRating]);
+  }, [authContext.user.userId, creatorId, updateAverageRating]);
   return (
     <Grid container className={classes.creatorInfoContainer}>
       {/* 왼쪽 크리에이터 기본설명, 평점 */}
@@ -110,13 +128,13 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
             <div className={classes.ratingContainer}>
               <Typography className={classes.averageRatingText}>
                 평균★
-                {averageRating}
+                {averageRating.toFixed(2)}
                 {`(${ratingCount}명)`}
               </Typography>
               <StarRating
                 createRatingHandler={createRatingHandler}
                 cancelRatingHandler={cancelRatingHandler}
-                score={userRating || undefined}
+                score={userRating}
                 ratingProps={{
                   size: 'large',
                   classes: largeRating,

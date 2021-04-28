@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -7,6 +8,8 @@ import { configure } from 'axios-hooks';
 import { SnackbarProvider } from 'notistack';
 import App from './App';
 import axios from './util/axios';
+
+dotenv.config();
 
 const history = createBrowserHistory();
 configure({ axios });

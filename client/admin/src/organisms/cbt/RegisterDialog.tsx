@@ -69,7 +69,7 @@ export default function RegisterDialog(data: DialogProps): JSX.Element {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [, executePost] = useAxios({ url: '/cbt/user', method: 'post' }, { manual: true });
+  const [, executePost] = useAxios({ url: '/users/byadmin', method: 'post' }, { manual: true });
 
   const [openInputSpace, setSpace] = React.useState(false);
   const [state, setState] = React.useState({

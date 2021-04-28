@@ -4,7 +4,9 @@ import {
   UpdateDateColumn,
   PrimaryColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
+import { UserEntity } from './user.entity';
 
 @Entity({ name: 'PlatformYoutube' })
 export class PlatformYoutubeEntity implements PlatformYoutube {
@@ -40,6 +42,9 @@ export class PlatformYoutubeEntity implements PlatformYoutube {
 
   @Column({ type: 'timestamp' })
   youtubePublishedAt: Date;
+
+  @OneToOne(() => UserEntity, (user) => user.youtube)
+  user?: UserEntity;
 
   @CreateDateColumn({ type: 'timestamp', comment: '첫 연동 날짜' })
   createdAt?: Date;

@@ -6,7 +6,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
   Button, Card, CardActions, CardContent, Container, Typography, Paper,
 } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
 
 import useAxios from 'axios-hooks';
 import * as dateFns from 'date-fns';
@@ -25,14 +24,13 @@ import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
 import BoardContainer from './list/BoardContainer';
 import PostInfoCard from './postView/PostInfoCard';
 import CheckPasswordForm from '../shared/CheckPasswordForm';
-import RepliesSection from './postView/RepliesSection';
-import ReplyForm from './postView/ReplyForm';
+import RepliesContainer from './postView/RepliesContainer';
 // 스타일
 import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
 
 const SUN_EDITOR_VIEWER_CLASSNAME = 'sun-editor-editable'; // suneditor로 작성된 글을 innerHTML로 넣을 때 해당 엘리먼트에 붙어야 할 클래스네임
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
+export const useStyles = makeStyles((theme: Theme) => createStyles({
   boardTitle: {},
   headerCard: {},
   viewer: {
@@ -340,30 +338,14 @@ export default function CommunityPostView(): JSX.Element {
       </CustomDialog>
       {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
 
-      <div className={classes.repliesContainer}>
-        <RepliesSection
-          totalReplyCount={replies ? replies.total : 0}
-          replies={replies ? replies.replies : []}
-          loadReplies={loadReplies}
-        />
-
-        { replyPaginationCount > 1
-          ? (
-            <Pagination
-              className={classes.replyPagenation}
-              shape="rounded"
-              page={replyPage}
-              count={replyPaginationCount}
-              onChange={changeReplyPage}
-            />
-          )
-          : null}
-
-        <ReplyForm
-          postId={postId}
-          afterCreateReplyHandler={loadReplies}
-        />
-      </div>
+      <RepliesContainer
+        replies={replies}
+        loadReplies={loadReplies}
+        replyPage={replyPage}
+        replyPaginationCount={replyPaginationCount}
+        changeReplyPage={changeReplyPage}
+        postId={postId}
+      />
 
       <BoardContainer
         platform={platform}
