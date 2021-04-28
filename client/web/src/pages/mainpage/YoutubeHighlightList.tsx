@@ -6,10 +6,10 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import YoutubeHighlightListLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
-import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import useBoardState from '../../utils/hooks/useBoardListState';
 import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
 import HighlightListContainer from '../../organisms/mainpage/youtubeHighlight/list/HighlightListContainer';
+import YoutubeHighlightListHero from '../../organisms/mainpage/youtubeHighlight/YoutubeHighlightListHero';
 
 const youtubeHighlightListLayout = makeStyles((theme) => ({
   searchForm: {
@@ -77,10 +77,7 @@ export default function YoutubeHighlightList(): JSX.Element {
 
   return (
     <YoutubeHighlightListLayout>
-      <ProductHero
-        title="유튜브 편집점 및 방송분석 제공"
-        content={'시청자들이 재밌게 보았던 시간을 찾아드립니다! \n유튜브 편집시 놓치지 말고 활용 해보세요!'}
-      />
+      <YoutubeHighlightListHero />
 
       <div className={classes.contentTitle}>
         <Typography variant="h5" align="center" gutterBottom color="primary">

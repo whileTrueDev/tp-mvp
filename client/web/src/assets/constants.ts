@@ -23,7 +23,7 @@ export const MYPAGE_MAIN_MIN_WIDTH = 1400;
 export const MYPAGE_MAIN_MIN_HEIGHT = `calc(100vh - ${COMMON_APP_BAR_HEIGHT}px)`;
 // *****************************************
 
-export const MAIN_HERO_HEIGHT = 280;
+export const MAIN_HERO_HEIGHT = 240;
 
 // 랭킹페이지 컨테이너 최대너비
 export const RANKING_PAGE_CONTAINER_WIDTH = `${1920 - 190}px`;
