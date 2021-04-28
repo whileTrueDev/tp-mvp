@@ -1,8 +1,6 @@
-import React from 'react';
+import { Backdrop, Fade, Modal } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Modal, Backdrop, Fade, Typography,
-} from '@material-ui/core';
+import React from 'react';
 
 /**
    * clickOpen 프롭을 통해 로딩창 활성화
