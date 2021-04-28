@@ -1,5 +1,5 @@
 import { Button, TextField, Typography } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useRef } from 'react';
@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FindAccountForm(): JSX.Element {
   const classes = useStyles();
-  const theme = useTheme();
   // **************************************************
   // 스텝 할당을 위한 스테이트
   const [activeStep, setActiveStep] = React.useState(0);
