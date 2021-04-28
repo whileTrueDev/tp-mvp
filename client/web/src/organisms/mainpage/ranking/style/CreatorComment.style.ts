@@ -172,3 +172,15 @@ export const useCreatorCommentFormStyle = makeStyles((theme: Theme) => createSty
     fontWeight: theme.typography.fontWeightBold,
   },
 }));
+
+export const useCommentContainerStyles = makeStyles((theme: Theme) => createStyles({
+  commentSectionWrapper: {
+    padding: theme.spacing(8),
+    paddingBottom: theme.spacing(20),
+    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
+    backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_2.svg), url(/images/rankingPage/streamer_detail_bg_3.svg)',
+    backgroundRepeat: 'no-repeat, no-repeat',
+    backgroundPosition: 'left center, left bottom',
+    backgroundSize: '100% 100%, contain',
+  },
+}));

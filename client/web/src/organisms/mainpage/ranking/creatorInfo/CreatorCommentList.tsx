@@ -1,25 +1,21 @@
-import {
-  Button, Typography,
-} from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import React, {
   useCallback, useEffect, useState,
 } from 'react';
-import classnames from 'classnames';
 import { useSnackbar } from 'notistack';
 import dayjs from 'dayjs';
 import {
   ICreatorCommentsRes, ICreatorCommentData,
 } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import CheckIcon from '@material-ui/icons/Check';
 import CommentItem from '../sub/CommentItem';
-import { useCreatorCommentListStyle } from '../style/CreatorComment.style';
+import { useCreatorCommentListStyle, useCommentContainerStyles } from '../style/CreatorComment.style';
 import RegularButton from '../../../../atoms/Button/Button';
 import CommentForm from '../sub/CommentForm';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import CommentSortButtons, { CommentFilter, filters } from '../sub/CommentSortButtons';
 
 export function isReportedIn24Hours(date: string): boolean {
   const now = dayjs();
@@ -27,30 +23,15 @@ export function isReportedIn24Hours(date: string): boolean {
   return now.diff(targetDate, 'hour') < 24;
 }
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  commentSectionWrapper: {
-    padding: theme.spacing(8),
-    paddingBottom: theme.spacing(20),
-    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
-    backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_2.svg), url(/images/rankingPage/streamer_detail_bg_3.svg)',
-    backgroundRepeat: 'no-repeat, no-repeat',
-    backgroundPosition: 'left center, left bottom',
-    backgroundSize: '100% 100%, contain',
-  },
-}));
-
-type CommentFilter = 'date' | 'recommend';
 export interface CreatorCommentListProps{
   creatorId: string;
 }
-
-const filters = ['recommend', 'date'];
 
 export default function CreatorCommentList(props: CreatorCommentListProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const listStyle = useCreatorCommentListStyle();
   const authContext = useAuthContext();
-  const classes = useStyles();
+  const classes = useCommentContainerStyles();
   const { creatorId } = props;
   const [commentList, setCommentList] = useState<ICreatorCommentData[]>([]);
   const [clickedFilterButtonIndex, setClickedFilterButtonIndex] = useState<number>(0); //  0 : 인기순(recommend), 1 : 최신순(date)
@@ -137,7 +118,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
 
   const onClickLike = useCallback((commentId: number) => axios.post(
     `creatorComment/vote/${commentId}`,
-    { vote: 1, userId: authContext.user.userId },
+    { vote: 1, userId: authContext.user.userId || null },
   )
     .then((res) => {
       const result = res.data;
@@ -149,7 +130,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
 
   const onClickHate = useCallback((commentId: number) => axios.post(
     `creatorComment/vote/${commentId}`,
-    { vote: 0, userId: authContext.user.userId },
+    { vote: 0, userId: authContext.user.userId || null },
   )
     .then((res) => {
       const result = res.data;
@@ -185,23 +166,11 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
       />
 
       <div className={listStyle.commentsContainer}>
-        <div className={listStyle.commentFilterContainer}>
-          <Button
-            startIcon={<CheckIcon />}
-            className={classnames(listStyle.commentFilterButton, { selected: clickedFilterButtonIndex === 0 })}
-            onClick={handleRecommendFilter}
-          >
-            인기순
-          </Button>
-          <Button
-            startIcon={<CheckIcon />}
-            className={classnames(listStyle.commentFilterButton, { selected: clickedFilterButtonIndex === 1 })}
-            onClick={handleDateFilter}
-          >
-            최신순
-          </Button>
-
-        </div>
+        <CommentSortButtons
+          clickedButtonIndex={clickedFilterButtonIndex}
+          handleRecommendFilter={handleRecommendFilter}
+          handleDateFilter={handleDateFilter}
+        />
         <div className={listStyle.commentListContainer}>
           {
           commentList.length
