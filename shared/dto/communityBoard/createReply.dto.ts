@@ -1,5 +1,5 @@
 import {
-  IsString, IsNumber, MaxLength, IsNotEmpty,
+  IsString, MaxLength,
 } from 'class-validator';
 
 export class CreateReplyDto {
@@ -14,8 +14,4 @@ export class CreateReplyDto {
   @IsString()
   @MaxLength(100)
   content: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  postId: number;
 }

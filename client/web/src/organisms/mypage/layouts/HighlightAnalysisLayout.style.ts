@@ -1,7 +1,9 @@
 import { makeStyles } from '@material-ui/core';
 
 const useHighlightAnalysisLayoutStyles = makeStyles((theme) => ({
-  root: { padding: theme.spacing(4) },
+  root: {
+    padding: theme.spacing(4),
+  },
   wraper: {
     margin: `0 ${theme.spacing(2)}px`,
     width: '90%',

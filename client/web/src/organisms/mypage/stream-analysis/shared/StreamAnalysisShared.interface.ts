@@ -35,6 +35,7 @@ export interface PeriodSelectBoxProps {
   titleMessage: string;
 }
 export interface RangeSelectCaledarProps {
+  exampleMode?: boolean;
   period: Date[];
   base?: true;
   removeFunc?: true;
@@ -92,6 +93,7 @@ export interface PeriodAnalysisSubmitInterface {
 }
 
 export interface PeriodCompareProps {
+  exampleMode?: boolean;
   loading: boolean;
   error: FatalError | undefined;
   handleSubmit: ({ category, params }: PeriodCompareSubmitInterface
@@ -99,6 +101,7 @@ export interface PeriodCompareProps {
 }
 
 export interface PeriodAnalysisProps {
+  exampleMode?: boolean;
   loading: boolean;
   error: undefined | FatalError;
   handleSubmit: ({ category, params }: PeriodAnalysisSubmitInterface

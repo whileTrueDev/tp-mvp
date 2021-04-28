@@ -33,6 +33,7 @@ export class StreamAnalysisController {
   * @param findInfoRequest 2개의 방송을 배열 형태로 받는다.
   */
   @Get('streams')
+  // 마케팅을 위한 개발로 인한 가드 해제 - 일시주석
   // @UseGuards(JwtAuthGuard)
   getStreamsInfo(
     @Query('streams', new ParseArrayPipe({ items: SearchEachStream })) findInfoRequest: SearchStreamInfoByStreamId,
@@ -46,6 +47,8 @@ export class StreamAnalysisController {
    * @param compare 분석 가능 방송 리스트
    */
   @Post('periods')
+  // 마케팅을 위한 개발로 인한 가드 해제 - 일시주석
+
   // @UseGuards(JwtAuthGuard)
   async getPeriodsStreamsInfo(
   @Body('base', new ParseArrayPipe({ items: EachStream })) base: EachStream[],
@@ -60,6 +63,7 @@ export class StreamAnalysisController {
   * @param s3Request S3 조회 규격 방송 리스트
   */
   @Get('period')
+  // 마케팅을 위한 개발로 인한 가드 해제 - 일시주석
   // @UseGuards(JwtAuthGuard)
   getTest(
     @Query('streams', new ParseArrayPipe({ items: SearchEachS3StreamData }))

@@ -1,4 +1,6 @@
 import React from 'react';
+import Brightness7Icon from '@material-ui/icons/Brightness7';
+import Brightness4Icon from '@material-ui/icons/Brightness4';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import classnames from 'classnames';
@@ -11,7 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Link, NavLink } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
+import { Box, IconButton, useTheme } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ListProps } from '../App';
@@ -118,6 +120,7 @@ location: 현재 클릭된 페이지의위치
 
 interface Props {
   routes: ListProps[];
+  handleThemeChange: () => void;
 }
 /*
 Sidebar
@@ -130,7 +133,7 @@ Sidebar
 **********************************************************************************
  */
 export default function Sidebar(props: Props): JSX.Element {
-  const { routes } = props;
+  const { routes, handleThemeChange } = props;
   const classes = useStyles();
   const { selectedIndex, handleListItemClick } = useDrawerSelectedItem();
   const [drawerOpen, setDrawerOpen] = React.useState(true);
@@ -144,6 +147,7 @@ export default function Sidebar(props: Props): JSX.Element {
     });
     return `${routeName}`;
   }
+  const theme = useTheme();
 
   return (
     <div>
@@ -153,23 +157,33 @@ export default function Sidebar(props: Props): JSX.Element {
           [classes.appBarShift]: drawerOpen,
         })}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => {
-              setDrawerOpen(true);
-            }}
-            edge="start"
-            className={classnames(classes.menuButton, {
-              [classes.hide]: drawerOpen,
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            {makeTitle()}
-          </Typography>
+        <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => {
+                setDrawerOpen(true);
+              }}
+              edge="start"
+              className={classnames(classes.menuButton, {
+                [classes.hide]: drawerOpen,
+              })}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap>
+              {makeTitle()}
+            </Typography>
+          </Box>
+
+          <Box textAlign="right">
+            <IconButton onClick={handleThemeChange}>
+              {theme.palette.type === 'light'
+                ? (<Brightness7Icon style={{ color: 'white' }} />)
+                : (<Brightness4Icon style={{ color: 'white' }} />)}
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 

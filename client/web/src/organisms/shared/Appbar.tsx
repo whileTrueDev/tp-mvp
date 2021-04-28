@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import {
-  createStyles, makeStyles,
+  createStyles, makeStyles, useTheme,
 } from '@material-ui/core/styles';
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
@@ -10,21 +10,23 @@ import {
   MenuItem, Button, Hidden,
 } from '@material-ui/core';
 import {
-  Dashboard, MoreVert, ListAltOutlined,
+  Dashboard, MoreVert,
+  // ListAltOutlined,
+  Brightness7 as LightThemeIcon,
+  Brightness4 as DarkThemeIcon,
 } from '@material-ui/icons';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import TruepointLogoLight from '../../atoms/TruepointLogoLight';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT } from '../../assets/constants';
 import THEME_TYPE from '../../interfaces/ThemeType';
-
+import { TruepointTheme } from '../../interfaces/TruepointTheme';
 // type
 import HeaderLinks from './sub/HeaderLinks';
 
 const useStyles = makeStyles((theme) => createStyles({
   root: {
     flexGrow: 1,
-    background: theme.palette.primary.main,
     position: 'fixed',
     width: '100%',
     zIndex: 1200,
@@ -35,6 +37,11 @@ const useStyles = makeStyles((theme) => createStyles({
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
     borderBottom: 'none',
+    backgroundColor: theme.palette.background.paper,
+    transition: theme.transitions.create('background'),
+  },
+  transparent: {
+    backgroundColor: 'transparent',
   },
   toolbar: {
     display: 'flex',
@@ -51,15 +58,15 @@ const useStyles = makeStyles((theme) => createStyles({
   link: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(4),
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.text.primary,
     opacity: 0.8,
     '&:hover': { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
   },
-  selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
+  selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1, '& $linkText': { fontSize: theme.typography.h6.fontSize } },
   linkText: { fontWeight: 'bold' },
   logo: {
-    width: 170,
-    height: 24,
+    width: 214,
+    height: 74,
     margin: `0px ${theme.spacing(4)}px`,
   },
   appbarSpace: {
@@ -97,11 +104,33 @@ const useStyles = makeStyles((theme) => createStyles({
     fontWeight: theme.typography.fontWeightRegular,
   },
   mobileTextMyPage: { color: theme.palette.primary.main },
+  darkModeToggleButton: {
+    position: 'relative',
+    color: theme.palette.text.primary,
+    '&$menuItem': {
+      width: '100%',
+      borderTop: `2px solid ${theme.palette.divider}`,
+      color: theme.palette.text.primary,
+    },
+  },
+  lightModeIcon: {
+    display: theme.palette.type === 'light' ? 'none' : 'block',
+  },
+  darkModeIcon: {
+    display: theme.palette.type === 'dark' ? 'none' : 'block',
+  },
 }));
 
-export default function AppBar(): JSX.Element {
+interface AppBarProps {
+  variant?: 'transparent';
+}
+
+export default function AppBar({
+  variant,
+}: AppBarProps): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
+  const theme = useTheme<TruepointTheme>();
 
   // 현재 활성화된 탭을 구하는 함수
   function isActiveRoute(pagePath: string): boolean {
@@ -117,6 +146,23 @@ export default function AppBar(): JSX.Element {
   function handleMobileMenuClose(): void {
     setMobileMoreAnchorEl(null);
   }
+  const links = [
+    {
+      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
+    },
+    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
+    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
+    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
+    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
+    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
+  ];
+
+  const darkModeToggleButtonContent = (
+    <>
+      <LightThemeIcon className={classes.lightModeIcon} />
+      <DarkThemeIcon className={classes.darkModeIcon} />
+    </>
+  );
 
   const mobileMenu = (
     <Menu
@@ -126,7 +172,7 @@ export default function AppBar(): JSX.Element {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {authContext.user.userId.length > 1 && (
+      {authContext.user.userId.length > 1 && authContext.accessToken && (
         <MenuItem
           className={classnames(classes.menuItem, classes.mobileTextMyPage)}
           component={Link}
@@ -137,14 +183,25 @@ export default function AppBar(): JSX.Element {
           <Typography>마이페이지</Typography>
         </MenuItem>
       )}
+      {links.slice(1).map((link) => (
+        <MenuItem
+          key={link.path.slice(1)}
+          className={classnames(classes.menuItem, classes.mobileText)}
+          component={Link}
+          to={link.path}
+          button
+        >
+          <Typography>{link.name}</Typography>
+        </MenuItem>
+      ))}
+
       <MenuItem
-        className={classnames(classes.menuItem, classes.mobileText)}
-        component={Link}
-        to="/infoCBT"
+        className={classnames(classes.menuItem, classes.mobileText, classes.darkModeToggleButton)}
+        component={Button}
+        onClick={theme.handleThemeChange}
         button
       >
-        <ListAltOutlined className={classes.mobileIcon} />
-        <Typography>CBT신청</Typography>
+        {darkModeToggleButtonContent}
       </MenuItem>
 
       {authContext.user.userId ? (
@@ -154,35 +211,47 @@ export default function AppBar(): JSX.Element {
           </div>
         </MenuItem>
       ) : (
-        <MenuItem className={classes.menuItem}>
-          <Button
-            variant="contained"
-            color="secondary"
-            className={classes.loginButton}
-            component={Link}
-            to="/login"
-          >
-            로그인
-          </Button>
-        </MenuItem>
+        null
+        // <MenuItem className={classes.menuItem}>
+        //   <Button
+        //     variant="contained"
+        //     color="secondary"
+        //     className={classes.loginButton}
+        //     component={Link}
+        //     to="/login"
+        //   >
+        //     로그인
+        //   </Button>
+        // </MenuItem>
       )}
     </Menu>
   );
 
-  const links = [
-    {
-      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1),
-    },
-    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
-    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
-    { name: 'CBT신청', path: '/infoCBT', activeRouteString: '/infoCBT' },
-    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
-  ];
+  // 투명 앱바 (variant==='transparent') 인 경우에만.
+  const [transparentDisabled, setTransparentDisabled] = useState<boolean>(false);
+  const handleScroll = () => {
+    const windowScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    if (windowScroll > COMMON_APP_BAR_HEIGHT) setTransparentDisabled(true);
+    else setTransparentDisabled(false);
+  };
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (variant === 'transparent') {
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [variant]);
 
   return (
     <>
       <div className={classes.root}>
-        <MuiAppBar className={classes.container}>
+        <MuiAppBar
+          className={classnames(
+            classes.container, {
+              [classes.transparent]: variant === 'transparent' && !transparentDisabled,
+            },
+          )}
+        >
           <div className={classes.toolbar}>
             {/* 모바일 화면을 위해 */}
             <Hidden mdUp>
@@ -215,22 +284,12 @@ export default function AppBar(): JSX.Element {
             </div>
 
             <div className={classes.links}>
-              {authContext.user.userId ? ( // 로그인 되어있는 경우
-                <div className={classes.userInterfaceWrapper}>
-                  <HeaderLinks />
-                </div>
-              ) : ( // 로그인 되어있지 않은 경우
-                <Button
-                  disableElevation
-                  variant="contained"
-                  color="secondary"
-                  className={classes.loginButton}
-                  component={Link}
-                  to="/login"
-                >
-                  로그인
-                </Button>
-              )}
+              <IconButton
+                className={classes.darkModeToggleButton}
+                onClick={theme.handleThemeChange}
+              >
+                {darkModeToggleButtonContent}
+              </IconButton>
             </div>
 
             <Hidden mdUp>
@@ -244,7 +303,10 @@ export default function AppBar(): JSX.Element {
         </MuiAppBar>
         {mobileMenu}
       </div>
-      <div className={classes.appbarSpace} />
+
+      {variant === 'transparent' ? (null) : (
+        <div className={classes.appbarSpace} />
+      )}
     </>
   );
 }

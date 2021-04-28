@@ -63,8 +63,8 @@ const Table = (props: Props): JSX.Element => {
       textAlign: 'center',
       wordBreak: 'keep-all',
     },
-    pageSize: 10,
-    pageSizeOptions: [10, 20, 30],
+    pageSize: 30,
+    pageSizeOptions: [20, 30, 50],
     ...propOptions,
   };
   return (

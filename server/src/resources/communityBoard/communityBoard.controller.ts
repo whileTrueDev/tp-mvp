@@ -11,6 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
   HttpCode,
+  Ip,
 } from '@nestjs/common';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
@@ -18,23 +19,10 @@ import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/create
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
-import { RealIP } from 'nestjs-real-ip';
-import { Address6 } from 'ip-address';
 import { CommunityBoardService } from './communityBoard.service';
 import { CommunityReplyService } from './communityReply.service';
 import { CommunityPostEntity } from './entities/community-post.entity';
 import { CommunityReplyEntity } from './entities/community-reply.entity';
-
-// ip주소가 ipv6으로 들어오는데ipv4 로 address family 바꾸는 방법 못찾아서
-// ipv6주소를 ipv4로 변환하는 함수
-function ipv6ToIpv4(ipv6: string): string {
-  const address = new Address6(ipv6);
-  const teredo = address.inspectTeredo();
-  const ipv4 = teredo.client4; // 255.255.255.254
-
-  const ipToSave = ipv4.split('.').slice(0, 2).join('.');// 255.255 처럼 잘라서 저장
-  return ipToSave;
-}
 
 @Controller('community')
 export class CommunityBoardController {
@@ -42,6 +30,17 @@ export class CommunityBoardController {
     private readonly communityBoardService: CommunityBoardService,
     private readonly communityReplyService: CommunityReplyService,
   ) {}
+
+  /**
+   * 대댓글 조회 GET /community/replies/child/:replyId
+   * 
+   */
+  @Get('/replies/child/:replyId')
+  findChildReplies(
+    @Param('replyId', ParseIntPipe) replyId: number,
+  ): Promise<CommunityReplyEntity[]> {
+    return this.communityReplyService.findChildReplies(replyId);
+  }
 
   /**
    * 댓글조회 GET /community/replies?postId=&page=&take=
@@ -106,10 +105,10 @@ export class CommunityBoardController {
   @Post('posts')
   @UsePipes(new ValidationPipe({ transform: true }))
   createOnePost(
-    @RealIP() ip: string,
+    @Ip() userIp: string,
     @Body() createCommunityPostDto: CreateCommunityPostDto,
   ): Promise<CommunityPostEntity> {
-    return this.communityBoardService.createOnePost(createCommunityPostDto, ipv6ToIpv4(ip));
+    return this.communityBoardService.createOnePost(createCommunityPostDto, userIp);
   }
 
   /**
@@ -209,15 +208,29 @@ export class CommunityBoardController {
    *          nickname: string; 12자
               password: string; 4자
               content: string; 100자
-              postId: number;
    */
-  @Post('replies')
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('/posts/:postId/replies')
+  @UsePipes(new ValidationPipe())
   createReply(
-    @RealIP() ip: string,
+    @Ip() userIp: string,
+    @Param('postId', ParseIntPipe) postId: number,
     @Body() createReplyDto: CreateReplyDto,
   ): Promise<CommunityReplyEntity> {
-    return this.communityReplyService.createReply(createReplyDto, ipv6ToIpv4(ip));
+    return this.communityReplyService.createReply(postId, createReplyDto, userIp);
+  }
+
+  @Post('replies/child/:replyId')
+  @UsePipes(new ValidationPipe())
+  createChildReply(
+    @Ip() userIp: string,
+    @Param('replyId', ParseIntPipe) replyId: number,
+    @Body() createReplyDto: CreateReplyDto,
+  ): Promise<CommunityReplyEntity> {
+    return this.communityReplyService.createChildReply({
+      parentReplyId: replyId,
+      createReplyDto,
+      ip: userIp,
+    });
   }
 
   /**
@@ -232,6 +245,18 @@ export class CommunityBoardController {
     @Body('password') password: string,
   ): Promise<boolean> {
     return this.communityReplyService.checkReplyPassword(replyId, password);
+  }
+
+  /**
+   * 대댓글 생성 POST /replies/report/:replyId
+   * @param replyId 
+   * @returns 
+   */
+  @Post('replies/report/:replyId')
+  async reportReply(
+    @Param('replyId', ParseIntPipe) replyId: number,
+  ): Promise<boolean> {
+    return this.communityReplyService.report(replyId);
   }
 
   /**

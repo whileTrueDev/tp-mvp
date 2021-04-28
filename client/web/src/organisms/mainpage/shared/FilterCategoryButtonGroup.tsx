@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: 0,
     boxShadow: theme.shadows[0],
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[100] : theme.palette.background.default,
   },
   selected: {
     backgroundColor: theme.palette.background.paper,

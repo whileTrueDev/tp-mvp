@@ -1,8 +1,7 @@
+import { Typography } from '@material-ui/core';
 import React from 'react';
-import { Grid, Typography } from '@material-ui/core';
 // organisms
 import CbtTable from './table/CbtTable';
-import RegisterDialg from '../cbt/RegisterDialog';
 
 /*
 dataprops
@@ -33,91 +32,22 @@ cbt 회원목록을 보여주는 컴포넌트 입니다.
 **********************************************************************************
  */
 export default function CbtSet(data: dataprops): JSX.Element {
-  // 공지사항 선택을 위한 State
-  // useState<NoticeData> 제네릭타입 //
-  const {
-    tabledata, cbtLoading,
-    reload,
-  } = data;
-  const [selectedData, setSelectedData] = React.useState<any>({
-    id: -1,
-    privacyAgreement: false,
-    content: '',
-    name: '',
-    idForTest: '',
-    creatorName: '',
-    email: '',
-    platform: '',
-    phoneNum: '',
-    isComplete: false,
-  });
+  const { tabledata, cbtLoading } = data;
 
-  // dialog hook
-  const [open, setOpen] = React.useState(false);
-  function handleOpen() {
-    setOpen(true);
-  }
-
-  function handleClose() {
-    setOpen(false);
-  }
-
-  React.useEffect(() => {
-    if (reload) {
-      reload();
-    }
-  }, [reload]);
-  function handleSelectedData(d: any) {
-    const user = {
-      ...selectedData,
-      name: d.name,
-      idForTest: d.idForTest,
-      creatorName: d.creatorName,
-      email: d.email,
-      phoneNum: d.phoneNum,
-      platform: d.platform,
-      privacyAgreement: d.privacyAgreement,
-      isComplete: d.isComplete,
-      id: d.id,
-    };
-    setSelectedData(user);
+  if (cbtLoading) {
+    return (
+      <div style={{ padding: 28 }}>
+        <h3>Loading...</h3>
+      </div>
+    );
   }
 
   return (
     <div>
-      {cbtLoading && (
-        <div style={{ padding: 28 }}>
-          <h3>Loading...</h3>
-        </div>
-      )}
-      {!cbtLoading && (
-        <div>
-          <div style={{ padding: 28 }}>
-            <Typography variant="h5">
-              Cbt 관리
-            </Typography>
-          </div>
-
-          <Grid container xs={12}>
-            <Grid item xs={12}>
-              <CbtTable
-                tableData={tabledata}
-                handleOpen={handleOpen}
-                handleData={handleSelectedData}
-              />
-            </Grid>
-          </Grid>
-        </div>
-      )}
-      {open && (
-      <RegisterDialg
-        open={open}
-        handleClose={handleClose}
-        selectedData={selectedData}
-        reload={reload}
-      />
-      )}
+      <Typography variant="h5">
+        Cbt 관리
+      </Typography>
+      <CbtTable tableData={tabledata} />
     </div>
-
   );
 }

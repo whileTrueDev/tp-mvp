@@ -65,7 +65,7 @@ export default function HelperPopOver(): JSX.Element {
           <Typography>
             내보내고 싶은 확장자로 선택 후 버튼을 눌러주세요. 보다 상세한 사항은
             {' '}
-            <strong>편집점 알아보기 버튼</strong>
+            <strong>편집점 파일 활용법 버튼</strong>
             을 클릭해주세요!
           </Typography>
         </div>

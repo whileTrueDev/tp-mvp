@@ -38,7 +38,9 @@ export default function usePostWriteEditAPI(postId: number): {
         } else {
           ShowSnack('글 불러오기 오류', 'error', enqueueSnackbar);
         }
-        history.push('/community-board');
+        history.push({
+          pathname: '/community-board',
+        });
       });
   }, [enqueueSnackbar, getPostForEdit, history]);
 
@@ -46,7 +48,10 @@ export default function usePostWriteEditAPI(postId: number): {
     createPost({ data: createPostDto })
       .then((res) => {
         ShowSnack('글 작성 성공', 'info', enqueueSnackbar);
-        history.push('/community-board');
+        // history.push('/community-board');
+        history.push({
+          pathname: '/community-board',
+        });
       })
       .catch((error) => {
         console.error(error);

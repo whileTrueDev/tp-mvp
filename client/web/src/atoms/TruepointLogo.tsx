@@ -9,7 +9,7 @@ export default function TruepointLogo({
   return (
     <Link to="/">
       <img
-        src="/images/logo/new_tp_logo_black.png"
+        src="/images/logo/logo_truepoint_v2_dark.png"
         alt=""
         width={width}
         {...props}

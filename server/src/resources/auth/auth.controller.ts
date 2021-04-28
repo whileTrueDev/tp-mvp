@@ -1,32 +1,36 @@
-import express from 'express';
 import {
-  UseGuards,
-  Controller, Request, Post, Get, Query,
-  HttpException, HttpStatus, Res, BadRequestException,
-  Body, Req, Delete, UseFilters, InternalServerErrorException, ForbiddenException,
+  BadRequestException,
+  Body,
+  Controller,
+  Delete, ForbiddenException, Get,
+  HttpException, HttpStatus,
+  InternalServerErrorException, Post, Query,
+  Req, Request,
+  Res,
+  UseFilters, UseGuards,
 } from '@nestjs/common';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
-import { LinkPlatformRes } from '@truepoint/shared/dist/res/LinkPlatformRes.interface';
-import { ValidationPipe } from '../../pipes/validation.pipe';
-import { AuthService } from './auth.service';
-import {
-  LogedInExpressRequest,
-  UserLoginPayload,
-} from '../../interfaces/logedInUser.interface';
+import express from 'express';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+// 가드 임시 주석처리
+import { LocalAuthGuard } from '../../guards/local-auth.guard';
+import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
+import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { CertificationInfo } from '../../interfaces/certification.interface';
-import { UsersService } from '../users/users.service';
+import {
+  LogedInExpressRequest, UserLoginPayload,
+} from '../../interfaces/logedInUser.interface';
+import { ValidationPipe } from '../../pipes/validation.pipe';
+import getFrontHost from '../../utils/getFrontHost';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
-import { AfreecaLinker } from './strategies/afreeca.linker';
+import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
+import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
-import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
-import getFrontHost from '../../utils/getFrontHost';
-import { LocalAuthGuard } from '../../guards/local-auth.guard';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
-import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
+import { AfreecaLinker } from './strategies/afreeca.linker';
 
 @Controller('auth')
 export class AuthController {
@@ -65,8 +69,8 @@ export class AuthController {
 
     // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
     // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
-    if (user.twitchId) this.usersService.refreshTwitchInfo(user.twitchId);
-    if (user.youtubeId) this.usersService.refreshYoutubeInfo(user.youtubeId);
+    if (user.twitch.twitchId) this.usersService.refreshTwitchInfo(user.twitch.twitchId);
+    if (user.youtube.youtubeId) this.usersService.refreshYoutubeInfo(user.youtube.youtubeId);
 
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
@@ -136,9 +140,11 @@ export class AuthController {
   async platformLink(
     @Req() req: LogedInExpressRequest,
     @Body('platform') platform: string, @Body('id') id: string,
-  ): Promise<LinkPlatformRes> {
+  ): Promise<string> {
     const { userId } = req.user;
-    return this.usersService.linkUserToPlatform(userId, platform, id);
+    return userId;
+    // entity 변경으로 제거된 메서드. by hwasurr 210420 -> 연동 기능 필요할 때 새롭게 만드는 것이 더 좋을 듯.
+    // return this.usersService.linkUserToPlatform(userId, platform, id);
   }
 
   /**

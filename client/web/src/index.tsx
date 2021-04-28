@@ -19,27 +19,29 @@ import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
 import Mypage from './pages/mypage/layouts/MypageLayout';
+import PublickMypage from './pages/mainpage/PublicMypage';
 import KakaoTalk from './organisms/shared/KakaoTalkButton';
 import Login from './pages/mainpage/Login';
 import Regist from './pages/mainpage/Regist';
-import InfoCBT from './pages/mainpage/InfoCBT';
 import FindId from './pages/others/FindId';
 import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
 import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
-import CommunityBoardList from './pages/mainpage/CommunityBoardList';
-import CommunityPostView from './pages/mainpage/CommunityPostView';
-import CommunityPostWrite from './pages/mainpage/CommunityPostWrite';
+import CommunityBoard from './pages/mainpage/CommunityBoard';
+
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
-import useAutoLogin from './utils/hooks/useAutoLogin';
+// 트루포인트 2.5 로그인 기능 추가 전이라 주석처리
+// import useAutoLogin from './utils/hooks/useAutoLogin';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
 import './assets/truepoint.css';
 import PageNotFound from './pages/others/PageNotFound';
+import Ranking from './pages/mainpage/Ranking';
+import YoutubeHighlightList from './pages/mainpage/YoutubeHighlightList';
 
 function Index(): JSX.Element {
   // *******************************************
@@ -74,7 +76,8 @@ function Index(): JSX.Element {
 
   // *******************************************
   // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
-  useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
+  // 트루포인트 2.5에서 로그인 기능이 필요하나, 로그인 관련 기능 미흡으로 로그인 주석처리 -> 차후 추가
+  // useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
 
   // *******************************************
   // 화면 렌더링시 최상단 으로 고정
@@ -109,7 +112,6 @@ function Index(): JSX.Element {
 
             <Switch>
               <Route exact path="/" component={Main} />
-              <Route exact path="/infoCBT" component={InfoCBT} />
               <Route exact path="/signup" component={Regist} />
               <Route exact path="/signup/completed" component={Regist} />
               <Route exact path="/login" component={Login} />
@@ -123,10 +125,10 @@ function Index(): JSX.Element {
               <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
-              <Route exact path="/community-board" component={CommunityBoardList} />
-              <Route exact path="/community-board/:platform/view/:postId" component={CommunityPostView} />
-              <Route exact path="/community-board/:platform/write" component={CommunityPostWrite} />
-              <Route exact path="/community-board/:platform/write/:postId" component={CommunityPostWrite} />
+              <Route path="/community-board" component={CommunityBoard} />
+              <Route path="/ranking" component={Ranking} />
+              <Route exact path="/highlight-list" component={YoutubeHighlightList} />
+              <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
               <Route path="/mypage" component={Mypage} />
               <Route component={PageNotFound} />
             </Switch>

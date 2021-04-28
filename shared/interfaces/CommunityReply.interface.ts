@@ -3,11 +3,13 @@
 export interface CommunityReply{
   replyId: number;
 
-  content: string;
+  userId?: string;
+
+  ip: string;
 
   nickname: string;
 
-  ip: string;
+  content: string;
 
   password: string;
 

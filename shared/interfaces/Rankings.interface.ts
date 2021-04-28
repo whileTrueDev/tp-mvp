@@ -7,6 +7,8 @@ export interface Rankings{
 
   creatorName: string;
 
+  title: string;
+
   createDate: Date;
 
   streamDate: Date;

@@ -77,7 +77,7 @@ const getCreators = () => new Promise((resolve, reject) => {
 // 4. 2번 map을 통해서 streamData에 대해 userId를 대응시킨다.
 const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) => {
   const conditionQuery = creators.reduce((str, element, index) => `${index === 0 ? `(${str}` : `${str},`}'${element.afreecaId}'`, '');
-
+  const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
   if (conditionQuery === '') {
     resolve([]);
     return;
@@ -89,9 +89,11 @@ const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) =
       const streamData = streams.map((element) => {
         // userId가 존재하지 않는 경우, null을 사용하도록 한다.
         const userId = userMap.hasOwnProperty(`${element.creatorId}`) ? userMap[element.creatorId] : null;
+        const title = element.title.replace(reg, '');
         return {
           ...element,
           userId,
+          title
         };
       });
       resolve(streamData);

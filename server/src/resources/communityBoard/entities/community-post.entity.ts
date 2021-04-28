@@ -27,7 +27,7 @@ export class CommunityPostEntity implements CommunityPost {
   @CreateDateColumn({ type: 'timestamp' })
   createDate: Date;
 
-  @Column({ type: 'tinyint', nullable: false, comment: '아프리카=0, 트위치=1 플랫폼 구분용 컬럼' })
+  @Column({ type: 'tinyint', nullable: false, comment: '아프리카=0, 트위치=1, 자유게시판=2 플랫폼 구분용 컬럼' })
   platform: number;
 
   @Column({ type: 'tinyint', default: 0, comment: '일반글=0, 공지글=1 일반글,공지글 구분용 컬럼' })

@@ -1,13 +1,12 @@
 import React, { useMemo, memo } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Paper, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
 
 // 라이브러리
-import { ko } from 'date-fns/locale';
-import * as dateFns from 'date-fns';
+import dayjs from 'dayjs';
 import classnames from 'classnames';
 // 응답타입
 import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
@@ -19,13 +18,14 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 const rowHeightBase = 6; // row(listItem)하나당 높이 기준픽셀
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    marginBottom: theme.spacing(2),
+  postList: {
   },
   header: {
     justifyContent: 'center',
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    '& $cellText': {
+      color: theme.palette.common.white,
+    },
   },
   row: {
     display: 'flex',
@@ -41,22 +41,22 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   cellText: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    color: theme.palette.text.primary,
   },
   listContainer: {
     position: 'relative',
+    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? '100' : 'A400'],
   },
   listItem: { // button 엘리먼트 사용하고 있어서 기본 기본스타일 제거
     width: '100%',
     position: 'relative',
-    backgroundColor: 'transparent',
+    backgroundColor: theme.palette.background.paper,
+    marginBottom: theme.spacing(1),
     cursor: 'pointer',
     border: 'none',
     padding: 0,
     '&:hover': {
       backgroundColor: theme.palette.grey[100],
-    },
-    '&+&': {
-      borderTop: `1px solid ${theme.palette.divider}`,
     },
   },
   replies: {
@@ -106,7 +106,7 @@ interface ColumnData {
 const boardColumns: ColumnData[] = [
   { key: 'postNumber', text: '번호', width: '8%' },
   { key: 'title', text: '제목', width: '44%' },
-  { key: 'nickname', text: '작성자', width: '17%' },
+  { key: 'nickname', text: '글쓴이', width: '17%' },
   { key: 'createDate', text: '작성일', width: '15%' },
   { key: 'hit', text: '조회', width: '8%' },
   { key: 'recommend', text: '추천', width: '8%' },
@@ -116,16 +116,22 @@ const boardColumns: ColumnData[] = [
 function getDateDisplay(createDate: Date|undefined): string {
   let dateDisplay = '';
   if (createDate) {
-    const date = new Date(createDate);
-    if (date.getDate() === new Date().getDate()) { // 오늘 날짜인 경우
-      // '**시간 전' 형태로 표현
-      dateDisplay = `${dateFns.formatDistanceToNow(date, { locale: ko }).replace('약 ', '')} 전`;
-    } else {
-      // 오늘 날짜가 아닌경우 '12-26'형태로 표현
-      dateDisplay = dateFns.format(date, 'MM-dd');
-    }
+    dateDisplay = dayjs(createDate).format('MM-DD');
   }
   return dateDisplay;
+}
+
+export function getBoardPlatformNameByCode(platform: number | undefined): string {
+  switch (platform) {
+    case 0:
+      return 'afreeca';
+    case 1:
+      return 'twitch';
+    case 2:
+      return 'free';
+    default:
+      return 'free';
+  }
 }
 
 function PostList(props: PostListProps): JSX.Element {
@@ -158,7 +164,7 @@ function PostList(props: PostListProps): JSX.Element {
     }))), [classes.replies, posts]);
 
   const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
-    const postPlatform = platform === 0 ? 'afreeca' : 'twitch';
+    const postPlatform = getBoardPlatformNameByCode(platform);
     axios.post(`/community/posts/${postId}/hit`).then(() => {
       history.push({
         pathname: `/community-board/${postPlatform}/view/${postId}`,
@@ -173,7 +179,7 @@ function PostList(props: PostListProps): JSX.Element {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.postList}>
       {/* 헤더 컬럼 */}
       <div className={classnames(classes.row, classes.header)}>
         {boardColumns.map((col) => (
@@ -190,7 +196,7 @@ function PostList(props: PostListProps): JSX.Element {
       </div>
 
       {/* 글 목록 컨테이너 */}
-      <Paper
+      <div
         className={classes.listContainer}
         style={{ minHeight: `${theme.spacing(rowHeightBase) * take}px` }}
       >
@@ -229,7 +235,7 @@ function PostList(props: PostListProps): JSX.Element {
           : null}
         {/* 로딩중인 경우 */}
         {loading ? <CenterLoading /> : null}
-      </Paper>
+      </div>
     </div>
   );
 }
