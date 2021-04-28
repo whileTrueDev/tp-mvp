@@ -6,9 +6,9 @@ const colorizedMorgan = morgan((tokens, req, res) => {
   // Status
   const status = tokens.status(req, res);
   let statusText = chalk.bold(status);
-  if (status.startsWith('2')) statusText = chalk.green.bold(status);
-  if (status.startsWith('4')) statusText = chalk.hex('#ffb142').bold(status);
-  if (status.startsWith('5')) statusText = chalk.bgRed.bold(status);
+  if (status && status.startsWith('2')) statusText = chalk.green.bold(status);
+  if (status && status.startsWith('4')) statusText = chalk.hex('#ffb142').bold(status);
+  if (status && status.startsWith('5')) statusText = chalk.bgRed.bold(status);
 
   // **********************************************
   // Content Length
