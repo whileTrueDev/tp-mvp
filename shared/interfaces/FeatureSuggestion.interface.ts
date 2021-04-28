@@ -12,6 +12,10 @@ export interface FeatureSuggestion {
 
   author: User;
 
+  userIp: string;
+
+  password: string;
+
   state: number;
 
   like: number;

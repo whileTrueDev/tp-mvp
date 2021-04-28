@@ -40,15 +40,11 @@ const useRatingStyle = makeStyles((theme: Theme) => {
 });
 
 export interface StarRatingProps{
-  /** 10점 만점으로 들어오는 점수 */
+  /** 5점 만점으로 들어오는 점수 */
  score: number | undefined;
  /** true이면 별점 수정이 불가능하다, 평가, 수정, 취소버튼도 뜨지않음 */
  readOnly?: boolean;
- /** 
-- score는 null이거나 0~5 사이의 값임
-- 서버에 값을 보낼때는 score * 2해서 보내기
-- null일경우 처리 따로 해야함
-*/
+ /**  score는 null이거나 0~5 사이의 값으로 핸들러에 넘겨줘야함 */
  createRatingHandler? : (score: number|null, cb?: () => void) => void;
  /** 평점 취소 핸들러 */
  cancelRatingHandler? : (cb?: () => void) => void;
@@ -67,13 +63,12 @@ const labels: { [index: string]: string } = {
   4: '재미있어요',
   4.5: '훌륭해요',
   5: '최고예요',
-  askEvaluate: '별점을 남겨주세요',
 };
 
 /**
  * material ui의 Rating컴포넌트와 평점 매기기, 취소, 수정 버튼이 같이 있는 컴포넌트
  * readOnly 값이 false인 경우 버튼은 보이지 않는다
- * 10점 만점으로 함, 별 0.5개가 1점, 별 5개가 10점
+ * 5점 만점으로 함
  * @param param0 
  * @returns 
  */
@@ -87,9 +82,8 @@ export default function StarRating({
 }: StarRatingProps): JSX.Element {
   const classes = useRatingStyle();
 
-  const [evaluated, setEvaluated] = useState<boolean>(score !== undefined);
-  // 점수는 10점 만점으로 들어오므로 Rating컴포넌트 value로 넘겨주기 위해서는 나누기 2 해야함
-  const [value, setValue] = useState<number>(score ? (score / 2) : 0); // rating컴포넌트에 표시될 점수
+  const [evaluated, setEvaluated] = useState<boolean>(score !== undefined); // 평가했는지 여부 확인
+  const [value, setValue] = useState<number>(score || 0); // rating컴포넌트에 표시될 점수
 
   const onChange = useCallback((event, newValue: number|null) => {
     if (newValue === null) { // 서버로 보낼 평점 취소 요청
@@ -99,7 +93,7 @@ export default function StarRating({
       }
     } else if (createRatingHandler) {
       setEvaluated(true);
-      createRatingHandler(newValue ? (newValue * 2) : null);
+      createRatingHandler(newValue || null);
     }
     setValue(newValue || 0);
   }, [cancelRatingHandler, createRatingHandler]);
@@ -115,7 +109,8 @@ export default function StarRating({
   }, [value]);
 
   useEffect(() => {
-    setValue(score ? (score / 2) : 0);
+    setValue(score || 0);
+    setEvaluated(score !== undefined);
   }, [score]);
 
   return (
@@ -134,7 +129,7 @@ export default function StarRating({
       </Tooltip>
       {!readOnly && (
         <Typography className={classes.label} color={evaluated ? 'textPrimary' : 'error'}>
-          {evaluated ? labels[value] : labels.askEvaluate}
+          {evaluated ? labels[value] : '별점을 남겨주세요'}
         </Typography>
       )}
 

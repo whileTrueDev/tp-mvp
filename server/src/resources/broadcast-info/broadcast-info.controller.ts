@@ -37,6 +37,21 @@ export class BroadcastInfoController {
   }
 
   /**
+   * 해당 크리에이터의 최근 방송 정보를 가져옵니다.
+   * creatorId (twitch, afreeca 고유 ID) 를 통해 방송 목록을 가져옵니다.
+   * @param creatorId 방송목록을 가져올 유저(afreeca,twitch)고유 아이디
+   * @param limit 가져올 방송 목록 갯수
+   */
+  @Get('bycreator')
+  async getStreamsByCreatorId(
+    @Query('creatorId') creatorId: string,
+    @Query('limit', ParseIntPipe) limit: number,
+  ): Promise<RecentStreamResType> {
+    const result = await this.broadcastService.getStreamsByCreatorId(creatorId, limit);
+    return result;
+  }
+
+  /**
    * 방송에 대한 좋아요 / 싫어요를 추가합니다.
    * @param ip 요청자 IP
    * @param dto CreateSteramVoteDto
@@ -54,21 +69,6 @@ export class BroadcastInfoController {
   @Delete('vote')
   cancelVote(@Query('id') id: number): Promise<number> {
     return this.broadcastService.cancelVote(id);
-  }
-
-  /**
-   * 해당 크리에이터의 최근 방송 정보를 가져옵니다.
-   * creatorId (twitch, afreeca 고유 ID) 를 통해 방송 목록을 가져옵니다.
-   * @param creatorId 방송목록을 가져올 유저(afreeca,twitch)고유 아이디
-   * @param limit 가져올 방송 목록 갯수
-   */
-  @Get('bycreator')
-  async getStreamsByCreatorId(
-    @Query('creatorId') creatorId: string,
-    @Query('limit', ParseIntPipe) limit: number,
-  ): Promise<RecentStreamResType> {
-    const result = await this.broadcastService.getStreamsByCreatorId(creatorId, limit);
-    return result;
   }
 
   /**

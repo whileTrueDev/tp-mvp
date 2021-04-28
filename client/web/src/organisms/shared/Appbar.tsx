@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import {
@@ -38,6 +38,10 @@ const useStyles = makeStyles((theme) => createStyles({
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
     borderBottom: 'none',
     backgroundColor: theme.palette.background.paper,
+    transition: theme.transitions.create('background'),
+  },
+  transparent: {
+    backgroundColor: 'transparent',
   },
   toolbar: {
     display: 'flex',
@@ -117,7 +121,13 @@ const useStyles = makeStyles((theme) => createStyles({
   },
 }));
 
-export default function AppBar(): JSX.Element {
+interface AppBarProps {
+  variant?: 'transparent';
+}
+
+export default function AppBar({
+  variant,
+}: AppBarProps): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
   const theme = useTheme<TruepointTheme>();
@@ -202,7 +212,6 @@ export default function AppBar(): JSX.Element {
         </MenuItem>
       ) : (
         null
-        // 트루포인트 2.0에서 로그인기능 사용하지 않아 로그인버튼 임시 주석처리
         // <MenuItem className={classes.menuItem}>
         //   <Button
         //     variant="contained"
@@ -218,10 +227,31 @@ export default function AppBar(): JSX.Element {
     </Menu>
   );
 
+  // 투명 앱바 (variant==='transparent') 인 경우에만.
+  const [transparentDisabled, setTransparentDisabled] = useState<boolean>(false);
+  const handleScroll = () => {
+    const windowScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    if (windowScroll > COMMON_APP_BAR_HEIGHT) setTransparentDisabled(true);
+    else setTransparentDisabled(false);
+  };
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (variant === 'transparent') {
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [variant]);
+
   return (
     <>
       <div className={classes.root}>
-        <MuiAppBar className={classes.container}>
+        <MuiAppBar
+          className={classnames(
+            classes.container, {
+              [classes.transparent]: variant === 'transparent' && !transparentDisabled,
+            },
+          )}
+        >
           <div className={classes.toolbar}>
             {/* 모바일 화면을 위해 */}
             <Hidden mdUp>
@@ -253,26 +283,6 @@ export default function AppBar(): JSX.Element {
               </div>
             </div>
 
-            {/* 트루포인트 2.0에서 로그인 기능 사용하지 않아 로그인버튼 임시 주석처리 */}
-            {/* <div className={classes.links}>
-              {authContext.user.userId && authContext.accessToken ? ( // 로그인 되어있는 경우
-                <div className={classes.userInterfaceWrapper}>
-                  <HeaderLinks />
-                </div>
-              ) : ( // 로그인 되어있지 않은 경우
-                <Button
-                  disableElevation
-                  variant="contained"
-                  color="secondary"
-                  className={classes.loginButton}
-                  component={Link}
-                  to="/login"
-                >
-                  로그인
-                </Button>
-              )}
-            </div> */}
-
             <div className={classes.links}>
               <IconButton
                 className={classes.darkModeToggleButton}
@@ -293,7 +303,10 @@ export default function AppBar(): JSX.Element {
         </MuiAppBar>
         {mobileMenu}
       </div>
-      <div className={classes.appbarSpace} />
+
+      {variant === 'transparent' ? (null) : (
+        <div className={classes.appbarSpace} />
+      )}
     </>
   );
 }

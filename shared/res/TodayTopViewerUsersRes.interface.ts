@@ -3,7 +3,8 @@ export interface TodayTopViewerUser {
   viewer: number;
   platform: 'afreeca' | 'twitch';
   creatorId: string;
-  logo: string;
+  afreecaLogo: string;
+  twitchLogo: string;
 }
 
 export type TodayTopViewerUsersRes = TodayTopViewerUser[];

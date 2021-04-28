@@ -3,4 +3,5 @@ export interface LoginUser {
   userName: string;
   userDI: string;
   roles: string;
+  nickName: string;
 }

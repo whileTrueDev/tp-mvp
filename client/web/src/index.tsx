@@ -28,14 +28,13 @@ import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
 import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
 import CommunityBoard from './pages/mainpage/CommunityBoard';
-// import CommunityBoardList from './pages/mainpage/CommunityBoardList';
-// import CommunityPostView from './pages/mainpage/CommunityPostView';
-// import CommunityPostWrite from './pages/mainpage/CommunityPostWrite';
+
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
+// 트루포인트 2.5 로그인 기능 추가 전이라 주석처리
 // import useAutoLogin from './utils/hooks/useAutoLogin';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
@@ -77,8 +76,7 @@ function Index(): JSX.Element {
 
   // *******************************************
   // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
-
-  // 트루포인트 2.0 에서 로그인 기능이 없어서 임시 주석처리함
+  // 트루포인트 2.5에서 로그인 기능이 필요하나, 로그인 관련 기능 미흡으로 로그인 주석처리 -> 차후 추가
   // useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
 
   // *******************************************

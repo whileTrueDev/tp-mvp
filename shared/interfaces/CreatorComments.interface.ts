@@ -1,13 +1,15 @@
 export interface CreatorComments{
   commentId: number;
 
-  creatorId: string;
-
   userId?: string;
 
   nickname: string;
 
+  content: string;
+
   password: string;
 
-  content: string;
+  createDate: Date;
+
+  creatorId: string;
 }

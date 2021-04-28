@@ -7,59 +7,29 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import HotPostItem from './HotPostItem';
 import { getBoardPlatformNameByCode } from './PostList';
 import axios from '../../../../utils/axios';
+import createPostItStyles from '../../../../utils/style/createPostitStyles';
 
-const useHotPostBoxStyle = makeStyles((theme: Theme) => {
-  const decorationColor = '#ccae79';
-  return createStyles({
-    hotPostBox: {
-      backgroundColor: theme.palette.background.paper,
-      padding: theme.spacing(6, 5),
-      overflow: 'visible',
-      position: 'relative',
-      '&:before': {
-        content: "' '",
-        display: 'block',
-        width: '20%',
-        maxWidth: theme.spacing(15),
-        minWidth: theme.spacing(10),
-        height: '10%',
-        backgroundColor: decorationColor,
-        opacity: 0.8,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        transformOrigin: 'left top',
-        transform: 'rotate(-30deg) translate(-40%,40%)',
-      },
-      '&:after': {
-        content: "' '",
-        display: 'block',
-        width: '20%',
-        maxWidth: theme.spacing(15),
-        minWidth: theme.spacing(10),
-        height: '10%',
-        backgroundColor: decorationColor,
-        opacity: 0.8,
-        position: 'absolute',
-        right: 0,
-        bottom: 0,
-        transformOrigin: 'right bottom',
-        transform: 'rotate(-30deg) translate(40%,-40%)',
-      },
-    },
-    listContainer: {
-      height: theme.spacing(6 * 4),
-      overflowY: 'scroll', // mac에서는 기본적으로 스크롤바가 숨겨진 상태임 스크롤바 라이브러리 찾아보기
-      paddingRight: theme.spacing(1),
-      position: 'relative',
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-  });
-});
+const useHotPostBoxStyle = makeStyles((theme: Theme) => createStyles({
+  hotPostBox: {
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(6, 5),
+    overflow: 'visible',
+    position: 'relative',
+    '&:before': createPostItStyles(theme, 'left top'),
+    '&:after': createPostItStyles(theme, 'right bottom'),
+  },
+  listContainer: {
+    height: theme.spacing(6 * 4),
+    overflowY: 'scroll', // mac에서는 기본적으로 스크롤바가 숨겨진 상태임 스크롤바 라이브러리 찾아보기
+    paddingRight: theme.spacing(1),
+    position: 'relative',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+}));
 
 export interface HotPostBoxProps {
  posts: PostFound[],
@@ -76,7 +46,7 @@ export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
     posts, error, loading, platform, buttonHandler,
   } = props;
 
-  const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="32" height="32" />;
+  const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="24" height="24" />;
   const moveToPost = (postId: number | undefined, platformCode: number | undefined) => () => {
     const postPlatform = getBoardPlatformNameByCode(platformCode);
     axios.post(`/community/posts/${postId}/hit`).then(() => {
@@ -93,8 +63,9 @@ export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
       <Divider />
       <div className={classes.header}>
         <div>
-          <Typography component="span" color="primary">핫</Typography>
-          <Typography component="span"> 시청자 반응</Typography>
+          <Typography component="span">{platform === 'twitch' ? '트위치' : '아프리카'}</Typography>
+          <Typography component="span" color="primary">HOT</Typography>
+          <Typography component="span"> 게시물</Typography>
         </div>
         <Button color="primary" onClick={buttonHandler}>+더보기</Button>
       </div>

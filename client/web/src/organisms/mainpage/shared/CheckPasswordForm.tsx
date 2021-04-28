@@ -1,9 +1,10 @@
 import { Button } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
+import { AxiosPromise, AxiosRequestConfig } from 'axios';
+import { RefetchOptions } from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
-import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
   form: {
@@ -23,21 +24,21 @@ const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
     justifyContent: 'space-between',
   },
 }));
+
 export default function CheckPasswordForm({
   closeDialog,
-  postId,
+  checkPassword,
   successHandler,
   children,
 }: {
   closeDialog: () => void,
-  postId: number,
+  checkPassword: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>;
   successHandler: () => void,
   children?: JSX.Element| JSX.Element[]
 }): JSX.Element {
   const classes = useCheckPasswordFormStyle();
   const passwordRef = useRef<HTMLInputElement>(null);
   const { enqueueSnackbar } = useSnackbar();
-  const [, checkPassword] = useAxios({ url: `/community/posts/${postId}/password`, method: 'post' }, { manual: true });
   const handleCancel = () => {
     closeDialog();
   };
@@ -54,6 +55,7 @@ export default function CheckPasswordForm({
     }).then((res) => {
       if (res.data === true) {
         successHandler();
+        closeDialog();
         // 글수정인 경우 비밀번호 맞음 -> write/postId로 이동
         // 글삭제인 경우 -> 글 삭제
       } else {
@@ -66,14 +68,25 @@ export default function CheckPasswordForm({
     });
   };
   return (
-    <form className={classes.form}>
+    <form
+      className={classes.form}
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+    >
       {children}
       <input
+        // eslint-disable-next-line jsx-a11y/no-autofocus
+        autoFocus
         type="password"
         className={classes.input}
         ref={passwordRef}
         placeholder="비밀번호를 입력해주세요"
         maxLength={4}
+        lang="en"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleSubmitPassword();
+        }}
       />
       <div className={classes.buttonContainer}>
         <Button variant="contained" onClick={handleCancel}>취소</Button>
