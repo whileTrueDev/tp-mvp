@@ -54,7 +54,7 @@ export default function StreamInfoCard({
   ), []);
 
   const twitchUrl = useMemo(() => (creator.twitch ? `https://twitch.tv/${creator.twitch.twitchChannelName}` : ''), [creator.twitch]);
-  const afreecaUrl = useMemo(() => (creator.afreeca ? `https://afreeca.tv/${creator.afreeca.afreecaId}` : ''), [creator.afreeca]);
+  const afreecaUrl = useMemo(() => (creator.afreeca ? `https://bj.afreecatv.com/${creator.afreeca.afreecaId}` : ''), [creator.afreeca]);
 
   const handleChannelClick = (url: string) => {
     window.open(url, '_blank');
