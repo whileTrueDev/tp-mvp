@@ -36,6 +36,7 @@ function getMinMax(currentScoreName: keyof Scores): {min: number|undefined, max:
 export interface CustomPointOption extends Highcharts.PointOptionsObject {
   y: number;
   originValue: number;
+  title?: string;
 }
 
 function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
@@ -44,7 +45,7 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
   } = this;
   const { options } = point;
   const customOption = options as CustomPointOption;
-  const { originValue } = customOption;
+  const { originValue, title } = customOption;
 
   let value: string;
   switch (series.name) {
@@ -61,8 +62,10 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
 
   return `
   <div>
-    <span style=" margin-right: 20px;">${key}</span><br/>
-    <span style=" margin-right: 20px;">${series.name}</span><br/>
+    <span>${key}</span><br/>
+    ${title ? `<span style="font-weight: bold">${title}</span><br/>` : ''}
+    <br/>
+    <span style=" margin-right: 20px;">${series.name}</span>
     <span style="font-weight: bold">${value}</span>
   </div>
   `;
@@ -109,6 +112,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
       },
       useHTML: true,
       formatter: tooltipFormatter,
+      outside: true,
     },
   });
 
@@ -129,7 +133,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     const tempData = source.map((d) => {
       const originValue = d[currentScoreName] as number;
       let y: number;
-      if (currentScoreName.includes('Score') && originValue < 3) {
+      if (currentScoreName.includes('Score') && originValue && originValue < 3) {
         y = 3;
       } else {
         y = originValue;
@@ -137,6 +141,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
       return {
         y,
         originValue,
+        title: d.title,
       };
     });
 

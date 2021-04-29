@@ -62,6 +62,7 @@ export interface TopTenDataItem extends Scores{
 }
 export interface WeeklyTrendsItem extends Scores{
     createDate: string,
+    title?: string,
   }
 
 export interface WeeklyTrendsType{
