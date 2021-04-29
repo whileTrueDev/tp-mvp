@@ -208,7 +208,11 @@ export class CreatorRatingsService {
     const { average, count } = await this.getAverageRatings(creatorId);
     result.ratings = { average, count };
 
-    // 크리에이터의 1달 내 평균점수(최근 분석일로부터?), 닉네임, 로고 정보를 찾는다
+    // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
+    const { recentCreateDate } = await this.rankingsRepository.createQueryBuilder('rank')
+      .select('max(rank.createDate) AS recentCreateDate')
+      .getRawOne();
+
     const qb = await this.rankingsRepository.createQueryBuilder('rankings')
       .select([
         'AVG(smileScore) AS smile',
@@ -217,7 +221,7 @@ export class CreatorRatingsService {
         'AVG(cussScore) AS cuss',
       ])
       .where('creatorId = :creatorId', { creatorId })
-      // .andWhere('createDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')
+      .andWhere(`createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
       .getRawOne();
 
     result.scores.admire = qb.admire;

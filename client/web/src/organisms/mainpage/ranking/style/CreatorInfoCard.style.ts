@@ -60,6 +60,7 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
       '& .upper-text': {
         display: 'flex',
         width: '100%',
+        marginBottom: theme.spacing(2),
       },
     },
     nameContainer: {
