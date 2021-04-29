@@ -301,7 +301,7 @@ export class CreatorRatingsService {
       DATE_FORMAT(createDate, '%Y-%m-%d') AS "date", 
       CAST(AVG(rating) as decimal(10,2)) AS avgRating,
       platform
-    FROM CreatorRatingsTest2
+    FROM ${this.ratingsRepository.metadata.tableName}
     Where
       DATE_FORMAT(createDate, '%Y-%m-%d') 
       BETWEEN (curdate() - interval 8 day)
@@ -352,9 +352,9 @@ export class CreatorRatingsService {
         twitch.logo AS twitchLogo,    
         afreeca.logo AS afreecaLogo,
         afreeca.afreecaStreamerName AS afreecaNickname
-      FROM CreatorRatingsTest2 R
-        LEFT JOIN PlatformAfreeca afreeca ON afreeca.afreecaId = R.creatorId
-        LEFT JOIN PlatformTwitch twitch ON twitch.twitchId = R.creatorId
+      FROM ${this.ratingsRepository.metadata.tableName} R
+        LEFT JOIN ${this.afreecaRepository.metadata.tableName} afreeca ON afreeca.afreecaId = R.creatorId
+        LEFT JOIN ${this.twitchRepository.metadata.tableName} twitch ON twitch.twitchId = R.creatorId
       WHERE TIMESTAMPDIFF(DAY, R.createDate, NOW())>=1 AND TIMESTAMPDIFF(DAY, R.createDate, NOW())<=8  
       GROUP BY R.creatorId
       ORDER BY rownum asc
@@ -365,7 +365,7 @@ export class CreatorRatingsService {
       SELECT
         creatorId,
         ROW_NUMBER() OVER(ORDER BY AVG(rating) DESC) AS rownum
-      FROM CreatorRatingsTest2
+      FROM ${this.ratingsRepository.metadata.tableName}
       WHERE TIMESTAMPDIFF(DAY, createDate, NOW()) >=9 AND TIMESTAMPDIFF(DAY, createDate, NOW()) <= 16
       GROUP BY creatorId
       ORDER BY rownum asc
