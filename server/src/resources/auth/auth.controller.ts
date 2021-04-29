@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Body,
-  // UseGuards,
   Controller,
   Delete, ForbiddenException, Get,
   HttpException, HttpStatus,
@@ -13,8 +12,11 @@ import {
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import express from 'express';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 // 가드 임시 주석처리
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
+import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
+import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import {
   LogedInExpressRequest, UserLoginPayload,
@@ -29,9 +31,6 @@ import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
 import { AfreecaLinker } from './strategies/afreeca.linker';
-// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-// import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
-// import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -84,7 +83,7 @@ export class AuthController {
    * @param req 로그인 user 정보를 포함한 요청 객체
    * @param password 패스워드 plain 문자열
    */
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('check-pw')
   async checkPw(
     @Req() req: LogedInExpressRequest,
@@ -137,7 +136,7 @@ export class AuthController {
    * @param id 연동하는 플랫폼의 고유 아이디
    */
   @Post('link')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async platformLink(
     @Req() req: LogedInExpressRequest,
     @Body('platform') platform: string, @Body('id') id: string,
@@ -154,7 +153,7 @@ export class AuthController {
    * @param platform 연동 제거할 플랫폼 문자열 twitch|youtube|afreeca 셋 중 하나.
    */
   @Delete('link')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async deletePlatformLink(
     @Req() req: LogedInExpressRequest, @Body('platform') platform: string,
   ): Promise<string> {
@@ -170,14 +169,14 @@ export class AuthController {
   // *********** Twitch ******************
   // Twitch Link start
   @Get('twitch')
-  // @UseGuards(TwitchLinkGuard)
+  @UseGuards(TwitchLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   twitch(): void {}
 
   // Twitch oauth Callback url
   @Get('twitch/callback')
   @UseFilters(TwitchLinkExceptionFilter)
-  // @UseGuards(TwitchLinkGuard)
+  @UseGuards(TwitchLinkGuard)
   twitchCallback(
     @Req() req: express.Request,
     @Res() res: express.Response,
@@ -191,7 +190,7 @@ export class AuthController {
   // *********** Youtube ******************
   // Youtube link start
   @Get('youtube')
-  // @UseGuards(YoutubeLinkGuard)
+  @UseGuards(YoutubeLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   youtube(): void {}
 

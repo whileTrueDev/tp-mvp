@@ -27,6 +27,9 @@ import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 import StepGuideTooltip from '../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../atoms/Tooltip/StepGuideTooltip.text';
 import Loading from '../../shared/sub/Loading';
+import sampleData from '../highlightAnalysis/sample/sample_short.json';
+// import sampleData from '../highlightAnalysis/sample/sample.json';
+// import sampleData from '../highlightAnalysis/sample/sample_long.json';
 
 interface HighlightAnalysisLayoutProps {
   exampleMode?: boolean
@@ -41,7 +44,6 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
   const handleClickedDate = (newDate: Date) => {
     setClickedDate(newDate);
   };
-
   // 캘린더의 해당 날짜의 방송 데이터들
   const [dayStreamsList, setDayStreamsList] = React.useState<StreamDataType[]>([]);
 
@@ -251,11 +253,11 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
         <>
           <TruepointHighlight
             selectedStream={selectedStream}
-            highlightData={highlightData}
+            highlightData={sampleData} // 해당 부분 S3와 연동
           />
           <MetricsAccordian
             selectedStream={selectedStream}
-            highlightData={highlightData}
+            highlightData={sampleData} // 해당 부분 S3와 연동
             categories={categoriesData}
           />
         </>
