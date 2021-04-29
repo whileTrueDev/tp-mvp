@@ -25,6 +25,9 @@ export interface CommentItemProps extends Record<string, any>{
   /** 댓글 고유 id */
   commentId: number;
 
+  /** 댓글 삭제 여부 1이면 삭제된 댓글, 0이면 삭제 안된 댓글 */
+  deleteFlag?: number;
+
   /** 반복문에서 key 값으로 사용될 prop 명(commentId, replyId 등 고유 id 값의 프로퍼티명) */
   idProperty?: string;
 
@@ -82,6 +85,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
     nickname,
     profileImage,
     commentId,
+    deleteFlag = 0,
     content,
     createDate,
     likesCount,
@@ -251,19 +255,25 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           {userId && <Typography component="span" className="userId">{`(${userId})`}</Typography>}
         </div>
         <div className={classes.headerActions}>
-          <Button
-            aria-label="신고하기"
-            className={classes.reportButton}
-            onClick={report}
-          >
-            <img
-              src="/images/rankingPage/reportIcon.png"
-              srcSet="/images/rankingPage/reportIcon@2x.png 2x"
-              alt="신고하기"
-            />
-          </Button>
-          <Typography component="span" className="time" color="textSecondary">{time}</Typography>
-          <DeleteButton onClick={handleDeleteButton} />
+          {deleteFlag === 1 ? (
+            <Typography component="span" className="time" color="textSecondary">{time}</Typography>
+          ) : (
+            <>
+              <Button
+                aria-label="신고하기"
+                className={classes.reportButton}
+                onClick={report}
+              >
+                <img
+                  src="/images/rankingPage/reportIcon.png"
+                  srcSet="/images/rankingPage/reportIcon@2x.png 2x"
+                  alt="신고하기"
+                />
+              </Button>
+              <Typography component="span" className="time" color="textSecondary">{time}</Typography>
+              <DeleteButton onClick={handleDeleteButton} />
+            </>
+          )}
         </div>
       </div>
 
@@ -285,7 +295,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           </div>
         )}
 
-        {(onClickLike && onClickHate) && (
+        {(deleteFlag === 0 && onClickLike && onClickHate) && (
         <div className={classes.recommendIcons}>
           <Button
             onClick={clickLike}

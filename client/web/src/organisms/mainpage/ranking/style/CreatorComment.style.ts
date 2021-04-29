@@ -67,7 +67,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createSty
 
   },
   content: {
-
+    padding: theme.spacing(2, 0),
   },
   actions: {
     display: 'flex',
