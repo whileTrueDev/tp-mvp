@@ -1,7 +1,7 @@
-import { Button, Divider, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import React, { useMemo, useRef } from 'react';
 import { Scores, RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+
 import { AxiosError } from 'axios';
 import { useTopTenList } from '../style/TopTenList.style';
 import ListItemSkeleton from './ListItemSkeleton';
@@ -41,12 +41,6 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
       { key: 'weeklyScoreGraph', label: weeklyGraphLabel, width: '30%' },
     ]
   ), [weeklyGraphLabel]);
-
-  const scrollToContainerTop = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollIntoView();
-    }
-  };
 
   return (
     <div className={classes.topTenListWrapper}>
@@ -91,13 +85,6 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
         && <Typography className={classes.informationText}>데이터가 없습니다.</Typography>}
         {error && <Typography className={classes.informationText}>에러가 발생했습니다.</Typography>}
       </div>
-
-      {/* 위로 버튼 */}
-      <Button className={classes.scrollTopButton} onClick={scrollToContainerTop}>
-        <ArrowUpwardIcon />
-        {' '}
-        위로 이동
-      </Button>
     </div>
   );
 }

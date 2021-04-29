@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { AxiosPromise, AxiosRequestConfig } from 'axios';
 import AdmireIcon from '../../../atoms/svgIcons/AdmireIcon';
@@ -73,6 +74,7 @@ function TopTenCard(): JSX.Element {
   const platformTabsStyle = usePlatformTabsStyle();
   const platformTabItemStyle = usePlatformTabItemStyle();
   const tabRef = useRef<any>(null);
+  const scrollRef = useRef<any>(null);
 
   // axios요청
   // 탭 별 상위 10인 요청
@@ -225,12 +227,18 @@ function TopTenCard(): JSX.Element {
   if (error) {
     console.error(error);
   }
+
+  const scrollToContainerTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView();
+    }
+  };
   return (
     <>
       <Typography className={classes.recentAnalysisDate}>
         {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
       </Typography>
-      <Grid container component="section" className={classes.topTenWrapper}>
+      <Grid ref={scrollRef} container component="section" className={classes.topTenWrapper}>
         <Grid item xs={2} className={classes.left}>
           <header className={classes.header}>
             <Typography>반응별 랭킹</Typography>
@@ -295,6 +303,14 @@ function TopTenCard(): JSX.Element {
             error={error || dailyRatingError}
             weeklyGraphLabel={weeklyGraphLabel}
           />
+          {/* 위로 버튼 */}
+          <Button
+            startIcon={<ArrowUpwardIcon />}
+            onClick={scrollToContainerTop}
+          >
+            위로 이동
+          </Button>
+
           <div className={classes.loadMoreButtonContainer}>
             { (dataToDisplay.rankingData.length !== 0)
             && (dataToDisplay.totalDataCount > dataToDisplay.rankingData.length)
