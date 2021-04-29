@@ -51,7 +51,7 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
         <Grid container item xs={4} alignItems="center" justify="center">
           <Rating
             className={classes.rating}
-            value={averageRating}
+            value={averageRating / 2}
             precision={0.1}
             size="large"
             readOnly

@@ -28,7 +28,7 @@ function getMinMax(currentScoreName: keyof Scores): {min: number|undefined, max:
     case 'viewer':
       return { min: undefined, max: undefined };
     case 'rating':
-      return { min: 0, max: 5 };
+      return { min: 0, max: 10 };
     default:
       return { min: 3, max: 10 };
   }
@@ -99,11 +99,13 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     xAxis: {
       labels: { enabled: false },
       gridLineColor: 'transparent',
+
     },
     yAxis: {
       labels: { enabled: false },
       gridLineColor: 'transparent',
       title: { text: ' ' },
+
     },
     tooltip: {
       headerFormat: `<span style="font-size: ${theme.typography.body2.fontSize}">{point.key}</span><br/>`,
@@ -158,16 +160,19 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
           width: 2,
           value: index - 0.5,
         })),
+        minPadding: 0.2,
       },
       yAxis: {
         min: getMinMax(currentScoreName).min,
         max: getMinMax(currentScoreName).max,
+        minPadding: 0.2,
       },
       series: [
         {
           type: 'line',
           data: tempData,
           name: getSeriesName(currentScoreName),
+
         },
       ],
     });

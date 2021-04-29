@@ -36,6 +36,9 @@ const useRatingStyle = makeStyles((theme: Theme) => {
         color: yellow[400],
       },
     },
+    tooltip: {
+      fontSize: theme.typography.body1.fontSize,
+    },
   });
 });
 
@@ -68,8 +71,7 @@ const labels: { [index: string]: string } = {
 /**
  * material ui의 Rating컴포넌트와 평점 매기기, 취소, 수정 버튼이 같이 있는 컴포넌트
  * readOnly 값이 false인 경우 버튼은 보이지 않는다
- * 5점 만점으로 함
- * @param param0 
+ * @param  
  * @returns 
  */
 export default function StarRating({
@@ -83,7 +85,7 @@ export default function StarRating({
   const classes = useRatingStyle();
 
   const [evaluated, setEvaluated] = useState<boolean>(score !== undefined); // 평가했는지 여부 확인
-  const [value, setValue] = useState<number>(score || 0); // rating컴포넌트에 표시될 점수
+  const [value, setValue] = useState<number>(score ? score / 2 : 0); // rating컴포넌트에 표시될 점수
 
   const onChange = useCallback((event, newValue: number|null) => {
     if (newValue === null) { // 서버로 보낼 평점 취소 요청
@@ -93,29 +95,43 @@ export default function StarRating({
       }
     } else if (createRatingHandler) {
       setEvaluated(true);
-      createRatingHandler(newValue || null);
+      createRatingHandler(newValue * 2 || null);
     }
     setValue(newValue || 0);
   }, [cancelRatingHandler, createRatingHandler]);
 
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
+  const [tooltipText, setTooltipText] = useState<string>('취소하기');
   // 현재 매긴 평점과 같은 점수에 마우스 올렸을 때 '취소하기'툴팁 보여준다
   const onChangeActive = useCallback((event, hoverValue: number) => {
-    if (value !== null && value === hoverValue) {
-      setTooltipOpen(true);
-    } else {
+    if (event.type === 'mouseleave') {
       setTooltipOpen(false);
+      return;
+    }
+    setTooltipOpen(true);
+    if (value !== null && value === hoverValue) {
+      setTooltipText('취소하기');
+    } else {
+      setTooltipText(`${hoverValue * 2} 점`);
     }
   }, [value]);
 
   useEffect(() => {
-    setValue(score || 0);
+    setValue(score ? score / 2 : 0);
     setEvaluated(score !== undefined);
   }, [score]);
 
   return (
     <div className={classnames(classes.container, { 'with-label': !readOnly })}>
-      <Tooltip open={tooltipOpen} title="취소하기" arrow placement="right-start">
+      <Tooltip
+        open={tooltipOpen}
+        title={tooltipText}
+        arrow
+        placement="right-start"
+        classes={{
+          tooltip: classes.tooltip,
+        }}
+      >
         <Rating
           {...ratingProps}
           name="half-rating"
