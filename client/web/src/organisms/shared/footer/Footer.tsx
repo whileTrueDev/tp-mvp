@@ -1,16 +1,14 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
 import {
-  Container, Grid, Typography, Button, useTheme,
+  Button, Container, Grid, Typography,
 } from '@material-ui/core';
+import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
+import TruepointLogo from '../../../atoms/TruepointLogo';
 
-const styles = makeStyles((theme) => ({
+const styles = makeStyles((theme: Theme) => ({
   root: {
-    width: '90%',
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '20px auto',
+    backgroundColor: theme.palette.background.paper,
   },
   iconsWrapper: {
     height: 60,
@@ -22,8 +20,8 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 220 / 2,
+    height: 80 / 2,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -99,11 +97,10 @@ const styles = makeStyles((theme) => ({
 
 export default function Footer(): JSX.Element {
   const classes = styles();
-  const theme = useTheme();
 
   return (
-    <Container>
-      <div className={classes.root}>
+    <div className={classes.root}>
+      <Container>
         <Grid
           container
           direction="row"
@@ -113,15 +110,11 @@ export default function Footer(): JSX.Element {
         >
           <Grid item md={6} sm={6} xs={12} className={classes.icons}>
             <a href="/" className={classes.icon}>
-              {theme.palette.type === 'dark' ? (
-                <img src="/images/logo/new_tp_logo_raw.png" id="logo" alt="" width={35} height={35} />
-              ) : (
-                <img src="/images/logo/new_tp_logo_raw.png" id="logo" alt="" width={35} height={35} />
-              )}
+              <TruepointLogo width={220 / 2} height={80 / 2} />
             </a>
-            <Typography className={classes.name} variant="body2">
+            {/* <Typography className={classes.name} variant="body2">
               TruePoint
-            </Typography>
+            </Typography> */}
             <br />
           </Grid>
           <Grid item md={6} sm={6} xs={12}>
@@ -179,7 +172,7 @@ export default function Footer(): JSX.Element {
           </strong>
           {' All rights Reserved'}
         </Typography>
-      </div>
-    </Container>
+      </Container>
+    </div>
   );
 }

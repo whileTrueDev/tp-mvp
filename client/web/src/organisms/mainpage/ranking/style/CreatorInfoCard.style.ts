@@ -49,8 +49,8 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     },
     avatar: {
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
-      width: '100%',
-      height: 'auto',
+      width: theme.spacing(35),
+      height: theme.spacing(35),
     },
     textContainer: {
       display: 'flex',

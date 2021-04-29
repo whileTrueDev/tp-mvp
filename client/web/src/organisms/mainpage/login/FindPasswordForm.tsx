@@ -1,15 +1,14 @@
-import React from 'react';
-import classnames from 'classnames';
-import { Link } from 'react-router-dom';
-import { Typography, Button } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { Button, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
+import classnames from 'classnames';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
-import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import TruepointLogo from '../../../atoms/TruepointLogo';
-import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
-import PasswordTextField from '../../../atoms/Input/PasswordTextField';
+import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -34,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FindAccountForm(): JSX.Element {
   const classes = useStyles();
-  const theme = useTheme();
   // **************************************************
   // 스텝 할당을 위한 스테이트
   const [activeStep, setActiveStep] = React.useState(0);
@@ -127,7 +125,7 @@ export default function FindAccountForm(): JSX.Element {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      { theme.palette.type === 'light' ? <TruepointLogo width={350} /> : <TruepointLogoLight width={350} /> }
+      <TruepointLogo width={350} />
       {helperText && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />

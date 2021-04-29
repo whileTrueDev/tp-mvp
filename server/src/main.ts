@@ -36,6 +36,7 @@ async function bootstrap() {
     'https://admin.mytruepoint.com', 'https://test-admin.mytruepoint.com',
     'https://dev.mytruepoint.com', 'https://test.mytruepoint.com',
   ];
+
   app.enableCors({
     origin: whiteList,
     credentials: true,

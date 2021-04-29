@@ -1,26 +1,23 @@
-import React, { useState, useReducer } from 'react';
 import {
   Grid,
 } from '@material-ui/core';
-import { useHistory, useLocation } from 'react-router-dom';
-import useAxios from 'axios-hooks';
-import { useTheme } from '@material-ui/core/styles';
-import { useSnackbar } from 'notistack';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import useStyles from './style/Stepper.style';
-import RegistForm from './RegistForm';
-import PaperSheet from './Paper';
-import IdentityVerification from './IdentityVerification';
-import { myReducer, initialState } from './Stepper.reducer';
-import TruepointLogo from '../../../atoms/TruepointLogo';
-import TruepointLogoLight from '../../../atoms/TruepointLogoLight';
+import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+import React, { useReducer, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import TruepointLogo from '../../../atoms/TruepointLogo';
+import IdentityVerification from './IdentityVerification';
+import PaperSheet from './Paper';
+import RegistForm from './RegistForm';
 import SignUpCompleted from './SignUpCompleted';
+import { initialState, myReducer } from './Stepper.reducer';
+import useStyles from './style/Stepper.style';
 
 function RegistStepper(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
-  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const [activeStep, setStep] = useState(0);
   const [marketingAgreement, setAgreement] = useState(false);
@@ -84,7 +81,7 @@ function RegistStepper(): JSX.Element {
     return (
       <div>
         <Grid item className={classes.center}>
-          { theme.palette.type === 'light' ? <TruepointLogo width={300} /> : <TruepointLogoLight width={300} /> }
+          <TruepointLogo width={300} />
         </Grid>
         <SignUpCompleted generatedUserId={generatedUserId} />
       </div>
@@ -95,7 +92,7 @@ function RegistStepper(): JSX.Element {
     <div>
       <Grid container direction="column">
         <Grid item className={classes.center}>
-          { theme.palette.type === 'light' ? <TruepointLogo /> : <TruepointLogoLight /> }
+          <TruepointLogo width={300} />
         </Grid>
         <Grid item>
           {activeStep === 0 && (

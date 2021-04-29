@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Paper, Grid } from '@material-ui/core';
+import { Paper, Grid, useTheme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import MetricsTable from '../../shared/sub/MetricsTable';
@@ -105,6 +105,7 @@ export default function TruepointHighlight({
   selectedStream,
 }: TruepointHighlightProps): JSX.Element {
   const classes = styles();
+  const theme = useTheme();
   const [picked97, setPicked97] = React.useState(true);
   const highlight97 = useMemo(() => highlightData.highlight_points_97.map((point: number) => ({
     ...highlightData.highlight_points[point],
@@ -119,8 +120,8 @@ export default function TruepointHighlight({
         <MetricTitle
           mainTitle="편집점 분석 대시보드"
           subTitle="트루포인트의 편집점"
-          iconSrc="/images/logo/truepointLogo.png"
           pointNumber={picked97 ? highlightData.highlight_points_97.length : highlightData.highlight_points.length}
+          iconSrc={theme.palette.type === 'dark' ? '/images/logo/logo_truepoint_v2_dark.png' : '/images/logo/logo_truepoint_v2_light.png'}
         />
         <Grid container direction="column" justify="center">
           <Grid item md={12}>

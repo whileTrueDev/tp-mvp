@@ -68,7 +68,7 @@ export default function MetricTitle({
       )}
       <Grid container direction="row" alignItems="center">
         <Grid item className={classes.logo}>
-          <img src={iconSrc} alt="truepointItems" width={70} height={70} />
+          <img src={iconSrc} alt="truepointItems" height={70} />
           <Typography variant="body1" className={classes.content}>
             {subTitle}
           </Typography>
