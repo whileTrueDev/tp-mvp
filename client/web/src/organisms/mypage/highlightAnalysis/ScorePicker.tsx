@@ -18,8 +18,8 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 interface ScorePickerProps {
-  picked90: boolean
-  setPicked90: React.Dispatch<React.SetStateAction<boolean>>
+  picked97: boolean
+  setPicked97: React.Dispatch<React.SetStateAction<boolean>>
   setPage?: React.Dispatch<React.SetStateAction<number>>
   setPageSize?: React.Dispatch<React.SetStateAction<number>>
   setPoint?: React.Dispatch<React.SetStateAction<InitialPoint>>
@@ -33,8 +33,8 @@ interface ScorePickerProps {
 
 export default function ScorePicker(
   {
-    picked90,
-    setPicked90,
+    picked97,
+    setPicked97,
     setPage,
     setPageSize,
     setPoint,
@@ -49,7 +49,7 @@ export default function ScorePicker(
   const classes = useStyle();
 
   const handleChange = () => {
-    setPicked90(!picked90);
+    setPicked97(!picked97);
 
     if (setPage && setPageSize && setPoint) {
       setPage(0);
@@ -76,12 +76,12 @@ export default function ScorePicker(
         className={classes.boundary}
         control={(
           <Switch
-            checked={picked90}
+            checked={picked97}
             onChange={handleChange}
             color="primary"
           />
         )}
-        label="상위 10% 편집점만 보기"
+        label="상위 3% 편집점만 보기"
       />
     </div>
   );

@@ -98,9 +98,9 @@ export default function MetricsAccordian(
   const [page3, setPage3] = React.useState(0);
   const [pageSize3, setPageSize3] = React.useState(5);
   const [point3, setPoint3] = React.useState(initialPoint);
-  const [chatPicked97, setChatPicked90] = React.useState(true);
-  const [smilePicked97, setSmilePicked90] = React.useState(true);
-  const [categoryPicked97, setCategoryPicked90] = React.useState(true);
+  const [chatPicked97, setChatPicked97] = React.useState(true);
+  const [smilePicked97, setSmilePicked97] = React.useState(true);
+  const [categoryPicked97, setCategoryPicked97] = React.useState(true);
   const [selectedCategory, setSelectedCategory] = React.useState(categories[0]);
 
   const chatHightlight97 = useMemo(() => highlightData.chat_points_97.map((atPoint: number) => ({
@@ -127,21 +127,6 @@ export default function MetricsAccordian(
   };
 
   const categoryTotalData = useMemo(() => List(highlightData[`${selectedCategory.category}_total_data`]).toJS(), [selectedCategory.category, highlightData]);
-
-  // immutable.js 쓰기 => 아래 커스텀 deep freeze는 성능상 안좋음
-  // function deepFreeze(obj: any): readonly {x: number, y: number}[] {
-  //   const data = Object.getOwnPropertyNames(obj);
-
-  //   data.forEach((name: any) => {
-  //     const d = obj[name];
-  //     if (typeof d === 'object' && d !== null) {
-  //       deepFreeze(d);
-  //     }
-  //   });
-  //   return Object.freeze(obj);
-  // }
-
-  // deepFreeze(highlightData.agree_total_data);
 
   return (
     <Paper>
@@ -170,8 +155,8 @@ export default function MetricsAccordian(
                   입니다
                 </Typography>
                 <ScorePicker
-                  picked90={chatPicked97}
-                  setPicked90={setChatPicked90}
+                  picked97={chatPicked97}
+                  setPicked97={setChatPicked97}
                   setPage={setPage}
                   setPageSize={setPageSize}
                   setPoint={setPoint}
@@ -238,8 +223,8 @@ export default function MetricsAccordian(
                   입니다
                 </Typography>
                 <ScorePicker
-                  picked90={smilePicked97}
-                  setPicked90={setSmilePicked90}
+                  picked97={smilePicked97}
+                  setPicked97={setSmilePicked97}
                   setPage2={setPage2}
                   setPageSize2={setPageSize2}
                   setPoint2={setPoint2}
@@ -333,8 +318,8 @@ export default function MetricsAccordian(
                 입니다
               </Typography>
               <ScorePicker
-                picked90={categoryPicked97}
-                setPicked90={setCategoryPicked90}
+                picked97={categoryPicked97}
+                setPicked97={setCategoryPicked97}
                 setPage3={setPage3}
                 setPageSize3={setPageSize3}
                 setPoint3={setPoint3}

@@ -105,7 +105,7 @@ export default function TruepointHighlight({
   selectedStream,
 }: TruepointHighlightProps): JSX.Element {
   const classes = styles();
-  const [picked90, setPicked90] = React.useState(true);
+  const [picked97, setPicked97] = React.useState(true);
   const highlight97 = useMemo(() => highlightData.highlight_points_97.map((point: number) => ({
     ...highlightData.highlight_points[point],
   })), [highlightData]);
@@ -120,22 +120,22 @@ export default function TruepointHighlight({
           mainTitle="편집점 분석 대시보드"
           subTitle="트루포인트의 편집점"
           iconSrc="/images/logo/truepointLogo.png"
-          pointNumber={picked90 ? highlightData.highlight_points_97.length : highlightData.highlight_points.length}
+          pointNumber={picked97 ? highlightData.highlight_points_97.length : highlightData.highlight_points.length}
         />
         <Grid container direction="column" justify="center">
           <Grid item md={12}>
             <ScorePicker
-              picked90={picked90}
-              setPicked90={setPicked90}
+              picked97={picked97}
+              setPicked97={setPicked97}
               setPage={setPage}
               setPageSize={setPageSize}
               setPoint={setPoint}
             />
             <Highcharts
-              data={picked90 ? highlight97 : highlightData.highlight_points}
+              data={picked97 ? highlight97 : highlightData.highlight_points}
               totalData={highlightData.highlight_total_data}
               dataOption={{
-                boundary: picked90 ? highlightData.boundary_97.highlight : highlightData.boundary.highlight,
+                boundary: picked97 ? highlightData.boundary_97.highlight : highlightData.boundary.highlight,
               }}
               chartType="highlight"
               highlight={point}
@@ -146,7 +146,7 @@ export default function TruepointHighlight({
           </Grid>
           <Grid item md={12} className={classes.contentRight}>
             <MetricsTable
-              metrics={picked90 ? highlight97 : highlightData.highlight_points}
+              metrics={picked97 ? highlight97 : highlightData.highlight_points}
               handleClick={setPoint}
               row={point}
               page={page}
