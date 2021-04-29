@@ -161,10 +161,9 @@ export default function Chart({
         resetZoom: '초기화',
       },
     });
-    const chartRef = highchartsRef.current?.chart;
-    // chartRef.xAxis[0].removePlotBand('plot-band');
 
     if (highlight.start_index) {
+      const chartRef = highchartsRef.current?.chart;
       const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
       const chartDataRef = highchartsRef.current?.chart.series[0].data;
       const clickedxAxisData = totalData[highlight.start_index].x;
@@ -190,9 +189,6 @@ export default function Chart({
         });
       }
     }
-    //  else if (chartRef) {
-    //   chartRef.xAxis[0].removePlotBand('plot-band');
-    // }
 
     setChartOptions({
       series: [{
