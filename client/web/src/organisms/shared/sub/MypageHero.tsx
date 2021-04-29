@@ -22,7 +22,7 @@ const style = makeStyles((theme) => ({
     boxShadow: theme.shadows[0],
     margin: `0px ${theme.spacing(3)}px 0px 0px`,
     padding: theme.spacing(3),
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.primary.main,
   },
   middleCard: {
     boxShadow: theme.shadows[0],

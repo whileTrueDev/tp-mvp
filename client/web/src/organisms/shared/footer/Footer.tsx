@@ -1,9 +1,10 @@
 import React from 'react';
+import {
+  Button, Container, Grid, Typography,
+} from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import {
-  Container, Grid, Typography, Button, useTheme,
-} from '@material-ui/core';
+import TruepointLogo from '../../../atoms/TruepointLogo';
 
 const styles = makeStyles((theme: Theme) => ({
   root: {
@@ -96,7 +97,6 @@ const styles = makeStyles((theme: Theme) => ({
 
 export default function Footer(): JSX.Element {
   const classes = styles();
-  const theme = useTheme();
 
   return (
     <div className={classes.root}>
@@ -110,11 +110,7 @@ export default function Footer(): JSX.Element {
         >
           <Grid item md={6} sm={6} xs={12} className={classes.icons}>
             <a href="/" className={classes.icon}>
-              {theme.palette.type === 'dark' ? (
-                <img src="/images/logo/logo_truepoint_v2_dark.png" id="logo" alt="트루포인트" width={220 / 2} height={80 / 2} />
-              ) : (
-                <img src="/images/logo/logo_truepoint_v2_light.png" id="logo" alt="트루포인트" width={220 / 2} height={80 / 2} />
-              )}
+              <TruepointLogo width={220 / 2} height={80 / 2} />
             </a>
             {/* <Typography className={classes.name} variant="body2">
               TruePoint
