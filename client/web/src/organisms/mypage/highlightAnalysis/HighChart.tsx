@@ -161,9 +161,9 @@ export default function Chart({
         resetZoom: '초기화',
       },
     });
-    const chartRef = highchartsRef.current?.chart;
 
     if (highlight.start_index) {
+      const chartRef = highchartsRef.current?.chart;
       const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
       const chartDataRef = highchartsRef.current?.chart.series[0].data;
       const clickedxAxisData = totalData[highlight.start_index].x;
@@ -172,6 +172,7 @@ export default function Chart({
         if (chartxAxisRef.min! > clickedxAxisData || clickedxAxisData > chartxAxisRef.max!) {
           chartRef.zoomOut();
         }
+        chartxAxisRef.removePlotBand('plot-band');
         chartxAxisRef.addPlotBand({
           from: totalData[highlight.start_index].x - 36000,
           to: totalData[highlight.end_index].x + 36000,
@@ -209,9 +210,14 @@ export default function Chart({
         }],
       },
     });
-
-    return (() => chartRef?.xAxis[0].removePlotBand('plot-band'));
   }, [highlight, themeType, theme.palette, totalData, dataOption]);
+
+  useEffect(() => {
+    const chartRef = highchartsRef.current?.chart;
+    if (chartRef && !highlight.start_index) {
+      chartRef.xAxis[0].removePlotBand('plot-band');
+    }
+  }, [chartType, highlight]);
 
   return (
     <div>
