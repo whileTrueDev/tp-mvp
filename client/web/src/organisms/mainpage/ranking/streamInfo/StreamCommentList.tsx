@@ -95,6 +95,7 @@ export default function StreamCommentList(props: StreamCommentListProps): JSX.El
     // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
     axios.post(`/creatorComment/report/${commentId}`)
       .then((res) => {
+        ShowSnack('댓글 신고 성공', 'info', enqueueSnackbar);
         localStorage.setItem(
           STREAM_COMMENT_REPORT_LIST_KEY,
           JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]),
