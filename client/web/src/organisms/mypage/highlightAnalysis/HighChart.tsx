@@ -162,6 +162,7 @@ export default function Chart({
       },
     });
     const chartRef = highchartsRef.current?.chart;
+    // chartRef.xAxis[0].removePlotBand('plot-band');
 
     if (highlight.start_index) {
       const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
@@ -172,6 +173,7 @@ export default function Chart({
         if (chartxAxisRef.min! > clickedxAxisData || clickedxAxisData > chartxAxisRef.max!) {
           chartRef.zoomOut();
         }
+        chartxAxisRef.removePlotBand('plot-band');
         chartxAxisRef.addPlotBand({
           from: totalData[highlight.start_index].x - 36000,
           to: totalData[highlight.end_index].x + 36000,
@@ -188,6 +190,9 @@ export default function Chart({
         });
       }
     }
+    //  else if (chartRef) {
+    //   chartRef.xAxis[0].removePlotBand('plot-band');
+    // }
 
     setChartOptions({
       series: [{
@@ -209,9 +214,14 @@ export default function Chart({
         }],
       },
     });
-
-    return (() => chartRef?.xAxis[0].removePlotBand('plot-band'));
   }, [highlight, themeType, theme.palette, totalData, dataOption]);
+
+  useEffect(() => {
+    const chartRef = highchartsRef.current?.chart;
+    if (chartRef && !highlight.start_index) {
+      chartRef.xAxis[0].removePlotBand('plot-band');
+    }
+  }, [chartType, highlight]);
 
   return (
     <div>
