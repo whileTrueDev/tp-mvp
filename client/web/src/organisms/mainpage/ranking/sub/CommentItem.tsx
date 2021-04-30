@@ -122,8 +122,8 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
   const [repliesCount, setRepliesCount] = useState<number>(childrenCount);
 
   useEffect(() => {
-    setRepliesCount(repliesCount || 0);
-  }, [repliesCount]);
+    setRepliesCount(childrenCount || 0);
+  }, [childrenCount]);
 
   const handleVoteResult = useCallback((result: {like: number, hate: number}): void => {
     setLikeClicked(result.like === 1);
@@ -348,6 +348,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
                     onClickLike={onClickLike}
                     onClickHate={onClickHate}
                     onDelete={onDelete}
+                    // reloadComments={reloadComments}
                     reloadComments={getChildrenComments}
                     checkPasswordRequest={checkPasswordRequest}
                   />
