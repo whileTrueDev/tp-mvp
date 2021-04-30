@@ -18,7 +18,11 @@ export class CommunityReplyService {
   ) {}
 
   async findOneReply(replyId: number): Promise<CommunityReplyEntity> {
-    const reply = await this.communityReplyRepository.findOne({ replyId });
+    const reply = await this.communityReplyRepository.findOne({
+      replyId,
+    }, {
+      relations: ['childrenComments'],
+    });
     if (!reply) {
       throw new HttpException('no reply with that replyId', HttpStatus.NOT_FOUND);
     }
@@ -110,11 +114,16 @@ export class CommunityReplyService {
 
   async removeReply(replyId: number): Promise<boolean> {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const reply = await this.findOneReply(replyId);
-      await this.communityReplyRepository.save({
-        ...reply,
-        deleteFlag: true,
-      });
+
+      const childrenReplyIds = reply.childrenComments?.map(reply => reply.replyId);
+      await this.communityReplyRepository.createQueryBuilder('replies')
+        .update()
+        .set({ deleteFlag: true })
+        .where('replyId IN (:replyIds)', { replyIds: [replyId, ...childrenReplyIds] })
+        .execute();
+
       return true;
     } catch (error) {
       console.error(error);
@@ -151,14 +160,18 @@ export class CommunityReplyService {
       const totalCount = await this.communityReplyRepository.count({
         where: {
           postId,
-          deleteFlag: 0,
-          parentReplyId: null,
+          deleteFlag: false,
         },
       });
 
       const replies = await this.communityReplyRepository.createQueryBuilder('reply')
         .select()
-        .loadRelationCountAndMap('reply.childrenComments', 'reply.childrenComments')
+        .loadRelationCountAndMap(
+          'reply.childrenCommentCount',
+          'reply.childrenComments',
+          'childrenComments',
+          (qb) => qb.andWhere('childrenComments.deleteFlag = 0'),
+        )
         .where('reply.postId =:postId', { postId })
         .andWhere('reply.deleteFlag = 0')
         .andWhere('reply.parentReplyId IS NULL')
