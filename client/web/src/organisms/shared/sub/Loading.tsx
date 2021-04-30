@@ -1,8 +1,6 @@
-import React from 'react';
+import { Backdrop, Fade, Modal } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Modal, Backdrop, Fade, Typography,
-} from '@material-ui/core';
+import React from 'react';
 
 /**
    * clickOpen 프롭을 통해 로딩창 활성화
@@ -285,15 +283,11 @@ export default function LoadingComponent({
   const shortLoading = (
     <div className={classes.shortWraper}>
       <img
-        src="/images/logo/truepointLogo.png"
+        src="/images/logo/logo_truepoint_v2_dark.png"
         alt="truepointLogo"
-        width={70}
         height={70}
         className={classes.loadingShortLogo}
       />
-      <Typography variant="h3" align="center" color="primary">
-        TRUEPOINT
-      </Typography>
     </div>
   );
 

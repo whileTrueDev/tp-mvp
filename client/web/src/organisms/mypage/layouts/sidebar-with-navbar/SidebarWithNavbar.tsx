@@ -238,6 +238,7 @@ export default function SidebarWithNavbar({
   return (
     <>
       <MuiAppBar
+        elevation={1}
         position="fixed"
         color="secondary"
         className={classnames(classes.appBar, {
