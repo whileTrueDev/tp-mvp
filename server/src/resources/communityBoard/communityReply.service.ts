@@ -117,7 +117,7 @@ export class CommunityReplyService {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const reply = await this.findOneReply(replyId);
 
-      const childrenReplyIds = reply.childrenComments?.map(reply => reply.replyId);
+      const childrenReplyIds = reply.childrenComments?.map((child) => child.replyId);
       await this.communityReplyRepository.createQueryBuilder('replies')
         .update()
         .set({ deleteFlag: true })
