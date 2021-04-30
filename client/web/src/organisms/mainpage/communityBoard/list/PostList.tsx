@@ -11,6 +11,7 @@ import classnames from 'classnames';
 // 응답타입
 import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
 // axios객체
+import { AxiosError } from 'axios';
 import axios from '../../../../utils/axios';
 // 컴포넌트
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
@@ -62,9 +63,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   replies: {
 
   },
-  noDataText: {
-    textAlign: 'center',
-  },
   currentPostItem: {
     backgroundColor: theme.palette.secondary.light,
     '&:before': {
@@ -85,6 +83,7 @@ interface PostListProps {
   page: number,
   posts: PostFound[],
   loading?: boolean,
+  error?: AxiosError<any> | undefined,
   currentPostId?: number
 }
 
@@ -137,7 +136,7 @@ export function getBoardPlatformNameByCode(platform: number | undefined): string
 function PostList(props: PostListProps): JSX.Element {
   const {
     take, page,
-    posts, loading,
+    posts, loading, error,
     currentPostId,
   } = props;
   const history = useHistory();
@@ -200,8 +199,8 @@ function PostList(props: PostListProps): JSX.Element {
         className={classes.listContainer}
         style={{ minHeight: `${theme.spacing(rowHeightBase) * take}px` }}
       >
-
-        {postToDisplay.map((post) => (
+        {error && <Typography align="center">에러가 발생했습니다. 잠시 후 다시 시도해주세요.</Typography>}
+        {!error && postToDisplay.map((post) => (
           /** row 시작 */
           <button
             onClick={moveToPost(post.postId, post.platform)}
@@ -230,9 +229,9 @@ function PostList(props: PostListProps): JSX.Element {
           </button>/** row 끝 */
         ))}
         {/* 데이터가 없는 경우 */}
-        {(!loading && postToDisplay.length === 0)
-          ? <Typography className={classes.noDataText}>데이터가 없습니다...</Typography>
-          : null}
+        {!loading
+        && postToDisplay.length === 0
+        && <Typography align="center">데이터가 없습니다...</Typography>}
         {/* 로딩중인 경우 */}
         {loading ? <CenterLoading /> : null}
       </div>

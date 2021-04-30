@@ -137,6 +137,15 @@ interface BoardProps{
   titleComponent? : JSX.Element
 }
 
+type postGetParam = {
+  platform: 'afreeca' | 'twitch' | 'free',
+  category: FilterType,
+  page: number,
+  take: number,
+  qtext?: string,
+  qtype?: string,
+}
+
 export default function BoardContainer({
   platform,
   take,
@@ -155,30 +164,29 @@ export default function BoardContainer({
   } = boardState;
   const [searchText, setSearchText] = useState<string>('');
   const [searchType, setSearchType] = useState<string>('');
-  const url = useMemo(() => `/community/posts?platform=${platform}&category=${filter}&page=${page}&take=${take}`, [filter, platform, page, take]);
-  const searchUrl = useMemo(() => `${url}&qtext=${searchText}&qtype=${searchType}`, [url, searchText, searchType]);
   const paginationCount = useMemo(() => Math.ceil(totalRows / take), [totalRows, take]);
 
-  const [{ loading }, getPostList] = useAxios({ url }, { manual: true });
-  const [{ loading: searchLoading }, getSearchList] = useAxios({ url: searchUrl }, { manual: true });
+  const [{ loading, error }, getPostList] = useAxios('/community/posts', { manual: true });
 
   const hasSearchText = useMemo(() => searchType && searchType !== '' && searchText && searchText !== '', [searchText, searchType]);
 
   useEffect(() => {
-    if (hasSearchText) {
-      // 검색하는경우
-      getSearchList().then((res) => {
-        handlePostsLoad(res.data);
-      }).catch((e) => {
-        console.error(e.response, e);
-      });
-    } else {
-      getPostList().then((res) => {
-        handlePostsLoad(res.data);
-      }).catch((e) => {
-        console.error(e.response, e);
-      });
+    let params: postGetParam = {
+      platform,
+      category: filter,
+      page,
+      take,
+    };
+    if (hasSearchText) { // 검색하는경우
+      params = { ...params, qtype: searchType, qtext: searchText };
     }
+    getPostList({
+      params,
+    }).then((res) => {
+      handlePostsLoad(res.data);
+    }).catch((e) => {
+      console.error(e.response, e);
+    });
   // 아래 변수가 바뀌는 경우에만 실행되는 이펙트
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, page, take, hasSearchText]);
@@ -251,7 +259,8 @@ export default function BoardContainer({
         page={page}
         posts={posts}
         currentPostId={currentPostId}
-        loading={loading || searchLoading}
+        loading={loading}
+        error={error}
       />
 
       <Pagination
