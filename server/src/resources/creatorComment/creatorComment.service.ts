@@ -72,12 +72,6 @@ export class CreatorCommentService {
           childrenCount: Number(c.childrenCount),
         }
       ));
-      // .filter((c) => {
-      //   if (c.childrenCount === 0 && c.deleteFlag === 1) { // 자식댓글이 없고 삭제된 댓글이면 제외함
-      //     return false;
-      //   }
-      //   return true;
-      // });
     }
 
     try {
@@ -122,9 +116,6 @@ export class CreatorCommentService {
         .leftJoin(CreatorCommentsEntity, 'childrenComments', '(childrenComments.parentCommentId = C.commentId and childrenComments.deleteFlag = 0)')
         .groupBy('C.commentId');
 
-      // const totalCount = await this.creatorCommentsRepository.count({
-      //   where: { creatorId, deleteFlag: 0 },
-      // });
       const totalCount = await baseQueryBuilder.clone().getRawMany();
       result.count = totalCount.length;
 
