@@ -52,12 +52,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '100%',
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
-    marginBottom: theme.spacing(1),
     cursor: 'pointer',
     border: 'none',
+    borderBottom: `0.5px solid ${theme.palette.divider}`,
     padding: 0,
     '&:hover': {
-      backgroundColor: theme.palette.grey[100],
+      backgroundColor: theme.palette.type === 'light' ? theme.palette.action.hover : theme.palette.grey[700],
     },
   },
   replies: {

@@ -20,8 +20,8 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @Column({ type: 'longtext' })
   content: string;
 
-  @JoinColumn()
-  @ManyToOne((type) => UserEntity, (user) => user.userId)
+  @JoinColumn({ name: 'authorId' })
+  @ManyToOne((type) => UserEntity, (user) => user.userId, { nullable: true })
   author: UserEntity;
 
   @Column({ comment: '작성자 Ip' })

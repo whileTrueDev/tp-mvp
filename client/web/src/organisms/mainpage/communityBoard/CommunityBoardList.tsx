@@ -69,7 +69,7 @@ const useTabItem = makeStyles((theme: Theme) => createStyles({
   },
   wrapper: {
     flexDirection: 'row',
-    color: theme.palette.background.paper,
+    color: theme.palette.text.secondary,
     fontSize: theme.typography.h6.fontSize,
     '& svg, & img': {
       display: 'none',

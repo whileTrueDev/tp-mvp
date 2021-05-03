@@ -1,32 +1,28 @@
-import React, {
-  useCallback, useEffect, useMemo, useRef, useState,
-} from 'react';
-import { useParams, useLocation, useHistory } from 'react-router-dom';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
-  Button, Card, CardActions, CardContent, Container, Typography, Paper,
+  Button, Card, CardActions, CardContent, Container, Paper, Typography,
 } from '@material-ui/core';
-
-import useAxios from 'axios-hooks';
-import * as dateFns from 'date-fns';
-import { useSnackbar } from 'notistack';
-
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 // 타입정의
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
-import useBoardState from '../../../utils/hooks/useBoardListState';
-
-// 하위 컴포넌트
-import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import CenterLoading from '../../../atoms/Loading/CenterLoading';
-import CustomDialog from '../../../atoms/Dialog/Dialog';
-import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
-import BoardContainer from './list/BoardContainer';
-import PostInfoCard from './postView/PostInfoCard';
-import CheckPasswordForm from '../shared/CheckPasswordForm';
-import RepliesContainer from './postView/RepliesContainer';
+import useAxios from 'axios-hooks';
+import * as dateFns from 'date-fns';
+import { useSnackbar } from 'notistack';
+import React, {
+  useCallback, useEffect, useMemo, useRef, useState,
+} from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 // 스타일
 import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
+import CenterLoading from '../../../atoms/Loading/CenterLoading';
+// 하위 컴포넌트
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import useBoardState from '../../../utils/hooks/useBoardListState';
+import CheckPasswordDialog from '../shared/CheckPasswordDialog';
+import BoardContainer from './list/BoardContainer';
+import PostInfoCard from './postView/PostInfoCard';
+import RepliesContainer from './postView/RepliesContainer';
+import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
 
 const SUN_EDITOR_VIEWER_CLASSNAME = 'sun-editor-editable'; // suneditor로 작성된 글을 innerHTML로 넣을 때 해당 엘리먼트에 붙어야 할 클래스네임
 
@@ -265,10 +261,6 @@ export default function CommunityPostView(): JSX.Element {
   // 다이얼로그 닫기 위한 함수, 다이얼로그 상태 open : false로 바꾼다
   const closeDialog = useCallback(() => setDialogState((prevState) => ({ ...prevState, open: false })), []);
 
-  // 다이얼로그 닫고 난 후 실행되는 함수, 사용하지 않지만 다이얼로그 컴포넌트에서 요구하는 props라서 일단 둠
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const onDialogClose = useCallback(() => {}, []);
-
   const [, checkPassword] = useAxios({ url: `/community/posts/${postId}/password`, method: 'post' }, { manual: true });
 
   return (
@@ -327,18 +319,14 @@ export default function CommunityPostView(): JSX.Element {
       </div>
 
       {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
-      <CustomDialog
+      <CheckPasswordDialog
         open={dialogState.open}
-        onClose={onDialogClose}
+        onClose={closeDialog}
+        checkPassword={checkPassword}
+        successHandler={dialogSubmitFunction}
       >
-        <CheckPasswordForm
-          closeDialog={closeDialog}
-          checkPassword={checkPassword}
-          successHandler={dialogSubmitFunction}
-        >
-          {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
-        </CheckPasswordForm>
-      </CustomDialog>
+        {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
+      </CheckPasswordDialog>
       {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}
 
       <RepliesContainer
