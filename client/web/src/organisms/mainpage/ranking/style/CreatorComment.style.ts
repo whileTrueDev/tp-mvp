@@ -1,4 +1,4 @@
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => createStyles({
   commentItem: {
@@ -167,9 +167,12 @@ export const useCreatorCommentFormStyle = makeStyles((theme: Theme) => createSty
   },
   button: {
     backgroundColor: theme.palette.secondary.main,
-    color: theme.palette.background.paper,
+    color: theme.palette.common.white,
     fontSize: theme.typography.h6.fontSize,
     fontWeight: theme.typography.fontWeightBold,
+    '&:hover': {
+      backgroundColor: theme.palette.secondary.dark, // lighten(theme.palette.secondary.main, 0.2),
+    },
   },
 }));
 
