@@ -109,9 +109,7 @@ export default function Footer(): JSX.Element {
           className={classes.iconsWrapper}
         >
           <Grid item md={6} sm={6} xs={12} className={classes.icons}>
-            <a href="/" className={classes.icon}>
-              <TruepointLogo width={220 / 2} height={80 / 2} />
-            </a>
+            <TruepointLogo width={220 / 2} height={80 / 2} />
             {/* <Typography className={classes.name} variant="body2">
               TruePoint
             </Typography> */}

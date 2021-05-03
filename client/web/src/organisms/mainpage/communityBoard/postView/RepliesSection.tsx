@@ -12,13 +12,9 @@ import { isReportedIn24Hours } from '../../ranking/creatorInfo/CreatorCommentLis
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
-interface ReplyType extends CommunityReply{
-  childrenComments?: number;
-  parentReplyId?: null | number;
-}
 interface SectionProps{
   totalReplyCount?: number,
-  replies: ReplyType[] | undefined,
+  replies: CommunityReply[] | undefined,
   loadReplies: () => void
 }
 
@@ -121,11 +117,12 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
             key={reply.replyId}
             idProperty="replyId"
             {...reply}
+            deleteFlag={reply.deleteFlag ? 1 : 0}
             commentId={reply.replyId}
             targetId={reply.postId}
             onDelete={onDelete}
             onReport={onReport}
-            childrenCount={reply.childrenComments}
+            childrenCount={reply.childrenCommentCount}
             reloadComments={loadReplies}
             checkPasswordRequest={checkPasswordRequest}
             loadChildrenComments={loadChildrenComments}

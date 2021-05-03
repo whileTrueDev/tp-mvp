@@ -28,7 +28,7 @@ function getMinMax(currentScoreName: keyof Scores): {min: number|undefined, max:
     case 'viewer':
       return { min: undefined, max: undefined };
     case 'rating':
-      return { min: 0, max: 5 };
+      return { min: 0, max: 10 };
     default:
       return { min: 3, max: 10 };
   }
@@ -36,6 +36,7 @@ function getMinMax(currentScoreName: keyof Scores): {min: number|undefined, max:
 export interface CustomPointOption extends Highcharts.PointOptionsObject {
   y: number;
   originValue: number;
+  title?: string;
 }
 
 function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
@@ -44,7 +45,7 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
   } = this;
   const { options } = point;
   const customOption = options as CustomPointOption;
-  const { originValue } = customOption;
+  const { originValue, title } = customOption;
 
   let value: string;
   switch (series.name) {
@@ -61,8 +62,10 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
 
   return `
   <div>
-    <span style=" margin-right: 20px;">${key}</span><br/>
-    <span style=" margin-right: 20px;">${series.name}</span><br/>
+    <span>${key}</span><br/>
+    ${title ? `<span style="font-weight: bold">${title}</span><br/>` : ''}
+    <br/>
+    <span style=" margin-right: 20px;">${series.name}</span>
     <span style="font-weight: bold">${value}</span>
   </div>
   `;
@@ -96,11 +99,13 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     xAxis: {
       labels: { enabled: false },
       gridLineColor: 'transparent',
+
     },
     yAxis: {
       labels: { enabled: false },
       gridLineColor: 'transparent',
       title: { text: ' ' },
+
     },
     tooltip: {
       headerFormat: `<span style="font-size: ${theme.typography.body2.fontSize}">{point.key}</span><br/>`,
@@ -109,6 +114,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
       },
       useHTML: true,
       formatter: tooltipFormatter,
+      outside: true,
     },
   });
 
@@ -129,7 +135,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     const tempData = source.map((d) => {
       const originValue = d[currentScoreName] as number;
       let y: number;
-      if (currentScoreName.includes('Score') && originValue < 3) {
+      if (currentScoreName.includes('Score') && originValue && originValue < 3) {
         y = 3;
       } else {
         y = originValue;
@@ -137,6 +143,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
       return {
         y,
         originValue,
+        title: d.title,
       };
     });
 
@@ -153,16 +160,19 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
           width: 2,
           value: index - 0.5,
         })),
+        minPadding: 0.2,
       },
       yAxis: {
         min: getMinMax(currentScoreName).min,
         max: getMinMax(currentScoreName).max,
+        minPadding: 0.2,
       },
       series: [
         {
           type: 'line',
           data: tempData,
           name: getSeriesName(currentScoreName),
+
         },
       ],
     });

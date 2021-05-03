@@ -278,6 +278,7 @@ export class RankingsService {
           'T.streamDate',
           `T.${targetColumn}`,
           'T.rnk',
+          'T.title',
         ])
         .from((subQuery) => subQuery
           .from(RankingsEntity, 'R')
@@ -285,6 +286,7 @@ export class RankingsService {
             `R.${targetColumn} AS ${targetColumn}`,
             'DATE_FORMAT(R.streamDate,"%Y-%m-%d") AS streamDate',
             'R.creatorId AS creatorId',
+            'R.title AS title',
             `RANK() OVER(PARTITION BY R.creatorId ORDER BY R.streamDate DESC, R.${targetColumn} DESC) AS rnk`,
           ])
           .where(`R.creatorId IN ('${topTenCreatorIds.join("','")}')`),
@@ -295,8 +297,8 @@ export class RankingsService {
       // 가져온 데이터를 { creatorId: [ {createDate: "2021-3-5", cussScore: 9.861}, ... ], } 형태로 변환함
       const result = topTenCreatorIds.reduce((obj, key) => ({ ...obj, [key]: [] }), {});
       data.reverse().forEach((d) => {
-        const { creatorId, streamDate } = d;
-        result[creatorId].push({ createDate: streamDate, [targetColumn]: d[targetColumn] });
+        const { creatorId, streamDate, title } = d;
+        result[creatorId].push({ createDate: streamDate, [targetColumn]: d[targetColumn], title });
       });
 
       return result;

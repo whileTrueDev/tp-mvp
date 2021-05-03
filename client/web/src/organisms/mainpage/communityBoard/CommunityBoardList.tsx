@@ -306,14 +306,21 @@ export default function CommunityBoardList(): JSX.Element {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ), [take, twitchBoard]);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
   const moveToAfreecaHotPostList = () => {
     setValue(1);
     changeAfreecaFilter('recommended');
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView();
+    }
   };
 
   const moveToTwitchHotPostList = () => {
     setValue(2);
     changeTwitchFilter('recommended');
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView();
+    }
   };
 
   return (
@@ -341,7 +348,7 @@ export default function CommunityBoardList(): JSX.Element {
           </Grid>
         </Grid>
 
-        <div>
+        <div ref={scrollRef}>
           <Tabs
             classes={tabsClasses}
             value={value}

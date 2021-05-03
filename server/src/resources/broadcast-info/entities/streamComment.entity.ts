@@ -39,7 +39,7 @@ export class StreamCommentsEntity implements StreamComments {
   @Column({ comment: '댓글이 달린 방송(stream) 아이디' })
   streamId: string;
 
-  @ManyToOne((type) => StreamCommentsEntity)
+  @ManyToOne((type) => StreamCommentsEntity, (comment) => comment.childrenComments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parentCommentId', referencedColumnName: 'commentId' })
   @Column({ nullable: true, default: null, comment: '해당 값이 존재하는 경우 자식댓글(대댓글)이고, 해당 값이 null인 경우는 부모댓글. 부모 댓글의 commentId ' })
   parentCommentId: number;

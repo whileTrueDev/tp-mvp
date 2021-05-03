@@ -113,8 +113,12 @@ export class CommunityBoardService {
 
     const countQb = qb.clone();
     const resultQb = qb
-      .loadRelationCountAndMap('post.replies', 'post.replies')
-      .orderBy('post.createDate', 'DESC');
+      .loadRelationCountAndMap(
+        'post.repliesCount',
+        'post.replies',
+        'replies',
+        (sqb) => sqb.andWhere('replies.deleteFlag = 0'),
+      ).orderBy('post.createDate', 'DESC');
 
     try {
       const posts = await resultQb.skip((page - 1) * take)
@@ -153,7 +157,12 @@ export class CommunityBoardService {
         'post.recommend',
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
-      .loadRelationCountAndMap('post.repliesCount', 'post.replies');
+      .loadRelationCountAndMap(
+        'post.repliesCount',
+        'post.replies',
+        'replies',
+        (sqb) => sqb.andWhere('(replies.deleteFlag = 0)'),
+      );
 
     let resultQb = qb.clone();
     let countQb = qb.clone();

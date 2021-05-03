@@ -1,6 +1,6 @@
 import { CommunityReply } from '@truepoint/shared/dist/interfaces/CommunityReply.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn, OneToMany,
+  Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CommunityPostEntity } from './community-post.entity';
 

@@ -149,11 +149,13 @@ export default function CommunityPostView(): JSX.Element {
       take: maxReplyToDisplay.current,
       page: replyPage,
     },
-  }, { manual: true });
-  // 댓글 페이지 총 개수
-  const replyPaginationCount = useMemo(() => (
-    Math.ceil((replies ? replies.total : 0) / maxReplyToDisplay.current)
-  ), [replies]);
+  });
+
+  useEffect(() => {
+    loadReplies();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [replyPage]);
+
   // 댓글 페이지 변경 핸들러
   const changeReplyPage = (event: React.ChangeEvent<unknown>, newPage: number) => {
     if (replyPage === newPage) return;
@@ -180,19 +182,20 @@ export default function CommunityPostView(): JSX.Element {
   // 댓글 다시 불러오는 함수
   const loadReplies = useCallback(() => {
     if (!currentPost) return;
-    getReplies().catch((e) => {
+    getReplies({
+      params: {
+        postId,
+        take: maxReplyToDisplay.current,
+        page: replyPage,
+      },
+    }).catch((e) => {
       if (e.response) {
         console.error(e.response.data, e.response.status);
         ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
       }
       console.error(e);
     });
-  }, [enqueueSnackbar, getReplies, currentPost]);
-
-  // replyPage (댓글 페이지네이션) 이 바뀌면 댓글 불러오는 이펙트
-  useEffect(() => {
-    loadReplies();
-  }, [loadReplies, replyPage]);
+  }, [currentPost, enqueueSnackbar, getReplies, postId, replyPage]);
 
   // 댓글 추천버튼 핸들러(하루 한번만 추천하도록)
   const handleRecommend = useCallback(() => {
@@ -342,9 +345,10 @@ export default function CommunityPostView(): JSX.Element {
         replies={replies}
         loadReplies={loadReplies}
         replyPage={replyPage}
-        replyPaginationCount={replyPaginationCount}
+        replyCountPerPage={maxReplyToDisplay.current}
         changeReplyPage={changeReplyPage}
         postId={postId}
+        setReplyPage={setReplyPage}
       />
 
       <BoardContainer

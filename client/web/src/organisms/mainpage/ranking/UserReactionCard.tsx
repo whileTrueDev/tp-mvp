@@ -1,20 +1,17 @@
 import {
   Button, Grid, List, ListItem, TextField, Typography,
 } from '@material-ui/core';
-import React, {
-  useEffect, useRef, useCallback, useLayoutEffect,
-} from 'react';
-import SendIcon from '@material-ui/icons/Send';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { useSnackbar } from 'notistack';
-import useAxios from 'axios-hooks';
-
+import SendIcon from '@material-ui/icons/Send';
 import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
 import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
-import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+import React, { useCallback, useEffect, useRef } from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
-import UserReactionListItem from './sub/UserReactionListItem';
+import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { useUserReactionStyle } from './style/UserReactionCard.style';
+import UserReactionListItem from './sub/UserReactionListItem';
 
 const userReactionUrl = '/user-reactions';
 export default function UserReactionCard(): JSX.Element {
@@ -34,7 +31,11 @@ export default function UserReactionCard(): JSX.Element {
 
   // api요청 핸들러
   const loadUserReactions = useCallback(() => {
-    getUserReactions().catch((e) => {
+    getUserReactions().then(() => {
+      if (!listContainerRef.current) return;
+      const { scrollHeight, clientHeight } = listContainerRef.current;
+      listContainerRef.current.scrollTop = scrollHeight - clientHeight;
+    }).catch((e) => {
       console.error('시청자 반응 데이터 불러오기 오류', e);
     });
   }, [getUserReactions]);
@@ -60,13 +61,6 @@ export default function UserReactionCard(): JSX.Element {
     loadUserReactions();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // 새로운 데이터 로드 후 ul스크롤 위치를 최하단으로
-  useLayoutEffect(() => {
-    if (!listContainerRef.current) return;
-    const { scrollHeight, clientHeight } = listContainerRef.current;
-    listContainerRef.current.scrollTop = scrollHeight - clientHeight;
-  }, [userReactionData]);
 
   // 등록버튼 클릭 | 인풋창에서 엔터 누를 시 실행되는 핸들러
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {

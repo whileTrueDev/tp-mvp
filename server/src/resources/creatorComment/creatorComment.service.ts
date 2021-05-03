@@ -57,13 +57,24 @@ export class CreatorCommentService {
 
   // 방송인 평가댓글 목록 조회
   async getCreatorComments(creatorId: string, skip: number, order: 'recommend'|'date'): Promise<ICreatorCommentsRes> {
-    try {
-      const take = 10;
-      const result: ICreatorCommentsRes = {
-        comments: [],
-        count: 0,
-      };
+    const take = 10;
+    const result: ICreatorCommentsRes = {
+      comments: [],
+      count: 0,
+    };
 
+    function transformCommentsForResponse(comments: any[]): any[] {
+      return comments.map((c) => (
+        {
+          ...c,
+          likesCount: Number(c.likesCount),
+          hatesCount: Number(c.hatesCount),
+          childrenCount: Number(c.childrenCount),
+        }
+      ));
+    }
+
+    try {
       const baseQueryBuilder = await getConnection()
         .createQueryBuilder()
         .select([
@@ -85,7 +96,10 @@ export class CreatorCommentService {
             'comment.creatorId AS creatorId',
             'comment.userId AS userId',
             'comment.nickname AS nickname',
-            'comment.content AS content',
+            `CASE 
+              WHEN comment.deleteFlag = 1 THEN '삭제된 댓글입니다'
+              ELSE comment.content 
+             END AS content`,
             'comment.createDate AS createDate',
             'comment.deleteFlag AS deleteFlag',
             'IFNULL(SUM(likes.vote), 0) AS likesCount',
@@ -94,8 +108,8 @@ export class CreatorCommentService {
           .from(CreatorCommentsEntity, 'comment')
           .leftJoin('comment.votes', 'likes')
           .where('comment.creatorId = :creatorId', { creatorId })
-          .andWhere('comment.deleteFlag = 0')
           .andWhere('comment.parentCommentId IS NULL')
+          .andWhere('comment.deleteFlag = 0')
           .groupBy('comment.commentId'),
         'C')
         .leftJoin(UserEntity, 'users', 'users.userId = C.userId')
@@ -112,14 +126,7 @@ export class CreatorCommentService {
           .limit(take)
           .getRawMany();
 
-        result.comments = comments.map((c) => (
-          {
-            ...c,
-            likesCount: Number(c.likesCount),
-            hatesCount: Number(c.hatesCount),
-            childrenCount: Number(c.childrenCount),
-          }
-        ));
+        result.comments = transformCommentsForResponse(comments);
       }
       if (order === 'recommend') {
         const comments = await baseQueryBuilder
@@ -128,14 +135,8 @@ export class CreatorCommentService {
           .offset(skip)
           .limit(take)
           .getRawMany();
-        result.comments = comments.map((c) => (
-          {
-            ...c,
-            likesCount: Number(c.likesCount),
-            hatesCount: Number(c.hatesCount),
-            childrenCount: Number(c.childrenCount),
-          }
-        ));
+
+        result.comments = transformCommentsForResponse(comments);
       }
 
       return result;

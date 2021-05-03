@@ -29,10 +29,10 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
     form: {
       width: '100%',
       padding: theme.spacing(2, 0),
-      '& .MuiFormControl-root': {
-        border: `2px solid ${grey}`,
-        borderRadius: theme.spacing(0.75),
-      },
+      // '& .MuiFormControl-root': {
+      //   border: `2px solid ${grey}`,
+      //   borderRadius: theme.spacing(0.75),
+      // },
     },
     row: {
       '&:not(:last-child)': {

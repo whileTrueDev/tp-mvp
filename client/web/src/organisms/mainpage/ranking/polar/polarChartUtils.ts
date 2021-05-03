@@ -25,12 +25,23 @@ type ColorIndex = keyof Color; // material ui color 인덱스값
 export function toPolarAreaData(list: DailyTotalViewersItemData[], colors: Color): CustomPointOption[] {
   const odd: CustomPointOption[] = [];
   const even: CustomPointOption[] = [];
-  list.forEach((d: DailyTotalViewersItemData, i: number) => {
+  const tempList = [...list];
+
+  // 만약 당일 방송한 사람이 10인 이하인 경우 10개를 채워서 위치를 맞춘다
+  if (tempList.length < 10) {
+    for (let i = 0; i < 10 - list.length; i += 1) {
+      tempList.push({
+        maxViewer: 0,
+        creatorName: '',
+        creatorId: '',
+      });
+    }
+  }
+  tempList.forEach((d: DailyTotalViewersItemData, i: number) => {
     const colorIndex = ((9 - Math.ceil(i / 2)) - 3) * 100; // 600 ~ 100까지(material ui color 인덱스값)
     const pointOptions = {
       originValue: d.maxViewer, // 실제 최대시청자수 -> 툴팁에서 보여줄 값
-      y: (9 - Math.ceil(i * 0.7)) * 100, // 실제값은 별도로 넣고, 표시될 크기 y는 순위에 따라 일정하게 적용
-      // y: d.maxViewer,
+      y: d.maxViewer ? (9 - Math.ceil(i * 0.7)) * 100 : 0, // 실제값은 별도로 넣고 표시될 크기 y는 순위에 따라 일정하게 적용
       name: d.creatorName,
       order: i, // 상위 5인(order < 5 )만 이름을 표시한다, 0부터 시작함(0번째가 1위)
       color: colors[colorIndex as ColorIndex], // 순위에 따라 다른 색을 적용한다

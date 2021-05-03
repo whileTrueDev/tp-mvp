@@ -57,13 +57,24 @@ export class StreamCommentService {
 
   // 방송 댓글 조회
   async getStreamComments(streamId: string, skip: number, order: 'recommend'|'date'): Promise<any> {
-    try {
-      const take = 10;
-      const result = {
-        comments: [],
-        count: 0,
-      };
+    const take = 10;
+    const result = {
+      comments: [],
+      count: 0,
+    };
 
+    function transformCommentsForResponse(comments: any[]): any[] {
+      return comments.map((c) => (
+        {
+          ...c,
+          likesCount: Number(c.likesCount),
+          hatesCount: Number(c.hatesCount),
+          childrenCount: Number(c.childrenCount),
+        }
+      ));
+    }
+
+    try {
       const baseQueryBuilder = await getConnection()
         .createQueryBuilder()
         .select([
@@ -112,14 +123,7 @@ export class StreamCommentService {
           .limit(take)
           .getRawMany();
 
-        result.comments = comments.map((c) => (
-          {
-            ...c,
-            likesCount: Number(c.likesCount),
-            hatesCount: Number(c.hatesCount),
-            childrenCount: Number(c.childrenCount),
-          }
-        ));
+        result.comments = transformCommentsForResponse(comments);
       }
       if (order === 'recommend') {
         const comments = await baseQueryBuilder
@@ -128,14 +132,8 @@ export class StreamCommentService {
           .offset(skip)
           .limit(take)
           .getRawMany();
-        result.comments = comments.map((c) => (
-          {
-            ...c,
-            likesCount: Number(c.likesCount),
-            hatesCount: Number(c.hatesCount),
-            childrenCount: Number(c.childrenCount),
-          }
-        ));
+
+        result.comments = transformCommentsForResponse(comments);
       }
 
       return result;
