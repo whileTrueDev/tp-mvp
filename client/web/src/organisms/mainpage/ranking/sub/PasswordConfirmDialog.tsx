@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import React from 'react';
 import CustomDialog from '../../../../atoms/Dialog/Dialog';
 
@@ -21,8 +21,20 @@ export default function PasswordConfirmDialog(props: PasswordConfirmDialogProps)
       title="비밀번호 확인"
       callback={callback}
     >
-      <Typography>비밀번호를 입력해주세요</Typography>
-      <input ref={passwordInputRef} type="password" />
+      <TextField
+        margin="dense"
+        variant="outlined"
+        inputRef={passwordInputRef}
+        type="password"
+        placeholder="비밀번호를 입력해주세요"
+        inputProps={{
+          maxLength: 4,
+        }}
+        lang="en"
+        onKeyDown={!callback ? undefined : (e) => {
+          if (e.key === 'Enter') callback();
+        }}
+      />
     </CustomDialog>
   );
 }

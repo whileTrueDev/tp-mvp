@@ -1,16 +1,15 @@
-import React from 'react';
-import moment from 'moment';
 import { Avatar, IconButton, Typography } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
-import { useSnackbar } from 'notistack';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
-import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import useAxios from 'axios-hooks';
+import moment from 'moment';
+import { useSnackbar } from 'notistack';
+import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
-import CustomDialog from '../../../../atoms/Dialog/Dialog';
-import CheckPasswordForm from '../../shared/CheckPasswordForm';
+import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: { width: '100%', marginTop: theme.spacing(3) },
@@ -89,21 +88,17 @@ export default function FeatureReply({
         </div>
       </div>
 
-      <CustomDialog
+      <CheckPasswordDialog
         open={confirmDialog.open}
         onClose={confirmDialog.handleClose}
+        checkPassword={checkPassword}
+        successHandler={() => {
+          handleDeleteClick(reply.replyId);
+          confirmDialog.handleClose();
+        }}
       >
-        <CheckPasswordForm
-          closeDialog={confirmDialog.handleClose}
-          checkPassword={checkPassword}
-          successHandler={() => {
-            handleDeleteClick(reply.replyId);
-            confirmDialog.handleClose();
-          }}
-        >
-          <Typography>해당 댓글을 삭제하시겠습니까? 삭제시 복구가 불가능합니다.</Typography>
-        </CheckPasswordForm>
-      </CustomDialog>
+        <Typography>해당 댓글을 삭제하시겠습니까? 삭제시 복구가 불가능합니다.</Typography>
+      </CheckPasswordDialog>
     </div>
   );
 }

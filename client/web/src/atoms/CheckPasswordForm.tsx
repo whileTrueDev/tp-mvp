@@ -1,10 +1,10 @@
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { AxiosPromise, AxiosRequestConfig } from 'axios';
 import { RefetchOptions } from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
-import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import ShowSnack from './snackbar/ShowSnack';
 
 const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
   form: {
@@ -21,21 +21,23 @@ const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
   },
   buttonContainer: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
 }));
+
+export interface CheckPasswordFormProps {
+  closeDialog: () => void,
+  checkPassword: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>;
+  successHandler: () => void,
+  children?: React.ReactNode
+}
 
 export default function CheckPasswordForm({
   closeDialog,
   checkPassword,
   successHandler,
   children,
-}: {
-  closeDialog: () => void,
-  checkPassword: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>;
-  successHandler: () => void,
-  children?: JSX.Element| JSX.Element[]
-}): JSX.Element {
+}: CheckPasswordFormProps): JSX.Element {
   const classes = useCheckPasswordFormStyle();
   const passwordRef = useRef<HTMLInputElement>(null);
   const { enqueueSnackbar } = useSnackbar();
@@ -75,22 +77,25 @@ export default function CheckPasswordForm({
       }}
     >
       {children}
-      <input
-        // eslint-disable-next-line jsx-a11y/no-autofocus
+      <TextField
+        margin="dense"
+        variant="outlined"
         autoFocus
         type="password"
         className={classes.input}
-        ref={passwordRef}
         placeholder="비밀번호를 입력해주세요"
-        maxLength={4}
+        inputRef={passwordRef}
+        inputProps={{
+          maxLength: 4,
+        }}
         lang="en"
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSubmitPassword();
         }}
       />
       <div className={classes.buttonContainer}>
-        <Button variant="contained" onClick={handleCancel}>취소</Button>
-        <Button variant="contained" color="primary" onClick={handleSubmitPassword}>입력</Button>
+        <Button onClick={handleCancel}>취소</Button>
+        <Button variant="contained" color="primary" onClick={handleSubmitPassword}>확인</Button>
       </div>
     </form>
   );

@@ -1,18 +1,17 @@
-import React, { useRef } from 'react';
-import useAxios from 'axios-hooks';
-import { useSnackbar } from 'notistack';
 import {
-  Avatar, TextField, Button, Typography,
+  Avatar, Button, TextField, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
-import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
+import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+import React, { useRef } from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
-import CustomDialog from '../../../../atoms/Dialog/Dialog';
-import CheckPasswordForm from '../../shared/CheckPasswordForm';
 import useDialog from '../../../../utils/hooks/useDialog';
+import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -107,21 +106,17 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
         댓글 작성
       </Button>
 
-      <CustomDialog
+      <CheckPasswordDialog
         open={confirmDialog.open}
         onClose={confirmDialog.handleClose}
+        checkPassword={checkPassword}
+        successHandler={() => {
+          handleReplySubmit();
+          confirmDialog.handleClose();
+        }}
       >
-        <CheckPasswordForm
-          closeDialog={confirmDialog.handleClose}
-          checkPassword={checkPassword}
-          successHandler={() => {
-            handleReplySubmit();
-            confirmDialog.handleClose();
-          }}
-        >
-          <Typography>글의 비밀번호를 입력해주세요.</Typography>
-        </CheckPasswordForm>
-      </CustomDialog>
+        <Typography>글의 비밀번호를 입력해주세요.</Typography>
+      </CheckPasswordDialog>
 
     </div>
   );

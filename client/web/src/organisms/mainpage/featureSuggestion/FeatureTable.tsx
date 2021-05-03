@@ -8,12 +8,11 @@ import useAxios from 'axios-hooks';
 import React, { useState } from 'react';
 import shortid from 'shortid';
 import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
-import CustomDialog from '../../../atoms/Dialog/Dialog';
 import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
 import useDialog from '../../../utils/hooks/useDialog';
-import CheckPasswordForm from '../shared/CheckPasswordForm';
+import CheckPasswordDialog from '../shared/CheckPasswordDialog';
 
 const TABLE_ROW_HEIGHT = 45;
 const useStyles = makeStyles((theme) => ({
@@ -190,16 +189,15 @@ export default function FeatureTable({
         style={{ boxShadow: 'none' }}
       />
 
-      <CustomDialog open={confirmDialog.open} onClose={confirmDialog.handleClose}>
-        <CheckPasswordForm
-          closeDialog={confirmDialog.handleClose}
-          checkPassword={checkPassword}
-          successHandler={() => {
-            handleClick(selectedSuggestionId);
-            confirmDialog.handleClose();
-          }}
-        />
-      </CustomDialog>
+      <CheckPasswordDialog
+        open={confirmDialog.open}
+        onClose={confirmDialog.handleClose}
+        checkPassword={checkPassword}
+        successHandler={() => {
+          handleClick(selectedSuggestionId);
+          confirmDialog.handleClose();
+        }}
+      />
     </>
   );
 }

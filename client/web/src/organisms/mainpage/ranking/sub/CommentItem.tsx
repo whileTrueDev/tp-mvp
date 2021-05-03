@@ -1,22 +1,22 @@
 import {
   Avatar, Button, Typography,
 } from '@material-ui/core';
-import React, {
-  useState, useCallback, useEffect, useRef,
-} from 'react';
-import dayjs from 'dayjs';
-import classnames from 'classnames';
 import ReplyIcon from '@material-ui/icons/Reply';
+import classnames from 'classnames';
+import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
-import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
+import React, {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
+import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
-import CommentForm from './CommentForm';
 import useToggle from '../../../../utils/hooks/useToggle';
-import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
+import CommentForm from './CommentForm';
 import DeleteButton from './DeleteButton';
-import PasswordConfirmDialog from './PasswordConfirmDialog';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
+import PasswordConfirmDialog from './PasswordConfirmDialog';
 
 export interface CommentItemProps extends Record<string, any>{
   /** 대상이 되는 댓글(commentId), 글(postId), 크리에이터(creatorId) */

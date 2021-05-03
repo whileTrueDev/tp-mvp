@@ -16,11 +16,10 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
-import CustomDialog from '../../../atoms/Dialog/Dialog';
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import dateExpression from '../../../utils/dateExpression';
-import CheckPasswordForm from '../shared/CheckPasswordForm';
+import CheckPasswordDialog from '../shared/CheckPasswordDialog';
 import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
 
@@ -342,18 +341,14 @@ export default function FeatureDetail({
       </div>
 
       {/* 글 수정/삭제/이전&다음글이동 비밀번호 확인 다이얼로그 */}
-      <CustomDialog
+      <CheckPasswordDialog
         open={dialogState.open}
         onClose={handleCheckDialogClose}
+        checkPassword={checkPassword}
+        successHandler={dialogSubmitFunction}
       >
-        <CheckPasswordForm
-          closeDialog={handleCheckDialogClose}
-          checkPassword={checkPassword}
-          successHandler={dialogSubmitFunction}
-        >
-          {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
-        </CheckPasswordForm>
-      </CustomDialog>
+        {dialogState.context === 'delete' ? <Typography>게시글 삭제시 복구가 불가능합니다</Typography> : undefined}
+      </CheckPasswordDialog>
 
     </div>
   );
