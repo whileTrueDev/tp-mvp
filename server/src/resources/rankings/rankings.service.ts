@@ -48,7 +48,7 @@ export class RankingsService {
       .select('creatorName')
       .addSelect('creatorId')
       .addSelect('platform')
-      .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 MONTH)`)
+      .where(`streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 MONTH)`)
       .groupBy('creatorId')
       .addGroupBy('platform')
       .having('COUNT(*) >= 10')
@@ -175,7 +175,7 @@ export class RankingsService {
           ])
           .from(RankingsEntity, 'rankings')
           .groupBy('rankings.creatorId')
-          .where(`createDate > DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
+          .where(`streamDate > DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
         'MaxValueTable')
         .from(RankingsEntity, 'T1')
         .groupBy('T1.creatorId')
@@ -359,7 +359,7 @@ export class RankingsService {
           'rankings.creatorId AS creatorId',
         ])
         .where('rankings.platform =:platform', { platform })
-        .andWhere(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`) // 가장 최근 분석시간으로부터 1일 이내
+        .andWhere(`streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`) // 가장 최근 분석시간으로부터 1일 이내
         .groupBy('rankings.creatorId')
         .orderBy('maxViewer', 'DESC')
         .limit(10)
@@ -416,16 +416,16 @@ export class RankingsService {
     FROM(
       SELECT A.*, ROW_NUMBER() OVER (partition by cdate, platform order by maxViewer DESC) AS "rank"
       FROM (
-        SELECT creatorId, createDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(createDate,"%Y-%m-%d") AS cdate
+        SELECT creatorId, streamDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(streamDate,"%Y-%m-%d") AS cdate
         FROM Rankings
-        WHERE createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 WEEK)
+        WHERE streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 WEEK)
         Group by creatorId, cdate
-        Order by platform, createDate DESC, maxViewer DESC
+        Order by platform, streamDate DESC, maxViewer DESC
       ) AS A
     ) AS B
     where "rank" <= 10 
     group by platform, cdate
-    order by platform, createDate DESC;`;
+    order by platform, streamDate DESC;`;
 
     try {
       const data = await getConnection().query(query);
