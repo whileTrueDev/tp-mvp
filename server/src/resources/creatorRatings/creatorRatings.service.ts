@@ -336,16 +336,18 @@ export class CreatorRatingsService {
    */
   async getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
     const dates = this.getWeekDates();
+    // const thisWeekMonday = dayjs().day(1);
+
     const query = `
     SELECT 
-      Thisweek.creatorId AS creatorId,
-      Thisweek.platform AS platform,
-      IFNULL( (CAST(Prevweek.rownum AS SIGNED) - CAST(Thisweek.rownum AS SIGNED)), 9999) AS rankChange,
-      Thisweek.avgRating AS avgRating,
-      Thisweek.twitchStreamerName AS twitchStreamerName,
-      Thisweek.twitchLogo AS twitchLogo,
-      Thisweek.afreecaLogo AS afreecaLogo,
-      Thisweek.afreecaNickname AS afreecaNickname
+      This.creatorId AS creatorId,
+      This.platform AS platform,
+      IFNULL( (CAST(Prev.rownum AS SIGNED) - CAST(This.rownum AS SIGNED)), 9999) AS rankChange,
+      This.avgRating AS avgRating,
+      This.twitchStreamerName AS twitchStreamerName,
+      This.twitchLogo AS twitchLogo,
+      This.afreecaLogo AS afreecaLogo,
+      This.afreecaNickname AS afreecaNickname
     FROM (
       SELECT
         R.creatorId,
@@ -363,7 +365,7 @@ export class CreatorRatingsService {
       GROUP BY R.creatorId
       ORDER BY rownum asc
       LIMIT 10
-    ) AS Thisweek
+    ) AS This
     LEFT OUTER JOIN
       (
       SELECT
@@ -373,7 +375,7 @@ export class CreatorRatingsService {
       WHERE TIMESTAMPDIFF(DAY, createDate, NOW()) >=9 AND TIMESTAMPDIFF(DAY, createDate, NOW()) <= 16
       GROUP BY creatorId
       ORDER BY rownum asc
-      ) AS Prevweek ON Thisweek.creatorId = Prevweek.creatorId;
+      ) AS Prev ON This.creatorId = Prev.creatorId;
     `;
 
     const data = await getConnection().query(query);
