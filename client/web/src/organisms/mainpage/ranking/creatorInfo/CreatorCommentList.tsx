@@ -100,16 +100,17 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     if (commentIds.includes(currentCommentId)) {
       ShowSnack('이미 신고한 댓글입니다', 'error', enqueueSnackbar);
       localStorage.setItem(CREATOR_COMMENT_REPORT_LIST_KEY, JSON.stringify([...commentsRecentlyReported]));
-      return;
+      return new Promise((res, rej) => res(true));
     }
     // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
-    axios.post(`/creatorComment/report/${commentId}`)
+    return axios.post(`/creatorComment/report/${commentId}`)
       .then((res) => {
         ShowSnack('댓글 신고 성공', 'info', enqueueSnackbar);
         localStorage.setItem(
           CREATOR_COMMENT_REPORT_LIST_KEY,
           JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]),
         );
+        return new Promise((resolve, reject) => resolve(res));
       })
       .catch((err) => {
         ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);
