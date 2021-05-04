@@ -6,7 +6,6 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
 import useAxios from 'axios-hooks';
-import * as dateFns from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, {
   useCallback, useEffect, useMemo, useRef, useState,
@@ -23,6 +22,7 @@ import BoardContainer from './list/BoardContainer';
 import PostInfoCard from './postView/PostInfoCard';
 import RepliesContainer from './postView/RepliesContainer';
 import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
+import { isWithin24Hours } from '../ranking/creatorInfo/CreatorCommentList';
 
 const SUN_EDITOR_VIEWER_CLASSNAME = 'sun-editor-editable'; // suneditor로 작성된 글을 innerHTML로 넣을 때 해당 엘리먼트에 붙어야 할 클래스네임
 
@@ -72,14 +72,6 @@ interface LocationState{
   take: number
 }
 
-// 추천시간이 24시간 이내인지 확인하는 함수
-function isRecommendedWithin24Hours(createDate: string): boolean {
-  const today = new Date();
-  const recommendedDay = new Date(createDate);
-  const hourDiff = dateFns.differenceInHours(today, recommendedDay);
-  return hourDiff < 24;
-}
-
 /**
  * 스낵바에서 보여줄 메시지
  */
@@ -91,7 +83,9 @@ const snackMessages = {
     getReplies: '댓글 내용을 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요',
     getPost: '존재하지 않는 글입니다. 목록페이지로 이동합니다',
     postRecommend: '추천하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+    postNotRecommend: '비추천하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요',
     duplicateRecommend: '동일한 글은 하루에 한 번만 추천 할 수 있습니다',
+    duplicateNotRecommend: '동일한 글은 하루에 한 번만 비추천 할 수 있습니다',
     deletePost: '글을 삭제하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요',
   },
 };
@@ -117,7 +111,16 @@ export default function CommunityPostView(): JSX.Element {
   // 개별글 내용 요청
   const [{ data: currentPost }, getPostForView] = useAxios<CommunityPost>({ url: `/community/posts/${postId}` }, { manual: true });
   // 개별글 추천 요청
-  const [{ data: recommendCount }, postRecommend] = useAxios<number>({ url: `/community/posts/${postId}/recommend`, method: 'post' }, { manual: true });
+  const [{ data: recommendCount }, postRecommend] = useAxios<number>({
+    url: `/community/posts/${postId}/recommend`,
+    method: 'post',
+  }, { manual: true });
+    // 개별글 비추천 요청
+  const [{ data: notRecommendCount }, postNotRecommend] = useAxios<number>({
+    url: `/community/posts/${postId}/notRecommend`,
+    method: 'post',
+  }, { manual: true });
+
   // 개별글 삭제 요청
   const [, deletePost] = useAxios({ url: `/community/posts/${postId}`, method: 'delete' }, { manual: true });
 
@@ -193,10 +196,11 @@ export default function CommunityPostView(): JSX.Element {
     });
   }, [currentPost, enqueueSnackbar, getReplies, postId, replyPage]);
 
-  // 댓글 추천버튼 핸들러(하루 한번만 추천하도록)
+  // 글 추천버튼 핸들러(하루 한번만 추천하도록)
   const handleRecommend = useCallback(() => {
-    const recommendList: {id: number, date: string}[] = JSON.parse(localStorage.getItem('recommendList') || '[]');
-    const postsRecentlyRecommended = recommendList.filter((item) => isRecommendedWithin24Hours(item.date));
+    const RECOMMEND_LIST_KEY = 'recommendList';
+    const recommendList: {id: number, date: string}[] = JSON.parse(localStorage.getItem(RECOMMEND_LIST_KEY) || '[]');
+    const postsRecentlyRecommended = recommendList.filter((item) => isWithin24Hours(item.date));
     const postIds = postsRecentlyRecommended.map((item) => item.id);
 
     const currentPostId = Number(postId);// postId는 param에서 넘어와서 string이다. recommendList의 id값과 비교하기 위해 숫자로 변경
@@ -209,13 +213,45 @@ export default function CommunityPostView(): JSX.Element {
     // 현재 postId가 로컬스토리지에 저장되어 있지 않다면 해당 글 추천하기 요청
     postRecommend()
       .then((res) => {
-        localStorage.setItem('recommendList', JSON.stringify([...postsRecentlyRecommended, { id: currentPostId, date: new Date() }]));
+        localStorage.setItem(RECOMMEND_LIST_KEY,
+          JSON.stringify([
+            ...postsRecentlyRecommended,
+            { id: currentPostId, date: new Date() },
+          ]));
       })
       .catch((err) => {
         ShowSnack(snackMessages.error.postRecommend, 'error', enqueueSnackbar);
         console.error(err);
       });
   }, [enqueueSnackbar, postId, postRecommend]);
+
+  // 글 비추천버튼 핸들러
+  const handleNotRecommend = useCallback(() => {
+    const NOT_RECOMMEND_LIST_KEY = 'notRecommendList';
+    const notRecommendList: {id: number, date: string}[] = JSON.parse(localStorage.getItem(NOT_RECOMMEND_LIST_KEY) || '[]');
+    const postsRecentlyNotRecommended = notRecommendList.filter((item) => isWithin24Hours(item.date));
+    const postIds = postsRecentlyNotRecommended.map((item) => item.id);
+
+    const currentPostId = Number(postId);
+
+    if (postIds.includes(currentPostId)) {
+      ShowSnack(snackMessages.error.duplicateNotRecommend, 'error', enqueueSnackbar);
+      return;
+    }
+
+    postNotRecommend()
+      .then((res) => {
+        localStorage.setItem(NOT_RECOMMEND_LIST_KEY,
+          JSON.stringify([
+            ...postsRecentlyNotRecommended,
+            { id: currentPostId, date: new Date() },
+          ]));
+      })
+      .catch((err) => {
+        ShowSnack(snackMessages.error.postNotRecommend, 'error', enqueueSnackbar);
+        console.error(err);
+      });
+  }, [enqueueSnackbar, postId, postNotRecommend]);
 
   // 전체 게시판 페이지로 이동
   const moveToBoardList = useCallback(() => {
@@ -288,6 +324,15 @@ export default function CommunityPostView(): JSX.Element {
                 추천하기
               </Button>
             </CardActions>
+            <CardActions>
+              <Button onClick={handleNotRecommend} variant="contained" color="primary">
+                비추천하기
+              </Button>
+            </CardActions>
+            <CardContent>
+              <Typography>{`비추천 ${notRecommendCount || currentPost?.notRecommendCount || 0}`}</Typography>
+            </CardContent>
+
           </Card>
         </div>
       </Paper>

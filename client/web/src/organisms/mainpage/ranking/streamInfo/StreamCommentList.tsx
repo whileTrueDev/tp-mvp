@@ -10,7 +10,7 @@ import CommentItem from '../sub/CommentItem';
 import CommentSortButtons, { CommentFilter, filters } from '../sub/CommentSortButtons';
 import axios from '../../../../utils/axios';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
-import { isReportedIn24Hours } from '../creatorInfo/CreatorCommentList';
+import { isWithin24Hours } from '../creatorInfo/CreatorCommentList';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 export interface StreamCommentListProps {
@@ -82,7 +82,7 @@ export default function StreamCommentList(props: StreamCommentListProps): JSX.El
   const onReport = useCallback((commentId: number) => {
     const STREAM_COMMENT_REPORT_LIST_KEY = 'streamCommentReport';
     const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(STREAM_COMMENT_REPORT_LIST_KEY) || '[]');
-    const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
+    const commentsRecentlyReported = reportList.filter((item) => isWithin24Hours(item.date));
     const commentIds = commentsRecentlyReported.map((item) => item.id);
 
     const currentCommentId = commentId;

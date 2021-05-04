@@ -17,7 +17,7 @@ import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import CommentSortButtons, { CommentFilter, filters } from '../sub/CommentSortButtons';
 
-export function isReportedIn24Hours(date: string): boolean {
+export function isWithin24Hours(date: string): boolean {
   const now = dayjs();
   const targetDate = dayjs(date);
   return now.diff(targetDate, 'hour') < 24;
@@ -92,7 +92,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   const onReport = useCallback((commentId: number) => {
     const CREATOR_COMMENT_REPORT_LIST_KEY = 'cretorCommentReport';
     const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(CREATOR_COMMENT_REPORT_LIST_KEY) || '[]');
-    const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
+    const commentsRecentlyReported = reportList.filter((item) => isWithin24Hours(item.date));
     const commentIds = commentsRecentlyReported.map((item) => item.id);
 
     const currentCommentId = commentId;

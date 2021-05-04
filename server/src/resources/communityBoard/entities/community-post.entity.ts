@@ -36,8 +36,11 @@ export class CommunityPostEntity implements CommunityPost {
   @Column({ type: 'int', default: 0 })
   hit: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0, comment: '추천수' })
   recommend: number;
+
+  @Column({ type: 'int', default: 0, comment: '비추천 수' })
+  notRecommendCount: number;
 
   @OneToMany((type) => CommunityReplyEntity, (reply) => reply.postId)
   replies? : CommunityReplyEntity[];

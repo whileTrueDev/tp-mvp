@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import CommentItem from '../../ranking/sub/CommentItem';
-import { isReportedIn24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
+import { isWithin24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
@@ -78,7 +78,7 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
   const onReport = useCallback((replyId: number) => {
     const BOARD_REPLY_REPORT_LIST_KEY = 'communityReplyReport';
     const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(BOARD_REPLY_REPORT_LIST_KEY) || '[]');
-    const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
+    const commentsRecentlyReported = reportList.filter((item) => isWithin24Hours(item.date));
     const commentIds = commentsRecentlyReported.map((item) => item.id);
 
     const currentCommentId = replyId;

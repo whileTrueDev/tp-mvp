@@ -276,4 +276,19 @@ export class CommunityBoardService {
       throw new HttpException('error in recommendPost', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async notRecommendPost(postId: number): Promise<number> {
+    const post = await this.findOnePost(postId);
+    const { notRecommendCount } = post;
+    try {
+      const savedPost = await this.communityPostRepository.save({
+        ...post,
+        notRecommendCount: notRecommendCount + 1,
+      });
+      return savedPost.notRecommendCount;
+    } catch (error) {
+      console.error(error);
+      throw new HttpException('error in not recommend post', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
