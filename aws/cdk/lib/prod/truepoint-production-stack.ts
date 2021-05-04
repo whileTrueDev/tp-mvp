@@ -67,9 +67,9 @@ export class TruepointProductionStack extends BaseStack {
       engine: dbEngine,
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
       databaseName: ID_PREFIX,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MEDIUM),
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.SMALL),
       vpcPlacement: { subnetType: ec2.SubnetType.PUBLIC },
-      multiAz: true,
+      multiAz: false,
       allocatedStorage: 100,
       // Enable storage auto scailing option by specifying maximum allocated storage
       maxAllocatedStorage: 300, // GB
