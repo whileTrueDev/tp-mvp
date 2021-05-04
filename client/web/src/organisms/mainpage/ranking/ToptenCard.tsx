@@ -54,8 +54,8 @@ type PlatformFilterType = 'all' | 'twitch' | 'afreeca';
 // 플랫폼 필터 탭 목록
 const platformTabColumns: {label: string, platform: PlatformFilterType}[] = [
   { label: '전체', platform: 'all' },
-  { label: '트위치', platform: 'twitch' },
   { label: '아프리카', platform: 'afreeca' },
+  { label: '트위치', platform: 'twitch' },
 ];
 
 interface loadDataArgs {
