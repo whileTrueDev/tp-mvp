@@ -1,4 +1,6 @@
-import { Button, TextField, Typography } from '@material-ui/core';
+import {
+  Button, InputBase, TextField, Typography,
+} from '@material-ui/core';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
 import React from 'react';
@@ -96,7 +98,7 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
             <TextField label="비밀번호" name="password" type="password" placeholder="비밀번호" variant="outlined" inputProps={{ maxLength: 4 }} autoComplete="on" />
           </div>
         )}
-      <TextField
+      <InputBase
         className={formStyle.contentTextArea}
         fullWidth
         multiline
