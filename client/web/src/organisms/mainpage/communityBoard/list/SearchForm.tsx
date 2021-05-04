@@ -7,6 +7,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 // import SelectField from '../../../../atoms/SelectField';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import SelectField from '../../../../atoms/SelectField';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -33,6 +34,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(0, 1),
     color: theme.palette.text.primary,
   },
+  select: {
+    '& .MuiSelect-root': {
+      minWidth: theme.spacing(5),
+    },
+  },
 }));
 
 interface SearchFormProps extends React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>{
@@ -43,7 +49,7 @@ interface SearchFormProps extends React.DetailedHTMLProps<React.FormHTMLAttribut
 export default function SearchForm({ onSearch, selectOptions, className }: SearchFormProps): JSX.Element {
   const inputRef = useRef<HTMLSelectElement>();
   const select = useRef(selectOptions);
-  const [value] = useState(select.current[0]);
+  const [value, setValue] = useState(select.current[0]);
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -71,7 +77,6 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
   return (
     <div className={className}>
       <div className={classes.root}>
-        {/* <SelectField value={value} select={select.current} handleCallback={setValue} /> */}
 
         <Paper className={classes.inputContainer}>
           <OutlinedInput
@@ -79,7 +84,7 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
             onKeyDown={onKeyDown}
             inputRef={inputRef}
             placeholder="글찾기~"
-            startAdornment={
+            endAdornment={
               (
                 <InputAdornment position="start">
                   <IconButton
@@ -94,6 +99,12 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
             }
           />
         </Paper>
+        <SelectField
+          className={classes.select}
+          value={value}
+          select={select.current}
+          handleCallback={setValue}
+        />
       </div>
     </div>
   );

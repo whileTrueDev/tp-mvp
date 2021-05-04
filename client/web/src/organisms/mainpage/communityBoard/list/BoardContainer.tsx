@@ -6,7 +6,7 @@ import {
 import {
   Pagination, PaginationItem, ToggleButton, ToggleButtonGroup,
 } from '@material-ui/lab';
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import useAxios from 'axios-hooks';
 import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
   },
   writeButton: {
-    padding: theme.spacing(2, 0),
+    padding: theme.spacing(2),
   },
   writeButtonContainer: {
     textAlign: 'right',
@@ -168,18 +168,13 @@ export default function BoardContainer({
 
   const [{ loading, error }, getPostList] = useAxios('/community/posts', { manual: true });
 
-  const hasSearchText = useMemo(() => searchType && searchType !== '' && searchText && searchText !== '', [searchText, searchType]);
-
   useEffect(() => {
-    let params: postGetParam = {
+    const params: postGetParam = {
       platform,
       category: filter,
       page,
       take,
     };
-    if (hasSearchText) { // 검색하는경우
-      params = { ...params, qtype: searchType, qtext: searchText };
-    }
     getPostList({
       params,
     }).then((res) => {
@@ -189,7 +184,27 @@ export default function BoardContainer({
     });
   // 아래 변수가 바뀌는 경우에만 실행되는 이펙트
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, page, take, hasSearchText]);
+  }, [filter, page, take]);
+
+  useEffect(() => {
+    if (!searchText) {
+      return;
+    }
+    const params: postGetParam = {
+      platform,
+      category: filter,
+      page,
+      take,
+      qtype: searchType,
+      qtext: searchText,
+    };
+    getPostList({ params })
+      .then((res) => {
+        handlePostsLoad(res.data);
+      })
+      .catch((e) => console.error(e.response, e));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchText]);
 
   const moveToWritePage = (event: React.MouseEvent<HTMLElement>) => {
     history.push({
@@ -240,6 +255,7 @@ export default function BoardContainer({
 
         <div className="right">
           <SearchForm
+            style={{ justifyContent: 'center' }}
             onSearch={onSearch}
             selectOptions={['제목', '작성자']}
           />
@@ -250,6 +266,7 @@ export default function BoardContainer({
             className={classes.writeButton}
           >
             <SendIcon />
+            <Typography>글쓰기</Typography>
           </Button>
         </div>
       </div>
@@ -286,7 +303,6 @@ export default function BoardContainer({
           글쓰기
         </Button>
       </div>
-
     </div>
   );
 }
