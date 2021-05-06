@@ -1,13 +1,13 @@
 import {
-  Box, Button, Dialog, makeStyles, MenuItem, Paper, Select, TextField, Typography, Popper, IconButton,
+  Box, Button, Dialog, IconButton, makeStyles, MenuItem, Paper, Popper, Select, TextField, Typography,
 } from '@material-ui/core';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registerUserByAdminDto.dto';
 import HelpIcon from '@material-ui/icons/Help';
+import Alert from '@material-ui/lab/Alert';
+import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registerUserByAdminDto.dto';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
-import Alert from '@material-ui/lab/Alert';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import knownCreators from '../../data/knownCreators210419.json';
 
 const useStyles = makeStyles((theme) => ({
@@ -73,9 +73,9 @@ export default function RegisterCreatorDialog({
           message: `입력한 유저 <${formData.nickname}>의 트위치 고유 ID를 알지 못하므로 진행할 수 없습니다. dan 에게 문의 바랍니다.`,
         });
       }
-      if (!formData.logo.includes('300x300.png')) {
+      if (!formData.logo.includes('300x300.')) {
         return setError('logo', {
-          message: '로고에는 300x300.png 가 포함되어야 합니다.',
+          message: '로고 주소에는 300x300. 가 포함되어야 합니다.',
         });
       }
     }
