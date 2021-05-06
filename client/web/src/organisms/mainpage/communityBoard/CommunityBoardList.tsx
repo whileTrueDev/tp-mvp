@@ -1,5 +1,4 @@
 import {
-  Container,
   Grid, Tab, Tabs,
 } from '@material-ui/core';
 import React, {
@@ -15,28 +14,24 @@ import BoardTitle from './share/BoardTitle';
 import HotPostBox from './list/HotPostBox';
 import useBoardContext from '../../../utils/hooks/useBoardContext';
 import BoardHeaderImage from './list/BoardHeaderImage';
+import { MYPAGE_MAIN_MAX_WIDTH } from '../../../assets/constants';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-  centerWrapper: {
-    width: '100%',
-    minWidth: '1400px', // <ProductHero/>의 minWidth에 맞춤
+  communitySection: {
+    backgroundColor: theme.palette.primary.main,
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing(2),
+    overflow: 'hidden',
   },
-  boardWrapper: {
-    width: '45%',
-  },
-  hide: {
-    visibility: 'hidden',
+  communityContainer: {
+    width: '100%',
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    margin: '64px auto',
   },
   boardListSection: {
     backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
-  },
-  maxWidthWrapper: {
-    padding: theme.spacing(4, 6),
-    minWidth: theme.breakpoints.values.md,
   },
   smallLogo: {
     width: theme.spacing(4),
@@ -44,18 +39,25 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     color: theme.palette.primary.main,
   },
   hotPostSection: {
-    marginBottom: theme.spacing(6),
+    '&>.MuiGrid-item': {
+      padding: theme.spacing(2),
+    },
+    marginBottom: theme.spacing(0.5),
+
   },
 }));
 
-const useTabs = makeStyles({
+const useTabs = makeStyles((theme: Theme) => ({
+  root: {
+    height: theme.spacing(5),
+  },
   flexContainer: {
     justifyContent: 'flex-end',
   },
   indicator: {
     display: 'none',
   },
-});
+}));
 
 const useTabItem = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -66,11 +68,13 @@ const useTabItem = makeStyles((theme: Theme) => createStyles({
     [theme.breakpoints.down('sm')]: {
       minWidth: theme.spacing(20),
     },
+    padding: 0,
   },
   wrapper: {
     flexDirection: 'row',
     color: theme.palette.text.secondary,
-    fontSize: theme.typography.h6.fontSize,
+    fontWeight: theme.typography.fontWeightBold,
+    fontSize: theme.spacing(4),
     '& svg, & img': {
       display: 'none',
     },
@@ -326,61 +330,62 @@ export default function CommunityBoardList(): JSX.Element {
   return (
     <div className={classes.boardListSection}>
       <BoardHeaderImage />
-      <Container maxWidth="xl" className={classes.maxWidthWrapper}>
-        <Grid container spacing={10} className={classes.hotPostSection}>
-          <Grid item xs={6}>
-            <HotPostBox
-              platform="afreeca"
-              posts={afreecaHotPosts ? afreecaHotPosts.posts : []}
-              loading={afreecaHotPostsLoading}
-              error={afreecaHotPostsError}
-              buttonHandler={moveToAfreecaHotPostList}
-            />
+      <section className={classes.communitySection}>
+        <div className={classes.communityContainer}>
+          <Grid container spacing={10} className={classes.hotPostSection}>
+            <Grid item xs={6}>
+              <HotPostBox
+                platform="afreeca"
+                posts={afreecaHotPosts ? afreecaHotPosts.posts : []}
+                loading={afreecaHotPostsLoading}
+                error={afreecaHotPostsError}
+                buttonHandler={moveToAfreecaHotPostList}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <HotPostBox
+                platform="twitch"
+                posts={twitchHotPosts ? twitchHotPosts.posts : []}
+                loading={twitchHotPostsLoading}
+                error={twitchHotPostsError}
+                buttonHandler={moveToTwitchHotPostList}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <HotPostBox
-              platform="twitch"
-              posts={twitchHotPosts ? twitchHotPosts.posts : []}
-              loading={twitchHotPostsLoading}
-              error={twitchHotPostsError}
-              buttonHandler={moveToTwitchHotPostList}
-            />
-          </Grid>
-        </Grid>
-
-        <div ref={scrollRef}>
-          <Tabs
-            classes={tabsClasses}
-            value={value}
-            onChange={handleChange}
-          >
-            <Tab
-              classes={tabItemClasses}
-              label="자유게시판"
-              icon={icons.free}
-            />
-            <Tab
-              classes={tabItemClasses}
-              label="아프리카 게시판"
-              icon={icons.afreeca}
-            />
-            <Tab
-              classes={tabItemClasses}
-              label="트위치 게시판"
-              icon={icons.twitch}
-            />
-          </Tabs>
-          <TabPanel value={value} index={0}>
-            {FreeBoard}
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            {AfreecaBoard}
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            {TwitchBoard}
-          </TabPanel>
+          <div ref={scrollRef}>
+            <Tabs
+              classes={tabsClasses}
+              value={value}
+              onChange={handleChange}
+            >
+              <Tab
+                classes={tabItemClasses}
+                label="자유게시판"
+                icon={icons.free}
+              />
+              <Tab
+                classes={tabItemClasses}
+                label="아프리카 게시판"
+                icon={icons.afreeca}
+              />
+              <Tab
+                classes={tabItemClasses}
+                label="트위치 게시판"
+                icon={icons.twitch}
+              />
+            </Tabs>
+            <TabPanel value={value} index={0}>
+              {FreeBoard}
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              {AfreecaBoard}
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              {TwitchBoard}
+            </TabPanel>
+          </div>
         </div>
-      </Container>
+      </section>
 
     </div>
 

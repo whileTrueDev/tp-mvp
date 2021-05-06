@@ -65,9 +65,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   writeButton: {
     padding: theme.spacing(2),
+    '& .writeButtonText': {
+      fontSize: theme.typography.h6.fontSize,
+    },
   },
-  writeButtonContainer: {
-    textAlign: 'right',
+  searchForm: {
+    display: 'flex',
+    justifyContent: 'center',
   },
 }));
 
@@ -254,11 +258,7 @@ export default function BoardContainer({
         </ToggleButtonGroup>
 
         <div className="right">
-          <SearchForm
-            style={{ justifyContent: 'center' }}
-            onSearch={onSearch}
-            selectOptions={['제목', '작성자']}
-          />
+
           <Button
             variant="contained"
             color="primary"
@@ -266,7 +266,7 @@ export default function BoardContainer({
             className={classes.writeButton}
           >
             <SendIcon />
-            <Typography>글쓰기</Typography>
+            <Typography className="writeButtonText">글쓰기</Typography>
           </Button>
         </div>
       </div>
@@ -293,16 +293,13 @@ export default function BoardContainer({
           />
         )}
       />
-      <div className={classes.writeButtonContainer}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={moveToWritePage}
-          startIcon={<SendIcon />}
-        >
-          글쓰기
-        </Button>
-      </div>
+      <SearchForm
+        className={classes.searchForm}
+        style={{ justifyContent: 'center' }}
+        onSearch={onSearch}
+        selectOptions={['제목', '작성자']}
+      />
+
     </div>
   );
 }
