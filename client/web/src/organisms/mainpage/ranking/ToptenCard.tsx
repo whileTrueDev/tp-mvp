@@ -43,11 +43,13 @@ const mainTabColumns: MainTabColumns[] = [
 
 // 하위 카테고리 탭 목록
 const categoryTabColumns = [
-  { categoryId: 1, label: '버라이어티 BJ' },
-  { categoryId: 2, label: '종합게임엔터 BJ' },
-  { categoryId: 3, label: '보이는 라디오 BJ' },
-  { categoryId: 4, label: '롤 BJ' },
-  { categoryId: 5, label: '주식투자' },
+  { categoryId: 0, label: '전체' },
+  { categoryId: 1, label: '버라이어티' },
+  { categoryId: 2, label: '게임/엔터' },
+  { categoryId: 3, label: '소통/보라' },
+  { categoryId: 4, label: '롤' },
+  { categoryId: 5, label: '배그' },
+  { categoryId: 6, label: '투자' },
 ];
 
 type PlatformFilterType = 'all' | 'twitch' | 'afreeca';
@@ -77,6 +79,9 @@ function TopTenCard(): JSX.Element {
   const scrollRef = useRef<any>(null);
 
   // axios요청
+  // 카테고리 탭 요청
+  // const [{ data: creatorCategories }] = useAxios('/creator-category');
+
   // 탭 별 상위 10인 요청
   const [{ loading, error }, refetch] = useAxios<RankingDataType>({
     url: '/rankings/top-ten',

@@ -130,6 +130,7 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
     display: 'none',
   },
   root: {
+    width: '100%',
     display: 'inline-flex',
     height: theme.spacing(9),
     backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
@@ -137,6 +138,9 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
     paddingTop: theme.spacing(0.5),
     paddingLeft: theme.spacing(0.5),
     paddingRight: theme.spacing(0.5),
+    '& .MuiTabs-flexContainer': {
+      justifyContent: 'space-around',
+    },
   },
 }));
 
@@ -144,6 +148,7 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
 // ToptenCard 내 상단 가로형 탭 아이템 컴포넌트 스타일
 export const useHorizontalTabItemStyle = makeStyles((theme: Theme) => createStyles({
   root: {
+    minWidth: theme.spacing(12),
     height: theme.spacing(8),
     alignItems: 'center',
     opacity: 1,

@@ -193,10 +193,14 @@ export class RankingsService {
             'Afreeca.logo AS afreecaProfileImage',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId');
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'twitch') {
         // 트위치 추가 쿼리
         qb = await baseQuery
@@ -205,9 +209,12 @@ export class RankingsService {
             'Twitch.twitchChannelName AS twitchChannelName',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere('T1.platform =:platformType', { platformType: 'twitch' })
-          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+          .andWhere('T1.platform =:platformType', { platformType: 'twitch' });
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'afreeca') {
         // 아프리카 추가 쿼리
         qb = await baseQuery
@@ -215,9 +222,13 @@ export class RankingsService {
             'Afreeca.logo AS afreecaProfileImage',
           ])
           .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .andWhere('T1.platform =:platformType', { platformType: 'afreeca' })
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+          .andWhere('T1.platform =:platformType', { platformType: 'afreeca' });
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+        }
       }
 
       // 해당 조건에 맞는 offset, limit 적용하지 않은 총 데이터 개수

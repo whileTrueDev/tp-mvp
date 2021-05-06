@@ -426,10 +426,13 @@ export class CreatorRatingsService {
             'Afreeca.afreecaStreamerName AS afreecaStreamerName',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId');
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'afreeca') {
         qb = await baseQuery
           .addSelect([
@@ -437,9 +440,13 @@ export class CreatorRatingsService {
             'Afreeca.afreecaStreamerName AS afreecaStreamerName',
           ])
           .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .andWhere('ratings.platform =:platformType', { platformType: 'afreeca' })
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+          .andWhere('ratings.platform =:platformType', { platformType: 'afreeca' });
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'twitch') {
         qb = await baseQuery
           .addSelect([
@@ -448,9 +455,13 @@ export class CreatorRatingsService {
             'Twitch.twitchChannelName AS twitchChannelName',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere('ratings.platform =:platformType', { platformType: 'twitch' })
-          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+          .andWhere('ratings.platform =:platformType', { platformType: 'twitch' });
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+        }
       }
 
       const totalData = await qb.clone().getRawMany();
