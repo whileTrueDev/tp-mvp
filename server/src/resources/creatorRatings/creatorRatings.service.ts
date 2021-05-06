@@ -335,8 +335,10 @@ export class CreatorRatingsService {
    * @returns 
    */
   async getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
-    const dates = this.getWeekDates();
-    // const thisWeekMonday = dayjs().day(1);
+    const startDayOfThisWeek = dayjs().day(1); // 0 sunday ~ 6 saturday
+    const endDayOfThisWeek = startDayOfThisWeek.add(6, 'day');
+    const endDatOfPrevWeek = startDayOfThisWeek.subtract(1, 'day');
+    const startDayOfPrevWeek = endDatOfPrevWeek.subtract(1, 'week');
 
     const query = `
     SELECT 
@@ -361,7 +363,7 @@ export class CreatorRatingsService {
       FROM ${this.ratingsRepository.metadata.tableName} R
         LEFT JOIN ${this.afreecaRepository.metadata.tableName} afreeca ON afreeca.afreecaId = R.creatorId
         LEFT JOIN ${this.twitchRepository.metadata.tableName} twitch ON twitch.twitchId = R.creatorId
-      WHERE TIMESTAMPDIFF(DAY, R.createDate, NOW())>=1 AND TIMESTAMPDIFF(DAY, R.createDate, NOW())<=8  
+      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= curdate()+1 
       GROUP BY R.creatorId
       ORDER BY rownum asc
       LIMIT 10
@@ -372,7 +374,7 @@ export class CreatorRatingsService {
         creatorId,
         ROW_NUMBER() OVER(ORDER BY AVG(rating) DESC) AS rownum
       FROM ${this.ratingsRepository.metadata.tableName}
-      WHERE TIMESTAMPDIFF(DAY, createDate, NOW()) >=9 AND TIMESTAMPDIFF(DAY, createDate, NOW()) <= 16
+      WHERE createDate >= DATE("${startDayOfPrevWeek.toISOString()}") AND createDate <= DATE("${startDayOfThisWeek.toISOString()}")
       GROUP BY creatorId
       ORDER BY rownum asc
       ) AS Prev ON This.creatorId = Prev.creatorId;
@@ -388,8 +390,8 @@ export class CreatorRatingsService {
       logo: d.platform === 'twitch' ? d.twitchLogo : d.afreecaLogo,
     }));
     return {
-      startDate: dates[0],
-      endDate: dates[dates.length - 1],
+      startDate: startDayOfThisWeek.format('YYYY-MM-DD'),
+      endDate: endDayOfThisWeek.format('YYYY-MM-DD'),
       rankingList: result,
     };
   }
@@ -410,7 +412,8 @@ export class CreatorRatingsService {
           'AVG(ratings.rating) AS rating',
           'ratings.platform AS platform',
         ])
-        .where('DATE_FORMAT(ratings.createDate, \'%Y-%m-%d\') = (curdate() - interval 1 day)')
+        .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
+        // .where('DATE_FORMAT(ratings.createDate, \'%Y-%m-%d\') = (curdate() - interval 1 day)')
         .groupBy('ratings.creatorId')
         .orderBy('AVG(ratings.rating)', 'DESC')
         .addOrderBy('COUNT(ratings.id)', 'DESC');
