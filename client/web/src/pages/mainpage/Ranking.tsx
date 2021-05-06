@@ -7,6 +7,7 @@ import {
   Redirect, Route, Switch, useRouteMatch,
 } from 'react-router-dom';
 import CreatorDetails from '../../organisms/mainpage/ranking/CreatorDetails';
+import CreatorSearch from '../../organisms/mainpage/ranking/CreatorSearch';
 import RatingsList from '../../organisms/mainpage/ranking/RatingsList';
 import StreamEvaluation from '../../organisms/mainpage/ranking/StreamEvaluation';
 import { useCarouselStyle, useRankingPageLayout } from '../../organisms/mainpage/ranking/style/RankingPage.style';
@@ -56,13 +57,13 @@ export default function Ranking(): JSX.Element {
               </Grid>
               <Grid item xs={4} className={wrapper.right}>
                 <RatingsList />
-                {/* <MonthlyScoresRankingCard /> */}
                 <UserReactionCard />
               </Grid>
             </Grid>
           </Container>
           {footerDecoration}
         </Route>
+
         {/* 방송 정보를 포함한 방송인 정보 페이지 */}
         <Route exact path={`${path}/:platform/:creatorId`}>
           <CreatorDetails />
@@ -73,6 +74,11 @@ export default function Ranking(): JSX.Element {
           <Container className={wrapper.container}>
             <StreamEvaluation />
           </Container>
+        </Route>
+
+        {/* 방송인 검색 페이지 */}
+        <Route exact path={`${path}/search`}>
+          <CreatorSearch />
         </Route>
 
         <Route>

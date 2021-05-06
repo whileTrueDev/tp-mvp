@@ -1,14 +1,14 @@
 import {
   Button, Hidden, IconButton, Menu,
-  MenuItem, Typography,
+  MenuItem, Typography, Popover,
 } from '@material-ui/core';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
   createStyles, makeStyles, useTheme,
 } from '@material-ui/core/styles';
 import {
   Brightness4 as DarkThemeIcon,
-  // ListAltOutlined,
   Brightness7 as LightThemeIcon, Dashboard, MoreVert,
 } from '@material-ui/icons';
 import classnames from 'classnames';
@@ -52,12 +52,18 @@ const useStyles = makeStyles((theme) => createStyles({
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: { display: 'none' },
   },
+  linkItem: {
+    position: 'relative',
+  },
   link: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(4),
     color: theme.palette.text.primary,
     opacity: 0.8,
-    '&:hover': { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
+    '&:hover': {
+      textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)',
+      opacity: 1,
+    },
   },
   selected: {
     textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)',
@@ -125,6 +131,17 @@ const useStyles = makeStyles((theme) => createStyles({
   darkModeIcon: {
     display: theme.palette.type === 'dark' ? 'none' : 'block',
   },
+
+}));
+
+const usePopoverStyles = makeStyles((theme) => ({
+  popover: {
+    position: 'relative',
+    width: '100%',
+  },
+  paper: {
+    padding: theme.spacing(1),
+  },
 }));
 
 interface AppBarProps {
@@ -136,6 +153,7 @@ export default function AppBar({
 }: AppBarProps): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
+  const popoverStyles = usePopoverStyles();
   const theme = useTheme<TruepointTheme>();
 
   // 현재 활성화된 탭을 구하는 함수
@@ -156,7 +174,14 @@ export default function AppBar({
     {
       name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
     },
-    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
+    {
+      name: '인방랭킹',
+      path: '/ranking',
+      activeRouteString: '/ranking',
+      sub: [
+        { name: '방송인검색', path: '/ranking/search' },
+      ],
+    },
     { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
     { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
     { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
@@ -248,6 +273,25 @@ export default function AppBar({
     }
   }, [variant]);
 
+  /**
+   * 인방랭킹 하위 탭 
+   * 현재 하나뿐(인방랭킹 - 방송인검색)이라 임시로 만듦
+   * 추후 수정 필요
+   */
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement|null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+  const open = Boolean(anchorEl);
+  const handleClickAway = () => {
+    handlePopoverClose();
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -268,17 +312,58 @@ export default function AppBar({
 
               <div className={classes.links}>
                 {links.map((link) => (
-                  <div key={link.name}>
+                  <div className={classes.linkItem} key={link.name}>
                     {!link.hidden && (
-                    <Button
-                      component={Link}
-                      to={link.path}
-                      className={classnames(classes.link, {
-                        [classes.selected]: isActiveRoute(link.activeRouteString),
-                      })}
-                    >
-                      <Typography className={classes.linkText}>{link.name}</Typography>
-                    </Button>
+                      <>
+                        <Button
+                          component={Link}
+                          to={link.path}
+                          className={classnames(classes.link, {
+                            [classes.selected]: isActiveRoute(link.activeRouteString),
+                          })}
+                          onMouseEnter={link.sub ? handlePopoverOpen : undefined}
+                        >
+                          <Typography className={classes.linkText}>{link.name}</Typography>
+                        </Button>
+                        {/* 
+                        인방랭킹 하위 탭 
+                        현재 하나뿐(인방랭킹 - 방송인검색)이라 임시로 만듦
+                        추후 수정 필요
+                        */}
+                        {link.sub && (
+                          <ClickAwayListener onClickAway={handleClickAway}>
+                            <Popover
+                              className={popoverStyles.popover}
+                              classes={{
+                                paper: popoverStyles.paper,
+                              }}
+                              open={open}
+                              anchorEl={anchorEl}
+                              anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                              }}
+                              transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                              }}
+                              onClose={handlePopoverClose}
+                              disableRestoreFocus
+                            >
+                              {link.sub.map((sub) => (
+                                <Button
+                                  key={sub.path}
+                                  component={Link}
+                                  to={sub.path}
+                                >
+                                  {sub.name}
+                                </Button>
+                              ))}
+                            </Popover>
+                          </ClickAwayListener>
+
+                        )}
+                      </>
                     )}
                   </div>
                 ))}

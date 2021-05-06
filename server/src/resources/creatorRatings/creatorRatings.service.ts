@@ -23,6 +23,7 @@ export class CreatorRatingsService {
     private readonly twitchRepository: Repository<PlatformTwitchEntity>,
     @InjectRepository(RankingsEntity)
     private readonly rankingsRepository: Repository<RankingsEntity>,
+
   ) {}
 
   /**
@@ -56,8 +57,6 @@ export class CreatorRatingsService {
    */
   async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<CreatorRatingsEntity> {
     const { userId, rating, platform } = ratingPostDto;
-    // 우선 rankings 테이블에서 해당 creatorId가 존재하는지 찾는다
-    await this.findCreator(creatorId);
 
     // 해당 creator가 존재하는 경우 평점을 생성한다
     // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
@@ -95,7 +94,7 @@ export class CreatorRatingsService {
    * @returns 
    */
   async deleteRatings(creatorId: string, ip: string, userId?: string): Promise<string> {
-    await this.findCreator(creatorId);
+    // await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
@@ -149,7 +148,7 @@ export class CreatorRatingsService {
    * @returns 
    */
   async findOneRating(ip: string, creatorId: string): Promise<{score: number} | false> {
-    await this.findCreator(creatorId);
+    // await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
