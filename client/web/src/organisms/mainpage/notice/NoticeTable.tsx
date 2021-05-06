@@ -21,7 +21,10 @@ interface TableProps {
   handleClick: (a: any) => void;
 }
 const useStyles = makeStyles((theme) => ({
-  tableCell: { padding: theme.spacing(1) },
+  tableCell: {
+    padding: theme.spacing(1),
+    fontSize: theme.typography.body1.fontSize,
+  },
   tableRow: {
     height: TABLE_ROW_HEIGHT,
     cursor: 'pointer',
@@ -152,7 +155,11 @@ export default function MaterialTable({
           search: false,
           pageSize,
           pageSizeOptions: [8, 12],
-          headerStyle: { backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText },
+          headerStyle: {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            fontSize: theme.typography.h6.fontSize,
+          },
           draggable: false,
           paginationType: 'stepped',
         }}

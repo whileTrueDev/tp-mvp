@@ -24,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
     },
     cursor: 'default',
   },
+  text: {
+    fontSize: theme.spacing(3.5),
+    [theme.breakpoints.down('md')]: {
+      fontSize: theme.spacing(2),
+    },
+  },
   selectedText: { fontWeight: 'bold' },
 }));
 
@@ -53,7 +59,7 @@ export default function FeatureCategoryButtonGroup({
             [classes.selected]: selected === category,
           })}
         >
-          <Typography component="div" className={classnames({ [classes.selectedText]: selected === category })}>
+          <Typography component="div" className={classnames(classes.text, { [classes.selectedText]: selected === category })}>
             {category}
           </Typography>
         </Button>

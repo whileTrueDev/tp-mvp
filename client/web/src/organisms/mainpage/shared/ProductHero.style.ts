@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  MYPAGE_MAIN_MIN_WIDTH, MAIN_HERO_HEIGHT, COMMON_APP_BAR_HEIGHT,
+  MAIN_HERO_HEIGHT, COMMON_APP_BAR_HEIGHT,
 } from '../../../assets/constants';
 
 const HEIGHT = MAIN_HERO_HEIGHT + COMMON_APP_BAR_HEIGHT; // 기존 hero 영역 높이 + Appbar가 차지하던 높이. (뱀비늘배경을 앱바에도 보이도록 하기 위한 조치) by hwasurr
@@ -10,7 +10,6 @@ const styles = makeStyles((theme) => ({
     width: '100%',
     height: HEIGHT,
     backgroundColor: theme.palette.background.paper,
-    minWidth: MYPAGE_MAIN_MIN_WIDTH,
   },
   heroBg: {
     height: HEIGHT,
