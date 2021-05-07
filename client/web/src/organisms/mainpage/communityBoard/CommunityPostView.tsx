@@ -317,7 +317,7 @@ export default function CommunityPostView(): JSX.Element {
         <div className={classes.recommendContainer}>
           <Card className={classes.recommendCard}>
             <CardContent>
-              <Typography>{`추천 ${recommendCount || currentPost?.recommend || 0}`}</Typography>
+              <Typography>{`추천 ${recommendCount || (currentPost && currentPost.recommend) || 0}`}</Typography>
             </CardContent>
             <CardActions>
               <Button onClick={handleRecommend} variant="contained" color="primary">
@@ -330,7 +330,7 @@ export default function CommunityPostView(): JSX.Element {
               </Button>
             </CardActions>
             <CardContent>
-              <Typography>{`비추천 ${notRecommendCount || currentPost?.notRecommendCount || 0}`}</Typography>
+              <Typography>{`비추천 ${notRecommendCount || (currentPost && currentPost.notRecommendCount) || 0}`}</Typography>
             </CardContent>
 
           </Card>

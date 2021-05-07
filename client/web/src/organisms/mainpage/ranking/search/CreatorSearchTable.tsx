@@ -53,15 +53,19 @@ export default function CreatorSearchTable(props: CreatorSearchTableProps): JSX.
           title: '카테고리',
           render: (rowData) => (
             <div>
-              {rowData.twitch?.categories && rowData.twitch?.categories.map(category => (
+              {rowData.twitch && rowData.twitch.categories && rowData.twitch.categories.map((category) => (
                 <Chip
-                style={{fontSize: theme.typography.body1.fontSize}}
-                key={category.categoryId} label={category.name}/>
+                  style={{ fontSize: theme.typography.body1.fontSize }}
+                  key={category.categoryId}
+                  label={category.name}
+                />
               ))}
-              {rowData.afreeca?.categories && rowData.afreeca?.categories.map(category => (
+              {rowData.afreeca && rowData.afreeca.categories && rowData.afreeca.categories.map((category) => (
                 <Chip
-                style={{fontSize: theme.typography.body1.fontSize}}
-                key={category.categoryId} label={category.name}/>
+                  style={{ fontSize: theme.typography.body1.fontSize }}
+                  key={category.categoryId}
+                  label={category.name}
+                />
               ))}
             </div>
           ),
