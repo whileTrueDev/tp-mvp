@@ -24,5 +24,7 @@ export interface CommunityPost{
 
   recommend: number;
 
+  notRecommendCount: number;
+
   replies? : CommunityReply[];
 }
