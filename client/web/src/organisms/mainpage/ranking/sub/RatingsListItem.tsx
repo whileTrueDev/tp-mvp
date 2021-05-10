@@ -6,8 +6,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { WeeklyRatingRankingItem } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import Rating from '@material-ui/lab/Rating';
 import classnames from 'classnames';
+import { Textfit } from 'react-textfit';
 import { useRatingsListItemStyles } from '../style/RatingList.style';
-import {Textfit} from 'react-textfit';
 
 export interface RatingsListItemProps extends WeeklyRatingRankingItem{
   order?: number

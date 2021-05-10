@@ -6,6 +6,7 @@ import RatingsListItem, { RatingsListItemProps } from '../organisms/mainpage/ran
 export default {
   decorators: [
     (story) => <MemoryRouter>{story()}</MemoryRouter>,
+    (DefaultStory) => <div style={{ width: '560px' }}><DefaultStory /></div>,
   ],
   title: 'organisms/RatingsListItem',
   component: RatingsListItem,
@@ -22,10 +23,9 @@ Default.args = {
   logo: 'https://profile.img.afreecatv.com/LOGO/bh/bht0205/bht0205.jpg',
   platform: 'afreeca',
 };
-Default.decorators = [(Story) => <div style={{ width: '560px' }}><Story/></div>]
 
 export const LongName = Template.bind({});
 LongName.args = {
   ...Default.args,
-  nickname:'이름이 아주 긴 크리에이터이름이 아주 긴 크리에이터이름이 아주 긴 크리에이터'
-}
+  nickname: '이름이 아주 긴 크리에이터이름이 아주 긴 크리에이터이름이 아주 긴 크리에이터',
+};
