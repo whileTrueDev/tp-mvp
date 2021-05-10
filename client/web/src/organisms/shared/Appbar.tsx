@@ -2,7 +2,6 @@ import {
   Button, Hidden, IconButton, Menu,
   MenuItem, Typography, Popover,
 } from '@material-ui/core';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
   createStyles, makeStyles, useTheme,
@@ -12,7 +11,7 @@ import {
   Brightness7 as LightThemeIcon, Dashboard, MoreVert,
 } from '@material-ui/icons';
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT } from '../../assets/constants';
 import TruepointLogo from '../../atoms/TruepointLogo';
@@ -138,9 +137,11 @@ const usePopoverStyles = makeStyles((theme) => ({
   popover: {
     position: 'relative',
     width: '100%',
+    pointerEvents: 'none',
   },
   paper: {
     padding: theme.spacing(1),
+    pointerEvents: 'auto',
   },
 }));
 
@@ -278,18 +279,15 @@ export default function AppBar({
    * 현재 하나뿐(인방랭킹 - 방송인검색)이라 임시로 만듦
    * 추후 수정 필요
    */
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement|null>(null);
+  const popoverAnchor = useRef<any>(null);
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setPopoverOpen(true);
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-  const open = Boolean(anchorEl);
-  const handleClickAway = () => {
-    handlePopoverClose();
+    setPopoverOpen(false);
   };
 
   return (
@@ -316,12 +314,14 @@ export default function AppBar({
                     {!link.hidden && (
                       <>
                         <Button
+                          ref={link.sub ? popoverAnchor : null}
                           component={Link}
                           to={link.path}
                           className={classnames(classes.link, {
                             [classes.selected]: isActiveRoute(link.activeRouteString),
                           })}
                           onMouseEnter={link.sub ? handlePopoverOpen : undefined}
+                          onMouseLeave={link.sub ? handlePopoverClose : undefined}
                         >
                           <Typography className={classes.linkText}>{link.name}</Typography>
                         </Button>
@@ -331,37 +331,34 @@ export default function AppBar({
                         추후 수정 필요
                         */}
                         {link.sub && (
-                          <ClickAwayListener onClickAway={handleClickAway}>
-                            <Popover
-                              className={popoverStyles.popover}
-                              classes={{
-                                paper: popoverStyles.paper,
-                              }}
-                              open={open}
-                              anchorEl={anchorEl}
-                              anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                              }}
-                              transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                              }}
-                              onClose={handlePopoverClose}
-                              disableRestoreFocus
+                        <Popover
+                          className={popoverStyles.popover}
+                          classes={{
+                            paper: popoverStyles.paper,
+                          }}
+                          open={popoverOpen}
+                          anchorEl={popoverAnchor.current}
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                          }}
+                          transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                          }}
+                          onClose={handlePopoverClose}
+                          PaperProps={{ onMouseEnter: handlePopoverOpen, onMouseLeave: handlePopoverClose }}
+                        >
+                          {link.sub.map((sub) => (
+                            <Button
+                              key={sub.path}
+                              component={Link}
+                              to={sub.path}
                             >
-                              {link.sub.map((sub) => (
-                                <Button
-                                  key={sub.path}
-                                  component={Link}
-                                  to={sub.path}
-                                >
-                                  {sub.name}
-                                </Button>
-                              ))}
-                            </Popover>
-                          </ClickAwayListener>
-
+                              {sub.name}
+                            </Button>
+                          ))}
+                        </Popover>
                         )}
                       </>
                     )}
