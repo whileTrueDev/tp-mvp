@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   container: {
     height: COMMON_APP_BAR_HEIGHT,
+    // maxWidth: 
     margin: '0 auto',
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
@@ -68,12 +69,12 @@ const useStyles = makeStyles((theme) => createStyles({
     textShadow: theme.shadows[7],
     opacity: 1,
     '& $linkText': {
-      fontSize: theme.typography.h4.fontSize,
+      fontSize: theme.typography.h5.fontSize,
     },
   },
   linkText: {
     fontWeight: 'bold',
-    fontSize: theme.typography.h5.fontSize,
+    fontSize: theme.typography.h6.fontSize,
   },
   logo: {
     width: 214,
@@ -184,10 +185,11 @@ export default function AppBar({
         { name: '방송인검색', path: '/ranking/search' },
       ],
     },
-    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
+    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
     { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
     { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
-    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
+    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
+    { name: 'About us', path: '/about-us', activeRouteString: '/about-us' },
   ];
 
   const darkModeToggleButtonContent = (
@@ -334,6 +336,7 @@ export default function AppBar({
                           className={classnames(classes.link, {
                             [classes.selected]: isActiveRoute(link.activeRouteString),
                           })}
+                          onClick={link.sub ? handlePopoverOpen : undefined}
                           onMouseEnter={link.sub ? handlePopoverOpen : undefined}
                           onMouseLeave={link.sub ? handlePopoverClose : undefined}
                         >
