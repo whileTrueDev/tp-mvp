@@ -7,6 +7,7 @@ import { WeeklyRatingRankingItem } from '@truepoint/shared/dist/res/CreatorRatin
 import Rating from '@material-ui/lab/Rating';
 import classnames from 'classnames';
 import { useRatingsListItemStyles } from '../style/RatingList.style';
+import {Textfit} from 'react-textfit';
 
 export interface RatingsListItemProps extends WeeklyRatingRankingItem{
   order?: number
@@ -38,11 +39,12 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
           <ListItemText primary={(
             <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
               <Typography
+                component="div"
                 className={classnames(
                   classes.creatorName, { [classes.black]: order && order < 5 },
                 )}
               >
-                {nickname}
+                <Textfit mode="single" max={20}>{nickname}</Textfit>
               </Typography>
             </Link>
         )}
