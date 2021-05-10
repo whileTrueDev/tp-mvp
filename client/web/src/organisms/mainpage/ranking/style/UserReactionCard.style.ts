@@ -7,7 +7,7 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
       border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
       borderRadius: theme.shape.borderRadius,
       backgroundColor: theme.palette.background.paper,
-      padding: theme.spacing(2, 6, 0, 6),
+      padding: theme.spacing(2, 2, 0, 2),
     },
     header: {
       display: 'flex',
@@ -29,16 +29,12 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
     form: {
       width: '100%',
       padding: theme.spacing(2, 0),
-      // '& .MuiFormControl-root': {
-      //   border: `2px solid ${grey}`,
-      //   borderRadius: theme.spacing(0.75),
-      // },
     },
     row: {
       '&:not(:last-child)': {
         marginBottom: theme.spacing(2),
       },
-      '&>*:not(:last-child)': {
+      '&:not(:last-child)>*:not(:last-child)': {
         marginRight: theme.spacing(1),
       },
     },

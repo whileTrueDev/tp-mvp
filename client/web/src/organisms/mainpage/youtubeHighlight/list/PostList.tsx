@@ -65,7 +65,7 @@ function PostList(props: PostListProps): JSX.Element {
         columns={[
           {
             title: '방송인',
-            width: '25%',
+            width: '40%',
             field: 'nickname',
             render: (rowData: EditingPointListResType): JSX.Element => (
               <>
@@ -85,7 +85,7 @@ function PostList(props: PostListProps): JSX.Element {
           },
           {
             title: '최근 방송',
-            width: '25%',
+            width: '10%',
             field: 'endDate',
             searchable: false,
             sorting: false,
