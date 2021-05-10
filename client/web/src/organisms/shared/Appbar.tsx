@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   container: {
     height: COMMON_APP_BAR_HEIGHT,
-    // maxWidth: 
     margin: '0 auto',
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,

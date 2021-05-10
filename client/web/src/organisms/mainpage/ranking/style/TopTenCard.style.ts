@@ -22,13 +22,14 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
   },
   header: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(4, 2, 5, 2),
+    padding: theme.spacing(4, 0, 5, 2),
     marginBottom: theme.spacing(1),
     '&>:nth-child(1)': {
-      fontSize: theme.typography.h4.fontSize,
+      fontSize: theme.typography.h5.fontSize,
+      fontWeight: theme.typography.fontWeightBold,
     },
     '&>:nth-child(2)': {
-      fontSize: theme.spacing(5.5),
+      fontSize: theme.typography.h5.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       color: theme.palette.primary.main,
     },
@@ -72,7 +73,7 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
 export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.type === 'light' ? theme.palette.background.paper : theme.palette.grey.A200;
   const defaultLabelColor = theme.palette.text.disabled;
-  const svgFontSize = theme.typography.h4.fontSize;
+  const svgFontSize = theme.typography.h5.fontSize;
   const rootHeight = theme.spacing(9);
   return createStyles({
     root: {
@@ -83,6 +84,7 @@ export const useTabItem = makeStyles((theme: Theme) => {
       position: 'relative',
       justifyContent: 'flex-start',
       paddingLeft: theme.spacing(3),
+      minWidth: 'auto',
       '&:after': {
         content: '" "',
         display: 'none',
@@ -130,7 +132,6 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
     display: 'none',
   },
   root: {
-    width: '100%',
     display: 'inline-flex',
     height: theme.spacing(9),
     backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
@@ -138,9 +139,6 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
     paddingTop: theme.spacing(0.5),
     paddingLeft: theme.spacing(0.5),
     paddingRight: theme.spacing(0.5),
-    '& .MuiTabs-flexContainer': {
-      justifyContent: 'space-around',
-    },
   },
 }));
 

@@ -8,12 +8,13 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
   const contrastColor = theme.palette.text.primary;
   const defaultArrowSize = theme.spacing(1);
+  const itemHeight = theme.spacing(14);
   const downArrowColor = 'blue';
   const upArrowColor = 'red';
 
   return createStyles({
     listItem: {
-      height: theme.spacing(17),
+      height: itemHeight,
       color: contrastColor,
       paddingRight: theme.spacing(1.5),
     },
@@ -56,6 +57,7 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
       backgroundImage: 'url(images/rankingPage/rankingBox-normal.png)',
       backgroundPosition: 'center center',
       backgroundRepeat: 'no-repeat',
+      backgroundSize: 'contain',
     },
     contentBackground: {
       position: 'absolute',
@@ -63,7 +65,7 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
       width: '100%',
       height: '100%',
       backgroundColor: theme.palette.background.paper,
-      padding: theme.spacing(3, 1.5, 1, 2),
+      padding: theme.spacing(3, 0.25, 1.5, 1),
       backgroundClip: 'content-box',
     },
     contentBox: {
@@ -73,9 +75,10 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
     platformLogo: {
       width: '100%',
       height: 'auto',
+      marginTop: theme.spacing(-1),
       '&.afreeca': {
-        maxWidth: theme.spacing(4),
-        maxHeight: theme.spacing(4),
+        maxWidth: theme.spacing(3),
+        maxHeight: theme.spacing(3),
       },
       '&.twitch': {
         maxWidth: theme.spacing(5),
@@ -99,13 +102,13 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
     black: { color: contrastColor },
     ratingText: {
       textAlign: 'center',
-      fontSize: theme.typography.h6.fontSize,
+      fontSize: theme.typography.subtitle1.fontSize,
       fontWeight: theme.typography.fontWeightBold,
     },
     orderText: {
       color: theme.palette.text.primary,
       fontWeight: theme.typography.fontWeightBold,
-      fontSize: theme.typography.h4.fontSize,
+      fontSize: theme.typography.h5.fontSize,
     },
     rating: {
       '& .MuiRating-iconFilled': {
