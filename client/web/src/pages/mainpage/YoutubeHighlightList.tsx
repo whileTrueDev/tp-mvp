@@ -2,6 +2,7 @@ import React, {
   useMemo,
 } from 'react';
 import {
+  Container,
   Grid, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +11,7 @@ import useBoardState from '../../utils/hooks/useBoardListState';
 import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
 import HighlightListContainer from '../../organisms/mainpage/youtubeHighlight/list/HighlightListContainer';
 import YoutubeHighlightListHero from '../../organisms/mainpage/youtubeHighlight/YoutubeHighlightListHero';
+import { MYPAGE_MAIN_MAX_WIDTH } from '../../assets/constants';
 
 const youtubeHighlightListLayout = makeStyles((theme) => ({
   searchForm: {
@@ -20,12 +22,9 @@ const youtubeHighlightListLayout = makeStyles((theme) => ({
     margin: theme.spacing(10, 0, 4, 0),
   },
   centerWrapper: {
-    width: '100%',
-    minWidth: '1400px', // <ProductHero/>의 minWidth에 맞춤
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing(5, 2, 5, 2),
+    [theme.breakpoints.up('lg')]: {
+      maxWidth: MYPAGE_MAIN_MAX_WIDTH,
+    },
   },
   boardWrapper: {
     width: '45%',
@@ -88,7 +87,7 @@ export default function YoutubeHighlightList(): JSX.Element {
         </Typography>
       </div>
 
-      <div className={classes.centerWrapper}>
+      <Container className={classes.centerWrapper}>
         <Grid
           container
           justify="space-around"
@@ -102,7 +101,7 @@ export default function YoutubeHighlightList(): JSX.Element {
             {TwitchBoard}
           </Grid>
         </Grid>
-      </div>
+      </Container>
 
     </YoutubeHighlightListLayout>
   );

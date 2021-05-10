@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     titleText: {
       zIndex: 1,
+      whiteSpace: 'pre-line',
     },
     subTitleText: {
       fontSize: theme.typography.h5.fontSize,

@@ -42,17 +42,6 @@ const mainTabColumns: MainTabColumns[] = [
   { column: 'cuss', label: '욕점수', icon: <CussIcon /> },
 ];
 
-// // 하위 카테고리 탭 목록
-// const categoryTabColumns = [
-//   { categoryId: 0, label: '전체' },
-//   { categoryId: 1, label: '버라이어티' },
-//   { categoryId: 2, label: '게임/엔터' },
-//   { categoryId: 3, label: '소통/보라' },
-//   { categoryId: 4, label: '롤' },
-//   { categoryId: 5, label: '배그' },
-//   { categoryId: 6, label: '투자' },
-// ];
-
 type PlatformFilterType = 'all' | 'twitch' | 'afreeca';
 // 플랫폼 필터 탭 목록
 const platformTabColumns: {label: string, platform: PlatformFilterType}[] = [
@@ -84,9 +73,6 @@ function TopTenCard(): JSX.Element {
   ]);
 
   // axios요청
-  // 카테고리 탭 요청
-  // const [{ data: creatorCategories }] = useAxios('/creator-category');
-
   // 탭 별 상위 10인 요청
   const [{ loading, error }, refetch] = useAxios<RankingDataType>({
     url: '/rankings/top-ten',
