@@ -321,12 +321,12 @@ export default function CommunityPostView(): JSX.Element {
             </CardContent>
             <CardActions>
               <Button onClick={handleRecommend} variant="contained" color="primary">
-                추천하기
+                <img width="36" height="36" src="/images/rankingPage/thumb_up.png" alt="추천" />
               </Button>
             </CardActions>
             <CardActions>
               <Button onClick={handleNotRecommend} variant="contained" color="primary">
-                비추천하기
+                <img width="36" height="36" src="/images/rankingPage/thumb_down.png" alt="비추천" />
               </Button>
             </CardActions>
             <CardContent>
