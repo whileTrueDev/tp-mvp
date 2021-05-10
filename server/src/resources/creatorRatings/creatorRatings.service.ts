@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Injectable, InternalServerErrorException,
+  Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,26 +25,6 @@ export class CreatorRatingsService {
     private readonly rankingsRepository: Repository<RankingsEntity>,
 
   ) {}
-
-  /**
-   * rankings테이블에서 해당 creatorId를 가진 값이 존재하는지 확인한다
-   * 없으면 400 에러 발생시킴
-   * @param creatorId 
-   * @returns 
-   */
-  private async findCreator(creatorId: string): Promise<RankingsEntity> {
-    try {
-      const creator = await this.rankingsRepository.findOne({
-        where: { creatorId },
-      });
-      if (!creator) {
-        throw new BadRequestException(`no creator with creatorId: ${creatorId}`);
-      }
-      return creator;
-    } catch (error) {
-      throw new BadRequestException(error);
-    }
-  }
 
   /**
    * creatorId와 userIp로 평점데이터를 찾아보고
@@ -94,7 +74,6 @@ export class CreatorRatingsService {
    * @returns 
    */
   async deleteRatings(creatorId: string, ip: string, userId?: string): Promise<string> {
-    // await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
@@ -148,7 +127,6 @@ export class CreatorRatingsService {
    * @returns 
    */
   async findOneRating(ip: string, creatorId: string): Promise<{score: number} | false> {
-    // await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
@@ -258,11 +236,11 @@ export class CreatorRatingsService {
     }
   }
 
-  // 어제 ~ 8일이전(1주일간) 날짜 'YYYY-MM-DD' 문자열로 반환
+  // 오늘 ~ 7일이전(1주일간) 날짜 'YYYY-MM-DD' 문자열로 반환
   // return ['2021-04-14','2021-04-15','2021-04-16','2021-04-17','2021-04-18','2021-04-19','2021-04-20']
   private getWeekDates(): string[] {
     return new Array(7).fill('').map((val, index) => (
-      dayjs().subtract(index + 1, 'days').format('YYYY-MM-DD')
+      dayjs().subtract(index, 'days').format('YYYY-MM-DD')
     )).reverse();
   }
 
@@ -307,8 +285,8 @@ export class CreatorRatingsService {
     FROM ${this.ratingsRepository.metadata.tableName}
     Where
       DATE_FORMAT(createDate, '%Y-%m-%d') 
-      BETWEEN (curdate() - interval 8 day)
-      AND (curdate() - interval 1 day)
+      BETWEEN (curdate() - interval 7 day)
+      AND (curdate())
     GROUP BY date, platform
     Order By date ASC
     `;
@@ -328,9 +306,10 @@ export class CreatorRatingsService {
   }
 
   /**
-   * 지난주(어제~8일전) 평점별 상위 10인의 정보와 랭킹순위 구하고
-   * 지지난주(9일전 ~ 16일전) 평점별 랭킹 순위 구해서
-   * 지난주 상위 10인의 주간평균평점과 랭킹변동순위 조회
+   * 이번주 시작일(월요일)~오늘 까지 평점별 상위 10인의 정보와 랭킹순위 구하고
+   * 지난주 시작일(지난주 월요일)~지난주 마지막날(지난주 일요일) 평점별 랭킹 순위 구해서
+   * 지난주 마지막날 상위 10인의 랭킹과 비교하여
+   * 오늘의 랭킹변동순위 조회
    * @returns 
    */
   async getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
