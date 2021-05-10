@@ -86,6 +86,7 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     },
     creatorDescription: {
       width: '100%',
+      whiteSpace: 'pre-wrap',
     },
     chipLink: {
       margin: theme.spacing(0, 1),
