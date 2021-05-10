@@ -172,7 +172,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
           </div>
 
           <div className={classes.creatorDescription}>
-            <Typography component="pre">
+            <Typography>
               {user?.detail?.description ? String(user.detail.description) : ''}
             </Typography>
           </div>
