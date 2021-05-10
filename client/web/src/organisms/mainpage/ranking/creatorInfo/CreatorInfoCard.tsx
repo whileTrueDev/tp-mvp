@@ -5,6 +5,7 @@ import {
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { CreatorRatingInfoRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
+import { Textfit } from 'react-textfit';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import AdmireIcon from '../../../../atoms/svgIcons/AdmireIcon';
 import CussIcon from '../../../../atoms/svgIcons/CussIcon';
@@ -151,7 +152,9 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
         <Grid item className={classes.textContainer} xs={8}>
           <div className="upper-text">
             <div className={classes.nameContainer}>
-              <Typography className={classes.nickname}>{nickname}</Typography>
+              <Typography className={classes.nickname} component="div">
+                <Textfit mode="single">{nickname}</Textfit>
+              </Typography>
             </div>
             <div className={classes.ratingContainer}>
               <Typography className={classes.averageRatingText}>
@@ -171,7 +174,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
             </div>
           </div>
 
-          <div>
+          <div style={{ width: '100%' }}>
             <Typography component="pre" className={classes.creatorDescription}>
               {user?.detail?.description ? String(user.detail.description) : ''}
             </Typography>

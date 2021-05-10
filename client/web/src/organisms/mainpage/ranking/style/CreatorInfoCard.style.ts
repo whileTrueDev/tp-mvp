@@ -68,11 +68,11 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
       alignItems: 'center',
       maxWidth: '40%',
       textOverflow: 'ellipsis',
+      marginRight: theme.spacing(2),
     },
     nickname: {
       fontSize: theme.typography.h4.fontSize,
       fontWeight: theme.typography.fontWeightBold,
-      marginRight: theme.spacing(2),
       wordBreak: 'break-word',
     },
     ratingContainer: {
