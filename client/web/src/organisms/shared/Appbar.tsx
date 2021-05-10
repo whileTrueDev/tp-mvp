@@ -1,5 +1,5 @@
 import {
-  Button, Hidden, IconButton, Menu,
+  Button, Hidden, IconButton, Menu, MenuList,
   MenuItem, Typography, Popover,
 } from '@material-ui/core';
 import MuiAppBar from '@material-ui/core/AppBar';
@@ -180,6 +180,7 @@ export default function AppBar({
       path: '/ranking',
       activeRouteString: '/ranking',
       sub: [
+        { name: '인방랭킹', path: '/ranking' },
         { name: '방송인검색', path: '/ranking/search' },
       ],
     },
@@ -216,15 +217,28 @@ export default function AppBar({
         </MenuItem>
       )}
       {links.slice(1).map((link) => (
-        <MenuItem
-          key={link.path.slice(1)}
-          className={classnames(classes.menuItem, classes.mobileText)}
-          component={Link}
-          to={link.path}
-          button
-        >
-          <Typography>{link.name}</Typography>
-        </MenuItem>
+        link.sub ? [
+          link.sub.map((subLink) => (
+            <MenuItem
+              key={subLink.path}
+              className={classnames(classes.menuItem, classes.mobileText)}
+              component={Link}
+              to={subLink.path}
+              button
+            >
+              <Typography>{subLink.name}</Typography>
+            </MenuItem>
+          )),
+        ] : [
+          <MenuItem
+            className={classnames(classes.menuItem, classes.mobileText)}
+            component={Link}
+            to={link.path}
+            button
+          >
+            <Typography>{link.name}</Typography>
+          </MenuItem>,
+        ]
       ))}
 
       <MenuItem
@@ -348,16 +362,21 @@ export default function AppBar({
                           }}
                           onClose={handlePopoverClose}
                           PaperProps={{ onMouseEnter: handlePopoverOpen, onMouseLeave: handlePopoverClose }}
+                          disableScrollLock
                         >
-                          {link.sub.map((sub) => (
-                            <Button
-                              key={sub.path}
-                              component={Link}
-                              to={sub.path}
-                            >
-                              {sub.name}
-                            </Button>
-                          ))}
+                          <MenuList>
+                            {link.sub.map((sub) => (
+                              <MenuItem
+                                key={sub.path}
+                                component={Link}
+                                to={sub.path}
+                                button
+                              >
+                                {sub.name}
+                              </MenuItem>
+                            ))}
+                          </MenuList>
+
                         </Popover>
                         )}
                       </>
