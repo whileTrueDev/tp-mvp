@@ -60,12 +60,12 @@ const useStyles = makeStyles((theme) => createStyles({
     color: theme.palette.text.primary,
     opacity: 0.8,
     '&:hover': {
-      textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)',
+      textShadow: theme.shadows[7],
       opacity: 1,
     },
   },
   selected: {
-    textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)',
+    textShadow: theme.shadows[7],
     opacity: 1,
     '& $linkText': {
       fontSize: theme.typography.h4.fontSize,
@@ -323,7 +323,7 @@ export default function AppBar({
                           onMouseEnter={link.sub ? handlePopoverOpen : undefined}
                           onMouseLeave={link.sub ? handlePopoverClose : undefined}
                         >
-                          <Typography className={classes.linkText}>{link.name}</Typography>
+                          <Typography noWrap className={classes.linkText}>{link.name}</Typography>
                         </Button>
                         {/* 
                         인방랭킹 하위 탭 
