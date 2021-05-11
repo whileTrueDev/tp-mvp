@@ -33,7 +33,7 @@ type MainTabColumns = {
 
 // 탭목록
 const mainTabColumns: MainTabColumns[] = [
-  { column: 'viewer', label: '평균 시청자수', icon: <TVIcon /> },
+  { column: 'viewer', label: '최고 시청자수', icon: <TVIcon /> },
   { column: 'rating', label: '시청자 평점', icon: <StarBorderIcon /> },
   { column: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
   { column: 'smile', label: '웃음점수', icon: <SmileIcon /> },
