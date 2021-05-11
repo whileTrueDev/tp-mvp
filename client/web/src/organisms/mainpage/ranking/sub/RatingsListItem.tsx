@@ -22,7 +22,7 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
   return (
     <ListItem className={classnames(classes.listItem, classes[`listItem-${order}`])}>
       <div className={classes.contentBackground} />
-      <div className={classes.frame} />
+
       <Grid container className={classes.contentBox}>
         <Grid container item xs={1} direction="column" alignItems="center" justify="center">
           <Typography className={classes.orderText}>{order}</Typography>
@@ -75,6 +75,7 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
           </Typography>
         </Grid>
       </Grid>
+      <div className={classes.frame} />
 
     </ListItem>
   );

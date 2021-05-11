@@ -26,7 +26,8 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     scoreLabelContainer: {
       width: '30%',
       marginRight: theme.spacing(1),
-      padding: theme.spacing(3, 0, 3, 6),
+      padding: theme.spacing(3, 0),
+      paddingLeft: '5%',
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: theme.spacing(1),
       display: 'flex',
@@ -49,8 +50,8 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     },
     avatar: {
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
-      width: theme.spacing(35),
-      height: theme.spacing(35),
+      width: theme.spacing(30),
+      height: theme.spacing(30),
     },
     textContainer: {
       display: 'flex',

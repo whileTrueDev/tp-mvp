@@ -8,15 +8,15 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
   const contrastColor = theme.palette.text.primary;
   const defaultArrowSize = theme.spacing(1);
-  const itemHeight = theme.spacing(14);
   const downArrowColor = 'blue';
   const upArrowColor = 'red';
 
   return createStyles({
     listItem: {
-      height: itemHeight,
       color: contrastColor,
       paddingRight: theme.spacing(1.5),
+      paddingBottom: '11%',
+      position: 'relative',
     },
     [`listItem-${1}`]: {
       '& $frame': {
@@ -65,7 +65,7 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
       width: '100%',
       height: '100%',
       backgroundColor: theme.palette.background.paper,
-      padding: theme.spacing(3, 0.25, 1.5, 1),
+      padding: theme.spacing(3.5, 1, 2.5, 1.5),
       backgroundClip: 'content-box',
     },
     contentBox: {
