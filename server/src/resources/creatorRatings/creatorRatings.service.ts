@@ -12,6 +12,7 @@ import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity'
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { RankingsEntity } from '../rankings/entities/rankings.entity';
 import { PlatformType } from '../rankings/rankings.service';
+import { AdminRating } from './creatorRatings.controller';
 @Injectable()
 export class CreatorRatingsService {
   constructor(
@@ -25,6 +26,25 @@ export class CreatorRatingsService {
     private readonly rankingsRepository: Repository<RankingsEntity>,
 
   ) {}
+
+  /**
+   * 관리자페이지에서 평점 생성 요청시
+   * userId : truepointAdmin
+   * 인 데이터를 CreatorRatingsEntity에 생성
+   */
+  async createRatingByAdmin(data: AdminRating[]): Promise<any> {
+    try {
+      const result = await this.ratingsRepository.createQueryBuilder('rating')
+        .insert()
+        .values([
+          ...data,
+        ])
+        .execute();
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 
   /**
    * creatorId와 userIp로 평점데이터를 찾아보고
@@ -107,6 +127,7 @@ export class CreatorRatingsService {
           'Count(id) AS count',
         ])
         .where('creatorId = :creatorId', { creatorId })
+        .andWhere('createDate >= DATE_SUB(curDate(), INTERVAL 1 MONTH)')
         .getRawOne();
       return {
         average: Number(data.average),
@@ -391,7 +412,6 @@ export class CreatorRatingsService {
           'ratings.platform AS platform',
         ])
         .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
-        // .where('DATE_FORMAT(ratings.createDate, \'%Y-%m-%d\') = (curdate() - interval 1 day)')
         .groupBy('ratings.creatorId')
         .orderBy('AVG(ratings.rating)', 'DESC')
         .addOrderBy('COUNT(ratings.id)', 'DESC');

@@ -10,8 +10,10 @@ import React, { useMemo } from 'react';
 import {
   Redirect, useHistory, useParams,
 } from 'react-router-dom';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import CategoryChip from '../../atoms/CategoryChip';
 import useDialog from '../../util/hooks/useDialog';
+import CreatorRatingForAdmin from './CreatorRatingForAdmin';
 import CategoryField from './editableFields/CategoryField';
 import DescriptionField from './editableFields/DescriptionField';
 import HeroImageField from './editableFields/HeroImageField';
@@ -19,7 +21,6 @@ import YoutubeAddressField from './editableFields/YoutubeAddressField';
 
 const useStyles = makeStyles((theme) => ({
   section: {
-    height: 600,
     position: 'relative',
     paddingTop: theme.spacing(3),
     borderRadius: theme.spacing(0.5),
@@ -124,6 +125,16 @@ function CreatorDetail(): React.ReactElement {
             </Box>
           </Dialog>
         </Box>
+
+        {data && (
+        <CreatorRatingForAdmin
+          creatorId={
+            (data.afreeca && data.afreeca.afreecaId)
+            || (data.twitch && data.twitch.twitchId)
+          }
+          platform={data.afreeca ? 'afreeca' : 'twitch'}
+        />
+        )}
       </Box>
     </Box>
   );
