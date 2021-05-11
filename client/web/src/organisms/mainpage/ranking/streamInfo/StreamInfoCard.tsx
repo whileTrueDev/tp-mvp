@@ -77,7 +77,7 @@ export default function StreamInfoCard({
                 </Grid>
                 <Grid item>
                   <Typography>{`${stream.startDate} ~ ${stream.endDate}`}</Typography>
-                  <Typography>{`평균 시청자수 ${stream.viewer ? stream.viewer.toLocaleString() : 0} 명`}</Typography>
+                  <Typography>{`최고 시청자수 ${stream.viewer ? stream.viewer.toLocaleString() : 0} 명`}</Typography>
                   <Typography>{`채팅 발생량 ${stream.chatCount ? stream.chatCount.toLocaleString() : 0} 회`}</Typography>
                   {creator.twitch && twitchUrl && (
                   <Typography className={streamInfoCardClasses.linkText} onClick={() => handleChannelClick(twitchUrl)}>

@@ -9,7 +9,7 @@ import ScoreBar from './ScoreBar';
 export function ViewerCountDisplay(props: {viewer: number}): JSX.Element {
   const { viewer } = props;
   return (
-    <Typography component="span">{`평균 시청자수: ${viewer} 명`}</Typography>
+    <Typography component="span">{`최고 시청자수: ${viewer} 명`}</Typography>
   );
 }
 export interface InfoComponentProps{
