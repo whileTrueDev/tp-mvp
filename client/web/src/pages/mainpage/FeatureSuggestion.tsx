@@ -7,6 +7,7 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { MYPAGE_MAIN_MAX_WIDTH } from '../../assets/constants';
 import { FeatureProgressChip } from '../../atoms/Chip/FeatureProgressChip';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
@@ -17,6 +18,7 @@ import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import createPostItStyles from '../../utils/style/createPostitStyles';
+import { useFontStyle } from './Notice';
 
 const useStyles = makeStyles((theme) => ({
   featureSection: {
@@ -28,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
   },
   featureContainer: {
     position: 'relative',
-    width: 968,
+    width: '100%',
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
     margin: '64px auto',
     padding: theme.spacing(6, 4),
     '&:before': createPostItStyles(theme, 'left top'),
@@ -59,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FeatureSuggestionPage(): JSX.Element {
   const classes = useStyles();
+  const fontStyle = useFontStyle();
   const history = useHistory();
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
 
@@ -109,9 +113,13 @@ export default function FeatureSuggestionPage(): JSX.Element {
       <ProductHero />
       <section className={classes.featureSection}>
         <Paper elevation={0} className={classes.featureContainer}>
-          <Typography style={{ fontWeight: 'bold', lineHeight: 2.5 }} variant="h6">기능제안 게시판</Typography>
-          <Typography>트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해 주세요.</Typography>
-          <Typography>궁금하신 사항은 고객센터로 연락 부탁드립니다.</Typography>
+          <Typography className={fontStyle.title} variant="h6">기능제안 게시판</Typography>
+          <Typography
+            className={fontStyle.description}
+          >
+            트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해 주세요.
+          </Typography>
+          <Typography className={fontStyle.description}>궁금하신 사항은 고객센터로 연락 부탁드립니다.</Typography>
 
           {/* 기능제안 개별 보기 */}
           {selectedSuggestionId && loading && (

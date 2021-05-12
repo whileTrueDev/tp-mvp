@@ -23,7 +23,10 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.action.hover,
     },
   },
-  tableCell: { padding: theme.spacing(1) },
+  tableCell: {
+    padding: theme.spacing(1),
+    fontSize: theme.typography.body1.fontSize,
+  },
   commentCount: { marginLeft: theme.spacing(1), fontWeight: 'bold' },
   lockIcon: {
     verticalAlign: 'middle',
@@ -182,7 +185,11 @@ export default function FeatureTable({
           search: false,
           pageSize,
           pageSizeOptions: [8, 12],
-          headerStyle: { backgroundColor: theme.palette.primary.main, color: theme.palette.primary.contrastText },
+          headerStyle: {
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            fontSize: theme.typography.h6.fontSize,
+          },
           draggable: false,
           paginationType: 'stepped',
         }}

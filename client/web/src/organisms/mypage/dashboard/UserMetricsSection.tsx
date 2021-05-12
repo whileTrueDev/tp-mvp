@@ -95,7 +95,7 @@ export default function UserMetricsSection(): JSX.Element {
       const sortedData = d.sort((
         a, b,
       ) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-      const fanDelta = sortedData[sortedData.length - 1].fan - sortedData[0].fan;
+      // const fanDelta = sortedData[sortedData.length - 1].fan - sortedData[0].fan;
 
       let count = 0;
       const reduced: any = sortedData.reduce((prev, current) => {
@@ -104,17 +104,18 @@ export default function UserMetricsSection(): JSX.Element {
         prev1['평균 방송시간'] += current.airTime;
         prev1['평균 시청자'] += current.viewer;
         prev1['평균 채팅 발생수'] += current.chatCount;
-        prev1['평균 애청자 수'] += current.fan;
+        prev1['총 애청자 수'] += current.fan;
         return prev1;
       }, {
-        '평균 방송시간': 0, '평균 시청자': 0, '평균 채팅 발생수': 0, '평균 애청자 수': 0,
+        '평균 방송시간': 0, '평균 시청자': 0, '평균 채팅 발생수': 0, '총 애청자 수': 0,
       });
 
       result.push({ name: 'viewer', nameKr: '평균 시청자', value: Math.round(reduced['평균 시청자'] / count) });
       result.push({ name: 'airTime', nameKr: '평균 방송시간', value: Math.round(reduced['평균 방송시간'] / count) });
       result.push({ name: 'chatCount', nameKr: '평균 채팅 발생수', value: Math.round(reduced['평균 채팅 발생수'] / count) });
+      // 가장 최근 방송의 애청자수로 수정 @joni 21.05.10
       result.push({
-        name: 'fan', nameKr: '평균 애청자 수', value: Math.round(reduced['평균 애청자 수'] / count), delta: fanDelta,
+        name: 'fan', nameKr: '총 애청자 수', value: sortedData[sortedData.length - 1].fan,
       });
       return result;
     }

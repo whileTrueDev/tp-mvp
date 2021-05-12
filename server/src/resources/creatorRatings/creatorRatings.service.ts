@@ -1,5 +1,5 @@
 import {
-  BadRequestException, Injectable, InternalServerErrorException,
+  Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +12,7 @@ import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity'
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { RankingsEntity } from '../rankings/entities/rankings.entity';
 import { PlatformType } from '../rankings/rankings.service';
+import { AdminRating } from './creatorRatings.controller';
 @Injectable()
 export class CreatorRatingsService {
   constructor(
@@ -23,25 +24,25 @@ export class CreatorRatingsService {
     private readonly twitchRepository: Repository<PlatformTwitchEntity>,
     @InjectRepository(RankingsEntity)
     private readonly rankingsRepository: Repository<RankingsEntity>,
+
   ) {}
 
   /**
-   * rankings테이블에서 해당 creatorId를 가진 값이 존재하는지 확인한다
-   * 없으면 400 에러 발생시킴
-   * @param creatorId 
-   * @returns 
+   * 관리자페이지에서 평점 생성 요청시
+   * userId : truepointAdmin
+   * 인 데이터를 CreatorRatingsEntity에 생성
    */
-  private async findCreator(creatorId: string): Promise<RankingsEntity> {
+  async createRatingByAdmin(data: AdminRating[]): Promise<any> {
     try {
-      const creator = await this.rankingsRepository.findOne({
-        where: { creatorId },
-      });
-      if (!creator) {
-        throw new BadRequestException(`no creator with creatorId: ${creatorId}`);
-      }
-      return creator;
+      const result = await this.ratingsRepository.createQueryBuilder('rating')
+        .insert()
+        .values([
+          ...data,
+        ])
+        .execute();
+      return result;
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -56,8 +57,6 @@ export class CreatorRatingsService {
    */
   async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<CreatorRatingsEntity> {
     const { userId, rating, platform } = ratingPostDto;
-    // 우선 rankings 테이블에서 해당 creatorId가 존재하는지 찾는다
-    await this.findCreator(creatorId);
 
     // 해당 creator가 존재하는 경우 평점을 생성한다
     // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
@@ -95,7 +94,6 @@ export class CreatorRatingsService {
    * @returns 
    */
   async deleteRatings(creatorId: string, ip: string, userId?: string): Promise<string> {
-    await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
@@ -129,6 +127,7 @@ export class CreatorRatingsService {
           'Count(id) AS count',
         ])
         .where('creatorId = :creatorId', { creatorId })
+        .andWhere('createDate >= DATE_SUB(curDate(), INTERVAL 1 MONTH)')
         .getRawOne();
       return {
         average: Number(data.average),
@@ -149,7 +148,6 @@ export class CreatorRatingsService {
    * @returns 
    */
   async findOneRating(ip: string, creatorId: string): Promise<{score: number} | false> {
-    await this.findCreator(creatorId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
@@ -259,11 +257,11 @@ export class CreatorRatingsService {
     }
   }
 
-  // 어제 ~ 8일이전(1주일간) 날짜 'YYYY-MM-DD' 문자열로 반환
+  // 오늘 ~ 7일이전(1주일간) 날짜 'YYYY-MM-DD' 문자열로 반환
   // return ['2021-04-14','2021-04-15','2021-04-16','2021-04-17','2021-04-18','2021-04-19','2021-04-20']
   private getWeekDates(): string[] {
     return new Array(7).fill('').map((val, index) => (
-      dayjs().subtract(index + 1, 'days').format('YYYY-MM-DD')
+      dayjs().subtract(index, 'days').format('YYYY-MM-DD')
     )).reverse();
   }
 
@@ -308,8 +306,8 @@ export class CreatorRatingsService {
     FROM ${this.ratingsRepository.metadata.tableName}
     Where
       DATE_FORMAT(createDate, '%Y-%m-%d') 
-      BETWEEN (curdate() - interval 8 day)
-      AND (curdate() - interval 1 day)
+      BETWEEN (curdate() - interval 7 day)
+      AND (curdate())
     GROUP BY date, platform
     Order By date ASC
     `;
@@ -329,23 +327,28 @@ export class CreatorRatingsService {
   }
 
   /**
-   * 지난주(어제~8일전) 평점별 상위 10인의 정보와 랭킹순위 구하고
-   * 지지난주(9일전 ~ 16일전) 평점별 랭킹 순위 구해서
-   * 지난주 상위 10인의 주간평균평점과 랭킹변동순위 조회
+   * 이번주 시작일(월요일)~오늘 까지 평점별 상위 10인의 정보와 랭킹순위 구하고
+   * 지난주 시작일(지난주 월요일)~지난주 마지막날(지난주 일요일) 평점별 랭킹 순위 구해서
+   * 지난주 마지막날 상위 10인의 랭킹과 비교하여
+   * 오늘의 랭킹변동순위 조회
    * @returns 
    */
   async getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
-    const dates = this.getWeekDates();
+    const startDayOfThisWeek = dayjs().day(1); // 0 sunday ~ 6 saturday
+    const endDayOfThisWeek = startDayOfThisWeek.add(6, 'day');
+    const endDatOfPrevWeek = startDayOfThisWeek.subtract(1, 'day');
+    const startDayOfPrevWeek = endDatOfPrevWeek.subtract(1, 'week');
+
     const query = `
     SELECT 
-      Thisweek.creatorId AS creatorId,
-      Thisweek.platform AS platform,
-      IFNULL( (CAST(Prevweek.rownum AS SIGNED) - CAST(Thisweek.rownum AS SIGNED)), 9999) AS rankChange,
-      Thisweek.avgRating AS avgRating,
-      Thisweek.twitchStreamerName AS twitchStreamerName,
-      Thisweek.twitchLogo AS twitchLogo,
-      Thisweek.afreecaLogo AS afreecaLogo,
-      Thisweek.afreecaNickname AS afreecaNickname
+      This.creatorId AS creatorId,
+      This.platform AS platform,
+      IFNULL( (CAST(Prev.rownum AS SIGNED) - CAST(This.rownum AS SIGNED)), 9999) AS rankChange,
+      This.avgRating AS avgRating,
+      This.twitchStreamerName AS twitchStreamerName,
+      This.twitchLogo AS twitchLogo,
+      This.afreecaLogo AS afreecaLogo,
+      This.afreecaNickname AS afreecaNickname
     FROM (
       SELECT
         R.creatorId,
@@ -359,21 +362,21 @@ export class CreatorRatingsService {
       FROM ${this.ratingsRepository.metadata.tableName} R
         LEFT JOIN ${this.afreecaRepository.metadata.tableName} afreeca ON afreeca.afreecaId = R.creatorId
         LEFT JOIN ${this.twitchRepository.metadata.tableName} twitch ON twitch.twitchId = R.creatorId
-      WHERE TIMESTAMPDIFF(DAY, R.createDate, NOW())>=1 AND TIMESTAMPDIFF(DAY, R.createDate, NOW())<=8  
+      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= curdate()+1 
       GROUP BY R.creatorId
       ORDER BY rownum asc
       LIMIT 10
-    ) AS Thisweek
+    ) AS This
     LEFT OUTER JOIN
       (
       SELECT
         creatorId,
         ROW_NUMBER() OVER(ORDER BY AVG(rating) DESC) AS rownum
       FROM ${this.ratingsRepository.metadata.tableName}
-      WHERE TIMESTAMPDIFF(DAY, createDate, NOW()) >=9 AND TIMESTAMPDIFF(DAY, createDate, NOW()) <= 16
+      WHERE createDate >= DATE("${startDayOfPrevWeek.toISOString()}") AND createDate <= DATE("${startDayOfThisWeek.toISOString()}")
       GROUP BY creatorId
       ORDER BY rownum asc
-      ) AS Prevweek ON Thisweek.creatorId = Prevweek.creatorId;
+      ) AS Prev ON This.creatorId = Prev.creatorId;
     `;
 
     const data = await getConnection().query(query);
@@ -386,8 +389,8 @@ export class CreatorRatingsService {
       logo: d.platform === 'twitch' ? d.twitchLogo : d.afreecaLogo,
     }));
     return {
-      startDate: dates[0],
-      endDate: dates[dates.length - 1],
+      startDate: startDayOfThisWeek.format('YYYY-MM-DD'),
+      endDate: endDayOfThisWeek.format('YYYY-MM-DD'),
       rankingList: result,
     };
   }
@@ -408,7 +411,7 @@ export class CreatorRatingsService {
           'AVG(ratings.rating) AS rating',
           'ratings.platform AS platform',
         ])
-        .where('DATE_FORMAT(ratings.createDate, \'%Y-%m-%d\') = (curdate() - interval 1 day)')
+        .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
         .groupBy('ratings.creatorId')
         .orderBy('AVG(ratings.rating)', 'DESC')
         .addOrderBy('COUNT(ratings.id)', 'DESC');
@@ -424,10 +427,13 @@ export class CreatorRatingsService {
             'Afreeca.afreecaStreamerName AS afreecaStreamerName',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId');
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'afreeca') {
         qb = await baseQuery
           .addSelect([
@@ -435,9 +441,13 @@ export class CreatorRatingsService {
             'Afreeca.afreecaStreamerName AS afreecaStreamerName',
           ])
           .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .andWhere('ratings.platform =:platformType', { platformType: 'afreeca' })
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+          .andWhere('ratings.platform =:platformType', { platformType: 'afreeca' });
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'twitch') {
         qb = await baseQuery
           .addSelect([
@@ -446,9 +456,13 @@ export class CreatorRatingsService {
             'Twitch.twitchChannelName AS twitchChannelName',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere('ratings.platform =:platformType', { platformType: 'twitch' })
-          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+          .andWhere('ratings.platform =:platformType', { platformType: 'twitch' });
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+        }
       }
 
       const totalData = await qb.clone().getRawMany();

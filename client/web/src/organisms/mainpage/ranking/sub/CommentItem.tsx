@@ -17,6 +17,7 @@ import CommentForm from './CommentForm';
 import DeleteButton from './DeleteButton';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 import PasswordConfirmDialog from './PasswordConfirmDialog';
+import ReportConfirmDialog from './ReportConfirmDialog';
 
 export interface CommentItemProps extends Record<string, any>{
   /** 대상이 되는 댓글(commentId), 글(postId), 크리에이터(creatorId) */
@@ -58,7 +59,7 @@ export interface CommentItemProps extends Record<string, any>{
   childComment?: boolean;
 
   /** 신고하기 버튼 핸들러 */
-  onReport?: (commentId: number) => void;
+  onReport?: (commentId: number) => Promise<any>;
 
   /** 좋아용 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
   onClickLike?: (commentId: number) => Promise<any>;
@@ -109,6 +110,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
 
   const { open: passwordDialogOpen, handleOpen: openPasswordDialog, handleClose: closePasswordDialog } = useDialog();
   const { open: confirmDialogOpen, handleOpen: openConfirmDialog, handleClose: closeConfirmDialog } = useDialog();
+  const { open: reportDialogOpen, handleOpen: openReportDialog, handleClose: closeReportDialog } = useDialog();
 
   const [likeClicked, setLikeClicked] = useState<boolean>(isLiked);
   const [hateClicked, setHateClicked] = useState<boolean>(isHated);
@@ -238,11 +240,14 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
     }
   };
 
-  const report = useCallback(() => {
+  const reportComment = useCallback(() => {
     if (onReport) {
-      onReport(commentId);
+      onReport(commentId)
+        .then(() => {
+          closeReportDialog();
+        });
     }
-  }, [commentId, onReport]);
+  }, [closeReportDialog, commentId, onReport]);
 
   const time = dayjs(createDate).format('YYYY-MM-DD HH:mm:ss');
 
@@ -262,7 +267,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
               <Button
                 aria-label="신고하기"
                 className={classes.reportButton}
-                onClick={report}
+                onClick={openReportDialog}
               >
                 <img
                   src="/images/rankingPage/reportIcon.png"
@@ -370,6 +375,12 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
         open={confirmDialogOpen}
         onClose={closeConfirmDialog}
         callback={deleteComment}
+      />
+
+      <ReportConfirmDialog
+        open={reportDialogOpen}
+        onClose={closeReportDialog}
+        callback={reportComment}
       />
     </div>
   );

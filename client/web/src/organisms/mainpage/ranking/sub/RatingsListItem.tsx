@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { WeeklyRatingRankingItem } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import Rating from '@material-ui/lab/Rating';
 import classnames from 'classnames';
+import { Textfit } from 'react-textfit';
 import { useRatingsListItemStyles } from '../style/RatingList.style';
 
 export interface RatingsListItemProps extends WeeklyRatingRankingItem{
@@ -21,9 +22,9 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
   return (
     <ListItem className={classnames(classes.listItem, classes[`listItem-${order}`])}>
       <div className={classes.contentBackground} />
-      <div className={classes.frame} />
+
       <Grid container className={classes.contentBox}>
-        <Grid container item xs={2} direction="column" alignItems="center" justify="center">
+        <Grid container item xs={1} direction="column" alignItems="center" justify="center">
           <Typography className={classes.orderText}>{order}</Typography>
           <img
             className={classnames(classes.platformLogo, { twitch: platform === 'twitch' }, { afreeca: platform === 'afreeca' })}
@@ -31,18 +32,19 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
             alt={`${platform}로고`}
           />
         </Grid>
-        <Grid container item xs={4} alignItems="center" wrap="nowrap">
+        <Grid container item xs={5} alignItems="center" wrap="nowrap">
           <ListItemAvatar>
             <Avatar className={classes.avatarImage} alt={`${nickname} 프로필 이미지`} src={logo} />
           </ListItemAvatar>
           <ListItemText primary={(
             <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
               <Typography
+                component="div"
                 className={classnames(
                   classes.creatorName, { [classes.black]: order && order < 5 },
                 )}
               >
-                {nickname}
+                <Textfit mode="single" max={20}>{nickname}</Textfit>
               </Typography>
             </Link>
         )}
@@ -53,7 +55,6 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
             className={classes.rating}
             value={averageRating / 2}
             precision={0.1}
-            size="large"
             readOnly
           />
           <Typography
@@ -74,6 +75,7 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
           </Typography>
         </Grid>
       </Grid>
+      <div className={classes.frame} />
 
     </ListItem>
   );

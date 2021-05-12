@@ -25,6 +25,9 @@ type ColorIndex = keyof Color; // material ui color 인덱스값
 export function toPolarAreaData(list: DailyTotalViewersItemData[], colors: Color): CustomPointOption[] {
   const odd: CustomPointOption[] = [];
   const even: CustomPointOption[] = [];
+  if (list.length === 0) {
+    return [];
+  }
   const tempList = [...list];
 
   // 만약 당일 방송한 사람이 10인 이하인 경우 10개를 채워서 위치를 맞춘다

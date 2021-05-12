@@ -125,6 +125,18 @@ export class CommunityBoardController {
   }
 
   /**
+   * 게시글 비추천 POST /community/posts/:postId/notRecommend
+   * @param postId 
+   * @returns 
+   */
+  @Post('posts/:postId/notRecommend')
+  notRecommendPost(
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<number> {
+    return this.communityBoardService.notRecommendPost(postId);
+  }
+
+  /**
    * 게시글 조회 - 조회수만 올림 POST /community/posts/:postId/hit
    * 
    * @param postId 

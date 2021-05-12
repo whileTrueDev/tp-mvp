@@ -38,7 +38,7 @@ export class RankingsController {
    * GET /rankings/top-ten?column=smile&skip=
    * @param column 'smile'| 'frustrate'| 'admire'| 'cuss' | 'viewer'
    * @param skip number  해당 개수만큼 데이터 이후의 데이터를 가져옴
-   * @param categoryId 크리에이터 카테고리 필터
+   * @param categoryId 크리에이터 카테고리 필터  CreatorCategoryTest 테이블에 있는 값, 0인경우 전체카테고리 의미
    * @return
    * {rankingData : {
                      creatorId: string;
@@ -59,9 +59,10 @@ export class RankingsController {
   getTopTenRank(
       @Query('column', new ValidationPipe()) column: ColumnType,
       @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
-      @Query('categoryId', new DefaultValuePipe(1), ParseIntPipe) categoryId: number,
+      @Query('categoryId', new DefaultValuePipe(0), ParseIntPipe) categoryId: number,
       @Query('platform', new DefaultValuePipe('all')) platform: PlatformType,
   ): Promise<RankingDataType> {
+    // categoryId === 0 : 전체
     return this.rankingsService.getTopTenRank(column, skip, categoryId, platform);
   }
 

@@ -48,7 +48,7 @@ export class RankingsService {
       .select('creatorName')
       .addSelect('creatorId')
       .addSelect('platform')
-      .where(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 MONTH)`)
+      .where(`streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 MONTH)`)
       .groupBy('creatorId')
       .addGroupBy('platform')
       .having('COUNT(*) >= 10')
@@ -175,7 +175,7 @@ export class RankingsService {
           ])
           .from(RankingsEntity, 'rankings')
           .groupBy('rankings.creatorId')
-          .where(`createDate > DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
+          .where(`streamDate > DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
         'MaxValueTable')
         .from(RankingsEntity, 'T1')
         .groupBy('T1.creatorId')
@@ -193,10 +193,14 @@ export class RankingsService {
             'Afreeca.logo AS afreecaProfileImage',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId');
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'twitch') {
         // 트위치 추가 쿼리
         qb = await baseQuery
@@ -205,9 +209,12 @@ export class RankingsService {
             'Twitch.twitchChannelName AS twitchChannelName',
           ])
           .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
-          .leftJoin('Twitch.categories', 'twitchCategories')
-          .andWhere('T1.platform =:platformType', { platformType: 'twitch' })
-          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+          .andWhere('T1.platform =:platformType', { platformType: 'twitch' });
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Twitch.categories', 'twitchCategories')
+            .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+        }
       } else if (platformType === 'afreeca') {
         // 아프리카 추가 쿼리
         qb = await baseQuery
@@ -215,9 +222,13 @@ export class RankingsService {
             'Afreeca.logo AS afreecaProfileImage',
           ])
           .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
-          .leftJoin('Afreeca.categories', 'afreecaCategories')
-          .andWhere('T1.platform =:platformType', { platformType: 'afreeca' })
-          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+          .andWhere('T1.platform =:platformType', { platformType: 'afreeca' });
+
+        if (categoryId !== 0) {
+          qb = await qb
+            .leftJoin('Afreeca.categories', 'afreecaCategories')
+            .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+        }
       }
 
       // 해당 조건에 맞는 offset, limit 적용하지 않은 총 데이터 개수
@@ -359,7 +370,7 @@ export class RankingsService {
           'rankings.creatorId AS creatorId',
         ])
         .where('rankings.platform =:platform', { platform })
-        .andWhere(`createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`) // 가장 최근 분석시간으로부터 1일 이내
+        .andWhere(`streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`) // 가장 최근 분석시간으로부터 1일 이내
         .groupBy('rankings.creatorId')
         .orderBy('maxViewer', 'DESC')
         .limit(10)
@@ -416,16 +427,16 @@ export class RankingsService {
     FROM(
       SELECT A.*, ROW_NUMBER() OVER (partition by cdate, platform order by maxViewer DESC) AS "rank"
       FROM (
-        SELECT creatorId, createDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(createDate,"%Y-%m-%d") AS cdate
+        SELECT creatorId, streamDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(streamDate,"%Y-%m-%d") AS cdate
         FROM Rankings
-        WHERE createDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 WEEK)
+        WHERE streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 WEEK)
         Group by creatorId, cdate
-        Order by platform, createDate DESC, maxViewer DESC
+        Order by platform, streamDate DESC, maxViewer DESC
       ) AS A
     ) AS B
     where "rank" <= 10 
     group by platform, cdate
-    order by platform, createDate DESC;`;
+    order by platform, streamDate DESC;`;
 
     try {
       const data = await getConnection().query(query);

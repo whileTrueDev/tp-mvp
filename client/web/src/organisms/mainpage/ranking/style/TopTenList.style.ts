@@ -140,6 +140,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         color: theme.palette.grey[500],
       },
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       '&>*': {
         fontWeight: theme.typography.fontWeightMedium,

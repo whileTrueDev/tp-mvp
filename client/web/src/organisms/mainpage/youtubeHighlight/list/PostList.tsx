@@ -1,5 +1,7 @@
 import React, { memo } from 'react';
-import { Typography, TablePagination, Button } from '@material-ui/core';
+import {
+  Typography, TablePagination, Button,
+} from '@material-ui/core';
 import {
   makeStyles, createStyles, Theme, useTheme,
 } from '@material-ui/core/styles';
@@ -63,8 +65,8 @@ function PostList(props: PostListProps): JSX.Element {
         columns={[
           {
             title: '방송인',
-            width: '25%',
-            field: 'nickName',
+            width: '40%',
+            field: 'nickname',
             render: (rowData: EditingPointListResType): JSX.Element => (
               <>
                 <AvatarWithName name={rowData.nickname} logo={rowData.logo} />
@@ -83,8 +85,10 @@ function PostList(props: PostListProps): JSX.Element {
           },
           {
             title: '최근 방송',
-            width: '25%',
+            width: '10%',
             field: 'endDate',
+            searchable: false,
+            sorting: false,
             render: (rowData: EditingPointListResType): JSX.Element => (
               <Typography variant="subtitle1" align="center" className={classes.columnText}>
                 {getDateDisplay(rowData.endDate)}
@@ -95,6 +99,8 @@ function PostList(props: PostListProps): JSX.Element {
             title: '편집점 살펴보기',
             width: '30%',
             align: 'center',
+            searchable: false,
+            sorting: false,
             render: (rowData: EditingPointListResType): JSX.Element => (
               <Button
                 className={classes.columnButton}
@@ -124,7 +130,12 @@ function PostList(props: PostListProps): JSX.Element {
           pageSizeOptions: [30, 50],
           searchFieldAlignment: 'right',
           headerStyle: {
-            textAlign: 'center', fontWeight: 600, fontSize: 20, backgroundColor: theme.palette.primary.main, color: theme.palette.common.white,
+            textAlign: 'center',
+            fontWeight: 600,
+            minWidth: 170,
+            fontSize: theme.typography.body1.fontSize,
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.common.white,
           },
           draggable: false,
           paginationType: 'stepped',

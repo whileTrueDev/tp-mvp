@@ -7,11 +7,31 @@ import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interfac
 import { CreatorRatingsService } from './creatorRatings.service';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformType } from '../rankings/rankings.service';
+
+export type AdminRating = {
+  createDate: string,
+  creatorId: string,
+  userIp: string,
+  platform: 'twitch' | 'afreeca',
+  rating: number,
+  userId: 'truepointAdmin'
+}
 @Controller('ratings')
 export class CreatorRatingsController {
   constructor(
     private readonly ratingsService: CreatorRatingsService,
   ) {}
+
+  /**
+   * 관리자페이지에서 방송인에게 평점 매기기 - 
+   * 사용자가 늘어나기 전까지 임시로 관리자페이지에서 평점 매길 수 있도록 함
+   */
+  @Post('/admin')
+  createRatingByAdmin(
+    @Body() adminRating: AdminRating[],
+  ): Promise<any> {
+    return this.ratingsService.createRatingByAdmin(adminRating);
+  }
 
   /**
    * 평점 생성 & 수정 라우터

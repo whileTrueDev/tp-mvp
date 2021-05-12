@@ -29,6 +29,14 @@ const useHotPostBoxStyle = makeStyles((theme: Theme) => createStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  title: {
+    '&>*': {
+      fontSize: theme.spacing(3),
+    },
+  },
+  loadMoreButton: {
+    fontSize: theme.spacing(2.5),
+  },
 }));
 
 export interface HotPostBoxProps {
@@ -62,12 +70,12 @@ export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
     <section className={classes.hotPostBox}>
       <Divider />
       <div className={classes.header}>
-        <div>
+        <div className={classes.title}>
           <Typography component="span">{platform === 'twitch' ? '트위치' : '아프리카'}</Typography>
           <Typography component="span" color="primary">HOT</Typography>
           <Typography component="span"> 게시물</Typography>
         </div>
-        <Button color="primary" onClick={buttonHandler}>+더보기</Button>
+        <Button className={classes.loadMoreButton} color="primary" onClick={buttonHandler}>+더보기</Button>
       </div>
       <div className={classes.listContainer}>
         {error && <Typography>데이터를 불러올 수 없습니다..</Typography>}

@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import CommentItem from '../../ranking/sub/CommentItem';
-import { isReportedIn24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
+import { isWithin24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
@@ -78,7 +78,7 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
   const onReport = useCallback((replyId: number) => {
     const BOARD_REPLY_REPORT_LIST_KEY = 'communityReplyReport';
     const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(BOARD_REPLY_REPORT_LIST_KEY) || '[]');
-    const commentsRecentlyReported = reportList.filter((item) => isReportedIn24Hours(item.date));
+    const commentsRecentlyReported = reportList.filter((item) => isWithin24Hours(item.date));
     const commentIds = commentsRecentlyReported.map((item) => item.id);
 
     const currentCommentId = replyId;
@@ -86,15 +86,16 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
     if (commentIds.includes(currentCommentId)) {
       ShowSnack('이미 신고한 댓글입니다', 'error', enqueueSnackbar);
       localStorage.setItem(BOARD_REPLY_REPORT_LIST_KEY, JSON.stringify([...commentsRecentlyReported]));
-      return;
+      return new Promise((res, rej) => res(true));
     }
     // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
-    axios.post(`/community/replies/report/${replyId}`)
+    return axios.post(`/community/replies/report/${replyId}`)
       .then((res) => {
         localStorage.setItem(
           BOARD_REPLY_REPORT_LIST_KEY,
           JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]),
         );
+        return new Promise((resolve, reject) => resolve(res));
       })
       .catch((err) => {
         ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);

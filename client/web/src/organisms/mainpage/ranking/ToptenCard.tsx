@@ -22,6 +22,7 @@ import {
   usePlatformTabsStyle, usePlatformTabItemStyle,
 } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
+import axios from '../../../utils/axios';
 
 export type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer'|'rating';
 type MainTabColumns = {
@@ -41,21 +42,12 @@ const mainTabColumns: MainTabColumns[] = [
   { column: 'cuss', label: '욕점수', icon: <CussIcon /> },
 ];
 
-// 하위 카테고리 탭 목록
-const categoryTabColumns = [
-  { categoryId: 1, label: '버라이어티 BJ' },
-  { categoryId: 2, label: '종합게임엔터 BJ' },
-  { categoryId: 3, label: '보이는 라디오 BJ' },
-  { categoryId: 4, label: '롤 BJ' },
-  { categoryId: 5, label: '주식투자' },
-];
-
 type PlatformFilterType = 'all' | 'twitch' | 'afreeca';
 // 플랫폼 필터 탭 목록
 const platformTabColumns: {label: string, platform: PlatformFilterType}[] = [
   { label: '전체', platform: 'all' },
-  { label: '트위치', platform: 'twitch' },
   { label: '아프리카', platform: 'afreeca' },
+  { label: '트위치', platform: 'twitch' },
 ];
 
 interface loadDataArgs {
@@ -75,6 +67,10 @@ function TopTenCard(): JSX.Element {
   const platformTabItemStyle = usePlatformTabItemStyle();
   const tabRef = useRef<any>(null);
   const scrollRef = useRef<any>(null);
+
+  const [categoryTabColumns, setCategoryTabColumns] = useState<{categoryId: number, label: string}[]>([
+    { categoryId: 0, label: '전체' },
+  ]);
 
   // axios요청
   // 탭 별 상위 10인 요청
@@ -160,7 +156,7 @@ function TopTenCard(): JSX.Element {
     } else {
       setWeeklyGraphLabel('주간 점수 그래프');
     }
-  }, [categoryTabIndex, platformTabIndex, loadData]);
+  }, [categoryTabColumns, categoryTabIndex, platformTabIndex, loadData]);
 
   const onCategoryTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setCategoryTabIndex(index);
@@ -169,7 +165,7 @@ function TopTenCard(): JSX.Element {
     const { platform } = platformTabColumns[platformTabIndex];
 
     loadData({ column, categoryId, platform });
-  }, [loadData, mainTabIndex, platformTabIndex]);
+  }, [categoryTabColumns, loadData, mainTabIndex, platformTabIndex]);
 
   const onPlatformTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setPlatformTabIndex(index);
@@ -178,7 +174,7 @@ function TopTenCard(): JSX.Element {
     const { platform } = platformTabColumns[index];
 
     loadData({ column, categoryId, platform });
-  }, [categoryTabIndex, loadData, mainTabIndex]);
+  }, [categoryTabColumns, categoryTabIndex, loadData, mainTabIndex]);
 
   const loadMoreData = useCallback(() => {
     let request: (config?: AxiosRequestConfig | undefined,
@@ -206,8 +202,21 @@ function TopTenCard(): JSX.Element {
     }).catch((e) => {
       console.error(e);
     });
-  }, [categoryTabIndex, dataToDisplay.rankingData.length,
+  }, [categoryTabColumns, categoryTabIndex, dataToDisplay.rankingData.length,
     getDailyRatingData, mainTabIndex, platformTabIndex, refetch]);
+
+  const loadCategories = () => {
+    axios.get('/creator-category')
+      .then((res) => {
+        const data = res.data.map((d: {categoryId: number; name: string;}) => (
+          { categoryId: d.categoryId, label: d.name }
+        ));
+        setCategoryTabColumns((prev) => ([...prev, ...data]));
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   useEffect(() => {
     // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
@@ -220,6 +229,9 @@ function TopTenCard(): JSX.Element {
 
     // 초기 데이터 불러옴
     loadData({ column, categoryId, platform });
+    // 크리에이터 카테고리 불러옴
+    loadCategories();
+
   // 마운트 이후 한번만 실행될 훅
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     color: theme.palette.text.primary,
+    fontSize: theme.typography.h6.fontSize,
   },
   listContainer: {
     position: 'relative',

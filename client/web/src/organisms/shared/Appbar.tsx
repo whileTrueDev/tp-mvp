@@ -1,6 +1,6 @@
 import {
-  Button, Hidden, IconButton, Menu,
-  MenuItem, Typography,
+  Button, Hidden, IconButton, Menu, MenuList,
+  MenuItem, Typography, Popover,
 } from '@material-ui/core';
 import MuiAppBar from '@material-ui/core/AppBar';
 import {
@@ -8,11 +8,10 @@ import {
 } from '@material-ui/core/styles';
 import {
   Brightness4 as DarkThemeIcon,
-  // ListAltOutlined,
   Brightness7 as LightThemeIcon, Dashboard, MoreVert,
 } from '@material-ui/icons';
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT } from '../../assets/constants';
 import TruepointLogo from '../../atoms/TruepointLogo';
@@ -52,15 +51,30 @@ const useStyles = makeStyles((theme) => createStyles({
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: { display: 'none' },
   },
+  linkItem: {
+    position: 'relative',
+  },
   link: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(4),
     color: theme.palette.text.primary,
     opacity: 0.8,
-    '&:hover': { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1 },
+    '&:hover': {
+      textShadow: theme.shadows[7],
+      opacity: 1,
+    },
   },
-  selected: { textShadow: '0 4px 8px rgba(0, 0, 0, 0.24)', opacity: 1, '& $linkText': { fontSize: theme.typography.h6.fontSize } },
-  linkText: { fontWeight: 'bold' },
+  selected: {
+    textShadow: theme.shadows[7],
+    opacity: 1,
+    '& $linkText': {
+      fontSize: theme.typography.h5.fontSize,
+    },
+  },
+  linkText: {
+    fontWeight: 'bold',
+    fontSize: theme.typography.h6.fontSize,
+  },
   logo: {
     width: 214,
     height: 74,
@@ -116,6 +130,19 @@ const useStyles = makeStyles((theme) => createStyles({
   darkModeIcon: {
     display: theme.palette.type === 'dark' ? 'none' : 'block',
   },
+
+}));
+
+const usePopoverStyles = makeStyles((theme) => ({
+  popover: {
+    position: 'relative',
+    width: '100%',
+    pointerEvents: 'none',
+  },
+  paper: {
+    padding: theme.spacing(1),
+    pointerEvents: 'auto',
+  },
 }));
 
 interface AppBarProps {
@@ -127,6 +154,7 @@ export default function AppBar({
 }: AppBarProps): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
+  const popoverStyles = usePopoverStyles();
   const theme = useTheme<TruepointTheme>();
 
   // 현재 활성화된 탭을 구하는 함수
@@ -147,11 +175,20 @@ export default function AppBar({
     {
       name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
     },
-    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
-    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
+    {
+      name: '인방랭킹',
+      path: '/ranking',
+      activeRouteString: '/ranking',
+      sub: [
+        { name: '인방랭킹', path: '/ranking' },
+        { name: '방송인검색', path: '/ranking/search' },
+      ],
+    },
+    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
     { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
     { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
-    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
+    { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
+    { name: 'About us', path: '/about-us', activeRouteString: '/about-us' },
   ];
 
   const darkModeToggleButtonContent = (
@@ -181,15 +218,28 @@ export default function AppBar({
         </MenuItem>
       )}
       {links.slice(1).map((link) => (
-        <MenuItem
-          key={link.path.slice(1)}
-          className={classnames(classes.menuItem, classes.mobileText)}
-          component={Link}
-          to={link.path}
-          button
-        >
-          <Typography>{link.name}</Typography>
-        </MenuItem>
+        link.sub ? [
+          link.sub.map((subLink) => (
+            <MenuItem
+              key={subLink.path}
+              className={classnames(classes.menuItem, classes.mobileText)}
+              component={Link}
+              to={subLink.path}
+              button
+            >
+              <Typography>{subLink.name}</Typography>
+            </MenuItem>
+          )),
+        ] : [
+          <MenuItem
+            className={classnames(classes.menuItem, classes.mobileText)}
+            component={Link}
+            to={link.path}
+            button
+          >
+            <Typography>{link.name}</Typography>
+          </MenuItem>,
+        ]
       ))}
 
       <MenuItem
@@ -239,6 +289,22 @@ export default function AppBar({
     }
   }, [variant]);
 
+  /**
+   * 인방랭킹 하위 탭 
+   * 현재 하나뿐(인방랭킹 - 방송인검색)이라 임시로 만듦
+   * 추후 수정 필요
+   */
+  const popoverAnchor = useRef<any>(null);
+  const [popoverOpen, setPopoverOpen] = useState<boolean>(false);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setPopoverOpen(true);
+  };
+
+  const handlePopoverClose = () => {
+    setPopoverOpen(false);
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -259,17 +325,63 @@ export default function AppBar({
 
               <div className={classes.links}>
                 {links.map((link) => (
-                  <div key={link.name}>
+                  <div className={classes.linkItem} key={link.name}>
                     {!link.hidden && (
-                    <Button
-                      component={Link}
-                      to={link.path}
-                      className={classnames(classes.link, {
-                        [classes.selected]: isActiveRoute(link.activeRouteString),
-                      })}
-                    >
-                      <Typography className={classes.linkText}>{link.name}</Typography>
-                    </Button>
+                      <>
+                        <Button
+                          ref={link.sub ? popoverAnchor : null}
+                          component={Link}
+                          to={link.path}
+                          className={classnames(classes.link, {
+                            [classes.selected]: isActiveRoute(link.activeRouteString),
+                          })}
+                          onClick={link.sub ? handlePopoverOpen : undefined}
+                          onMouseEnter={link.sub ? handlePopoverOpen : undefined}
+                          onMouseLeave={link.sub ? handlePopoverClose : undefined}
+                        >
+                          <Typography noWrap className={classes.linkText}>{link.name}</Typography>
+                        </Button>
+                        {/* 
+                        인방랭킹 하위 탭 
+                        현재 하나뿐(인방랭킹 - 방송인검색)이라 임시로 만듦
+                        추후 수정 필요
+                        */}
+                        {link.sub && (
+                        <Popover
+                          className={popoverStyles.popover}
+                          classes={{
+                            paper: popoverStyles.paper,
+                          }}
+                          open={popoverOpen}
+                          anchorEl={popoverAnchor.current}
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                          }}
+                          transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                          }}
+                          onClose={handlePopoverClose}
+                          PaperProps={{ onMouseEnter: handlePopoverOpen, onMouseLeave: handlePopoverClose }}
+                          disableScrollLock
+                        >
+                          <MenuList>
+                            {link.sub.map((sub) => (
+                              <MenuItem
+                                key={sub.path}
+                                component={Link}
+                                to={sub.path}
+                                button
+                              >
+                                {sub.name}
+                              </MenuItem>
+                            ))}
+                          </MenuList>
+
+                        </Popover>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}

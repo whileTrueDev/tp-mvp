@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useHistory, useParams } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
@@ -12,6 +12,21 @@ import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import createPostItStyles from '../../utils/style/createPostitStyles';
+import { MYPAGE_MAIN_MAX_WIDTH } from '../../assets/constants';
+
+export const useFontStyle = makeStyles((theme: Theme) => createStyles({
+  title: {
+    fontSize: theme.typography.h4.fontSize,
+    fontWeight: 'bold',
+    lineHeight: 2.5,
+  },
+  description: {
+    fontSize: theme.typography.h5.fontSize,
+    [theme.breakpoints.down('md')]: {
+      fontSize: theme.typography.body1.fontSize,
+    },
+  },
+}));
 
 const useStyles = makeStyles((theme) => ({
   noticeSection: {
@@ -23,9 +38,10 @@ const useStyles = makeStyles((theme) => ({
   },
   noticeContainer: {
     position: 'relative',
-    width: 968,
+    width: '100%',
+    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
     margin: '64px auto',
-    padding: theme.spacing(6, 4),
+    padding: theme.spacing(9),
     '&:before': createPostItStyles(theme, 'left top'),
   },
   contents: { marginTop: theme.spacing(2) },
@@ -33,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Notice(): JSX.Element {
   const classes = useStyles();
+  const fontStyle = useFontStyle();
   const history = useHistory();
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(8);
@@ -71,8 +88,8 @@ export default function Notice(): JSX.Element {
       <ProductHero />
       <section className={classes.noticeSection}>
         <Paper elevation={0} className={classes.noticeContainer}>
-          <Typography style={{ fontWeight: 'bold', lineHeight: 2.5 }} variant="h6">공지사항</Typography>
-          <Typography>기능개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다.</Typography>
+          <Typography className={fontStyle.title} variant="h6">공지사항</Typography>
+          <Typography className={fontStyle.description}>기능개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다.</Typography>
 
           {/* 공지사항 개별 보기 */}
           {selectedNoticeId && !loading && data && (
