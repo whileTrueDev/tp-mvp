@@ -23,7 +23,7 @@ SELECT
   A.title, 
   followerCount AS fan, 
   airTime, 
-  ROUND(AVG(viewerCount)) AS viewer, 
+  ROUND(MAX(viewerCount)) AS viewer, 
   'twitch' AS platform
 FROM
 (

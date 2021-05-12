@@ -9,7 +9,7 @@ const getDateFormat = (_date1) => {
 };
 
 const query = (conditionQuery) => `
-SELECT A.*, ROUND(AVG(viewer)) as viewer, COUNT(*) AS chatCount, 'youtube' AS platform
+SELECT A.*, ROUND(MAX(viewer)) as viewer, COUNT(*) AS chatCount, 'youtube' AS platform
 FROM 
 (
 SELECT 
