@@ -71,6 +71,7 @@ export default function Chart({
       lineColor: theme.palette.primary.main,
       color: theme.palette.primary.main,
       fillOpacity: 0.5,
+      cursor: 'pointer',
     }],
     xAxis: {
       crosshair: true,
@@ -162,8 +163,8 @@ export default function Chart({
       },
     });
 
+    const chartRef = highchartsRef.current?.chart;
     if (highlight.start_index) {
-      const chartRef = highchartsRef.current?.chart;
       const chartxAxisRef = highchartsRef.current?.chart.xAxis[0];
       const chartDataRef = highchartsRef.current?.chart.series[0].data;
       const clickedxAxisData = totalData[highlight.start_index].x;
@@ -188,6 +189,9 @@ export default function Chart({
           },
         });
       }
+    } else if (chartRef) {
+      chartRef.xAxis[0].removePlotBand('plot-band');
+      chartRef.zoomOut();
     }
 
     setChartOptions({
@@ -211,13 +215,6 @@ export default function Chart({
       },
     });
   }, [highlight, themeType, theme.palette, totalData, dataOption]);
-
-  useEffect(() => {
-    const chartRef = highchartsRef.current?.chart;
-    if (chartRef && !highlight.start_index) {
-      chartRef.xAxis[0].removePlotBand('plot-band');
-    }
-  }, [chartType, highlight]);
 
   return (
     <div>

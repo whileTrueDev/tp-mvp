@@ -16,7 +16,7 @@ const styles = makeStyles((theme) => ({
   },
   selectedRow: {
     height: 30,
-    background: `linear-gradient(to right, ${theme.palette.error.light}, ${theme.palette.error.main})`,
+    background: `linear-gradient(to right, ${theme.palette.primary.light}, ${theme.palette.primary.dark})`,
   },
 }));
 
@@ -156,7 +156,7 @@ export default function MaterialTable({
           search: false,
           pageSize: 5,
           pageSizeOptions: [5, 10],
-          headerStyle: { backgroundColor: '#929ef8', color: 'white', padding: 10 },
+          headerStyle: { backgroundColor: '#f29551', color: 'white', padding: 10 },
           draggable: false,
           paginationType: 'stepped',
           showTitle: false,
