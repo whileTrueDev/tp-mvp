@@ -19,7 +19,8 @@ import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
 import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import {
-  LogedInExpressRequest, UserLoginPayload,
+  LogedInExpressRequest,
+  // UserLoginPayload,
 } from '../../interfaces/logedInUser.interface';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import getFrontHost from '../../utils/getFrontHost';
@@ -53,29 +54,31 @@ export class AuthController {
 
   // 로그인 컨트롤러
   @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(
-    @Body('stayLogedIn') stayLogedIn: boolean,
-    @Request() req: express.Request,
-    @Res() res: express.Response,
-  ): Promise<void> {
-    const user = req.user as UserLoginPayload;
-    const {
-      accessToken, refreshToken,
-    } = await this.authService.login(user, stayLogedIn);
+  /** 트루포인트 2.5 로그인 기능 없어서 주석처리 */
+  // @Post('login')
+  // async login(
+  //   @Body('stayLogedIn') stayLogedIn: boolean,
+  //   @Request() req: express.Request,
+  //   @Res() res: express.Response,
+  // ): Promise<void> {
+  //   const user = req.user as 
+  // ;
+  //   const {
+  //     accessToken, refreshToken,
+  //   } = await this.authService.login(user, stayLogedIn);
 
-    // *************************************
-    // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
+  //   // *************************************
+  //   // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
 
-    // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
-    // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
-    if (user.twitch.twitchId) this.usersService.refreshTwitchInfo(user.twitch.twitchId);
-    if (user.youtube.youtubeId) this.usersService.refreshYoutubeInfo(user.youtube.youtubeId);
+  //   // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
+  //   // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
+  //   if (user.twitch.twitchId) this.usersService.refreshTwitchInfo(user.twitch.twitchId);
+  //   if (user.youtube.youtubeId) this.usersService.refreshYoutubeInfo(user.youtube.youtubeId);
 
-    // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
-    res.cookie('refresh_token', refreshToken, { httpOnly: true });
-    res.send({ access_token: accessToken });
-  }
+  //   // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
+  //   res.cookie('refresh_token', refreshToken, { httpOnly: true });
+  //   res.send({ access_token: accessToken });
+  // }
 
   /**
    * 패스워드가 맞는지 확인하여 true , false를 반환하는 컨트롤러로,

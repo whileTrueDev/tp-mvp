@@ -18,13 +18,14 @@ import defaultTheme from './theme';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
-import Mypage from './pages/mypage/layouts/MypageLayout';
 import PublickMypage from './pages/mainpage/PublicMypage';
 import KakaoTalk from './organisms/shared/KakaoTalkButton';
-import Login from './pages/mainpage/Login';
-import Regist from './pages/mainpage/Regist';
-import FindId from './pages/others/FindId';
-import FindPassword from './pages/others/FindPassword';
+// ** 트루포인트 2.5기준 로그인&회원가입 기능이 없으므로 페이지 주석처리 **
+// import Mypage from './pages/mypage/layouts/MypageLayout';
+// import Login from './pages/mainpage/Login';
+// import Regist from './pages/mainpage/Regist';
+// import FindId from './pages/others/FindId';
+// import FindPassword from './pages/others/FindPassword';
 import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
 import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
 import CommunityBoard from './pages/mainpage/CommunityBoard';
@@ -34,7 +35,7 @@ import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
 import { TruepointTheme } from './interfaces/TruepointTheme';
 import Notice from './pages/mainpage/Notice';
-// 트루포인트 2.5 로그인 기능 추가 전이라 주석처리
+// ** 트루포인트 2.5기준 로그인&회원가입 기능이 없으므로 페이지 주석처리 **
 // import useAutoLogin from './utils/hooks/useAutoLogin';
 // import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
 
@@ -113,11 +114,12 @@ function Index(): JSX.Element {
             <Switch>
               <Route exact path="/" component={Ranking} />
               <Route exact path="/about-us" component={Main} />
-              <Route exact path="/signup" component={Regist} />
-              <Route exact path="/signup/completed" component={Regist} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/find-id" component={FindId} />
-              <Route exact path="/find-pw" component={FindPassword} />
+              {/** 트루포인트 2.5기준 로그인&회원가입 기능이 없으므로 페이지 주석처리 * */}
+              {/* <Route exact path="/signup" component={Regist} /> */}
+              {/* <Route exact path="/signup/completed" component={Regist} /> */}
+              {/* <Route exact path="/login" component={Login} /> */}
+              {/* <Route exact path="/find-id" component={FindId} /> */}
+              {/* <Route exact path="/find-pw" component={FindPassword} /> */}
               <Route exact path="/notice" component={Notice} />
               <Route exact path="/notice/:id" component={Notice} />
               <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
@@ -130,7 +132,8 @@ function Index(): JSX.Element {
               <Route path="/ranking" component={Ranking} />
               <Route exact path="/highlight-list" component={YoutubeHighlightList} />
               <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
-              <Route path="/mypage" component={Mypage} />
+              {/* 트루포인트 2.5기준 로그인&회원가입 기능이 없으므로 페이지 주석처리 */}
+              {/* <Route path="/mypage" component={Mypage} /> */}
               <Route component={PageNotFound} />
             </Switch>
             {/* 페이지 컴포넌트 */}

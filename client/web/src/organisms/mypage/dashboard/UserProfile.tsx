@@ -93,10 +93,10 @@ export default function UserProfile(): JSX.Element {
             )}
 
             {/* 요금제 */}
-            <div className={classnames(classes.flexBox, classes.secondSection)}>
+            {/* <div className={classnames(classes.flexBox, classes.secondSection)}>
               <Typography className={classes.bold} variant="body1">요금제</Typography>
               <Chip label="클로즈베타 테스터" size="small" color="primary" className={classes.userTier} />
-            </div>
+            </div> */}
 
             {/* 클로즈베타 처리 - 잠시 제거 */}
             {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>
