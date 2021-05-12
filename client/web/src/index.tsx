@@ -42,7 +42,6 @@ import './assets/truepoint.css';
 import PageNotFound from './pages/others/PageNotFound';
 import Ranking from './pages/mainpage/Ranking';
 import YoutubeHighlightList from './pages/mainpage/YoutubeHighlightList';
-import UpdatingPage from './pages/others/UpdatingPage';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Index(): JSX.Element {
@@ -145,7 +144,7 @@ function Index(): JSX.Element {
 }
 
 ReactDOM.render(
-  // <Index />,
-  <UpdatingPage />,
+  <Index />,
+  // <UpdatingPage />,
   document.getElementById('root'),
 );
