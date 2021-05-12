@@ -45,18 +45,18 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
   } = this;
   const { options } = point;
   const customOption = options as CustomPointOption;
-  const { originValue, title } = customOption;
+  const {
+    title,
+  } = customOption;
 
   let value: string;
   switch (series.name) {
     case '시청자 수':
       value = `${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명`;
       break;
-    case '일일 평균 평점':
-      value = `${Highcharts.numberFormat(y as number, 2, undefined, ',')} 점`;
-      break;
+
     default:
-      value = `${Highcharts.numberFormat(originValue as number, 2, undefined, ',')} 점`;
+      value = `${Highcharts.numberFormat(y as number, 2, undefined, ',')} 점`;
       break;
   }
 
@@ -132,11 +132,14 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     const dates = source.map((d) => d.createDate);
 
     // 감정점수 데이터일 경우 3점 이하는 3점 위치에 고정
+    // 10점 이상인경우 10점에 고정
     const tempData = source.map((d) => {
       const originValue = d[currentScoreName] as number;
       let y: number;
       if (currentScoreName.includes('Score') && originValue && originValue < 3) {
         y = 3;
+      } else if (currentScoreName.includes('Score') && originValue && originValue > 10) {
+        y = 10;
       } else {
         y = originValue;
       }
