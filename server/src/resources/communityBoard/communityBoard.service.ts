@@ -95,7 +95,7 @@ export class CommunityBoardService {
     searchColumn: string,
     searchText: string,
   }): Promise<FindPostResType> {
-    const qb = this.communityPostRepository
+    let qb = this.communityPostRepository
       .createQueryBuilder('post')
       .select([
         'post.postId',
@@ -107,9 +107,12 @@ export class CommunityBoardService {
         'post.category',
         'post.hit',
         'post.recommend',
-      ])
-      .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
-      .andWhere(`post.${searchColumn} like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
+      ]);
+
+    if (platform !== 'free') {
+      qb = qb.where('post.platform = :platform', { platform: this.getPlatformCode(platform) });
+    }
+    qb = qb.andWhere(`post.${searchColumn} like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
 
     const countQb = qb.clone();
     const resultQb = qb
@@ -143,7 +146,7 @@ export class CommunityBoardService {
     take: number,
     category: string
   }): Promise<FindPostResType> {
-    const qb = this.communityPostRepository
+    let qb = this.communityPostRepository
       .createQueryBuilder('post')
       .select([
         'post.postId',
@@ -155,14 +158,19 @@ export class CommunityBoardService {
         'post.category',
         'post.hit',
         'post.recommend',
-      ])
-      .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
-      .loadRelationCountAndMap(
-        'post.repliesCount',
-        'post.replies',
-        'replies',
-        (sqb) => sqb.andWhere('(replies.deleteFlag = 0)'),
-      );
+      ]);
+
+    // 자유게시판 탭은 (아프리카게시판 + 트위치게시판) 모두 보여줌..
+    if (platform !== 'free') {
+      qb = qb.where('post.platform = :platform', { platform: this.getPlatformCode(platform) });
+    }
+
+    qb = qb.loadRelationCountAndMap(
+      'post.repliesCount',
+      'post.replies',
+      'replies',
+      (sqb) => sqb.andWhere('(replies.deleteFlag = 0)'),
+    );
 
     let resultQb = qb.clone();
     let countQb = qb.clone();
