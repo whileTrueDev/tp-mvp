@@ -38,7 +38,7 @@ const getCreators = () => new Promise((resolve, reject) => {
   const creatorListQuery = `
   SELECT userId, youtubeId
   FROM ${USER_TABLE}
-  RIGHT JOIN PlatformYoutubeTest USING (youtubeId)
+  RIGHT JOIN PlatformYoutube USING (youtubeId)
   `;
   useQuery('tp', creatorListQuery, [])
     .then((row) => {
@@ -62,6 +62,7 @@ const getCreators = () => new Promise((resolve, reject) => {
 // 4. 2번 map을 통해서 streamData에 대해 userId를 대응시킨다.
 const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) => {
   const conditionQuery = creators.reduce((str, element, index) => `${index == 0 ? `(${str}` : `${str},`}'${element.youtubeId}'`, '');
+  const reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
   
   if(conditionQuery === ''){
     resolve([]);
@@ -72,10 +73,12 @@ const getStreamData = ({ userMap, creators }) => new Promise((resolve, reject) =
     .then((inrow) => {
       const streams = inrow.result;
       const streamData = streams.map((element) => {
+        const title = element.title.replace(reg, '');
         const userId = userMap[element.creatorId];
         return {
           ...element,
           userId,
+          title
         };
       });
       resolve(streamData);

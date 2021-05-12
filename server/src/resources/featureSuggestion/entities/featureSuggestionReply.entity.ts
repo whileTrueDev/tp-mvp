@@ -5,7 +5,7 @@ import {
 import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionEntity } from './featureSuggestion.entity';
 
-@Entity({ name: 'FeatureSuggestionReply' })
+@Entity({ name: 'FeatureSuggestionReplyTest' })
 export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @PrimaryGeneratedColumn()
   replyId: number;
@@ -20,6 +20,9 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   @JoinColumn({ name: 'author' })
   @ManyToOne((type) => UserEntity, (user) => user.userId)
   author: UserEntity;
+
+  @Column({ comment: '작성자 Ip' })
+  userIp: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

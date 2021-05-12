@@ -22,7 +22,13 @@ import { SlackModule } from './resources/slack/slack.module';
 import { NoticeModule } from './resources/notice/notice.module';
 import { HealthCheckModule } from './resources/health-check/healthcheck.module';
 import { BroadcastInfoModule } from './resources/broadcast-info/broadcast-info.module';
-import { CbtModule } from './resources/cbt/cbt.module';
+import { CommunityBoardModule } from './resources/communityBoard/communityBoard.module';
+import { RankingsModule } from './resources/rankings/rankings.module';
+import { UserReactionModule } from './resources/userReaction/userReaction.module';
+import { CreatorRatingsModule } from './resources/creatorRatings/creatorRatings.module';
+import { CreatorCommentModule } from './resources/creatorComment/creatorComment.module';
+import { CreatorCategoryModule } from './resources/creator-category/creator-category.module';
+import { S3Module } from './resources/s3/s3.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -47,7 +53,13 @@ import { CbtModule } from './resources/cbt/cbt.module';
     CategoryModule,
     HealthCheckModule,
     BroadcastInfoModule,
-    CbtModule,
+    CommunityBoardModule,
+    RankingsModule,
+    UserReactionModule,
+    CreatorRatingsModule,
+    CreatorCommentModule,
+    CreatorCategoryModule,
+    S3Module,
   ],
 })
 export class AppModule { }

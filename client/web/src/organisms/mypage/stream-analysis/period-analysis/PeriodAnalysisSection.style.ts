@@ -14,10 +14,9 @@ const usePeriodAnalysisSectionStyles = makeStyles((theme: Theme) => ({
     height: '51.1px',
     borderRadius: '6px',
     backgroundColor: theme.palette.primary.dark,
-
     fontSize: '24px',
     marginTop: theme.spacing(3),
-    marginRight: theme.spacing(10),
+    marginBottom: theme.spacing(3),
     color: theme.palette.common.white,
     '&:hover': {
       backgroundColor: theme.palette.primary.light,

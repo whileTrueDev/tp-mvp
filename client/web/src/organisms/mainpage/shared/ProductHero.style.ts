@@ -1,12 +1,21 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { MYPAGE_MAIN_MIN_WIDTH } from '../../../assets/constants';
+import {
+  MAIN_HERO_HEIGHT, COMMON_APP_BAR_HEIGHT,
+} from '../../../assets/constants';
+
+const HEIGHT = MAIN_HERO_HEIGHT + COMMON_APP_BAR_HEIGHT; // 기존 hero 영역 높이 + Appbar가 차지하던 높이. (뱀비늘배경을 앱바에도 보이도록 하기 위한 조치) by hwasurr
 
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 280,
-    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-    minWidth: MYPAGE_MAIN_MIN_WIDTH,
+    height: HEIGHT,
+    backgroundColor: theme.palette.background.paper,
+  },
+  heroBg: {
+    height: HEIGHT,
+    backgroundImage: 'url(/images/feature-suggestion/fish_scales_bg.png)',
+    backgroundRepeat: 'repeat',
+    backgroundSize: '50%',
   },
   wraper: {
     width: 968,
@@ -15,8 +24,18 @@ const styles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'left',
+    alignItems: 'stretch',
     height: 'inherit',
+    position: 'relative',
+  },
+  heroLogo: {
+    height: HEIGHT,
+    background: theme.palette.type === 'light'
+      ? ('url("/images/logo/logo_truepoint_v2_desert_light.png")')
+      : ('url("/images/logo/logo_truepoint_v2_desert_dark.png")'),
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
   },
   main: {
     // margin: '20px 0px 20px 0px',

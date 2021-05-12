@@ -1,11 +1,12 @@
 import helmet from 'helmet';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { json, urlencoded } from 'express';
 // import dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import colorizedMorgan from './middleware/colorizedMorgan';
 
 async function bootstrap() {
   // **********************************************
@@ -24,16 +25,18 @@ async function bootstrap() {
   app.use(helmet());
 
   // Set morgan Logger
-  app.use(morgan('common'));
+  app.use(colorizedMorgan);
 
   // cookie parser
   app.use(cookieParser('@#@$MYSIGN#@$#$')); // cookie parser 설정
 
   const whiteList = [
     'http://localhost:3001', 'http://localhost:3002',
-    'https://mytruepoint.com', 'https://admin.mytruepoint.com',
+    'https://mytruepoint.com',
+    'https://admin.mytruepoint.com', 'https://test-admin.mytruepoint.com',
     'https://dev.mytruepoint.com', 'https://test.mytruepoint.com',
   ];
+
   app.enableCors({
     origin: whiteList,
     credentials: true,
@@ -41,6 +44,6 @@ async function bootstrap() {
 
   // eslint-disable-next-line no-console
   console.log(`Running Evironment: ${process.env.NODE_ENV || 'development'}`);
-  await app.listen(3000);
+  await app.listen(3000, '0.0.0.0');
 }
 bootstrap();

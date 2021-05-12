@@ -1,19 +1,24 @@
-import React, { useRef } from 'react';
-import useAxios from 'axios-hooks';
-import { useSnackbar } from 'notistack';
 import {
-  Avatar, TextField, Button,
+  Avatar, Button, TextField, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
-import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
+import useAxios from 'axios-hooks';
+import { useSnackbar } from 'notistack';
+import React, { useRef } from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import useDialog from '../../../../utils/hooks/useDialog';
+import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(2), display: 'flex', alignItems: 'center', width: '100%',
+    marginTop: theme.spacing(2),
+    display: 'flex',
+    width: '100%',
+    alignItems: 'flex-start',
   },
   avatar: { marginRight: theme.spacing(2) },
   button: { minWidth: 200, marginLeft: theme.spacing(2) },
@@ -26,14 +31,11 @@ export interface FeatureReplyInputProps {
 }
 export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.Element {
   const classes = useStyles();
-  const { currentSuggestion, refetch, avatarLogo } = props;
-  const [lengthState, setLengthState] = React.useState(false);
-  const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-  const [, postReply] = useAxios<FeatureSuggestionReply>({
-    method: 'POST',
-    url: '/feature-suggestion/reply',
-  }, { manual: true });
+  const { currentSuggestion, refetch, avatarLogo } = props;
+  const auth = useAuthContext();
+
+  const [lengthState, setLengthState] = React.useState(false);
   const lengthCheck = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.value.length === 255) {
       setLengthState(true);
@@ -44,7 +46,13 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
   // 기능제안 댓글 작성을 위한 input text ref
   const replyText = useRef<HTMLInputElement>(null);
 
-  // "댓글 작성" 버튼 핸들러
+  // 댓글 작성 요청
+  const [, postReply] = useAxios<FeatureSuggestionReply>({
+    method: 'POST',
+    url: '/feature-suggestion/reply',
+  }, { manual: true });
+
+  // "댓글 작성" 핸들러
   function handleReplySubmit() {
     if (replyText.current) {
       if (!replyText.current.value.trim()) {
@@ -61,6 +69,14 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
       }
     }
   }
+
+  // 기능제안 글의 비밀번호 확인 요청
+  const [, checkPassword] = useAxios({
+    url: `/feature-suggestion/${currentSuggestion.suggestionId}/password`, method: 'POST',
+  }, { manual: true });
+
+  // 비밀번호 확인 다이얼로그
+  const confirmDialog = useDialog();
 
   return (
     <div className={classes.container}>
@@ -82,10 +98,26 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
         className={classes.button}
         color="primary"
         variant="contained"
-        onClick={handleReplySubmit}
+        onClick={() => {
+          if (replyText.current && replyText.current.value.trim()) confirmDialog.handleOpen();
+          else ShowSnack('댓글을 입력해주세요.', 'error', enqueueSnackbar);
+        }}
       >
         댓글 작성
       </Button>
+
+      <CheckPasswordDialog
+        open={confirmDialog.open}
+        onClose={confirmDialog.handleClose}
+        checkPassword={checkPassword}
+        successHandler={() => {
+          handleReplySubmit();
+          confirmDialog.handleClose();
+        }}
+      >
+        <Typography>글의 비밀번호를 입력해주세요.</Typography>
+      </CheckPasswordDialog>
+
     </div>
   );
 }

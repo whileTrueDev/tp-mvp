@@ -3,36 +3,29 @@ import { makeStyles } from '@material-ui/core/styles';
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 600,
-    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+    height: 500,
+    backgroundColor: theme.palette.background.paper,
     [theme.breakpoints.down('sm')]: {
-      height: 500,
+      height: 400,
     },
   },
   wraper: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'left',
-    height: 600,
+    alignItems: 'flex-start',
+    height: 500,
     [theme.breakpoints.down('sm')]: {
-      height: 500,
+      height: 400,
     },
   },
   main: {
     margin: '20px 0px 20px 0px',
   },
-  mainExcept: {
-    margin: '20px 0px 20px 0px',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   mainTitle: {
-
     fontSize: 55,
     fontWeight: 900,
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.primary.main,
     margin: 0,
     [theme.breakpoints.down('md')]: {
       wordBreak: 'keep-all',
@@ -46,27 +39,11 @@ const styles = makeStyles((theme) => ({
     },
   },
   mainContent: {
-
     fontSize: 20,
     margin: 0,
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    color: theme.palette.text.primary,
     [theme.breakpoints.down('md')]: {
       wordBreak: 'keep-all',
-    },
-  },
-  button: {
-
-    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
-    border: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
-    borderRadius: 0,
-    width: 150,
-  },
-  buttonLine: {
-    animation: '$lineSpread 0.5s ease-in-out',
-    borderBottom: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
-    width: '100%',
-    [theme.breakpoints.down('md')]: {
-      width: '100%',
     },
   },
   imgWraper: {
@@ -78,6 +55,23 @@ const styles = makeStyles((theme) => ({
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
       display: 'none',
+    },
+    '& .small-tv': {
+      width: '50%',
+      maxWidth: '304px',
+    },
+    '& .large-tv-wrapper': {
+      marginTop: `-${theme.spacing(5)}px`,
+      position: 'relative',
+      '& .large-tv': {
+        width: '100%',
+        maxWidth: '553px',
+      },
+      '& .logo-in-tv': {
+        position: 'absolute',
+        top: theme.spacing(9),
+        left: theme.spacing(8),
+      },
     },
   },
   mainSVGEffect: {
@@ -134,6 +128,26 @@ const styles = makeStyles((theme) => ({
     },
     '100%': {
       width: 350,
+    },
+  },
+  mainExcept: {
+    margin: '20px 0px 20px 0px',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  button: {
+    color: theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+    border: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
+    borderRadius: 0,
+    width: 150,
+  },
+  buttonLine: {
+    animation: '$lineSpread 0.5s ease-in-out',
+    borderBottom: `1px solid ${theme.palette.type === 'dark' ? theme.palette.common.black : theme.palette.common.white}`,
+    width: '100%',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
     },
   },
 }));

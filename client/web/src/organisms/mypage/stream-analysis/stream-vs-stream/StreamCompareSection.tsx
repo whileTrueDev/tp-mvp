@@ -27,6 +27,8 @@ import {
 } from './StreamCompareSectioninterface';
 // attoms
 import Loading from '../../../shared/sub/Loading';
+import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
+import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
 // context
 import SubscribeContext from '../../../../utils/contexts/SubscribeContext';
 // attoms snackbar
@@ -36,7 +38,7 @@ export default function StreamCompareSection(
   props: StreamCompareSectionPropInterface,
 ): JSX.Element {
   const {
-    handleSubmit, loading, error,
+    handleSubmit, loading, error, exampleMode,
   } = props;
   const subscribe = React.useContext(SubscribeContext);
   const classes = useStreamHeroStyles();
@@ -188,7 +190,7 @@ export default function StreamCompareSection(
 
         {/* 달력 선택 */}
         <Grid item container direction="row">
-          <Grid container className={classes.bodyWrapper} style={{ minWidth: '1000px' }}>
+          <Grid container className={classes.bodyWrapper} style={{ minWidth: '700px' }}>
             <Grid item style={{ width: '310px', marginRight: 32 }}>
               <Typography className={classes.bodyTitle}>
                 <SelectDateIcon className={classes.selectIcon} />
@@ -197,21 +199,53 @@ export default function StreamCompareSection(
 
               {/* Custom Date Picker 달력 컴포넌트 */}
               <div className={classes.calendarAndListWrapper}>
-                <StreamCalendar
-                  handleDayStreamList={handleDayStreamList}
-                  clickedDate={clickedDate}
-                  setClickedDate={setClickedDate}
-                  baseStream={baseStream}
-                  compareStream={compareStream}
-                />
+                { exampleMode ? (
+                  <StepGuideTooltip
+                    position="bottom"
+                    stepTitle="step1"
+                    content={stepguideSource.mainpageStreamAnalysis.step1}
+                  >
+                    <StreamCalendar
+                      exampleMode={exampleMode}
+                      handleDayStreamList={handleDayStreamList}
+                      clickedDate={clickedDate}
+                      setClickedDate={setClickedDate}
+                      baseStream={baseStream}
+                      compareStream={compareStream}
+                    />
+                  </StepGuideTooltip>
+                ) : (
+                  <StreamCalendar
+                    exampleMode={exampleMode}
+                    handleDayStreamList={handleDayStreamList}
+                    clickedDate={clickedDate}
+                    setClickedDate={setClickedDate}
+                    baseStream={baseStream}
+                    compareStream={compareStream}
+                  />
+                )}
+
               </div>
 
             </Grid>
             <Grid item className={classes.streamSelectWrapper} xs>
-              <Typography className={classes.bodyTitle}>
-                <SelectVideoIcon className={classes.selectIcon} />
-                방송 선택
-              </Typography>
+              { exampleMode ? (
+                <StepGuideTooltip
+                  position="top-end"
+                  stepTitle="step2"
+                  content={stepguideSource.mainpageStreamAnalysis.step2}
+                >
+                  <Typography className={classes.bodyTitle}>
+                    <SelectVideoIcon className={classes.selectIcon} />
+                    방송 선택
+                  </Typography>
+                </StepGuideTooltip>
+              ) : (
+                <Typography className={classes.bodyTitle}>
+                  <SelectVideoIcon className={classes.selectIcon} />
+                  방송 선택
+                </Typography>
+              )}
               {/* 달력 날짜 선택시 해당 날짜 방송 리스트 */}
               <div className={classes.calendarAndListWrapper}>
                 <StreamList
@@ -230,14 +264,31 @@ export default function StreamCompareSection(
       </Grid>
 
       <Grid container justify="center">
-        <Button
-          variant="contained"
-          className={classes.anlaysisButton}
-          disabled={!(baseStream && compareStream)}
-          onClick={handleAnalysisButton}
-        >
-          분석하기
-        </Button>
+        { exampleMode ? (
+          <StepGuideTooltip
+            position="right"
+            stepTitle="step3"
+            content={stepguideSource.mainpageStreamAnalysis.step3}
+          >
+            <Button
+              variant="contained"
+              className={classes.anlaysisButton}
+              disabled={!(baseStream && compareStream)}
+              onClick={handleAnalysisButton}
+            >
+              분석하기
+            </Button>
+          </StepGuideTooltip>
+        ) : (
+          <Button
+            variant="contained"
+            className={classes.anlaysisButton}
+            disabled={!(baseStream && compareStream)}
+            onClick={handleAnalysisButton}
+          >
+            분석하기
+          </Button>
+        )}
       </Grid>
     </div>
   );

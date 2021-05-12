@@ -1,14 +1,15 @@
-import React from 'react';
-import moment from 'moment';
-import { Avatar, Typography } from '@material-ui/core';
+import { Avatar, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 import useAxios from 'axios-hooks';
+import moment from 'moment';
 import { useSnackbar } from 'notistack';
-import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
-import CustomDialog from '../../../../atoms/Dialog/Dialog';
-import transformIdToAsterisk from '../../../../utils/transformAsterisk';
+import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: { width: '100%', marginTop: theme.spacing(3) },
@@ -19,18 +20,18 @@ const useStyles = makeStyles((theme) => ({
   deleteText: { marginLeft: theme.spacing(1), cursor: 'pointer', '&:hover': { textDecoration: 'underline' } },
 }));
 export interface FeatureReplyProps {
-  replyId: number;
-  author: string;
-  content: string;
-  createdAt: string | Date;
-  avatarLogo?: string;
+  suggestionId: number;
+  reply: FeatureSuggestionReply;
   refetch?: () => void;
 }
 export default function FeatureReply({
-  replyId, avatarLogo = '/images/logo/logo_truepoint.png', author, createdAt, content, refetch,
+  suggestionId,
+  reply,
+  refetch,
 }: FeatureReplyProps): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
   const confirmDialog = useDialog();
 
   const [, deleteRequest] = useAxios({
@@ -38,8 +39,12 @@ export default function FeatureReply({
     method: 'DELETE',
   }, { manual: true });
 
+  // 기능제안 글의 비밀번호 확인 요청
+  const [, checkPassword] = useAxios({
+    url: `/feature-suggestion/${suggestionId}/password`, method: 'POST',
+  }, { manual: true });
+
   // 자기가 남긴 댓글 삭제 클릭
-  const { enqueueSnackbar } = useSnackbar();
   function handleDeleteClick(id: number) {
     deleteRequest({ data: { id } })
       .then(() => {
@@ -47,47 +52,53 @@ export default function FeatureReply({
       })
       .catch(() => ShowSnack('댓글 작성중 오류가 발생했습니다. 문의부탁드립니다.', 'error', enqueueSnackbar));
   }
+
   return (
     <div className={classes.container}>
       <div className={classes.wrapper}>
         {/* 본인이 아닌 경우 프로필사진 기본 사진 처리 */}
-        <Avatar src={auth.user.userId === author || author === 'Truepoint' ? avatarLogo : ''} variant="square" className={classes.avatar} />
+        <Avatar
+          src={auth.user?.userId === reply.author?.userId || reply.author?.userId === 'Truepoint'
+            ? reply.author.profileImage : ''}
+          variant="square"
+          className={classes.avatar}
+        />
         <div>
           <div className={classes.titleSection}>
             <Typography variant="body2" className={classes.title}>
-              {((auth.user.userId === author) || author === 'Truepoint')
-                ? author
-                : transformIdToAsterisk(author, 1.8)}
+              {reply.author?.userId === 'Truepoint' ? reply.author?.userId : reply.userIp}
             </Typography>
-            <Typography variant="caption">{moment(createdAt).fromNow()}</Typography>
-            {author === auth.user.userId && (
-              <Typography
-                className={classes.deleteText}
-                style={{ marginLeft: 8, cursor: 'pointer' }}
-                variant="caption"
-                onClick={() => {
-                  confirmDialog.handleOpen();
-                }}
-              >
-                삭제
-              </Typography>
+            <Typography variant="caption">{moment(reply.createdAt).fromNow()}</Typography>
+            {reply.author?.userId !== 'Truepoint' && (
+            <IconButton
+              size="small"
+              style={{ marginLeft: 4, verticalAlign: 'middle' }}
+              onClick={() => {
+                // 비밀번호 확인 다이얼로그로 변경
+                confirmDialog.handleOpen();
+              }}
+            >
+              <DeleteIcon fontSize="small">삭제</DeleteIcon>
+            </IconButton>
             )}
           </div>
-          {content.split('\n').map((text) => (
-            <Typography key={text}>{text}</Typography>
+          {reply.content.split('\n').map((text) => (
+            <Typography key={reply.author + text + reply.createdAt}>{text}</Typography>
           ))}
         </div>
       </div>
 
-      <CustomDialog
+      <CheckPasswordDialog
         open={confirmDialog.open}
         onClose={confirmDialog.handleClose}
-        callback={() => {
-          handleDeleteClick(replyId);
+        checkPassword={checkPassword}
+        successHandler={() => {
+          handleDeleteClick(reply.replyId);
+          confirmDialog.handleClose();
         }}
       >
-        <Typography>해당 댓글을 삭제하시겠습니까?</Typography>
-      </CustomDialog>
+        <Typography>해당 댓글을 삭제하시겠습니까? 삭제시 복구가 불가능합니다.</Typography>
+      </CheckPasswordDialog>
     </div>
   );
 }

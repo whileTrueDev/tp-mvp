@@ -1,23 +1,27 @@
 import {
-  Controller, Post, Body, Get, UseInterceptors,
-  ClassSerializerInterceptor, Query, Patch, UseGuards, Req, ForbiddenException, Delete,
+  Body,
+  ClassSerializerInterceptor, Controller,
+  Delete, Get,
+  Param, Patch, Post,
+  Query, Req, UseInterceptors,
 } from '@nestjs/common';
-// DTOs
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
+// DTOs
+import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registerUserByAdminDto.dto';
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
-import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
+import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-import { ValidationPipe } from '../../pipes/validation.pipe';
-import { UsersService } from './users.service';
-import { AuthService } from '../auth/auth.service';
-
-import { UserEntity } from './entities/user.entity';
-import { CertificationType, CertificationInfo, CheckIdType } from '../../interfaces/certification.interface';
-import { SubscribeEntity } from './entities/subscribe.entity';
+import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
+import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
 import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
+// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { ValidationPipe } from '../../pipes/validation.pipe';
+import { AuthService } from '../auth/auth.service';
+import { SubscribeEntity } from './entities/subscribe.entity';
+import { UserEntity } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -32,14 +36,16 @@ export class UsersController {
    * @param userId 유저 정보를 열람하고자 하는 유저의 아이디
    */
   @Get()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async findUser(
     @Req() req: LogedInExpressRequest,
     @Query('userId') userId: string,
+    @Query('creatorId') creatorId: string,
   ): Promise<UserEntity> {
-    if (userId) return this.usersService.findOne(userId);
-    return this.usersService.findOne(req.user.userId);
+    if (userId) return this.usersService.findOne({ userId });
+    if (!userId && creatorId) return this.usersService.findOne({ creatorId });
+    return this.usersService.findOne({ userId: req.user.userId });
   }
 
   /**
@@ -48,7 +54,7 @@ export class UsersController {
    * @param userId 연동된 플랫폼 프로필 이미지를 열람하고자 하는 유저 아이디
    */
   @Get('profile-images')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async findUserProfileImages(
     @Req() req: LogedInExpressRequest,
@@ -64,7 +70,7 @@ export class UsersController {
    * @param userId 연동된 플랫폼 닉네임/채널명을 열람하고자 하는 유저 아이디
    */
   @Get('platform-names')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async findLinkedChannelNames(
     @Req() req: LogedInExpressRequest,
@@ -80,21 +86,23 @@ export class UsersController {
    * @param updateUserDto 변경할 유저 정보 Data Transfer Object
    */
   @Patch()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async updateUser(
     @Req() req: LogedInExpressRequest,
     @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-  ): Promise<number> {
-    if (req.user.userId && req.user.userId === updateUserDto.userId) {
-      return this.usersService.updateOne(updateUserDto);
-    }
+  ): Promise<UserEntity> {
+    return this.usersService.updateOne(updateUserDto);
+    // 로그인 되어있지 않아도 변경 가능
+    //   if (req.user.userId && req.user.userId === updateUserDto.userId) {
+    //   return this.usersService.updateOne(updateUserDto);
+    // }
     // 로그인 되어있지 않거나, 로그인한 유저와 변경요청한 유저가 다른 경우
-    throw new ForbiddenException('Forbidden for you');
+    // throw new ForbiddenException('Forbidden for you');
   }
 
   @Delete()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   async deleteUser(
     @Req() req: LogedInExpressRequest,
@@ -149,7 +157,7 @@ export class UsersController {
     output  : [{userId, targetUserId, startAt, endAt}, {userId, targetUserId, startAt, endAt} ... ]
   */
   @Get('/subscribe-users')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   getUserValidSubscribeInfo(
     @Query(new ValidationPipe()) subscribeUsersRequest: SubscribeUsers,
   ): Promise<{validUserList: SubscribeEntity[]; inValidUserList: SubscribeEntity[]}> {
@@ -163,8 +171,42 @@ export class UsersController {
     output  : [userId1, userId2, ... ]
   */
   @Get('/id-list')
-  getAllUserIdList(): Promise<{userId: string}[]> {
+  getAllUserIdList(): Promise<UserEntity[]> {
     return this.usersService.findAllUserList();
+  }
+
+  /**
+   * 관리자 페이지 내 이용자db 정보 조회 탭에서 사용
+   * output : [{nickName, userId, recentBroadcastDate, averageViewer}...]
+   */
+  @Get('/brief-info-list')
+  getAllUserBriefInfoList(): Promise<BriefInfoDataResType> {
+    return this.usersService.getAllUserBriefInfoList();
+  }
+
+  /**
+   * 유투브 편집점 페이지 편집점 제공 목록 요청
+   * GET /users/highlight-point-list/:platform
+   * 플랫폼에 따라 최근 방송 종료순으로 
+   * 크리에이터 활동명, userId, 최근방송제목, 최근방송종료시간, 플랫폼 정보를 반환한다
+   * 
+   * @param platform 'afreeca' | 'twitch'
+   * 
+   * @return EditingPointListResType[]
+   * {   
+   *  creatorId: string, // 크리에이터 ID(아프리카아이디 || 트위치아이디)
+      platform: string, // 플랫폼 'afreeca' | 'twitch'
+      userId: string,   // userId
+      title: string,   // 가장 최근 방송 제목
+      endDate: Date,   // 가장 최근 방송의 종료시간
+      nickname: string // 크리에이터 활동명
+   * }[]
+   */
+  @Get('/highlight-point-list/:platform')
+  getHighlightPointList(
+    @Param('platform') platform: 'afreeca'|'twitch',
+  ): Promise<any[]> {
+    return this.usersService.getHighlightPointList(platform);
   }
 
   // 회원 가입
@@ -174,5 +216,12 @@ export class UsersController {
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<UserEntity> {
     return this.usersService.register(createUserDto);
+  }
+
+  @Post('/byadmin')
+  async registerUserByAdmin(
+    @Body(ValidationPipe) registerUserByAdminDto: RegisterUserByAdminDto,
+  ): Promise<any> {
+    return this.usersService.registerByAdmin(registerUserByAdminDto);
   }
 }

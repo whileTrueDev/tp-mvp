@@ -24,11 +24,6 @@ export default function MypageLoading(): JSX.Element {
     >
       <CircularProgress />
       {/* 로고 활용시 */}
-      {/* {theme.palette.type === 'dark' ? (
-        <TruepointLogoLight />
-      ) : (
-        <TruepointLogo />
-      )} */}
     </div>
   );
 }

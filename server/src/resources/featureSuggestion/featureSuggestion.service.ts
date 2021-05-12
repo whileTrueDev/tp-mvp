@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -43,7 +44,7 @@ export class FeatureSuggestionService {
   public async findAllList(): Promise<FeatureSuggestionEntity[]> {
     return this.FeatureSuggestionRepository.find({
       order: { createdAt: 'DESC' },
-      select: ['author', 'category', 'createdAt', 'isLock', 'title', 'suggestionId', 'state'],
+      select: ['author', 'category', 'createdAt', 'isLock', 'title', 'suggestionId', 'state', 'userIp'],
       relations: ['author', 'replies'],
     });
   }
@@ -63,10 +64,14 @@ export class FeatureSuggestionService {
    * 기능제안 개별 글 UPDATE 메서드
    * @param fsDto 기능제안 개별 글 Insert 요청 DTO
    */
-  async insert(fsDto: FeatureSuggestionPostDto): Promise<FeatureSuggestionEntity> {
+  async insert(fsDto: FeatureSuggestionPostDto, userIp: string): Promise<FeatureSuggestionEntity> {
     const author = await this.usersRepository.findOne(fsDto.author);
+    let password = '';
+    if (fsDto.password) {
+      password = await bcrypt.hash(fsDto.password, 10);
+    }
     return this.FeatureSuggestionRepository.save({
-      ...fsDto, author,
+      ...fsDto, author, userIp, password,
     });
   }
 
@@ -129,4 +134,11 @@ export class FeatureSuggestionService {
   //     }
   //   });
   // }
+
+  async checkSuggestionPassword(suggestionId: number, password: string): Promise<boolean> {
+    const suggestion = await this.FeatureSuggestionRepository.findOne(
+      { suggestionId }, { select: ['password'] },
+    );
+    return bcrypt.compare(password, suggestion.password);
+  }
 }

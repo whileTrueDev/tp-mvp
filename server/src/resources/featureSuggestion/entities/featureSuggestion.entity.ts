@@ -6,7 +6,7 @@ import {
 import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionReplyEntity } from './featureSuggestionReply.entity';
 
-@Entity({ name: 'FeatureSuggestion' })
+@Entity({ name: 'FeatureSuggestionTest' })
 export class FeatureSuggestionEntity implements FeatureSuggestion {
   @PrimaryGeneratedColumn()
   suggestionId: number;
@@ -20,9 +20,15 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   @Column({ type: 'longtext' })
   content: string;
 
-  @JoinColumn()
-  @ManyToOne((type) => UserEntity, (user) => user.userId)
+  @JoinColumn({ name: 'authorId' })
+  @ManyToOne((type) => UserEntity, (user) => user.userId, { nullable: true })
   author: UserEntity;
+
+  @Column({ comment: '작성자 Ip' })
+  userIp: string;
+
+  @Column({ type: 'varchar', select: false, comment: '암호화된 비밀번호' })
+  password: string;
 
   @Column({
     type: 'tinyint', default: 0, comment: '기능제안 상태 플래그 0=미확인, 1=검토중 2=개발확정, 3=개발보류',

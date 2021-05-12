@@ -113,7 +113,7 @@ export default function Chart({
 
     const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.minGridDistance = 60;
-    dateAxis.skipEmptyPeriods = true;
+    // dateAxis.skipEmptyPeriods = true;
     dateAxis.tooltipDateFormat = 'HH:mm:ss';
     dateAxis.dateFormats.setKey('second', 'yyyy-MM-dd HH:mm:ss');
     // 라벨 글자 색 변경
@@ -152,7 +152,7 @@ export default function Chart({
       series.name = setting.name;
       series.tooltipText = setting.tooltipText;
       series.strokeWidth = 2.5;
-      series.tensionX = 0.8;
+      // series.tensionX = 0.8;
       chart.cursor.snapToSeries = series;
       series.stroke = am4core.color('#7E8CF7');
       series.tooltip.background.cornerRadius = 20;

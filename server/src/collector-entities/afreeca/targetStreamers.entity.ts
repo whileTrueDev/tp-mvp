@@ -2,7 +2,9 @@ import {
   Column, CreateDateColumn, Entity, UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('AfreecaTargetStreamers')
+@Entity('AfreecaTargetStreamers', {
+  database: 'WhileTrueCollector',
+})
 export class AfreecaTargetStreamersEntity {
   @Column({ primary: true })
   creatorId: string;
@@ -11,11 +13,11 @@ export class AfreecaTargetStreamersEntity {
   creatorName: string;
 
   @Column({ length: 150 })
-  refreshToken: string;
+  refreshToken?: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt: Date;
+  updatedAt?: Date;
 }

@@ -6,6 +6,7 @@
     "@amcharts/amcharts4": "^4.10.4",
     "@date-io/date-fns": "1.3.13",
     "@date-io/moment": "^2.10.6",
+    "@fortawesome/fontawesome-free": "^5.15.3",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
@@ -20,7 +21,11 @@
     "axios-hooks": "^2.1.0",
     "classnames": "^2.2.6",
     "date-fns": "2.12.0",
+    "dayjs": "^1.10.4",
+    "highcharts": "^9.0.1",
+    "highcharts-react-official": "^3.0.0",
     "history": "^5.0.0",
+    "immutable": "^4.0.0-rc.12",
     "js-file-download": "^0.4.12",
     "jwt-decode": "^3.0.0-beta.2",
     "material-table": "^1.69.0",
@@ -35,6 +40,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-slick": "^0.27.11",
+    "react-textfit": "^1.1.1",
+    "react-window": "^1.8.6",
     "react-wordcloud": "^1.2.7",
     "short-id": "^0.1.0-1",
     "shortid": "^2.2.15",
@@ -49,7 +56,9 @@
     "eject": "react-scripts eject",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix",
-    "lint:commit:fix": "eslint --fix"
+    "lint:commit:fix": "eslint --fix",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "browserslist": {
     "production": [
@@ -64,6 +73,12 @@
     ]
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^6.1.21",
+    "@storybook/addon-essentials": "^6.1.21",
+    "@storybook/addon-links": "^6.1.21",
+    "@storybook/node-logger": "^6.1.21",
+    "@storybook/preset-create-react-app": "^3.1.7",
+    "@storybook/react": "^6.1.21",
     "@types/classnames": "^2.2.10",
     "@types/core-js": "^2.5.4",
     "@types/jest": "^24.0.0",
@@ -74,6 +89,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-slick": "^0.23.4",
+    "@types/react-window": "^1.8.2",
     "@types/shortid": "0.0.29",
     "@typescript-eslint/eslint-plugin": "^3.9.0",
     "@typescript-eslint/parser": "^3.9.0",
@@ -88,7 +104,9 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "react-material-ui-carousel": "^2.2.1",
+    "suneditor": "^2.36.3"
   },
   "resolutions": {
     "@types/react": "^17.0.0"

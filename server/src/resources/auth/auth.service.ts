@@ -24,6 +24,7 @@ export class AuthService {
       userName: payload.userName,
       roles: payload.roles,
       userDI: payload.userDI,
+      nickName: payload.nickName,
     });
   }
 
@@ -42,7 +43,7 @@ export class AuthService {
   public async validateUser(
     userId: string, plainPassword: string,
   ): Promise<UserLoginPayload> {
-    const user = await this.usersService.findOne(userId);
+    const user = await this.usersService.findOne({ userId });
 
     if (user) {
       const isCorrectPass = await bcrypt.compare(plainPassword, user.password);
@@ -66,7 +67,7 @@ export class AuthService {
   public async login(user: UserLoginPayload, stayLogedIn: boolean): Promise<LoginToken> {
     // access token 발급
     const accessToken = this.createAccessToken({
-      userId: user.userId, userName: user.name, roles: user.roles, userDI: user.userDI,
+      userId: user.userId, userName: user.name, roles: user.roles, userDI: user.userDI, nickName: user.nickName,
     });
     // 로그인 상태 유지에 따라 다른 유지기간의 refresh token 발급
     const refreshToken = this.createRefreshToken(user.userId, stayLogedIn);
@@ -112,13 +113,14 @@ export class AuthService {
       );
     }
     // 유저 정보 로드
-    const userInfo = await this.usersService.findOne(verifiedPrevRefreshToken.userId);
+    const userInfo = await this.usersService.findOne({ userId: verifiedPrevRefreshToken.userId });
     // 새로운 accessToken, refreshToken 생성
     const newAccessToken = this.createAccessToken({
       userId: userInfo.userId,
       userName: userInfo.name,
       roles: userInfo.roles,
       userDI: userInfo.userDI,
+      nickName: userInfo.nickName,
     });
 
     // ***************************************************************

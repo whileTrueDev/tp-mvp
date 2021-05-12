@@ -52,7 +52,7 @@ const reRequest = 3;
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
-    clickedDate, handleDayStreamList, setClickedDate,
+    clickedDate, handleDayStreamList, setClickedDate, exampleMode,
     compareStream, baseStream,
   } = props;
   const classes = useStyles();
@@ -113,7 +113,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
    */
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: auth.user.userId,
+      userId: exampleMode ? 'sal_gu' : auth.user.userId,
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
@@ -129,7 +129,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
 
   /**
    * 달력 날짜 선택 핸들러
@@ -143,7 +143,11 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         getStreamsData.forEach((stream: StreamDataType) => {
           if (newDate
             && moment(newDate).format('YYYY-MM-DD') === moment(stream.startDate).format('YYYY-MM-DD')) {
-            dayStreamList.push(stream);
+            if (!exampleMode) {
+              dayStreamList.push(stream);
+            } else {
+              dayStreamList.push({ ...stream, title: '예시 방송입니다.' });
+            }
           }
         });
       }
