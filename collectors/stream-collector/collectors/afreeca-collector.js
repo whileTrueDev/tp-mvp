@@ -15,7 +15,7 @@ const getDateFormat = (_date1) => {
 
 // 2020-02-02 크롤러 변경으로 인한 query 수정 => 현재 플랫폼에 대한 제약조건 제거
 const query = (conditionQuery) => `
-SELECT A.*, ROUND(MAX(REPLACE(viewCount,',',''))) as viewer
+SELECT A.*, MAX(CAST(REPLACE(viewCount,',','') AS UNSIGNED)) as viewer
 FROM
 (
   SELECT 
