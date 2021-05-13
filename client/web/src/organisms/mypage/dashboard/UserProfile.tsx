@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import classnames from 'classnames';
 import {
-  Avatar, Chip, CircularProgress, Paper, Typography,
+  Avatar, CircularProgress, Paper, Typography,
 } from '@material-ui/core';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
@@ -11,6 +10,7 @@ import useAxios from 'axios-hooks';
 import useDialog from '../../../utils/hooks/useDialog';
 import MainDialog from './MainDialog';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import { usePublicMypageContext } from '../../../utils/contexts/PublicMyPageContext';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -30,8 +30,9 @@ const useStyles = makeStyles((theme) => ({
 export default function UserProfile(): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
+  const selectedCreator = usePublicMypageContext();
   const [profileRequestObject, refetch] = useAxios<User>({
-    url: 'users', method: 'GET', params: { userId: auth.user.userId },
+    url: 'users', method: 'GET', params: { userId: auth.user.userId || selectedCreator.userId },
   });
 
   const { open, handleOpen, handleClose } = useDialog();
@@ -93,7 +94,7 @@ export default function UserProfile(): JSX.Element {
             )}
 
             {/* 요금제 */}
-            {/* <div className={classnames(classes.flexBox, classes.secondSection)}>
+            {/* <div className={(classes.flexBox, classes.secondSection)}>
               <Typography className={classes.bold} variant="body1">요금제</Typography>
               <Chip label="클로즈베타 테스터" size="small" color="primary" className={classes.userTier} />
             </div> */}

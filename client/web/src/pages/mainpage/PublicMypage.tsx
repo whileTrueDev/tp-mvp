@@ -11,6 +11,7 @@ import PageSizeAlert from '../../organisms/mypage/alertbar/PageSizeAlert';
 import SidebarWithNavbar from '../../organisms/mypage/layouts/sidebar-with-navbar/SidebarWithNavbar';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import useDialog from '../../utils/hooks/useDialog';
+import PublicMypageContext from '../../utils/contexts/PublicMyPageContext';
 
 export interface ParamTypes {
   userId: string
@@ -33,6 +34,7 @@ export default function PublicMypage(): JSX.Element {
     if (userId) {
       auth.user.userId = userId;
     }
+    setSelectedCreatorId(userId);
   }, [auth, userId]);
 
   // 사이드바 오픈 스테이트
@@ -44,10 +46,21 @@ export default function PublicMypage(): JSX.Element {
     setOpen(false);
   };
 
+  // publicMypageContextValue
+  const [selectedCreatorId, setSelectedCreatorId] = useState<string>('');
+  const changeUserId = (newUserId: string) => {
+    setSelectedCreatorId(newUserId);
+  };
+
   const memoAppbar = useMemo(() => (<AppBar />), []);
 
   return (
-    <>
+
+    <PublicMypageContext.Provider value={{
+      userId: selectedCreatorId,
+      changeUserId,
+    }}
+    >
       {/* 최상단 네비바 */}
       {memoAppbar}
 
@@ -57,7 +70,6 @@ export default function PublicMypage(): JSX.Element {
         handleOpen={handleAlertOpen}
         handleClose={handleAlertClose}
       />
-
       <div className={classes.wrapper}>
         {/* 마이페이지 상단 네비바 */}
         <SidebarWithNavbar
@@ -78,7 +90,7 @@ export default function PublicMypage(): JSX.Element {
                     route.subRoutes && route.subRoutes.map((subRoute) => (
                       <Route
                         path={`${subRoute.layout}${subRoute.path}`}
-                        component={subRoute.component}
+                        component={route.component}
                         key={subRoute.name}
                       />
                     ))
@@ -94,6 +106,6 @@ export default function PublicMypage(): JSX.Element {
           </div>
         </main>
       </div>
-    </>
+    </PublicMypageContext.Provider>
   );
 }
