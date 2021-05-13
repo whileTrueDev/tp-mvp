@@ -33,6 +33,7 @@ import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAllCalendarStyles from './RangeSelectCalendar.style';
 import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
+import { usePublicMypageContext } from '../../../../utils/contexts/PublicMyPageContext';
 
 const reRequest = 3;
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
@@ -43,6 +44,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const classes = useAllCalendarStyles();
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
+  const selectedCreator = usePublicMypageContext();
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
@@ -103,7 +105,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: exampleMode ? 'sal_gu' : auth.user.userId,
+      userId: exampleMode ? 'sal_gu' : (auth.user.userId || selectedCreator.userId),
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
@@ -119,7 +121,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [exampleMode, auth.user, excuteGetStreams, enqueueSnackbar, currMonth]);
+  }, [exampleMode, auth.user, excuteGetStreams, enqueueSnackbar, currMonth, selectedCreator.userId]);
 
   React.useEffect(() => {
     if (period.length > 1 && period[0] && period[1]) {

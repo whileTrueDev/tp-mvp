@@ -33,6 +33,7 @@ import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 // attoms snackbar
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import { usePublicMypageContext } from '../../../../utils/contexts/PublicMyPageContext';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {
@@ -50,6 +51,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
 
   const { enqueueSnackbar } = useSnackbar();
   const auth = useAuthContext();
+  const selectedCreator = usePublicMypageContext();
 
   /* 다이얼로그 */
   const baseDialog = useDialog();
@@ -178,7 +180,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   React.useEffect(() => {
     if (basePeriod[0] && basePeriod[1]) {
       const searchParam: SearchCalendarStreams = {
-        userId: exampleMode ? 'sal_gu' : auth.user.userId,
+        userId: exampleMode ? 'sal_gu' : (auth.user.userId || selectedCreator.userId),
         startDate: basePeriod[0].toISOString(),
         endDate: basePeriod[1].toISOString(),
       };
@@ -197,7 +199,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         }
       });
     }
-  }, [exampleMode, basePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, basePeriod, auth.user, excuteGetStreams, enqueueSnackbar, selectedCreator.userId]);
 
   React.useEffect(() => {
     if (comparePeriod[0] && comparePeriod[1]) {

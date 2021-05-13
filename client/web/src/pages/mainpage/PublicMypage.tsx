@@ -9,7 +9,6 @@ import routes from '../../organisms/mainpage/youtubeHighlight/publicMypage/publi
 import AppBar from '../../organisms/shared/Appbar';
 import PageSizeAlert from '../../organisms/mypage/alertbar/PageSizeAlert';
 import SidebarWithNavbar from '../../organisms/mypage/layouts/sidebar-with-navbar/SidebarWithNavbar';
-import useAuthContext from '../../utils/hooks/useAuthContext';
 import useDialog from '../../utils/hooks/useDialog';
 import PublicMypageContext from '../../utils/contexts/PublicMyPageContext';
 
@@ -20,7 +19,6 @@ export interface ParamTypes {
 export default function PublicMypage(): JSX.Element {
   const classes = useLayoutStyles();
   const { userId } = useParams<ParamTypes>();
-  const auth = useAuthContext();
   const { open: alertOpen, handleOpen: handleAlertOpen, handleClose: handleAlertClose } = useDialog();
 
   // main ref
@@ -30,12 +28,8 @@ export default function PublicMypage(): JSX.Element {
       mainPanel.current.scrollTop = 0;
     }
 
-    // 비로그인 시 유저 정보 조회 용도
-    if (userId) {
-      auth.user.userId = userId;
-    }
     setSelectedCreatorId(userId);
-  }, [auth, userId]);
+  }, [userId]);
 
   // 사이드바 오픈 스테이트
   const [open, setOpen] = useState(true);
@@ -46,13 +40,15 @@ export default function PublicMypage(): JSX.Element {
     setOpen(false);
   };
 
-  // publicMypageContextValue
+  const memoAppbar = useMemo(() => (<AppBar />), []);
+
+  // PublicMypage에서 authContext.user(로그인한 유저) 값을 덮어쓰는 대신
+  // PublicMypageContext를 생성하여 userId를 공유하고자 함
+  // publicMypageContext의 contextValue
   const [selectedCreatorId, setSelectedCreatorId] = useState<string>('');
   const changeUserId = (newUserId: string) => {
     setSelectedCreatorId(newUserId);
   };
-
-  const memoAppbar = useMemo(() => (<AppBar />), []);
 
   return (
 
@@ -90,7 +86,7 @@ export default function PublicMypage(): JSX.Element {
                     route.subRoutes && route.subRoutes.map((subRoute) => (
                       <Route
                         path={`${subRoute.layout}${subRoute.path}`}
-                        component={route.component}
+                        component={subRoute.component}
                         key={subRoute.name}
                       />
                     ))

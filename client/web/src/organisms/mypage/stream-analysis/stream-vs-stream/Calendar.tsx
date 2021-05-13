@@ -27,6 +27,7 @@ import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // attoms snackbar
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import { usePublicMypageContext } from '../../../../utils/contexts/PublicMyPageContext';
 
 const useStyles = makeStyles((theme: Theme) => ({
   hasStreamDayDot: {
@@ -57,6 +58,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   } = props;
   const classes = useStyles();
   const auth = useAuthContext();
+  const selectedCreator = usePublicMypageContext();
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
@@ -113,7 +115,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
    */
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: exampleMode ? 'sal_gu' : auth.user.userId,
+      userId: exampleMode ? 'sal_gu' : (auth.user.userId || selectedCreator.userId),
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
@@ -129,7 +131,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar, selectedCreator.userId]);
 
   /**
    * 달력 날짜 선택 핸들러
