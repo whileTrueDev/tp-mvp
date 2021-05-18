@@ -151,6 +151,9 @@ export class WhileTrueCollectorStack extends BaseStack {
       `${TWITCH_COLLECTOR_FAMILY_NAME}Task`, {
         cluster: ECSCluster,
         desiredTaskCount: 1,
+        subnetSelection: {
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
         scheduledFargateTaskDefinitionOptions: {
           taskDefinition: twitchtvTaskDef,
         },
@@ -196,9 +199,14 @@ export class WhileTrueCollectorStack extends BaseStack {
     new ecs.FargateService(
       this, `${ID_PREFIX}${TWITCH_CHAT_COLLECTOR_FAMILY_NAME}Service`, {
         cluster: ECSCluster,
+        vpcSubnets: {
+          subnetGroupName: 'Application',
+        },
+        platformVersion: ecs.FargatePlatformVersion.LATEST,
         taskDefinition: twitchtvChatsTaskDef,
         desiredCount: 1,
         securityGroup: twitchtvChatsSecGrp,
+        assignPublicIp: true,
       },
     );
   }
