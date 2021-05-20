@@ -118,38 +118,6 @@ export default function Chart({
     legend: {
       enabled: false,
     },
-    plotOptions: {
-      series: {
-        turboThreshold: 500000, // 500000이상에서 터보모드 차트 써야함
-        allowPointSelect: true,
-        marker: {
-          lineWidth: 3,
-        },
-        point: {
-          events: {
-            click(this: PointType, event: Highcharts.PointClickEventObject) {
-              const {
-                y, index, x,
-              } = this;
-              event.preventDefault();
-              if (y as number >= dataOption.boundary) {
-                for (let i = 0; i < data.length; i += 1) {
-                  if (data[i].start_index <= index && data[i].end_index >= index) {
-                    handleClick({
-                      start_index: data[i].start_index,
-                      end_index: data[i].end_index,
-                      index: i,
-                      x,
-                    });
-                    handlePage(Math.floor(i / pageSize));
-                  }
-                }
-              }
-            },
-          },
-        },
-      },
-    },
   });
 
   useEffect(() => {
@@ -213,8 +181,40 @@ export default function Chart({
           zIndex: 3,
         }],
       },
+      plotOptions: {
+        series: {
+          turboThreshold: 500000, // 500000이상에서 터보모드 차트 써야함
+          allowPointSelect: true,
+          marker: {
+            lineWidth: 3,
+          },
+          point: {
+            events: {
+              click(this: PointType, event: Highcharts.PointClickEventObject) {
+                const {
+                  y, index, x,
+                } = this;
+                event.preventDefault();
+                if (y as number >= dataOption.boundary) {
+                  for (let i = 0; i < data.length; i += 1) {
+                    if (data[i].start_index <= index && data[i].end_index >= index) {
+                      handleClick({
+                        start_index: data[i].start_index,
+                        end_index: data[i].end_index,
+                        index: i,
+                        x,
+                      });
+                      handlePage(Math.floor(i / pageSize));
+                    }
+                  }
+                }
+              },
+            },
+          },
+        },
+      },
     });
-  }, [highlight, themeType, theme.palette, totalData, dataOption]);
+  }, [highlight, themeType, theme.palette, totalData, dataOption, data, handleClick, handlePage, pageSize]);
 
   return (
     <div>

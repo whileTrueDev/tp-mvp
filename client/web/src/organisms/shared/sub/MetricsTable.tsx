@@ -162,7 +162,9 @@ export default function MaterialTable({
           showTitle: false,
           toolbar: false,
         }}
-        style={{ boxShadow: 'none' }}
+        style={{
+          boxShadow: 'none',
+        }}
       />
     </>
   );
