@@ -20,10 +20,10 @@ module.exports = {
     "react",
     "react-hooks",
     '@typescript-eslint/eslint-plugin',
-    'prettier',
     'jest'
   ],
   extends: [
+    "plugin:prettier/recommended",
     "plugin:react/recommended",
     'airbnb-base',
     'airbnb',
