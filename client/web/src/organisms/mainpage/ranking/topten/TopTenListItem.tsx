@@ -25,14 +25,14 @@ function getPercentNumber(strPercentNum: string): number {
 function toPercentString(num: number): string {
   return `${num}%`;
 }
-interface Props{
+export interface TopTenListItemProps{
   index: number;
   data: TopTenDataItem
   headerColumns: {width: string}[],
   currentScoreName: keyof Scores,
   weeklyTrendsData: WeeklyTrendsItem[]
 }
-function TopTenListItem(props: Props): JSX.Element {
+function TopTenListItem(props: TopTenListItemProps): JSX.Element {
   const classes = useTopTenList();
   const {
     data: d, index, headerColumns, currentScoreName, weeklyTrendsData,
