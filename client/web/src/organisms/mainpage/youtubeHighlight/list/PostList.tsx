@@ -70,8 +70,8 @@ function PostList(props: PostListProps): JSX.Element {
             <Avatar alt={rowData.nickname} src={rowData.logo} />
           </Grid>
           <Grid item>
-            <Typography variant="subtitle1">{rowData.nickname}</Typography>
-            <Typography variant="subtitle1">{dayjs(rowData.endDate).format('YY.MM.DD HH:mm')}</Typography>
+            <Typography variant="h6">{rowData.nickname}</Typography>
+            <Typography variant="caption" color="textSecondary">{dayjs(rowData.endDate).format('YY.MM.DD HH:mm')}</Typography>
 
           </Grid>
 

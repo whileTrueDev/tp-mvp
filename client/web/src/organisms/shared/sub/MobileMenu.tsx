@@ -1,10 +1,11 @@
 import {
-  Typography, Button, SwipeableDrawer, List, ListItem,
+  Typography, Button, SwipeableDrawer, List, ListItem, IconButton,
 } from '@material-ui/core';
 import React from 'react';
 import classnames from 'classnames';
 import { useTheme } from '@material-ui/core/styles';
 import { Dashboard } from '@material-ui/icons';
+import CloseIcon from '@material-ui/icons/Close';
 import { Link } from 'react-router-dom';
 import HeaderLinks from './HeaderLinks';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
@@ -45,8 +46,11 @@ export default function MobileMenu(props: MobileMenuProps): JSX.Element {
       onClose={handleMobileMenuClose}
     >
       <List style={{ width: theme.spacing(20) }}>
-        <ListItem alignItems="center">
+        <ListItem alignItems="center" style={{ justifyContent: 'space-between' }}>
           <TruepointLogo width={60} />
+          <IconButton aria-label="닫기" onClick={handleMobileMenuClose}>
+            <CloseIcon />
+          </IconButton>
         </ListItem>
         {authContext.user.userId.length > 1 && authContext.accessToken && (
         <ListItem
@@ -80,7 +84,7 @@ export default function MobileMenu(props: MobileMenuProps): JSX.Element {
           <DarkModeToggleButtonContent />
         </ListItem>
 
-        {authContext.user.userId ? (
+        {authContext.user.userId && authContext.accessToken ? (
           <ListItem className={classes.menuItem}>
             <div className={classes.userInterfaceWrapper}>
               <HeaderLinks />
