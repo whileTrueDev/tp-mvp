@@ -9,16 +9,26 @@ const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
     height: HEIGHT,
+    [theme.breakpoints.down('sm')]: {
+      height: 'auto',
+    },
     backgroundColor: theme.palette.background.paper,
   },
   heroBg: {
     height: HEIGHT,
+    [theme.breakpoints.down('sm')]: {
+      height: 'auto',
+    },
     backgroundImage: 'url(/images/feature-suggestion/fish_scales_bg.png)',
     backgroundRepeat: 'repeat',
     backgroundSize: '50%',
   },
   wraper: {
     width: 968,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      padding: theme.spacing(4, 2),
+    },
     padding: 0,
     margin: '0 auto',
     display: 'flex',

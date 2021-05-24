@@ -152,8 +152,6 @@ function PostList(props: PostListProps): JSX.Element {
     },
   ] as Column<EditingPointListResType>[];
 
-  console.log(isMobile);
-
   return (
     <div className={classes.root}>
       <Table

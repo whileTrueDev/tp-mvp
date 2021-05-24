@@ -5,6 +5,7 @@ import { Avatar, Chip } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
 import MaterialTable from '../../../../atoms/Table/MaterialTable';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 
 export interface CreatorSearchTableProps {
   data: User[] | undefined;
@@ -15,6 +16,7 @@ export default function CreatorSearchTable(props: CreatorSearchTableProps): JSX.
   const { data, loading } = props;
   const theme = useTheme();
   const history = useHistory();
+  const { isMobile } = useMediaSize();
   const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: User | undefined) => {
     const platform = rowData?.afreeca ? 'afreeca' : 'twitch';
     const creatorId = rowData?.afreeca ? rowData?.afreeca.afreecaId : rowData?.twitch?.twitchId;
@@ -55,14 +57,14 @@ export default function CreatorSearchTable(props: CreatorSearchTableProps): JSX.
             <div>
               {rowData.twitch && rowData.twitch.categories && rowData.twitch.categories.map((category) => (
                 <Chip
-                  style={{ fontSize: theme.typography.body1.fontSize }}
+                  style={{ fontSize: theme.typography[isMobile ? 'body2' : 'body1'].fontSize }}
                   key={category.categoryId}
                   label={category.name}
                 />
               ))}
               {rowData.afreeca && rowData.afreeca.categories && rowData.afreeca.categories.map((category) => (
                 <Chip
-                  style={{ fontSize: theme.typography.body1.fontSize }}
+                  style={{ fontSize: theme.typography[isMobile ? 'body2' : 'body1'].fontSize }}
                   key={category.categoryId}
                   label={category.name}
                 />
@@ -87,14 +89,14 @@ export default function CreatorSearchTable(props: CreatorSearchTableProps): JSX.
         headerStyle: {
           backgroundColor: theme.palette.primary.main,
           color: theme.palette.primary.contrastText,
-          fontSize: theme.typography.h6.fontSize,
+          fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,
         },
         searchFieldVariant: 'outlined',
         searchFieldStyle: {
-          fontSize: theme.typography.h6.fontSize,
+          fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,
         },
         rowStyle: {
-          fontSize: theme.typography.h6.fontSize,
+          fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,
         },
       }}
     />

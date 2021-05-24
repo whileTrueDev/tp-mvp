@@ -10,11 +10,18 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
       minWidth: RANKING_PAGE_CONTAINER_WIDTH,
       backgroundColor: type === 'light' ? theme.palette.primary.main : theme.palette.background.paper,
       minHeight: '100vh',
+      [theme.breakpoints.down('md')]: {
+        minWidth: 'auto',
+      },
     },
     container: {
       minWidth: RANKING_PAGE_CONTAINER_WIDTH,
       maxWidth: RANKING_PAGE_CONTAINER_WIDTH,
       padding: 0,
+      [theme.breakpoints.down('md')]: {
+        minWidth: 'auto',
+        maxWidth: 'auto',
+      },
     },
     top: {
       backgroundColor: theme.palette.background.paper,

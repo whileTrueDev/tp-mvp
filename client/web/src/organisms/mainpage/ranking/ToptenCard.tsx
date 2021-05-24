@@ -121,6 +121,7 @@ function TopTenCard(): JSX.Element {
     let request: (config?: AxiosRequestConfig | undefined,
       options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
     setTabChangeLoading(true);
+
     if (column === 'rating') {
       request = getDailyRatingData;
     } else {
