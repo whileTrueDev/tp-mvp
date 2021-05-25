@@ -92,8 +92,8 @@ export default function YoutubeHighlightList(): JSX.Element {
             alignItems="flex-start"
             spacing={2}
           >
-            <Grid item xs={5}>{AfreecaBoard}</Grid>
-            <Grid item xs={5}>{TwitchBoard}</Grid>
+            <Grid item xs={6}>{AfreecaBoard}</Grid>
+            <Grid item xs={6}>{TwitchBoard}</Grid>
           </Grid>
         </>
       )}

@@ -87,7 +87,7 @@ export default function Inquiry(): JSX.Element {
             <Grid container className={classes.card} direction="column">
 
               <Grid container direction="row" alignItems="center" className={classes.cardContent}>
-                <Grid item xs={6} sm={6} className={classes.detailWrap}>
+                <Grid item xs={12} sm={6} className={classes.detailWrap}>
                   <Typography className={classes.detailTitle}>
                     성명
                     <Typography variant="caption" color="error">(필수)</Typography>
@@ -102,7 +102,7 @@ export default function Inquiry(): JSX.Element {
                     name="author"
                   />
                 </Grid>
-                <Grid item xs={6} sm={6} className={classes.detailWrap}>
+                <Grid item xs={12} sm={6} className={classes.detailWrap}>
                   <Typography className={classes.detailTitle}>
                     이메일
                     <Typography variant="caption" color="error">(필수)</Typography>

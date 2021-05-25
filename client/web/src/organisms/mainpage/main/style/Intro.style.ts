@@ -5,7 +5,7 @@ const styles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     padding: theme.spacing(10, 10),
     [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(10, 1),
+      padding: theme.spacing(4, 1),
     },
   },
   wraper: {
@@ -25,21 +25,26 @@ const styles = makeStyles((theme) => ({
     marginBottom: theme.spacing(5),
   },
   mainTitle: {
+    color: theme.palette.primary.contrastText,
     fontWeight: theme.typography.fontWeightBold,
     [theme.breakpoints.down('md')]: {
       fontSize: 20,
     },
-    [theme.breakpoints.only('sm')]: {
-      fontSize: 17,
+    [theme.breakpoints.down('sm')]: {
+      fontWeight: theme.typography.fontWeightRegular,
+      fontSize: theme.typography.body1.fontSize,
     },
   },
   mainContent: {
+    color: theme.palette.primary.contrastText,
     fontWeight: theme.typography.fontWeightBold,
     [theme.breakpoints.down('md')]: {
       fontSize: 20,
     },
-    [theme.breakpoints.only('sm')]: {
-      fontSize: 17,
+    [theme.breakpoints.down('sm')]: {
+      fontWeight: theme.typography.fontWeightRegular,
+      fontSize: theme.typography.body1.fontSize,
+      color: theme.palette.secondary.main,
     },
   },
   introVideoWrap: {
