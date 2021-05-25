@@ -41,8 +41,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     position: 'relative',
   },
   link: {
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(4),
+    marginRight: theme.spacing(2),
     color: theme.palette.text.primary,
     opacity: 0.8,
     '&:hover': {
@@ -54,16 +53,17 @@ export const useStyles = makeStyles((theme) => createStyles({
     textShadow: theme.shadows[7],
     opacity: 1,
     '& $linkText': {
-      fontSize: theme.typography.h5.fontSize,
+      textDecoration: 'underline',
+      transform: 'scale(1.1)',
     },
   },
   linkText: {
     fontWeight: 'bold',
-    fontSize: theme.typography.h6.fontSize,
+    fontSize: theme.typography.body1.fontSize,
   },
   logo: {
-    width: 214,
-    height: 74,
+    width: 112,
+    height: 38,
     margin: `0px ${theme.spacing(4)}px`,
     [theme.breakpoints.down('sm')]: {
       width: 80,
