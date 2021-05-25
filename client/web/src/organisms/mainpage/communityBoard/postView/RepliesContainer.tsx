@@ -1,7 +1,7 @@
 import { Pagination } from '@material-ui/lab';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
 import React, { useEffect, useMemo } from 'react';
-import { useStyles } from '../CommunityPostView';
+import { useStyles } from '../style/CommunityBoardView.style';
 import RepliesSection from './RepliesSection';
 import CommentForm from '../../ranking/sub/CommentForm';
 
@@ -57,6 +57,7 @@ export default function RepliesContainer(props: RepliesContainerProps): JSX.Elem
         count={replyPaginationCount}
         onChange={changeReplyPage}
       />
+
       <CommentForm
         postUrl={`/community/posts/${postId}/replies`}
         callback={loadReplies}

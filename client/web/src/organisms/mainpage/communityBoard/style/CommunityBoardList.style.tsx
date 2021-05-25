@@ -8,6 +8,9 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     width: '100%',
     minWidth: '650px',
     padding: theme.spacing(4, 8),
+    '.postView &': {
+      padding: 0,
+    },
     [theme.breakpoints.down('sm')]: {
       minWidth: 'auto',
       padding: theme.spacing(1),

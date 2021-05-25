@@ -307,6 +307,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           <Button
             onClick={clickLike}
             className={classnames(classes.actionButton, { [classes.liked]: likeClicked })}
+            size={isMobile ? 'small' : undefined}
             startIcon={
             isMobile
               ? <img width="24" height="24" src="/images/rankingPage/thumb_up.png" alt="추천" />
@@ -323,6 +324,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           <Button
             onClick={clickHate}
             className={classnames(classes.actionButton, { [classes.hated]: hateClicked })}
+            size={isMobile ? 'small' : undefined}
             startIcon={
               isMobile
                 ? <img width="24" height="24" src="/images/rankingPage/thumb_down.png" alt="비추천" />

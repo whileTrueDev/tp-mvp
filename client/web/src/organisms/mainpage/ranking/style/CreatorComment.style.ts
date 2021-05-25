@@ -118,6 +118,9 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     },
     countText: {
       marginLeft: theme.spacing(1),
+      [theme.breakpoints.down('sm')]: {
+        fontSize: theme.spacing(1.5),
+      },
     },
     liked: {
       color: theme.palette.primary.main,
