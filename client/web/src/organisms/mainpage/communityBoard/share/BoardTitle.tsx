@@ -25,10 +25,15 @@ const useStyles = makeStyles((theme: Theme) => {
     titleText: {
       zIndex: 1,
       whiteSpace: 'pre-line',
+      fontSize: theme.typography.h4.fontSize,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: theme.typography.body1.fontSize,
+      },
     },
     subTitleText: {
       fontSize: theme.typography.subtitle2.fontSize,
     },
+
     bg: {
       position: 'absolute',
       left: defaultIconBackgroundSize * (-0.5),
@@ -59,7 +64,7 @@ export default function BoardTitle({
   const classes = useStyles();
   if (!platform) {
     return (
-      <Typography variant="h4" className={classes.titleText}>게시판</Typography>
+      <Typography className={classes.titleText}>게시판</Typography>
     );
   }
   return (
@@ -79,10 +84,10 @@ export default function BoardTitle({
       ) : (
         <>
           {imageSrc && <div className={classes.bg} style={{ backgroundImage: `url(${imageSrc})` }} />}
-          <Typography variant="h4" className={classes.titleText}>
+          <Typography className={classes.titleText}>
             {title}
           </Typography>
-          <Typography variant="subtitle1" className={classes.subTitleText}>
+          <Typography className={classes.subTitleText}>
             {subTitle}
           </Typography>
         </>
