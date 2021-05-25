@@ -3,37 +3,69 @@ import React, { useMemo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import useAxios from 'axios-hooks';
+import { BOARD_PAGE_MAX_WIDTH } from '../../../../assets/constants';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   bg: {
     display: 'flex',
+    justifyContent: 'center',
     alignItems: 'flex-end',
     width: '100%',
-    height: theme.spacing(45),
+    height: theme.spacing(25),
+    [theme.breakpoints.down('sm')]: {
+      height: theme.spacing(13),
+    },
     backgroundColor: theme.palette.background.paper,
     backgroundImage: 'url(/images/board/board_bg.png)',
     backgroundRepeat: 'repeat-x',
   },
+  container: {
+    width: '100%',
+    maxWidth: BOARD_PAGE_MAX_WIDTH,
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   tvContainer: {
-    position: 'relative',
-    width: '50%',
-    height: '80%',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
   },
   tv: {
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: '50% 0%',
-    position: 'absolute',
     width: '100%',
     height: '100%',
+    maxWidth: 276,
+    maxHeight: 191,
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: 162,
+      maxHeight: 108,
+    },
+    padding: '5%',
+    position: 'relative',
+    '&:after': {
+      content: '" "',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      width: '110%',
+      height: '100%',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+    },
   },
   afreeca: {
-    backgroundImage: 'url(/images/board/tv_afreeca.png)',
+    '&:after': {
+      backgroundImage: 'url(/images/board/tv_afreeca.png)',
+    },
   },
   twitch: {
-    backgroundImage: 'url(/images/board/tv_twitch.png)',
+    '&:after': {
+      backgroundImage: 'url(/images/board/tv_twitch.png)',
+    },
   },
   userLogo: {
-    position: 'absolute', bottom: 16, left: 'calc(50% - 200px)', height: 230, width: 300,
+    width: '100%',
+    objectFit: 'fill',
+    height: '100%',
   },
 }));
 
@@ -46,14 +78,20 @@ export default function BoardHeaderImage(): JSX.Element {
 
   return (
     <div className={classes.bg}>
-      <div className={classes.tvContainer}>
-        <img src={afreecaTopUser?.afreecaLogo} alt="" className={classes.userLogo} />
-        <div className={classnames(classes.tv, classes.afreeca)} />
+      <div className={classes.container}>
+        <div className={classes.tvContainer}>
+          <div className={classnames(classes.tv, classes.afreeca)}>
+            <img src={afreecaTopUser?.afreecaLogo} alt="" className={classes.userLogo} />
+          </div>
+
+        </div>
+        <div className={classes.tvContainer}>
+          <div className={classnames(classes.tv, classes.twitch)}>
+            <img src={twitchTopUser?.twitchLogo} alt="" className={classes.userLogo} />
+          </div>
+        </div>
       </div>
-      <div className={classes.tvContainer}>
-        <img src={twitchTopUser?.twitchLogo} alt="" className={classes.userLogo} />
-        <div className={classnames(classes.tv, classes.twitch)} />
-      </div>
+
     </div>
   );
 }

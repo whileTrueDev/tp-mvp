@@ -12,7 +12,7 @@ import createPostItStyles from '../../../../utils/style/createPostitStyles';
 const useHotPostBoxStyle = makeStyles((theme: Theme) => createStyles({
   hotPostBox: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6, 5),
+    padding: theme.spacing(2),
     overflow: 'visible',
     position: 'relative',
     '&:before': createPostItStyles(theme, 'left top'),
@@ -31,11 +31,11 @@ const useHotPostBoxStyle = makeStyles((theme: Theme) => createStyles({
   },
   title: {
     '&>*': {
-      fontSize: theme.spacing(3),
+      fontSize: theme.typography.body2.fontSize,
     },
   },
   loadMoreButton: {
-    fontSize: theme.spacing(2.5),
+    fontSize: theme.typography.body2.fontSize,
   },
 }));
 
@@ -54,7 +54,7 @@ export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
     posts, error, loading, platform, buttonHandler,
   } = props;
 
-  const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="24" height="24" />;
+  const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="18" height="15" />;
   const moveToPost = (postId: number | undefined, platformCode: number | undefined) => () => {
     const postPlatform = getBoardPlatformNameByCode(platformCode);
     axios.post(`/community/posts/${postId}/hit`).then(() => {

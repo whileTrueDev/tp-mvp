@@ -24,3 +24,6 @@ export const MYPAGE_MAIN_MIN_HEIGHT = `calc(100vh - ${COMMON_APP_BAR_HEIGHT}px)`
 // *****************************************
 
 export const MAIN_HERO_HEIGHT = 240;
+
+// 자유게시판 - 최대 너비
+export const BOARD_PAGE_MAX_WIDTH = 998;

@@ -14,7 +14,8 @@ import BoardTitle from './share/BoardTitle';
 import HotPostBox from './list/HotPostBox';
 import useBoardContext from '../../../utils/hooks/useBoardContext';
 import BoardHeaderImage from './list/BoardHeaderImage';
-import { MYPAGE_MAIN_MAX_WIDTH } from '../../../assets/constants';
+import { BOARD_PAGE_MAX_WIDTH } from '../../../assets/constants';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   communitySection: {
@@ -27,8 +28,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   communityContainer: {
     width: '100%',
-    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
-    margin: '64px auto',
+    maxWidth: BOARD_PAGE_MAX_WIDTH,
   },
   boardListSection: {
     backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
@@ -37,19 +37,26 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     width: theme.spacing(4),
     height: theme.spacing(4),
     color: theme.palette.primary.main,
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
+    },
   },
   hotPostSection: {
     '&>.MuiGrid-item': {
-      padding: theme.spacing(2),
+      maxWidth: '48%',
     },
-    marginBottom: theme.spacing(0.5),
-
+    justifyContent: 'space-between',
+    margin: theme.spacing(2, 0),
+  },
+  tabsSection: {
+    padding: theme.spacing(1),
   },
 }));
 
 const useTabs = makeStyles((theme: Theme) => ({
   root: {
-    height: theme.spacing(5),
+    minHeight: 'auto',
   },
   flexContainer: {
     justifyContent: 'flex-end',
@@ -61,20 +68,19 @@ const useTabs = makeStyles((theme: Theme) => ({
 
 const useTabItem = makeStyles((theme: Theme) => createStyles({
   root: {
-    minWidth: theme.spacing(30),
     minHeight: 'auto',
     borderTopRightRadius: theme.spacing(1),
     borderTopLeftRadius: theme.spacing(1),
-    [theme.breakpoints.down('sm')]: {
-      minWidth: theme.spacing(20),
-    },
-    padding: 0,
+    padding: theme.spacing(0, 2),
   },
   wrapper: {
     flexDirection: 'row',
     color: theme.palette.text.secondary,
     fontWeight: theme.typography.fontWeightBold,
-    fontSize: theme.spacing(4),
+    fontSize: theme.typography.body1.fontSize,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.typography.body2.fontSize,
+    },
     '& svg, & img': {
       display: 'none',
     },
@@ -95,7 +101,6 @@ const useTabItem = makeStyles((theme: Theme) => createStyles({
 const useTabPanel = makeStyles((theme: Theme) => createStyles({
   tabPanel: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(10),
   },
 }));
 interface TabPanelProps {
@@ -148,6 +153,7 @@ export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
   const tabsClasses = useTabs();
   const tabItemClasses = useTabItem();
+  const { isMobile } = useMediaSize();
   const { platform: currentPlatform, changePlatform } = useBoardContext();
 
   // 아프리카 핫시청자 반응(추천글)
@@ -332,7 +338,9 @@ export default function CommunityBoardList(): JSX.Element {
       <BoardHeaderImage />
       <section className={classes.communitySection}>
         <div className={classes.communityContainer}>
-          <Grid container spacing={10} className={classes.hotPostSection}>
+
+          {!isMobile && (
+          <Grid container className={classes.hotPostSection}>
             <Grid item xs={6}>
               <HotPostBox
                 platform="afreeca"
@@ -352,7 +360,9 @@ export default function CommunityBoardList(): JSX.Element {
               />
             </Grid>
           </Grid>
-          <div ref={scrollRef}>
+          )}
+
+          <div ref={scrollRef} className={classes.tabsSection}>
             <Tabs
               classes={tabsClasses}
               value={value}

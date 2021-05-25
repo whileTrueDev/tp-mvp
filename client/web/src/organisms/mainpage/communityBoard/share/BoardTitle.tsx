@@ -5,7 +5,7 @@ import {
 import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) => {
-  const defaultIconBackgroundSize = theme.spacing(10);
+  const defaultIconBackgroundSize = theme.spacing(7);
   return createStyles({
     title: {
       position: 'relative',
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => {
       whiteSpace: 'pre-line',
     },
     subTitleText: {
-      fontSize: theme.typography.h5.fontSize,
+      fontSize: theme.typography.subtitle2.fontSize,
     },
     bg: {
       position: 'absolute',
@@ -79,7 +79,7 @@ export default function BoardTitle({
       ) : (
         <>
           {imageSrc && <div className={classes.bg} style={{ backgroundImage: `url(${imageSrc})` }} />}
-          <Typography variant="h2" className={classes.titleText}>
+          <Typography variant="h4" className={classes.titleText}>
             {title}
           </Typography>
           <Typography variant="subtitle1" className={classes.subTitleText}>
