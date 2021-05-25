@@ -36,7 +36,7 @@ interface PostProps {
 }
 function PostInfoCard({ post, repliesCount }: PostProps) {
   const {
-    title, nickname, ip, createDate, hit, recommend,
+    title, nickname, createDate, hit, recommend,
   } = post;
 
   const cardClass = usePostInfoCardStyle();
@@ -46,8 +46,8 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
     <Card className={cardClass.postInfoCard}>
       <Typography variant="h5" className={cardClass.title}>{title}</Typography>
       <Grid container justify="space-between">
-        <Grid item className={cardClass.group}>
-          <Typography className="text">{`${nickname} (${ip})`}</Typography>
+        <Grid item className={cardClass.group} xs={12} sm={6}>
+          <Typography className="text">{`${nickname}`}</Typography>
           <Divider orientation="vertical" flexItem />
           <Typography className="text">{createDate ? new Date(createDate).toLocaleString() : ''}</Typography>
         </Grid>

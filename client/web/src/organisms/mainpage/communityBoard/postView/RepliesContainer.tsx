@@ -44,10 +44,6 @@ export default function RepliesContainer(props: RepliesContainerProps): JSX.Elem
 
   return (
     <div className={classes.repliesContainer}>
-      <CommentForm
-        postUrl={`/community/posts/${postId}/replies`}
-        callback={loadReplies}
-      />
 
       <RepliesSection
         totalReplyCount={replies ? replies.total : 0}
@@ -60,6 +56,10 @@ export default function RepliesContainer(props: RepliesContainerProps): JSX.Elem
         page={replyPage}
         count={replyPaginationCount}
         onChange={changeReplyPage}
+      />
+      <CommentForm
+        postUrl={`/community/posts/${postId}/replies`}
+        callback={loadReplies}
       />
 
     </div>
