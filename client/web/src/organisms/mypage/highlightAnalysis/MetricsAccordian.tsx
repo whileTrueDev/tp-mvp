@@ -288,23 +288,25 @@ export default function MetricsAccordian(
             }}
             >
               {categories.map((category) => (
-                <Button
-                  className={
+                (highlightData.boundary[`${category.category}_sum`] !== 0) && (
+                  <Button
+                    className={
                     category.categoryId === selectedCategory.categoryId
                       ? classes.selectedCategoryButton : classes.categoryButton
                   }
-                  variant="contained"
-                  style={{ width: 150, marginLeft: 16, height: 60 }}
-                  onClick={() => handleCategorySelect(category)}
-                  key={shortid.generate()}
-                >
-                  <Typography
-                    className={category.categoryId === selectedCategory.categoryId
-                      ? classes.selectedButtonTitle : undefined}
+                    variant="contained"
+                    style={{ width: 150, marginLeft: 16, height: 60 }}
+                    onClick={() => handleCategorySelect(category)}
+                    key={shortid.generate()}
                   >
-                    {category.categoryName}
-                  </Typography>
-                </Button>
+                    <Typography
+                      className={category.categoryId === selectedCategory.categoryId
+                        ? classes.selectedButtonTitle : undefined}
+                    >
+                      {category.categoryName}
+                    </Typography>
+                  </Button>
+                )
               ))}
             </div>
             <Grid container direction="row" justify="space-between" alignItems="center">
