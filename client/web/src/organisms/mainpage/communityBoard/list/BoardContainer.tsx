@@ -180,6 +180,7 @@ export default function BoardContainer({
       <Pagination
         className={classes.pagination}
         variant="outlined"
+        shape="rounded"
         page={page}
         count={paginationCount}
         onChange={pagenationHandler}

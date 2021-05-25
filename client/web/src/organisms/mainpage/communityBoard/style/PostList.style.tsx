@@ -68,10 +68,20 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
       borderLeft: `${theme.spacing(1.2)}px solid ${theme.palette.primary.dark}`,
     },
   },
+  mobile: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   mobileTitle: {
     fontSize: theme.spacing(1.5),
   },
   mobileText: {
     fontSize: theme.spacing(1.25),
+    marginRight: theme.spacing(2),
+  },
+  mobileNickname: {
+    flex: 1,
+    textAlign: 'right',
   },
 }));

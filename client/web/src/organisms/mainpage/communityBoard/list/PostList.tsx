@@ -208,10 +208,6 @@ function MobilePostList({
     }
   };
 
-  const getDateDisplay = (date: Date| undefined) => {
-    if (!date) return '';
-    return dayjs(date).fromNow();
-  };
   return (
     <>
       {posts.map((post) => (
@@ -220,6 +216,7 @@ function MobilePostList({
           className={classnames(
             classes.row,
             classes.listItem,
+            classes.mobile,
             { [classes.currentPostItem]: post.postId === currentPostId },
           )}
           key={post.postId}
@@ -228,24 +225,33 @@ function MobilePostList({
             <Grid item xs={2}>
               {getPlatformImage(post.platform)}
             </Grid>
-            <Grid container item xs={6} direction="column" alignItems="flex-start">
+            <Grid container item xs={10} direction="column" alignItems="flex-start">
               <div>
                 <Typography component="span" className={classes.mobileTitle}>{post.title}</Typography>
-                <Typography component="span" className={classes.mobileTitle}>{`[${post.repliesCount}]`}</Typography>
+                {post.repliesCount > 0 && (
+                  <Typography component="span" className={classes.mobileTitle}>{`[${post.repliesCount}]`}</Typography>
+                )}
+
               </div>
 
-              <div>
+              <Grid container>
                 <Typography component="span" color="textSecondary" className={classes.mobileText}>
                   {post.createDate ? dayjs(post.createDate).fromNow() : ''}
                 </Typography>
-                <Typography component="span" color="textSecondary" className={classes.mobileText}>{post.hit}</Typography>
-                <Typography component="span" color="primary" className={classes.mobileText}>{post.recommend}</Typography>
+                <Typography component="span" color="textSecondary" className={classes.mobileText}>
+                  {`조회수 ${post.hit}`}
+                </Typography>
+                <Typography component="span" color="primary" className={classes.mobileText}>
+                  {`추천 ${post.recommend}`}
+                </Typography>
+                <Typography className={classnames(classes.mobileText, classes.mobileNickname)}>
+                  {post.nickname}
+                </Typography>
 
-              </div>
+              </Grid>
+
             </Grid>
-            <Grid item xs={4}>
-              <span>{post.nickname}</span>
-            </Grid>
+
           </Grid>
 
         </button>
