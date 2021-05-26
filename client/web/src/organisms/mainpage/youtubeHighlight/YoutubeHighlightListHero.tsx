@@ -7,6 +7,8 @@ import useHeroStyles from '../shared/ProductHero.style';
 const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: theme.palette.primary.main,
+    marginTop: 0,
+    height: theme.spacing(30),
   },
   wrapper: {
     alignItems: 'flex-start',

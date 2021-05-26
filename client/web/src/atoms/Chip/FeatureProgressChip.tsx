@@ -12,7 +12,7 @@ const useChipStyle = makeStyles((theme: Theme) => createStyles({
     borderRadius: theme.spacing(1),
   },
   default: {
-    color: theme.palette.common.black,
+    color: theme.palette.text.primary,
   },
   hold: {
     backgroundColor: theme.palette.error.light,

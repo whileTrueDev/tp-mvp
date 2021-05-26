@@ -72,6 +72,9 @@ const useTabItem = makeStyles((theme: Theme) => createStyles({
     borderTopRightRadius: theme.spacing(1),
     borderTopLeftRadius: theme.spacing(1),
     padding: theme.spacing(0, 2),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(0, 1),
+    },
   },
   wrapper: {
     flexDirection: 'row',
