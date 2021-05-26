@@ -7,10 +7,15 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     },
     left: {
       position: 'relative',
-      padding: theme.spacing(4),
+      padding: theme.spacing(2),
       border: commonBorderStyle,
       background: 'url("/images/rankingPage/streamer_detail_bg_1.svg") no-repeat 100% 100%',
       backgroundSize: 'contain',
+    },
+    linkButtons: {
+      position: 'absolute',
+      right: 0,
+      top: theme.spacing(1),
     },
     right: {
       border: commonBorderStyle,
@@ -50,8 +55,8 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     },
     avatar: {
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
-      width: theme.spacing(30),
-      height: theme.spacing(30),
+      width: theme.spacing(19),
+      height: theme.spacing(19),
     },
     textContainer: {
       display: 'flex',
@@ -67,17 +72,19 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
     nameContainer: {
       display: 'flex',
       alignItems: 'center',
+      flex: 1,
       maxWidth: '40%',
       textOverflow: 'ellipsis',
       marginRight: theme.spacing(2),
     },
     nickname: {
-      fontSize: theme.typography.h4.fontSize,
+      fontSize: theme.typography.subtitle1.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       wordBreak: 'break-word',
     },
     ratingContainer: {
       display: 'flex',
+      flex: 1,
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'flex-start',

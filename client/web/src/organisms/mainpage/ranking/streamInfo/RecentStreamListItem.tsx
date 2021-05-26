@@ -1,9 +1,10 @@
 import {
-  Tooltip, Typography, useMediaQuery, useTheme,
+  Tooltip, Typography,
 } from '@material-ui/core';
 import { RecentStream } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import dayjs from 'dayjs';
 import React from 'react';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import useRecentStreamStyles from '../style/RecentStream.styles';
 
 export interface RecentStreamListItemProps {
@@ -16,15 +17,14 @@ export default function RecentStreamListItem({
   onClick,
 }: RecentStreamListItemProps): React.ReactElement {
   const classes = useRecentStreamStyles();
-  const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isMobile: isSm } = useMediaSize();
 
   return (
     <div
       key={stream.title}
       style={{
         marginLeft: isSm ? 0 : stream.marginLeft,
-        height: stream.height,
+        height: 'auto',
         zIndex: 2,
         position: 'relative',
       }}
@@ -32,7 +32,7 @@ export default function RecentStreamListItem({
       <Tooltip
         title={stream.title.length > 25 ? <Typography variant="body2">{stream.title}</Typography> : ''}
       >
-        <Typography onClick={onClick} variant="h4" className={classes.title} component="span">
+        <Typography onClick={onClick} className={classes.title} component="span">
           {stream.title.length > 25 ? `${stream.title.slice(0, 25)}...` : stream.title}
           <Typography variant="body1" component="span" className={classes.subtitle}>
             {dayjs(stream.startDate).format('YYYY-MM-DD')}

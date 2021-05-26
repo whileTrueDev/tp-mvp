@@ -1,9 +1,9 @@
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
+import { RANKING_PAGE_CONTAINER_WIDTH } from '../../../../assets/constants';
 
 export const useRankingPageLayout = makeStyles((theme: Theme) => {
   const { type } = theme.palette;
   const borderStyle = `${theme.spacing(1)}px solid ${theme.palette.common.black}`;
-  const RANKING_PAGE_CONTAINER_WIDTH = '1080px';
 
   return createStyles({
     background: {

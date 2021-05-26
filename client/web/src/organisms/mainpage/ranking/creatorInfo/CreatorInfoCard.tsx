@@ -119,7 +119,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
     <Grid container className={classes.creatorInfoContainer}>
       {/* 왼쪽 크리에이터 기본설명, 평점 */}
       <Grid container item className={classes.left} xs={7}>
-        <Grid item xs={12} style={{ textAlign: 'right' }}>
+        <Grid item xs={12} className={classes.linkButtons}>
           {user?.detail?.youtubeChannelAddress ? (
             <Chip
               className={classes.chipLink}
@@ -167,7 +167,6 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
                 cancelRatingHandler={cancelRatingHandler}
                 score={userRating}
                 ratingProps={{
-                  size: 'large',
                   classes: largeRating,
                 }}
               />

@@ -9,11 +9,11 @@ import RecentStreamListLeftDecorator from './streamInfo/RecentStreamListLeftDeco
 import useRecentStreamStyles from './style/RecentStream.styles';
 
 const listPositions = [
-  { marginLeft: 16, height: 85 },
-  { marginLeft: 70, height: 100 },
-  { marginLeft: 110, height: 100 },
-  { marginLeft: 80, height: 90 },
-  { marginLeft: 16, height: undefined },
+  { marginLeft: 70 },
+  { marginLeft: 120 },
+  { marginLeft: 130 },
+  { marginLeft: 120 },
+  { marginLeft: 70 },
 ];
 interface RecentStreamListProps {
   userData: ResponseValues<User, any>;
@@ -40,7 +40,6 @@ export default function RecentStreamList({
     return d.map((_d, idx) => ({
       ..._d,
       marginLeft: listPositions[idx].marginLeft,
-      height: listPositions[idx].height,
     }));
   }
 
@@ -67,9 +66,7 @@ export default function RecentStreamList({
       {!userData.loading && userData.data && (
       <img
         draggable={false}
-        style={{
-          position: 'absolute', right: 0, top: 0, height: 600 - 16,
-        }}
+        className={classes.profileImage}
         src={theme.palette.type === 'light' ? userData.data.detail?.heroImageLight : userData.data.detail?.heroImageDark}
         alt=""
       />
