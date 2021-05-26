@@ -180,7 +180,7 @@ export class RankingsService {
         .from(RankingsEntity, 'T1')
         .groupBy('T1.creatorId')
         .where('T1.creatorId = MaxValueTable.creatorId')
-        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId AND ratings.createDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK)') // 1주 내 매겨진 평점만
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId')
         .andWhere(`T1.${targetColumn} = MaxValueTable.maxScore`); // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
 
       let qb: SelectQueryBuilder<RankingsEntity>;
@@ -255,7 +255,7 @@ export class RankingsService {
       if (errorHandler) {
         errorHandler(error);
       }
-      throw new InternalServerErrorException(`error in getTopTenByColumn column:${column}`);
+      throw new InternalServerErrorException(error, `error in getTopTenByColumn column:${column}`);
     }
   }
 
@@ -317,7 +317,7 @@ export class RankingsService {
       if (errorHandler) {
         errorHandler(error);
       }
-      throw new InternalServerErrorException(`error in getTopTenTrendsByColumn column:${column}, creatorIds: ${topTenCreatorIds}`);
+      throw new InternalServerErrorException(error, `error in getTopTenTrendsByColumn column:${column}, creatorIds: ${topTenCreatorIds}`);
     }
   }
 
