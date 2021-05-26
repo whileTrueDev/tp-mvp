@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       backgroundColor: theme.palette.background.paper,
     },
     [theme.breakpoints.down('sm')]: {
-      width: theme.spacing(40),
+      width: theme.spacing(35),
       '& input': {
         padding: theme.spacing(1),
         backgroundColor: theme.palette.background.paper,

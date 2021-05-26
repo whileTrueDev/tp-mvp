@@ -40,25 +40,21 @@ export default function RankingMain(): JSX.Element {
   const footerDecoration = useMemo(() => <FooterDecoration />, []);
   return (
     <div>
-      {isMobile ? ('mobile') : (
-        <>
-          <CarouselSection />
-          <Container className={wrapper.container}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={8} className={wrapper.left}>
-                <TopTenCard />
-              </Grid>
-              <Grid item xs={12} md={4} className={wrapper.right}>
-                {!isMobile && <RatingsList />}
-                <UserReactionCard />
-              </Grid>
-            </Grid>
-          </Container>
+      {!isMobile && <CarouselSection />}
 
-          {footerDecoration}
-        </>
-      )}
+      <Container className={wrapper.container}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={8} className={wrapper.left}>
+            <TopTenCard />
+          </Grid>
+          <Grid item xs={12} md={4} className={wrapper.right}>
+            <RatingsList />
+            <UserReactionCard />
+          </Grid>
+        </Grid>
+      </Container>
 
+      {footerDecoration}
     </div>
   );
 }

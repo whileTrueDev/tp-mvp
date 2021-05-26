@@ -81,7 +81,7 @@ export const StyledToggleButton = withStyles((theme: Theme) => createStyles({
     minWidth: theme.spacing(10),
     fontSize: theme.typography.body2.fontSize,
     [theme.breakpoints.down('sm')]: {
-      minWidth: theme.spacing(9),
+      minWidth: theme.spacing(8),
     },
     marginRight: theme.spacing(1),
     '&.Mui-selected': {
@@ -94,7 +94,7 @@ export const StyledToggleButton = withStyles((theme: Theme) => createStyles({
         width: theme.spacing(1),
         height: theme.spacing(1),
         backgroundColor: 'red',
-        left: theme.spacing(1),
+        left: theme.spacing(0.5),
         top: '50%',
         transform: 'translateY(-50%)',
       },

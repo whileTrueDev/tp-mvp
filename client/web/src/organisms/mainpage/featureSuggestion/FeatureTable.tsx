@@ -84,7 +84,9 @@ function MobileRowCells({ row }: {row: Omit<FeatureSuggestion, 'content'>}): JSX
           <Grid item xs={10} container direction="column">
             <Typography component="span" className={classes.title}>
               {row.title}
-              {row.replies && row.replies.length > 0 && (<span>{row.replies.length}</span>)}
+              {row.replies && row.replies.length > 0 && (
+                <Typography component="span" color="primary">{`(${row.replies.length})`}</Typography>
+              )}
               {row.isLock && (
               <LockIcon color="primary" fontSize="small" />
               )}
@@ -255,7 +257,7 @@ export default function FeatureTable({
 
                 </TableRow>
               ))}
-              {emptyRows > 0 && (
+              {emptyRows > 0 && !isMobile && (
                 <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>

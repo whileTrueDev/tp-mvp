@@ -27,6 +27,7 @@ export const FeatureProgressChip = (value: number): React.ReactNode => {
   switch (value) {
     case 1: return (
       <Chip
+        component="span"
         size={isMobile ? 'small' : undefined}
         className={classnames(classes.common)}
         color="primary"
@@ -36,6 +37,7 @@ export const FeatureProgressChip = (value: number): React.ReactNode => {
     );
     case 2: return (
       <Chip
+        component="span"
         size={isMobile ? 'small' : undefined}
         className={classnames(classes.common)}
         color="primary"
@@ -44,6 +46,7 @@ export const FeatureProgressChip = (value: number): React.ReactNode => {
     );
     case 3: return (
       <Chip
+        component="span"
         size={isMobile ? 'small' : undefined}
         className={classnames(classes.common, classes.hold)}
         label="개발보류"
@@ -51,6 +54,7 @@ export const FeatureProgressChip = (value: number): React.ReactNode => {
     );
     default: return (
       <Chip
+        component="span"
         size={isMobile ? 'small' : undefined}
         className={classnames(classes.common, classes.default)}
         variant="outlined"
