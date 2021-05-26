@@ -1,7 +1,10 @@
 import {
+  Grid,
   TableBody, TableCell, TablePagination, TableRow, Typography,
 } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {
+  makeStyles, useTheme, Theme, createStyles,
+} from '@material-ui/core/styles';
 import LockIcon from '@material-ui/icons/Lock';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import useAxios from 'axios-hooks';
@@ -12,6 +15,7 @@ import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
 import useDialog from '../../../utils/hooks/useDialog';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
 import CheckPasswordDialog from '../shared/CheckPasswordDialog';
 
 const TABLE_ROW_HEIGHT = 45;
@@ -35,6 +39,118 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const useMobileCellStyle = makeStyles((theme: Theme) => createStyles({
+  mobileCell: {
+    padding: 0,
+  },
+  categoryText: {
+    wordBreak: 'keep-all',
+    fontSize: theme.typography.subtitle2.fontSize,
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: theme.shape.borderRadius,
+    marginRight: theme.spacing(1),
+  },
+  title: {
+    fontSize: theme.typography.subtitle1.fontSize,
+  },
+  infoRow: {
+    display: 'flex',
+    '&>*': {
+      marginRight: theme.spacing(1),
+      fontSize: theme.typography.body2.fontSize,
+    },
+    '& .date': {
+      color: theme.palette.text.secondary,
+    },
+    '& .state': {
+      flex: 1,
+      textAlign: 'end',
+    },
+
+  },
+}));
+
+function MobileRowCells({ row }: {row: Omit<FeatureSuggestion, 'content'>}): JSX.Element {
+  const classes = useMobileCellStyle();
+  return (
+    <>
+      <TableCell className={classes.mobileCell}>
+        <Grid container alignItems="center">
+          <Grid item xs={2}>
+            <Typography align="center" className={classes.categoryText}>
+              {row.category}
+            </Typography>
+          </Grid>
+          <Grid item xs={10} container direction="column">
+            <Typography component="span" className={classes.title}>
+              {row.title}
+              {row.replies && row.replies.length > 0 && (<span>{row.replies.length}</span>)}
+              {row.isLock && (
+              <LockIcon color="primary" fontSize="small" />
+              )}
+            </Typography>
+            <div className={classes.infoRow}>
+              <Typography className="date">
+                {dateExpression({
+                  compoName: 'fromNow',
+                  createdAt: row.createdAt,
+                })}
+              </Typography>
+              <Typography className="state">{FeatureProgressChip(row.state)}</Typography>
+
+            </div>
+
+          </Grid>
+
+        </Grid>
+      </TableCell>
+    </>
+  );
+}
+
+function DesktopRowCells({ row: eachRow }: {row: Omit<FeatureSuggestion, 'content'>}): JSX.Element {
+  const classes = useStyles();
+  return (
+    <>
+      <TableCell className={classes.tableCell} scope="row" align="center">
+        {eachRow.suggestionId}
+      </TableCell>
+      <TableCell className={classes.tableCell} scope="row" align="center">
+        {eachRow.category}
+      </TableCell>
+      <TableCell className={classes.tableCell} scope="row" align="center">
+        {eachRow.userIp}
+      </TableCell>
+      <TableCell className={classes.tableCell} scope="row" align="left">
+
+        {eachRow.title}
+        {eachRow.replies && eachRow.replies.length > 0 && (
+        <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
+          {`(${eachRow.replies.length})`}
+        </Typography>
+        )}
+        {eachRow.isLock && (
+        <LockIcon
+          color="primary"
+          fontSize="small"
+          className={classes.lockIcon}
+        />
+        )}
+
+      </TableCell>
+      <TableCell className={classes.tableCell} scope="row" align="center">
+        {dateExpression({
+          compoName: 'table-view',
+          createdAt: eachRow.createdAt,
+        })}
+      </TableCell>
+      <TableCell className={classes.tableCell} scope="row" align="center">
+        {FeatureProgressChip(eachRow.state)}
+      </TableCell>
+    </>
+  );
+}
+
 export interface FeatureTableProps {
   isLoading: boolean;
   metrics: Omit<FeatureSuggestion, 'content' | 'replies'>[];
@@ -56,6 +172,7 @@ export default function FeatureTable({
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
   const classes = useStyles();
   const theme = useTheme();
+  const { isMobile } = useMediaSize();
 
   // 현재 사용자와 기능제안 글쓴이가 같은 사람인지 체크하기 위해
   const confirmDialog = useDialog();
@@ -118,7 +235,7 @@ export default function FeatureTable({
                 // eslint-disable-next-line react/prop-types
                 ? metrics.slice(page * pageSize, page * pageSize + pageSize)
                 : metrics
-              ).map((eachRow: any) => (
+              ).map((eachRow: Omit<FeatureSuggestion, 'content'>) => (
                 <TableRow
                   className={classes.tableRow}
                   key={shortid.generate()}
@@ -129,43 +246,13 @@ export default function FeatureTable({
                     } else handleClick(eachRow.suggestionId);
                   }}
                 >
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.suggestionId}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.category}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.userIp}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="left">
 
-                    {eachRow.title}
-                    {eachRow.replies.length > 0 && (
-                      <Typography variant="caption" color="primary" className={classes.commentCount} component="span">
-                        {`(${eachRow.replies.length})`}
-                      </Typography>
-                    )}
-                    {eachRow.isLock && (
-                    <LockIcon
-                      color="primary"
-                      fontSize="small"
-                      className={classes.lockIcon}
-                    />
+                  {isMobile
+                    ? <MobileRowCells row={eachRow} />
+                    : (
+                      <DesktopRowCells row={eachRow} />
                     )}
 
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {
-                      dateExpression({
-                        compoName: 'table-view',
-                        createdAt: eachRow.createdAt,
-                      })
-                    }
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {FeatureProgressChip(eachRow.state)}
-                  </TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
@@ -185,10 +272,11 @@ export default function FeatureTable({
           search: false,
           pageSize,
           pageSizeOptions: [8, 12],
+          header: !isMobile,
           headerStyle: {
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
-            fontSize: theme.typography.h6.fontSize,
+            fontSize: theme.typography.subtitle1.fontSize,
           },
           draggable: false,
           paginationType: 'stepped',

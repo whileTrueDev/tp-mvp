@@ -1,5 +1,5 @@
 import {
-  CircularProgress, Paper, Typography, Button,
+  CircularProgress, Paper, Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
@@ -7,7 +7,6 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { MYPAGE_MAIN_MAX_WIDTH } from '../../assets/constants';
 import { FeatureProgressChip } from '../../atoms/Chip/FeatureProgressChip';
 import FeatureDetail from '../../organisms/mainpage/featureSuggestion/FeatureDetail';
 import FeatureTable from '../../organisms/mainpage/featureSuggestion/FeatureTable';
@@ -17,25 +16,9 @@ import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
-import createPostItStyles from '../../utils/style/createPostitStyles';
-import { useFontStyle } from './Notice';
+import NoticeLayout from '../../organisms/mainpage/shared/NoticeLayout';
 
 const useStyles = makeStyles((theme) => ({
-  featureSection: {
-    backgroundColor: theme.palette.primary.main,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  featureContainer: {
-    position: 'relative',
-    width: '100%',
-    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
-    margin: '64px auto',
-    padding: theme.spacing(6, 4),
-    '&:before': createPostItStyles(theme, 'left top'),
-  },
   contents: { marginTop: theme.spacing(2) },
   buttonSection: {
     display: 'flex',
@@ -62,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FeatureSuggestionPage(): JSX.Element {
   const classes = useStyles();
-  const fontStyle = useFontStyle();
   const history = useHistory();
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
 
@@ -111,84 +93,80 @@ export default function FeatureSuggestionPage(): JSX.Element {
     <div>
       <Appbar variant="transparent" />
       <ProductHero />
-      <section className={classes.featureSection}>
-        <Paper elevation={0} className={classes.featureContainer}>
-          <Typography className={fontStyle.title} variant="h6">기능제안 게시판</Typography>
-          <Typography
-            className={fontStyle.description}
-          >
-            트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해 주세요.
-          </Typography>
-          <Typography className={fontStyle.description}>궁금하신 사항은 고객센터로 연락 부탁드립니다.</Typography>
-
-          {/* 기능제안 개별 보기 */}
-          {selectedSuggestionId && loading && (
-            <Paper elevation={0} className={classes.detailLoading}>
-              <CircularProgress />
-            </Paper>
-          )}
-          {selectedSuggestionId && !loading && featureListData && (
-            <div className={classes.contents}>
-              <FeatureDetail
-                selectedSuggestionId={selectedSuggestionId}
-                data={featureListData
-                  .sort((row1, row2) => new Date(row2.createdAt).getTime()
-                    - new Date(row1.createdAt).getTime())
-                  .filter((row) => (selectedCategory !== '전체'
-                    ? row.category === selectedCategory : row))}
-                onOtherFeatureClick={handleFeatureClick}
-                onBackClick={handleResetFeatureSelect}
-                featureListRefetch={featureListRefetch}
-              />
-            </div>
-          )}
-
-          {/* 기능제안 카테고리 목록 필터링 */}
-          {!selectedSuggestionId && (
-            <div className={classes.contents}>
-              <FilterCategoryButtonGroup
-                categories={FEATURE_SUGGESTION_OPTIONS.map((options) => options.value)}
-                onChange={handleCategorySelect}
-                selected={selectedCategory}
-              />
-            </div>
-          )}
-
-          {/* 기능제안 글 목록 */}
-          <div className={classnames(classes.contents, classes.buttonSection)}>
-            <div className={classes.chipArea}>
-              {FeatureProgressChip(3)}
-              {FeatureProgressChip(2)}
-              {FeatureProgressChip(1)}
-              {FeatureProgressChip(0)}
-            </div>
-          </div>
-          <div className={classes.tableContainer}>
-            <FeatureTable
-              isLoading={loading}
-              metrics={!loading && featureListData
-                ? featureListData
-                  .sort((row1, row2) => new Date(row2.createdAt).getTime()
-                          - new Date(row1.createdAt).getTime())
-                  .filter((row) => (selectedCategory !== '전체'
-                    ? row.category === selectedCategory : row))
-                : []}
-              handleClick={handleFeatureClick}
-              page={page}
-              pageSize={pageSize}
-              handlePage={setPage}
-              handlePageSize={setPageSize}
-            />
-
-          </div>
-
-          <div className={classes.writeButtonWrapper}>
-            <Button className={classes.writeButton} disableElevation variant="contained" onClick={handleWriteClick}>
-              글쓰기
-            </Button>
-          </div>
+      <NoticeLayout
+        title="기능제안 게시판"
+        description={[
+          '트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해 주세요.',
+          '궁금하신 사항은 고객센터로 연락 부탁드립니다.',
+        ]}
+      >
+        {/* 기능제안 개별 보기 */}
+        {selectedSuggestionId && loading && (
+        <Paper elevation={0} className={classes.detailLoading}>
+          <CircularProgress />
         </Paper>
-      </section>
+        )}
+        {selectedSuggestionId && !loading && featureListData && (
+        <div className={classes.contents}>
+          <FeatureDetail
+            selectedSuggestionId={selectedSuggestionId}
+            data={featureListData
+              .sort((row1, row2) => new Date(row2.createdAt).getTime()
+                    - new Date(row1.createdAt).getTime())
+              .filter((row) => (selectedCategory !== '전체'
+                ? row.category === selectedCategory : row))}
+            onOtherFeatureClick={handleFeatureClick}
+            onBackClick={handleResetFeatureSelect}
+            featureListRefetch={featureListRefetch}
+          />
+        </div>
+        )}
+
+        {/* 기능제안 카테고리 목록 필터링 */}
+        {!selectedSuggestionId && (
+        <div className={classes.contents}>
+          <FilterCategoryButtonGroup
+            categories={FEATURE_SUGGESTION_OPTIONS.map((options) => options.value)}
+            onChange={handleCategorySelect}
+            selected={selectedCategory}
+          />
+        </div>
+        )}
+
+        {/* 기능제안 글 목록 */}
+        <div className={classnames(classes.contents, classes.buttonSection)}>
+          <div className={classes.chipArea}>
+            {FeatureProgressChip(3)}
+            {FeatureProgressChip(2)}
+            {FeatureProgressChip(1)}
+            {FeatureProgressChip(0)}
+          </div>
+        </div>
+        <div className={classes.tableContainer}>
+          <FeatureTable
+            isLoading={loading}
+            metrics={!loading && featureListData
+              ? featureListData
+                .sort((row1, row2) => new Date(row2.createdAt).getTime()
+                          - new Date(row1.createdAt).getTime())
+                .filter((row) => (selectedCategory !== '전체'
+                  ? row.category === selectedCategory : row))
+              : []}
+            handleClick={handleFeatureClick}
+            page={page}
+            pageSize={pageSize}
+            handlePage={setPage}
+            handlePageSize={setPageSize}
+          />
+
+        </div>
+
+        <div className={classes.writeButtonWrapper}>
+          <Button className={classes.writeButton} disableElevation variant="contained" onClick={handleWriteClick}>
+            글쓰기
+          </Button>
+        </div>
+      </NoticeLayout>
       <Footer />
 
     </div>
