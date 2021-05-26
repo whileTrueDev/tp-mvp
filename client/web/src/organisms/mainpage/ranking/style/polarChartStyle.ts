@@ -1,13 +1,14 @@
 import {
   createStyles, makeStyles, Theme,
 } from '@material-ui/core/styles';
+import { CAROUSEL_HEIGHT } from '../../../../assets/constants';
 import getPlatformColor from '../../../../utils/getPlatformColor';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
   polarAreaContainer: {
     position: 'relative',
-    padding: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
+    height: CAROUSEL_HEIGHT,
   },
   totalCount: {
     position: 'absolute',
@@ -17,18 +18,18 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     textAlign: 'center',
     '& img': {
       width: '100%',
-      maxWidth: `${theme.spacing(10)}px`,
+      maxWidth: `${theme.spacing(5)}px`,
     },
     '&>*': {
       position: 'absolute',
       transform: 'translateY(-50%)',
     },
     '& .platformName': {
-      fontSize: theme.typography.h6.fontSize,
+      fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.fontWeightBold,
     },
     '& .percent': {
-      fontSize: theme.typography.h6.fontSize,
+      fontSize: theme.typography.body1.fontSize,
     },
 
   },

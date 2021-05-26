@@ -41,7 +41,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     },
     listItem: {
       display: 'flex',
-      height: theme.spacing(18),
+      height: theme.spacing(9.5),
       marginBottom: theme.spacing(1),
       '&:nth-child(1) .fa-star': starStyles[0],
       '&:nth-child(2) .fa-star': starStyles[1],
@@ -61,14 +61,15 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       },
     },
     platformLogo: {
-      width: '100%',
-      height: 'auto',
+      width: theme.spacing(2.75),
+      height: theme.spacing(2.75),
       '&.afreeca': {
-        maxWidth: theme.spacing(4),
-        maxHeight: theme.spacing(4),
+        // maxWidth: theme.spacing(4),
+        // maxHeight: theme.spacing(4),
       },
       '&.twitch': {
-
+        width: theme.spacing(3),
+        height: theme.spacing(3),
       },
     },
     background: {
@@ -94,14 +95,13 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       position: 'relative',
       '& p': {
         color: theme.palette.common.black,
-        fontSize: theme.typography.h5.fontSize,
       },
     },
     avatarContainer: {},
     avatarImage: {
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
-      width: theme.spacing(10),
-      height: theme.spacing(10),
+      width: theme.spacing(8.75),
+      height: theme.spacing(8.75),
     },
     infoContainer: {
       padding: theme.spacing(1),
@@ -109,7 +109,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     infoWrapper: {
       width: '100%',
       '&>*:not(:last-child)': {
-        marginBottom: theme.spacing(1),
+        // marginBottom: theme.spacing(1),
       },
     },
     title: {
@@ -129,7 +129,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     creatorName: {
       color: theme.palette.common.black,
       fontWeight: theme.typography.fontWeightBold,
-      fontSize: theme.typography.h6.fontSize,
+      fontSize: theme.typography.body1.fontSize,
       textOverflow: 'ellipsis',
       overflow: 'hidden',
       whiteSpace: 'nowrap',
@@ -140,10 +140,15 @@ export const useTopTenList = makeStyles((theme: Theme) => {
         color: theme.palette.grey[500],
       },
       display: 'flex',
-      flexDirection: 'column',
+      '&.column': {
+        flexDirection: 'column',
+      },
       alignItems: 'center',
       '&>*': {
         fontWeight: theme.typography.fontWeightMedium,
+      },
+      '& .scoreText': {
+        fontSize: theme.spacing(1.5),
       },
     },
     chip: {
@@ -157,7 +162,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       marginRight: theme.spacing(1),
     },
     trendsBarContainer: {
-      padding: theme.spacing(1),
+      marginLeft: theme.spacing(1),
       alignItems: 'flex-end',
     },
     placeholder: {
@@ -177,6 +182,7 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     scoreText: {
       position: 'relative',
       textAlign: 'right',
+      fontSize: theme.spacing(1.5),
       fontWeight: theme.typography.fontWeightBold,
       color: theme.palette.primary.dark,
     },
@@ -195,7 +201,7 @@ export const useProgressBar = makeStyles((theme: Theme) => {
 
   return createStyles({
     root: {
-      height: theme.spacing(3),
+      height: theme.spacing(1.5),
       ...barCommonStyle,
     },
     colorPrimary: {

@@ -3,33 +3,29 @@ import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import getPlatformColor from '../../../../utils/getPlatformColor';
 
-const useHeaderStyle = makeStyles((theme: Theme) => {
-  const buttonSize = theme.typography.h1.fontSize;
-
-  return createStyles({
-    wrapper: {
-      position: 'relative',
-      zIndex: 10,
-      transform: `translate(${buttonSize}, ${theme.spacing(2)}px)`,
+const useHeaderStyle = makeStyles((theme: Theme) => createStyles({
+  wrapper: {
+    position: 'absolute',
+    zIndex: 10,
+    padding: theme.spacing(1, 2),
+  },
+  title: {
+    fontSize: theme.typography.h6.fontSize,
+  },
+  subTitle: {
+    fontSize: theme.typography.h5.fontSize,
+    fontWeight: theme.typography.fontWeightBold,
+    '& > *:not(last-child)': {
+      marginRight: theme.spacing(1),
     },
-    title: {
-      fontSize: theme.typography.h6.fontSize,
-    },
-    subTitle: {
-      fontSize: theme.typography.h4.fontSize,
-      fontWeight: theme.typography.fontWeightBold,
-      '& > *:not(last-child)': {
-        marginRight: theme.spacing(1),
-      },
-    },
-    afreeca: {
-      color: getPlatformColor('afreeca'),
-    },
-    twitch: {
-      color: getPlatformColor('twitch'),
-    },
-  });
-});
+  },
+  afreeca: {
+    color: getPlatformColor('afreeca'),
+  },
+  twitch: {
+    color: getPlatformColor('twitch'),
+  },
+}));
 
 export interface CarouselItemHeaderProps extends React.HTMLAttributes<HTMLDivElement>{
   title: string;

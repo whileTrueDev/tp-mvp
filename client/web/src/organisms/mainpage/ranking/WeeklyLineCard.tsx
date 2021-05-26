@@ -12,6 +12,7 @@ import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { useWeeklyLineCardStyle } from './style/WeeklyLineCard.style';
 import CarouselItemHeader from './sub/CarouselItemHeader';
+import { CAROUSEL_HEIGHT } from '../../../assets/constants';
 
 function WeeklyLineCard(): JSX.Element {
   const classes = useWeeklyLineCardStyle();
@@ -31,6 +32,7 @@ function WeeklyLineCard(): JSX.Element {
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
       spacingTop: 24,
+      height: CAROUSEL_HEIGHT,
     },
     credits: { enabled: false },
     title: { text: undefined },
@@ -53,8 +55,8 @@ function WeeklyLineCard(): JSX.Element {
       itemMarginBottom: 30,
       labelFormat: ' ',
       margin: 0,
-      symbolWidth: theme.spacing(8),
-      symbolHeight: theme.spacing(6),
+      symbolWidth: theme.spacing(4),
+      symbolHeight: theme.spacing(3),
     },
     tooltip: {
       shared: true,

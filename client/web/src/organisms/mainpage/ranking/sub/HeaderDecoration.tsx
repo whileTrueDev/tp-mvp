@@ -13,10 +13,7 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     backgroundPositionY: 'bottom',
-    height: theme.spacing(30),
-    position: 'relative',
-    marginLeft: 'auto',
-    marginRight: -12,
+    height: theme.spacing(21),
   },
 }));
 export default function HeaderDecoration(): JSX.Element {

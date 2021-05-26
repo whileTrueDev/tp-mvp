@@ -27,3 +27,6 @@ export const MAIN_HERO_HEIGHT = 240;
 
 // 자유게시판 - 최대 너비
 export const BOARD_PAGE_MAX_WIDTH = 998;
+
+// carousel height
+export const CAROUSEL_HEIGHT = 272;
