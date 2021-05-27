@@ -12,6 +12,7 @@ import HighlightListContainer from '../../organisms/mainpage/youtubeHighlight/li
 import YoutubeHighlightListHero from '../../organisms/mainpage/youtubeHighlight/YoutubeHighlightListHero';
 import useMediaSize from '../../utils/hooks/useMediaSize';
 import MobileYoutubeHighlightList from '../../organisms/mainpage/youtubeHighlight/MobileYoutubeHighlightList';
+import { RANKING_PAGE_CONTAINER_WIDTH } from '../../assets/constants';
 
 export const youtubeHighlightListLayout = makeStyles((theme) => ({
   searchForm: {
@@ -23,6 +24,10 @@ export const youtubeHighlightListLayout = makeStyles((theme) => ({
   },
   contentTitle: {
     margin: theme.spacing(5),
+  },
+  boardWrapper: {
+    maxWidth: RANKING_PAGE_CONTAINER_WIDTH,
+    margin: '0 auto',
   },
 }));
 
@@ -90,6 +95,7 @@ export default function YoutubeHighlightList(): JSX.Element {
             container
             justify="space-around"
             alignItems="flex-start"
+            className={classes.boardWrapper}
             spacing={2}
           >
             <Grid item xs={6}>{AfreecaBoard}</Grid>

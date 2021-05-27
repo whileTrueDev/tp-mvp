@@ -178,6 +178,7 @@ function PostList(props: PostListProps): JSX.Element {
             fontSize: theme.typography.body1.fontSize,
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.common.white,
+            wordBreak: 'keep-all',
           },
           header: !isMobile,
           showTitle: !isMobile,

@@ -60,6 +60,7 @@ function FilterButton({ onClick, label }: {
       variant="contained"
       color="primary"
       onClick={onClick}
+      style={{ marginRight: '4px' }}
       size={isMobile ? 'small' : undefined}
     >
       {label}
@@ -333,8 +334,11 @@ export default function CommunityPostView(): JSX.Element {
 
       <div className={classes.buttonsContainer}>
         <FilterButton onClick={moveToBoardList} label="전체 게시판 목록보기" />
-        <FilterButton onClick={editPostButtonHandler} label="글수정" />
-        <FilterButton onClick={deletePostButtonHandler} label="글삭제" />
+        <div>
+          <FilterButton onClick={editPostButtonHandler} label="글수정" />
+          <FilterButton onClick={deletePostButtonHandler} label="글삭제" />
+        </div>
+
       </div>
 
       {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}

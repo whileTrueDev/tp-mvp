@@ -25,6 +25,9 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
       borderBottom: borderStyle,
     },
     left: {
+      [theme.breakpoints.down('sm')]: {
+        padding: 0,
+      },
     },
     right: {
       '&>*:not(:last-child)': {

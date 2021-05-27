@@ -7,7 +7,7 @@ import classnames from 'classnames';
 const useStyles = makeStyles((theme: Theme) => createStyles({
   mobileNavContainer: {
     padding: theme.spacing(0.5, 1.5),
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.background.paper,
   },
   button: {
     marginRight: theme.spacing(1),

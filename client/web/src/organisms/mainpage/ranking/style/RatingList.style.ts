@@ -17,9 +17,11 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
       position: 'relative',
       marginBottom: theme.spacing(1),
       padding: 0,
+
     },
     bg: {
       padding: theme.spacing(1, 0),
+      width: '100%',
     },
     [`listItem-${1}`]: {
       '& $bg': {
