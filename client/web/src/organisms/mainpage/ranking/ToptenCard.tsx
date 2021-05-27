@@ -1,5 +1,5 @@
 import {
-  Button, Grid, Typography,
+  Button, Card, Grid, Typography,
 } from '@material-ui/core';
 
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
@@ -237,10 +237,13 @@ function TopTenCard(): JSX.Element {
 
   if (isMobile) {
     return (
-      <>
-        <RankingDropDown columns={mainTabColumns} index={mainTabIndex} changeHandler={changeMain} />
-        <RankingDropDown columns={platformTabColumns} index={platformTabIndex} changeHandler={changePlatform} />
-        <RankingDropDown columns={categoryTabColumns} index={categoryTabIndex} changeHandler={changeCategory} />
+      <Card>
+        <div style={{ display: 'flex', padding: '4px' }}>
+          <RankingDropDown id="main" columns={mainTabColumns} index={mainTabIndex} changeHandler={changeMain} />
+          <RankingDropDown id="category" columns={platformTabColumns} index={platformTabIndex} changeHandler={changePlatform} />
+          <RankingDropDown id="platform" columns={categoryTabColumns} index={categoryTabIndex} changeHandler={changeCategory} />
+        </div>
+
         <TopTenListContainer
           data={dataToDisplay}
           currentTab={mainTabColumns[mainTabIndex].column}
@@ -264,50 +267,11 @@ function TopTenCard(): JSX.Element {
             )
             : null}
         </div>
-      </>
+      </Card>
     );
   }
   return (
     <>
-      {/* <Select
-        variant="outlined"
-        value={mainTabColumns[mainTabIndex].label}
-        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-          const label = event.target.value;
-          const index = mainTabColumns.findIndex((tab) => tab.label === label);
-          changeMain(index);
-        }}
-      >
-        {mainTabColumns.map((val) => (
-          <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
-        ))}
-      </Select>
-      <Select
-        variant="outlined"
-        value={categoryTabColumns[categoryTabIndex].label}
-        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-          const label = event.target.value;
-          const index = categoryTabColumns.findIndex((tab) => tab.label === label);
-          changeCategory(index);
-        }}
-      >
-        {categoryTabColumns.map((val) => (
-          <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
-        ))}
-      </Select>
-      <Select
-        variant="outlined"
-        value={platformTabColumns[platformTabIndex].label}
-        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-          const label = event.target.value;
-          const index = platformTabColumns.findIndex((tab) => tab.label === label);
-          changePlatform(index);
-        }}
-      >
-        {platformTabColumns.map((val) => (
-          <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
-        ))}
-      </Select> */}
       <Typography className={classes.recentAnalysisDate}>
         {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
       </Typography>

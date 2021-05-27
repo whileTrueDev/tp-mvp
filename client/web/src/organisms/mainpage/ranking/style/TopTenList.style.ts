@@ -24,6 +24,9 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       position: 'relative',
       paddingTop: theme.spacing(2),
       paddingLeft: theme.spacing(1),
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(0.5),
+      },
     },
     header: {
       display: 'flex',
@@ -38,6 +41,9 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     },
     listItems: {
       padding: theme.spacing(2, 0),
+      [theme.breakpoints.down('sm')]: {
+        padding: 0,
+      },
     },
     listItem: {
       display: 'flex',
@@ -102,6 +108,10 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
       width: theme.spacing(8.75),
       height: theme.spacing(8.75),
+      [theme.breakpoints.down('sm')]: {
+        width: theme.spacing(6),
+        height: theme.spacing(6),
+      },
     },
     infoContainer: {
       padding: theme.spacing(1),

@@ -1,4 +1,6 @@
-import { Typography, Avatar, Link } from '@material-ui/core';
+import {
+  Typography, Avatar, Link, Hidden,
+} from '@material-ui/core';
 import classnames from 'classnames';
 import React, { useMemo } from 'react';
 import { Scores, TopTenDataItem, WeeklyTrendsItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
@@ -8,6 +10,7 @@ import { useTopTenList } from '../style/TopTenList.style';
 import InfoComponent from './InfoComponent';
 import TrendsBarChart from './TrendsBarChart';
 import '@fortawesome/fontawesome-free/css/all.css';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 /**
  * '80%' -> 80으로 반환하는 함수
  * @param strPercentNum '80%' 처럼 %가 포함된 문자열
@@ -38,6 +41,7 @@ function TopTenListItem(props: TopTenListItemProps): JSX.Element {
     data: d, index, headerColumns, currentScoreName, weeklyTrendsData,
   } = props;
   const { platform, creatorId } = d;
+  const { isMobile } = useMediaSize();
 
   // 주간점수그래프 부분 제외한 너비
   const backgroundWidth = useMemo(() => 100 - getPercentNumber(headerColumns[3].width), [headerColumns]);
@@ -54,11 +58,11 @@ function TopTenListItem(props: TopTenListItemProps): JSX.Element {
 
       <div
         className={classnames(platform, classes.background)}
-        style={{ width: toPercentString(backgroundWidth) }}
+        style={{ width: isMobile ? '100%' : toPercentString(backgroundWidth) }}
       >
         <div
           className={classnames(classes.orderContainer, classes.center)}
-          style={{ width: toPercentString(innerBackgroundWidths[0]) }}
+          style={{ width: isMobile ? '10%' : toPercentString(innerBackgroundWidths[0]) }}
         >
           {index < 3
             ? <i className="fas fa-star" />
@@ -73,7 +77,7 @@ function TopTenListItem(props: TopTenListItemProps): JSX.Element {
 
         <div
           className={classnames(classes.avatarContainer, classes.center)}
-          style={{ width: toPercentString(innerBackgroundWidths[1]) }}
+          style={{ width: isMobile ? '15%' : toPercentString(innerBackgroundWidths[1]) }}
         >
           <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
             <Avatar
@@ -87,19 +91,21 @@ function TopTenListItem(props: TopTenListItemProps): JSX.Element {
 
         <div
           className={classnames(classes.infoContainer, classes.center)}
-          style={{ width: toPercentString(innerBackgroundWidths[2]) }}
+          style={{ width: isMobile ? '75%' : toPercentString(innerBackgroundWidths[2]) }}
         >
           <InfoComponent data={d} currentScoreName={currentScoreName} />
         </div>
 
       </div>
 
-      <div
-        className={classnames(classes.trendsBarContainer, classes.center)}
-        style={{ width: headerColumns[3].width }}
-      >
-        <TrendsBarChart data={weeklyTrendsData} currentScoreName={currentScoreName} />
-      </div>
+      <Hidden smDown>
+        <div
+          className={classnames(classes.trendsBarContainer, classes.center)}
+          style={{ width: headerColumns[3].width }}
+        >
+          <TrendsBarChart data={weeklyTrendsData} currentScoreName={currentScoreName} />
+        </div>
+      </Hidden>
     </div>
   );
 }
