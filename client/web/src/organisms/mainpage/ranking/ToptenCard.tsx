@@ -1,5 +1,5 @@
 import {
-  Button, Grid, MenuItem, Select, Typography,
+  Button, Grid, Typography,
 } from '@material-ui/core';
 
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
@@ -19,8 +19,9 @@ import TVIcon from '../../../atoms/svgIcons/TVIcon';
 import { useTopTenCard } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 import axios from '../../../utils/axios';
-import * as RankingTabs from './topten/tabs';
-import useRankingState from '../../../utils/hooks/useRankingState';
+import { CategoryTab, MainTab, PlatformTab } from './topten/filter';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
+import RankingDropDown from './topten/filter/RankingDropDown';
 
 export type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer'|'rating';
 type MainTabColumns = {
@@ -55,180 +56,165 @@ type loadDataArgs = {
 }
 
 function TopTenCard(): JSX.Element {
+  const { isMobile } = useMediaSize();
   // 스타일
   const classes = useTopTenCard();
   const tabRef = useRef<any>(null);
   const scrollRef = useRef<any>(null);
-  const {
-    loading,
-    error,
-    dailyRatingLoading,
-    dailyRatingError,
-    recentAnalysisDate,
-    weeklyGraphLabel,
-    tabChangeLoading,
-    changeMain,
-    changeCategory,
-    changePlatform,
-    loadData,
-    loadMoreData,
-    loadCategories,
-    dataToDisplay,
-    currentMainTab,
-    currentCategoryTab,
-    currentPlatformTab,
-  } = useRankingState();
 
-  // const [categoryTabColumns, setCategoryTabColumns] = useState<{categoryId: number, label: string}[]>([
-  //   { categoryId: 0, label: '전체' },
-  // ]);
+  const [categoryTabColumns, setCategoryTabColumns] = useState<{categoryId: number, label: string}[]>([
+    { categoryId: 0, label: '전체' },
+  ]);
 
-  // // axios요청
-  // // 탭 별 상위 10인 요청
-  // const [{ loading, error }, refetch] = useAxios<RankingDataType>({
-  //   url: '/rankings/top-ten',
-  // }, { manual: true });
-  // // 시청자 평점 탭(일일평점) 요청
-  // const [{
-  //   loading: dailyRatingLoading,
-  //   error: dailyRatingError,
-  // }, getDailyRatingData] = useAxios<RankingDataType>({
-  //   url: '/ratings/daily-ranking',
-  // }, { manual: true });
+  // axios요청
+  // 탭 별 상위 10인 요청
+  const [{ loading, error }, refetch] = useAxios<RankingDataType>({
+    url: '/rankings/top-ten',
+  }, { manual: true });
+  // 시청자 평점 탭(일일평점) 요청
+  const [{
+    loading: dailyRatingLoading,
+    error: dailyRatingError,
+  }, getDailyRatingData] = useAxios<RankingDataType>({
+    url: '/ratings/daily-ranking',
+  }, { manual: true });
 
-  // // 최근 분석날짜 요청
-  // const [{ data: recentAnalysisDate },
-  // ] = useAxios<Date>('/rankings/recent-analysis-date');
+  // 최근 분석날짜 요청
+  const [{ data: recentAnalysisDate },
+  ] = useAxios<Date>('/rankings/recent-analysis-date');
 
-  // // states
-  // // 메인 탭에서 선택된 탭의 인덱스
-  // const [mainTabIndex, setMainTabIndex] = useState<number>(0);
-  // // 하위카테고리 탭에서 선택된 탭의 인덱스
-  // const [categoryTabIndex, setCategoryTabIndex] = useState<number>(0);
-  // // 플랫폼 탭에서 선택된 탭의 인덱스
-  // const [platformTabIndex, setPlatformTabIndex] = useState<number>(0);
-  // // 랭킹목록 순위, 이름, 다음에 나오는 '주간 점수 그래프 | 주간 시청자수 그래프' 부분
-  // const [weeklyGraphLabel, setWeeklyGraphLabel] = useState<string>('주간 점수 그래프');
-  // // 보여줄 데이터 상태
-  // const [dataToDisplay, setDataToDisplay] = useState<RankingDataType>({
-  //   rankingData: [],
-  //   weeklyTrends: {},
-  //   totalDataCount: 0,
-  // });
-  // // 탭변경 로딩
-  // const [tabChangeLoading, setTabChangeLoading] = useState<boolean>(false);
+  // states
+  // 메인 탭에서 선택된 탭의 인덱스
+  const [mainTabIndex, setMainTabIndex] = useState<number>(0);
+  // 하위카테고리 탭에서 선택된 탭의 인덱스
+  const [categoryTabIndex, setCategoryTabIndex] = useState<number>(0);
+  // 플랫폼 탭에서 선택된 탭의 인덱스
+  const [platformTabIndex, setPlatformTabIndex] = useState<number>(0);
+  // 랭킹목록 순위, 이름, 다음에 나오는 '주간 점수 그래프 | 주간 시청자수 그래프' 부분
+  const [weeklyGraphLabel, setWeeklyGraphLabel] = useState<string>('주간 점수 그래프');
+  // 보여줄 데이터 상태
+  const [dataToDisplay, setDataToDisplay] = useState<RankingDataType>({
+    rankingData: [],
+    weeklyTrends: {},
+    totalDataCount: 0,
+  });
+  // 탭변경 로딩
+  const [tabChangeLoading, setTabChangeLoading] = useState<boolean>(false);
 
-  // const loadData = useCallback((args: loadDataArgs) => {
-  //   const { column, categoryId, platform } = args;
-  //   let request: (config?: AxiosRequestConfig | undefined,
-  //     options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
-  //   setTabChangeLoading(true);
+  const loadData = useCallback((args: loadDataArgs) => {
+    const { column, categoryId, platform } = args;
+    let request: (config?: AxiosRequestConfig | undefined,
+      options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
+    setTabChangeLoading(true);
 
-  //   if (column === 'rating') {
-  //     request = getDailyRatingData;
-  //   } else {
-  //     request = refetch;
-  //   }
-  //   request({
-  //     params: {
-  //       column,
-  //       skip: 0,
-  //       categoryId,
-  //       platform,
-  //     },
-  //   }).then((res) => {
-  //     setDataToDisplay(res.data);
-  //     setTabChangeLoading(false);
-  //   }).catch((e) => {
-  //     console.error(e);
-  //     setTabChangeLoading(false);
-  //   });
-  // }, [getDailyRatingData, refetch]);
+    if (column === 'rating') {
+      request = getDailyRatingData;
+    } else {
+      request = refetch;
+    }
+    request({
+      params: {
+        column,
+        skip: 0,
+        categoryId,
+        platform,
+      },
+    }).then((res) => {
+      setDataToDisplay(res.data);
+      setTabChangeLoading(false);
+    }).catch((e) => {
+      console.error(e);
+      setTabChangeLoading(false);
+    });
+  }, [getDailyRatingData, refetch]);
 
-  // const changeMain = useCallback((index: number) => {
-  //   setMainTabIndex(index);
-  //   const { column } = mainTabColumns[index];
-  //   const { categoryId } = categoryTabColumns[categoryTabIndex];
-  //   const { platform } = platformTabColumns[platformTabIndex];
-  //   loadData({ column, categoryId, platform });
+  const changeMain = useCallback((index: number) => {
+    setMainTabIndex(index);
+    const { column } = mainTabColumns[index];
+    const { categoryId } = categoryTabColumns[categoryTabIndex];
+    const { platform } = platformTabColumns[platformTabIndex];
+    loadData({ column, categoryId, platform });
 
-  //   if (column === 'viewer') {
-  //     setWeeklyGraphLabel('주간 시청자수 추이');
-  //   } else if (column === 'rating') {
-  //     setWeeklyGraphLabel('일일 평균 평점 추이');
-  //   } else {
-  //     setWeeklyGraphLabel('주간 점수 그래프');
-  //   }
-  // }, [categoryTabColumns, categoryTabIndex, loadData, platformTabIndex]);
+    if (column === 'viewer') {
+      setWeeklyGraphLabel('주간 시청자수 추이');
+    } else if (column === 'rating') {
+      setWeeklyGraphLabel('일일 평균 평점 추이');
+    } else {
+      setWeeklyGraphLabel('주간 점수 그래프');
+    }
+  }, [categoryTabColumns, categoryTabIndex, loadData, platformTabIndex]);
 
-  // const changeCategory = useCallback((index: number) => {
-  //   setCategoryTabIndex(index);
-  //   const { column } = mainTabColumns[mainTabIndex];
-  //   const { categoryId } = categoryTabColumns[index];
-  //   const { platform } = platformTabColumns[platformTabIndex];
+  const changeCategory = useCallback((index: number) => {
+    setCategoryTabIndex(index);
+    const { column } = mainTabColumns[mainTabIndex];
+    const { categoryId } = categoryTabColumns[index];
+    const { platform } = platformTabColumns[platformTabIndex];
 
-  //   loadData({ column, categoryId, platform });
-  // }, [categoryTabColumns, loadData, mainTabIndex, platformTabIndex]);
+    loadData({ column, categoryId, platform });
+  }, [categoryTabColumns, loadData, mainTabIndex, platformTabIndex]);
 
-  // const changePlatform = useCallback((index: number) => {
-  //   setPlatformTabIndex(index);
-  //   const { column } = mainTabColumns[mainTabIndex];
-  //   const { categoryId } = categoryTabColumns[categoryTabIndex];
-  //   const { platform } = platformTabColumns[index];
+  const changePlatform = useCallback((index: number) => {
+    setPlatformTabIndex(index);
+    const { column } = mainTabColumns[mainTabIndex];
+    const { categoryId } = categoryTabColumns[categoryTabIndex];
+    const { platform } = platformTabColumns[index];
 
-  //   loadData({ column, categoryId, platform });
-  // }, [categoryTabColumns, categoryTabIndex, loadData, mainTabIndex]);
+    loadData({ column, categoryId, platform });
+  }, [categoryTabColumns, categoryTabIndex, loadData, mainTabIndex]);
 
-  // const loadMoreData = useCallback(() => {
-  //   let request: (config?: AxiosRequestConfig | undefined,
-  //     options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
+  const loadMoreData = useCallback(() => {
+    let request: (config?: AxiosRequestConfig | undefined,
+      options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
 
-  //   if (mainTabColumns[mainTabIndex].column === 'rating') {
-  //     request = getDailyRatingData;
-  //   } else {
-  //     request = refetch;
-  //   }
-  //   request({
-  //     params: {
-  //       column: mainTabColumns[mainTabIndex].column,
-  //       skip: dataToDisplay.rankingData.length,
-  //       categoryId: categoryTabColumns[categoryTabIndex].categoryId,
-  //       platform: platformTabColumns[platformTabIndex].platform,
-  //     },
-  //   }).then((res) => {
-  //     const newData = res.data;
-  //     setDataToDisplay((prev) => ({
-  //       rankingData: [...prev.rankingData, ...newData.rankingData],
-  //       weeklyTrends: { ...prev.weeklyTrends, ...newData.weeklyTrends },
-  //       totalDataCount: newData.totalDataCount,
-  //     }));
-  //   }).catch((e) => {
-  //     console.error(e);
-  //   });
-  // }, [categoryTabColumns, categoryTabIndex, dataToDisplay.rankingData.length,
-  //   getDailyRatingData, mainTabIndex, platformTabIndex, refetch]);
+    if (mainTabColumns[mainTabIndex].column === 'rating') {
+      request = getDailyRatingData;
+    } else {
+      request = refetch;
+    }
+    request({
+      params: {
+        column: mainTabColumns[mainTabIndex].column,
+        skip: dataToDisplay.rankingData.length,
+        categoryId: categoryTabColumns[categoryTabIndex].categoryId,
+        platform: platformTabColumns[platformTabIndex].platform,
+      },
+    }).then((res) => {
+      const newData = res.data;
+      setDataToDisplay((prev) => ({
+        rankingData: [...prev.rankingData, ...newData.rankingData],
+        weeklyTrends: { ...prev.weeklyTrends, ...newData.weeklyTrends },
+        totalDataCount: newData.totalDataCount,
+      }));
+    }).catch((e) => {
+      console.error(e);
+    });
+  }, [categoryTabColumns, categoryTabIndex, dataToDisplay.rankingData.length,
+    getDailyRatingData, mainTabIndex, platformTabIndex, refetch]);
 
-  // const loadCategories = () => {
-  //   axios.get('/creator-category')
-  //     .then((res) => {
-  //       const data = res.data.map((d: {categoryId: number; name: string;}) => (
-  //         { categoryId: d.categoryId, label: d.name }
-  //       ));
-  //       setCategoryTabColumns((prev) => ([...prev, ...data]));
-  //     })
-  //     .catch((e) => {
-  //       console.error(e);
-  //     });
-  // };
+  const loadCategories = () => {
+    axios.get('/creator-category')
+      .then((res) => {
+        const data = res.data.map((d: {categoryId: number; name: string;}) => (
+          { categoryId: d.categoryId, label: d.name }
+        ));
+        setCategoryTabColumns((prev) => ([...prev, ...data]));
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   useEffect(() => {
     // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
     if (tabRef.current && tabRef.current.querySelector('.MuiTabs-scroller')) {
       tabRef.current.querySelector('.MuiTabs-scroller').setAttribute('style', 'overflow: visible;');
     }
-    const { column } = currentMainTab;
-    const { categoryId } = currentCategoryTab;
-    const { platform } = currentPlatformTab;
+    // const { column } = currentMainTab;
+    // const { categoryId } = currentCategoryTab;
+    // const { platform } = currentPlatformTab;
+    const { column } = mainTabColumns[mainTabIndex];
+    const { categoryId } = categoryTabColumns[categoryTabIndex];
+    const { platform } = platformTabColumns[platformTabIndex];
 
     // 초기 데이터 불러옴
     loadData({ column, categoryId, platform });
@@ -248,6 +234,39 @@ function TopTenCard(): JSX.Element {
       scrollRef.current.scrollIntoView();
     }
   };
+
+  if (isMobile) {
+    return (
+      <>
+        <RankingDropDown columns={mainTabColumns} index={mainTabIndex} changeHandler={changeMain} />
+        <RankingDropDown columns={platformTabColumns} index={platformTabIndex} changeHandler={changePlatform} />
+        <RankingDropDown columns={categoryTabColumns} index={categoryTabIndex} changeHandler={changeCategory} />
+        <TopTenListContainer
+          data={dataToDisplay}
+          currentTab={mainTabColumns[mainTabIndex].column}
+          loading={loading || dailyRatingLoading}
+          tabChanging={tabChangeLoading}
+          error={error || dailyRatingError}
+          weeklyGraphLabel={weeklyGraphLabel}
+        />
+        <div className={classes.loadMoreButtonContainer}>
+          { (dataToDisplay.rankingData.length !== 0)
+            && (dataToDisplay.totalDataCount > dataToDisplay.rankingData.length)
+            ? (
+              <Button
+                className={classes.loadMoreButton}
+                onClick={loadMoreData}
+                variant="outlined"
+                color="primary"
+              >
+                더보기
+              </Button>
+            )
+            : null}
+        </div>
+      </>
+    );
+  }
   return (
     <>
       {/* <Select
@@ -298,33 +317,31 @@ function TopTenCard(): JSX.Element {
             <Typography>반응별 랭킹</Typography>
             <Typography variant="h4">TOP 10</Typography>
           </header>
-          <RankingTabs.MainTab
-            // value={mainTabIndex}
+          <MainTab
+            value={mainTabIndex}
             onTabChange={changeMain}
             columns={mainTabColumns}
-            // ref={tabRef}
           />
-
         </Grid>
         <Grid item xs={10}>
           <Grid container justify="flex-end">
-            {/* <RankingTabs.PlatformTab
+            <PlatformTab
               value={platformTabIndex}
               onTabChange={changePlatform}
               columns={platformTabColumns}
-            /> */}
+            />
           </Grid>
           <Grid container justify="center">
-            {/* <RankingTabs.CategoryTab
+            <CategoryTab
               value={categoryTabIndex}
               onTabChange={changeCategory}
               columns={categoryTabColumns}
-            /> */}
+            />
           </Grid>
 
           <TopTenListContainer
             data={dataToDisplay}
-            currentTab={currentMainTab.column}
+            currentTab={mainTabColumns[mainTabIndex].column}
             loading={loading || dailyRatingLoading}
             tabChanging={tabChangeLoading}
             error={error || dailyRatingError}

@@ -4,7 +4,7 @@ import { Props } from './MainTab';
 import { useHorizontalTabItemStyle, useHorizontalTabsStyle } from '../../style/TopTenCard.style';
 
 export default function CategoryTab(props: Props): JSX.Element {
-  const { columns, onTabChange, ...rest } = props;
+  const { onTabChange, columns, ...rest } = props;
   const horizontalTabItemStyle = useHorizontalTabItemStyle();
   const horizontalTabsStyle = useHorizontalTabsStyle();
   const onChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {

@@ -4,7 +4,7 @@ import { Props } from './MainTab';
 import { usePlatformTabsStyle, usePlatformTabItemStyle } from '../../style/TopTenCard.style';
 
 export default function PlatformTab(props: Props): JSX.Element {
-  const { columns, onTabChange, ...rest } = props;
+  const { onTabChange, columns, ...rest } = props;
   const platformTabsStyle = usePlatformTabsStyle();
   const platformTabItemStyle = usePlatformTabItemStyle();
   const onChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {

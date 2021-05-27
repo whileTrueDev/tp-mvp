@@ -70,7 +70,11 @@ export default function useRankingState(): {
       mainTabIndex: number,
       categoryTabIndex: number,
       platformTabIndex: number,
-      } {
+      categoryTabColumns: {
+        categoryId: number;
+        label: string;
+    }[]
+    } {
   // axios요청
   // 탭 별 상위 10인 요청
   const [{ loading, error }, refetch] = useAxios<RankingDataType>({
@@ -131,7 +135,6 @@ export default function useRankingState(): {
         platform,
       },
     }).then((res) => {
-      console.log(res.data);
       setDataToDisplay(res.data);
       setTabChangeLoading(false);
     }).catch((e) => {
@@ -241,6 +244,6 @@ export default function useRankingState(): {
     mainTabIndex,
     categoryTabIndex,
     platformTabIndex,
-
+    categoryTabColumns,
   };
 }
