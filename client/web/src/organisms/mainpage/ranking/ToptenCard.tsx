@@ -1,6 +1,6 @@
 import {
   Button,
-  Grid, Tab, Tabs, Typography,
+  Grid, MenuItem, Select, Tab, Tabs, Typography,
 } from '@material-ui/core';
 
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
@@ -253,6 +253,19 @@ function TopTenCard(): JSX.Element {
   };
   return (
     <>
+      <Select
+        variant="outlined"
+        value={mainTabColumns[mainTabIndex].label}
+        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+          const label = event.target.value;
+          const index = mainTabColumns.findIndex((tab) => tab.label === label);
+          changeMain(index);
+        }}
+      >
+        {mainTabColumns.map((val) => (
+          <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
+        ))}
+      </Select>
       <Typography className={classes.recentAnalysisDate}>
         {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
       </Typography>
