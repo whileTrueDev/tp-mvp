@@ -18,7 +18,7 @@ import CussIcon from '../../../atoms/svgIcons/CussIcon';
 import FrustratedIcon from '../../../atoms/svgIcons/FrustratedIcon';
 import TVIcon from '../../../atoms/svgIcons/TVIcon';
 import {
-  useTabItem, useTabs, useTopTenCard, useHorizontalTabItemStyle, useHorizontalTabsStyle,
+  useTopTenCard,
   usePlatformTabsStyle, usePlatformTabItemStyle,
 } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
@@ -60,10 +60,6 @@ interface loadDataArgs {
 function TopTenCard(): JSX.Element {
   // 스타일
   const classes = useTopTenCard();
-  const verticalTabsStyles = useTabs();
-  const verticalTabItemStyles = useTabItem();
-  const horizontalTabItemStyle = useHorizontalTabItemStyle();
-  const horizontalTabsStyle = useHorizontalTabsStyle();
   const platformTabsStyle = usePlatformTabsStyle();
   const platformTabItemStyle = usePlatformTabItemStyle();
   const tabRef = useRef<any>(null);
@@ -160,11 +156,7 @@ function TopTenCard(): JSX.Element {
     }
   }, [categoryTabColumns, categoryTabIndex, loadData, platformTabIndex]);
 
-  const onMainTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
-    changeMain(index);
-  }, [changeMain]);
-
-  const onCategoryTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
+  const changeCategory = useCallback((index: number) => {
     setCategoryTabIndex(index);
     const { column } = mainTabColumns[mainTabIndex];
     const { categoryId } = categoryTabColumns[index];
@@ -266,6 +258,19 @@ function TopTenCard(): JSX.Element {
           <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
         ))}
       </Select>
+      <Select
+        variant="outlined"
+        value={categoryTabColumns[categoryTabIndex].label}
+        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+          const label = event.target.value;
+          const index = categoryTabColumns.findIndex((tab) => tab.label === label);
+          changeCategory(index);
+        }}
+      >
+        {categoryTabColumns.map((val) => (
+          <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
+        ))}
+      </Select>
       <Typography className={classes.recentAnalysisDate}>
         {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
       </Typography>
@@ -279,11 +284,13 @@ function TopTenCard(): JSX.Element {
             value={mainTabIndex}
             onTabChange={changeMain}
             columns={mainTabColumns}
+            ref={tabRef}
           />
 
         </Grid>
         <Grid item xs={10}>
           <Grid container justify="flex-end">
+
             <Tabs
               classes={platformTabsStyle}
               value={platformTabIndex}
@@ -295,22 +302,11 @@ function TopTenCard(): JSX.Element {
             </Tabs>
           </Grid>
           <Grid container justify="center">
-            <Tabs
-              variant="scrollable"
-              scrollButtons="auto"
-              classes={horizontalTabsStyle}
+            <RankingTabs.CategoryTab
               value={categoryTabIndex}
-              onChange={onCategoryTabChange}
-            >
-              {categoryTabColumns.map((col) => (
-                <Tab
-                  key={col.categoryId}
-                  classes={horizontalTabItemStyle}
-                  disableRipple
-                  label={col.label}
-                />
-              ))}
-            </Tabs>
+              onTabChange={changeCategory}
+              columns={categoryTabColumns}
+            />
           </Grid>
 
           <TopTenListContainer
