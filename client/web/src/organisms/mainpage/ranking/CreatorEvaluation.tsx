@@ -1,11 +1,8 @@
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import {
-  CreatorAverageRatings, CreatorAverageScores, CreatorRatingCardInfo, CreatorRatingInfoRes,
-} from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import useAxios from 'axios-hooks';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
+import useRatingData from '../../../utils/hooks/useRatingData';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
 import CreatorInfoCard from './creatorInfo/CreatorInfoCard';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
@@ -23,43 +20,13 @@ export default function CreatorEvaluation({
 }: CreatorEvaluationProps): JSX.Element {
   const classes = useCreatorEvalutationCardStyle();
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
-  const [, getCreatorRatingInfo] = useAxios<CreatorRatingInfoRes>(`/ratings/info/${platform}/${creatorId}`, { manual: true });
-  const [, refetchAverageRating] = useAxios<CreatorAverageRatings>(`/ratings/${creatorId}/average`, { manual: true });
-  const [info, setInfo] = useState<CreatorRatingCardInfo>({
-    platform,
-    creatorId,
-    logo: '',
-    nickname: '',
-  });
-  // 해당 크리에이터에 대한 평균평점과 평가횟수
-  const [ratings, setRatings] = useState<CreatorAverageRatings>({
-    average: 0,
-    count: 0,
-  });
-  const [scores, setScores] = useState<CreatorAverageScores>({
-    admire: 0,
-    smile: 0,
-    frustrate: 0,
-    cuss: 0,
-  });
-  // 유저가 평점을 매긴 후 평균평점을 다시 불러온다
-  const updateAverageRating = useCallback(() => {
-    refetchAverageRating()
-      .then((res) => {
-        setRatings(res.data);
-      })
-      .catch((error) => console.error(error));
-  }, [refetchAverageRating]);
+  const {
+    info, ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
+  } = useRatingData({ platform, creatorId });
 
   // 컴포넌트 마운트 이후 1회 실행, 크리에이터 초기 정보를 가져온다
   useEffect(() => {
-    getCreatorRatingInfo()
-      .then((res) => {
-        setInfo((prevInfo) => ({ ...prevInfo, ...res.data.info }));
-        setRatings(res.data.ratings);
-        setScores(res.data.scores);
-      })
-      .catch((error) => console.error(error));
+    fetchCreatorRatingInfo();
 
     // 화면 상단으로 
     if (window.scrollY !== 0) {
@@ -71,6 +38,7 @@ export default function CreatorEvaluation({
   return (
     <div className={classes.creatorEvaluationCardContainer}>
       <GoBackButton />
+
       <CreatorInfoCard
         updateAverageRating={updateAverageRating}
         user={userData}

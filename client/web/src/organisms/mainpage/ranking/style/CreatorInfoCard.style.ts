@@ -21,13 +21,10 @@ export const useProfileSectionStyles = makeStyles((theme: Theme) => ({
   },
   textContainer: {
     display: 'flex',
-    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    '& .upper-text': {
-      display: 'flex',
-      width: '100%',
-      marginBottom: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'flex-start',
     },
   },
   nameContainer: {
@@ -40,6 +37,10 @@ export const useProfileSectionStyles = makeStyles((theme: Theme) => ({
     fontSize: theme.typography.h5.fontSize,
     fontWeight: theme.typography.fontWeightBold,
     wordBreak: 'break-word',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(2.25),
+      marginBottom: theme.spacing(0.5),
+    },
   },
   ratingContainer: {
     display: 'flex',
@@ -47,23 +48,45 @@ export const useProfileSectionStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
+    [theme.breakpoints.down('sm')]: {
+      order: 1, // 마지막 위치로
+    },
   },
   averageRatingText: {
     fontSize: theme.typography.h6.fontSize,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.typography.body2.fontSize,
+    },
+  },
+  descriptionContainer: {
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: theme.spacing(0.5),
+    },
   },
   creatorDescription: {
     fontSize: theme.typography.body2.fontSize,
     width: '100%',
     whiteSpace: 'pre-wrap',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.25),
+    },
   },
   linkButtons: {
     position: 'absolute',
     right: 0,
     top: theme.spacing(0.5),
+    [theme.breakpoints.down('sm')]: {
+      position: 'relative',
+      textAlign: 'right',
+      marginBottom: theme.spacing(0.5),
+    },
   },
   chipLink: {
     margin: theme.spacing(0, 1),
     fontSize: theme.spacing(0.75),
+    [theme.breakpoints.down('sm')]: {
+      height: theme.spacing(2),
+    },
   },
 }
 ));
@@ -88,6 +111,9 @@ export const useScoreSectionStyles = makeStyles((theme: Theme) => ({
   },
   scoreLabelText: {
     fontSize: theme.typography.body2.fontSize,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.5),
+    },
   },
   scoreBarContainer: {
     flex: 1,
@@ -130,7 +156,10 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
 });
 
 export const useExLargeRatingStyle = makeStyles((theme: Theme) => createStyles({
-  sizeLarge: {
-    fontSize: theme.typography.h3.fontSize,
+  root: {
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.typography.h4.fontSize,
+    },
+
   },
 }));

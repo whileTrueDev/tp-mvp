@@ -48,6 +48,42 @@ const useRecentStreamStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
     fontWeight: 'bold',
   },
+  row: {
+    transition: theme.transitions.create(
+      'color', { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.short },
+    ),
+    '&:hover': {
+      cursor: 'pointer',
+      color: theme.palette.text.primary,
+    },
+    '&>*': {
+      marginRight: theme.spacing(1),
+    },
+    [theme.breakpoints.down('sm')]: {
+      backgroundColor: theme.palette.divider,
+      marginBottom: theme.spacing(0.25),
+      padding: theme.spacing(0.5, 1),
+      '&>*': {
+        marginRight: 0,
+      },
+    },
+  },
+  titleText: {
+    textOverflow: 'clip',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.5),
+    },
+  },
+  subText: {
+    color: theme.palette.text.secondary,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.25),
+    },
+  },
   profileImage: {
     position: 'absolute',
     right: 0,

@@ -153,35 +153,33 @@ export function ProfileSection({
         <Avatar className={classes.avatar} src={logo} />
       </Grid>
 
-      <Grid item className={classes.textContainer} xs={8}>
-        <div className="upper-text">
-          <div className={classes.nameContainer}>
-            <Typography className={classes.nickname} component="div">
-              <Textfit mode="single" max={20}>{nickname}</Textfit>
-            </Typography>
-          </div>
-          <div className={classes.ratingContainer}>
-            <Typography className={classes.averageRatingText}>
-              평균★
-              {averageRating.toFixed(2)}
-              {`(${ratingCount}명)`}
-            </Typography>
-            <StarRating
-              createRatingHandler={createRatingHandler}
-              cancelRatingHandler={cancelRatingHandler}
-              score={userRating}
-              ratingProps={{
-                classes: largeRating,
-              }}
-            />
-          </div>
-        </div>
-
-        <div style={{ width: '100%' }}>
+      <Grid item container className={classes.textContainer} xs={8}>
+        <Grid item className={classes.nameContainer}>
+          <Typography className={classes.nickname} component="div">
+            <Textfit mode="single" max={20}>{nickname}</Textfit>
+          </Typography>
+        </Grid>
+        <Grid item className={classes.ratingContainer}>
+          <Typography className={classes.averageRatingText}>
+            평균★
+            {averageRating.toFixed(2)}
+            {`(${ratingCount}명)`}
+          </Typography>
+          <StarRating
+            createRatingHandler={createRatingHandler}
+            cancelRatingHandler={cancelRatingHandler}
+            score={userRating}
+            ratingProps={{
+              classes: largeRating,
+            }}
+          />
+        </Grid>
+        <Grid item className={classes.descriptionContainer}>
           <Typography component="pre" className={classes.creatorDescription}>
             {user?.detail?.description ? String(user.detail.description) : ''}
           </Typography>
-        </div>
+        </Grid>
+
       </Grid>
     </>
   );

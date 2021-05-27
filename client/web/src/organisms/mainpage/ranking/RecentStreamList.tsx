@@ -4,6 +4,7 @@ import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResT
 import useAxios, { ResponseValues } from 'axios-hooks';
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
+import PageTitle from '../shared/PageTitle';
 import RecentStreamListItem from './streamInfo/RecentStreamListItem';
 import RecentStreamListLeftDecorator from './streamInfo/RecentStreamListLeftDecorator';
 import useRecentStreamStyles from './style/RecentStream.styles';
@@ -47,6 +48,24 @@ export default function RecentStreamList({
     if (!data) return [];
     return createListData(data);
   }, [data]);
+
+  if (isSm) {
+    return (
+
+      <section>
+        <PageTitle text="최근 방송" />
+        {!error && dataSource && dataSource.map((stream) => (
+          <RecentStreamListItem
+            key={stream.streamId}
+            stream={stream}
+            onClick={() => {
+              history.push(`${window.location.pathname}/${stream.streamId}`, userData.data);
+            }}
+          />
+        ))}
+      </section>
+    );
+  }
 
   return (
     <section className={classes.section} id="broad-list">
