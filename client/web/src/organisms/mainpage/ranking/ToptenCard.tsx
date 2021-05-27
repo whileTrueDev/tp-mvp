@@ -1,6 +1,5 @@
 import {
-  Button,
-  Grid, MenuItem, Select, Tab, Tabs, Typography,
+  Button, Grid, MenuItem, Select, Typography,
 } from '@material-ui/core';
 
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
@@ -17,10 +16,7 @@ import SmileIcon from '../../../atoms/svgIcons/SmileIcon';
 import CussIcon from '../../../atoms/svgIcons/CussIcon';
 import FrustratedIcon from '../../../atoms/svgIcons/FrustratedIcon';
 import TVIcon from '../../../atoms/svgIcons/TVIcon';
-import {
-  useTopTenCard,
-  usePlatformTabsStyle, usePlatformTabItemStyle,
-} from './style/TopTenCard.style';
+import { useTopTenCard } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 import axios from '../../../utils/axios';
 import * as RankingTabs from './topten/tabs';
@@ -60,8 +56,6 @@ interface loadDataArgs {
 function TopTenCard(): JSX.Element {
   // 스타일
   const classes = useTopTenCard();
-  const platformTabsStyle = usePlatformTabsStyle();
-  const platformTabItemStyle = usePlatformTabItemStyle();
   const tabRef = useRef<any>(null);
   const scrollRef = useRef<any>(null);
 
@@ -165,7 +159,7 @@ function TopTenCard(): JSX.Element {
     loadData({ column, categoryId, platform });
   }, [categoryTabColumns, loadData, mainTabIndex, platformTabIndex]);
 
-  const onPlatformTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
+  const changePlatform = useCallback((index: number) => {
     setPlatformTabIndex(index);
     const { column } = mainTabColumns[mainTabIndex];
     const { categoryId } = categoryTabColumns[categoryTabIndex];
@@ -271,6 +265,19 @@ function TopTenCard(): JSX.Element {
           <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
         ))}
       </Select>
+      <Select
+        variant="outlined"
+        value={platformTabColumns[platformTabIndex].label}
+        onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+          const label = event.target.value;
+          const index = platformTabColumns.findIndex((tab) => tab.label === label);
+          changePlatform(index);
+        }}
+      >
+        {platformTabColumns.map((val) => (
+          <MenuItem key={val.label} value={val.label}>{val.label}</MenuItem>
+        ))}
+      </Select>
       <Typography className={classes.recentAnalysisDate}>
         {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
       </Typography>
@@ -290,16 +297,11 @@ function TopTenCard(): JSX.Element {
         </Grid>
         <Grid item xs={10}>
           <Grid container justify="flex-end">
-
-            <Tabs
-              classes={platformTabsStyle}
+            <RankingTabs.PlatformTab
               value={platformTabIndex}
-              onChange={onPlatformTabChange}
-            >
-              {platformTabColumns.map((col) => (
-                <Tab classes={platformTabItemStyle} key={col.platform} label={col.label} />
-              ))}
-            </Tabs>
+              onTabChange={changePlatform}
+              columns={platformTabColumns}
+            />
           </Grid>
           <Grid container justify="center">
             <RankingTabs.CategoryTab
