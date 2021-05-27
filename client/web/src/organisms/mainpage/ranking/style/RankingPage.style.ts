@@ -15,6 +15,7 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
       padding: 0,
       [theme.breakpoints.down('md')]: {
         maxWidth: '100%',
+        padding: theme.spacing(1),
       },
     },
     top: {

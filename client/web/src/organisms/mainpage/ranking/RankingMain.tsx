@@ -12,6 +12,7 @@ import ViewerComparisonPolarAreaCard from './ViewerComparisonPolarAreaCard';
 import WeeklyLineCard from './WeeklyLineCard';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
+import PageTitle from '../shared/PageTitle';
 
 export function CarouselSection(): JSX.Element {
   const carousel = useCarouselStyle();
@@ -44,6 +45,7 @@ export default function RankingMain(): JSX.Element {
     <div>
       {!isMobile && <CarouselSection />}
 
+      <PageTitle text="인방랭킹" />
       <Container className={wrapper.container}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={8} className={wrapper.left}>

@@ -12,6 +12,9 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     borderRadius: theme.shape.borderRadius,
     paddingTop: theme.spacing(1),
     paddingRight: theme.spacing(1),
+    [theme.breakpoints.down('sm')]: {
+      border: 'none',
+    },
   },
   recentAnalysisDate: {
     position: 'absolute',

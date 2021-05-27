@@ -8,6 +8,9 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
       borderRadius: theme.shape.borderRadius,
       backgroundColor: theme.palette.background.paper,
       padding: theme.spacing(0, 2),
+      [theme.breakpoints.down('sm')]: {
+        border: 'none',
+      },
     },
     header: {
       display: 'flex',

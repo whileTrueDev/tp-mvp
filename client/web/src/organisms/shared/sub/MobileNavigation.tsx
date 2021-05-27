@@ -59,7 +59,7 @@ export default function MobileNavigation(): JSX.Element {
     <Hidden smUp>
       <div className={classes.mobileNavContainer}>
         {mobileNav.map((nav) => (
-          <MatchButton label={nav.label} path={nav.path} />
+          <MatchButton key={nav.path} label={nav.label} path={nav.path} />
         ))}
       </div>
     </Hidden>
