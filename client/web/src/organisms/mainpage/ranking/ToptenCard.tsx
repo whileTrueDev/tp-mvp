@@ -23,6 +23,7 @@ import {
 } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 import axios from '../../../utils/axios';
+import * as RankingTabs from './topten/tabs';
 
 export type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer'|'rating';
 type MainTabColumns = {
@@ -143,7 +144,7 @@ function TopTenCard(): JSX.Element {
     });
   }, [getDailyRatingData, refetch]);
 
-  const onMainTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
+  const changeMain = useCallback((index: number) => {
     setMainTabIndex(index);
     const { column } = mainTabColumns[index];
     const { categoryId } = categoryTabColumns[categoryTabIndex];
@@ -157,7 +158,11 @@ function TopTenCard(): JSX.Element {
     } else {
       setWeeklyGraphLabel('주간 점수 그래프');
     }
-  }, [categoryTabColumns, categoryTabIndex, platformTabIndex, loadData]);
+  }, [categoryTabColumns, categoryTabIndex, loadData, platformTabIndex]);
+
+  const onMainTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
+    changeMain(index);
+  }, [changeMain]);
 
   const onCategoryTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
     setCategoryTabIndex(index);
@@ -257,25 +262,12 @@ function TopTenCard(): JSX.Element {
             <Typography>반응별 랭킹</Typography>
             <Typography variant="h4">TOP 10</Typography>
           </header>
-          <Tabs
-            style={{ overflow: 'visible' }} // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
-            classes={verticalTabsStyles}
-            orientation="vertical"
+          <RankingTabs.MainTab
             value={mainTabIndex}
-            onChange={onMainTabChange}
-            ref={tabRef}
-          >
-            {mainTabColumns.map((c) => (
-              <Tab
-                disableRipple
-                classes={verticalTabItemStyles}
-                key={c.column}
-                icon={c.icon}
-                label={c.label}
-                className={c.className}
-              />
-            ))}
-          </Tabs>
+            onTabChange={changeMain}
+            columns={mainTabColumns}
+          />
+
         </Grid>
         <Grid item xs={10}>
           <Grid container justify="flex-end">
