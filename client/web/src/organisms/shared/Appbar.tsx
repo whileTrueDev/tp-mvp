@@ -14,9 +14,14 @@ import useAuthContext from '../../utils/hooks/useAuthContext';
 import { useStyles } from './styles/Appbar.style';
 import DarkModeToggleButtonContent from './sub/DarkModeToggleButtonContent';
 import MobileMenu from './sub/MobileMenu';
+import MobileNavigation from './sub/MobileNavigation';
 
 interface AppBarProps {
   variant?: 'transparent';
+}
+// 현재 활성화된 탭을 구하는 함수
+export function isActiveRoute(pagePath: string): boolean {
+  return window.location.pathname.indexOf(pagePath) > -1;
 }
 
 export default function AppBar({
@@ -25,11 +30,6 @@ export default function AppBar({
   const authContext = useAuthContext();
   const classes = useStyles();
   const theme = useTheme<TruepointTheme>();
-
-  // 현재 활성화된 탭을 구하는 함수
-  function isActiveRoute(pagePath: string): boolean {
-    return window.location.pathname.indexOf(pagePath) > -1;
-  }
 
   // 모바일 메뉴 오픈 스테이트
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -138,6 +138,7 @@ export default function AppBar({
       {variant === 'transparent' ? (null) : (
         <div className={classes.appbarSpace} />
       )}
+      <MobileNavigation />
     </>
   );
 }
