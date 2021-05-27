@@ -2,8 +2,10 @@
 // Layouts - 사이드바, 네비바
 
 // 상단 네비바 높이
-export const COMMON_APP_BAR_HEIGHT = 72 + 36;
-export const SM_APP_BAR_HEIGHT = 62;
+// export const COMMON_APP_BAR_HEIGHT = 72 + 36;
+// export const SM_APP_BAR_HEIGHT = 62;
+export const COMMON_APP_BAR_HEIGHT = 64;
+export const SM_APP_BAR_HEIGHT = 48;
 
 // 마이페이지 상단 네비바 높이
 export const MYPAGE_APP_BAR_HEIGHT = 56;

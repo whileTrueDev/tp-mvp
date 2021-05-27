@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => {
     titleText: {
       zIndex: 1,
       whiteSpace: 'pre-line',
-      fontSize: theme.typography.h4.fontSize,
+      fontSize: theme.typography.h5.fontSize,
       [theme.breakpoints.down('sm')]: {
         fontSize: theme.typography.body1.fontSize,
       },

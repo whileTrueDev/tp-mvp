@@ -135,9 +135,7 @@ export default function AppBar({
         />
       </div>
 
-      {variant === 'transparent' ? (null) : (
-        <div className={classes.appbarSpace} />
-      )}
+      <div className={classes.appbarSpace} />
       <MobileNavigation />
     </>
   );
