@@ -8,11 +8,19 @@ const useStyles = makeStyles((theme) => ({
 
   goBackButton: {
     position: 'absolute',
+    [theme.breakpoints.down('sm')]: {
+      position: 'fixed',
+      left: `-${theme.spacing(1.5)}px`,
+    },
     zIndex: 1,
-    left: `-${theme.spacing(9)}px`,
-    width: theme.spacing(15),
-    height: theme.spacing(15),
+    left: `-${theme.spacing(3.5)}px`,
+    width: theme.spacing(7),
+    height: theme.spacing(7),
     borderRadius: '50%',
+    '& img': {
+      width: '100%',
+      height: '100%',
+    },
   },
   center: {
     top: '50%',

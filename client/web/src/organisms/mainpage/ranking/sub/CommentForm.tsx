@@ -149,10 +149,10 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
         rows={2}
         inputProps={{ maxLength: 240 }}
         name="content"
-        placeholder="내용을 입력해주세요"
+        placeholder="댓글을 입력해주세요"
       />
       <div className={formStyle.buttonWrapper}>
-        <Button type="submit" className={formStyle.button}>등록</Button>
+        <Button size="small" type="submit" className={formStyle.button}>등록</Button>
       </div>
     </form>
   );

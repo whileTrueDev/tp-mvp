@@ -311,7 +311,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
             startIcon={
             isMobile
               ? <img width="24" height="24" src="/images/rankingPage/thumb_up.png" alt="추천" />
-              : <img width="36" height="36" src="/images/rankingPage/thumb_up.png" alt="추천" />
+              : <img width="32" height="28" src="/images/rankingPage/thumb_up.png" alt="추천" />
           }
           >
             <Typography
@@ -328,7 +328,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
             startIcon={
               isMobile
                 ? <img width="24" height="24" src="/images/rankingPage/thumb_down.png" alt="비추천" />
-                : <img width="36" height="36" src="/images/rankingPage/thumb_down.png" alt="비추천" />
+                : <img width="32" height="28" src="/images/rankingPage/thumb_down.png" alt="비추천" />
           }
           >
             <Typography

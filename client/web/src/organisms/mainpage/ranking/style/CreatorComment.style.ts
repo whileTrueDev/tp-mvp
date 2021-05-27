@@ -4,12 +4,9 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
   const smallTextSize = theme.spacing(1.25);
   return createStyles({
     commentItem: {
-      [theme.breakpoints.down('sm')]: {
-        '& .nickname': { fontSize: theme.spacing(1.5) },
-        '& .time': { fontSize: smallTextSize },
-      },
       position: 'relative',
-      padding: theme.spacing(1),
+      padding: theme.spacing(0.5, 1, 0, 1),
+      '& .time': { fontSize: smallTextSize },
       '&:not(:first-child)': {
         borderTop: `1px solid ${theme.palette.divider}`,
       },
@@ -48,7 +45,6 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: theme.spacing(1),
       },
       userInfo: {
         display: 'flex',
@@ -56,17 +52,18 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
           marginRight: theme.spacing(1),
         },
         '& .nickname': {
-          fontSize: theme.typography.body1.fontSize,
+          fontSize: theme.typography.body2.fontSize,
           fontWeight: theme.typography.fontWeightMedium,
         },
         '& .userId': {
+          fontSize: theme.spacing(0.75),
           color: theme.palette.text.secondary,
         },
       },
     },
     smallAvatar: {
-      width: theme.spacing(3),
-      height: theme.spacing(3),
+      width: theme.spacing(1.75),
+      height: theme.spacing(1.75),
     },
     largeAvatar: {
       width: theme.spacing(7),
@@ -77,15 +74,13 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
       alignItems: 'center',
     },
     reportButton: {
-      [theme.breakpoints.down('sm')]: {
-        '& img': {
-          width: 28,
-          height: 12,
-        },
+      '& img': {
+        width: 28,
+        height: 12,
       },
     },
     content: {
-      padding: theme.spacing(0.5, 0),
+      fontSize: theme.spacing(1.5),
       [theme.breakpoints.down('sm')]: {
         fontSize: smallTextSize,
       },
@@ -98,9 +93,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
         justifyContent: 'flex-end',
       },
       '& .MuiButton-label': {
-        [theme.breakpoints.down('sm')]: {
-          fontSize: smallTextSize,
-        },
+        fontSize: smallTextSize,
       },
     },
     replyIcon: {
@@ -109,6 +102,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     nestedComments: {
     },
     recommendIcons: {
+      marginTop: theme.spacing(-2),
       '&>*:not(:last-child)': {
         marginRight: theme.spacing(1),
       },
@@ -117,10 +111,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
       color: theme.palette.action.disabled,
     },
     countText: {
-      marginLeft: theme.spacing(1),
-      [theme.breakpoints.down('sm')]: {
-        fontSize: theme.spacing(1.5),
-      },
+      fontSize: smallTextSize,
     },
     liked: {
       color: theme.palette.primary.main,
@@ -151,11 +142,14 @@ export const useCreatorCommentListStyle = makeStyles((theme: Theme) => createSty
 
   },
   commentFilterButton: {
-    fontSize: theme.typography.h6.fontSize,
+    fontSize: theme.typography.body1.fontSize,
     color: theme.palette.text.disabled,
     '&.selected': {
       color: theme.palette.text.primary,
       fontWeight: theme.typography.fontWeightBold,
+    },
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.typography.body2.fontSize,
     },
   },
   commentListContainer: {
@@ -234,9 +228,13 @@ export const useCreatorCommentFormStyle = makeStyles((theme: Theme) => createSty
 
 export const useCommentContainerStyles = makeStyles((theme: Theme) => createStyles({
   commentSectionWrapper: {
-    padding: theme.spacing(8),
+    padding: theme.spacing(3),
     paddingBottom: theme.spacing(20),
     border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
+    [theme.breakpoints.down('sm')]: {
+      border: `1px solid ${theme.palette.divider}`,
+      padding: 0,
+    },
     backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_2.svg), url(/images/rankingPage/streamer_detail_bg_3.svg)',
     backgroundRepeat: 'no-repeat, no-repeat',
     backgroundPosition: 'left center, left bottom',
