@@ -26,7 +26,7 @@ type Nav = {
 }
 const mobileNav: Nav[] = [
   { label: '인방랭킹', path: '/ranking' },
-  { label: '방송인검색', path: '/ranking/search' },
+  { label: '방송인검색', path: '/creator-search' },
   { label: '자유게시판', path: '/community-board' },
 ];
 
@@ -38,10 +38,14 @@ function MatchButton(props: Nav): JSX.Element {
     exact: true,
     strict: true,
   });
+  let isActive = match ? match.isExact : false;
+  if (path === '/ranking' && window.location.pathname === '/') {
+    isActive = true;
+  }
 
   return (
     <Button
-      className={classnames(classes.button, { active: match && match.isExact })}
+      className={classnames(classes.button, { active: isActive })}
       size="small"
       variant="contained"
       key={path}

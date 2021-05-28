@@ -42,6 +42,7 @@ import './assets/truepoint.css';
 import PageNotFound from './pages/others/PageNotFound';
 import Ranking from './pages/mainpage/Ranking';
 import YoutubeHighlightList from './pages/mainpage/YoutubeHighlightList';
+import SearchCreator from './pages/mainpage/SearchCreator';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Index(): JSX.Element {
@@ -129,6 +130,7 @@ function Index(): JSX.Element {
               <Route exact path="/termsofuse" component={TermsOfUse} />
               <Route path="/community-board" component={CommunityBoard} />
               <Route path="/ranking" component={Ranking} />
+              <Route path="/creator-search" component={SearchCreator} />
               <Route exact path="/highlight-list" component={YoutubeHighlightList} />
               <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
               <Route path="/mypage" component={Mypage} />

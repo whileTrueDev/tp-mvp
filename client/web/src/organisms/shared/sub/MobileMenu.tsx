@@ -17,7 +17,7 @@ import TruepointLogo from '../../../atoms/TruepointLogo';
 type LinkType = {
   name: string,
   path: string,
-  activeRouteString: string,
+  activeRouteString: string | string[],
   hidden?: boolean
 }
 

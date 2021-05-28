@@ -20,7 +20,10 @@ interface AppBarProps {
   variant?: 'transparent';
 }
 // 현재 활성화된 탭을 구하는 함수
-export function isActiveRoute(pagePath: string): boolean {
+export function isActiveRoute(pagePath: string | string[]): boolean {
+  if (Array.isArray(pagePath)) {
+    return pagePath.includes(window.location.pathname);
+  }
   return window.location.pathname.indexOf(pagePath) > -1;
 }
 
@@ -44,8 +47,8 @@ export default function AppBar({
     {
       name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
     },
-    { name: '인방랭킹', path: '/ranking', activeRouteString: '/ranking' },
-    { name: '방송인검색', path: '/ranking/search', activeRouteString: '/ranking/search' },
+    { name: '인방랭킹', path: '/ranking', activeRouteString: ['/ranking', '/'] },
+    { name: '방송인검색', path: '/creator-search', activeRouteString: '/creator-search' },
     { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
     { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
     { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
