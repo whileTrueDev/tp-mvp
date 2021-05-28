@@ -150,8 +150,14 @@ export class CreatorRatingsService {
    * @param creatorId 
    * @returns 
    */
-  async findOneRating({ ip, creatorId, userId }: {ip: string, creatorId: string, userId?: string | undefined}): Promise<{score: number} | false> {
+  async findOneRating({ ip, creatorId, userId }: {
+    ip: string,
+    creatorId: string,
+    userId?: string | undefined
+  }): Promise<{score: number} | false> {
+    console.log('find one rating, userId:', userId);
     if (!userId) return false;
+    console.log('has userId, userId', userId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
