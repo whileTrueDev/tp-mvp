@@ -49,6 +49,7 @@ const useRecentStreamStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
   },
   row: {
+    color: theme.palette.text.secondary,
     transition: theme.transitions.create(
       'color', { easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.short },
     ),

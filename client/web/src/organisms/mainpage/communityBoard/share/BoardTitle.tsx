@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     titleText: {
       zIndex: 1,
-      whiteSpace: 'pre-line',
+      wordBreak: 'keep-all',
       fontSize: theme.typography.h5.fontSize,
       [theme.breakpoints.down('sm')]: {
         fontSize: theme.typography.body1.fontSize,
@@ -76,7 +76,7 @@ export default function BoardTitle({
             src={`/images/logo/${platform}Logo.png`}
             alt={`${platform}Logo`}
           />
-          <Typography variant="h4" className={classes.titleText}>
+          <Typography className={classes.titleText}>
             {`${PLATFORM_NAMES[platform]}
           ${boardType ? '방송인' : '게시판'}`}
           </Typography>
