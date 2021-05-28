@@ -1,6 +1,7 @@
 import {
-  Select, MenuItem, FormControl, InputLabel,
+  Select, MenuItem, FormControl, InputLabel, InputBase,
 } from '@material-ui/core';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 
 interface Props{
@@ -22,6 +23,32 @@ function getInputLabel(key: string): string {
       return '';
   }
 }
+
+const BootstrapInput = withStyles((theme: Theme) => createStyles({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    backgroundColor: theme.palette.background.paper,
+    border: '1px solid #ced4da',
+    fontSize: theme.typography.caption.fontSize,
+    padding: theme.spacing(1),
+    '&:not(:last-child)': {
+      marginRight: theme.spacing(0.5),
+    },
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    '&:focus': {
+      borderRadius: 4,
+      borderColor: '#80bdff',
+      boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
+    },
+  },
+}))(InputBase);
+
 export default function RankingDropDown(props: Props): JSX.Element {
   const {
     columns, index, changeHandler, id,
@@ -36,6 +63,7 @@ export default function RankingDropDown(props: Props): JSX.Element {
         labelId={id}
         variant="outlined"
         value={columns[index].label}
+        input={<BootstrapInput />}
         onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
           const label = event.target.value;
           const currentIndex = columns.findIndex((tab) => tab.label === label);

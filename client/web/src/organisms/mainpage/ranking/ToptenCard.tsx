@@ -240,8 +240,8 @@ function TopTenCard(): JSX.Element {
       <Card>
         <div style={{ display: 'flex', padding: '4px' }}>
           <RankingDropDown id="main" columns={mainTabColumns} index={mainTabIndex} changeHandler={changeMain} />
-          <RankingDropDown id="category" columns={platformTabColumns} index={platformTabIndex} changeHandler={changePlatform} />
-          <RankingDropDown id="platform" columns={categoryTabColumns} index={categoryTabIndex} changeHandler={changeCategory} />
+          <RankingDropDown id="category" columns={categoryTabColumns} index={categoryTabIndex} changeHandler={changeCategory} />
+          <RankingDropDown id="platform" columns={platformTabColumns} index={platformTabIndex} changeHandler={changePlatform} />
         </div>
 
         <TopTenListContainer
