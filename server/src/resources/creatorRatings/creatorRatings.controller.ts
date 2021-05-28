@@ -1,6 +1,8 @@
 import {
-  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, ValidationPipe,
+  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, Req, Res, ValidationPipe,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingInfoRes, CreatorAverageRatings, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interface';
@@ -21,6 +23,12 @@ export class CreatorRatingsController {
   constructor(
     private readonly ratingsService: CreatorRatingsService,
   ) {}
+
+  private TEMP_ID_KEY = '_tptrid';
+
+  private getTempID(request: Request): string|undefined {
+    return request.cookies[this.TEMP_ID_KEY];
+  }
 
   /**
    * 관리자페이지에서 방송인에게 평점 매기기 - 
@@ -47,8 +55,32 @@ export class CreatorRatingsController {
     @Param('creatorId') creatorId: string,
     @Ip() ip: string,
     @Body(ValidationPipe) ratingPostDto: RatingPostDto,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<CreatorRatingsEntity> {
-    return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
+    // 로그인하여 userId를 보낸 경우
+    if (ratingPostDto.userId) {
+      console.log('로그인하여 userId를 보낸 경우');
+      return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
+    }
+
+    // 로그인 안한 경우
+    // 평점을 처음 매기는 경우 쿠키에 임시 id저장
+    // 평점을 한번 매긴 경우 쿠키게 저장된 임시 id사용
+    const tempId = this.getTempID(request);
+    let ratingDtoWithTempId = { ...ratingPostDto };
+    if (tempId) {
+      console.log('로그인 안하고 이미 평점을 한번 매긴 경우 , cookie : ', tempId);
+      // 로그인 안하고 이미 평점을 한번 매긴 경우(쿠키에 temp id 가 저장된 경우)
+      ratingDtoWithTempId = { ...ratingDtoWithTempId, userId: tempId };
+    } else {
+      // 로그인 안하고 처음 평점 매기는 경우
+      console.log('로그인 안하고 처음 평점 매기는 경우 , cookie : ', tempId);
+      const newTempId = uuidv4();
+      response.cookie(this.TEMP_ID_KEY, newTempId);
+      ratingDtoWithTempId = { ...ratingDtoWithTempId, userId: newTempId };
+    }
+    return this.ratingsService.createRatings(creatorId, ratingDtoWithTempId, ip);
   }
 
   /**
@@ -140,7 +172,9 @@ export class CreatorRatingsController {
   getOneRating(
     @Ip() ip: string,
     @Param('creatorId') creatorId: string,
+    @Req() request: Request,
   ): Promise<{score: number} | false> {
-    return this.ratingsService.findOneRating(ip, creatorId);
+    const tempId = this.getTempID(request);
+    return this.ratingsService.findOneRating({ ip, creatorId, userId: tempId });
   }
 }

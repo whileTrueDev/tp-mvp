@@ -62,10 +62,11 @@ export class CreatorRatingsService {
     // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
     try {
       const exRating = await this.ratingsRepository.findOne({
-        where: { userIp: ip, creatorId },
+        where: { userIp: ip, creatorId, userId },
       });
 
       if (exRating) {
+        console.log('exRating', exRating);
         const updatedRating = await this.ratingsRepository.save({
           ...exRating,
           rating,
@@ -73,6 +74,7 @@ export class CreatorRatingsService {
         });
         return updatedRating;
       }
+      console.log('new rating');
       const newRating = await this.ratingsRepository.save({
         creatorId,
         userIp: ip,
@@ -148,12 +150,14 @@ export class CreatorRatingsService {
    * @param creatorId 
    * @returns 
    */
-  async findOneRating(ip: string, creatorId: string): Promise<{score: number} | false> {
+  async findOneRating({ ip, creatorId, userId }: {ip: string, creatorId: string, userId?: string | undefined}): Promise<{score: number} | false> {
+    if (!userId) return false;
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
           userIp: ip,
           creatorId,
+          userId,
         },
       });
       if (exRating) {

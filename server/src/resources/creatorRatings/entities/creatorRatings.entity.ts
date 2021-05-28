@@ -1,11 +1,11 @@
 import { CreatorRatings } from '@truepoint/shared/dist/interfaces/CreatorRatings.interface';
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn, Unique,
+  CreateDateColumn, PrimaryGeneratedColumn, Unique, UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'CreatorRatingsTest2' })
-@Unique('UX_creatorId_userIp', ['creatorId', 'userIp'])
+@Unique('UX_creatorId_userIp', ['creatorId', 'userIp', 'userId'])
 export class CreatorRatingsEntity implements CreatorRatings {
   constructor(partial: Partial<CreatorRatingsEntity>) {
     Object.assign(this, partial);
@@ -28,6 +28,9 @@ export class CreatorRatingsEntity implements CreatorRatings {
 
   @CreateDateColumn({ type: 'timestamp', comment: '생성 날짜' })
   createDate: Date;
+
+  @UpdateDateColumn({ type: 'timestamp', comment: '수정 날짜' })
+  updateDate: Date;
 
   @Column({ comment: '평점이 매겨진 creatorId의 플랫폼, afreeca | twitch' })
   platform: string;
