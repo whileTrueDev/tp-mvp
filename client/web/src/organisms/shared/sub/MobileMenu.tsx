@@ -14,7 +14,7 @@ import DarkModeToggleButtonContent from './DarkModeToggleButtonContent';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import TruepointLogo from '../../../atoms/TruepointLogo';
 
-type link = {
+type LinkType = {
   name: string,
   path: string,
   activeRouteString: string,
@@ -25,7 +25,7 @@ export interface MobileMenuProps{
   mobileMoreAnchorEl: HTMLElement | null,
   isMobileMenuOpen: boolean,
   handleMobileMenuClose: () => void
-  links: link[]
+  links: LinkType[]
 }
 
 export default function MobileMenu(props: MobileMenuProps): JSX.Element {
