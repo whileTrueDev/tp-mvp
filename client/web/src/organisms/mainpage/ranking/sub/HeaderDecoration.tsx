@@ -11,12 +11,9 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
   container: {
     backgroundImage: 'url(/images/rankingPage/header_bg.png)',
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundPositionY: 'bottom',
-    height: theme.spacing(30),
-    position: 'relative',
-    marginLeft: 'auto',
-    marginRight: -12,
+    backgroundSize: '80%',
+    backgroundPosition: 'center bottom',
+    height: theme.spacing(13),
   },
 }));
 export default function HeaderDecoration(): JSX.Element {

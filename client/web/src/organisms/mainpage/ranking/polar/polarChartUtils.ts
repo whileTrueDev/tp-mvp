@@ -82,10 +82,10 @@ export function polarAreaLabelFormatter(this: Highcharts.PointLabelObject): stri
  * @returns [afreecaChartSize: number, twitchChartSize: number]
  */
 export function getChartSize(afreecaTotal: number, twitchTotal: number, compensationPx = 0): number[] {
-  const bigSize = 280 + compensationPx; // 큰 차트 지름
-  const smallSize = 200 + compensationPx; // 작은 차트 지름
+  const bigSize = 190 + compensationPx; // 큰 차트 지름
+  const smallSize = 120 + compensationPx; // 작은 차트 지름
   if (afreecaTotal === twitchTotal) {
-    return [200, 200]; // [아프리카, 트위치]
+    return [150, 150]; // [아프리카, 트위치]
   }
   const afreecaChartSize = afreecaTotal > twitchTotal ? bigSize : smallSize;
   const twitchChartSize = afreecaTotal < twitchTotal ? bigSize : smallSize;

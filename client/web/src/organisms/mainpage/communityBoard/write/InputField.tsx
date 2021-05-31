@@ -3,6 +3,7 @@ import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
 import React, { memo } from 'react';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 
 interface PropType extends Partial<OutlinedTextFieldProps>{
   maxLength?: number;
@@ -10,6 +11,9 @@ interface PropType extends Partial<OutlinedTextFieldProps>{
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   input: {
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: theme.spacing(0.5),
+    },
     '&>.MuiOutlinedInput-root': {
       backgroundColor: theme.palette.background.paper,
     },
@@ -25,9 +29,11 @@ function InputField(props: PropType): JSX.Element {
   const {
     maxLength, inputProps, className, ...rest
   } = props;
+  const { isMobile } = useMediaSize();
   const classes = useStyles();
   return (
     <TextField
+      size={isMobile ? 'small' : undefined}
       {...rest}
       className={`${classes.input} ${className}`}
       variant="outlined"

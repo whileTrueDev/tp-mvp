@@ -1,5 +1,5 @@
 import {
-  Button, CircularProgress, Paper, Typography,
+  Button, CircularProgress, Grid, Paper, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -19,6 +19,7 @@ import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import dateExpression from '../../../utils/dateExpression';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
 import CheckPasswordDialog from '../shared/CheckPasswordDialog';
 import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
@@ -27,15 +28,38 @@ const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
   title: {
     padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
-    display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottom: '1px solid rgba(0, 0, 0, 0.23)',
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      padding: theme.spacing(2, 1),
+    },
+  },
+  titleRow: {
+  },
+  metaRow: {
+    display: 'flex',
+    flexDirection: 'column',
+    '&>*': {
+      marginRight: theme.spacing(1),
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'row',
+    },
   },
   titleText: { textTransform: 'none', fontWeight: 'bold' },
-  contentsText: { padding: theme.spacing(4), minHeight: 300, backgroundColor: theme.palette.common.white },
+  contentsText: {
+    padding: theme.spacing(4),
+    minHeight: 300,
+    backgroundColor: theme.palette.common.white,
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2, 1),
+    },
+  },
   loadingWrapper: { display: 'flex', justifyContent: 'center', alignItems: 'center' },
   secretText: {
     display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: 300,
@@ -45,6 +69,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      '&>button': {
+        width: 'auto',
+      },
+    },
   },
   editDeleteButtonSet: {
     backgroundColor: theme.palette.common.white,
@@ -79,6 +108,7 @@ export default function FeatureDetail({
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
+  const { isMobile } = useMediaSize();
   const { enqueueSnackbar } = useSnackbar();
 
   // ******************************************************************
@@ -190,11 +220,10 @@ export default function FeatureDetail({
     <div>
       <Paper component="article">
         {/* 제목 섹션 */}
-        <div className={classes.title}>
-          <div>
+        <Grid container className={classes.title}>
+          <Grid item className={classes.titleRow}>
             <Typography component="div" variant="h6" className={classes.titleText}>
               {currentFeatureData.title}
-              {' '}
               {FeatureProgressChip(currentFeatureData.state)}
               {currentFeatureData.isLock && (
               <LockIcon
@@ -204,22 +233,21 @@ export default function FeatureDetail({
               />
               )}
             </Typography>
-            <Typography variant="body1" color="textSecondary" style={{ color: '#0000008a' }}>
+            <Typography variant="body1" color="textSecondary">
               {currentFeatureData.userIp && (<span>{currentFeatureData.userIp}</span>)}
             </Typography>
-          </div>
-          <Typography color="textSecondary" component="div" style={{ color: '#0000008a' }}>
-            <Typography>
-              {currentFeatureData.category}
-            </Typography>
-            <Typography>
+          </Grid>
+          <Grid item className={classes.metaRow}>
+            <Typography color="textSecondary">{currentFeatureData.category}</Typography>
+            <Typography color="textSecondary">
               {dateExpression({
                 compoName: 'selected-view',
                 createdAt: currentFeatureData.createdAt,
               })}
             </Typography>
-          </Typography>
-        </div>
+          </Grid>
+        </Grid>
+
         <div className={classes.editDeleteButtonSet}>
           <Button
             className={classes.editDeleteButton}
@@ -293,7 +321,7 @@ export default function FeatureDetail({
           }}
         >
           <KeyboardArrowLeft />
-          {currentIndex !== 0 && (
+          {currentIndex !== 0 && !isMobile && (
           <Typography>
             {previousFeature.title.length > TITLE_LENGTH
               ? `${previousFeature.title.slice(0, TITLE_LENGTH)}...`
@@ -329,7 +357,7 @@ export default function FeatureDetail({
             }
           }}
         >
-          {currentIndex !== data.length - 1 && (
+          {currentIndex !== data.length - 1 && !isMobile && (
           <Typography>
             {nextFeature.title.length > TITLE_LENGTH
               ? `${nextFeature.title.slice(0, TITLE_LENGTH)}...`

@@ -19,6 +19,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     width: '100%',
     alignItems: 'flex-start',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
+  },
+  inputContainer: {
+    width: '100%',
+    display: 'flex',
+    flex: 1,
   },
   avatar: { marginRight: theme.spacing(2) },
   button: { minWidth: 200, marginLeft: theme.spacing(2) },
@@ -80,20 +88,23 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
 
   return (
     <div className={classes.container}>
-      <Avatar src={avatarLogo} variant="square" className={classes.avatar} />
-      <TextField
-        error={lengthState}
-        placeholder="댓글 추가..."
-        fullWidth
-        multiline
-        rowsMax={5}
-        inputRef={replyText}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          lengthCheck(e);
-        }}
-        inputProps={{ maxLength: 255 }}
-        helperText="댓글은 최대 255자까지 작성 가능합니다."
-      />
+      <div className={classes.inputContainer}>
+        <Avatar src={avatarLogo} variant="square" className={classes.avatar} />
+        <TextField
+          error={lengthState}
+          placeholder="댓글 추가..."
+          fullWidth
+          multiline
+          rowsMax={5}
+          inputRef={replyText}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            lengthCheck(e);
+          }}
+          inputProps={{ maxLength: 255 }}
+          helperText="댓글은 최대 255자까지 작성 가능합니다."
+        />
+      </div>
+
       <Button
         className={classes.button}
         color="primary"

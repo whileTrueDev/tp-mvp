@@ -8,7 +8,7 @@ import { Typography, Tooltip } from '@material-ui/core';
 import yellow from '@material-ui/core/colors/yellow';
 
 const useRatingStyle = makeStyles((theme: Theme) => {
-  const labelFontSize = theme.typography.body1.fontSize;
+  const labelFontSize = theme.spacing(0.75);
 
   return createStyles({
     container: {
@@ -16,7 +16,7 @@ const useRatingStyle = makeStyles((theme: Theme) => {
       alignItems: 'center',
       position: 'relative',
       '&.with-label': {
-        paddingBottom: theme.spacing(3),
+        paddingBottom: theme.spacing(1.5),
       },
     },
     label: {

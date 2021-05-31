@@ -54,7 +54,7 @@ const styles = makeStyles((theme) => ({
   },
   downAnalysisWrap: {
     wordBreak: 'keep-all',
-    height: 300,
+    height: 150,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',

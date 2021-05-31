@@ -47,6 +47,7 @@ const styles = makeStyles((theme) => ({
     width: '70%',
     [theme.breakpoints.down('xs')]: {
       width: '100%',
+      padding: theme.spacing(2, 1),
     },
   },
   cardContent: {

@@ -8,6 +8,7 @@ import SearchIcon from '@material-ui/icons/Search';
 // import SelectField from '../../../../atoms/SelectField';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import SelectField from '../../../../atoms/SelectField';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -27,6 +28,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     backgroundColor: theme.palette.primary.main,
     '& input': {
       backgroundColor: theme.palette.background.paper,
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(35),
+      '& input': {
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+        fontSize: theme.spacing(1.5),
+      },
     },
   },
   iconButton: {
@@ -53,6 +62,7 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
   const [value, setValue] = useState(select.current[0]);
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
+  const { isMobile } = useMediaSize();
 
   const doSearch = () => {
     if (inputRef.current && onSearch) {
@@ -78,12 +88,15 @@ export default function SearchForm({ onSearch, selectOptions, className }: Searc
   return (
     <div className={className}>
       <div className={classes.root}>
-        <SelectField
-          className={classes.select}
-          value={value}
-          select={select.current}
-          handleCallback={setValue}
-        />
+        {!isMobile && (
+          <SelectField
+            className={classes.select}
+            value={value}
+            select={select.current}
+            handleCallback={setValue}
+          />
+        )}
+
         <Paper className={classes.inputContainer}>
           <OutlinedInput
             className={classes.input}

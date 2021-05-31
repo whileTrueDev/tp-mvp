@@ -1,6 +1,5 @@
 import {
-  Button,
-  Grid, Tab, Tabs, Typography,
+  Button, Card, Grid, Typography,
 } from '@material-ui/core';
 
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
@@ -17,12 +16,12 @@ import SmileIcon from '../../../atoms/svgIcons/SmileIcon';
 import CussIcon from '../../../atoms/svgIcons/CussIcon';
 import FrustratedIcon from '../../../atoms/svgIcons/FrustratedIcon';
 import TVIcon from '../../../atoms/svgIcons/TVIcon';
-import {
-  useTabItem, useTabs, useTopTenCard, useHorizontalTabItemStyle, useHorizontalTabsStyle,
-  usePlatformTabsStyle, usePlatformTabItemStyle,
-} from './style/TopTenCard.style';
+import { useTopTenCard } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
 import axios from '../../../utils/axios';
+import { CategoryTab, MainTab, PlatformTab } from './topten/filter';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
+import RankingDropDown from './topten/filter/RankingDropDown';
 
 export type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer'|'rating';
 type MainTabColumns = {
@@ -50,21 +49,16 @@ const platformTabColumns: {label: string, platform: PlatformFilterType}[] = [
   { label: '트위치', platform: 'twitch' },
 ];
 
-interface loadDataArgs {
+type loadDataArgs = {
   column: MainTabName;
   categoryId: number;
   platform: PlatformFilterType;
 }
 
 function TopTenCard(): JSX.Element {
+  const { isMobile } = useMediaSize();
   // 스타일
   const classes = useTopTenCard();
-  const verticalTabsStyles = useTabs();
-  const verticalTabItemStyles = useTabItem();
-  const horizontalTabItemStyle = useHorizontalTabItemStyle();
-  const horizontalTabsStyle = useHorizontalTabsStyle();
-  const platformTabsStyle = usePlatformTabsStyle();
-  const platformTabItemStyle = usePlatformTabItemStyle();
   const tabRef = useRef<any>(null);
   const scrollRef = useRef<any>(null);
 
@@ -76,22 +70,13 @@ function TopTenCard(): JSX.Element {
   // 탭 별 상위 10인 요청
   const [{ loading, error }, refetch] = useAxios<RankingDataType>({
     url: '/rankings/top-ten',
-    params: {
-      column: mainTabColumns[0].column,
-      skip: 0,
-      categoryId: categoryTabColumns[0].categoryId,
-    },
-  });
+  }, { manual: true });
   // 시청자 평점 탭(일일평점) 요청
   const [{
     loading: dailyRatingLoading,
     error: dailyRatingError,
   }, getDailyRatingData] = useAxios<RankingDataType>({
     url: '/ratings/daily-ranking',
-    params: {
-      skip: 0,
-      categoryId: categoryTabColumns[0].categoryId,
-    },
   }, { manual: true });
 
   // 최근 분석날짜 요청
@@ -121,6 +106,7 @@ function TopTenCard(): JSX.Element {
     let request: (config?: AxiosRequestConfig | undefined,
       options?: RefetchOptions | undefined) => AxiosPromise<RankingDataType>;
     setTabChangeLoading(true);
+
     if (column === 'rating') {
       request = getDailyRatingData;
     } else {
@@ -142,7 +128,7 @@ function TopTenCard(): JSX.Element {
     });
   }, [getDailyRatingData, refetch]);
 
-  const onMainTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
+  const changeMain = useCallback((index: number) => {
     setMainTabIndex(index);
     const { column } = mainTabColumns[index];
     const { categoryId } = categoryTabColumns[categoryTabIndex];
@@ -156,9 +142,9 @@ function TopTenCard(): JSX.Element {
     } else {
       setWeeklyGraphLabel('주간 점수 그래프');
     }
-  }, [categoryTabColumns, categoryTabIndex, platformTabIndex, loadData]);
+  }, [categoryTabColumns, categoryTabIndex, loadData, platformTabIndex]);
 
-  const onCategoryTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
+  const changeCategory = useCallback((index: number) => {
     setCategoryTabIndex(index);
     const { column } = mainTabColumns[mainTabIndex];
     const { categoryId } = categoryTabColumns[index];
@@ -167,7 +153,7 @@ function TopTenCard(): JSX.Element {
     loadData({ column, categoryId, platform });
   }, [categoryTabColumns, loadData, mainTabIndex, platformTabIndex]);
 
-  const onPlatformTabChange = useCallback((event: React.ChangeEvent<unknown>, index: number) => {
+  const changePlatform = useCallback((index: number) => {
     setPlatformTabIndex(index);
     const { column } = mainTabColumns[mainTabIndex];
     const { categoryId } = categoryTabColumns[categoryTabIndex];
@@ -223,6 +209,9 @@ function TopTenCard(): JSX.Element {
     if (tabRef.current && tabRef.current.querySelector('.MuiTabs-scroller')) {
       tabRef.current.querySelector('.MuiTabs-scroller').setAttribute('style', 'overflow: visible;');
     }
+    // const { column } = currentMainTab;
+    // const { categoryId } = currentCategoryTab;
+    // const { platform } = currentPlatformTab;
     const { column } = mainTabColumns[mainTabIndex];
     const { categoryId } = categoryTabColumns[categoryTabIndex];
     const { platform } = platformTabColumns[platformTabIndex];
@@ -245,6 +234,42 @@ function TopTenCard(): JSX.Element {
       scrollRef.current.scrollIntoView();
     }
   };
+
+  if (isMobile) {
+    return (
+      <Card>
+        <div style={{ display: 'flex', padding: '4px' }}>
+          <RankingDropDown id="main" columns={mainTabColumns} index={mainTabIndex} changeHandler={changeMain} />
+          <RankingDropDown id="category" columns={categoryTabColumns} index={categoryTabIndex} changeHandler={changeCategory} />
+          <RankingDropDown id="platform" columns={platformTabColumns} index={platformTabIndex} changeHandler={changePlatform} />
+        </div>
+
+        <TopTenListContainer
+          data={dataToDisplay}
+          currentTab={mainTabColumns[mainTabIndex].column}
+          loading={loading || dailyRatingLoading}
+          tabChanging={tabChangeLoading}
+          error={error || dailyRatingError}
+          weeklyGraphLabel={weeklyGraphLabel}
+        />
+        <div className={classes.loadMoreButtonContainer}>
+          { (dataToDisplay.rankingData.length !== 0)
+            && (dataToDisplay.totalDataCount > dataToDisplay.rankingData.length)
+            ? (
+              <Button
+                className={classes.loadMoreButton}
+                onClick={loadMoreData}
+                variant="outlined"
+                color="primary"
+              >
+                더보기
+              </Button>
+            )
+            : null}
+        </div>
+      </Card>
+    );
+  }
   return (
     <>
       <Typography className={classes.recentAnalysisDate}>
@@ -256,55 +281,26 @@ function TopTenCard(): JSX.Element {
             <Typography>반응별 랭킹</Typography>
             <Typography variant="h4">TOP 10</Typography>
           </header>
-          <Tabs
-            style={{ overflow: 'visible' }} // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
-            classes={verticalTabsStyles}
-            orientation="vertical"
+          <MainTab
             value={mainTabIndex}
-            onChange={onMainTabChange}
-            ref={tabRef}
-          >
-            {mainTabColumns.map((c) => (
-              <Tab
-                disableRipple
-                classes={verticalTabItemStyles}
-                key={c.column}
-                icon={c.icon}
-                label={c.label}
-                className={c.className}
-              />
-            ))}
-          </Tabs>
+            onTabChange={changeMain}
+            columns={mainTabColumns}
+          />
         </Grid>
         <Grid item xs={10}>
           <Grid container justify="flex-end">
-            <Tabs
-              classes={platformTabsStyle}
+            <PlatformTab
               value={platformTabIndex}
-              onChange={onPlatformTabChange}
-            >
-              {platformTabColumns.map((col) => (
-                <Tab classes={platformTabItemStyle} key={col.platform} label={col.label} />
-              ))}
-            </Tabs>
+              onTabChange={changePlatform}
+              columns={platformTabColumns}
+            />
           </Grid>
           <Grid container justify="center">
-            <Tabs
-              variant="scrollable"
-              scrollButtons="auto"
-              classes={horizontalTabsStyle}
+            <CategoryTab
               value={categoryTabIndex}
-              onChange={onCategoryTabChange}
-            >
-              {categoryTabColumns.map((col) => (
-                <Tab
-                  key={col.categoryId}
-                  classes={horizontalTabItemStyle}
-                  disableRipple
-                  label={col.label}
-                />
-              ))}
-            </Tabs>
+              onTabChange={changeCategory}
+              columns={categoryTabColumns}
+            />
           </Grid>
 
           <TopTenListContainer

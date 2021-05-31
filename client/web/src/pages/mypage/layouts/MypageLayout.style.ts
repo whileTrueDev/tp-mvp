@@ -11,6 +11,9 @@ const useLayoutStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     minHeight: MYPAGE_MAIN_MIN_HEIGHT,
     minWidth: MYPAGE_MAIN_MIN_WIDTH,
+    [theme.breakpoints.down('sm')]: {
+      minWidth: '100%',
+    },
     background: `linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
   },
   sidebarWrapper: {

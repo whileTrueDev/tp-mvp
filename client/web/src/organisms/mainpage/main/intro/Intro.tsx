@@ -54,7 +54,6 @@ export default function ProductHero(): JSX.Element {
                   variant="h5"
                   key={shortid.generate()}
                   className={classes.mainContent}
-                  color="primary"
                 >
                   {row}
                 </Typography>

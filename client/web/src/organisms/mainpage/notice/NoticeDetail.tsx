@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import Markdown from 'react-markdown/with-html';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Paper, Typography } from '@material-ui/core';
+import {
+  Button, Grid, Paper, Typography,
+} from '@material-ui/core';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
 
 const useStyles = makeStyles((theme) => ({
   markdown: { fontSize: theme.typography.body1.fontSize },
@@ -15,18 +18,35 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.divider}`,
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2, 1),
+    },
   },
+  titleRow: {},
+  metaRow: {},
   titleText: { textTransform: 'none', fontWeight: 'bold' },
-  contentsText: { padding: theme.spacing(4), minHeight: 400 },
+  contentsText: {
+    padding: theme.spacing(4),
+    minHeight: 400,
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(2, 1),
+    },
+  },
   buttonSet: {
     padding: `${theme.spacing(4)}px 0px ${theme.spacing(2)}px`,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      '&>button': {
+        width: 'auto',
+      },
+    },
   },
   secretText: {
     display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: 300,
   },
+  pageButton: { width: '300px' },
   listButton: { width: '100px' },
 }));
 
@@ -41,6 +61,7 @@ export default function NoticeDetail({
   onOtherNoticeClick,
 }: NoticeDetailProps): JSX.Element {
   const classes = useStyles();
+  const { isMobile } = useMediaSize();
 
   // length of title to render on Next/Previous button
   const TITLE_LENGTH = 15;
@@ -87,23 +108,25 @@ export default function NoticeDetail({
     <div>
       <Paper component="article" ref={paperRef}>
         {/* 공지사항 제목 및 메타데이터 */}
-        <div className={classes.title}>
-          <Typography variant="h6" className={classes.titleText}>
-            {currentNotice && currentNotice.title}
-          </Typography>
-          <Typography color="textSecondary" component="div">
-            <Typography>
+        <Grid container className={classes.title}>
+          <Grid item className={classes.titleRow}>
+            <Typography variant="h6" className={classes.titleText}>
+              {currentNotice && currentNotice.title}
+            </Typography>
+          </Grid>
+          <Grid item className={classes.metaRow}>
+            <Typography color="textSecondary" component="div">
               {currentNotice?.category}
             </Typography>
-            <Typography>
+            <Typography color="textSecondary">
               {dateExpression({
                 compoName: 'selected-view',
                 createdAt: currentNotice?.createdAt,
               })}
             </Typography>
+          </Grid>
 
-          </Typography>
-        </div>
+        </Grid>
 
         {/* 공지사항 내용 */}
         <div className={classes.contentsText}>
@@ -120,7 +143,7 @@ export default function NoticeDetail({
       {/* 이전글, 다음글, 목록 버튼 셋 */}
       <div id="button-set" className={classes.buttonSet}>
         <Button
-          style={{ width: '30%' }}
+          className={classes.pageButton}
           size="large"
           disabled={currentNoticeIndex === 0}
           variant="outlined"
@@ -129,7 +152,7 @@ export default function NoticeDetail({
           }}
         >
           <KeyboardArrowLeft />
-          {currentNoticeIndex !== 0 && (
+          {currentNoticeIndex !== 0 && !isMobile && (
             <Typography>
               {previousNotice.title.length > TITLE_LENGTH
                 ? `${previousNotice.title.slice(0, TITLE_LENGTH)}...`
@@ -138,7 +161,7 @@ export default function NoticeDetail({
           )}
         </Button>
         <Button
-          style={{ width: '10%' }}
+          className={classes.listButton}
           size="large"
           variant="outlined"
           onClick={() => {
@@ -148,7 +171,7 @@ export default function NoticeDetail({
           목록
         </Button>
         <Button
-          style={{ width: '30%' }}
+          className={classes.pageButton}
           size="large"
           disabled={currentNoticeIndex === data.length - 1}
           variant="outlined"
@@ -156,7 +179,7 @@ export default function NoticeDetail({
             onOtherNoticeClick(nextNotice.id);
           }}
         >
-          {currentNoticeIndex !== data.length - 1 && (
+          {currentNoticeIndex !== data.length - 1 && !isMobile && (
             <Typography>
               {nextNotice.title.length > TITLE_LENGTH
                 ? `${nextNotice.title.slice(0, TITLE_LENGTH)}...`

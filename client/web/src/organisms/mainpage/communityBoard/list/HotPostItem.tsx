@@ -17,7 +17,7 @@ const useHotPostItemStyles = makeStyles((theme: Theme) => createStyles({
   },
   nickname: {
     textOverflow: 'ellipsis',
-    fontSize: theme.spacing(3),
+    fontSize: theme.spacing(1),
   },
   titleWrapper: {
     flexWrap: 'nowrap',
@@ -25,7 +25,7 @@ const useHotPostItemStyles = makeStyles((theme: Theme) => createStyles({
   title: {
     textOverflow: 'ellipsis',
     marginLeft: theme.spacing(1),
-    fontSize: theme.spacing(3),
+    fontSize: theme.typography.subtitle2.fontSize,
   },
 }));
 
