@@ -1,4 +1,4 @@
-import { useMediaQuery, useTheme } from '@material-ui/core';
+import { Container, useMediaQuery, useTheme } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios, { ResponseValues } from 'axios-hooks';
@@ -69,30 +69,33 @@ export default function RecentStreamList({
 
   return (
     <section className={classes.section} id="broad-list">
-      <div className={classes.itembox}>
-        {!error && dataSource && dataSource.map((stream) => (
-          <RecentStreamListItem
-            key={stream.streamId}
-            stream={stream}
-            onClick={() => {
-              history.push(`${window.location.pathname}/${stream.streamId}`, userData.data);
-            }}
-          />
-        ))}
-      </div>
+      <Container maxWidth="md" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className={classes.itembox}>
+          {!error && dataSource && dataSource.map((stream) => (
+            <RecentStreamListItem
+              key={stream.streamId}
+              stream={stream}
+              onClick={() => {
+                history.push(`${window.location.pathname}/${stream.streamId}`, userData.data);
+              }}
+            />
+          ))}
+        </div>
 
-      {/* 우측 스트리머 프로필이미지 */}
-      {!userData.loading && userData.data && (
-      <img
-        draggable={false}
-        className={classes.profileImage}
-        src={theme.palette.type === 'light' ? userData.data.detail?.heroImageLight : userData.data.detail?.heroImageDark}
-        alt=""
-      />
-      )}
+        {/* 우측 스트리머 프로필이미지 */}
+        {!userData.loading && userData.data && (
+        <img
+          draggable={false}
+          className={classes.profileImage}
+          src={theme.palette.type === 'light' ? userData.data.detail?.heroImageLight : userData.data.detail?.heroImageDark}
+          alt=""
+        />
+        )}
 
-      {/* 플랫폼 로고 이미지 */}
-      {isSm ? (null) : (<RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />)}
+        {/* 플랫폼 로고 이미지 */}
+        {isSm ? (null) : (<RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />)}
+      </Container>
+
     </section>
 
   );
