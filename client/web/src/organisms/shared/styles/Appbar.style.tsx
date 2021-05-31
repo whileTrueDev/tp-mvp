@@ -22,6 +22,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     transition: theme.transitions.create('background'),
     [theme.breakpoints.down('sm')]: {
       height: SM_APP_BAR_HEIGHT,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   transparent: {

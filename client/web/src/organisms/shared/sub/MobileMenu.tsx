@@ -46,7 +46,7 @@ export default function MobileMenu(props: MobileMenuProps): JSX.Element {
       onClose={handleMobileMenuClose}
     >
       <List style={{ width: theme.spacing(20) }}>
-        <ListItem alignItems="center" style={{ justifyContent: 'space-between' }}>
+        <ListItem alignItems="center" style={{ justifyContent: 'space-between', backgroundColor: theme.palette.primary.main }}>
           <TruepointLogo width={60} />
           <IconButton aria-label="닫기" onClick={handleMobileMenuClose}>
             <CloseIcon />
