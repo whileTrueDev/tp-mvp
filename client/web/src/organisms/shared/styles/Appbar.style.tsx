@@ -33,6 +33,10 @@ export const useStyles = makeStyles((theme) => createStyles({
     alignItems: 'center',
     height: '100%',
     minWidth: RANKING_PAGE_CONTAINER_WIDTH,
+    [theme.breakpoints.down('sm')]: {
+      minWidth: '100%',
+    },
+
   },
   left: { display: 'flex', alignItems: 'center' },
   links: {
