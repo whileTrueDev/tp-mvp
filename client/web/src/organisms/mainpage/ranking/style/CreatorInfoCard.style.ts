@@ -130,7 +130,7 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
       position: 'relative',
       padding: theme.spacing(2),
       border: commonBorderStyle,
-      background: 'url("/images/rankingPage/streamer_detail_bg_1.svg") no-repeat 100% 100%',
+      background: 'url("/images/rankingPage/streamer_detail_bg_1_light.svg") no-repeat 100% 100%',
       backgroundSize: 'contain',
       [theme.breakpoints.down('sm')]: {
         border: `1px solid ${theme.palette.divider}`,

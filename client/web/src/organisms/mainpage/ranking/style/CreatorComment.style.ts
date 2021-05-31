@@ -232,9 +232,9 @@ export const useCommentContainerStyles = makeStyles((theme: Theme) => createStyl
       border: `1px solid ${theme.palette.divider}`,
       padding: 0,
     },
-    backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_2.svg), url(/images/rankingPage/streamer_detail_bg_3.svg)',
-    backgroundRepeat: 'no-repeat, no-repeat',
-    backgroundPosition: 'left center, left bottom',
-    backgroundSize: '100% 100%, contain',
+    backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_3_light.svg)',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'left bottom',
+    backgroundSize: 'contain',
   },
 }));
