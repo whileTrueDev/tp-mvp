@@ -1,7 +1,7 @@
 import {
   createStyles, makeStyles,
 } from '@material-ui/core/styles';
-import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT } from '../../../assets/constants';
+import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT, RANKING_PAGE_CONTAINER_WIDTH } from '../../../assets/constants';
 
 export const useStyles = makeStyles((theme) => createStyles({
   root: {
@@ -12,6 +12,8 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   container: {
     height: COMMON_APP_BAR_HEIGHT,
+    justifyContent: 'center',
+    flexDirection: 'row',
     margin: '0 auto',
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
@@ -30,6 +32,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%',
+    minWidth: RANKING_PAGE_CONTAINER_WIDTH,
   },
   left: { display: 'flex', alignItems: 'center' },
   links: {
