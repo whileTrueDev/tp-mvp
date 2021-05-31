@@ -23,6 +23,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom';
 import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
 import useToggle from '../../../utils/hooks/useToggle';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,13 +31,42 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     justifyContent: 'center',
     alighItems: 'center',
+    '& .MuiSelect-select': {
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1.5, 2),
+        width: theme.spacing(20),
+      },
+    },
   },
   flex: { display: 'flex', alignItems: 'center' },
-  title: { marginTop: theme.spacing(3) },
-  titleInput: { width: '400px' },
+  select: {
+
+  },
+  title: {
+    marginTop: theme.spacing(3),
+  },
+  titleInput: {
+    width: '400px',
+    [theme.breakpoints.down('sm')]: {
+      width: 'auto',
+    },
+  },
   button: { marginRight: theme.spacing(1) },
   contents: { marginTop: theme.spacing(2) },
-  writeForm: { marginTop: theme.spacing(8) },
+  writeForm: {
+    marginTop: theme.spacing(8),
+    [theme.breakpoints.down('sm')]: {
+      marginTop: theme.spacing(1),
+      fontSize: theme.typography.h6.fontSize,
+    },
+  },
+  label: {
+    marginRight: theme.spacing(2),
+    fontSize: theme.typography.h6.fontSize,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.typography.body2.fontSize,
+    },
+  },
   buttonSet: { textAlign: 'right' },
   editor: { color: theme.palette.common.white },
   backdrop: {
@@ -62,6 +92,7 @@ export default function FeatureWriteForm(): JSX.Element {
     isEdit: boolean;
   }>();
   const { enqueueSnackbar } = useSnackbar();
+  const { isMobile } = useMediaSize();
 
   // ******************************************************
   // 기능제안 state
@@ -202,17 +233,18 @@ export default function FeatureWriteForm(): JSX.Element {
         className={classnames(classes.contents, classes.writeForm)}
         variant="h4"
       >
-        글쓰기
+        기능제안 글쓰기
       </Typography>
       {/* 분류 선택 */}
       <div className={classnames(classes.contents, classes.flex)}>
-        <Typography style={{ marginRight: 16 }} variant="h6">
+        <Typography className={classes.label}>
           분류*
         </Typography>
         <FormControl variant="outlined">
           <InputLabel htmlFor="outlined-age-native-simple">카테고리</InputLabel>
           <Select
             native
+            className={classes.select}
             id="feature-category"
             label="카테고리"
             value={featureSource.category}
@@ -233,7 +265,7 @@ export default function FeatureWriteForm(): JSX.Element {
 
       {/* 제목 작성 */}
       <div className={classnames(classes.contents, classes.flex)}>
-        <Typography style={{ marginRight: 16 }} variant="h6">
+        <Typography className={classes.label}>
           제목*
         </Typography>
         <TextField
@@ -245,6 +277,7 @@ export default function FeatureWriteForm(): JSX.Element {
           variant="outlined"
           placeholder="제목을 입력해주세요."
           onChange={handleChange('title')}
+          size={isMobile ? 'small' : undefined}
         />
       </div>
 
@@ -252,7 +285,7 @@ export default function FeatureWriteForm(): JSX.Element {
       <div className={classes.contents}>
         <Editor
           previewStyle="vertical"
-          height="500px"
+          height={isMobile ? '300px' : '500px'}
           initialEditType="wysiwyg"
           initialValue={
             location.state ? location.state.featureDetailData?.content : ''

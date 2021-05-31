@@ -83,7 +83,7 @@ export default function UserReactionCard(): JSX.Element {
     <section className={classes.userReactionContainer}>
       <header className={classes.header}>
         <Typography className={classes.title}>잡담방</Typography>
-        <Button variant="outlined" onClick={loadUserReactions}>
+        <Button size="small" variant="outlined" onClick={loadUserReactions}>
           <RefreshIcon />
           새로고침
         </Button>
@@ -107,6 +107,7 @@ export default function UserReactionCard(): JSX.Element {
       <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
         <Grid container className={classes.row}>
           <TextField
+            size="small"
             className={classes.nicknameField}
             name="username"
             placeholder="닉네임"
@@ -114,6 +115,7 @@ export default function UserReactionCard(): JSX.Element {
             variant="outlined"
           />
           <TextField
+            size="small"
             className={classes.passwordField}
             name="password"
             type="password"

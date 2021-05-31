@@ -7,43 +7,40 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 // listItem 컴포넌트
 export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
   const contrastColor = theme.palette.text.primary;
-  const defaultArrowSize = theme.spacing(1);
+  const defaultArrowSize = theme.spacing(0.5);
   const downArrowColor = 'blue';
   const upArrowColor = 'red';
 
   return createStyles({
     listItem: {
       color: contrastColor,
-      paddingRight: theme.spacing(1.5),
-      paddingBottom: '11%',
       position: 'relative',
+      marginBottom: theme.spacing(1),
+      padding: 0,
+
+    },
+    bg: {
+      padding: theme.spacing(1, 0),
+      width: '100%',
     },
     [`listItem-${1}`]: {
-      '& $frame': {
-        backgroundImage: 'url(images/rankingPage/rankingBox-1.png)',
-      },
-      '& $contentBackground': {
+      '& $bg': {
         backgroundColor: theme.palette.type === 'light' && lighten(theme.palette.primary.main, 0.1),
       },
     },
     [`listItem-${2}`]: {
-      '& $frame': {
-        backgroundImage: 'url(images/rankingPage/rankingBox-2.png)',
-      },
-      '& $contentBackground': {
+      '& $bg': {
         backgroundColor: theme.palette.type === 'light' && lighten(theme.palette.primary.main, 0.3),
       },
     },
     [`listItem-${3}`]: {
-      '& $frame': {
-        backgroundImage: 'url(images/rankingPage/rankingBox-3.png)',
-      },
-      '& $contentBackground': {
+
+      '& $bg': {
         backgroundColor: theme.palette.type === 'light' && lighten(theme.palette.primary.main, 0.5),
       },
     },
     [`listItem-${4}`]: {
-      '& $contentBackground': {
+      '& $bg': {
         backgroundColor: theme.palette.type === 'light' && lighten(theme.palette.primary.main, 0.7),
       },
     },
@@ -69,8 +66,8 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
       backgroundClip: 'content-box',
     },
     contentBox: {
-      zIndex: 1,
-      marginTop: theme.spacing(2),
+      // zIndex: 1,
+      // marginTop: theme.spacing(2),
     },
     platformLogo: {
       width: '100%',
@@ -85,30 +82,33 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
         maxHeight: theme.spacing(5),
       },
     },
+    linkContainer: {
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+    },
     avatarImage: {
-      marginRight: theme.spacing(2),
+      marginRight: theme.spacing(0.5),
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
-      width: theme.spacing(7),
-      height: theme.spacing(7),
+      width: theme.spacing(6.5),
+      height: theme.spacing(6.5),
     },
     creatorName: {
       marginRight: theme.spacing(1),
-      fontSize: theme.typography.h6.fontSize,
+      fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       color: theme.palette.text.primary,
-      textOverflow: 'ellipsis',
-      overflow: 'hidden',
+      wordBreak: 'keep-all',
     },
     black: { color: contrastColor },
     ratingText: {
       textAlign: 'center',
-      fontSize: theme.typography.subtitle1.fontSize,
-      fontWeight: theme.typography.fontWeightBold,
+      fontSize: theme.typography.caption.fontSize,
     },
     orderText: {
       color: theme.palette.text.primary,
       fontWeight: theme.typography.fontWeightBold,
-      fontSize: theme.typography.h5.fontSize,
+      fontSize: theme.typography.h6.fontSize,
     },
     rating: {
       '& .MuiRating-iconFilled': {
@@ -117,7 +117,8 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
     },
     rankChange: {
       position: 'relative',
-      paddingLeft: theme.spacing(3),
+      paddingLeft: theme.spacing(1.5),
+      fontSize: theme.spacing(1.25),
       '&::before': {
         content: '""',
         position: 'absolute',
@@ -157,12 +158,16 @@ export const useRatingsListStyles = makeStyles((theme: Theme) => {
       border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
       borderRadius: theme.spacing(0.5),
       backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.background.paper,
-      padding: theme.spacing(2, 0),
+      padding: theme.spacing(1, 0),
+      [theme.breakpoints.down('sm')]: {
+        border: 'none',
+        backgroundColor: theme.palette.background.paper,
+      },
     },
     title: {
       textAlign: 'center',
       padding: theme.spacing(1, 0, 0, 1),
-      fontSize: theme.typography.h3.fontSize,
+      fontSize: theme.typography.h5.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       color: theme.palette.primary.main,
       textShadow: `-1px -1px 0 ${textStrokeColor}, 1px -1px 0 ${textStrokeColor}, -1px 1px 0 ${textStrokeColor}, 1px 1px 0 ${textStrokeColor}`,
@@ -170,15 +175,18 @@ export const useRatingsListStyles = makeStyles((theme: Theme) => {
     subTitle: {
       height: theme.spacing(4),
       textAlign: 'center',
-      fontSize: theme.typography.h6.fontSize,
+      fontSize: theme.typography.caption.fontSize,
     },
     listItemContainer: {
+      padding: theme.spacing(1),
     },
     text: {
       padding: theme.spacing(2),
     },
     headerText: {
       textAlign: 'center',
+      fontWeight: theme.typography.fontWeightBold,
+      fontSize: theme.typography.body2.fontSize,
       color: theme.palette.text.primary,
     },
   });

@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
-  makeStyles, createStyles, Theme, withStyles,
-} from '@material-ui/core/styles';
-import {
-  Pagination, PaginationItem, ToggleButton, ToggleButtonGroup,
+  Pagination, PaginationItem, ToggleButtonGroup,
 } from '@material-ui/lab';
 import { Button, Typography } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
@@ -14,115 +11,14 @@ import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostR
 import { FilterType } from '../../../../utils/hooks/useBoardListState';
 import PostList from './PostList';
 import SearchForm from './SearchForm';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import { useStyles, StyledToggleButton, useToggleButtonGroupsStyle } from '../style/CommunityBoardList.style';
 
 const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
   { key: 'all', text: '전체글', class: 'all' },
   { key: 'notice', text: '공지', class: 'notice' },
   { key: 'recommended', text: '핫글', class: 'recommended' },
 ];
-
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  root: {
-    height: '100%',
-    width: '100%',
-    minWidth: '650px',
-  },
-  pagination: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? '100' : 'A400'],
-    marginBottom: theme.spacing(2),
-    '& .MuiPagination-ul>*:first-child>.MuiPaginationItem-root': {
-      border: '1px solid currentColor',
-    },
-    '& .MuiPagination-ul>*:last-child>.MuiPaginationItem-root': {
-      border: '1px solid currentColor',
-    },
-  },
-  paginationItem: {
-    '&.MuiPaginationItem-root': {
-      color: theme.palette.text.secondary,
-      border: 'none',
-      fontSize: theme.typography.body1.fontSize,
-    },
-    '&.Mui-selected': {
-      color: theme.palette.text.primary,
-    },
-  },
-  controls: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing(3),
-    '&>.right': {
-      display: 'flex',
-      alignItems: 'center',
-      '&>*': {
-        marginLeft: theme.spacing(1),
-      },
-    },
-  },
-  writeButton: {
-    padding: theme.spacing(2),
-    '& .writeButtonText': {
-      fontSize: theme.typography.h6.fontSize,
-    },
-  },
-  searchForm: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-}));
-
-const StyledToggleButton = withStyles((theme: Theme) => createStyles({
-  root: {
-    height: theme.spacing(7),
-    minWidth: theme.spacing(18),
-    [theme.breakpoints.down('sm')]: {
-      minWidth: theme.spacing(9),
-    },
-    fontSize: theme.typography.h5.fontSize,
-    marginRight: theme.spacing(2),
-    '&.Mui-selected': {
-      position: 'relative',
-      '&:before': {
-        display: 'block',
-        position: 'absolute',
-        content: '" "',
-        borderLeft: `${theme.spacing(1)}px solid red`,
-        borderTop: `${theme.spacing(1)}px solid transparent`,
-        borderBottom: `${theme.spacing(1)}px solid transparent`,
-        left: theme.spacing(2),
-        top: '50%',
-        transform: 'translateY(-50%)',
-      },
-      border: 'none',
-    },
-    '&.all': {
-      color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.paper,
-    },
-    '&.notice': {
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.action.disabled,
-    },
-    '&.recommended': {
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.primary.main,
-    },
-  },
-}))(ToggleButton);
-
-const useToggleButtonGroupsStyle = makeStyles((theme: Theme) => createStyles({
-  root: {},
-  groupedHorizontal: {
-    '&:not(:last-child), &:not(:first-child), &': {
-      borderRadius: theme.spacing(1),
-      border: `1px solid ${theme.palette.divider}`,
-    },
-  },
-}));
 
 interface BoardProps{
   platform: 'afreeca' | 'twitch' | 'free',
@@ -162,6 +58,7 @@ export default function BoardContainer({
 }: BoardProps): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
+  const { isMobile } = useMediaSize();
   const toggleButtonGroupClasses = useToggleButtonGroupsStyle();
   const {
     posts, page, totalRows, filter,
@@ -237,7 +134,7 @@ export default function BoardContainer({
   return (
     <div className={classes.root}>
 
-      {titleComponent}
+      {!isMobile && titleComponent}
 
       <div className={classes.controls}>
         <ToggleButtonGroup
@@ -283,6 +180,7 @@ export default function BoardContainer({
       <Pagination
         className={classes.pagination}
         variant="outlined"
+        shape="rounded"
         page={page}
         count={paginationCount}
         onChange={pagenationHandler}

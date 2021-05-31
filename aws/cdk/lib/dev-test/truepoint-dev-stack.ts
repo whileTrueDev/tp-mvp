@@ -68,11 +68,22 @@ export class TruepointDevStack extends BaseStack {
     );
 
     const dbEngine = rds.DatabaseInstanceEngine.mysql({
-      version: rds.MysqlEngineVersion.VER_8_0_17,
+      version: rds.MysqlEngineVersion.VER_8_0_20,
+    });
+    const rdsDbParameterGrp = new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
+      engine: dbEngine,
+      parameters: {
+        time_zone: 'Asia/Seoul',
+        wait_timeout: '180',
+        max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
+      },
     });
     new rds.DatabaseInstance(this, `${ID_PREFIX}DBInstance`, {
       vpc,
       engine: dbEngine,
+      credentials: {
+        username: 'truepoint',
+      },
       instanceIdentifier: `${ID_PREFIX}-RDS-${dbEngine.engineType}`,
       databaseName: ID_PREFIX,
       // *********************************************
@@ -91,14 +102,7 @@ export class TruepointDevStack extends BaseStack {
       maxAllocatedStorage: 300, // GB
       autoMinorVersionUpgrade: true,
       securityGroups: [databaseSecGrp],
-      parameterGroup: new rds.ParameterGroup(this, `${ID_PREFIX}DBParameterGroup`, {
-        engine: dbEngine,
-        parameters: {
-          time_zone: 'Asia/Seoul',
-          wait_timeout: '180',
-          max_allowed_packet: '16777216', // 16 GB (if memory capacity is lower than this, rds will use the entire memory)
-        },
-      }),
+      parameterGroup: rdsDbParameterGrp,
       deletionProtection: false,
     });
 

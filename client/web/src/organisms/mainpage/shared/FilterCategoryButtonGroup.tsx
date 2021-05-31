@@ -8,6 +8,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     width: '100%',
     height: 60,
+    [theme.breakpoints.down('sm')]: {
+      height: 'auto',
+      flexWrap: 'wrap',
+    },
   },
   button: {
     width: '25%',
@@ -15,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 0,
     boxShadow: theme.shadows[0],
     backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[100] : theme.palette.background.default,
+    [theme.breakpoints.down('sm')]: {
+      width: '50%',
+    },
   },
   selected: {
     backgroundColor: theme.palette.background.paper,
@@ -25,9 +32,10 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'default',
   },
   text: {
-    fontSize: theme.spacing(3.5),
-    [theme.breakpoints.down('md')]: {
-      fontSize: theme.spacing(2),
+    fontSize: theme.typography.h6.fontSize,
+    wordBreak: 'keep-all',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.typography.body1.fontSize,
     },
   },
   selectedText: { fontWeight: 'bold' },

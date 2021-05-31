@@ -11,6 +11,7 @@ import React, {
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import useToggle from '../../../../utils/hooks/useToggle';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
 import CommentForm from './CommentForm';
@@ -79,6 +80,7 @@ export interface CommentItemProps extends Record<string, any>{
 
 export default function CommentItem(props: CommentItemProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
+  const { isMobile } = useMediaSize();
   const authContext = useAuthContext();
   const classes = useCreatorCommentItemStyle();
   const {
@@ -305,7 +307,12 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           <Button
             onClick={clickLike}
             className={classnames(classes.actionButton, { [classes.liked]: likeClicked })}
-            startIcon={<img width="36" height="36" src="/images/rankingPage/thumb_up.png" alt="추천" />}
+            size={isMobile ? 'small' : undefined}
+            startIcon={
+            isMobile
+              ? <img width="24" height="24" src="/images/rankingPage/thumb_up.png" alt="추천" />
+              : <img width="32" height="28" src="/images/rankingPage/thumb_up.png" alt="추천" />
+          }
           >
             <Typography
               component="span"
@@ -317,7 +324,12 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           <Button
             onClick={clickHate}
             className={classnames(classes.actionButton, { [classes.hated]: hateClicked })}
-            startIcon={<img width="36" height="36" src="/images/rankingPage/thumb_down.png" alt="비추천" />}
+            size={isMobile ? 'small' : undefined}
+            startIcon={
+              isMobile
+                ? <img width="24" height="24" src="/images/rankingPage/thumb_down.png" alt="비추천" />
+                : <img width="32" height="28" src="/images/rankingPage/thumb_down.png" alt="비추천" />
+          }
           >
             <Typography
               component="span"

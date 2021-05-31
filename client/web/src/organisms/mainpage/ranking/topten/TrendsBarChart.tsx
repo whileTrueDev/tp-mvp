@@ -82,7 +82,10 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     chart: Highcharts.Chart,
     container: React.RefObject<HTMLDivElement>
   }>(null);
-  const TrendsBarChartStyle = useRef<{height: string, width: string}>({ height: `${theme.spacing(14)}px`, width: '100%' });
+  const TrendsBarChartStyle = useRef<{height: string, width: string}>({
+    height: `${theme.spacing(9.5)}px`,
+    width: '100%',
+  });
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     credits: { enabled: false },

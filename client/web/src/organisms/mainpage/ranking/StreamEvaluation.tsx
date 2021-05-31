@@ -6,6 +6,7 @@ import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import PageTitle from '../shared/PageTitle';
 import StreamCommentList from './streamInfo/StreamCommentList';
 import StreamInfoCard from './streamInfo/StreamInfoCard';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
@@ -49,7 +50,7 @@ export default function StreamEvaluation(): React.ReactElement {
   return (
     <div className={classes.creatorEvaluationCardContainer}>
       <GoBackButton />
-
+      <PageTitle text="방송 후기 페이지" />
       <StreamInfoCard
         creator={creatorInfo}
         stream={streamData}

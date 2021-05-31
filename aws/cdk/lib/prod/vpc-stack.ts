@@ -22,16 +22,19 @@ export class WhileTrueTruepointVpcStack extends cdk.Stack {
           subnetType: ec2.SubnetType.PUBLIC, // For internet-facing load balancer
           name: 'Ingress',
         },
+        // 비용 절감을 위해 퍼블릭 서브넷만 사용 (mbaku, luke의견 -> TP 보안은 나중에 신경써도 될 듯) 210517
         {
-          subnetType: ec2.SubnetType.PRIVATE, // For applications tier
+          // 원래는 Private
+          subnetType: ec2.SubnetType.PUBLIC, // For applications tier
           name: 'Application',
         },
         {
-          subnetType: ec2.SubnetType.ISOLATED, // For Database tier
+          // 원래는 Isolated
+          subnetType: ec2.SubnetType.PUBLIC, // For Database tier
           name: 'Database',
         },
       ],
-      natGateways: 1,
+      // natGateways: 1,
     });
     this.vpc = vpc;
   }

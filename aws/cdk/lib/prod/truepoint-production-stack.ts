@@ -16,7 +16,7 @@ import * as route53 from '@aws-cdk/aws-route53';
 import * as targets from '@aws-cdk/aws-route53-targets';
 import BaseStack from '../class/BaseStack';
 
-interface WhileTrueCollectorStackProps extends cdk.StackProps {
+interface TruepointProductionStackProps extends cdk.StackProps {
   vpc: ec2.IVpc
 }
 
@@ -32,7 +32,7 @@ const API_SERVER_PORT = 3000;
 const API_SERVER_NAME = 'truepoint-api';
 
 export class TruepointProductionStack extends BaseStack {
-  constructor(scope: cdk.Construct, id: string, props?: WhileTrueCollectorStackProps) {
+  constructor(scope: cdk.Construct, id: string, props?: TruepointProductionStackProps) {
     super(scope, id, props);
 
     const { vpc } = props!;
@@ -170,9 +170,12 @@ export class TruepointProductionStack extends BaseStack {
       cluster: truepointCluster,
       serviceName: `${API_SERVER_NAME}-service`,
       taskDefinition: apiTaskDef,
-      assignPublicIp: true,
       desiredCount: 1,
       securityGroups: [apiSecGrp],
+      assignPublicIp: true,
+      vpcSubnets: {
+        subnetGroupName: 'Application',
+      },
     });
 
     // ALB 타겟 그룹으로 생성
@@ -197,13 +200,18 @@ export class TruepointProductionStack extends BaseStack {
 
     // ALB 생성
     const truepointALB = new elbv2.ApplicationLoadBalancer(this, `${ID_PREFIX}ALB`, {
-      vpc, internetFacing: true, loadBalancerName: `${ID_PREFIX}ALB`,
+      vpc,
+      internetFacing: true,
+      loadBalancerName: `${ID_PREFIX}ALB`,
+      vpcSubnets: {
+        subnetGroupName: 'Ingress',
+      },
     });
     // If you do not provide any options for this method, it redirects HTTP port 80 to HTTPS port 443
     truepointALB.addRedirect();
 
-    // // **********************************************
-    // // ALB - HTTPS **********************************
+    // **********************************************
+    // ALB - HTTPS **********************************
 
     // HTTPS 리스너를 위해 SSL Certificates 생성
     const sslCert = acm.Certificate.fromCertificateArn(

@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import useAxios from 'axios-hooks';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-// import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
+import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
 // import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import { Chip } from '@material-ui/core';
@@ -27,9 +27,6 @@ import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 import StepGuideTooltip from '../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../atoms/Tooltip/StepGuideTooltip.text';
 import Loading from '../../shared/sub/Loading';
-import sampleData from '../highlightAnalysis/sample/sample_short.json';
-// import sampleData from '../highlightAnalysis/sample/sample.json';
-// import sampleData from '../highlightAnalysis/sample/sample_long.json';
 
 interface HighlightAnalysisLayoutProps {
   exampleMode?: boolean
@@ -118,18 +115,9 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
     }
   };
 
-  // 일시적 주석처리 - 마케팅을 위한 개발
-  // 카테고리 리스트 요청
-  // const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
-  //   url: '/category',
-  // });
-
-  const categoriesData = [
-    { categoryId: 1, category: 'agree', categoryName: '모두가 인정한' },
-    { categoryId: 2, category: 'disgust', categoryName: '역겨운' },
-    { categoryId: 3, category: 'surprise', categoryName: '놀라운' },
-    { categoryId: 4, category: 'question', categoryName: '의문이 드는' },
-  ];
+  const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
+    url: '/category',
+  });
 
   return (
     <Paper className={classes.root}>
@@ -253,11 +241,11 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
         <>
           <TruepointHighlight
             selectedStream={selectedStream}
-            highlightData={sampleData} // 해당 부분 S3와 연동
+            highlightData={highlightData} // 해당 부분 S3와 연동
           />
           <MetricsAccordian
             selectedStream={selectedStream}
-            highlightData={sampleData} // 해당 부분 S3와 연동
+            highlightData={highlightData} // 해당 부분 S3와 연동
             categories={categoriesData}
           />
         </>

@@ -1,4 +1,4 @@
-import { Divider, Typography } from '@material-ui/core';
+import { Divider, Typography, Hidden } from '@material-ui/core';
 import React, { useMemo, useRef } from 'react';
 import { Scores, RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 
@@ -37,7 +37,7 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
         key: 'order', label: '순위', width: '5%', textAlign: 'center',
       },
       { key: 'profileImage', label: '', width: '15%' },
-      { key: 'bjName', label: 'BJ이름', width: '50%' },
+      { key: 'bjName', label: '활동명', width: '50%' },
       { key: 'weeklyScoreGraph', label: weeklyGraphLabel, width: '30%' },
     ]
   ), [weeklyGraphLabel]);
@@ -45,18 +45,20 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
   return (
     <div className={classes.topTenListWrapper}>
       {/* 목록 헤더 */}
-      <div className={classes.header}>
-        {headerColumns.map((column) => (
-          <div
-            key={column.key}
-            className={classes.headerColumn}
-            style={{ width: column.width || 'auto' }}
-          >
-            <Typography>{column.label}</Typography>
-          </div>
-        ))}
-      </div>
-      <Divider />
+      <Hidden smDown>
+        <div className={classes.header}>
+          {headerColumns.map((column) => (
+            <div
+              key={column.key}
+              className={classes.headerColumn}
+              style={{ width: column.width || 'auto' }}
+            >
+              <Typography>{column.label}</Typography>
+            </div>
+          ))}
+        </div>
+        <Divider />
+      </Hidden>
 
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems} ref={containerRef}>

@@ -3,10 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 const styles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    height: 500,
+    // height: 500,
     backgroundColor: theme.palette.background.paper,
     [theme.breakpoints.down('sm')]: {
-      height: 400,
+      // height: 400,
     },
   },
   wraper: {
@@ -17,10 +17,14 @@ const styles = makeStyles((theme) => ({
     height: 500,
     [theme.breakpoints.down('sm')]: {
       height: 400,
+      alignItems: 'center',
     },
   },
   main: {
-    margin: '20px 0px 20px 0px',
+    margin: theme.spacing(2.5, 0),
+    [theme.breakpoints.down('sm')]: {
+      margin: theme.spacing(1, 0),
+    },
   },
   mainTitle: {
     fontSize: 55,
@@ -33,6 +37,8 @@ const styles = makeStyles((theme) => ({
     },
     [theme.breakpoints.down('sm')]: {
       fontSize: 32,
+      textAlign: 'center',
+      fontWeight: theme.typography.fontWeightBold,
     },
     [theme.breakpoints.down('xs')]: {
       fontSize: 25,
@@ -45,32 +51,21 @@ const styles = makeStyles((theme) => ({
     [theme.breakpoints.down('md')]: {
       wordBreak: 'keep-all',
     },
+    [theme.breakpoints.down('sm')]: {
+      textAlign: 'center',
+      fontSize: theme.typography.body1.fontSize,
+    },
   },
   imgWraper: {
     animationDelay: '1s',
     animation: '$wraperEffect 2s ease-in-out',
-    marginTop: theme.spacing(8),
+    // marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
-    '& .small-tv': {
-      width: '50%',
-      maxWidth: '304px',
-    },
-    '& .large-tv-wrapper': {
-      marginTop: `-${theme.spacing(5)}px`,
-      position: 'relative',
-      '& .large-tv': {
-        width: '100%',
-        maxWidth: '553px',
-      },
-      '& .logo-in-tv': {
-        position: 'absolute',
-        top: theme.spacing(9),
-        left: theme.spacing(8),
+      '& img': {
+        width: '80%',
       },
     },
   },

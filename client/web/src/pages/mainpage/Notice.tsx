@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import useAxios from 'axios-hooks';
 import { useHistory, useParams } from 'react-router-dom';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { Paper, Typography } from '@material-ui/core';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
@@ -11,48 +9,15 @@ import FilterCategoryButtonGroup from '../../organisms/mainpage/shared/FilterCat
 import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
-import createPostItStyles from '../../utils/style/createPostitStyles';
-import { MYPAGE_MAIN_MAX_WIDTH } from '../../assets/constants';
-
-export const useFontStyle = makeStyles((theme: Theme) => createStyles({
-  title: {
-    fontSize: theme.typography.h4.fontSize,
-    fontWeight: 'bold',
-    lineHeight: 2.5,
-  },
-  description: {
-    fontSize: theme.typography.h5.fontSize,
-    [theme.breakpoints.down('md')]: {
-      fontSize: theme.typography.body1.fontSize,
-    },
-  },
-}));
-
-const useStyles = makeStyles((theme) => ({
-  noticeSection: {
-    backgroundColor: theme.palette.primary.main,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noticeContainer: {
-    position: 'relative',
-    width: '100%',
-    maxWidth: MYPAGE_MAIN_MAX_WIDTH,
-    margin: '64px auto',
-    padding: theme.spacing(9),
-    '&:before': createPostItStyles(theme, 'left top'),
-  },
-  contents: { marginTop: theme.spacing(2) },
-}));
+import NoticeLayout, { useContainerStyles } from '../../organisms/mainpage/shared/NoticeLayout';
+import useMediaSize from '../../utils/hooks/useMediaSize';
 
 export default function Notice(): JSX.Element {
-  const classes = useStyles();
-  const fontStyle = useFontStyle();
+  const classes = useContainerStyles();
   const history = useHistory();
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(8);
+  const { isMobile } = useMediaSize();
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
 
@@ -84,34 +49,33 @@ export default function Notice(): JSX.Element {
   }, [selectedNoticeId]);
   return (
     <main>
-      <Appbar variant="transparent" />
+      <Appbar variant={isMobile ? undefined : 'transparent'} />
       <ProductHero />
-      <section className={classes.noticeSection}>
-        <Paper elevation={0} className={classes.noticeContainer}>
-          <Typography className={fontStyle.title} variant="h6">공지사항</Typography>
-          <Typography className={fontStyle.description}>기능개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다.</Typography>
-
-          {/* 공지사항 개별 보기 */}
-          {selectedNoticeId && !loading && data && (
-            <div className={classes.contents}>
-              <NoticeDetail
-                selectedNoticeId={selectedNoticeId}
-                data={data
-                  .sort((row1, row2) => {
-                    if (row2.isImportant) return 1;
-                    if (row1.isImportant) return -1;
-                    return new Date(row2.createdAt).getTime()
+      <NoticeLayout
+        title="공지사항"
+        description="기능개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
+      >
+        {/* 공지사항 개별 보기 */}
+        {selectedNoticeId && !loading && data && (
+        <div className={classes.contents}>
+          <NoticeDetail
+            selectedNoticeId={selectedNoticeId}
+            data={data
+              .sort((row1, row2) => {
+                if (row2.isImportant) return 1;
+                if (row1.isImportant) return -1;
+                return new Date(row2.createdAt).getTime()
                       - new Date(row1.createdAt).getTime();
-                  })
-                  .filter((row) => (selectedCategory !== '전체'
-                    ? row.category === selectedCategory : row))}
-                onOtherNoticeClick={handleNoticeClick}
-                onBackClick={handleResetNoticeSelect}
-              />
-            </div>
-          )}
-          {/* 공지사항 카테고리 필터링 목록 보기 */}
-          {!selectedNoticeId && (
+              })
+              .filter((row) => (selectedCategory !== '전체'
+                ? row.category === selectedCategory : row))}
+            onOtherNoticeClick={handleNoticeClick}
+            onBackClick={handleResetNoticeSelect}
+          />
+        </div>
+        )}
+        {/* 공지사항 카테고리 필터링 목록 보기 */}
+        {!selectedNoticeId && (
           <div className={classes.contents}>
             <FilterCategoryButtonGroup
               categories={!loading && data
@@ -123,31 +87,30 @@ export default function Notice(): JSX.Element {
               selected={selectedCategory}
             />
           </div>
-          )}
+        )}
 
-          <div className={classes.contents}>
-            <NoticeTable
-              isLoading={loading}
-              metrics={!loading && data
-                ? data
-                  .sort((row1, row2) => {
-                    if (row2.isImportant) return 1;
-                    if (row1.isImportant) return -1;
-                    return new Date(row2.createdAt).getTime()
+        <div className={classes.contents}>
+          <NoticeTable
+            isLoading={loading}
+            metrics={!loading && data
+              ? data
+                .sort((row1, row2) => {
+                  if (row2.isImportant) return 1;
+                  if (row1.isImportant) return -1;
+                  return new Date(row2.createdAt).getTime()
                     - new Date(row1.createdAt).getTime();
-                  })
-                  .filter((row) => (selectedCategory !== '전체'
-                    ? row.category === selectedCategory : row))
-                : []}
-              handleClick={handleNoticeClick}
-              page={page}
-              pageSize={pageSize}
-              handlePage={setPage}
-              handlePageSize={setPageSize}
-            />
-          </div>
-        </Paper>
-      </section>
+                })
+                .filter((row) => (selectedCategory !== '전체'
+                  ? row.category === selectedCategory : row))
+              : []}
+            handleClick={handleNoticeClick}
+            page={page}
+            pageSize={pageSize}
+            handlePage={setPage}
+            handlePageSize={setPageSize}
+          />
+        </div>
+      </NoticeLayout>
       <Footer />
     </main>
   );

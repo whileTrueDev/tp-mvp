@@ -2,7 +2,6 @@ import React, {
   useMemo,
 } from 'react';
 import {
-  Container,
   Grid, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,9 +10,11 @@ import useBoardState from '../../utils/hooks/useBoardListState';
 import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
 import HighlightListContainer from '../../organisms/mainpage/youtubeHighlight/list/HighlightListContainer';
 import YoutubeHighlightListHero from '../../organisms/mainpage/youtubeHighlight/YoutubeHighlightListHero';
-import { MYPAGE_MAIN_MAX_WIDTH } from '../../assets/constants';
+import useMediaSize from '../../utils/hooks/useMediaSize';
+import MobileYoutubeHighlightList from '../../organisms/mainpage/youtubeHighlight/MobileYoutubeHighlightList';
+import { RANKING_PAGE_CONTAINER_WIDTH } from '../../assets/constants';
 
-const youtubeHighlightListLayout = makeStyles((theme) => ({
+export const youtubeHighlightListLayout = makeStyles((theme) => ({
   searchForm: {
     padding: theme.spacing(0, '4%', 0, '4%'),
     display: 'flex',
@@ -21,21 +22,18 @@ const youtubeHighlightListLayout = makeStyles((theme) => ({
     alignItems: 'center',
     margin: theme.spacing(10, 0, 4, 0),
   },
-  centerWrapper: {
-    [theme.breakpoints.up('lg')]: {
-      maxWidth: MYPAGE_MAIN_MAX_WIDTH,
-    },
-  },
-  boardWrapper: {
-    width: '45%',
-  },
   contentTitle: {
     margin: theme.spacing(5),
+  },
+  boardWrapper: {
+    maxWidth: RANKING_PAGE_CONTAINER_WIDTH,
+    margin: '0 auto',
   },
 }));
 
 export default function YoutubeHighlightList(): JSX.Element {
   const classes = youtubeHighlightListLayout();
+  const { isMobile } = useMediaSize();
 
   const {
     boardState: afreecaHighlightList,
@@ -76,32 +74,35 @@ export default function YoutubeHighlightList(): JSX.Element {
 
   return (
     <YoutubeHighlightListLayout>
-      <YoutubeHighlightListHero />
 
-      <div className={classes.contentTitle}>
-        <Typography variant="h5" align="center" gutterBottom color="primary">
-          탑 방송인들의 최신 방송 정보를 확인해 보세요!
-        </Typography>
-        <Typography variant="h5" align="center" gutterBottom color="primary">
-          해당 방송인의 대시보드, 편집점, 방송분석 정보들을 보실 수 있습니다.
-        </Typography>
-      </div>
-
-      <Container className={classes.centerWrapper}>
-        <Grid
-          container
-          justify="space-around"
-          alignItems="flex-start"
-        >
-          <Grid item className={classes.boardWrapper}>
-            {AfreecaBoard}
+      {isMobile ? (
+        <MobileYoutubeHighlightList
+          afreecaBoard={AfreecaBoard}
+          twitchBoard={TwitchBoard}
+        />
+      ) : (
+        <>
+          <YoutubeHighlightListHero />
+          <div className={classes.contentTitle}>
+            <Typography variant="h5" align="center" gutterBottom color="primary">
+              탑 방송인들의 최신 방송 정보를 확인해 보세요!
+            </Typography>
+            <Typography variant="h5" align="center" gutterBottom color="primary">
+              해당 방송인의 대시보드, 편집점, 방송분석 정보들을 보실 수 있습니다.
+            </Typography>
+          </div>
+          <Grid
+            container
+            justify="space-around"
+            alignItems="flex-start"
+            className={classes.boardWrapper}
+            spacing={2}
+          >
+            <Grid item xs={6}>{AfreecaBoard}</Grid>
+            <Grid item xs={6}>{TwitchBoard}</Grid>
           </Grid>
-
-          <Grid item className={classes.boardWrapper}>
-            {TwitchBoard}
-          </Grid>
-        </Grid>
-      </Container>
+        </>
+      )}
 
     </YoutubeHighlightListLayout>
   );

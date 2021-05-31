@@ -10,8 +10,11 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     position: 'relative',
     border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
     borderRadius: theme.shape.borderRadius,
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(1),
     paddingRight: theme.spacing(1),
+    [theme.breakpoints.down('sm')]: {
+      border: 'none',
+    },
   },
   recentAnalysisDate: {
     position: 'absolute',
@@ -22,10 +25,10 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
   },
   header: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(4, 0, 5, 2),
+    padding: theme.spacing(4, 0, 5, 1),
     marginBottom: theme.spacing(1),
     '&>:nth-child(1)': {
-      fontSize: theme.typography.h5.fontSize,
+      fontSize: theme.typography.h6.fontSize,
       fontWeight: theme.typography.fontWeightBold,
     },
     '&>:nth-child(2)': {
@@ -37,13 +40,11 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
   loadMoreButtonContainer: {
     textAlign: 'center',
     padding: theme.spacing(2, 0),
-    marginBottom: theme.spacing(2),
   },
   loadMoreButton: {
-    fontSize: theme.typography.h5.fontSize,
+    fontSize: theme.typography.body1.fontSize,
     border: `2px solid ${theme.palette.grey[500]}`,
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(2, 5),
+    padding: theme.spacing(0.5, 2),
     color: theme.palette.grey[500],
     '&:hover': {
       border: `2px solid ${theme.palette.primary.main}`,
@@ -73,17 +74,18 @@ export const useTabs = makeStyles((theme: Theme) => createStyles({
 export const useTabItem = makeStyles((theme: Theme) => {
   const defaultBgColor = theme.palette.type === 'light' ? theme.palette.background.paper : theme.palette.grey.A200;
   const defaultLabelColor = theme.palette.text.disabled;
-  const svgFontSize = theme.typography.h5.fontSize;
-  const rootHeight = theme.spacing(9);
+  const svgFontSize = theme.typography.body1.fontSize;
+  const rootHeight = theme.spacing(5.5);
   return createStyles({
     root: {
       textTransform: 'initial',
       height: rootHeight,
       minHeight: rootHeight,
+      padding: 0,
+      paddingLeft: theme.spacing(0.5),
       overflow: 'visible',
       position: 'relative',
       justifyContent: 'flex-start',
-      paddingLeft: theme.spacing(3),
       minWidth: 'auto',
       '&:after': {
         content: '" "',
@@ -112,7 +114,7 @@ export const useTabItem = makeStyles((theme: Theme) => {
     wrapper: {
       color: defaultLabelColor,
       position: 'relative',
-      fontSize: theme.typography.body1.fontSize,
+      fontSize: theme.typography.button.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       flexDirection: 'row',
       width: 'auto',
@@ -133,12 +135,10 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
   },
   root: {
     display: 'inline-flex',
-    height: theme.spacing(9),
     backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
     borderRadius: theme.spacing(1),
-    paddingTop: theme.spacing(0.5),
-    paddingLeft: theme.spacing(0.5),
-    paddingRight: theme.spacing(0.5),
+    padding: theme.spacing(0.25),
+    minHeight: theme.spacing(3.75),
   },
 }));
 
@@ -146,13 +146,12 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
 // ToptenCard 내 상단 가로형 탭 아이템 컴포넌트 스타일
 export const useHorizontalTabItemStyle = makeStyles((theme: Theme) => createStyles({
   root: {
-    minWidth: theme.spacing(12),
-    height: theme.spacing(8),
+    minWidth: theme.spacing(7.5),
+    minHeight: theme.spacing(3.75),
     alignItems: 'center',
     opacity: 1,
     overflow: 'initial',
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    padding: theme.spacing(0, 1),
     borderRadius: theme.spacing(1),
     color: theme.palette.text.primary,
     transition: '0.2s',
@@ -170,7 +169,7 @@ export const useHorizontalTabItemStyle = makeStyles((theme: Theme) => createStyl
     zIndex: 2,
     width: 'auto',
     textTransform: 'initial',
-    fontSize: theme.typography.h6.fontSize,
+    fontSize: theme.typography.button.fontSize,
     color: theme.palette.text.disabled,
     flexDirection: 'row',
     alignItems: 'center',
@@ -185,7 +184,7 @@ export const useHorizontalTabItemStyle = makeStyles((theme: Theme) => createStyl
 export const usePlatformTabsStyle = makeStyles((theme: Theme) => createStyles({
   root: {
     padding: theme.spacing(0.5),
-    marginBottom: theme.spacing(4),
+    marginBottom: theme.spacing(2.5),
     backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
     minHeight: 'auto',
   },
@@ -195,11 +194,11 @@ export const usePlatformTabItemStyle = makeStyles((theme: Theme) => createStyles
   root: {
     minHeight: 'auto',
     minWidth: 'auto',
-    height: theme.spacing(3.5),
-    padding: theme.spacing(0, 2),
+    height: theme.spacing(2),
+    padding: theme.spacing(0, 1),
   },
   wrapper: {
-    fontSize: theme.typography.h6.fontSize,
+    fontSize: theme.typography.button.fontSize,
     color: theme.palette.text.disabled,
   },
   selected: {

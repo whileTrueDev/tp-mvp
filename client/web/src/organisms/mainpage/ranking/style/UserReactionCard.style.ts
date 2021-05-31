@@ -7,7 +7,10 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
       border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
       borderRadius: theme.shape.borderRadius,
       backgroundColor: theme.palette.background.paper,
-      padding: theme.spacing(2, 2, 0, 2),
+      padding: theme.spacing(0, 2),
+      [theme.breakpoints.down('sm')]: {
+        border: 'none',
+      },
     },
     header: {
       display: 'flex',
@@ -16,10 +19,11 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
       color: theme.palette.text.primary,
     },
     title: {
-      fontSize: theme.typography.h6.fontSize,
+      fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.fontWeightBold,
     },
     list: {
+      padding: 0,
       minHeight: theme.spacing(50),
       maxHeight: theme.spacing(50),
       overflowY: 'auto',
@@ -30,11 +34,12 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
       width: '100%',
       padding: theme.spacing(2, 0),
     },
+
     row: {
       '&:not(:last-child)': {
-        marginBottom: theme.spacing(2),
+        marginBottom: theme.spacing(1),
       },
-      '&:not(:last-child)>*:not(:last-child)': {
+      '& > *:not(:last-child)': {
         marginRight: theme.spacing(1),
       },
     },
@@ -45,7 +50,7 @@ export const useUserReactionStyle = makeStyles((theme: Theme) => {
       width: '30%',
     },
     contentField: {
-      width: '90%',
+      width: '80%',
     },
     submitButton: {
       border: `2px solid ${grey}`,

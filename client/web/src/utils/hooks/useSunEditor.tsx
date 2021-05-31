@@ -6,6 +6,7 @@ import suneditor from 'suneditor';
 import { ko } from 'suneditor/src/lang';
 import plugins from 'suneditor/src/plugins';
 import SunEditor from 'suneditor/src/lib/core';
+import useMediaSize from './useMediaSize';
 
 interface EditorContainerProps {
   style?: React.CSSProperties;
@@ -36,32 +37,39 @@ interface useSunEditorReturnType{
  * */
 export default function useSunEditor(): useSunEditorReturnType {
   const editorRef = useRef<SunEditor|null>(null);
+  const { isMobile } = useMediaSize();
 
   const refFn = useCallback((node) => {
     if (node !== null) {
+      const buttonList = [
+        ['bold', 'underline', 'italic'],
+        ['align'],
+        ['link', 'image', 'video', 'codeView'],
+      ];
+      const originButtonList = [
+        ['undo', 'redo'],
+        ['font', 'fontSize', 'formatBlock'],
+        ['paragraphStyle', 'blockquote'],
+        ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript'],
+        ['fontColor', 'hiliteColor', 'textStyle'],
+        ['removeFormat'],
+        '/', // Line break
+        ['outdent', 'indent'],
+        ['align', 'horizontalRule', 'list', 'lineHeight'],
+        ['table', 'link', 'image', 'video'],
+        ['fullScreen', 'showBlocks', 'codeView'],
+        ['preview'],
+      ];
       const editorInstance = suneditor.create(node, {
         lang: ko,
         plugins,
-        buttonList: [
-          ['undo', 'redo'],
-          ['font', 'fontSize', 'formatBlock'],
-          ['paragraphStyle', 'blockquote'],
-          ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript'],
-          ['fontColor', 'hiliteColor', 'textStyle'],
-          ['removeFormat'],
-          '/', // Line break
-          ['outdent', 'indent'],
-          ['align', 'horizontalRule', 'list', 'lineHeight'],
-          ['table', 'link', 'image', 'video'],
-          ['fullScreen', 'showBlocks', 'codeView'],
-          ['preview'],
-        ],
+        buttonList: isMobile ? buttonList : originButtonList,
         showPathLabel: false,
         resizingBar: false,
       });
       editorRef.current = editorInstance;
     }
-  }, []);
+  }, [isMobile]);
 
   const EditorContainer = ({
     style = { width: '100%', minHeight: '400px' },

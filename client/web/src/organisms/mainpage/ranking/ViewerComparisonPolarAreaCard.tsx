@@ -11,6 +11,7 @@ import { useSnackbar } from 'notistack';
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
+import { CAROUSEL_HEIGHT } from '../../../assets/constants';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import {
@@ -19,7 +20,7 @@ import {
 
   polarAreaLabelFormatter, toPolarAreaData,
 } from './polar/polarChartUtils';
-import { useStyles as usePolatChartStyles } from './style/polarChartStyle';
+import { useStyles as usePolarChartStyles } from './style/polarChartStyle';
 import CarouselItemHeader from './sub/CarouselItemHeader';
 
 HCmore(Highcharts);// polar area chart 사용 위해 필요
@@ -53,7 +54,7 @@ const commonXAxisOptions = {
 
 function ViewerComparisonPolarAreaCard(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
-  const classes = usePolatChartStyles();
+  const classes = usePolarChartStyles();
   const theme = useTheme();
   // 차트컨테이너 ref
   const chartRef = useRef<{chart: Highcharts.Chart, container: React.RefObject<HTMLDivElement>}>(null);
@@ -67,6 +68,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
     chart: {
       type: 'column',
       polar: true,
+      height: CAROUSEL_HEIGHT,
     },
     credits: { enabled: false },
     legend: { enabled: false },
@@ -105,7 +107,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
           align: 'center',
           verticalAlign: 'middle',
           style: {
-            fontSize: `${theme.typography.body2.fontSize}`,
+            fontSize: `${theme.spacing(1.25)}px`,
           },
           formatter: polarAreaLabelFormatter,
         },
@@ -209,7 +211,7 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
 
   return (
     <section className={classes.polarAreaContainer}>
-      <CarouselItemHeader title="종합랭킹" />
+      <CarouselItemHeader title="플랫폼 상위 10인 시청자수 합계" />
 
       { data
         ? (

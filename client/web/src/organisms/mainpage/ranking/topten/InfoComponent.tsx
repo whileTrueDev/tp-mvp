@@ -1,5 +1,6 @@
 import { Typography, Link } from '@material-ui/core';
 import { Scores, TopTenDataItem } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import classnames from 'classnames';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import StarRating from '../creatorInfo/StarRating';
@@ -9,7 +10,10 @@ import ScoreBar from './ScoreBar';
 export function ViewerCountDisplay(props: {viewer: number}): JSX.Element {
   const { viewer } = props;
   return (
-    <Typography component="span">{`최고 시청자수: ${viewer} 명`}</Typography>
+    <div>
+      <Typography component="span" style={{ fontSize: '12px' }}>최고 시청자수 : </Typography>
+      <Typography component="span" style={{ fontSize: '18px', fontWeight: 'bold' }}>{`${viewer} 명`}</Typography>
+    </div>
   );
 }
 export interface InfoComponentProps{
@@ -28,15 +32,23 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
             {d.creatorName}
           </Typography>
         </Link>
-        <div className={classes.ratingContainer}>
-          <StarRating ratingProps={{ size: 'large' }} score={d.averageRating} readOnly />
-          <Typography noWrap>{`${currentScoreName === 'rating' ? '일일 평균 평점' : '주간 평점'} ${d.averageRating ? d.averageRating.toFixed(2) : 0}`}</Typography>
+        <div className={classnames(classes.ratingContainer, { column: currentScoreName === 'rating' })}>
+          <StarRating
+            ratingProps={{
+              size: currentScoreName === 'rating' ? 'large' : 'small',
+            }}
+            score={d.averageRating}
+            readOnly
+          />
+          <Typography noWrap className="scoreText">{`평점 ${d.averageRating ? d.averageRating.toFixed(2) : 0}`}</Typography>
         </div>
       </div>
 
-      <Typography className={classes.title}>
-        {d.title}
-      </Typography>
+      {currentScoreName !== 'viewer' && (
+        <Typography className={classes.title}>
+          {d.title}
+        </Typography>
+      )}
 
       {currentScoreName === 'viewer' && <ViewerCountDisplay viewer={d[currentScoreName] || 0} />}
       {!['viewer', 'rating'].includes(currentScoreName) && <ScoreBar score={d[currentScoreName] || 0} />}

@@ -70,7 +70,7 @@ export default function Exanalysis(): JSX.Element {
               ? renderAnalysisContent(analysisType)
               : (
                 <Typography variant="subtitle1" align="center" className={classes.downAnalysisWrap}>
-                  예시 기능은 PC 및 태블릿 화면에서 이용가능합니다.
+                  PC 및 태블릿 화면에서 예시 기능을 사용해보세요!
                 </Typography>
               )}
           </Grid>

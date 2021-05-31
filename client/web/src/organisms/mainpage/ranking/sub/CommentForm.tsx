@@ -1,5 +1,5 @@
 import {
-  Button, InputBase, TextField, Typography,
+  Button, Grid, Hidden, InputBase, TextField,
 } from '@material-ui/core';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
@@ -36,13 +36,13 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
     const contentInput = form.content;
 
     const createCommentDto: CreateCommentDto = {
-      userId: authContext.user.userId ? authContext.user.userId : null,
+      userId: authContext.accessToken ? authContext.user.userId : null,
       nickname: '',
       password: '',
       content: '',
     };
 
-    if (authContext.user.userId) { // 로그인 된 상태일 경우
+    if (authContext.user.userId && authContext.accessToken) { // 로그인 된 상태일 경우
       const nickname = authContext.user.nickName;
       const content = e.currentTarget.content.value.trim();
       if (!nickname || !content) {
@@ -80,12 +80,16 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
   };
   return (
     <form className={formStyle.form} onSubmit={onSubmit}>
-      {authContext.user.userId
-        ? (
-          <Typography>{authContext.user.nickName}</Typography>
-        )
-        : (
-          <div>
+      {/* 로그인 한 경우 */}
+      {/* {authContext.user.userId && authContext.accessToken && (
+        <Typography>{authContext.user.nickName}</Typography>
+      )} */}
+      {/* 로그인 안해도 authcontext.user값이 들어간 경우가 있어서(public mypage..) 
+        로그인 기능 활성화 후 다른 방식으로 처리 필요(public mypage에 authcontext.user 값 넣는 부분 수정필요)
+      */}
+      <Hidden smUp>
+        <Grid container>
+          <Grid item xs={6}>
             <TextField
               label="닉네임"
               name="nickname"
@@ -94,21 +98,63 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
               inputProps={{ maxLength: 8 }}
               className={formStyle.nicknameInput}
               defaultValue={authContext.user.userName}
+              size="small"
             />
-            <TextField label="비밀번호" name="password" type="password" placeholder="비밀번호" variant="outlined" inputProps={{ maxLength: 4 }} autoComplete="on" />
-          </div>
-        )}
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="비밀번호"
+              name="password"
+              type="password"
+              placeholder="비밀번호"
+              variant="outlined"
+              className={formStyle.passwordInput}
+              inputProps={{ maxLength: 4 }}
+              autoComplete="on"
+              size="small"
+            />
+          </Grid>
+        </Grid>
+      </Hidden>
+
+      {/* 데스크탑 화면인 경우 */}
+      <Hidden smDown>
+        <div>
+          <TextField
+            label="닉네임"
+            name="nickname"
+            variant="outlined"
+            placeholder="닉네임"
+            inputProps={{ maxLength: 8 }}
+            className={formStyle.nicknameInput}
+            defaultValue={authContext.user.userName}
+            size="small"
+          />
+          <TextField
+            label="비밀번호"
+            name="password"
+            type="password"
+            placeholder="비밀번호"
+            variant="outlined"
+            className={formStyle.passwordInput}
+            inputProps={{ maxLength: 4 }}
+            autoComplete="on"
+            size="small"
+          />
+        </div>
+      </Hidden>
+
       <InputBase
         className={formStyle.contentTextArea}
         fullWidth
         multiline
-        rows={4}
+        rows={2}
         inputProps={{ maxLength: 240 }}
         name="content"
-        placeholder="내용을 입력해주세요"
+        placeholder="댓글을 입력해주세요"
       />
       <div className={formStyle.buttonWrapper}>
-        <Button type="submit" className={formStyle.button}>등록</Button>
+        <Button size="small" type="submit" className={formStyle.button}>등록</Button>
       </div>
     </form>
   );

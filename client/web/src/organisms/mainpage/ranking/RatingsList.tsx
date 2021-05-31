@@ -24,7 +24,7 @@ export default function RatingsList(): JSX.Element {
         <ListItem>
           <Grid container>
             <Grid item xs={2}><Typography className={classes.headerText}>순위</Typography></Grid>
-            <Grid item xs={4}><Typography className={classes.headerText}>스트리머</Typography></Grid>
+            <Grid item xs={4}><Typography className={classes.headerText}>활동명</Typography></Grid>
             <Grid item xs={4}><Typography className={classes.headerText}>평점</Typography></Grid>
             <Grid item xs={2}><Typography className={classes.headerText}>변동</Typography></Grid>
           </Grid>

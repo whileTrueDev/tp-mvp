@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
-  Container, Button, Grid,
+  Container, Button,
 } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
@@ -16,11 +16,11 @@ import { useSnackbar } from 'notistack';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 // 컴포넌트
 import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
-import InputField from './write/InputField';
 // 훅
 import useScrollTop from '../../../utils/hooks/useScrollTop';
 import useSunEditor from '../../../utils/hooks/useSunEditor';
 import usePostWriteEditAPI from '../../../utils/hooks/usePostWriteEditAPI';
+import WritingInputFields from './write/WritingInputFields';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
@@ -208,49 +208,13 @@ export default function CommunityPostWrite(): JSX.Element {
       <BoardTitle platform={platform} title={`${PLATFORM_NAMES[platform]} 게시판`} />
 
       <form className="form">
-        {isEditMode
-          ? null
-          : (
-            <Grid
-              container
-              justify="flex-start"
-              spacing={2}
-            >
-              <Grid item xs={12} md={6}>
-                <InputField
-                  label="닉네임"
-                  name="nickname"
-                  maxLength={12}
-                  helperText="* 닉네임은 최대 12글자까지 가능합니다"
-                  placeholder="닉네임을 입력하세요"
-                  inputRef={nicknameRef}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <InputField
-                  type="password"
-                  name="password"
-                  label="비밀번호"
-                  maxLength={4}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  helperText="* 비밀번호는 최대 4글자까지 가능합니다"
-                  placeholder="비밀번호를 입력하세요"
-                  inputRef={passwordRef}
-                />
-              </Grid>
-            </Grid>
-          )}
-
-        <InputField
-          name="title"
-          label="제목"
-          maxLength={20}
-          helperText="* 제목은 최대 20글자까지 가능합니다"
-          placeholder="제목을 입력하세요"
-          inputRef={titleRef}
+        <WritingInputFields
+          isEditMode={isEditMode}
+          nicknameRef={nicknameRef}
+          passwordRef={passwordRef}
+          titleRef={titleRef}
         />
+
         <EditorContainer
           className={classes.editorContainer}
         />

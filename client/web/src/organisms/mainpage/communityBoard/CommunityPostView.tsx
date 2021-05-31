@@ -1,7 +1,7 @@
 import {
-  Button, Card, CardActions, CardContent, Container, Paper, Typography,
+  Button, Container, Paper, Typography,
 } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import classnames from 'classnames';
 // 타입정의
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
@@ -23,48 +23,8 @@ import PostInfoCard from './postView/PostInfoCard';
 import RepliesContainer from './postView/RepliesContainer';
 import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
 import { isWithin24Hours } from '../ranking/creatorInfo/CreatorCommentList';
-
-const SUN_EDITOR_VIEWER_CLASSNAME = 'sun-editor-editable'; // suneditor로 작성된 글을 innerHTML로 넣을 때 해당 엘리먼트에 붙어야 할 클래스네임
-
-export const useStyles = makeStyles((theme: Theme) => createStyles({
-  boardTitle: {},
-  headerCard: {},
-  viewer: {
-    [`& .${SUN_EDITOR_VIEWER_CLASSNAME}`]: {
-      backgroundColor: theme.palette.background.paper,
-      color: theme.palette.text.primary,
-    },
-  },
-  recommendContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing(3, 0),
-  },
-  recommendCard: {
-    display: 'flex',
-  },
-  buttonsContainer: {
-    padding: theme.spacing(1, 0),
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing(2),
-  },
-  postButtons: {
-    '&>*+*': {
-      marginLeft: theme.spacing(1),
-    },
-  },
-  replyPagenation: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: theme.spacing(2),
-  },
-  repliesContainer: {
-    marginBottom: theme.spacing(8),
-  },
-}));
+import useMediaSize from '../../../utils/hooks/useMediaSize';
+import { useStyles, SUN_EDITOR_VIEWER_CLASSNAME } from './style/CommunityBoardView.style';
 
 // PostList 컴포넌트의 moveToPost 함수에서 history.push({state:})로 넘어오는 값들
 interface LocationState{
@@ -90,6 +50,24 @@ const snackMessages = {
   },
 };
 
+function FilterButton({ onClick, label }: {
+  onClick: () => void,
+  label: string
+}): JSX.Element {
+  const { isMobile } = useMediaSize();
+  return (
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={onClick}
+      style={{ marginRight: '4px' }}
+      size={isMobile ? 'small' : undefined}
+    >
+      {label}
+    </Button>
+  );
+}
+
 interface Params{
   postId: string,
   platform: 'twitch' | 'afreeca' | 'free'
@@ -99,6 +77,7 @@ export default function CommunityPostView(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const history = useHistory();
+  const { isMobile } = useMediaSize();
 
   const { postId, platform } = useParams<Params>();
 
@@ -300,7 +279,7 @@ export default function CommunityPostView(): JSX.Element {
   const [, checkPassword] = useAxios({ url: `/community/posts/${postId}/password`, method: 'post' }, { manual: true });
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" className="postView">
       <BoardTitle platform={platform} title={`${PLATFORM_NAMES[platform]}게시판`} />
 
       {currentPost ? (
@@ -314,53 +293,52 @@ export default function CommunityPostView(): JSX.Element {
 
       <Paper className={classes.viewer}>
         <div ref={viewerRef} className={SUN_EDITOR_VIEWER_CLASSNAME} />
-        <div className={classes.recommendContainer}>
-          <Card className={classes.recommendCard}>
-            <CardContent>
-              <Typography>{`추천 ${recommendCount || (currentPost && currentPost.recommend) || 0}`}</Typography>
-            </CardContent>
-            <CardActions>
-              <Button onClick={handleRecommend} variant="contained" color="primary">
-                <img width="36" height="36" src="/images/rankingPage/thumb_up.png" alt="추천" />
-              </Button>
-            </CardActions>
-            <CardActions>
-              <Button onClick={handleNotRecommend} variant="contained" color="primary">
-                <img width="36" height="36" src="/images/rankingPage/thumb_down.png" alt="비추천" />
-              </Button>
-            </CardActions>
-            <CardContent>
-              <Typography>{`비추천 ${notRecommendCount || (currentPost && currentPost.notRecommendCount) || 0}`}</Typography>
-            </CardContent>
 
-          </Card>
+        <div className={classes.recommendContainer}>
+          <div className={classes.recommendButtons}>
+            <Typography>{recommendCount || (currentPost && currentPost.recommend) || 0}</Typography>
+            <Button
+              size={isMobile ? 'small' : undefined}
+              className={classnames(classes.recommendButton)}
+              onClick={handleRecommend}
+              variant="contained"
+              color="primary"
+            >
+              <img
+                width={isMobile ? 24 : 36}
+                height={isMobile ? 24 : 36}
+                src="/images/rankingPage/thumb_up.png"
+                alt="추천"
+              />
+              <Typography className="buttonText">추천</Typography>
+            </Button>
+            <Button
+              size={isMobile ? 'small' : undefined}
+              className={classnames(classes.recommendButton, 'not')}
+              onClick={handleNotRecommend}
+              variant="contained"
+              color="default"
+            >
+              <img
+                width={isMobile ? 24 : 36}
+                height={isMobile ? 24 : 36}
+                src="/images/rankingPage/thumb_down.png"
+                alt="비추천"
+              />
+              <Typography className="buttonText">비추</Typography>
+            </Button>
+            <Typography>{notRecommendCount || (currentPost && currentPost.notRecommendCount) || 0}</Typography>
+          </div>
         </div>
       </Paper>
 
       <div className={classes.buttonsContainer}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={moveToBoardList}
-        >
-          전체 게시판 목록보기
-        </Button>
-        <div className={classes.postButtons}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={editPostButtonHandler}
-          >
-            글수정
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={deletePostButtonHandler}
-          >
-            글삭제
-          </Button>
+        <FilterButton onClick={moveToBoardList} label="전체 게시판 목록보기" />
+        <div>
+          <FilterButton onClick={editPostButtonHandler} label="글수정" />
+          <FilterButton onClick={deletePostButtonHandler} label="글삭제" />
         </div>
+
       </div>
 
       {/* 글수정, 삭제시 비밀번호 확인 다이얼로그 */}

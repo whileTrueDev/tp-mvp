@@ -26,6 +26,14 @@ const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
   itemContent: {
     lineBreak: 'anywhere',
     whiteSpace: 'pre-line',
+    fontSize: theme.typography.body2.fontSize,
+  },
+  avatar: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+  },
+  avatarContainer: {
+    minWidth: theme.spacing(4),
   },
 }));
 
@@ -39,7 +47,7 @@ function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
   const classes = useUserReactionListItemStyle();
   const { data, reloadItems } = props;
   const {
-    username, content, ip, id,
+    username, content, id,
   } = data;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,14 +100,14 @@ function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
   return (
     <>
       <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar />
+        <ListItemAvatar className={classes.avatarContainer}>
+          <Avatar className={classes.avatar} />
         </ListItemAvatar>
         <ListItemText
           classes={{ primary: classes.itemPrimaryText }}
           primary={(
             <>
-              <Typography>{`${username} (${ip})`}</Typography>
+              <Typography>{`${username}`}</Typography>
               <div>
                 <Typography variant="caption" component="span">{date}</Typography>
                 <DeleteButton onClick={onDeleteButtonClick} />

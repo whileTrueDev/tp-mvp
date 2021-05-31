@@ -62,7 +62,7 @@ export class CreatorRatingsService {
     // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
     try {
       const exRating = await this.ratingsRepository.findOne({
-        where: { userIp: ip, creatorId },
+        where: { userIp: ip, creatorId, userId },
       });
 
       if (exRating) {
@@ -113,6 +113,7 @@ export class CreatorRatingsService {
 
   /**
    * creatorId의 평균평점과 횟수 조회
+   * [tp3.0 특정 기간 반영이 없는 누적 평점 평균치를 게시] 기획에 따라 1달제한 주석처리
    * @param creatorId 
    * @return {
   "average": 2,
@@ -127,7 +128,7 @@ export class CreatorRatingsService {
           'Count(id) AS count',
         ])
         .where('creatorId = :creatorId', { creatorId })
-        .andWhere('createDate >= DATE_SUB(curDate(), INTERVAL 1 MONTH)')
+        // .andWhere('createDate >= DATE_SUB(curDate(), INTERVAL 1 MONTH)')
         .getRawOne();
       return {
         average: Number(data.average),
@@ -147,12 +148,18 @@ export class CreatorRatingsService {
    * @param creatorId 
    * @returns 
    */
-  async findOneRating(ip: string, creatorId: string): Promise<{score: number} | false> {
+  async findOneRating({ ip, creatorId, userId }: {
+    ip: string,
+    creatorId: string,
+    userId?: string | undefined
+  }): Promise<{score: number} | false> {
+    if (!userId) return false;
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
           userIp: ip,
           creatorId,
+          userId,
         },
       });
       if (exRating) {
@@ -362,7 +369,7 @@ export class CreatorRatingsService {
       FROM ${this.ratingsRepository.metadata.tableName} R
         LEFT JOIN ${this.afreecaRepository.metadata.tableName} afreeca ON afreeca.afreecaId = R.creatorId
         LEFT JOIN ${this.twitchRepository.metadata.tableName} twitch ON twitch.twitchId = R.creatorId
-      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= curdate()+1 
+      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= (curdate() + INTERVAL 1 DAY)
       GROUP BY R.creatorId
       ORDER BY rownum asc
       LIMIT 10
@@ -395,15 +402,31 @@ export class CreatorRatingsService {
     };
   }
 
+  /**
+   * 일일 평점별 순위 구하는 메서드 (시청자 평점)
+   * 
+   * 본래 일일 평점별 순위 구하는 함수였으나
+   * [tp3.0 특정 기간 반영이 없는 누적 평점 평균치를 게시] 기획에 따라 1달제한 주석처리
+   * dateLimit 파라미터에 false 넘기면 일일평점별 순위 반환함
+   * 
+   * 
+   * @param param0 
+   * @returns 
+   */
   async getDailyRatingRankings(
-    { skip, categoryId, platform: platformType }: {
+    {
+      skip, categoryId, platform: platformType, dateLimit = false,
+    }: {
       skip: number,
       categoryId: number,
-      platform: PlatformType
+      platform: PlatformType,
+      dateLimit?: boolean
     },
   ): Promise<RankingDataType> {
     try {
-      const baseQuery = await this.ratingsRepository
+      let baseQuery: SelectQueryBuilder<CreatorRatingsEntity>;
+
+      baseQuery = await this.ratingsRepository
         .createQueryBuilder('ratings')
         .select([
           'ratings.id AS id',
@@ -411,10 +434,14 @@ export class CreatorRatingsService {
           'AVG(ratings.rating) AS rating',
           'ratings.platform AS platform',
         ])
-        .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
+        // .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
         .groupBy('ratings.creatorId')
         .orderBy('AVG(ratings.rating)', 'DESC')
         .addOrderBy('COUNT(ratings.id)', 'DESC');
+
+      if (dateLimit) {
+        baseQuery = baseQuery.where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)');
+      }
 
       let qb: SelectQueryBuilder<CreatorRatingsEntity>;
       if (platformType === 'all') {

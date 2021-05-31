@@ -5,7 +5,7 @@ import {
 import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) => {
-  const defaultIconBackgroundSize = theme.spacing(10);
+  const defaultIconBackgroundSize = theme.spacing(7);
   return createStyles({
     title: {
       position: 'relative',
@@ -24,11 +24,16 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     titleText: {
       zIndex: 1,
-      whiteSpace: 'pre-line',
+      wordBreak: 'keep-all',
+      fontSize: theme.typography.h5.fontSize,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: theme.typography.body1.fontSize,
+      },
     },
     subTitleText: {
-      fontSize: theme.typography.h5.fontSize,
+      fontSize: theme.typography.subtitle2.fontSize,
     },
+
     bg: {
       position: 'absolute',
       left: defaultIconBackgroundSize * (-0.5),
@@ -59,7 +64,7 @@ export default function BoardTitle({
   const classes = useStyles();
   if (!platform) {
     return (
-      <Typography variant="h4" className={classes.titleText}>게시판</Typography>
+      <Typography className={classes.titleText}>게시판</Typography>
     );
   }
   return (
@@ -71,7 +76,7 @@ export default function BoardTitle({
             src={`/images/logo/${platform}Logo.png`}
             alt={`${platform}Logo`}
           />
-          <Typography variant="h4" className={classes.titleText}>
+          <Typography className={classes.titleText}>
             {`${PLATFORM_NAMES[platform]}
           ${boardType ? '방송인' : '게시판'}`}
           </Typography>
@@ -79,10 +84,10 @@ export default function BoardTitle({
       ) : (
         <>
           {imageSrc && <div className={classes.bg} style={{ backgroundImage: `url(${imageSrc})` }} />}
-          <Typography variant="h2" className={classes.titleText}>
+          <Typography className={classes.titleText}>
             {title}
           </Typography>
-          <Typography variant="subtitle1" className={classes.subTitleText}>
+          <Typography className={classes.subTitleText}>
             {subTitle}
           </Typography>
         </>

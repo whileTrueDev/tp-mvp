@@ -9,6 +9,7 @@ import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
 import dateExpression from '../../../utils/dateExpression';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
 
 const TABLE_ROW_HEIGHT = 45;
 interface TableProps {
@@ -53,7 +54,7 @@ export default function MaterialTable({
 }: TableProps): JSX.Element {
   const classes = useStyles();
   const emptyRows = pageSize - Math.min(pageSize, metrics.length - page * pageSize);
-
+  const { isMobile } = useMediaSize();
   const theme = useTheme();
 
   return (
@@ -102,43 +103,64 @@ export default function MaterialTable({
                     [classes.tableRow]: true, [classes.importantRow]: eachRow.isImportant,
                   })}
                 >
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.isImportant ? (
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                      >
-                        <NotificationImportantIcon color="primary" />
-                        <Typography className={classes.importantText}>
-                          중요
-                        </Typography>
-                      </div>
-                    ) : eachRow.id}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {eachRow.category}
-                  </TableCell>
-                  <TableCell
-                    className={classnames({
-                      [classes.tableCell]: true,
-                      [classes.importantText]: eachRow.isImportant,
-                    })}
-                    scope="row"
-                    align="left"
-                  >
-                    {eachRow.title}
-                  </TableCell>
-                  <TableCell className={classes.tableCell} scope="row" align="center">
-                    {dateExpression({
-                      compoName: 'table-view',
-                      createdAt: eachRow.createdAt,
-                    })}
-                  </TableCell>
+                  { isMobile
+                    ? (
+                      <>
+                        <TableCell>
+                          <Typography variant="subtitle1">
+                            {eachRow.isImportant && <NotificationImportantIcon color="primary" />}
+                            {eachRow.title}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {dateExpression({
+                              compoName: 'table-view',
+                              createdAt: eachRow.createdAt,
+                            })}
+                          </Typography>
+                        </TableCell>
+                      </>
+                    ) : (
+                      <>
+                        <TableCell className={classes.tableCell} scope="row" align="center">
+                          {eachRow.isImportant ? (
+                            <div style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                            >
+                              <NotificationImportantIcon color="primary" />
+                              <Typography className={classes.importantText}>
+                                중요
+                              </Typography>
+                            </div>
+                          ) : eachRow.id}
+                        </TableCell>
+                        <TableCell className={classes.tableCell} scope="row" align="center">
+                          {eachRow.category}
+                        </TableCell>
+                        <TableCell
+                          className={classnames({
+                            [classes.tableCell]: true,
+                            [classes.importantText]: eachRow.isImportant,
+                          })}
+                          scope="row"
+                          align="left"
+                        >
+                          {eachRow.title}
+                        </TableCell>
+                        <TableCell className={classes.tableCell} scope="row" align="center">
+                          {dateExpression({
+                            compoName: 'table-view',
+                            createdAt: eachRow.createdAt,
+                          })}
+                        </TableCell>
+                      </>
+                    )}
+
                 </TableRow>
               ))}
-              {emptyRows > 0 && (
+              {emptyRows > 0 && !isMobile && (
                 <TableRow style={{ height: TABLE_ROW_HEIGHT * emptyRows }}>
                   <TableCell colSpan={4} />
                 </TableRow>
@@ -155,10 +177,11 @@ export default function MaterialTable({
           search: false,
           pageSize,
           pageSizeOptions: [8, 12],
+          header: !isMobile,
           headerStyle: {
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
-            fontSize: theme.typography.h6.fontSize,
+            fontSize: theme.typography.subtitle1.fontSize,
           },
           draggable: false,
           paginationType: 'stepped',

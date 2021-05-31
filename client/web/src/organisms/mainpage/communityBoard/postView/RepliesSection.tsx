@@ -128,6 +128,8 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
             checkPasswordRequest={checkPasswordRequest}
             loadChildrenComments={loadChildrenComments}
             childrenCommentPostBaseUrl="/community/replies/child"
+            // onClickLike={(id: number) => (new Promise((res, rej) => res('a')))}
+            // onClickHate={(id: number) => (new Promise((res, rej) => res('a')))}
           />
         ))}
       </Paper>
