@@ -20,7 +20,7 @@ export default function TruepointLogo({
           {...props}
         />
       </Hidden>
-      <Hidden smUp>
+      <Hidden mdUp>
         <img
           src="/images/logo/logo_truepoint_v2_allwhite.png"
           alt=""
