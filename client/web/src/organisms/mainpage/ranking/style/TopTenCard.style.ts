@@ -81,6 +81,8 @@ export const useTabItem = makeStyles((theme: Theme) => {
       textTransform: 'initial',
       height: rootHeight,
       minHeight: rootHeight,
+      padding: 0,
+      paddingLeft: theme.spacing(0.5),
       overflow: 'visible',
       position: 'relative',
       justifyContent: 'flex-start',
