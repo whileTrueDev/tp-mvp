@@ -1,10 +1,10 @@
 import { Container, Grid } from '@material-ui/core';
-import React, { useMemo } from 'react';
+import React from 'react';
 import Carousel from 'react-material-ui-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { useCarouselStyle, useRankingPageLayout } from './style/RankingPage.style';
-import FooterDecoration from './sub/FooterDecoration';
+// import FooterDecoration from './sub/FooterDecoration';
 import TopTenCard from './ToptenCard';
 import RatingsList from './RatingsList';
 import UserReactionCard from './UserReactionCard';
@@ -40,7 +40,7 @@ export function CarouselSection(): JSX.Element {
 export default function RankingMain(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const { isMobile } = useMediaSize();
-  const footerDecoration = useMemo(() => <FooterDecoration />, []);
+  // const footerDecoration = useMemo(() => <FooterDecoration />, []);
   return (
     <div>
       {!isMobile && <CarouselSection />}
@@ -58,7 +58,7 @@ export default function RankingMain(): JSX.Element {
         </Grid>
       </Container>
 
-      {!isMobile && footerDecoration}
+      {/* {!isMobile && footerDecoration} */}
     </div>
   );
 }
