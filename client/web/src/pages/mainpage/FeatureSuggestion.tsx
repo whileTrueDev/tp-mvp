@@ -17,6 +17,7 @@ import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import NoticeLayout from '../../organisms/mainpage/shared/NoticeLayout';
+import useMediaSize from '../../utils/hooks/useMediaSize';
 
 const useStyles = makeStyles((theme) => ({
   contents: { marginTop: theme.spacing(2) },
@@ -47,6 +48,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
   const { id: selectedSuggestionId } = useParams<{ id: string }>();
+  const { isMobile } = useMediaSize();
 
   // 카테고리 필터링
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
@@ -91,7 +93,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
 
   return (
     <div>
-      <Appbar variant="transparent" />
+      <Appbar variant={isMobile ? undefined : 'transparent'} />
       <ProductHero />
       <NoticeLayout
         title="기능제안 게시판"

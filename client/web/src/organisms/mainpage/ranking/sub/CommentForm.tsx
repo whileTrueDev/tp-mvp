@@ -1,5 +1,5 @@
 import {
-  Button, Grid, InputBase, TextField, Typography,
+  Button, Grid, Hidden, InputBase, TextField,
 } from '@material-ui/core';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
@@ -7,7 +7,6 @@ import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import axios from '../../../../utils/axios';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
-import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useCreatorCommentFormStyle } from '../style/CreatorComment.style';
 
 export interface CommentFormProps {
@@ -26,7 +25,6 @@ export interface CommentFormProps {
 export default function CommentForm(props: CommentFormProps): JSX.Element {
   const { postUrl = '', callback } = props;
   const authContext = useAuthContext();
-  const { isMobile } = useMediaSize();
   const { enqueueSnackbar } = useSnackbar();
   const formStyle = useCreatorCommentFormStyle();
 
@@ -38,13 +36,13 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
     const contentInput = form.content;
 
     const createCommentDto: CreateCommentDto = {
-      userId: authContext.user.userId ? authContext.user.userId : null,
+      userId: authContext.accessToken ? authContext.user.userId : null,
       nickname: '',
       password: '',
       content: '',
     };
 
-    if (authContext.user.userId) { // 로그인 된 상태일 경우
+    if (authContext.user.userId && authContext.accessToken) { // 로그인 된 상태일 경우
       const nickname = authContext.user.nickName;
       const content = e.currentTarget.content.value.trim();
       if (!nickname || !content) {
@@ -83,11 +81,13 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
   return (
     <form className={formStyle.form} onSubmit={onSubmit}>
       {/* 로그인 한 경우 */}
-      {authContext.user.userId && authContext.accessToken && (
+      {/* {authContext.user.userId && authContext.accessToken && (
         <Typography>{authContext.user.nickName}</Typography>
-      )}
-      {/* 로그인 안하고 모바일 화면인 경우 */}
-      {(!authContext.user.userId && !authContext.accessToken) && isMobile && (
+      )} */}
+      {/* 로그인 안해도 authcontext.user값이 들어간 경우가 있어서(public mypage..) 
+        로그인 기능 활성화 후 다른 방식으로 처리 필요(public mypage에 authcontext.user 값 넣는 부분 수정필요)
+      */}
+      <Hidden smUp>
         <Grid container>
           <Grid item xs={6}>
             <TextField
@@ -115,33 +115,35 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
             />
           </Grid>
         </Grid>
-      )}
-      {/* 로그인 안하고 데스크탑 화면인 경우 */}
-      {(!authContext.user.userId && !authContext.accessToken) && !isMobile && (
-      <div>
-        <TextField
-          label="닉네임"
-          name="nickname"
-          variant="outlined"
-          placeholder="닉네임"
-          inputProps={{ maxLength: 8 }}
-          className={formStyle.nicknameInput}
-          defaultValue={authContext.user.userName}
-          size="small"
-        />
-        <TextField
-          label="비밀번호"
-          name="password"
-          type="password"
-          placeholder="비밀번호"
-          variant="outlined"
-          className={formStyle.passwordInput}
-          inputProps={{ maxLength: 4 }}
-          autoComplete="on"
-          size="small"
-        />
-      </div>
-      )}
+      </Hidden>
+
+      {/* 데스크탑 화면인 경우 */}
+      <Hidden smDown>
+        <div>
+          <TextField
+            label="닉네임"
+            name="nickname"
+            variant="outlined"
+            placeholder="닉네임"
+            inputProps={{ maxLength: 8 }}
+            className={formStyle.nicknameInput}
+            defaultValue={authContext.user.userName}
+            size="small"
+          />
+          <TextField
+            label="비밀번호"
+            name="password"
+            type="password"
+            placeholder="비밀번호"
+            variant="outlined"
+            className={formStyle.passwordInput}
+            inputProps={{ maxLength: 4 }}
+            autoComplete="on"
+            size="small"
+          />
+        </div>
+      </Hidden>
+
       <InputBase
         className={formStyle.contentTextArea}
         fullWidth

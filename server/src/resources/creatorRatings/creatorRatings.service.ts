@@ -62,7 +62,7 @@ export class CreatorRatingsService {
     // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
     try {
       const exRating = await this.ratingsRepository.findOne({
-        where: { userIp: ip, creatorId },
+        where: { userIp: ip, creatorId, userId },
       });
 
       if (exRating) {
@@ -148,12 +148,18 @@ export class CreatorRatingsService {
    * @param creatorId 
    * @returns 
    */
-  async findOneRating(ip: string, creatorId: string): Promise<{score: number} | false> {
+  async findOneRating({ ip, creatorId, userId }: {
+    ip: string,
+    creatorId: string,
+    userId?: string | undefined
+  }): Promise<{score: number} | false> {
+    if (!userId) return false;
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
           userIp: ip,
           creatorId,
+          userId,
         },
       });
       if (exRating) {
@@ -363,7 +369,7 @@ export class CreatorRatingsService {
       FROM ${this.ratingsRepository.metadata.tableName} R
         LEFT JOIN ${this.afreecaRepository.metadata.tableName} afreeca ON afreeca.afreecaId = R.creatorId
         LEFT JOIN ${this.twitchRepository.metadata.tableName} twitch ON twitch.twitchId = R.creatorId
-      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= curdate()+1 
+      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= (curdate() + INTERVAL 1 DAY)
       GROUP BY R.creatorId
       ORDER BY rownum asc
       LIMIT 10

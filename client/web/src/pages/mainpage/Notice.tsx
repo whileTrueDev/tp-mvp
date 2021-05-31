@@ -10,12 +10,14 @@ import NoticeDetail from '../../organisms/mainpage/notice/NoticeDetail';
 import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import NoticeLayout, { useContainerStyles } from '../../organisms/mainpage/shared/NoticeLayout';
+import useMediaSize from '../../utils/hooks/useMediaSize';
 
 export default function Notice(): JSX.Element {
   const classes = useContainerStyles();
   const history = useHistory();
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(8);
+  const { isMobile } = useMediaSize();
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
 
@@ -47,7 +49,7 @@ export default function Notice(): JSX.Element {
   }, [selectedNoticeId]);
   return (
     <main>
-      <Appbar variant="transparent" />
+      <Appbar variant={isMobile ? undefined : 'transparent'} />
       <ProductHero />
       <NoticeLayout
         title="공지사항"

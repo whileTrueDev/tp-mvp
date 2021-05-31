@@ -92,7 +92,7 @@ export default function AppBar({
               <TruepointLogo className={classes.logo} />
 
               <div className={classes.links}>
-                {links.map((link) => (
+                {links.slice(0, 6).map((link) => (
                   <div className={classes.linkItem} key={link.name}>
                     {!link.hidden && (
                       <>
@@ -112,13 +112,34 @@ export default function AppBar({
               </div>
             </div>
 
-            <div className={classes.links}>
-              <IconButton
-                className={classes.darkModeToggleButton}
-                onClick={theme.handleThemeChange}
-              >
-                {darkModeToggleButtonContent}
-              </IconButton>
+            <div className={classes.right}>
+              <div className={classes.links}>
+                {links.slice(6).map((link) => (
+                  <div className={classes.linkItem} key={link.name}>
+                    {!link.hidden && (
+                    <>
+                      <Button
+                        component={Link}
+                        to={link.path}
+                        className={classnames(classes.link, {
+                          [classes.selected]: isActiveRoute(link.activeRouteString),
+                        })}
+                      >
+                        <Typography noWrap className={classes.linkText}>{link.name}</Typography>
+                      </Button>
+                    </>
+                    )}
+                  </div>
+                ))}
+
+                <IconButton
+                  className={classes.darkModeToggleButton}
+                  onClick={theme.handleThemeChange}
+                >
+                  {darkModeToggleButtonContent}
+                </IconButton>
+              </div>
+
             </div>
 
             <Hidden mdUp>

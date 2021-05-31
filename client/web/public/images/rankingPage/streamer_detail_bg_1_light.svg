@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140.857" height="173.372" viewBox="0 0 140.857 173.372">
+  <defs>
+    <style>
+      .cls-1 {
+        opacity: 0.7;
+      }
+
+      .cls-2 {
+        fill: #d3aae8;
+        opacity: 0.49;
+      }
+    </style>
+  </defs>
+  <g id="그룹_3068" data-name="그룹 3068" class="cls-1" transform="translate(-1283.061 -1176.586)">
+    <g id="그룹_3067" data-name="그룹 3067" transform="translate(1283.061 1176.586)">
+      <rect id="사각형_1944" data-name="사각형 1944" class="cls-2" width="62.462" height="62.462" rx="20" transform="translate(46.457 85.037) rotate(45)"/>
+      <rect id="사각형_1943" data-name="사각형 1943" class="cls-2" width="99.601" height="99.601" rx="20" transform="translate(70.429) rotate(45)"/>
+    </g>
+  </g>
+</svg>

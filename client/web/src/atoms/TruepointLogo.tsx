@@ -1,3 +1,4 @@
+import { Hidden } from '@material-ui/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import THEME_TYPE from '../interfaces/ThemeType';
@@ -11,12 +12,23 @@ export default function TruepointLogo({
 
   return (
     <Link to="/">
-      <img
-        src={isDark ? '/images/logo/logo_truepoint_v2_dark.png' : '/images/logo/logo_truepoint_v2_light.png'}
-        alt=""
-        width={width}
-        {...props}
-      />
+      <Hidden smDown>
+        <img
+          src={isDark ? '/images/logo/logo_truepoint_v2_dark.png' : '/images/logo/logo_truepoint_v2_light.png'}
+          alt=""
+          width={width}
+          {...props}
+        />
+      </Hidden>
+      <Hidden mdUp>
+        <img
+          src="/images/logo/logo_truepoint_v2_allwhite.png"
+          alt=""
+          width={width}
+          {...props}
+        />
+      </Hidden>
+
     </Link>
   );
 }
