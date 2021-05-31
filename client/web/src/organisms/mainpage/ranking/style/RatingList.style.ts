@@ -7,7 +7,7 @@ import { lighten } from '@material-ui/core/styles/colorManipulator';
 // listItem 컴포넌트
 export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
   const contrastColor = theme.palette.text.primary;
-  const defaultArrowSize = theme.spacing(1);
+  const defaultArrowSize = theme.spacing(0.5);
   const downArrowColor = 'blue';
   const upArrowColor = 'red';
 
@@ -82,19 +82,23 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
         maxHeight: theme.spacing(5),
       },
     },
+    linkContainer: {
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+    },
     avatarImage: {
-      marginRight: theme.spacing(2),
+      marginRight: theme.spacing(0.5),
       border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
       width: theme.spacing(6.5),
       height: theme.spacing(6.5),
     },
     creatorName: {
       marginRight: theme.spacing(1),
-      fontSize: theme.typography.body1.fontSize,
+      fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.fontWeightBold,
       color: theme.palette.text.primary,
-      textOverflow: 'ellipsis',
-      overflow: 'hidden',
+      wordBreak: 'keep-all',
     },
     black: { color: contrastColor },
     ratingText: {
@@ -113,7 +117,7 @@ export const useRatingsListItemStyles = makeStyles((theme: Theme) => {
     },
     rankChange: {
       position: 'relative',
-      paddingLeft: theme.spacing(3),
+      paddingLeft: theme.spacing(1.5),
       fontSize: theme.spacing(1.25),
       '&::before': {
         content: '""',

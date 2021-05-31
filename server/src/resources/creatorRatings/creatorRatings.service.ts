@@ -363,7 +363,7 @@ export class CreatorRatingsService {
       FROM ${this.ratingsRepository.metadata.tableName} R
         LEFT JOIN ${this.afreecaRepository.metadata.tableName} afreeca ON afreeca.afreecaId = R.creatorId
         LEFT JOIN ${this.twitchRepository.metadata.tableName} twitch ON twitch.twitchId = R.creatorId
-      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= curdate()+1 
+      WHERE R.createDate >= Date("${startDayOfThisWeek.toISOString()}") AND  R.createDate <= (curdate() + INTERVAL 1 DAY)
       GROUP BY R.creatorId
       ORDER BY rownum asc
       LIMIT 10

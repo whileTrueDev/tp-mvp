@@ -1,12 +1,11 @@
 import {
-  ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Grid, Link, Card,
+  ListItem, Avatar, Typography, Grid, Link, Card,
 } from '@material-ui/core';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { WeeklyRatingRankingItem } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import Rating from '@material-ui/lab/Rating';
 import classnames from 'classnames';
-import { Textfit } from 'react-textfit';
 import { useRatingsListItemStyles } from '../style/RatingList.style';
 
 export interface RatingsListItemProps extends WeeklyRatingRankingItem{
@@ -32,22 +31,17 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
             />
           </Grid>
           <Grid container item xs={5} alignItems="center" wrap="nowrap">
-            <ListItemAvatar>
+            <Link className={classes.linkContainer} component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
               <Avatar className={classes.avatarImage} alt={`${nickname} 프로필 이미지`} src={logo} />
-            </ListItemAvatar>
-            <ListItemText primary={(
-              <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
-                <Typography
-                  component="div"
-                  className={classnames(
-                    classes.creatorName, { [classes.black]: order && order < 5 },
-                  )}
-                >
-                  <Textfit mode="single" max={20}>{nickname}</Textfit>
-                </Typography>
-              </Link>
-        )}
-            />
+
+              <Typography
+                className={classnames(
+                  classes.creatorName, { [classes.black]: order && order < 5 },
+                )}
+              >
+                {nickname.length > 4 ? `${nickname.slice(0, 4)}...` : nickname}
+              </Typography>
+            </Link>
           </Grid>
           <Grid container item xs={4} alignItems="center" justify="center">
             <Rating

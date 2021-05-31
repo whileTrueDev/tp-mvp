@@ -37,7 +37,7 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
         key: 'order', label: '순위', width: '5%', textAlign: 'center',
       },
       { key: 'profileImage', label: '', width: '15%' },
-      { key: 'bjName', label: 'BJ이름', width: '50%' },
+      { key: 'bjName', label: '활동명', width: '50%' },
       { key: 'weeklyScoreGraph', label: weeklyGraphLabel, width: '30%' },
     ]
   ), [weeklyGraphLabel]);
