@@ -29,6 +29,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     backgroundColor: 'transparent',
   },
   toolbar: {
+    position: 'relative',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -40,6 +41,7 @@ export const useStyles = makeStyles((theme) => createStyles({
 
   },
   left: { display: 'flex', alignItems: 'center' },
+  right: { display: 'flex', alignItems: 'center' },
   links: {
     display: 'flex',
     alignItems: 'center',
@@ -98,7 +100,8 @@ export const useStyles = makeStyles((theme) => createStyles({
     },
   },
   mobileMenu: {
-    justifyContent: 'flex-end',
+    position: 'absolute',
+    right: 0,
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
