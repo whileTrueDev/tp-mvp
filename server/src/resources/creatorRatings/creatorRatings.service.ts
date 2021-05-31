@@ -66,7 +66,6 @@ export class CreatorRatingsService {
       });
 
       if (exRating) {
-        console.log('exRating', exRating);
         const updatedRating = await this.ratingsRepository.save({
           ...exRating,
           rating,
@@ -74,7 +73,6 @@ export class CreatorRatingsService {
         });
         return updatedRating;
       }
-      console.log('new rating');
       const newRating = await this.ratingsRepository.save({
         creatorId,
         userIp: ip,
@@ -155,9 +153,7 @@ export class CreatorRatingsService {
     creatorId: string,
     userId?: string | undefined
   }): Promise<{score: number} | false> {
-    console.log('find one rating, userId:', userId);
     if (!userId) return false;
-    console.log('has userId, userId', userId);
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {

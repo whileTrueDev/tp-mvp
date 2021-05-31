@@ -60,12 +60,10 @@ export class CreatorRatingsController {
   ): Promise<CreatorRatingsEntity> {
     // 로그인하여 userId를 보낸 경우 || 이미 평점을 매겨서 받은 tempId로 보낸 경우
     if (ratingPostDto.userId) {
-      console.log('로그인하여 userId를 보낸 경우 || 이미 평점을 매겨서 받은 tempId로 보낸 경우');
       return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
     }
 
     // 로그인 안하고 tempId도 없는경우
-    console.log('로그인 안하고 tempId도 없는경우');
     let ratingDtoWithTempId = { ...ratingPostDto };
     const newTempId = uuidv4();
     response.cookie(this.TEMP_ID_KEY, newTempId);
