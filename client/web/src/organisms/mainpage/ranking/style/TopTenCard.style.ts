@@ -135,9 +135,7 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
     display: 'inline-flex',
     backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
     borderRadius: theme.spacing(1),
-    paddingTop: theme.spacing(0.5),
-    paddingLeft: theme.spacing(0.5),
-    paddingRight: theme.spacing(0.5),
+    padding: theme.spacing(0.25),
     minHeight: theme.spacing(3.75),
   },
 }));
