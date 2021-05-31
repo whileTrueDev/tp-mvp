@@ -1,12 +1,12 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
-  const smallTextSize = theme.spacing(1.25);
+  const smallTextSize = theme.spacing(1.5);
   return createStyles({
     commentItem: {
       position: 'relative',
       padding: theme.spacing(0.5, 1, 0, 1),
-      '& .time': { fontSize: smallTextSize },
+      '& .time': { fontSize: theme.spacing(1.25) },
       '&:not(:first-child)': {
         borderTop: `1px solid ${theme.palette.divider}`,
       },
@@ -81,9 +81,6 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     },
     content: {
       fontSize: theme.spacing(1.5),
-      [theme.breakpoints.down('sm')]: {
-        fontSize: smallTextSize,
-      },
     },
     actions: {
       display: 'flex',

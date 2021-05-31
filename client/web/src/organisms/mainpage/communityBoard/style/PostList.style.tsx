@@ -77,7 +77,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     fontSize: theme.spacing(1.5),
   },
   mobileText: {
-    fontSize: theme.spacing(1.25),
+    fontSize: theme.spacing(1.5),
     marginRight: theme.spacing(2),
   },
   mobileNickname: {
