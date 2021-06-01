@@ -69,7 +69,7 @@ export default function RecentStreamList({
 
   return (
     <section className={classes.section} id="broad-list">
-      <Container maxWidth="md" style={{ position: 'relative', overflow: 'hidden' }}>
+      <Container style={{ position: 'relative', overflow: 'hidden' }}>
         <div className={classes.itembox}>
           {!error && dataSource && dataSource.map((stream) => (
             <RecentStreamListItem
