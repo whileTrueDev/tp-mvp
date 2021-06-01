@@ -5,15 +5,15 @@ import {
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import TruepointLogo from '../../../atoms/TruepointLogo';
-import { RANKING_PAGE_CONTAINER_WIDTH } from '../../../assets/constants';
+import { MAX_WIDTH_DESKTOP } from '../../../assets/constants';
 
 const styles = makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
   container: {
-    maxWidth: RANKING_PAGE_CONTAINER_WIDTH,
-    padding: theme.spacing(2, 0),
+    maxWidth: MAX_WIDTH_DESKTOP,
+    padding: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(1),
     },
