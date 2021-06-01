@@ -8,13 +8,9 @@ export const useTopTenCard = makeStyles((theme: Theme) => createStyles({
     backgroundColor: theme.palette.background.paper,
     height: '100%',
     position: 'relative',
-    border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
     borderRadius: theme.shape.borderRadius,
     paddingTop: theme.spacing(1),
     paddingRight: theme.spacing(1),
-    [theme.breakpoints.down('sm')]: {
-      border: 'none',
-    },
   },
   recentAnalysisDate: {
     position: 'absolute',

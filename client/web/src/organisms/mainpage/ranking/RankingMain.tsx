@@ -44,9 +44,10 @@ export default function RankingMain(): JSX.Element {
   return (
     <div>
       {!isMobile && <CarouselSection />}
-
       <PageTitle text="인방랭킹" />
+
       <Container className={wrapper.container}>
+
         <Grid container spacing={2}>
           <Grid item xs={12} md={8} className={wrapper.left}>
             <TopTenCard />
