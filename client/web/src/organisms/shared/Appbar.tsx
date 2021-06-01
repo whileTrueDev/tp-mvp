@@ -43,9 +43,11 @@ export default function AppBar({
   function handleMobileMenuClose(): void {
     setMobileMoreAnchorEl(null);
   }
+
+  const isLoggedIn = authContext.user.userId.length > 1 && authContext.accessToken;
   const links = [
     {
-      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
+      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !isLoggedIn,
     },
     { name: '인방랭킹', path: '/ranking', activeRouteString: ['/ranking', '/'] },
     { name: '방송인검색', path: '/creator-search', activeRouteString: '/creator-search' },
@@ -138,6 +140,19 @@ export default function AppBar({
                 >
                   {darkModeToggleButtonContent}
                 </IconButton>
+                {
+                  isLoggedIn
+                    ? <Button>로그아웃</Button>
+                    : (
+                      <Button
+                        component={Link}
+                        to="/login"
+                        variant="outlined"
+                      >
+                        로그인
+                      </Button>
+                    )
+                }
               </div>
 
             </div>

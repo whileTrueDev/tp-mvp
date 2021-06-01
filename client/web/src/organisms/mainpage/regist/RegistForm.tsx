@@ -218,7 +218,7 @@ function PlatformRegistForm({
                 </Grid>
               </Grid>
               <Grid item container direction="row">
-                {/* <Grid item>
+                <Grid item>
                   <TextField
                     required
                     label="별명"
@@ -232,7 +232,7 @@ function PlatformRegistForm({
                     }}
                     helperText="크리에이터인 경우, 활동명을 입력하세요."
                   />
-                </Grid> */}
+                </Grid>
                 <Grid item>
                   <Grid container direction="row">
                     <Grid item>

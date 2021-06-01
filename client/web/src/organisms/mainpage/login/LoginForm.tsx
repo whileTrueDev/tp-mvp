@@ -11,7 +11,7 @@ import { Link, useHistory } from 'react-router-dom';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
-import kakaoChattingURL from '../../../constants/kakao';
+import { getApiHost } from '../../../utils/getApiHost';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import useDialog from '../../../utils/hooks/useDialog';
 
@@ -171,20 +171,16 @@ export default function LoginForm(): JSX.Element {
             >
               로그인
             </Button>
-            {/* ********************************************** */}
-            {/* CBT에서는 회원가입을 통해 진행하지 않으므로 CBT 신청으로 변경 - by @hwasurr 2020.12.19  */}
             <Button
               variant="outlined"
               color="primary"
               className={classes.button}
               style={{ color: theme.palette.text.primary }}
               component={Link}
-              to="/infoCBT" // CBT 이후 "/signup" 으로 변경 필요.
+              to="/signup"
             >
-              CBT신청
-              {/* "회원가입" 으로 변경 필요 */}
+              회원가입
             </Button>
-            {/* ********************************************** */}
           </Grid>
         </Grid>
 
@@ -195,23 +191,20 @@ export default function LoginForm(): JSX.Element {
             text={helperTextValue}
           />
         )}
-        {/* ********************************************** */}
-        {/* CBT에서는 회원가입을 진행하지 않으므로 현재 구현된 방식의
-            아이디/비번 찾기 기능을 사용할 수 없다.
-            따라서, 카카오톡 문의하는 버튼으로 변경
-            CBT 이후 아디/비번 찾기로 다시 돌려야합니다. by @hwasurr 2020.12.19 */}
-        {/* <div className={classnames(classes.upperSpace, classes.alignCenter)}>
+        {/* 아디/비번 찾기 */}
+        {/* 휴대폰 본인인증에 이용된 본명과 번호를 사용하고 있다 
+        휴대폰 본인인증 안쓸거면 다른 방식으로 만들어야함 */}
+        <div className={classnames(classes.upperSpace, classes.alignCenter)}>
           <Button component={Link} to="/find-id">아이디 찾기</Button>
           |
           <Button component={Link} to="/find-pw">비밀번호 찾기</Button>
-        </div> */}
-        <Button onClick={() => {
-          window.open(kakaoChattingURL, '_blank');
-        }}
-        >
-          계정 관련 문의하기
-        </Button>
+        </div>
+
         {/* ********************************************** */}
+
+        <div className="social-login-section">
+          <Button fullWidth variant="outlined" href={`${getApiHost()}/auth/login/google`}>구글 아이디로 로그인</Button>
+        </div>
       </form>
     </>
   );

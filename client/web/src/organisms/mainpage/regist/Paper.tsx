@@ -28,6 +28,7 @@ type CheckAction = { key: 'checkedA'; value: boolean }
   | { key: 'checkedB'; value: boolean }
   | { key: 'checkedC'; value: boolean }
   | { key: 'reset' }
+  | { key: 'checkAll'}
 
 const reducer = (
   state: CheckState<boolean>,
@@ -42,6 +43,8 @@ const reducer = (
       return { ...state, checkedC: !state.checkedC };
     case 'reset':
       return { checkedA: false, checkedB: false, checkedC: false };
+    case 'checkAll':
+      return { checkedA: true, checkedB: true, checkedC: true };
     default:
       return state;
   }
@@ -93,6 +96,16 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
       ShowSnack('모든 약관에 동의하지 않으면 회원가입이 완료되지 않습니다.', 'warning', enqueueSnackbar);
     }
     setAgreement(state.checkedC);
+  }
+
+  const [allChecked, setAllChecked] = useState<boolean>(false);
+  function checkAll(): void {
+    setAllChecked(true);
+    dispatch({ key: 'checkAll' });
+  }
+  function resetAllChecks(): void {
+    setAllChecked(false);
+    dispatch({ key: 'reset' });
   }
 
   return (
@@ -147,6 +160,29 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
             </Grid>
           </Paper>
         ))}
+
+        {/* 모두 동의  */}
+        <FormControlLabel
+          control={(
+            <Checkbox
+              onChange={(): void => {
+                if (allChecked) {
+                  resetAllChecks();
+                } else {
+                  checkAll();
+                }
+              }}
+              checked={allChecked}
+              classes={{
+                root: classes.checkboxRoot,
+                checked: classes.checked,
+              }}
+            />
+          )}
+          label="모두 동의하기"
+          style={{ flex: 2, marginRight: 0 }}
+        />
+
         <div className={classnames(classes.center, classes.content)}>
           <Button
             variant="contained"
