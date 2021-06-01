@@ -8,16 +8,16 @@ import {
   Req, Request,
   Res,
   UseFilters,
-  // UseGuards,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import express from 'express';
-// 가드 임시 주석처리
-// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-// import { LocalAuthGuard } from '../../guards/local-auth.guard';
-// import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
-// import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { LocalAuthGuard } from '../../guards/local-auth.guard';
+import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
+import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import {
   LogedInExpressRequest, UserLoginPayload,
@@ -41,19 +41,32 @@ export class AuthController {
     private readonly afreecaLinker: AfreecaLinker,
   ) {}
 
-  @Post('logout')
-  async logout(
-    @Body() logoutDto: LogoutDto,
-  ): Promise<{ success: boolean }> {
-    const isLogoutSucess = await this.authService.logout(logoutDto);
-    if (isLogoutSucess) {
-      return { success: true };
+  /** 소셜로그인 */
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    @Get('login/google')
+    @UseGuards(AuthGuard('google'))
+  async googleLogin() {}
+
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    @Get('youtube/callback')
+    @UseGuards(AuthGuard('google'))
+    async googleLoginCallback(@Req() req: express.Request) {
+      return this.authService.googleLogin(req);
     }
-    return { success: false };
-  }
+
+  @Post('logout')
+    async logout(
+    @Body() logoutDto: LogoutDto,
+    ): Promise<{ success: boolean }> {
+      const isLogoutSucess = await this.authService.logout(logoutDto);
+      if (isLogoutSucess) {
+        return { success: true };
+      }
+      return { success: false };
+    }
 
   // 로그인 컨트롤러
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(
     @Body('stayLogedIn') stayLogedIn: boolean,
@@ -84,7 +97,7 @@ export class AuthController {
    * @param req 로그인 user 정보를 포함한 요청 객체
    * @param password 패스워드 plain 문자열
    */
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('check-pw')
   async checkPw(
     @Req() req: LogedInExpressRequest,
@@ -137,7 +150,7 @@ export class AuthController {
    * @param id 연동하는 플랫폼의 고유 아이디
    */
   @Post('link')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async platformLink(
     @Req() req: LogedInExpressRequest,
     @Body('platform') platform: string, @Body('id') id: string,
@@ -154,7 +167,7 @@ export class AuthController {
    * @param platform 연동 제거할 플랫폼 문자열 twitch|youtube|afreeca 셋 중 하나.
    */
   @Delete('link')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async deletePlatformLink(
     @Req() req: LogedInExpressRequest, @Body('platform') platform: string,
   ): Promise<string> {
@@ -170,14 +183,14 @@ export class AuthController {
   // *********** Twitch ******************
   // Twitch Link start
   @Get('twitch')
-  // @UseGuards(TwitchLinkGuard)
+  @UseGuards(TwitchLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   twitch(): void {}
 
   // Twitch oauth Callback url
   @Get('twitch/callback')
   @UseFilters(TwitchLinkExceptionFilter)
-  // @UseGuards(TwitchLinkGuard)
+  @UseGuards(TwitchLinkGuard)
   twitchCallback(
     @Req() req: express.Request,
     @Res() res: express.Response,
@@ -191,7 +204,7 @@ export class AuthController {
   // *********** Youtube ******************
   // Youtube link start
   @Get('youtube')
-  // @UseGuards(YoutubeLinkGuard)
+  @UseGuards(YoutubeLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   youtube(): void {}
 

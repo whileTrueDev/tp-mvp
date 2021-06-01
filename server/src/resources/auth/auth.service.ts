@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import {
-  Injectable, HttpException, HttpStatus,
+  Injectable, HttpException, HttpStatus, BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
@@ -76,6 +76,15 @@ export class AuthService {
       userId: user.userId, refreshToken,
     });
     return { accessToken, refreshToken };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public async googleLogin(req: any) {
+    if (!req.user) {
+      throw new BadRequestException('no user from google');
+    }
+
+    return req.user;
   }
 
   // Logout = DB에서 refresh token 삭제
