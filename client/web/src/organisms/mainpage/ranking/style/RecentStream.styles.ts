@@ -8,7 +8,6 @@ const useRecentStreamStyles = makeStyles((theme) => ({
     height: sectionHeight,
     position: 'relative',
     borderRadius: theme.spacing(0.5),
-    marginBottom: theme.spacing(5),
     overflow: 'hidden',
   },
   itembox: {

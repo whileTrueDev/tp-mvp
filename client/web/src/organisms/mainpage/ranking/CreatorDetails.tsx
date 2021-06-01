@@ -75,7 +75,10 @@ export default function CreatorDetails(): React.ReactElement {
     <>
 
       {/* 최근 방송 정보 섹션 */}
-      <RecentStreamList userData={userData} platform={platform} creatorId={creatorId} />
+      <Container className={container}>
+        <RecentStreamList userData={userData} platform={platform} creatorId={creatorId} />
+
+      </Container>
 
       <Container className={container}>
         <div className={creatorEvaluationCardContainer}>

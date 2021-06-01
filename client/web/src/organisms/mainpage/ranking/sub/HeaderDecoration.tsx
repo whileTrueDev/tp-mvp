@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Container } from '@material-ui/core';
+import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 
 const useStyle = makeStyles((theme: Theme) => createStyles({
   headerImages: {
@@ -10,6 +11,7 @@ const useStyle = makeStyles((theme: Theme) => createStyles({
   },
   container: {
     paddingTop: theme.spacing(4),
+    maxWidth: MAX_WIDTH_DESKTOP,
   },
 }));
 export default function HeaderDecoration(): JSX.Element {

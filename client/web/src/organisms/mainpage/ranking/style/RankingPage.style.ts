@@ -1,5 +1,5 @@
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
-import { RANKING_PAGE_CONTAINER_WIDTH, MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
+import { RANKING_PAGE_CONTAINER_WIDTH } from '../../../../assets/constants';
 
 export const useRankingPageLayout = makeStyles((theme: Theme) => {
   const { type } = theme.palette;
@@ -8,7 +8,6 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
     background: {
       backgroundColor: type === 'light' ? theme.palette.primary.main : theme.palette.background.paper,
       minHeight: '100vh',
-      maxWidth: MAX_WIDTH_DESKTOP,
       margin: '0 auto',
       [theme.breakpoints.down('sm')]: {
         backgroundColor: type === 'light' ? theme.palette.grey[200] : theme.palette.background.paper,
