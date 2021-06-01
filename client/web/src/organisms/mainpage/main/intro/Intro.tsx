@@ -5,6 +5,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 import styles from '../style/Intro.style';
 import source from '../source/textsource';
+import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 
 export default function ProductHero(): JSX.Element {
   const classes = styles();
@@ -29,7 +30,7 @@ export default function ProductHero(): JSX.Element {
 
   return (
     <div className={classes.root}>
-      <Container>
+      <Container style={{ maxWidth: MAX_WIDTH_DESKTOP }}>
         <Grid
           container
           direction="row"

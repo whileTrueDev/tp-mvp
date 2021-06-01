@@ -50,7 +50,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     margin: theme.spacing(2, 0),
   },
   tabsSection: {
-    padding: theme.spacing(1),
   },
 }));
 
