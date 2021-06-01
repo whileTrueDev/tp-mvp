@@ -18,6 +18,7 @@ import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import NoticeLayout from '../../organisms/mainpage/shared/NoticeLayout';
 import useMediaSize from '../../utils/hooks/useMediaSize';
+import { MAX_WIDTH_DESKTOP } from '../../assets/constants';
 
 const useStyles = makeStyles((theme) => ({
   contents: { marginTop: theme.spacing(2) },
@@ -94,81 +95,83 @@ export default function FeatureSuggestionPage(): JSX.Element {
   return (
     <div>
       <Appbar variant={isMobile ? undefined : 'transparent'} />
-      <ProductHero />
-      <NoticeLayout
-        title="기능제안 게시판"
-        description={[
-          '트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해 주세요.',
-          '궁금하신 사항은 고객센터로 연락 부탁드립니다.',
-        ]}
-      >
-        {/* 기능제안 개별 보기 */}
-        {selectedSuggestionId && loading && (
-        <Paper elevation={0} className={classes.detailLoading}>
-          <CircularProgress />
-        </Paper>
-        )}
-        {selectedSuggestionId && !loading && featureListData && (
-        <div className={classes.contents}>
-          <FeatureDetail
-            selectedSuggestionId={selectedSuggestionId}
-            data={featureListData
-              .sort((row1, row2) => new Date(row2.createdAt).getTime()
-                    - new Date(row1.createdAt).getTime())
-              .filter((row) => (selectedCategory !== '전체'
-                ? row.category === selectedCategory : row))}
-            onOtherFeatureClick={handleFeatureClick}
-            onBackClick={handleResetFeatureSelect}
-            featureListRefetch={featureListRefetch}
-          />
-        </div>
-        )}
-
-        {/* 기능제안 카테고리 목록 필터링 */}
-        {!selectedSuggestionId && (
-        <div className={classes.contents}>
-          <FilterCategoryButtonGroup
-            categories={FEATURE_SUGGESTION_OPTIONS.map((options) => options.value)}
-            onChange={handleCategorySelect}
-            selected={selectedCategory}
-          />
-        </div>
-        )}
-
-        {/* 기능제안 글 목록 */}
-        <div className={classnames(classes.contents, classes.buttonSection)}>
-          <div className={classes.chipArea}>
-            {FeatureProgressChip(3)}
-            {FeatureProgressChip(2)}
-            {FeatureProgressChip(1)}
-            {FeatureProgressChip(0)}
-          </div>
-        </div>
-        <div className={classes.tableContainer}>
-          <FeatureTable
-            isLoading={loading}
-            metrics={!loading && featureListData
-              ? featureListData
+      <div style={{ maxWidth: MAX_WIDTH_DESKTOP, margin: '0 auto' }}>
+        <ProductHero />
+        <NoticeLayout
+          title="기능제안 게시판"
+          description={[
+            '트루포인트 이용 중 추가되었으면 하는 기능이나 개선이 필요한 기능이 있다면 기능제안 게시판을 통해 제안해 주세요.',
+            '궁금하신 사항은 고객센터로 연락 부탁드립니다.',
+          ]}
+        >
+          {/* 기능제안 개별 보기 */}
+          {selectedSuggestionId && loading && (
+          <Paper elevation={0} className={classes.detailLoading}>
+            <CircularProgress />
+          </Paper>
+          )}
+          {selectedSuggestionId && !loading && featureListData && (
+          <div className={classes.contents}>
+            <FeatureDetail
+              selectedSuggestionId={selectedSuggestionId}
+              data={featureListData
                 .sort((row1, row2) => new Date(row2.createdAt).getTime()
-                          - new Date(row1.createdAt).getTime())
+                    - new Date(row1.createdAt).getTime())
                 .filter((row) => (selectedCategory !== '전체'
-                  ? row.category === selectedCategory : row))
-              : []}
-            handleClick={handleFeatureClick}
-            page={page}
-            pageSize={pageSize}
-            handlePage={setPage}
-            handlePageSize={setPageSize}
-          />
+                  ? row.category === selectedCategory : row))}
+              onOtherFeatureClick={handleFeatureClick}
+              onBackClick={handleResetFeatureSelect}
+              featureListRefetch={featureListRefetch}
+            />
+          </div>
+          )}
 
-        </div>
+          {/* 기능제안 카테고리 목록 필터링 */}
+          {!selectedSuggestionId && (
+          <div className={classes.contents}>
+            <FilterCategoryButtonGroup
+              categories={FEATURE_SUGGESTION_OPTIONS.map((options) => options.value)}
+              onChange={handleCategorySelect}
+              selected={selectedCategory}
+            />
+          </div>
+          )}
 
-        <div className={classes.writeButtonWrapper}>
-          <Button className={classes.writeButton} disableElevation variant="contained" onClick={handleWriteClick}>
-            글쓰기
-          </Button>
-        </div>
-      </NoticeLayout>
+          {/* 기능제안 글 목록 */}
+          <div className={classnames(classes.contents, classes.buttonSection)}>
+            <div className={classes.chipArea}>
+              {FeatureProgressChip(3)}
+              {FeatureProgressChip(2)}
+              {FeatureProgressChip(1)}
+              {FeatureProgressChip(0)}
+            </div>
+          </div>
+          <div className={classes.tableContainer}>
+            <FeatureTable
+              isLoading={loading}
+              metrics={!loading && featureListData
+                ? featureListData
+                  .sort((row1, row2) => new Date(row2.createdAt).getTime()
+                          - new Date(row1.createdAt).getTime())
+                  .filter((row) => (selectedCategory !== '전체'
+                    ? row.category === selectedCategory : row))
+                : []}
+              handleClick={handleFeatureClick}
+              page={page}
+              pageSize={pageSize}
+              handlePage={setPage}
+              handlePageSize={setPageSize}
+            />
+
+          </div>
+
+          <div className={classes.writeButtonWrapper}>
+            <Button className={classes.writeButton} disableElevation variant="contained" onClick={handleWriteClick}>
+              글쓰기
+            </Button>
+          </div>
+        </NoticeLayout>
+      </div>
       <Footer />
 
     </div>

@@ -11,6 +11,7 @@ import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import NoticeLayout, { useContainerStyles } from '../../organisms/mainpage/shared/NoticeLayout';
 import useMediaSize from '../../utils/hooks/useMediaSize';
+import { MAX_WIDTH_DESKTOP } from '../../assets/constants';
 
 export default function Notice(): JSX.Element {
   const classes = useContainerStyles();
@@ -50,32 +51,33 @@ export default function Notice(): JSX.Element {
   return (
     <main>
       <Appbar variant={isMobile ? undefined : 'transparent'} />
-      <ProductHero />
-      <NoticeLayout
-        title="공지사항"
-        description="기능개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
-      >
-        {/* 공지사항 개별 보기 */}
-        {selectedNoticeId && !loading && data && (
-        <div className={classes.contents}>
-          <NoticeDetail
-            selectedNoticeId={selectedNoticeId}
-            data={data
-              .sort((row1, row2) => {
-                if (row2.isImportant) return 1;
-                if (row1.isImportant) return -1;
-                return new Date(row2.createdAt).getTime()
+      <div style={{ maxWidth: MAX_WIDTH_DESKTOP, margin: '0 auto' }}>
+        <ProductHero />
+        <NoticeLayout
+          title="공지사항"
+          description="기능개선과 제안된 기능을 도입하기 위해 끊임없이 연구하고 있습니다."
+        >
+          {/* 공지사항 개별 보기 */}
+          {selectedNoticeId && !loading && data && (
+          <div className={classes.contents}>
+            <NoticeDetail
+              selectedNoticeId={selectedNoticeId}
+              data={data
+                .sort((row1, row2) => {
+                  if (row2.isImportant) return 1;
+                  if (row1.isImportant) return -1;
+                  return new Date(row2.createdAt).getTime()
                       - new Date(row1.createdAt).getTime();
-              })
-              .filter((row) => (selectedCategory !== '전체'
-                ? row.category === selectedCategory : row))}
-            onOtherNoticeClick={handleNoticeClick}
-            onBackClick={handleResetNoticeSelect}
-          />
-        </div>
-        )}
-        {/* 공지사항 카테고리 필터링 목록 보기 */}
-        {!selectedNoticeId && (
+                })
+                .filter((row) => (selectedCategory !== '전체'
+                  ? row.category === selectedCategory : row))}
+              onOtherNoticeClick={handleNoticeClick}
+              onBackClick={handleResetNoticeSelect}
+            />
+          </div>
+          )}
+          {/* 공지사항 카테고리 필터링 목록 보기 */}
+          {!selectedNoticeId && (
           <div className={classes.contents}>
             <FilterCategoryButtonGroup
               categories={!loading && data
@@ -87,30 +89,31 @@ export default function Notice(): JSX.Element {
               selected={selectedCategory}
             />
           </div>
-        )}
+          )}
 
-        <div className={classes.contents}>
-          <NoticeTable
-            isLoading={loading}
-            metrics={!loading && data
-              ? data
-                .sort((row1, row2) => {
-                  if (row2.isImportant) return 1;
-                  if (row1.isImportant) return -1;
-                  return new Date(row2.createdAt).getTime()
+          <div className={classes.contents}>
+            <NoticeTable
+              isLoading={loading}
+              metrics={!loading && data
+                ? data
+                  .sort((row1, row2) => {
+                    if (row2.isImportant) return 1;
+                    if (row1.isImportant) return -1;
+                    return new Date(row2.createdAt).getTime()
                     - new Date(row1.createdAt).getTime();
-                })
-                .filter((row) => (selectedCategory !== '전체'
-                  ? row.category === selectedCategory : row))
-              : []}
-            handleClick={handleNoticeClick}
-            page={page}
-            pageSize={pageSize}
-            handlePage={setPage}
-            handlePageSize={setPageSize}
-          />
-        </div>
-      </NoticeLayout>
+                  })
+                  .filter((row) => (selectedCategory !== '전체'
+                    ? row.category === selectedCategory : row))
+                : []}
+              handleClick={handleNoticeClick}
+              page={page}
+              pageSize={pageSize}
+              handlePage={setPage}
+              handlePageSize={setPageSize}
+            />
+          </div>
+        </NoticeLayout>
+      </div>
       <Footer />
     </main>
   );

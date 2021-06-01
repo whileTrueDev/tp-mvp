@@ -10,6 +10,7 @@ import Footer from '../../organisms/shared/footer/Footer';
 import Appbar from '../../organisms/shared/Appbar';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import Exanalysis from '../../organisms/mainpage/main/exanalysis/Exanalysis';
+import { MAX_WIDTH_DESKTOP } from '../../assets/constants';
 
 export default function Main(): JSX.Element {
   // 처음 페이지 렌더링시 화면 최상단으로 스크롤이동
@@ -18,10 +19,13 @@ export default function Main(): JSX.Element {
   return (
     <div>
       <Appbar />
-      <ProductHero />
-      <Intro />
-      <Exanalysis />
-      <Inquiry />
+      <div style={{ maxWidth: MAX_WIDTH_DESKTOP, margin: '0 auto' }}>
+        <ProductHero />
+        <Intro />
+        <Exanalysis />
+        <Inquiry />
+      </div>
+
       <Footer />
     </div>
   );
