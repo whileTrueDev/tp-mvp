@@ -9,6 +9,7 @@ export const initialState = {
   domain: '',
   name: '',
   idValue: '',
+  emailVerified: false,
 };
 
 export interface StepState {
@@ -22,6 +23,7 @@ export interface StepState {
   phoneNum: string | number;
   domain: string;
   name: string;
+  emailVerified: boolean;
 }
 
 export type StepAction = { type: 'id'; value: string }
@@ -33,6 +35,7 @@ export type StepAction = { type: 'id'; value: string }
   | { type: 'checkDuplication'; value: boolean }
   | { type: 'name'; value: string }
   | { type: 'reset' }
+  | { type: 'verifyEmail'; value: boolean}
 
 // reducer를 사용하여 Error를 handling하자
 export function myReducer(
@@ -85,6 +88,9 @@ export function myReducer(
     }
     case 'reset': {
       return initialState;
+    }
+    case 'verifyEmail': {
+      return { ...state, emailVerified: action.value };
     }
     default: {
       return state;
