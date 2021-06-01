@@ -19,7 +19,7 @@ import useMediaSize from '../../../utils/hooks/useMediaSize';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   communitySection: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

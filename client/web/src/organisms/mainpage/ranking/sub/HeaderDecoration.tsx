@@ -6,7 +6,7 @@ import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 const useStyle = makeStyles((theme: Theme) => createStyles({
   headerImages: {
     width: '100%',
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.paper,
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
     overflowX: 'hidden',
   },
   container: {
