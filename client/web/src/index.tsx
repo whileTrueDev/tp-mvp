@@ -50,7 +50,21 @@ function Index(): JSX.Element {
   // Theme Configurations
   const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
-    ...defaultTheme, palette: { ...defaultTheme.palette, type: themeType },
+    ...defaultTheme,
+    palette: {
+      ...defaultTheme.palette,
+      type: themeType,
+    },
+    overrides: { // body 기본 색 덮어쓰기 위해서 적용
+      MuiCssBaseline: {
+        '@global': {
+          body: {
+            backgroundColor: themeType === 'light' ? '#fff' : '#424242',
+          },
+        },
+      },
+    },
+
   });
   const truepointTheme: TruepointTheme = { ...THEME, handleThemeChange };
 
