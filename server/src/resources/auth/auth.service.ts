@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt';
 import {
-  Injectable, HttpException, HttpStatus, BadRequestException,
+  Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 import { RefreshTokenData } from '../../interfaces/RefreshTokenData.interface';
 import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
@@ -16,7 +17,23 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private readonly mailerService: MailerService,
   ) {}
+
+  async sendMail(email: string): Promise<any> {
+    try {
+      await this.mailerService.sendMail({
+        to: email, // list of receivers
+        from: 'noreply@nestjs.com', // sender address
+        subject: 'Testing Nest MailerModule ✔', // Subject line
+        html: '<b>welcome</b>', // HTML body content
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, `error in send email, address: ${email}`);
+    }
+  }
 
   private createAccessToken(payload: LogedinUser): string {
     return this.jwtService.sign({

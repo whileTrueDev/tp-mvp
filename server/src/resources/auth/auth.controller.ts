@@ -4,13 +4,12 @@ import {
   Controller,
   Delete, ForbiddenException, Get,
   HttpException, HttpStatus,
-  InternalServerErrorException, Post, Query,
+  InternalServerErrorException, Param, Post, Query,
   Req, Request,
   Res,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import express from 'express';
@@ -41,29 +40,26 @@ export class AuthController {
     private readonly afreecaLinker: AfreecaLinker,
   ) {}
 
-  /** 소셜로그인 */
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    @Get('login/google')
-    @UseGuards(AuthGuard('google'))
-  async googleLogin() {}
-
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    @Get('youtube/callback')
-    @UseGuards(AuthGuard('google'))
-    async googleLoginCallback(@Req() req: express.Request) {
-      return this.authService.googleLogin(req);
-    }
+  /**------------------------------------------------------------*/
+  // 이메일 인증 코드 요청
+  @Get('email/code/:email')
+  async sendVerifyCode(
+    @Param('email') email: string,
+  ): Promise<any> {
+    return this.authService.sendMail(email);
+  }
+  /**------------------------------------------------------------*/
 
   @Post('logout')
-    async logout(
+  async logout(
     @Body() logoutDto: LogoutDto,
-    ): Promise<{ success: boolean }> {
-      const isLogoutSucess = await this.authService.logout(logoutDto);
-      if (isLogoutSucess) {
-        return { success: true };
-      }
-      return { success: false };
+  ): Promise<{ success: boolean }> {
+    const isLogoutSucess = await this.authService.logout(logoutDto);
+    if (isLogoutSucess) {
+      return { success: true };
     }
+    return { success: false };
+  }
 
   // 로그인 컨트롤러
   @UseGuards(LocalAuthGuard)
