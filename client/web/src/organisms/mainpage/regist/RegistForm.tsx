@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import NumberFormat from 'react-number-format';
 import { useSnackbar } from 'notistack';
 
@@ -28,6 +28,7 @@ import {
   StepAction, StepState,
 } from './Stepper.reducer';
 import PasswordTextField from '../../../atoms/Input/PasswordTextField';
+import axios from '../../../utils/axios';
 
 // domain select용.
 const domains = [
@@ -143,18 +144,80 @@ function PlatformRegistForm({
     }
   }
 
+  // 이메일 인증관련 --------------------------------------------
+  // 리듀서로 옮기기
+  const [emailSent, setEmailSent] = useState<boolean>(true);
+  const codeInputRef = useRef<HTMLInputElement>(null);
+  const getFullEmail = () => `${state.email}@${state.domain}`;
   const requestEmailVerifyCode = () => {
-    const email = `${state.email}@${state.domain}`;
-    console.log('이메일 인증', email);
+    // 이메일 주소 가져오기
+    const email = getFullEmail();
+    // 이메일 주소로 코드 보내기 요청
+    axios.get(`/auth/email/code/${email}`)
+      .then((res) => {
+        console.log(res);
+        // 코드 입력창 보이기
+        setEmailSent(true);
+        // 해당 코드는 일정 시간만 유효함 && 이메일을 받지 못했을 경우 다시 이메일 요청하라고 알리기
+      })
+      .catch((e) => console.error(e));
   };
-  const EmailVerifyCodeButton = (
+
+  const EmailVerifyCodeRequestButton = (
     <Button
       variant="contained"
-      disabled={state.email.trim() === '' || state.domain.trim() === ''}
+      color="primary"
+      disabled={state.email.trim() === '' || state.domain.trim() === '' || state.emailVerified}
       onClick={requestEmailVerifyCode}
     >
-      코드 전송
+      {emailSent ? '코드 재전송' : '코드 전송'}
     </Button>
+  );
+
+  let timer: NodeJS.Timeout;
+
+  const checkVerificationCode = () => {
+    if (!codeInputRef || !codeInputRef.current) return;
+    const code = codeInputRef.current.value;
+    if (code.trim() === '') return;
+
+    const email = getFullEmail();
+    axios.get(`/auth/email/code/verify/${email}/${code}`)
+      .then((res) => {
+        if (res.data.result === true) {
+          dispatch({ type: 'verifyEmail', value: true });
+        } else {
+          alert('잘못된 코드입니다. 이메일을 받지 못한 경우 인증 코드 재전송을 눌러주세요.');
+        }
+      });
+  };
+  const verifyCodeDebounced = () => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(checkVerificationCode, 200);
+  };
+
+  const EmailVerifyCodeInput = (
+    emailSent && (
+      <div>
+        <FormControl>
+          <InputLabel shrink>인증코드</InputLabel>
+          <Input
+            required
+            id="verificationCode"
+            placeholder="메일로 발송된 인증코드를 입력해주세요"
+            inputRef={codeInputRef}
+            onChange={verifyCodeDebounced}
+            endAdornment={(
+              <InputAdornment position="end">
+                {state.emailVerified && <div className={classes.successText}><Done /></div>}
+              </InputAdornment>
+            )}
+          />
+          <FormHelperText>{`${getFullEmail()}로 받은 6자리 코드를 입력해주세요.`}</FormHelperText>
+        </FormControl>
+      </div>
+
+    )
   );
 
   return (
@@ -368,8 +431,9 @@ function PlatformRegistForm({
                       />
                     )}
                 </Grid>
-                <Grid item>{EmailVerifyCodeButton}</Grid>
+                <Grid item>{EmailVerifyCodeRequestButton}</Grid>
               </Grid>
+              {EmailVerifyCodeInput}
               <Grid item style={{ marginTop: '16px' }}>
                 <div>
                   <Button
