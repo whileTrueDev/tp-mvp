@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtConfigService } from '../../config/jwt.config';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
@@ -11,7 +12,7 @@ import { TwitchStrategy } from './strategies/twitch.strategy';
 import { YoutubeStrategy } from './strategies/youtube.strategy';
 import { AfreecaLinker } from './strategies/afreeca.linker';
 import { GoogleStrategy } from './strategies/google.strategy';
-
+import { EmailVerificationCodeEntity } from './entities/emailVerification.entity';
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -19,6 +20,8 @@ import { GoogleStrategy } from './strategies/google.strategy';
       useClass: JwtConfigService,
     }),
     forwardRef(() => UsersModule), // Resolve circular dependencies between Moduels
+    TypeOrmModule.forFeature([EmailVerificationCodeEntity,
+    ]),
   ],
   providers: [
     AuthService, LocalStrategy,
