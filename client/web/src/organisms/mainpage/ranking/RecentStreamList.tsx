@@ -91,7 +91,6 @@ export default function RecentStreamList({
           alt=""
         />
         )}
-
         {/* 플랫폼 로고 이미지 */}
         {isSm ? (null) : (<RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />)}
       </Container>
