@@ -6,7 +6,7 @@ import useHeroStyles from '../shared/ProductHero.style';
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
     marginTop: 0,
     height: theme.spacing(30),
   },
@@ -19,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontWeight: theme.typography.fontWeightBold,
   },
+  imgTextBg: {
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.primary.contrastText,
+  },
 }));
 
 export default function YoutubeHighlightListHero(): React.ReactElement {
@@ -28,7 +31,9 @@ export default function YoutubeHighlightListHero(): React.ReactElement {
     <>
       <div className={classnames(classes.root, myOwnClasses.container)}>
         <Container className={classnames(classes.wraper, myOwnClasses.wrapper)}>
-          <img src="/images/youtube-list/zebobaram.png" alt="" />
+          <span className={myOwnClasses.imgTextBg}>
+            <img src="/images/youtube-list/zebobaram.png" alt="" />
+          </span>
           <Typography variant="h4" className={classnames(myOwnClasses.text, myOwnClasses.title)}>
             유튜브 편집점 제공
           </Typography>

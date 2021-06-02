@@ -35,3 +35,6 @@ export const RANKING_PAGE_CONTAINER_WIDTH = 1000;
 
 // carousel height
 export const CAROUSEL_HEIGHT = 272;
+
+// 데스크탑 화면 최대너비
+export const MAX_WIDTH_DESKTOP = 1080;

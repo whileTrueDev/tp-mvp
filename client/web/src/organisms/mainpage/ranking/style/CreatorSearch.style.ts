@@ -1,11 +1,10 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
   container: {
-    padding: theme.spacing(4),
-    [theme.breakpoints.down('sm')]: {
-      padding: 0,
-    },
+    maxWidth: MAX_WIDTH_DESKTOP,
+    paddingBottom: theme.spacing(3),
   },
 }));
 
