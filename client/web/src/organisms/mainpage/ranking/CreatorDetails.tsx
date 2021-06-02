@@ -1,4 +1,6 @@
-import { Container, Grid, Paper } from '@material-ui/core';
+import {
+  Container, Divider, Grid, Paper,
+} from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
 import React, { useEffect } from 'react';
@@ -73,7 +75,10 @@ export default function CreatorDetails(): React.ReactElement {
     <>
 
       {/* 최근 방송 정보 섹션 */}
-      <RecentStreamList userData={userData} platform={platform} creatorId={creatorId} />
+      <Container className={container}>
+        <RecentStreamList userData={userData} platform={platform} creatorId={creatorId} />
+
+      </Container>
 
       <Container className={container}>
         <div className={creatorEvaluationCardContainer}>
@@ -94,6 +99,8 @@ export default function CreatorDetails(): React.ReactElement {
               <ScoresSection scores={scores} />
             </Grid>
           </Grid>
+
+          <Divider variant="middle" />
 
           {/* 댓글 부분 */}
           <CreatorCommentList creatorId={creatorId} />

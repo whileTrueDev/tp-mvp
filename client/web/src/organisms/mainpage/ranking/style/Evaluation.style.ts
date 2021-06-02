@@ -4,10 +4,8 @@ export const useCreatorEvalutationCardStyle = makeStyles((theme) => createStyles
   creatorEvaluationCardContainer: {
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
-    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
     borderRadius: theme.spacing(0.5),
     [theme.breakpoints.down('sm')]: {
-      border: 'none',
       padding: theme.spacing(0.5),
     },
   },

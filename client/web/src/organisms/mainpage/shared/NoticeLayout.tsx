@@ -22,7 +22,7 @@ export const useFontStyle = makeStyles((theme: Theme) => createStyles({
 
 export const useContainerStyles = makeStyles((theme) => ({
   section: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

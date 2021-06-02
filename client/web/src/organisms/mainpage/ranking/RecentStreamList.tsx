@@ -69,7 +69,7 @@ export default function RecentStreamList({
 
   return (
     <section className={classes.section} id="broad-list">
-      <Container maxWidth="md" style={{ position: 'relative', overflow: 'hidden' }}>
+      <Container style={{ position: 'relative', overflow: 'hidden' }}>
         <div className={classes.itembox}>
           {!error && dataSource && dataSource.map((stream) => (
             <RecentStreamListItem
@@ -91,7 +91,6 @@ export default function RecentStreamList({
           alt=""
         />
         )}
-
         {/* 플랫폼 로고 이미지 */}
         {isSm ? (null) : (<RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />)}
       </Container>

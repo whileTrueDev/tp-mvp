@@ -11,7 +11,7 @@ export default function CreatorSearch(): JSX.Element {
   const classes = useStyles();
 
   return (
-    <Container maxWidth="md" className={classes.container}>
+    <Container className={classes.container}>
       <PageTitle text="방송인 검색" />
       <CreatorSearchTable
         data={data}

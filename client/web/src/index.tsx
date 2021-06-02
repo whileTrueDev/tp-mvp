@@ -50,7 +50,11 @@ function Index(): JSX.Element {
   // Theme Configurations
   const { themeType, handleThemeChange } = useTruepointThemeType();
   const THEME = createMuiTheme({
-    ...defaultTheme, palette: { ...defaultTheme.palette, type: themeType },
+    ...defaultTheme,
+    palette: {
+      ...defaultTheme.palette,
+      type: themeType,
+    },
   });
   const truepointTheme: TruepointTheme = { ...THEME, handleThemeChange };
 
