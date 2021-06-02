@@ -1,7 +1,9 @@
 import {
   createStyles, makeStyles,
 } from '@material-ui/core/styles';
-import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT, RANKING_PAGE_CONTAINER_WIDTH } from '../../../assets/constants';
+import {
+  COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT, MAX_WIDTH_DESKTOP,
+} from '../../../assets/constants';
 
 export const useStyles = makeStyles((theme) => createStyles({
   root: {
@@ -34,7 +36,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%',
-    minWidth: RANKING_PAGE_CONTAINER_WIDTH,
+    minWidth: MAX_WIDTH_DESKTOP,
     [theme.breakpoints.down('sm')]: {
       minWidth: '100%',
     },

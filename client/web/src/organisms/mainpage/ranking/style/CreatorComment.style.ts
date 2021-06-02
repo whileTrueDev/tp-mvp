@@ -227,12 +227,11 @@ export const useCommentContainerStyles = makeStyles((theme: Theme) => createStyl
   commentSectionWrapper: {
     padding: theme.spacing(3),
     paddingBottom: theme.spacing(20),
-    border: `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`,
     [theme.breakpoints.down('sm')]: {
       border: `1px solid ${theme.palette.divider}`,
       padding: 0,
     },
-    backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_3_light.svg)',
+    backgroundImage: 'url(/images/rankingPage/streamer_detail_bg_1.svg)',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'left bottom',
     backgroundSize: 'contain',

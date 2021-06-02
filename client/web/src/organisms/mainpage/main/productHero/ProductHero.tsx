@@ -4,6 +4,7 @@ import shortid from 'shortid';
 import styles from '../style/ProductHero.style';
 import source from '../source/textsource';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 // CBT 이후 추가될 내용
 // import Dialog from '../../../../atoms/Dialog/Dialog';
 // import useDialog from '../../../../utils/hooks/useDialog';
@@ -16,7 +17,7 @@ export default function ProductHero(): JSX.Element {
   // const { open, handleClose, handleOpen } = useDialog();
   return (
     <div className={classes.root}>
-      <Container>
+      <Container style={{ maxWidth: MAX_WIDTH_DESKTOP }}>
         <Grid
           container
           direction={isMobile ? 'column-reverse' : 'row'}

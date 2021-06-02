@@ -11,6 +11,7 @@ import StreamAnalysis from './sub/StreamAnalysis';
 import PeriodAnalysis from './sub/PeriodAnalysis';
 import PeriodVsAnalysis from './sub/PeriodVsAnalysis';
 import HighlightAnalysisLayout from '../../../mypage/layouts/HighlightAnalysisLayout';
+import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 
 interface AnalysisType {
     [key: string]: string
@@ -52,7 +53,7 @@ export default function Exanalysis(): JSX.Element {
 
   return (
     <div className={classes.root}>
-      <Container>
+      <Container style={{ maxWidth: MAX_WIDTH_DESKTOP }}>
         <Grid container direction="column" justify="center" alignItems="flex-start">
           <Grid item md={12} sm={12} xs={12} className={classes.wrapper}>
             {Object.keys(exType).map((key) => (
