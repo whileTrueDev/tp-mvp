@@ -43,10 +43,19 @@ export class AuthController {
   /**------------------------------------------------------------*/
   // 이메일 인증 코드 요청
   @Get('email/code/:email')
-  async sendVerifyCode(
+  async sendVerificationCode(
     @Param('email') email: string,
   ): Promise<any> {
-    return this.authService.sendMail(email);
+    return this.authService.sendVerificationCodeMail(email);
+  }
+
+  // 이메일로 받은 인증코드 확인
+  @Get('email/code/verify/:email/:code')
+  async checkVerificationCode(
+    @Param('email') email: string,
+    @Param('code') code: string,
+  ): Promise<any> {
+    return this.authService.checkVerificationCode(email, code);
   }
   /**------------------------------------------------------------*/
 
