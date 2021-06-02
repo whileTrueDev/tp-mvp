@@ -143,6 +143,20 @@ function PlatformRegistForm({
     }
   }
 
+  const requestEmailVerifyCode = () => {
+    const email = `${state.email}@${state.domain}`;
+    console.log('이메일 인증', email);
+  };
+  const EmailVerifyCodeButton = (
+    <Button
+      variant="contained"
+      disabled={state.email.trim() === '' || state.domain.trim() === ''}
+      onClick={requestEmailVerifyCode}
+    >
+      코드 전송
+    </Button>
+  );
+
   return (
     <div>
       {loading
@@ -354,6 +368,7 @@ function PlatformRegistForm({
                       />
                     )}
                 </Grid>
+                <Grid item>{EmailVerifyCodeButton}</Grid>
               </Grid>
               <Grid item style={{ marginTop: '16px' }}>
                 <div>

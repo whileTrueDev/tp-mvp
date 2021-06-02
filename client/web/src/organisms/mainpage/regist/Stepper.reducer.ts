@@ -1,17 +1,3 @@
-export const initialState = {
-  passwordValue: '',
-  id: false,
-  password: false,
-  repasswd: false,
-  checkDuplication: true,
-  email: '',
-  phoneNum: '',
-  domain: '',
-  name: '',
-  idValue: '',
-  emailVerified: false,
-};
-
 export interface StepState {
   passwordValue: string | number;
   id: string | boolean;
@@ -24,7 +10,23 @@ export interface StepState {
   domain: string;
   name: string;
   emailVerified: boolean;
+  verificationCode: string;
 }
+
+export const initialState: StepState = {
+  passwordValue: '',
+  id: false,
+  password: false,
+  repasswd: false,
+  checkDuplication: true,
+  email: '',
+  phoneNum: '',
+  domain: '',
+  name: '',
+  idValue: '',
+  emailVerified: false,
+  verificationCode: '',
+};
 
 export type StepAction = { type: 'id'; value: string }
   | { type: 'password'; value: string }
@@ -36,6 +38,7 @@ export type StepAction = { type: 'id'; value: string }
   | { type: 'name'; value: string }
   | { type: 'reset' }
   | { type: 'verifyEmail'; value: boolean}
+  | { type: 'verificationCode'; value: string}
 
 // reducer를 사용하여 Error를 handling하자
 export function myReducer(
