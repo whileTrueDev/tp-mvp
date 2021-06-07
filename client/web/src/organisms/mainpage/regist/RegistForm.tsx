@@ -155,12 +155,18 @@ function PlatformRegistForm({
     // 이메일 주소로 코드 보내기 요청
     axios.get(`/auth/email/code/${email}`)
       .then((res) => {
-        console.log(res);
         // 코드 입력창 보이기
         setEmailSent(true);
         // 해당 코드는 일정 시간만 유효함 && 이메일을 받지 못했을 경우 다시 이메일 요청하라고 알리기
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        console.error(e);
+        if (e.response) {
+          if (e.response.status === 400) {
+            alert(e.response.data.message);
+          }
+        }
+      });
   };
 
   const EmailVerifyCodeRequestButton = (
@@ -187,7 +193,8 @@ function PlatformRegistForm({
         if (res.data.result === true) {
           dispatch({ type: 'verifyEmail', value: true });
         } else {
-          alert('잘못된 코드입니다. 이메일을 받지 못한 경우 인증 코드 재전송을 눌러주세요.');
+          dispatch({ type: 'verifyEmail', value: false });
+          alert('잘못되거나 유효하지 않은 코드입니다. 올바른 코드를 입력했는지 확인해주세요. 이메일을 받지 못한 경우 인증 코드 재전송을 눌러주세요.');
         }
       });
   };

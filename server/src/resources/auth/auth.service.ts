@@ -36,10 +36,8 @@ export class AuthService {
      code: string,
   }): Promise<void> {
     try {
-      const createDate = new Date();
-      console.log('create date before save', createDate);
       // 이메일 인증코드 테이블에 저장
-      await this.emailCodeRepository.save({ email, code, createDate });
+      await this.emailCodeRepository.save({ email, code });
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in save email verification code');
@@ -55,17 +53,16 @@ export class AuthService {
     // 0 테이블에 해당 이메일로 생성된 코드가 있는지 확인
     const existCode = await this.findVerificationCode(email);
     if (existCode) {
-      console.log('is sent recently', existCode.isSentRecently());
+      // 이미 존재하고 코드생성시간이 3분이 지나지 않았으면 최근에 보냈음 에러
+      if (existCode.isSentRecently()) {
+        throw new BadRequestException('이전 코드를 보낸 지 3분이 지나지 않았습니다. 스팸메일함을 확인하거나 3분 후에 다시 시도해주세요.');
+      }
+      // 이미 존재하고 생성시간이 3분 지났으면 해당 데이터 삭제하고 1로
+      await this.emailCodeRepository.remove(existCode);
     }
-
-    // 이미 존재하고 생성시간이 5분이 지나지 않았으면 최근에 보냈음 에러
-
-    // 없으면 1로
-    // 이미 존재하고 생성시간이 5분 지났으면 해당 데이터 삭제하고 1로
 
     // 1. 랜덤 문자열 코드생성
     const code = this.createEmailVerificationCode();
-    console.log({ code });
     // 2. 이메일 인증 테이블에 유저 email, 생성된 코드, 생성시간 저장
     await this.saveVerificationCode({ email, code });
     try {
