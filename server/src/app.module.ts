@@ -17,6 +17,7 @@ import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysi
 import { CategoryModule } from './resources/category/category.module';
 
 import loadConfig from './config/loadConfig';
+import { mailerConfig } from './config/mailer.config';
 
 import { roles } from './roles/app.roles';
 import { SlackModule } from './resources/slack/slack.module';
@@ -61,24 +62,7 @@ import { S3Module } from './resources/s3/s3.module';
     CreatorCommentModule,
     CreatorCategoryModule,
     S3Module,
-    MailerModule.forRoot({
-      transport: {
-        service: 'gmail',
-        host: 'smtp.google.com',
-        port: 587,
-        secure: true,
-        auth: {
-          type: 'OAuth2',
-          user: 'a1919361@gmail.com', // OAuth Client에서 테스트 사용자로 등록된 Gmail 주소 
-          clientId: '974164894170-1q03v0mb6qcqc3ioqm7tk8f5kppi373b.apps.googleusercontent.com', // gmail  OAuth Client ID 
-          clientSecret: 'wwOMiV46SppMqe9vVKfWGoIH', //  OAuth Client 보안 비밀
-          refreshToken: '1//04UADw5dk-VliCgYIARAAGAQSNwF-L9IrG3ALWy8OPTkHxsRwH87yOw-dmNUv1Q1s4wXwgHHJcGve36M6VM61GHWcTuBilKVrbss', // playground에서 발급받은 Refresh token
-        },
-      },
-      defaults: {
-        from: '"nest-modules" <modules@nestjs.com>',
-      },
-    }),
+    MailerModule.forRoot(mailerConfig),
   ],
 })
 export class AppModule { }
