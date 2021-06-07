@@ -145,6 +145,14 @@ export class UsersController {
     return this.usersService.checkID(query);
   }
 
+  // 이메일 중복 확인
+  @Get('/check-email')
+  async checkEmail(
+    @Query('email') email: string,
+  ): Promise<boolean> {
+    return this.usersService.checkEmail(email);
+  }
+
   @Patch('/password')
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto,

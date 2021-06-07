@@ -28,7 +28,7 @@ export class UserEntity implements User {
   @Column({ nullable: false, length: 15 })
   name!: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, comment: '이메일주소' })
   mail!: string;
 
   @Column({ length: 50 })
