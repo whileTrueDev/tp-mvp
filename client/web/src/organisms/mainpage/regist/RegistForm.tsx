@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import NumberFormat from 'react-number-format';
 import { useSnackbar } from 'notistack';
 
 import {
@@ -14,8 +13,6 @@ import {
   TextField,
   Grid,
   Typography,
-  FormControlLabel,
-  Radio,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import Done from '@material-ui/icons/Done';
@@ -23,7 +20,6 @@ import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 import useStyles from './style/RegistForm.style';
-import StyledInput from '../../../atoms/StyledInput';
 import {
   StepAction, StepState,
 } from './Stepper.reducer';
@@ -64,7 +60,7 @@ function PlatformRegistForm({
   const [loading, setLoading] = useState(0);
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [numberType, setNumberType] = useState(true);
+  // const [numberType, setNumberType] = useState(true);
   const [marketerCustomDomain, setCustomDomain] = useState('');
   const [, getRequest] = useAxios(
     '/users/check-id', { manual: true },
@@ -74,17 +70,9 @@ function PlatformRegistForm({
     setCustomDomain(event.target.value);
   }
 
-  function handleTypeToogle(): void {
-    setNumberType(!numberType);
-  }
-
   const handleChange = (name: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: name, value: event.target.value });
   };
-
-  function handleChangePhone(value: any): void {
-    dispatch({ type: 'phoneNum', value: value.formattedValue });
-  }
 
   function checkDuplicateID(): void {
     const { idValue } = state;
@@ -114,7 +102,7 @@ function PlatformRegistForm({
       return;
     }
     const {
-      id, password, repasswd, checkDuplication,
+      id, password, repasswd, checkDuplication, emailVerified, passEmailDuplication,
     } = state;
 
     const mailId = state.email;
@@ -123,10 +111,17 @@ function PlatformRegistForm({
       ShowSnack('E-mail 입력이 올바르지 않습니다.', 'warning', enqueueSnackbar);
       return;
     }
-    // 모든 state가 false가 되어야한다.
+
+    if (!emailVerified || !passEmailDuplication) {
+      ShowSnack('E-mail 인증이 완료되지 않았습니다.', 'warning', enqueueSnackbar);
+      return;
+    }
+
+    // 모든 state가 false가 되어야한다. (리듀서에서 입력값 유효성 확인 후 false로 처리함)
     if (!(id || password || repasswd || checkDuplication)) {
       const userId = state.idValue;
-      const nickName = state.name;
+      const nickName = state.nickname;
+      const { name } = state;
       const phone = state.phoneNum;
       const rawPassword = state.passwordValue;
       const domain = state.domain === '직접입력' ? marketerCustomDomain : state.domain;
@@ -134,6 +129,7 @@ function PlatformRegistForm({
         userId,
         password: rawPassword,
         nickName,
+        name,
         mail: `${mailId}@${domain}`,
         phone,
       };
@@ -145,16 +141,28 @@ function PlatformRegistForm({
   }
 
   // 이메일 인증관련 --------------------------------------------
-  // 리듀서로 옮기기
-  const [emailSent, setEmailSent] = useState<boolean>(true);
+  const [emailSent, setEmailSent] = useState<boolean>(false); // 이메일이 발송여부 상태 저장, 해당 값이 true일 때 코드입력창을 보여준다
   const codeInputRef = useRef<HTMLInputElement>(null);
   const getFullEmail = () => `${state.email}@${state.domain}`;
-  const requestEmailVerifyCode = () => {
+
+  const requestEmailVerifyCode = async () => {
     // 이메일 주소 가져오기
     const email = getFullEmail();
+
+    // 이미 회원가입에 사용된 이메일인지 확인
+    const response = await axios.get('/users/check-email', { params: { email } });
+    const isEmailAlreadyRegistered = response.data;
+    dispatch({ type: 'passEmailDuplication', value: !isEmailAlreadyRegistered });
+
+    if (isEmailAlreadyRegistered) {
+      alert('이미 가입된 이메일입니다.');
+      return;
+    }
+
     // 이메일 주소로 코드 보내기 요청
-    axios.get(`/auth/email/code/${email}`)
+    axios.get('/auth/email/code', { params: { email } })
       .then((res) => {
+        alert(`${email}로 인증코드가 전송되었습니다. 이메일을 받지 못한 경우 스팸메일함을 확인해주세요.`);
         // 코드 입력창 보이기
         setEmailSent(true);
         // 해당 코드는 일정 시간만 유효함 && 이메일을 받지 못했을 경우 다시 이메일 요청하라고 알리기
@@ -162,7 +170,7 @@ function PlatformRegistForm({
       .catch((e) => {
         console.error(e);
         if (e.response) {
-          if (e.response.status === 400) {
+          if (e.response.status === 400) { // 3분 내로 이메일 코드 인증을 다시 한 경우
             alert(e.response.data.message);
           }
         }
@@ -188,7 +196,7 @@ function PlatformRegistForm({
     if (code.trim() === '') return;
 
     const email = getFullEmail();
-    axios.get(`/auth/email/code/verify/${email}/${code}`)
+    axios.get('/auth/email/code/verify', { params: { email, code } })
       .then((res) => {
         if (res.data.result === true) {
           dispatch({ type: 'verifyEmail', value: true });
@@ -269,124 +277,72 @@ function PlatformRegistForm({
                   <FormHelperText>{state.id ? '영문자로 시작하는 6-15자 영문 또는 숫자' : ' '}</FormHelperText>
                 </FormControl>
               </Grid>
-              <Grid container direction="row">
-                <Grid item>
-                  <PasswordTextField
-                    required
-                    label="PASSWORD"
-                    placeholder="비밀번호를 입력하세요."
-                    className={classes.textField}
-                    onChange={handleChange('password')}
-                    helperText={state.password ? '특수문자를 포함한 8-20자 영문 또는 숫자' : ' '}
-                    error={state.password}
-                    margin="normal"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-                <Grid item>
-                  <PasswordTextField
-                    required
-                    label="RE-PASSWORD"
-                    placeholder="비밀번호를 재입력하세요."
-                    helperText={state.repasswd ? '비밀번호와 동일하지 않습니다.' : ' '}
-                    error={state.repasswd}
-                    className={classes.textField}
-                    onChange={handleChange('repasswd')}
-                    margin="normal"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
+              <Grid item>
+                <PasswordTextField
+                  required
+                  label="PASSWORD"
+                  placeholder="비밀번호를 입력하세요."
+                  className={classes.textField}
+                  onChange={handleChange('password')}
+                  helperText={state.password ? '특수문자를 포함한 8-20자 영문 또는 숫자' : ' '}
+                  error={state.password}
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
               </Grid>
-              <Grid item container direction="row">
-                <Grid item>
-                  <TextField
-                    required
-                    label="별명"
-                    id="name"
-                    onChange={handleChange('name')}
-                    className={classes.textField}
-                    placeholder="별명을 입력하세요."
-                    margin="normal"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    helperText="크리에이터인 경우, 활동명을 입력하세요."
-                  />
-                </Grid>
-                <Grid item>
-                  <Grid container direction="row">
-                    <Grid item>
-                      <FormControl
-                        className={classes.phoneField}
-                        required
-                        margin="normal"
-                      >
-                        <InputLabel shrink htmlFor="phoneNumber">전화번호</InputLabel>
-                        <NumberFormat
-                          placeholder="( ___ ) - ____ - ____"
-                          value={state.phoneNum}
-                          onValueChange={handleChangePhone}
-                          customInput={StyledInput}
-                          format={numberType ? '( ### ) - #### - ####' : '( ### ) - ### - ####'}
-                          className={classes.phoneField}
-                          allowNegative={false}
-                        />
-                        {/* <FormHelperText>트루포인트와 연락할 전화번호를 입력하세요.</FormHelperText> */}
-                      </FormControl>
-                    </Grid>
-                    <Grid item className={classes.switchbox}>
-                      <Divider className={classes.divider} />
-                      <Grid container direction="row">
-                        <Grid item>
-                          <FormControlLabel
-                            value="phone"
-                            control={(
-                              <Radio
-                                checked={numberType}
-                                onChange={handleTypeToogle}
-                                inputProps={{ 'aria-label': 'A' }}
-                                size="small"
-                                color="primary"
-                              />
-                            )}
-                            className={classes.switch}
-                            label="휴대폰"
-                            labelPlacement="bottom"
-                          />
-                        </Grid>
-                        <Grid item>
-                          <FormControlLabel
-                            value="tel"
-                            control={(
-                              <Radio
-                                checked={!numberType}
-                                onChange={handleTypeToogle}
-                                inputProps={{ 'aria-label': 'A' }}
-                                size="small"
-                                color="primary"
-                              />
-                            )}
-                            className={classes.switch}
-                            label="회사"
-                            labelPlacement="bottom"
-                          />
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
+              <Grid item>
+                <PasswordTextField
+                  required
+                  label="RE-PASSWORD"
+                  placeholder="비밀번호를 재입력하세요."
+                  helperText={state.repasswd ? '비밀번호와 동일하지 않습니다.' : ' '}
+                  error={state.repasswd}
+                  className={classes.textField}
+                  onChange={handleChange('repasswd')}
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  required
+                  label="이름"
+                  id="name"
+                  onChange={handleChange('name')}
+                  className={classes.textField}
+                  placeholder="이름을 입력하세요."
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  required
+                  label="닉네임"
+                  id="nickname"
+                  onChange={handleChange('nickname')}
+                  className={classes.textField}
+                  placeholder="별명을 입력하세요."
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  helperText="크리에이터인 경우, 활동명을 입력하세요."
+                />
               </Grid>
               <Grid container direction="row">
-                <Grid item>
+                <Grid item xs={4}>
                   <TextField
                     required
                     label="EMAIL"
                     value={state.email}
-                    className={classes.textField}
+                    // className={classes.textField}
                     onChange={handleChange('email')}
                     helperText="EMAIL을 입력하세요."
                     margin="normal"
@@ -399,13 +355,13 @@ function PlatformRegistForm({
                     }}
                   />
                 </Grid>
-                <Grid item>
+                <Grid item xs={4}>
                   {state.domain !== '직접입력' ? (
                     <TextField
                       required
                       select
                       label="Domain"
-                      className={classes.textField}
+                      // className={classes.textField}
                       value={state.domain}
                       onChange={handleChange('domain')}
                       helperText="EMAIL Domain을 선택하세요."
@@ -427,7 +383,7 @@ function PlatformRegistForm({
                         required
                         autoFocus
                         label="Domain"
-                        className={classes.textField}
+                        // className={classes.textField}
                         value={marketerCustomDomain}
                         onChange={handleCustom}
                         helperText="EMAIL Domain을 입력하세요."
@@ -438,7 +394,7 @@ function PlatformRegistForm({
                       />
                     )}
                 </Grid>
-                <Grid item>{EmailVerifyCodeRequestButton}</Grid>
+                <Grid item xs={4}>{EmailVerifyCodeRequestButton}</Grid>
               </Grid>
               {EmailVerifyCodeInput}
               <Grid item style={{ marginTop: '16px' }}>
@@ -455,6 +411,10 @@ function PlatformRegistForm({
                     className={classes.button}
                     type="submit"
                     value="submit"
+                    disabled={(
+                      !!state.id || !!state.password || !!state.repasswd || !!state.checkDuplication // 값이 false여야 함
+                      || !state.name || !state.nickname || !state.emailVerified // 값이 true여야함
+                      )}
                   >
                     가입하기
                   </Button>

@@ -1,6 +1,6 @@
 export interface StepState {
   passwordValue: string | number;
-  id: string | boolean;
+  id: string | boolean; // idValue 는 input에 들어오는 string 저장, id는 string값이 유효한지
   idValue: string;
   password: boolean;
   repasswd: boolean;
@@ -9,8 +9,9 @@ export interface StepState {
   phoneNum: string | number;
   domain: string;
   name: string;
-  emailVerified: boolean;
-  verificationCode: string;
+  emailVerified: boolean; // 이메일 인증코드 확인 pass 여부 - true이면 이메일인증 완료 / false이면 미인증 혹은 pass못함
+  nickname: string;
+  passEmailDuplication: boolean; // 이메일 중복 여부 - true이면 중복확인 완료 & 중복안됨/ false 이면 중복 혹은 중복미확인
 }
 
 export const initialState: StepState = {
@@ -19,13 +20,14 @@ export const initialState: StepState = {
   password: false,
   repasswd: false,
   checkDuplication: true,
-  email: 'qwer12qw123',
+  email: '',
   phoneNum: '',
-  domain: 'naver.com',
+  domain: '',
   name: '',
+  nickname: '',
   idValue: '',
   emailVerified: false,
-  verificationCode: '',
+  passEmailDuplication: false,
 };
 
 export type StepAction = { type: 'id'; value: string }
@@ -37,8 +39,9 @@ export type StepAction = { type: 'id'; value: string }
   | { type: 'checkDuplication'; value: boolean }
   | { type: 'name'; value: string }
   | { type: 'reset' }
+  | { type: 'nickname'; value: string }
   | { type: 'verifyEmail'; value: boolean}
-  | { type: 'verificationCode'; value: string}
+  | { type: 'passEmailDuplication'; value: boolean}
 
 // reducer를 사용하여 Error를 handling하자
 export function myReducer(
@@ -86,6 +89,9 @@ export function myReducer(
     case 'name': {
       return { ...state, name: action.value };
     }
+    case 'nickname': {
+      return { ...state, nickname: action.value };
+    }
     case 'checkDuplication': {
       return { ...state, checkDuplication: action.value };
     }
@@ -94,6 +100,9 @@ export function myReducer(
     }
     case 'verifyEmail': {
       return { ...state, emailVerified: action.value };
+    }
+    case 'passEmailDuplication': {
+      return { ...state, passEmailDuplication: action.value };
     }
     default: {
       return state;

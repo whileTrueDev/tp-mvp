@@ -19,7 +19,7 @@ function RegistStepper(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [activeStep, setStep] = useState(1);
+  const [activeStep, setStep] = useState(0);
   const [marketingAgreement, setAgreement] = useState(false);
   const [state, dispatch] = useReducer(myReducer, initialState);
   const [certificationInfo] = useState({}); // 휴대폰 인증 후 받은 인증유저정보
@@ -56,19 +56,27 @@ function RegistStepper(): JSX.Element {
   const [generatedUserId, setGeneratedUserId] = useState('');
 
   // 회원가입 요청 핸들러
-  function handleUserSubmit(user: any): void {
+  function handleUserSubmit(user: {
+    userId: string;
+    password: string | number;
+    nickName: string;
+    mail: string;
+    name: string;
+    phone: string | number;
+}): void {
     // state의 값을 이용하여 데이터를 전달한다.
 
-    let returnUser = {
+    let returnUser: any = {
       ...user, ...certificationInfo, marketingAgreement,
     };
+    // 휴대폰 인증 과정을 거치지 않은 경우 
+    // 휴대폰인증시 입력했던 정보 - 이름, 성별, 생일, 인증했던 식별값이 리턴되지 않으므로 임의의 값을 넣는다
     if (Object.keys(certificationInfo).length === 0) {
       returnUser = {
         ...returnUser,
-        name: '',
         gender: '',
         birth: '',
-        userDI: '',
+        userDI: `${user.userId}_${user.mail}`,
       };
     }
 
