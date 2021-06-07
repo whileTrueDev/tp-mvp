@@ -1,115 +1,21 @@
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
 import {
   Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MailerService } from '@nestjs-modules/mailer';
 import { RefreshTokenData } from '../../interfaces/RefreshTokenData.interface';
 import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
-import { EmailVerificationCodeEntity } from './entities/emailVerification.entity';
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private readonly mailerService: MailerService,
-    @InjectRepository(EmailVerificationCodeEntity)
-    private readonly emailCodeRepository: Repository<EmailVerificationCodeEntity>,
   ) {}
-
-  private verificationCodeValidTime = 1;
-
-  private createEmailVerificationCode(length = 6): string {
-    return crypto.randomBytes(20).toString('hex').slice(0, length);
-  }
-
-  private async saveVerificationCode({ email, code }: {
-    email: string,
-     code: string,
-  }): Promise<void> {
-    try {
-      // 이메일 인증코드 테이블에 저장
-      await this.emailCodeRepository.save({ email, code });
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, 'error in save email verification code');
-    }
-  }
-
-  private async findVerificationCode(email: string): Promise<EmailVerificationCodeEntity> {
-    // 이메일 인증코드 테이블에서 찾기
-    return this.emailCodeRepository.findOne({ email });
-  }
-
-  async sendVerificationCodeMail(email: string): Promise<any> {
-    // 0 테이블에 해당 이메일로 생성된 코드가 있는지 확인
-    const existCode = await this.findVerificationCode(email);
-    if (existCode) {
-      // 이미 존재하고 코드생성시간이 3분이 지나지 않았으면 최근에 보냈음 에러
-      if (existCode.isSentRecently()) {
-        throw new BadRequestException('이전 코드를 보낸 지 3분이 지나지 않았습니다. 스팸메일함을 확인하거나 3분 후에 다시 시도해주세요.');
-      }
-      // 이미 존재하고 생성시간이 3분 지났으면 해당 데이터 삭제하고 1로
-      await this.emailCodeRepository.remove(existCode);
-    }
-
-    // 1. 랜덤 문자열 코드생성
-    const code = this.createEmailVerificationCode();
-    // 2. 이메일 인증 테이블에 유저 email, 생성된 코드, 생성시간 저장
-    await this.saveVerificationCode({ email, code });
-    try {
-      // 3. 메일로 코드 전송
-      await this.mailerService.sendMail({
-        to: email, // list of receivers
-        from: 'noreply-----@nestjs.com', // sender address
-        subject: '트루포인트 회원가입 인증 코드 - 테스트', // Subject line
-        html: `
-        <h1>
-        트루포인트 회원가입 인증 코드
-        </h1>
-        <hr />
-        <p>인증 코드 : <p/>
-        <strong>${code}</strong>
-        <br />
-        <hr />
-        <p>해당 코드를 회원 가입 화면에서 입력해주세요. 
-        해당 코드는 ${this.verificationCodeValidTime}시간 동안 유효합니다.</p>
-        <p>이 메일을 요청한 적이 없으시다면 무시하시기 바랍니다.</p>
-          `, // HTML body content
-      });
-      return true;
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, `error in send email, address: ${email}`);
-    }
-  }
-
-  async checkVerificationCode(email: string, code: string): Promise<any> {
-    try {
-      // 이메일 인증 테이블에서 code 찾기
-      const codeEntity = await this.findVerificationCode(email);
-
-      // 해당 코드 없거나, 코드가 동일하지 않거나, 유효시간(1시간) 지났거나
-      if (!codeEntity || codeEntity.code !== code || !codeEntity.isValidCode()) {
-        return { result: false };
-      }
-
-      return { result: true };
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, `error verify code, email address: ${email}`);
-    }
-  }
-
-  // 여기까지 이메일 인증관련 코드 - 별도 서비스로 분리하여 사용해도 될듯하다 -------------
 
   private createAccessToken(payload: LogedinUser): string {
     return this.jwtService.sign({

@@ -13,6 +13,8 @@ import { YoutubeStrategy } from './strategies/youtube.strategy';
 import { AfreecaLinker } from './strategies/afreeca.linker';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { EmailVerificationCodeEntity } from './entities/emailVerification.entity';
+import { EmailVerificationService } from './emailVerification.service';
+
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -24,10 +26,10 @@ import { EmailVerificationCodeEntity } from './entities/emailVerification.entity
     ]),
   ],
   providers: [
-    AuthService, LocalStrategy,
+    AuthService, LocalStrategy, EmailVerificationService,
     JwtStrategy, TwitchStrategy, YoutubeStrategy, AfreecaLinker, GoogleStrategy,
   ],
   controllers: [AuthController],
-  exports: [AuthService, AfreecaLinker],
+  exports: [AuthService, AfreecaLinker, EmailVerificationService],
 })
 export class AuthModule {}

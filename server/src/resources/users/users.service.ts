@@ -14,7 +14,7 @@ import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interfac
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import Axios from 'axios';
 import bcrypt from 'bcrypt';
-import { Connection, getConnection, Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
@@ -30,6 +30,7 @@ import { SubscribeEntity } from './entities/subscribe.entity';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { UserDetailEntity } from './entities/userDetail.entity';
+import { EmailVerificationService } from '../auth/emailVerification.service';
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
@@ -62,7 +63,7 @@ export class UsersService {
     private readonly youtubeTargetStreamersRepository: Repository<YoutubeTargetStreamersEntity>,
     @InjectRepository(StreamsEntity)
     private readonly streamsRepository: Repository<StreamsEntity>,
-    private connection: Connection,
+    private readonly emailVerificationService: EmailVerificationService,
   ) {}
 
   private resizeingYoutubeLogo(youtubeLogoString: string): string {
@@ -208,6 +209,7 @@ export class UsersService {
     // Github Repository => https://github.com/kelektiv/node.bcrypt.js/
     const hashedPassword = await bcrypt.hash(user.password, 10);
 
+    await this.emailVerificationService.removeCodeEntityByEmail(user.mail);
     return this.usersRepository.save({ ...user, password: hashedPassword });
 
     // throw new HttpException('ID is duplicated', HttpStatus.BAD_REQUEST);
@@ -304,6 +306,12 @@ export class UsersService {
     if (user) {
       return true;
     }
+    return false;
+  }
+
+  async checkEmail(email: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({ where: { mail: email } });
+    if (user) return true;
     return false;
   }
 

@@ -4,7 +4,7 @@ import {
   Controller,
   Delete, ForbiddenException, Get,
   HttpException, HttpStatus,
-  InternalServerErrorException, Param, Post, Query,
+  InternalServerErrorException, Post, Query,
   Req, Request,
   Res,
   UseFilters,
@@ -31,6 +31,7 @@ import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
 import { AfreecaLinker } from './strategies/afreeca.linker';
+import { EmailVerificationService } from './emailVerification.service';
 
 @Controller('auth')
 export class AuthController {
@@ -38,24 +39,25 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
     private readonly afreecaLinker: AfreecaLinker,
+    private readonly emailVerificationService: EmailVerificationService,
   ) {}
 
   /**------------------------------------------------------------*/
   // 이메일 인증 코드 요청
-  @Get('email/code/:email')
+  @Get('email/code')
   async sendVerificationCode(
-    @Param('email') email: string,
+    @Query('email') email: string,
   ): Promise<any> {
-    return this.authService.sendVerificationCodeMail(email);
+    return this.emailVerificationService.sendVerificationCodeMail(email);
   }
 
   // 이메일로 받은 인증코드 확인
-  @Get('email/code/verify/:email/:code')
+  @Get('email/code/verify')
   async checkVerificationCode(
-    @Param('email') email: string,
-    @Param('code') code: string,
+    @Query('email') email: string,
+    @Query('code') code: string,
   ): Promise<any> {
-    return this.authService.checkVerificationCode(email, code);
+    return this.emailVerificationService.checkVerificationCode(email, code);
   }
   /**------------------------------------------------------------*/
 
