@@ -45,7 +45,6 @@ export default function GetTemporaryPassword(): JSX.Element {
         },
       });
       const userExist = checkUserResponse.data;
-      console.log({ userExist });
       if (!userExist) {
         handleHelperOpen('존재하지 않는 회원입니다. 아이디, 이름, 이메일을 다시 확인 해주세요');
         return;
@@ -66,7 +65,6 @@ export default function GetTemporaryPassword(): JSX.Element {
         },
       });
       const result = response.data;
-      console.log({ emailResult: result });
       if (result) {
         alert(`${email}로 임시 비밀번호가 발급되었습니다. 로그인 후 비밀번호를 변경해주세요.`);
       } else {
