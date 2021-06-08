@@ -153,6 +153,16 @@ export class UsersController {
     return this.usersService.checkEmail(email);
   }
 
+  // id, 이메일, 이름으로 가입된 회원이 있는지 확인
+  @Get('/check-exist-user')
+  async checkExistUser(
+    @Query('id') id: string,
+    @Query('name') name: string,
+    @Query('email') email: string,
+  ): Promise<boolean> {
+    return this.usersService.checkExistUser({ id, name, email });
+  }
+
   @Patch('/password')
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto,

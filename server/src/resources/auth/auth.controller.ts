@@ -43,7 +43,7 @@ export class AuthController {
   ) {}
 
   /**------------------------------------------------------------*/
-  // 이메일 인증 코드 요청
+  // 이메일 본인 인증 코드(회원가입용) 요청
   @Get('email/code')
   async sendVerificationCode(
     @Query('email') email: string,
@@ -51,13 +51,31 @@ export class AuthController {
     return this.emailVerificationService.sendVerificationCodeMail(email);
   }
 
-  // 이메일로 받은 인증코드 확인
+  // 이메일로 받은 본인인증코드 확인
   @Get('email/code/verify')
   async checkVerificationCode(
     @Query('email') email: string,
     @Query('code') code: string,
   ): Promise<any> {
     return this.emailVerificationService.checkVerificationCode(email, code);
+  }
+
+  // 이메일로 임시 비밀번호 발급 && 회원 비밀번호를 임시 비밀번호로 수정
+  @Get('email/temporary-password')
+  async sendTemporaryPassword(
+    @Query('email') email: string,
+    @Query('id') id: string,
+  ): Promise<any> {
+    // 임시 비밀번호 생성
+    const tempPassword = this.authService.createTempPassword();
+    // 이메일로 임시 비밀번호 전송
+    const emailSent = await this.emailVerificationService.sendTemporaryPassword(email, tempPassword);
+
+    // 이메일 코드 인증으로 가입한 유저의 userDI는 userId_mail의 형태로 저장하고 있음(RegistStepper.tsx)
+    const userDI = `${id}_${email}`;
+    // 유저 비밀번호를 임시 비밀번호로 변경하여 저장
+    const passwordChanged = await this.usersService.updatePW(userDI, tempPassword);
+    return emailSent && passwordChanged;
   }
   /**------------------------------------------------------------*/
 

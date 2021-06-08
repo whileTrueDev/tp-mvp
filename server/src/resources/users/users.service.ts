@@ -315,6 +315,23 @@ export class UsersService {
     return false;
   }
 
+  // 이메일, 이름, id로 유저 존재하는지 파악
+  async checkExistUser({ email, name, id }: {
+    email: string,
+    name: string,
+    id: string
+  }): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: {
+        userId: id,
+        name,
+        mail: email,
+      },
+    });
+    if (user) return true;
+    return false;
+  }
+
   // 본인인증의 결과가 인증이 되면,  해당 계정의 패스워드를 변경한다.
   async updatePW(userDI: string, password: string): Promise<boolean> {
     try {

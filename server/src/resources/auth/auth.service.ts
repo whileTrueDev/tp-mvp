@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import {
-  Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException,
+  Injectable, HttpException, HttpStatus, BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
@@ -16,6 +17,11 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
   ) {}
+
+  // 임시 비밀번호 생성 (비밀번호 8~16자)
+  public createTempPassword(length = 12): string {
+    return crypto.randomBytes(20).toString('hex').slice(0, length);
+  }
 
   private createAccessToken(payload: LogedinUser): string {
     return this.jwtService.sign({

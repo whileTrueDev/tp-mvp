@@ -14,16 +14,17 @@ export class EmailVerificationService {
 
   private verificationCodeValidHour = 1;
 
+  // 이메일 인증 위한 6자리 코드 생성
   private createEmailVerificationCode(length = 6): string {
     return crypto.randomBytes(20).toString('hex').slice(0, length);
   }
 
+  // 이메일 인증코드 테이블에 저장
   private async saveVerificationCode({ email, code }: {
     email: string,
      code: string,
   }): Promise<void> {
     try {
-      // 이메일 인증코드 테이블에 저장
       await this.emailCodeRepository.save({ email, code });
     } catch (error) {
       console.error(error);
@@ -31,11 +32,12 @@ export class EmailVerificationService {
     }
   }
 
+  // 이메일 인증코드 테이블에서 찾기
   private async findVerificationCode(email: string): Promise<EmailVerificationCodeEntity> {
-    // 이메일 인증코드 테이블에서 찾기
     return this.emailCodeRepository.findOne({ email });
   }
 
+  // 이메일 주소로 저장된 코드 데이터 삭제하기(회원가입 완료 후)
   async removeCodeEntityByEmail(email: string): Promise<void> {
     const existCode = await this.findVerificationCode(email);
     if (existCode) {
@@ -43,6 +45,7 @@ export class EmailVerificationService {
     }
   }
 
+  // 이메일 인증코드 보내기
   async sendVerificationCodeMail(email: string): Promise<any> {
     // 0 테이블에 해당 이메일로 생성된 코드가 있는지 확인
     const existCode = await this.findVerificationCode(email);
@@ -86,6 +89,7 @@ export class EmailVerificationService {
     }
   }
 
+  // 인증코드가 유효한지 확인
   async checkVerificationCode(email: string, code: string): Promise<any> {
     try {
       // 이메일 인증 테이블에서 code 찾기
@@ -100,6 +104,32 @@ export class EmailVerificationService {
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error verify code, email address: ${email}`);
+    }
+  }
+
+  // 이메일로 임시 비밀번호 발급
+  async sendTemporaryPassword(email: string, tempPassword: string): Promise<any> {
+    try {
+      await this.mailerService.sendMail({
+        to: email, // list of receivers
+        from: 'noreply-----@nestjs.com', // sender address
+        subject: '트루포인트 임시 비밀번호 발급 - 테스트', // Subject line
+        html: `
+        <h1>
+        트루포인트 임시 비밀번호 발급
+        </h1>
+        <hr />
+        <p>임시 비밀번호 : <p/>
+        <strong>${tempPassword}</strong>
+        <br />
+        <hr />
+        <p>해당 비밀번호로 로그인 후 비밀번호를 변경해주세요.</p>
+          `,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, `error in send temporary password email, address: ${email}`);
     }
   }
 }
