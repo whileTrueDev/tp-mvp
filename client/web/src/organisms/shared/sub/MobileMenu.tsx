@@ -85,24 +85,35 @@ export default function MobileMenu(props: MobileMenuProps): JSX.Element {
         </ListItem>
 
         {authContext.user.userId && authContext.accessToken ? (
-          <ListItem className={classes.menuItem}>
-            <div className={classes.userInterfaceWrapper}>
-              <HeaderLinks />
-            </div>
-          </ListItem>
+          <>
+            {/* <ListItem className={classes.menuItem}>
+              <div className={classes.userInterfaceWrapper}>
+                <HeaderLinks />
+              </div>
+            </ListItem> */}
+            <ListItem className={classes.menuItem}>
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.loginButton}
+                onClick={authContext.handleLogout}
+              >
+                로그아웃
+              </Button>
+            </ListItem>
+          </>
         ) : (
-          null
-        // <ListItem className={classes.menuItem}>
-        //   <Button
-        //     variant="contained"
-        //     color="secondary"
-        //     className={classes.loginButton}
-        //     component={Link}
-        //     to="/login"
-        //   >
-        //     로그인
-        //   </Button>
-        // </ListItem>
+          <ListItem className={classes.menuItem}>
+            <Button
+              variant="contained"
+              color="secondary"
+              className={classes.loginButton}
+              component={Link}
+              to="/login"
+            >
+              로그인
+            </Button>
+          </ListItem>
         )}
       </List>
     </SwipeableDrawer>

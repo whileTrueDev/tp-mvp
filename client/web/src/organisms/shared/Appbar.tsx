@@ -44,6 +44,7 @@ export default function AppBar({
     setMobileMoreAnchorEl(null);
   }
 
+  const { handleLogout } = authContext;
   const isLoggedIn = authContext.user.userId.length > 1 && authContext.accessToken;
   const links = [
     {
@@ -142,7 +143,7 @@ export default function AppBar({
                 </IconButton>
                 {
                   isLoggedIn
-                    ? <Button>로그아웃</Button>
+                    ? <Button variant="outlined" onClick={handleLogout}>로그아웃</Button>
                     : (
                       <Button
                         component={Link}
