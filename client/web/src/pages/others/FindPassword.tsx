@@ -1,5 +1,5 @@
 import React from 'react';
-import FindPasswordForm from '../../organisms/mainpage/login/FindPasswordForm';
+// import FindPasswordForm from '../../organisms/mainpage/login/FindPasswordForm';
 import LoginCommonLayout from '../../organisms/mainpage/login/LoginCommonLayout';
 import GetTemporaryPassword from './GetTemporaryPassword';
 
