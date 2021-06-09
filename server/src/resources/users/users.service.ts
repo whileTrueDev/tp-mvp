@@ -96,6 +96,30 @@ export class UsersService {
   }
 
   /**
+   * 특정 유저의 연동된 플랫폼 creatorId들의 정보 반환 (afreecaId, twitchId,,.)
+   * @param userId creatorId 얻고자 하는 유저id
+   */
+  async findOneCreatorIds(userId: string): Promise<string[]> {
+    const user = await this.usersRepository.findOne(userId, {
+      relations: ['twitch', 'afreeca', 'youtube'],
+    });
+
+    const creatorIds = [];
+
+    if (user.afreeca) {
+      creatorIds.push(user.afreeca.afreecaId);
+    }
+
+    if (user.twitch) {
+      creatorIds.push(user.twitch.twitchId);
+    }
+    if (user.youtube) {
+      creatorIds.push(user.youtube.youtubeId);
+    }
+    return creatorIds;
+  }
+
+  /**
    * 특정 유저의 연동된 플랫폼의 프로필 이미지 정보를 반환하는 메서드
    * @param userId 프로필 이미지 정보를 열람하고자 하는 유저 아이디
    */
