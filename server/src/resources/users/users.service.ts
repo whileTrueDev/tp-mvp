@@ -31,6 +31,7 @@ import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { UserDetailEntity } from './entities/userDetail.entity';
 import { EmailVerificationService } from '../auth/emailVerification.service';
+import { NaverUserInfo } from '../auth/auth.service';
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
@@ -215,6 +216,28 @@ export class UsersService {
     // throw new HttpException('ID is duplicated', HttpStatus.BAD_REQUEST);
   }
 
+  // sns 로그인 최초 로그인 시 유저 등록
+  async registNaverUser(user: NaverUserInfo): Promise<UserEntity> {
+    const naverUser = {
+      userId: user.naverId.slice(0, 20), // userId는 최대 20자 저장
+      userDI: `${user.naverId}_naver`,
+      nickName: user.nickname,
+      name: user.nickname,
+      mail: user.mail,
+      phone: '',
+      password: '',
+      roles: 'user',
+      birth: '',
+      gender: '',
+      marketingAgreement: false,
+      provider: 'naver',
+      naverId: user.naverId,
+    };
+
+    return this.usersRepository.save(naverUser);
+  }
+
+  // 관리자페이지에서 유저 등록
   async registerByAdmin(dto: RegisterUserByAdminDto): Promise<void> {
     // const hashedPassword = await bcrypt.hash(dto.password, 10);
 
@@ -799,6 +822,21 @@ export class UsersService {
         creatorName: target.creatorName,
       };
       await em.save(AfreecaActiveStreamsEntity, activeStreams);
+    });
+  }
+
+  // ****************** 소셜로그인 관련 *******************
+  // 
+  async findUserByProviderId(provider: string, id: string): Promise<UserEntity> {
+    const snsKey = {
+      naver: 'naverId',
+      kakao: 'kakaoId',
+    };
+    return this.usersRepository.findOne({
+      where: {
+        provider,
+        [snsKey[provider]]: id,
+      },
     });
   }
 }

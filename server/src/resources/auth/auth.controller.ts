@@ -13,6 +13,7 @@ import {
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import express from 'express';
+import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
@@ -26,13 +27,16 @@ import getFrontHost from '../../utils/getFrontHost';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
 import { UsersService } from '../users/users.service';
-import { AuthService } from './auth.service';
+import { AuthService, NaverUserInfo } from './auth.service';
 import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
 import { AfreecaLinker } from './strategies/afreeca.linker';
 import { EmailVerificationService } from './emailVerification.service';
 
+interface NaverCallbackRequest extends express.Request{
+  user: NaverUserInfo;
+}
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -307,5 +311,26 @@ export class AuthController {
       .catch((err) => {
         throw new Error(`${err.message}&platform=afreeca`);
       });
+  }
+
+  // *********** naver ******************
+  // Twitch Link start
+
+  @Get('naver')
+  @UseGuards(AuthGuard('naver'))
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  naver(): void {}
+
+  @Get('/naver/callback')
+  @UseGuards(AuthGuard('naver'))
+  async naverCallback(
+    @Req() req: NaverCallbackRequest,
+    @Res() res: express.Response,
+  ): Promise<any> {
+    const { user } = req;
+    const { user: userLoggedIn, accessToken, refreshToken } = await this.authService.naverLogin(user);
+
+    res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    res.redirect(`${getFrontHost()}/mypage/main`);
   }
 }

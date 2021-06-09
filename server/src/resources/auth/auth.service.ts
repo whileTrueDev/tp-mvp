@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import {
-  Injectable, HttpException, HttpStatus, BadRequestException,
+  Injectable, HttpException, HttpStatus,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
@@ -11,6 +11,14 @@ import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
+
+export interface NaverUserInfo{
+  naverId: string;
+  nickname: string;
+  mail: string;
+  profileImage?: string;
+  provider: string;
+}
 @Injectable()
 export class AuthService {
   constructor(
@@ -80,15 +88,6 @@ export class AuthService {
       userId: user.userId, refreshToken,
     });
     return { accessToken, refreshToken };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async googleLogin(req: any) {
-    if (!req.user) {
-      throw new BadRequestException('no user from google');
-    }
-
-    return req.user;
   }
 
   // Logout = DB에서 refresh token 삭제
@@ -209,5 +208,26 @@ export class AuthService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  // *******************************************
+  // 네이버 로그인
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async naverLogin(user: NaverUserInfo): Promise<any> {
+    // provider = naver 이고 naverId가 user.naverId인 값으로 유저 찾기
+    const existUser = await this.usersService.findUserByProviderId('naver', user.naverId);
+    if (existUser) {
+      // 있으면 로그인처리
+      const {
+        accessToken, refreshToken,
+      } = await this.login(existUser, false);
+      return { user: existUser, accessToken, refreshToken };
+    }
+    // 없으면 회원가입 후 로그인 처리
+    const newUser = await this.usersService.registNaverUser(user);
+    const {
+      accessToken, refreshToken,
+    } = await this.login(newUser, false);
+    return { user: newUser, accessToken, refreshToken };
   }
 }
