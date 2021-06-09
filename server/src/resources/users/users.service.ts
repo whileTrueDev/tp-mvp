@@ -807,14 +807,16 @@ export class UsersService {
   // ****************** 소셜로그인 관련 *******************
   // provider와 sns 회원번호로 가입된 계정 찾기
   async findUserByProviderId(provider: string, id: string): Promise<UserEntity> {
-    const snsKey = {
+    const sns = {
       naver: 'naverId',
       kakao: 'kakaoId',
     };
+    const snsIdColumnName = sns[provider];
+
     return this.usersRepository.findOne({
       where: {
         provider,
-        [snsKey[provider]]: id,
+        [snsIdColumnName]: id,
       },
     });
   }
@@ -838,7 +840,12 @@ export class UsersService {
       naverId: user.naverId,
     };
 
-    return this.usersRepository.save(naverUser);
+    try {
+      return this.usersRepository.save(naverUser);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in save naver login user');
+    }
   }
 
   // 카카오 로그인 최초 로그인 시 유저 등록
@@ -860,6 +867,11 @@ export class UsersService {
       kakaoId: user.kakaoId,
     };
 
-    return this.usersRepository.save(kakaoUser);
+    try {
+      return this.usersRepository.save(kakaoUser);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in save naver login user');
+    }
   }
 }
