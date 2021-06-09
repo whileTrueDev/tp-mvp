@@ -14,6 +14,7 @@ import { AfreecaLinker } from './strategies/afreeca.linker';
 import { EmailVerificationCodeEntity } from './entities/emailVerification.entity';
 import { EmailVerificationService } from './emailVerification.service';
 import { NaverStrategy } from './strategies/naver.strategy';
+import { KakaoStrategy } from './strategies/kakao.strategy';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { NaverStrategy } from './strategies/naver.strategy';
   ],
   providers: [
     AuthService, LocalStrategy, EmailVerificationService,
-    JwtStrategy, TwitchStrategy, YoutubeStrategy, AfreecaLinker, NaverStrategy,
+    JwtStrategy, TwitchStrategy, YoutubeStrategy, AfreecaLinker,
+    NaverStrategy, KakaoStrategy,
   ],
   controllers: [AuthController],
   exports: [AuthService, AfreecaLinker, EmailVerificationService],
