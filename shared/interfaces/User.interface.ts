@@ -46,4 +46,6 @@ export interface User {
   provider?: string;
 
   naverId?: string;
+
+  kakaoId?: string;
 }
