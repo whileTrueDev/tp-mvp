@@ -203,7 +203,8 @@ export default function LoginForm(): JSX.Element {
         {/* ********************************************** */}
 
         <div className="social-login-section">
-          <Button fullWidth variant="outlined" href={`${getApiHost()}/auth/login/google`}>구글 아이디로 로그인</Button>
+          <Button fullWidth variant="outlined" href={`${getApiHost()}/auth/kakao`}>카카오 아이디로 로그인</Button>
+          <Button fullWidth variant="outlined" href={`${getApiHost()}/auth/naver`}>네이버 아이디로 로그인</Button>
         </div>
       </form>
     </>
