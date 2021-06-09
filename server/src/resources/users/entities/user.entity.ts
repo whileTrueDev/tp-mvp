@@ -83,4 +83,10 @@ export class UserEntity implements User {
   @OneToOne(() => UserDetailEntity, (detail) => detail.user)
   @JoinColumn()
   detail?: UserDetailEntity;
+
+  @Column({ default: 'local', comment: 'sns 로그인시 해당 플랫폼(kakao, naver ...), 트루포인트 회원은 local' })
+  provider: string;
+
+  @Column({ nullable: true, comment: '네이버 로그인으로 가입된 회원의 naverid' })
+  naverId?: string;
 }

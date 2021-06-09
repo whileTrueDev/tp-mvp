@@ -42,4 +42,8 @@ export interface User {
   subscribe?: Subscribe[];
 
   detail?: UserDetail;
+
+  provider?: string;
+
+  naverId?: string;
 }
