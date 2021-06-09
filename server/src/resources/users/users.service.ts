@@ -463,6 +463,7 @@ export class UsersService {
           'users.nickName AS nickname',
         ])
         .where('streams.platform = :platform', { platform })
+        .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
         .groupBy('streams.creatorId')
         .orderBy('MAX(streams.endDate)', 'DESC')
         .getRawMany();
