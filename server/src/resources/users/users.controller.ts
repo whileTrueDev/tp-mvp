@@ -233,7 +233,11 @@ export class UsersController {
   async create(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<UserEntity> {
-    return this.usersService.register(createUserDto);
+    const createUserDtoLocal = {
+      ...createUserDto,
+      provider: 'local', // sns로그인이 아닌 트루포인트 웹 가입시 provider = local로 저장함
+    };
+    return this.usersService.register(createUserDtoLocal);
   }
 
   @Post('/byadmin')
