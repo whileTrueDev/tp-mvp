@@ -84,4 +84,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     flex: 1,
     textAlign: 'right',
   },
+  listEmpty: {
+    paddingTop: theme.spacing(3),
+  },
 }));

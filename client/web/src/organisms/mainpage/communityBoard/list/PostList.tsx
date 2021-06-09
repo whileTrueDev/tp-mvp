@@ -305,11 +305,11 @@ function PostList(props: PostListProps): JSX.Element {
         {!loading
           && posts.length === 0
           && (
-            <Typography align="center">데이터가 없습니다...</Typography>
+            <Typography className={classes.listEmpty} align="center">작성된 게시글이 존재하지 않습니다.</Typography>
           )}
 
         {/* 로딩중인 경우 */}
-        {loading ? <CenterLoading /> : null}
+        {loading ? <CenterLoading className={classes.listEmpty} /> : null}
       </div>
     </div>
   );
