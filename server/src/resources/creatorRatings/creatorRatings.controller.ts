@@ -1,5 +1,5 @@
 import {
-  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, Req, Res, ValidationPipe,
+  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, Res, UseGuards, ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,6 +9,7 @@ import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interfac
 import { CreatorRatingsService } from './creatorRatings.service';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformType } from '../rankings/rankings.service';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 export type AdminRating = {
   createDate: string,
@@ -51,11 +52,11 @@ export class CreatorRatingsController {
    * @returns 
    */
   @Post('/:creatorId')
+  @UseGuards(JwtAuthGuard)
   createRatings(
     @Param('creatorId') creatorId: string,
     @Ip() ip: string,
     @Body(ValidationPipe) ratingPostDto: RatingPostDto,
-    @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<CreatorRatingsEntity> {
     // 로그인하여 userId를 보낸 경우 || 이미 평점을 매겨서 받은 tempId로 보낸 경우

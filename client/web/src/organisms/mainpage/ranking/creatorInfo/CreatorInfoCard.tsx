@@ -22,25 +22,6 @@ import ScoreBar from '../topten/ScoreBar';
 import StarRating from './StarRating';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 
-const KEY = '_tptrid';
-const getCookieValue = (key: string): string => {
-  const cookieKey = `${key}=`;
-  let result = '';
-  const cookieArr = document.cookie.split(';');
-
-  for (let i = 0; i < cookieArr.length; i += 1) {
-    if (cookieArr[i][0] === ' ') {
-      cookieArr[i] = cookieArr[i].substring(1);
-    }
-
-    if (cookieArr[i].indexOf(cookieKey) === 0) {
-      result = cookieArr[i].slice(cookieKey.length, cookieArr[i].length);
-      return result;
-    }
-  }
-  return result;
-};
-
 export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
   user?: User;
   updateAverageRating?: () => void
@@ -79,7 +60,7 @@ export function ProfileSection({
 
   useEffect(() => {
     const params = {
-      userId: localStorage.getItem(KEY),
+      userId: authContext.user.userId,
     };
     axios.get(`ratings/${creatorId}`, {
       params,
@@ -90,7 +71,7 @@ export function ProfileSection({
         }
       })
       .catch((error) => console.error(error));
-  }, [creatorId]);
+  }, [authContext.user.userId, creatorId]);
   /**
    * 평점 생성, 수정 핸들러 함수
    * 평점을 매기고, 평균평점을 새로 불러온다
@@ -103,15 +84,10 @@ export function ProfileSection({
     } else {
       axios.post(`ratings/${creatorId}`, {
         rating: score,
-        userId: authContext.user.userId || localStorage.getItem(KEY) || undefined,
+        userId: authContext.user.userId,
         platform,
       })
         .then(() => {
-          const tempId = localStorage.getItem(KEY);
-          if (!tempId) {
-            localStorage.setItem(KEY, getCookieValue(KEY));
-          }
-
           if (updateAverageRating) {
             updateAverageRating();
           }
@@ -135,7 +111,7 @@ export function ProfileSection({
   const cancelRatingHandler = useCallback((cb?: () => void) => {
     axios.delete(`ratings/${creatorId}`, {
       data: {
-        userId: authContext.user.userId || localStorage.getItem(KEY) || undefined,
+        userId: authContext.user.userId,
       },
     })
       .then(() => {

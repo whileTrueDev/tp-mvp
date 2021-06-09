@@ -1,8 +1,12 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { Story, Meta } from '@storybook/react';
 import StarRating, { StarRatingProps } from '../organisms/mainpage/ranking/creatorInfo/StarRating';
 
 export default {
+  decorators: [
+    (story) => (<MemoryRouter>{story()}</MemoryRouter>),
+  ],
   title: 'organisms/StarRating',
   component: StarRating,
   argTypes: {
