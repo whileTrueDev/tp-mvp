@@ -11,11 +11,23 @@ import { UsersService } from '../users/users.service';
 import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
+import { UserEntity } from '../users/entities/user.entity';
 
+// naver strategy 통해서 리턴되는 req.user
 export interface NaverUserInfo{
   naverId: string;
   nickname: string;
   mail: string;
+  profileImage?: string;
+  provider: string;
+}
+
+// kakao strategy 통해 리턴되는 req.user
+export interface KakaoUserInfo{
+  kakaoId: string;
+  name: string;
+  nickname: string;
+  mail: string | undefined;
   profileImage?: string;
   provider: string;
 }
@@ -213,7 +225,11 @@ export class AuthService {
   // *******************************************
   // 네이버 로그인
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async naverLogin(user: NaverUserInfo): Promise<any> {
+  async naverLogin(user: NaverUserInfo): Promise<{
+    user: UserEntity,
+    accessToken: string,
+    refreshToken: string
+  }> {
     // provider = naver 이고 naverId가 user.naverId인 값으로 유저 찾기
     const existUser = await this.usersService.findUserByProviderId('naver', user.naverId);
     if (existUser) {
@@ -225,6 +241,24 @@ export class AuthService {
     }
     // 없으면 회원가입 후 로그인 처리
     const newUser = await this.usersService.registNaverUser(user);
+    const {
+      accessToken, refreshToken,
+    } = await this.login(newUser, false);
+    return { user: newUser, accessToken, refreshToken };
+  }
+
+  // *******************************************
+  // 카카오 로그인
+  async kakaoLogin(user: KakaoUserInfo): Promise<{ user: UserEntity; accessToken: string; refreshToken: string; }> {
+    const existUser = await this.usersService.findUserByProviderId('kakao', user.kakaoId);
+    if (existUser) {
+      const {
+        accessToken, refreshToken,
+      } = await this.login(existUser, false);
+      return { user: existUser, accessToken, refreshToken };
+    }
+
+    const newUser = await this.usersService.registKakaoUser(user);
     const {
       accessToken, refreshToken,
     } = await this.login(newUser, false);

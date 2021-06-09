@@ -27,7 +27,7 @@ import getFrontHost from '../../utils/getFrontHost';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
 import { UsersService } from '../users/users.service';
-import { AuthService, NaverUserInfo } from './auth.service';
+import { AuthService, NaverUserInfo, KakaoUserInfo } from './auth.service';
 import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
@@ -36,6 +36,9 @@ import { EmailVerificationService } from './emailVerification.service';
 
 interface NaverCallbackRequest extends express.Request{
   user: NaverUserInfo;
+}
+interface kakaoCallbackRequest extends express.Request{
+  user: KakaoUserInfo;
 }
 @Controller('auth')
 export class AuthController {
@@ -314,21 +317,46 @@ export class AuthController {
   }
 
   // *********** naver ******************
-  // Twitch Link start
-
+  // 네이버 로그인
   @Get('naver')
   @UseGuards(AuthGuard('naver'))
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   naver(): void {}
 
-  @Get('/naver/callback')
+  @Get('naver/callback')
   @UseGuards(AuthGuard('naver'))
   async naverCallback(
     @Req() req: NaverCallbackRequest,
     @Res() res: express.Response,
   ): Promise<any> {
     const { user } = req;
-    const { user: userLoggedIn, accessToken, refreshToken } = await this.authService.naverLogin(user);
+    const {
+      // user: userLoggedIn, 
+      // accessToken, 
+      refreshToken,
+    } = await this.authService.naverLogin(user);
+
+    res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    res.redirect(`${getFrontHost()}/mypage/main`);
+  }
+
+  // *********** kakao ******************
+  // 카카오 로그인
+  @Get('kakao')
+  @UseGuards(AuthGuard('kakao'))
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  kakao(): void{}
+
+  @Get('kakao/callback')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoCallback(
+    @Req() req: kakaoCallbackRequest,
+    @Res() res: express.Response,
+  ): Promise<void> {
+    const { user } = req;
+    const {
+      refreshToken,
+    } = await this.authService.kakaoLogin(user);
 
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     res.redirect(`${getFrontHost()}/mypage/main`);
