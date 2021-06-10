@@ -3,8 +3,10 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
   Chip, Divider, Grid, Typography,
 } from '@material-ui/core';
+import classnames from 'classnames';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import dateExpression from '../../../../utils/dateExpression';
 
 const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
   postInfoCard: {
@@ -19,7 +21,7 @@ const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
     marginBottom: theme.spacing(1),
     fontSize: theme.typography.h5.fontSize,
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.spacing(2),
+      fontSize: theme.spacing(2.2),
     },
   },
   group: {
@@ -45,6 +47,10 @@ const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
+  date: {
+    // color: theme.palette.text.secondary,
+    fontSize: theme.spacing(1.8),
+  },
 }));
 
 interface PostProps {
@@ -69,7 +75,12 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
             {`${nickname}`}
           </Typography>
           <Divider orientation="vertical" flexItem />
-          <Typography className="text">{createDate ? new Date(createDate).toLocaleString() : ''}</Typography>
+          <Typography className={classnames('text', cardClass.date)}>
+            {createDate ? dateExpression({
+              compoName: 'post-date',
+              createdAt: createDate,
+            }) : ''}
+          </Typography>
         </Grid>
         <Grid item className={cardClass.group} xs={12} sm={6} container justify="flex-end">
           <Typography className="text">{`조회 ${hit}`}</Typography>
