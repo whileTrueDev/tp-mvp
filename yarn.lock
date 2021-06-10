@@ -4022,6 +4022,14 @@
     "@types/passport" "*"
     "@types/passport-strategy" "*"
 
+"@types/passport-naver@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@types/passport-naver/-/passport-naver-0.2.0.tgz#9b90bce507a191a7d6f420b682b1659e647532ce"
+  integrity sha512-1A/asqYIrh+9CCN6wT8WKo/OO5LUkMPOvi2yuszYaGaixljpl6yOCAEq0EMdIMrCgDtiUYRA+xMNczZpxG7ruQ==
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+
 "@types/passport-oauth2@*", "@types/passport-oauth2@^1.4.9":
   version "1.4.10"
   resolved "https://registry.yarnpkg.com/@types/passport-oauth2/-/passport-oauth2-1.4.10.tgz#456fa1a9b0f2c32193c4b68c8aee453374764ae8"
