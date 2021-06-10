@@ -16,6 +16,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { COMMON_APP_BAR_HEIGHT, SIDE_BAR_WIDTH } from '../../../../assets/constants';
 import { MypageRoute } from '../../../../pages/mypage/routes';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
 
 const useStyles = makeStyles((theme) => createStyles({
   root: { display: 'flex' },
@@ -96,7 +97,10 @@ export default function SidebarWithNavbar({
 }: SidebarWithNavbarProps): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
+  const {user} = usePublicMainUser((state) => state);
   const history = useHistory();
+
+  const currentUserId = user.userId || auth.user.userId;
 
   const goToUrl = useCallback((layout: string, path: string) => {
     let resultUrl;
@@ -259,9 +263,9 @@ export default function SidebarWithNavbar({
           </IconButton>
 
           {/* 구독 유저 선택 - CBT 에서는 제거되는 기능. */}
-          {auth.user.userId && (
+          {currentUserId && (
           <Typography variant="h6" className={classes.titleWrapper}>
-            <span className={classes.title}>{auth.user.userId}</span>
+            <span className={classes.title}>{currentUserId}</span>
             &nbsp;
             <span>님</span>
           </Typography>
