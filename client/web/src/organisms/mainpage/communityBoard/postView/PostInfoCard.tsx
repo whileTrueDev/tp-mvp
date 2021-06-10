@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
-  Card, Chip, Divider, Grid, Typography,
+  Chip, Divider, Grid, Typography,
 } from '@material-ui/core';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
@@ -19,7 +19,7 @@ const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
     marginBottom: theme.spacing(1),
     fontSize: theme.typography.h5.fontSize,
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.spacing(1.5),
+      fontSize: theme.spacing(2),
     },
   },
   group: {
@@ -41,7 +41,10 @@ const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
       },
     },
   },
-
+  divider: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 interface PostProps {
@@ -57,12 +60,14 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
   const cardClass = usePostInfoCardStyle();
 
   return (
-
-    <Card className={cardClass.postInfoCard}>
+    <div className={cardClass.postInfoCard}>
       <Typography variant="h5" className={cardClass.title}>{title}</Typography>
+      <Divider orientation="horizontal" className={cardClass.divider} />
       <Grid container justify="space-between">
         <Grid item className={cardClass.group} xs={12} sm={6}>
-          <Typography className="text">{`${nickname}`}</Typography>
+          <Typography className="text">
+            {`${nickname}`}
+          </Typography>
           <Divider orientation="vertical" flexItem />
           <Typography className="text">{createDate ? new Date(createDate).toLocaleString() : ''}</Typography>
         </Grid>
@@ -80,7 +85,8 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
           </div>
         </Grid>
       </Grid>
-    </Card>
+      <Divider orientation="horizontal" className={cardClass.divider} />
+    </div>
   );
 }
 

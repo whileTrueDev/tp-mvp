@@ -1,6 +1,7 @@
 import {
   Button, Container, Paper, Typography,
 } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 // 타입정의
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
@@ -12,7 +13,6 @@ import React, {
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 // 스타일
 import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
-import CenterLoading from '../../../atoms/Loading/CenterLoading';
 // 하위 컴포넌트
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useBoardState from '../../../utils/hooks/useBoardListState';
@@ -216,22 +216,20 @@ export default function CommunityPostView(): JSX.Element {
       <BoardTitle platform={platform} title={`${PLATFORM_NAMES[platform]}게시판`} />
 
       {!postLoading && !!currentPost ? (
-        <>
-          <Paper className={classes.viewer}>
-            <PostInfoCard
-              post={currentPost}
-              repliesCount={replies ? replies.total : 0}
-            />
-            <div ref={viewerRef} className={SUN_EDITOR_VIEWER_CLASSNAME} />
-            <PostRecommandButtons
-              isMobile={isMobile}
-              currentPost={currentPost}
-              postId={postId}
-            />
-          </Paper>
-        </>
+        <Paper className={classes.viewer}>
+          <PostInfoCard
+            post={currentPost}
+            repliesCount={replies ? replies.total : 0}
+          />
+          <div ref={viewerRef} className={SUN_EDITOR_VIEWER_CLASSNAME} />
+          <PostRecommandButtons
+            isMobile={isMobile}
+            currentPost={currentPost}
+            postId={postId}
+          />
+        </Paper>
       ) : (
-        <CenterLoading />
+        <Skeleton variant="rect" height="280px" />
       )}
 
       <div className={classes.buttonsContainer}>
