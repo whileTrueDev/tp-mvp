@@ -137,8 +137,10 @@ export class CreatorRatingsController {
   @Get('/mypage')
   getRatingListByUserId(
     @Query('userId') userId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('itemPerPage', new DefaultValuePipe(12), ParseIntPipe) itemPerPage: number,
   ): Promise<any> {
-    return this.ratingsService.findRatingListByUserId(userId);
+    return this.ratingsService.findRatingListByUserId({ userId, page, itemPerPage });
   }
 
   /**

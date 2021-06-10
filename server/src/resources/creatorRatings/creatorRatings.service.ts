@@ -50,14 +50,20 @@ export class CreatorRatingsService {
     }
   }
 
-  async findRatingListByUserId(userId: string): Promise<any> {
+  async findRatingListByUserId({ userId, page, itemPerPage }: {userId: string, page: number, itemPerPage: number}): Promise<any> {
     // userId로 매겨진 rating record
-    const data = await this.ratingsRepository.createQueryBuilder('ratings')
+    const query = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
         'ratings.rating AS rating',
         'ratings.creatorId AS creatorId',
         'ratings.platform AS platform',
       ])
+      .where('ratings.userId = :userId', { userId });
+
+    const count = await query.clone().getCount();
+    const totalPage = Math.ceil(count / itemPerPage);
+
+    const data = await query
       .addSelect([
         'afreeca.afreecaStreamerName AS afreecaStreamerName',
         'afreeca.logo AS afreecaLogo',
@@ -68,8 +74,9 @@ export class CreatorRatingsService {
       ])
       .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = ratings.creatorId')
       .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = ratings.creatorId')
-      .where('ratings.userId = :userId', { userId })
       .orderBy('ratings.createDate', 'DESC')
+      .offset(itemPerPage * (page - 1))
+      .limit(itemPerPage)
       .getRawMany();
 
     const result = data.map((d) => ({
@@ -80,7 +87,10 @@ export class CreatorRatingsService {
       creatorProfileImage: d.platform === 'afreeca' ? d.afreecaLogo : d.twitchLogo,
     }));
 
-    return result;
+    return {
+      hasMore: page < totalPage,
+      creators: result,
+    };
   }
 
   /**
