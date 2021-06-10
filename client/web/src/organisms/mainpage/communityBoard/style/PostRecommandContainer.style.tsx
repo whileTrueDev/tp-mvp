@@ -8,9 +8,9 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(1, 0),
   },
   recommendButton: {
-    [theme.breakpoints.down('sm')]: {
-      '& .buttonText': {
-        paddingLeft: theme.spacing(0.3),
+    '& .buttonText': {
+      paddingLeft: theme.spacing(0.3),
+      [theme.breakpoints.down('sm')]: {
         fontSize: theme.spacing(1.4),
       },
     },
@@ -29,8 +29,9 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     marginBottom: theme.spacing(2),
   },
   recommandText: {
+    fontSize: theme.spacing(2.4),
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.spacing(1.7),
+      fontSize: theme.spacing(1.6),
     },
   },
 }));

@@ -111,8 +111,8 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
           color="primary"
         >
           <img
-            width={isMobile ? 20 : 36}
-            height={isMobile ? 20 : 36}
+            width={isMobile ? 16 : 32}
+            height={isMobile ? 16 : 32}
             src="/images/rankingPage/thumb_up.png"
             alt="추천"
           />
@@ -126,8 +126,8 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
           color="default"
         >
           <img
-            width={isMobile ? 20 : 36}
-            height={isMobile ? 20 : 36}
+            width={isMobile ? 16 : 32}
+            height={isMobile ? 16 : 32}
             src="/images/rankingPage/thumb_down.png"
             alt="비추천"
           />
