@@ -1,8 +1,7 @@
 import {
   Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, Res, UseGuards, ValidationPipe,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { Response } from 'express';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingInfoRes, CreatorAverageRatings, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interface';
@@ -24,12 +23,6 @@ export class CreatorRatingsController {
   constructor(
     private readonly ratingsService: CreatorRatingsService,
   ) {}
-
-  private TEMP_ID_KEY = '_tptrid';
-
-  private getTempID(request: Request): string|undefined {
-    return request.cookies[this.TEMP_ID_KEY];
-  }
 
   /**
    * 관리자페이지에서 방송인에게 평점 매기기 - 
@@ -59,17 +52,8 @@ export class CreatorRatingsController {
     @Body(ValidationPipe) ratingPostDto: RatingPostDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<CreatorRatingsEntity> {
-    // 로그인하여 userId를 보낸 경우 || 이미 평점을 매겨서 받은 tempId로 보낸 경우
-    if (ratingPostDto.userId) {
-      return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
-    }
-
-    // 로그인 안하고 tempId도 없는경우
-    let ratingDtoWithTempId = { ...ratingPostDto };
-    const newTempId = uuidv4();
-    response.cookie(this.TEMP_ID_KEY, newTempId);
-    ratingDtoWithTempId = { ...ratingDtoWithTempId, userId: newTempId };
-    return this.ratingsService.createRatings(creatorId, ratingDtoWithTempId, ip);
+  // 로그인하여 userId를 보낸 경우
+    return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
   }
 
   /**
@@ -151,6 +135,18 @@ export class CreatorRatingsController {
   }
 
   /**
+   * userId로 매긴 평점과 크리에이터 목록 가져오기
+   * @param userId 
+   * @returns 
+   */
+  @Get('/mypage')
+  getRatingListByUserId(
+    @Query('userId') userId: string,
+  ): Promise<any> {
+    return this.ratingsService.findRatingListByUserId(userId);
+  }
+
+  /**
    * 해당ip를 가진 유저가 creatorId에 매긴 평점 조회
    * 
    * @param ip 
@@ -159,10 +155,9 @@ export class CreatorRatingsController {
    */
   @Get('/:creatorId')
   getOneRating(
-    @Ip() ip: string,
     @Param('creatorId') creatorId: string,
     @Query('userId') userId: string,
   ): Promise<{score: number} | false> {
-    return this.ratingsService.findOneRating({ ip, creatorId, userId });
+    return this.ratingsService.findOneRating({ creatorId, userId });
   }
 }

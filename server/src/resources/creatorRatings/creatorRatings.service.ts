@@ -46,6 +46,39 @@ export class CreatorRatingsService {
     }
   }
 
+  async findRatingListByUserId(userId: string): Promise<any> {
+    // userId로 매겨진 rating record
+    const data = await this.ratingsRepository.createQueryBuilder('ratings')
+      .select([
+        'ratings.rating AS rating',
+        'ratings.creatorId AS creatorId',
+        'ratings.platform AS platform',
+      ])
+      .addSelect([
+        'afreeca.afreecaStreamerName AS afreecaStreamerName',
+        'afreeca.logo AS afreecaLogo',
+      ])
+      .addSelect([
+        'twitch.twitchStreamerName AS twitchStreamerName',
+        'twitch.logo AS twitchLogo',
+      ])
+      .leftJoin(PlatformAfreecaEntity, 'afreeca', 'afreeca.afreecaId = ratings.creatorId')
+      .leftJoin(PlatformTwitchEntity, 'twitch', 'twitch.twitchId = ratings.creatorId')
+      .where('ratings.userId = :userId', { userId })
+      .orderBy('ratings.createDate', 'DESC')
+      .getRawMany();
+
+    const result = data.map((d) => ({
+      rating: d.rating,
+      platform: d.platform,
+      creatorId: d.creatorId,
+      creatorDisplayName: d.platform === 'afreeca' ? d.afreecaStreamerName : d.twitchStreamerName,
+      creatorProfileImage: d.platform === 'afreeca' ? d.afreecaLogo : d.twitchLogo,
+    }));
+
+    return result;
+  }
+
   /**
    * creatorId와 userIp로 평점데이터를 찾아보고
    * 이미 평점을 매긴 경우 평점값을 수정하고,
@@ -148,8 +181,7 @@ export class CreatorRatingsService {
    * @param creatorId 
    * @returns 
    */
-  async findOneRating({ ip, creatorId, userId }: {
-    ip: string,
+  async findOneRating({ creatorId, userId }: {
     creatorId: string,
     userId?: string | undefined
   }): Promise<{score: number} | false> {
@@ -157,7 +189,6 @@ export class CreatorRatingsService {
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
-          userIp: ip,
           creatorId,
           userId,
         },
