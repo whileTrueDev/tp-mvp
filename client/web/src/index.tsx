@@ -42,6 +42,7 @@ import Ranking from './pages/mainpage/Ranking';
 import YoutubeHighlightList from './pages/mainpage/YoutubeHighlightList';
 import SearchCreator from './pages/mainpage/SearchCreator';
 import useAutoLogin from './utils/hooks/useAutoLogin';
+import UserInfoPage from './pages/mypage/UserInfoPage';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Index(): JSX.Element {
@@ -131,7 +132,8 @@ function Index(): JSX.Element {
               <Route path="/creator-search" component={SearchCreator} />
               <Route exact path="/highlight-list" component={YoutubeHighlightList} />
               <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
-              <Route path="/mypage" component={Mypage} />
+              {/* <Route path="/mypage" component={Mypage} /> */}
+              <Route path="/mypage" component={UserInfoPage} />
               <Route component={PageNotFound} />
             </Switch>
             {/* 페이지 컴포넌트 */}
