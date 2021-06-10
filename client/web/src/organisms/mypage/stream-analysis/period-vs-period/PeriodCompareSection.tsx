@@ -33,6 +33,7 @@ import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 // attoms snackbar
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {
@@ -50,6 +51,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
 
   const { enqueueSnackbar } = useSnackbar();
   const auth = useAuthContext();
+  const {user} = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
 
   /* 다이얼로그 */
   const baseDialog = useDialog();
@@ -178,7 +180,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   React.useEffect(() => {
     if (basePeriod[0] && basePeriod[1]) {
       const searchParam: SearchCalendarStreams = {
-        userId: exampleMode ? 'sal_gu' : auth.user.userId,
+        userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
         startDate: basePeriod[0].toISOString(),
         endDate: basePeriod[1].toISOString(),
       };
@@ -187,7 +189,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         const result = res.data.map((row) => ({
           ...row,
-          title: '예시 방송1 입니다',
+          title: exampleMode ? '예시 방송1 입니다' : row.title,
           isRemoved: false,
         }));
         setBaseStreamsList(result);
@@ -197,12 +199,12 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         }
       });
     }
-  }, [exampleMode, basePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, basePeriod, auth.user, user.userId, excuteGetStreams, enqueueSnackbar]);
 
   React.useEffect(() => {
     if (comparePeriod[0] && comparePeriod[1]) {
       const searchParam: SearchCalendarStreams = {
-        userId: exampleMode ? 'sal_gu' : auth.user.userId,
+        userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
         startDate: comparePeriod[0].toISOString(),
         endDate: comparePeriod[1].toISOString(),
       };
@@ -211,7 +213,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
         const result = res.data.map((row) => ({
           ...row,
-          title: '예시 방송2 입니다',
+          title: exampleMode ? '예시 방송2 입니다' : row.title,
           isRemoved: false,
         }));
         setCompareStreamsList(result);
@@ -221,7 +223,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         }
       });
     }
-  }, [exampleMode, comparePeriod, auth.user, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, comparePeriod, auth.user, user.userId, excuteGetStreams, enqueueSnackbar]);
 
   return (
     <div className={classes.root}>
