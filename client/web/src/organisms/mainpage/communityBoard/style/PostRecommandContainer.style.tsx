@@ -10,7 +10,8 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
   recommendButton: {
     [theme.breakpoints.down('sm')]: {
       '& .buttonText': {
-        fontSize: theme.spacing(1.5),
+        paddingLeft: theme.spacing(0.3),
+        fontSize: theme.spacing(1.4),
       },
     },
   },
@@ -26,5 +27,10 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: theme.spacing(2),
+  },
+  recommandText: {
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.7),
+    },
   },
 }));

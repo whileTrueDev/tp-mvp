@@ -102,38 +102,38 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
   return (
     <div className={classes.recommendContainer}>
       <div className={classes.recommendButtons}>
-        <Typography>{recommendCount || (currentPost.recommend) || 0}</Typography>
+        <Typography className={classes.recommandText}>{recommendCount || (currentPost.recommend) || 0}</Typography>
         <Button
-          size={isMobile ? 'small' : undefined}
+          size="small"
           className={classnames(classes.recommendButton)}
           onClick={handleRecommend}
           variant="contained"
           color="primary"
         >
           <img
-            width={isMobile ? 24 : 36}
-            height={isMobile ? 24 : 36}
+            width={isMobile ? 20 : 36}
+            height={isMobile ? 20 : 36}
             src="/images/rankingPage/thumb_up.png"
             alt="추천"
           />
           <Typography className="buttonText">추천</Typography>
         </Button>
         <Button
-          size={isMobile ? 'small' : undefined}
+          size="small"
           className={classnames(classes.recommendButton, 'not')}
           onClick={handleNotRecommend}
           variant="contained"
           color="default"
         >
           <img
-            width={isMobile ? 24 : 36}
-            height={isMobile ? 24 : 36}
+            width={isMobile ? 20 : 36}
+            height={isMobile ? 20 : 36}
             src="/images/rankingPage/thumb_down.png"
             alt="비추천"
           />
           <Typography className="buttonText">비추</Typography>
         </Button>
-        <Typography>{notRecommendCount || (currentPost.notRecommendCount) || 0}</Typography>
+        <Typography className={classes.recommandText}>{notRecommendCount || (currentPost.notRecommendCount) || 0}</Typography>
       </div>
     </div>
   );
