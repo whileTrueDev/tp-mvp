@@ -92,8 +92,8 @@ export default function StarRating({
 
   const authContext = useAuthContext();
   const { user, accessToken } = authContext;
-  const isLoggedIn = !!user.userId && !!accessToken;
 
+  const isLoggedIn = !!user.userId && !!accessToken;
   // 로그인 필요한 기능임 알리는 dialog 관련
   const [loginRequiredDialogOpen, setLoginRequiredDialogOpen] = useState<boolean>(false);
   const handleLoginRequestDialogOpen = () => {
@@ -114,7 +114,7 @@ export default function StarRating({
       }
     } else if (createRatingHandler) {
       setEvaluated(true);
-      createRatingHandler(newValue * 2 || null, handleLoginRequestDialogOpen);
+      createRatingHandler(newValue * 2 || null, handleLoginRequiredDialogClose);
     }
     setValue(newValue || 0);
   }, [cancelRatingHandler, createRatingHandler, isLoggedIn]);

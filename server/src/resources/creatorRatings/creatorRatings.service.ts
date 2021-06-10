@@ -29,15 +29,19 @@ export class CreatorRatingsService {
 
   /**
    * 관리자페이지에서 평점 생성 요청시
-   * userId : truepointAdmin
+   * userId : truepointAdmin_{randomString}
    * 인 데이터를 CreatorRatingsEntity에 생성
    */
   async createRatingByAdmin(data: AdminRating[]): Promise<any> {
     try {
+      const values = data.map((d) => ({
+        ...d,
+        userId: `${d.userId}_${d.userIp}`,
+      }));
       const result = await this.ratingsRepository.createQueryBuilder('rating')
         .insert()
         .values([
-          ...data,
+          ...values,
         ])
         .execute();
       return result;
@@ -91,25 +95,23 @@ export class CreatorRatingsService {
   async createRatings(creatorId: string, ratingPostDto: RatingPostDto, ip: string): Promise<CreatorRatingsEntity> {
     const { userId, rating, platform } = ratingPostDto;
 
-    // 해당 creator가 존재하는 경우 평점을 생성한다
-    // 요청 ip로 이미 매겨진 평점이 있는경우 이미 존재하는 평점을 수정한다
+    // 해당 userId로 이미 매겨진 평점이 있는경우, 이미 존재하는 평점을 수정한다
     try {
       const exRating = await this.ratingsRepository.findOne({
-        where: { userIp: ip, creatorId, userId },
+        where: { creatorId, userId },
       });
 
       if (exRating) {
         const updatedRating = await this.ratingsRepository.save({
           ...exRating,
           rating,
-          userId: userId || null,
         });
         return updatedRating;
       }
       const newRating = await this.ratingsRepository.save({
         creatorId,
         userIp: ip,
-        userId: userId || null,
+        userId,
         rating,
         platform,
       });
@@ -121,16 +123,13 @@ export class CreatorRatingsService {
   }
 
   /**
-   * creatorId와 userIp로 평점데이터를 찾아서 삭제한다
-   * @param creatorId 
-   * @param ip 
-   * @returns 
+   * creatorId와 userId로 평점데이터를 찾아서 삭제한다
    */
-  async deleteRatings(creatorId: string, ip: string, userId?: string): Promise<string> {
+  async deleteRatings(creatorId: string, userId: string): Promise<string> {
     try {
       const exRating = await this.ratingsRepository.findOne({
         where: {
-          userIp: ip,
+          userId,
           creatorId,
         },
       });
@@ -174,12 +173,9 @@ export class CreatorRatingsService {
   }
 
   /**
-   * 해당ip를 가진 유저가 creatorId에 매긴 평점 조회
+   * 해당userId 가진 유저가 creatorId에 매긴 평점 조회
    * 매긴적이 없으면 false반환
    * 매긴적이 있으면 {rating: number}반환
-   * @param ip 
-   * @param creatorId 
-   * @returns 
    */
   async findOneRating({ creatorId, userId }: {
     creatorId: string,
@@ -205,22 +201,19 @@ export class CreatorRatingsService {
 
   /**
    * 방송인 정보페이지 상단에 사용될 정보
-   * @param ip 접속한 유저의 ip
    * @param creatorId 조회하려는 creatorId
    * @param platform 조회하려는 creator의 플랫폼 'twitch'|'afreeca'
    * @returns 
    * {
       info: CreatorRatingCardInfo, // creator닉네임, 채널명, 프로필이미지 등의 정보
       ratings: CreatorAverageRatings, // 해당 creator의 평균평점과 횟수 정보
-      userRating: null | number // 해당 ip로 creatorId에 매겨진 평점
       scores: CreatorAverageScores, // 감탄, 웃음, 답답, 욕점수들
     }
    */
-  async getCreatorRatingInfo(
-    ip: string,
+  async getCreatorRatingInfo({ creatorId, platform }: {
     creatorId: string,
     platform: 'twitch'|'afreeca',
-  ): Promise<CreatorRatingInfoRes> {
+  }): Promise<CreatorRatingInfoRes> {
     const result = {
       ratings: {
         average: 0,

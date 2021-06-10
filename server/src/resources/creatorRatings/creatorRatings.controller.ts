@@ -1,7 +1,6 @@
 import {
-  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, Res, UseGuards, ValidationPipe,
+  Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, UseGuards, ValidationPipe,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { CreatorRatingInfoRes, CreatorAverageRatings, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interface';
@@ -50,9 +49,7 @@ export class CreatorRatingsController {
     @Param('creatorId') creatorId: string,
     @Ip() ip: string,
     @Body(ValidationPipe) ratingPostDto: RatingPostDto,
-    @Res({ passthrough: true }) response: Response,
   ): Promise<CreatorRatingsEntity> {
-  // 로그인하여 userId를 보낸 경우
     return this.ratingsService.createRatings(creatorId, ratingPostDto, ip);
   }
 
@@ -65,10 +62,9 @@ export class CreatorRatingsController {
   @Delete('/:creatorId')
   deleteRatings(
     @Param('creatorId') creatorId: string,
-    @Ip() ip: string,
-    @Body('userId') userId?: string,
+    @Body('userId') userId: string,
   ): Promise<string> {
-    return this.ratingsService.deleteRatings(creatorId, ip, userId);
+    return this.ratingsService.deleteRatings(creatorId, userId);
   }
 
   /**
@@ -80,11 +76,10 @@ export class CreatorRatingsController {
    */
   @Get('info/:platform/:creatorId')
   getCreatorRatingInfo(
-    @Ip() ip: string,
     @Param('platform') platform: 'afreeca'|'twitch',
     @Param('creatorId') creatorId: string,
   ): Promise<CreatorRatingInfoRes> {
-    return this.ratingsService.getCreatorRatingInfo(ip, creatorId, platform);
+    return this.ratingsService.getCreatorRatingInfo({ creatorId, platform });
   }
 
   /**
