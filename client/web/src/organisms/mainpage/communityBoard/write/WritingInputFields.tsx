@@ -1,7 +1,12 @@
 import { Grid } from '@material-ui/core';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import InputField from './InputField';
+
+const useStyles = makeStyles((theme: Theme) => createStyles({
+  input: { marginBottom: theme.spacing(1) },
+}));
 
 export default function WritingInputFields({
   isEditMode,
@@ -15,6 +20,7 @@ export default function WritingInputFields({
   titleRef: React.RefObject<HTMLInputElement>
 }): JSX.Element {
   const { isMobile } = useMediaSize();
+  const classes = useStyles();
   const getTextFieldOptions = (label: string, maxLen: number) => ({
     maxLength: maxLen,
     label: isMobile ? undefined : label,
@@ -29,6 +35,7 @@ export default function WritingInputFields({
         name="title"
         inputRef={titleRef}
         {...getTextFieldOptions('제목', 20)}
+        className={classes.input}
       />
       {isEditMode
         ? null
@@ -43,6 +50,7 @@ export default function WritingInputFields({
                 name="nickname"
                 inputRef={nicknameRef}
                 {...getTextFieldOptions('닉네임', 12)}
+                className={classes.input}
               />
             </Grid>
             <Grid item xs={6}>
@@ -54,6 +62,7 @@ export default function WritingInputFields({
                 }}
                 inputRef={passwordRef}
                 {...getTextFieldOptions('비밀번호', 4)}
+                className={classes.input}
               />
             </Grid>
           </Grid>
