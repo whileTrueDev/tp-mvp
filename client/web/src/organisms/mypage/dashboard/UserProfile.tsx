@@ -12,7 +12,7 @@ import useDialog from '../../../utils/hooks/useDialog';
 import MainDialog from './MainDialog';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   container: {
     padding: theme.spacing(2), display: 'flex', alignItems: 'center',
   },

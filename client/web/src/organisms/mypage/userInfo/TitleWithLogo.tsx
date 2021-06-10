@@ -4,7 +4,7 @@ import TruepointLogo from '../../../atoms/TruepointLogo';
 
 export default function TitleWithLogo({ text }: {text: string}): JSX.Element {
   return (
-    <div>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <TruepointLogo width={90} />
       <Typography>{text}</Typography>
     </div>
