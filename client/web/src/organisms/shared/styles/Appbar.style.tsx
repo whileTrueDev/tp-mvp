@@ -103,21 +103,49 @@ export const useStyles = makeStyles((theme) => createStyles({
       marginRight: theme.spacing(0),
     },
   },
+  mobileToggleLoginButton: {
+    width: '100%',
+    padding: theme.spacing(1.5),
+    fontSize: theme.typography.body1.fontSize,
+    borderRadius: theme.spacing(3.5),
+  },
+  mobileToggleLogoutButton: {
+    color: theme.palette.primary.dark,
+    textDecoration: 'underline',
+  },
   leftspace: {
     [theme.breakpoints.down('sm')]: {
       width: 24, height: 24,
     },
   },
-  mobileMenu: {
+  mobileMenuButton: {
     position: 'absolute',
     right: 0,
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
   },
+  mobileMenuCloseButton: {
+    position: 'absolute',
+    right: 0,
+  },
+  mobileMenuProfileImage: {
+    width: theme.spacing(12),
+    height: theme.spacing(12),
+  },
+  mobileMenuProfileName: {
+    padding: theme.spacing(0, 1),
+    textDecoration: 'none',
+    display: 'block',
+    color: theme.palette.text.primary,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
   menuItem: {
+    width: theme.spacing(40),
     justifyContent: 'center',
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    padding: theme.spacing(1.5),
   },
   mobileIcon: { marginRight: theme.spacing(1) },
   mobileText: {
@@ -139,6 +167,8 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   darkModeIcon: {
     display: theme.palette.type === 'dark' ? 'none' : 'block',
+  },
+  mobileToggleList: {
   },
 
 }));

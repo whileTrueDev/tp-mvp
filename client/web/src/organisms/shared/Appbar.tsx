@@ -162,13 +162,13 @@ export default function AppBar({
                     : (
                       <>
                         <IconButton
-                          className={classes.darkModeToggleButton}
+                          className={classnames(classes.darkModeToggleButton, classes.link)}
                           onClick={theme.handleThemeChange}
                         >
                           {darkModeToggleButtonContent}
                         </IconButton>
                         <Button
-                          className={classes.loginButton}
+                          className={classnames(classes.loginButton, classes.link)}
                           component={Link}
                           to="/login"
                           variant="outlined"
@@ -183,8 +183,8 @@ export default function AppBar({
             </div>
 
             <Hidden mdUp>
-              <div className={classes.mobileMenu}>
-                <IconButton aria-haspopup="true" onClick={handleMobileMenuOpen}>
+              <div className={classes.mobileMenuButton}>
+                <IconButton className={classes.link} aria-haspopup="true" onClick={handleMobileMenuOpen}>
                   <MenuIcon />
                 </IconButton>
               </div>
