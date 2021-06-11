@@ -139,20 +139,18 @@ function RegistStepper(): JSX.Element {
   }
 
   return (
-    <div>
-      <Grid container direction="column">
-        <Hidden xsDown>
-          <Grid item className={classes.center}>
-            <TruepointLogo width={300} />
-          </Grid>
-        </Hidden>
-        <Grid item>
-          {getComponentByStep(activeStep)}
-          {/* 
+    <>
+      <Hidden xsDown>
+        <Grid className={classes.center}>
+          <TruepointLogo width={300} />
+        </Grid>
+      </Hidden>
+      {getComponentByStep(activeStep)}
+      {/* 
           기존 휴대폰인증 -> 약관동의 -> 정보입력 과정을
           약관동의 -> 정보입력 -> 이메일 인증으로 변경 20210601 joni (휴대폰인증은 차후 기획에 따라 추가)
           */}
-          {/* {activeStep === 0 && (
+      {/* {activeStep === 0 && (
           <IdentityVerification
             handleNext={handleNext}
             handleBack={handleBack}
@@ -174,10 +172,8 @@ function RegistStepper(): JSX.Element {
             dispatch={dispatch}
           />
           )} */}
-        </Grid>
-      </Grid>
 
-    </div>
+    </>
   );
 }
 

@@ -3,7 +3,6 @@ import { useSnackbar } from 'notistack';
 
 import {
   FormControl,
-  Input,
   Divider,
   InputLabel,
   FormHelperText,
@@ -13,9 +12,11 @@ import {
   TextField,
   Grid,
   Typography,
+  OutlinedInput,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import Done from '@material-ui/icons/Done';
+import classnames from 'classnames';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
@@ -25,6 +26,7 @@ import {
 } from './Stepper.reducer';
 import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import axios from '../../../utils/axios';
+import PageTitle from '../shared/PageTitle';
 
 // domain select용.
 const domains = [
@@ -88,8 +90,9 @@ function PlatformRegistForm({
         } else {
           dispatch({ type: 'checkDuplication', value: false });
         }
-      }).catch(() => {
-        ShowSnack('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
+      }).catch((e) => {
+        console.error('id 중복 조회 오류', e);
+        ShowSnack('id 중복 조회 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
       });
     }
   }
@@ -213,30 +216,37 @@ function PlatformRegistForm({
 
   const EmailVerifyCodeInput = (
     emailSent && (
-      <div>
+      <Grid item className={classes.row}>
         <FormControl>
-          <InputLabel shrink>인증코드</InputLabel>
-          <Input
+          <TextField
             required
+            label="코드입력"
+            variant="outlined"
+            size="small"
+            margin="dense"
             id="verificationCode"
             placeholder="메일로 발송된 인증코드를 입력해주세요"
             inputRef={codeInputRef}
             onChange={verifyCodeDebounced}
-            endAdornment={(
-              <InputAdornment position="end">
-                {state.emailVerified && <div className={classes.successText}><Done /></div>}
-              </InputAdornment>
-            )}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {state.emailVerified && <div className={classes.successText}><Done /></div>}
+                </InputAdornment>
+              ),
+            }}
+
           />
           <FormHelperText>{`${getFullEmail()}로 받은 6자리 코드를 입력해주세요.`}</FormHelperText>
         </FormControl>
-      </div>
+      </Grid>
 
     )
   );
 
   return (
-    <div>
+    <div className={classes.registForm}>
+      <PageTitle text="기본정보 입력" />
       {loading
         ? (
           <div>
@@ -254,14 +264,15 @@ function PlatformRegistForm({
             <Grid
               container
               direction="column"
-              className={classes.form}
             >
-              <Grid item xs={12}>
+              <Grid item className={classes.row}>
+                <InputLabel shrink>아이디</InputLabel>
                 <FormControl error={Boolean(state.id)}>
-                  <InputLabel shrink>ID</InputLabel>
-                  <Input
+                  <OutlinedInput
                     required
                     id="id"
+                    fullWidth
+                    margin="dense"
                     placeholder="아이디를 입력하세요"
                     onChange={handleChange('id')}
                     endAdornment={(
@@ -277,98 +288,85 @@ function PlatformRegistForm({
                   <FormHelperText>{state.id ? '영문자로 시작하는 6-15자 영문 또는 숫자' : ' '}</FormHelperText>
                 </FormControl>
               </Grid>
-              <Grid item>
+              <Grid item className={classes.row}>
                 <PasswordTextField
+                  variant="outlined"
                   required
-                  label="PASSWORD"
+                  label="비밀번호"
+                  fullWidth
                   placeholder="비밀번호를 입력하세요."
                   className={classes.textField}
                   onChange={handleChange('password')}
                   helperText={state.password ? '특수문자를 포함한 8-20자 영문 또는 숫자' : ' '}
                   error={state.password}
-                  margin="normal"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                 />
               </Grid>
-              <Grid item>
+              <Grid item className={classes.row}>
                 <PasswordTextField
+                  variant="outlined"
                   required
-                  label="RE-PASSWORD"
+                  label="비밀번호 재확인"
                   placeholder="비밀번호를 재입력하세요."
                   helperText={state.repasswd ? '비밀번호와 동일하지 않습니다.' : ' '}
                   error={state.repasswd}
                   className={classes.textField}
                   onChange={handleChange('repasswd')}
-                  margin="normal"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                 />
               </Grid>
-              <Grid item>
+              <Grid item className={classes.row}>
+                <InputLabel shrink>이름</InputLabel>
                 <TextField
                   required
-                  label="이름"
                   id="name"
+                  variant="outlined"
+                  margin="dense"
+                  size="small"
                   onChange={handleChange('name')}
                   className={classes.textField}
                   placeholder="이름을 입력하세요."
-                  margin="normal"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                 />
               </Grid>
-              <Grid item>
+              <Grid item className={classes.row}>
+                <InputLabel shrink>닉네임</InputLabel>
                 <TextField
                   required
-                  label="닉네임"
                   id="nickname"
+                  variant="outlined"
+                  margin="dense"
+                  size="small"
                   onChange={handleChange('nickname')}
                   className={classes.textField}
                   placeholder="별명을 입력하세요."
-                  margin="normal"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
                   helperText="크리에이터인 경우, 활동명을 입력하세요."
                 />
               </Grid>
-              <Grid container direction="row">
-                <Grid item xs={4}>
+              <Grid container direction="row" alignItems="center">
+                <Grid item className={classes.row} xs={4}>
                   <TextField
                     required
-                    label="EMAIL"
+                    label="이메일"
                     value={state.email}
-                    // className={classes.textField}
                     onChange={handleChange('email')}
-                    helperText="EMAIL을 입력하세요."
-                    margin="normal"
+                    margin="dense"
+                    size="small"
                     id="email"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    placeholder="이메일"
                     InputProps={{
                       endAdornment: <InputAdornment position="end" className={classes.adornment}><div>@</div></InputAdornment>,
                     }}
                   />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item className={classes.row} xs={4}>
                   {state.domain !== '직접입력' ? (
                     <TextField
                       required
                       select
-                      label="Domain"
-                      // className={classes.textField}
+                      label="도메인"
                       value={state.domain}
                       onChange={handleChange('domain')}
-                      helperText="EMAIL Domain을 선택하세요."
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      margin="normal"
+                      placeholder="도메인"
+                      margin="dense"
+                      size="small"
                     >
                       {domains.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -382,11 +380,10 @@ function PlatformRegistForm({
                       <TextField
                         required
                         autoFocus
-                        label="Domain"
-                        // className={classes.textField}
+                        label="도메인"
                         value={marketerCustomDomain}
                         onChange={handleCustom}
-                        helperText="EMAIL Domain을 입력하세요."
+                        helperText="이메일 도메인을 입력하세요."
                         InputLabelProps={{
                           shrink: true,
                         }}
@@ -394,17 +391,23 @@ function PlatformRegistForm({
                       />
                     )}
                 </Grid>
-                <Grid item xs={4}>{EmailVerifyCodeRequestButton}</Grid>
+                <Grid item className={classes.row} xs={4}>{EmailVerifyCodeRequestButton}</Grid>
               </Grid>
+
+              {/* 이메일 코드 확인 인풋 */}
               {EmailVerifyCodeInput}
-              <Grid item style={{ marginTop: '16px' }}>
-                <div>
+
+              {/* 뒤로, 가입 버튼 */}
+              <Grid item container spacing={1} className={classes.row} style={{ marginTop: '16px' }}>
+                <Grid item xs={6}>
                   <Button
                     onClick={handleBack}
-                    className={classes.button}
+                    className={classnames(classes.button, 'back')}
                   >
                     뒤로
                   </Button>
+                </Grid>
+                <Grid item xs={6}>
                   <Button
                     variant="contained"
                     color="primary"
@@ -416,9 +419,9 @@ function PlatformRegistForm({
                       || !state.name || !state.nickname || !state.emailVerified // 값이 true여야함
                       )}
                   >
-                    가입하기
+                    가입
                   </Button>
-                </div>
+                </Grid>
               </Grid>
             </Grid>
           </form>
