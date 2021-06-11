@@ -4,7 +4,9 @@ import LoginFooter from '../../shared/FooterShort';
 import useScrollTop from '../../../utils/hooks/useScrollTop';
 import createPostItStyles from '../../../utils/style/createPostitStyles';
 import Appbar from '../../shared/Appbar';
-import { COMMON_APP_BAR_HEIGHT, LOGIN_PAGE_SECTION_MAX_WIDTH, LOGIN_PAGE_SECTION_MIN_WIDTH } from '../../../assets/constants';
+import {
+  COMMON_APP_BAR_HEIGHT, LOGIN_PAGE_SECTION_MAX_WIDTH, LOGIN_PAGE_SECTION_MIN_WIDTH, SM_APP_BAR_HEIGHT,
+} from '../../../assets/constants';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -37,10 +39,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     height: '100%',
     paddingTop: COMMON_APP_BAR_HEIGHT + theme.spacing(5),
-    maxWidth: '380px',
     [theme.breakpoints.down('sm')]: {
-      maxWidth: '230px',
+      paddingTop: SM_APP_BAR_HEIGHT + theme.spacing(2),
     },
+
   },
 
 }));

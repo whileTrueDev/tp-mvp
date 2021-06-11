@@ -17,6 +17,11 @@ import { KakaoLoginButton, NaverLoginButton } from './SNSLoginButton';
 
 const useStyles = makeStyles((theme) => ({
   loginForm: {
+    position: 'relative',
+    maxWidth: '380px',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '230px',
+    },
 
   },
   upperSpace: { marginTop: theme.spacing(4) },
@@ -101,7 +106,7 @@ export default function LoginForm(): JSX.Element {
   }
 
   return (
-    <>
+    <div className={classes.loginForm}>
       {/* 로딩 컴포넌트 */}
       {loading && (<CenterLoading color="primary" size="5rem" />)}
 
@@ -229,6 +234,6 @@ export default function LoginForm(): JSX.Element {
           <NaverLoginButton />
         </div>
       </form>
-    </>
+    </div>
   );
 }
