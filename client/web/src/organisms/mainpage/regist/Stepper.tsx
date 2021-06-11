@@ -8,6 +8,7 @@ import React, { useReducer, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import PageTitle from '../shared/PageTitle';
 // import IdentityVerification from './IdentityVerification';
 import PaperSheet from './Paper';
 import RegistForm from './RegistForm';
@@ -106,8 +107,13 @@ function RegistStepper(): JSX.Element {
     return (
       <div>
         <Grid item className={classes.center}>
-          <TruepointLogo width={300} />
+          <Hidden xsDown>
+            <Grid className={classes.center}>
+              <TruepointLogo width={300} />
+            </Grid>
+          </Hidden>
         </Grid>
+        <PageTitle text="회원가입 완료" />
         <SignUpCompleted generatedUserId={generatedUserId} />
       </div>
     );
