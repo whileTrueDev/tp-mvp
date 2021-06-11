@@ -37,6 +37,7 @@ import CheckBoxGroup from '../shared/CheckBoxGroup';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import PeriodSelectDialog from '../shared/PeriodSelectDialog';
+import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
@@ -54,6 +55,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext(); // 유저 컨텍스트
+  const {user} = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
   const { enqueueSnackbar } = useSnackbar(); // 스낵바 컨텍스트 호출
   const { open, handleClose, handleOpen } = useDialog(); // 다이얼로그 훅
 
@@ -104,7 +106,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   React.useEffect(() => {
     if (period[0] && period[1]) {
       const searchParam: SearchCalendarStreams = {
-        userId: exampleMode ? 'sal_gu' : auth.user.userId,
+        userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
         startDate: period[0].toISOString(),
         endDate: period[1].toISOString(),
       };
@@ -112,7 +114,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         params: searchParam,
       }).then((res) => {
         const result = res.data.map((row) => ({
-          ...row, isRemoved: false, title: '예시 방송입니다',
+          ...row, isRemoved: false, title: exampleMode ? '예시 방송입니다' : row.title,
         }));
         setTermStreamsList(result);
       }).catch((err) => {
@@ -121,7 +123,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         }
       });
     }
-  }, [exampleMode, period, auth.user, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, period, auth.user,user.userId, excuteGetStreams, enqueueSnackbar]);
 
   /* 네비바 유저 전환시 이전 값 초기화 -> CBT 주석 사항 */
   // React.useEffect(() => {

@@ -15,6 +15,7 @@ import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
 import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
 import UserMetricsChart from './sub/UserMetricsChart';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
 
 const useStyles = makeStyles((theme) => ({
   chartContainer: { padding: theme.spacing(4), height: 575, overflow: 'hidden' },
@@ -60,6 +61,7 @@ export interface DataCard {
 
 export default function UserMetricsSection(): JSX.Element {
   const auth = useAuthContext();
+  const {user} = usePublicMainUser((state) => state);
   const PLATFORM_LIST = ['afreeca', 'twitch', 'youtube'];
   const classes = useStyles();
 
@@ -68,7 +70,7 @@ export default function UserMetricsSection(): JSX.Element {
   const [{ loading, data }, refetch] = useAxios<UserMetrics[]>({
     url: 'stream-analysis/user-statistics',
     method: 'GET',
-    params: { userId: auth.user.userId },
+    params: { userId: user.userId || auth.user.userId },
   });
   useEffect(() => {
     refetch();

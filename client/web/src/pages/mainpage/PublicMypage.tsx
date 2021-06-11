@@ -12,6 +12,7 @@ import SidebarWithNavbar from '../../organisms/mypage/layouts/sidebar-with-navba
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import useDialog from '../../utils/hooks/useDialog';
 import useMediaSize from '../../utils/hooks/useMediaSize';
+import usePublicMainUser from '../../utils/hooks/usePublicMainUser';
 
 export interface ParamTypes {
   userId: string
@@ -21,6 +22,7 @@ export default function PublicMypage(): JSX.Element {
   const classes = useLayoutStyles();
   const { isMobile } = useMediaSize();
   const { userId } = useParams<ParamTypes>();
+  const {setUser} = usePublicMainUser((state) => state);
   const auth = useAuthContext();
   const { open: alertOpen, handleOpen: handleAlertOpen, handleClose: handleAlertClose } = useDialog();
 
@@ -33,9 +35,12 @@ export default function PublicMypage(): JSX.Element {
 
     // 비로그인 시 유저 정보 조회 용도
     if (userId) {
-      auth.user.userId = userId;
+      // auth.user.userId = userId;
+      setUser(userId);
     }
   }, [auth, userId]);
+
+  useEffect(() => () => setUser(''),[])
 
   // 사이드바 오픈 스테이트
   const [open, setOpen] = useState(true);

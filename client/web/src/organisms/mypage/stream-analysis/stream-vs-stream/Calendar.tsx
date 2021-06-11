@@ -27,6 +27,7 @@ import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // attoms snackbar
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
 
 const useStyles = makeStyles((theme: Theme) => ({
   hasStreamDayDot: {
@@ -57,6 +58,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   } = props;
   const classes = useStyles();
   const auth = useAuthContext();
+  const {user} = usePublicMainUser((state) => state);
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
@@ -113,7 +115,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
    */
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: exampleMode ? 'sal_gu' : auth.user.userId,
+      userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
