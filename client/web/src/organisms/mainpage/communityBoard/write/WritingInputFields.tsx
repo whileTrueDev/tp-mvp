@@ -24,7 +24,7 @@ export default function WritingInputFields({
   const getTextFieldOptions = (label: string, maxLen: number) => ({
     maxLength: maxLen,
     label: isMobile ? undefined : label,
-    helperText: isMobile ? undefined : `* ${label} - 최대 12글자까지 가능합니다`,
+    helperText: isMobile ? undefined : `* ${label} - 최대 ${maxLen}글자까지 가능합니다`,
     placeholder: isMobile ? label : `${label} 입력해주세요`,
   });
 

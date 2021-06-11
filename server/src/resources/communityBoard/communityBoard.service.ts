@@ -5,11 +5,14 @@ import * as bcrypt from 'bcrypt';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
+import { S3Service } from '../s3/s3.service';
 import { CommunityPostEntity } from './entities/community-post.entity';
 import { CommunityReplyService } from './communityReply.service';
+
 @Injectable()
 export class CommunityBoardService {
   constructor(
+    private readonly s3Service: S3Service,
     private readonly communityReplyService: CommunityReplyService,
     @InjectRepository(CommunityPostEntity)
     private readonly communityPostRepository: Repository<CommunityPostEntity>,
@@ -68,13 +71,37 @@ export class CommunityBoardService {
     }
   }
 
+  // 시그니쳐로 변경된 이미지를 S3로 저장 및 URL 변경
+  async saveResources(createCommunityPostDto: CreateCommunityPostDto | UpdateCommunityPostDto): Promise<string> {
+    // await
+    let { content } = createCommunityPostDto;
+    if (!Object.prototype.hasOwnProperty.call(createCommunityPostDto, 'resources')) {
+      return content;
+    }
+    await Promise.all(
+      createCommunityPostDto.resources.map(async ({ fileName, src, signature }: {fileName: string, src: string, signature: string}): Promise<void> => {
+        // 파일명 해싱
+        const hashName = await bcrypt.hash(fileName, 1);
+        // 파일 저장
+        const imageUrl = await this.s3Service.uploadBase64ImageToS3(
+          `community-board/${hashName.slice(0, 15)}`, src,
+        );
+        // replace 
+        content = content.replace(signature, imageUrl);
+      }),
+    );
+    return content;
+  }
+
   async createOnePost(createCommunityPostDto: CreateCommunityPostDto, ip: string): Promise<CommunityPostEntity> {
     try {
       // 비밀번호 암호화
       const { password } = createCommunityPostDto;
+      const content = await this.saveResources(createCommunityPostDto);
       const hashedPassword = await bcrypt.hash(password, 10);
       const postData = {
         ...createCommunityPostDto,
+        content,
         password: hashedPassword,
         ip,
       };
@@ -224,11 +251,13 @@ export class CommunityBoardService {
     postId: number,
     updateCommunityPostDto: UpdateCommunityPostDto,
   ): Promise<CommunityPostEntity> {
+    const content = await this.saveResources(updateCommunityPostDto);
     const post = await this.findOnePost(postId);
     try {
       return this.communityPostRepository.save({
         ...post,
         ...updateCommunityPostDto,
+        content,
       });
     } catch (error) {
       console.error(error);
