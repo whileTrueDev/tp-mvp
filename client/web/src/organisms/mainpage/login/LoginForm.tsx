@@ -111,6 +111,14 @@ export default function LoginForm(): JSX.Element {
       >
         <Hidden smDown>
           <div><TruepointLogo width={280} /></div>
+          <Typography
+            align="center"
+            color="secondary"
+            variant="subtitle1"
+            style={{ margin: '32px 0' }}
+          >
+            로그인 후 이용하실 수 있습니다.
+          </Typography>
         </Hidden>
 
         <Grid
@@ -149,6 +157,17 @@ export default function LoginForm(): JSX.Element {
             />
           </Grid>
 
+          <Hidden mdUp>
+            <Typography
+              align="center"
+              color="secondary"
+              variant="caption"
+              style={{ margin: '16px 0' }}
+            >
+              로그인 후 이용하실 수 있습니다.
+            </Typography>
+          </Hidden>
+
           <Grid item className={classnames(classes.loginButtonWrapper, classes.upperSpace, classes.alignCenter)}>
             <Button
               variant="contained"
@@ -162,7 +181,7 @@ export default function LoginForm(): JSX.Element {
           </Grid>
 
           {/* 로그인 상태 유지 체크박스 */}
-          <Grid item xs={12}>
+          <Grid item style={{ width: '100%' }}>
             <Tooltip
               title={(<Typography variant="body2">개인정보 보호를 위해 개인 PC에서만 사용하시기 바랍니다.</Typography>)}
               placement="right"
