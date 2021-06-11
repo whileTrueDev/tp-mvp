@@ -146,6 +146,9 @@ export const useStyles = makeStyles((theme) => createStyles({
     width: theme.spacing(40),
     justifyContent: 'center',
     padding: theme.spacing(1.5),
+    '&.active': {
+      color: theme.palette.primary.main,
+    },
   },
   mobileIcon: { marginRight: theme.spacing(1) },
   mobileText: {

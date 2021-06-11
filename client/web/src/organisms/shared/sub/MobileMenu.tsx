@@ -11,6 +11,7 @@ import { useStyles } from '../styles/Appbar.style';
 import DarkModeToggleButtonContent from './DarkModeToggleButtonContent';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import { isActiveRoute } from '../Appbar';
 
 type LinkType = {
   name: string,
@@ -46,7 +47,7 @@ export default function MobileMenu(props: MobileMenuProps): JSX.Element {
       <List className={classes.mobileToggleList}>
 
         {/* 트루포인트 로고  */}
-        <ListItem alignItems="center" style={{ justifyContent: 'center' }}>
+        <ListItem alignItems="center" style={{ justifyContent: 'center', marginBottom: '18px' }}>
           <TruepointLogo width={80} />
           <IconButton className={classes.mobileMenuCloseButton} aria-label="닫기" onClick={handleMobileMenuClose}>
             <CloseIcon />
@@ -97,7 +98,7 @@ export default function MobileMenu(props: MobileMenuProps): JSX.Element {
         )}
         {authContext.user.userId.length > 1 && authContext.accessToken && (
         <ListItem
-          className={classnames(classes.menuItem, classes.mobileText)}
+          className={classnames(classes.menuItem, classes.mobileText, { active: isActiveRoute('/mypage') })}
           component={Link}
           to="/mypage"
           button
@@ -108,7 +109,11 @@ export default function MobileMenu(props: MobileMenuProps): JSX.Element {
         {links.map((link) => (
           <ListItem
             key={link.path}
-            className={classnames(classes.menuItem, classes.mobileText)}
+            className={classnames(
+              classes.menuItem,
+              classes.mobileText,
+              { active: isActiveRoute(link.activeRouteString) },
+            )}
             component={Link}
             to={link.path}
             button

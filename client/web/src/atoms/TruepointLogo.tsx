@@ -15,10 +15,10 @@ export default function TruepointLogo({
 
   const logoSrc = useMemo(() => {
     if (isDark) {
+      if (type === 'white') {
+        return '/images/logo/logo_truepoint_v2_allwhite.png';
+      }
       return '/images/logo/logo_truepoint_v2_dark.png';
-    }
-    if (type === 'light') {
-      return '/images/logo/logo_truepoint_v2_light.png';
     }
     if (type === 'dark') {
       return '/images/logo/logo_truepoint_v2_dark.png';
@@ -26,6 +26,7 @@ export default function TruepointLogo({
     if (type === 'white') {
       return '/images/logo/logo_truepoint_v2_allwhite.png';
     }
+    // 기본 type = 'light'
     return '/images/logo/logo_truepoint_v2_light.png';
   }, [isDark, type]);
 

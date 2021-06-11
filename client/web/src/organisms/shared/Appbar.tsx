@@ -54,9 +54,6 @@ export default function AppBar({
 
   const isLoggedIn = authContext.user.userId.length > 1 && authContext.accessToken;
   const links = [
-    // {
-    //   name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !isLoggedIn,
-    // },
     { name: '인방랭킹', path: '/ranking', activeRouteString: ['/ranking', '/'] },
     { name: '방송인검색', path: '/creator-search', activeRouteString: '/creator-search' },
     { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
@@ -98,6 +95,7 @@ export default function AppBar({
             <Hidden mdUp>
               <div className={classes.leftspace} />
             </Hidden>
+
             <div className={classes.left}>
               <TruepointLogo
                 type={variant === 'transparent' && !transparentDisabled ? 'light' : 'white'}
