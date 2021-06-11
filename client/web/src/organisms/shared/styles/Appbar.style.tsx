@@ -11,6 +11,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     position: 'fixed',
     width: '100%',
     zIndex: 1200,
+
   },
   container: {
     height: COMMON_APP_BAR_HEIGHT,
@@ -20,7 +21,9 @@ export const useStyles = makeStyles((theme) => createStyles({
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
     borderBottom: 'none',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.type === 'light'
+      ? theme.palette.primary.main
+      : theme.palette.background.default,
     transition: theme.transitions.create('background'),
     [theme.breakpoints.down('sm')]: {
       height: SM_APP_BAR_HEIGHT,
@@ -29,6 +32,9 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   transparent: {
     backgroundColor: 'transparent',
+    '& $link': {
+      color: theme.palette.text.primary,
+    },
   },
   toolbar: {
     position: 'relative',
@@ -54,7 +60,7 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   link: {
     marginRight: theme.spacing(2),
-    color: theme.palette.text.primary,
+    color: theme.palette.primary.contrastText,
     opacity: 0.8,
     '&:hover': {
       textShadow: theme.shadows[7],
@@ -88,6 +94,7 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   userInterfaceWrapper: { display: 'flex', flex: 1 },
   loginButton: {
+    color: 'inherit',
     marginRight: theme.spacing(4),
     fontSize: theme.typography.body1.fontSize,
     [theme.breakpoints.down('sm')]: {
@@ -120,7 +127,7 @@ export const useStyles = makeStyles((theme) => createStyles({
   mobileTextMyPage: { color: theme.palette.primary.main },
   darkModeToggleButton: {
     position: 'relative',
-    color: theme.palette.text.primary,
+    color: 'inherit',
     '&$menuItem': {
       width: '100%',
       borderTop: `2px solid ${theme.palette.divider}`,

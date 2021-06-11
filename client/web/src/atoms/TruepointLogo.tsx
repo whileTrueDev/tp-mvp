@@ -1,33 +1,42 @@
-import { Hidden } from '@material-ui/core';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import THEME_TYPE from '../interfaces/ThemeType';
 
-export type TrupointLogoProps = React.ImgHTMLAttributes<HTMLImageElement>
+export interface TrupointLogoProps extends React.ImgHTMLAttributes<HTMLImageElement>{
+  type?: 'white' | 'dark' | 'light';
+}
+
 export default function TruepointLogo({
   width = 250,
   ...props
 }: TrupointLogoProps): JSX.Element {
+  const { type = 'light' } = props;
   const isDark = localStorage.getItem('themeType') === THEME_TYPE.DARK;
+
+  const logoSrc = useMemo(() => {
+    if (isDark) {
+      return '/images/logo/logo_truepoint_v2_dark.png';
+    }
+    if (type === 'light') {
+      return '/images/logo/logo_truepoint_v2_light.png';
+    }
+    if (type === 'dark') {
+      return '/images/logo/logo_truepoint_v2_dark.png';
+    }
+    if (type === 'white') {
+      return '/images/logo/logo_truepoint_v2_allwhite.png';
+    }
+    return '/images/logo/logo_truepoint_v2_light.png';
+  }, [isDark, type]);
 
   return (
     <Link to="/">
-      <Hidden smDown>
-        <img
-          src={isDark ? '/images/logo/logo_truepoint_v2_dark.png' : '/images/logo/logo_truepoint_v2_light.png'}
-          alt=""
-          width={width}
-          {...props}
-        />
-      </Hidden>
-      <Hidden mdUp>
-        <img
-          src="/images/logo/logo_truepoint_v2_allwhite.png"
-          alt=""
-          width={width}
-          {...props}
-        />
-      </Hidden>
+      <img
+        src={logoSrc}
+        alt=""
+        width={width}
+        {...props}
+      />
 
     </Link>
   );

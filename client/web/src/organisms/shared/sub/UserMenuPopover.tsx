@@ -90,7 +90,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
               button
               className={classes.menulistItem}
               onClick={() => {
-                history.push('/mypage/my-office/settings');
+                history.push('/mypage');
               }}
             >
               <AccountBox color="action" />

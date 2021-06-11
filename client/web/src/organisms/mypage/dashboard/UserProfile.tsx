@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import classnames from 'classnames';
 import {
-  Avatar, Chip, CircularProgress, Paper, Typography,
+  Avatar, CircularProgress, Paper, Typography,
 } from '@material-ui/core';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
@@ -31,7 +30,7 @@ export const useStyles = makeStyles((theme) => ({
 export default function UserProfile(): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
-  const {user} = usePublicMainUser((state) => state);
+  const { user } = usePublicMainUser((state) => state);
   const [profileRequestObject, refetch] = useAxios<User>({
     url: 'users', method: 'GET', params: { userId: user.userId || auth.user.userId },
   });
