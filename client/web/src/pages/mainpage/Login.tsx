@@ -4,7 +4,7 @@ import LoginCommonLayout from '../../organisms/mainpage/login/LoginCommonLayout'
 
 export default function Login(): JSX.Element {
   return (
-    <LoginCommonLayout>
+    <LoginCommonLayout footer={false}>
       <LoginForm />
     </LoginCommonLayout>
   );

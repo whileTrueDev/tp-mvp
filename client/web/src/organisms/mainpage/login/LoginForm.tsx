@@ -1,7 +1,7 @@
 import {
-  Button, Checkbox, FormControlLabel, Grid, TextField, Tooltip, Typography,
+  Button, Checkbox, FormControlLabel, Grid, Hidden, TextField, Tooltip, Typography,
 } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import CheckedCheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
 import useAxios from 'axios-hooks';
@@ -11,39 +11,45 @@ import { Link, useHistory } from 'react-router-dom';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
-import { getApiHost } from '../../../utils/getApiHost';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import useDialog from '../../../utils/hooks/useDialog';
+import { KakaoLoginButton, NaverLoginButton } from './SNSLoginButton';
 
 const useStyles = makeStyles((theme) => ({
-  upperSpace: { marginTop: theme.spacing(4) },
-  formWidth: { width: '100%', maxWidth: 290 },
-  inputWidth: { minWidth: 280 },
-  alignCenter: { textAlign: 'center' },
-  button: {
-    width: 170,
-    boxShadow: 'none',
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
+  loginForm: {
+
   },
-  checkbox: { marginLeft: theme.spacing(1) },
-  buttonset: {
-    display: 'flex',
-    justifyContent: 'space-between',
+  upperSpace: { marginTop: theme.spacing(4) },
+  formWidth: {
     width: '100%',
-    minWidth: 300,
+  },
+  inputWidth: { minWidth: 280 },
+  input: {
+    marginBottom: theme.spacing(0.5),
+  },
+  alignCenter: { textAlign: 'center' },
+  checkbox: { },
+  loginButtonWrapper: {
+    width: '100%',
+  },
+  loginButton: {
+    fontSize: theme.typography.body1.fontSize,
   },
   alignLeft: {
     display: 'flex',
     width: '100%',
     minWidth: 300,
   },
+  subButtons: {
+    '& .MuiButton-label': {
+      fontSize: theme.typography.caption.fontSize,
+    },
+  },
 }));
 
 export default function LoginForm(): JSX.Element {
   const authContext = useAuthContext();
   const history = useHistory();
-  const theme = useTheme();
   const classes = useStyles();
 
   // 로그인 실패 도움말
@@ -103,41 +109,59 @@ export default function LoginForm(): JSX.Element {
         onSubmit={handleLoginSubmit}
         className={classnames(classes.formWidth, classes.alignCenter)}
       >
-        <div>
-          <TruepointLogo width={280} />
-        </div>
+        <Hidden smDown>
+          <div><TruepointLogo width={280} /></div>
+        </Hidden>
+
         <Grid
           container
           direction="column"
           justify="center"
           alignItems="center"
           className={classes.formWidth}
-          // spacing={1}
         >
-          <Grid item xs={12}>
+          <Grid item>
             <TextField
-              className={classnames(classes.upperSpace, classes.inputWidth)}
+              className={classnames(classes.input)}
               color="primary"
+              variant="outlined"
               type="text"
               label="아이디"
+              fullWidth
               placeholder="아이디를 입력해주세요"
               inputProps={{ minLength: 3, required: true }}
               inputRef={userIdRef}
               autoFocus
+              size="small"
             />
-          </Grid>
-          <Grid item xs={12}>
             <TextField
-              className={classes.inputWidth}
+              className={classes.input}
               color="primary"
+              variant="outlined"
               type="password"
               label="비밀번호"
+              fullWidth
               inputProps={{ minLength: 3, required: true }}
               placeholder="비밀번호를 입력해주세요"
               inputRef={passwordRef}
               autoComplete="off"
+              size="small"
             />
           </Grid>
+
+          <Grid item className={classnames(classes.loginButtonWrapper, classes.upperSpace, classes.alignCenter)}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.loginButton}
+              fullWidth
+              type="submit"
+            >
+              로그인
+            </Button>
+          </Grid>
+
+          {/* 로그인 상태 유지 체크박스 */}
           <Grid item xs={12}>
             <Tooltip
               title={(<Typography variant="body2">개인정보 보호를 위해 개인 PC에서만 사용하시기 바랍니다.</Typography>)}
@@ -145,7 +169,7 @@ export default function LoginForm(): JSX.Element {
               className={classes.alignLeft}
             >
               <FormControlLabel
-                // className={classes.checkbox}
+                className={classes.checkbox}
                 control={(
                   <Checkbox
                     icon={<CheckCircleIcon />}
@@ -154,33 +178,12 @@ export default function LoginForm(): JSX.Element {
                     onChange={handleStayLogedInToggle}
                     name="checkedA"
                     color="primary"
+                    size="small"
                   />
                     )}
                 label="로그인 상태 유지"
               />
             </Tooltip>
-          </Grid>
-          <Grid item xs={5} className={classnames(classes.buttonset, classes.upperSpace, classes.alignCenter)}>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              fullWidth
-              style={{ color: theme.palette.common.white }}
-              type="submit"
-            >
-              로그인
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              className={classes.button}
-              style={{ color: theme.palette.text.primary }}
-              component={Link}
-              to="/signup"
-            >
-              회원가입
-            </Button>
           </Grid>
         </Grid>
 
@@ -192,19 +195,19 @@ export default function LoginForm(): JSX.Element {
           />
         )}
         {/* 아디/비번 찾기 */}
-        {/* 휴대폰 본인인증에 이용된 본명과 번호를 사용하고 있다 
-        휴대폰 본인인증 안쓸거면 다른 방식으로 만들어야함 */}
-        <div className={classnames(classes.upperSpace, classes.alignCenter)}>
+        <div className={classnames(classes.subButtons, classes.upperSpace, classes.alignCenter)}>
           <Button component={Link} to="/find-id">아이디 찾기</Button>
           |
           <Button component={Link} to="/find-pw">비밀번호 찾기</Button>
+          |
+          <Button component={Link} to="/signup">회원가입</Button>
         </div>
 
         {/* ********************************************** */}
 
-        <div className="social-login-section">
-          <Button fullWidth variant="outlined" href={`${getApiHost()}/auth/kakao`}>카카오 아이디로 로그인</Button>
-          <Button fullWidth variant="outlined" href={`${getApiHost()}/auth/naver`}>네이버 아이디로 로그인</Button>
+        <div className={classnames('social-login-section', classes.upperSpace)}>
+          <KakaoLoginButton />
+          <NaverLoginButton />
         </div>
       </form>
     </>

@@ -2,39 +2,47 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import LoginFooter from '../../shared/FooterShort';
 import useScrollTop from '../../../utils/hooks/useScrollTop';
+import createPostItStyles from '../../../utils/style/createPostitStyles';
+import Appbar from '../../shared/Appbar';
+import { COMMON_APP_BAR_HEIGHT, LOGIN_PAGE_SECTION_MAX_WIDTH, LOGIN_PAGE_SECTION_MIN_WIDTH } from '../../../assets/constants';
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    padding: theme.spacing(6),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1),
+    },
+    overflow: 'hidden',
+    backgroundColor: theme.palette.primary.main,
+    height: '100vh',
+  },
+  section: {
+    position: 'relative',
+    width: '100%',
+    margin: '0 auto',
+    maxWidth: LOGIN_PAGE_SECTION_MAX_WIDTH,
+    minWidth: LOGIN_PAGE_SECTION_MIN_WIDTH,
     display: 'flex',
     justifyContent: 'center',
-    flexDirection: 'column',
     alignItems: 'center',
-    background: `url('images/main/loginpage.png'), linear-gradient(${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-    height: '100vh',
+    flexDirection: 'column',
+    backgroundColor: theme.palette.background.paper,
+    height: '100%',
+    '&:before': createPostItStyles(theme, 'left top'),
+    '&:after': createPostItStyles(theme, 'right bottom'),
   },
   centerflex: {
     display: 'flex',
-    justifyContent: 'center',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: `${theme.palette.background.default}`,
-    height: '95vh',
-  },
-  section: {
     height: '100%',
-    backgroundColor: `${theme.palette.background.default}`,
-    width: '40%',
-    padding: `${theme.spacing(1)}px ${theme.spacing(3)}px`,
-    [theme.breakpoints.down('lg')]: {
-      width: '50%',
-    },
-    [theme.breakpoints.down('md')]: {
-      width: '70%',
-    },
+    paddingTop: COMMON_APP_BAR_HEIGHT + theme.spacing(5),
+    maxWidth: '380px',
     [theme.breakpoints.down('sm')]: {
-      width: '100%',
+      maxWidth: '230px',
     },
   },
+
 }));
 
 interface Props {
@@ -47,6 +55,10 @@ export default function LoginCommonLayout(props: Props): JSX.Element {
   useScrollTop();
   return (
     <section className={classes.container}>
+      <Appbar
+        appbarSpace={false}
+        mobileNavigation={false}
+      />
       <section
         className={classes.section}
       >

@@ -18,7 +18,7 @@ import defaultTheme from './theme';
 import Main from './pages/mainpage/Main';
 import PrivacyPolicy from './pages/others/PrivacyPolicy';
 import TermsOfUse from './pages/others/TermsOfUse';
-import Mypage from './pages/mypage/layouts/MypageLayout';
+// import Mypage from './pages/mypage/layouts/MypageLayout';
 import PublickMypage from './pages/mainpage/PublicMypage';
 import KakaoTalk from './organisms/shared/KakaoTalkButton';
 import Login from './pages/mainpage/Login';

@@ -115,7 +115,7 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   leftspace: {
     [theme.breakpoints.down('sm')]: {
-      width: 24, height: 24,
+      width: 0, height: 0,
     },
   },
   mobileMenuButton: {

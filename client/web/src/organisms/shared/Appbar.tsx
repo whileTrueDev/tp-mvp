@@ -21,6 +21,8 @@ import UserMenuPopper from './sub/UserMenuPopover';
 
 interface AppBarProps {
   variant?: 'transparent';
+  appbarSpace?: boolean;
+  mobileNavigation?: boolean;
 }
 // 현재 활성화된 탭을 구하는 함수
 export function isActiveRoute(pagePath: string | string[]): boolean {
@@ -32,6 +34,8 @@ export function isActiveRoute(pagePath: string | string[]): boolean {
 
 export default function AppBar({
   variant,
+  appbarSpace = true,
+  mobileNavigation = true,
 }: AppBarProps): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
@@ -197,8 +201,13 @@ export default function AppBar({
         />
       </div>
 
-      {variant !== 'transparent' && <div className={classes.appbarSpace} />}
-      <MobileNavigation />
+      {/* 투명앱바가 아닌경우 appbarSpace(패딩)적용 */}
+      {(variant !== 'transparent' && !transparentDisabled)
+      && appbarSpace
+      && <div className={classes.appbarSpace} />}
+
+      {/* 모바일 화면에서 나오는 단축메뉴(인방랭킹, 방송인검색, 자유게시판) */}
+      {mobileNavigation && <MobileNavigation />}
     </>
   );
 }
