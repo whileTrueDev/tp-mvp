@@ -1,5 +1,5 @@
 import {
-  Grid,
+  Grid, Hidden,
 } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
@@ -141,9 +141,11 @@ function RegistStepper(): JSX.Element {
   return (
     <div>
       <Grid container direction="column">
-        <Grid item className={classes.center}>
-          <TruepointLogo width={300} />
-        </Grid>
+        <Hidden xsDown>
+          <Grid item className={classes.center}>
+            <TruepointLogo width={300} />
+          </Grid>
+        </Hidden>
         <Grid item>
           {getComponentByStep(activeStep)}
           {/* 
