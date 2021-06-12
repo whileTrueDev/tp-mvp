@@ -6,13 +6,14 @@ import {
   Container, Button,
 } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-
-import SunEditor from 'suneditor/src/lib/core';
 // dto
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
 // snackbar
 import { useSnackbar } from 'notistack';
+import {
+  checkCreatePostDto, checkUpdatePostDto, replaceResources, getHtmlFromEditor,
+} from './write/WriteUtils';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 // 컴포넌트
 import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
@@ -63,26 +64,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-// editor 내용 가져오는 함수
-const getHtmlFromEditor = (editor: React.MutableRefObject<SunEditor | null>) => {
-  if (editor.current) {
-    return editor.current.core.getContents(false);
-  }
-  console.error('editor.current not exist');
-  throw new Error('문제가 발생했습니다. 새로고침 후 다시 시도해 주세요');
-};
-
-// 입력된 문자열에서 띄어쓰기,탭,공백 제외한 값 반환
-const trimmedContent = (content: string): string => (
-  content.replace(/(<\/?[^>]+(>|$)|&nbsp;|\s)/g, ''));
-
-// 에러메시지
-const ErrorMessages = {
-  title: '제목을 입력해주세요',
-  nickname: '닉네임을 입력해주세요',
-  password: '비밀번호를 입력해주세요',
-  content: '내용을 입력해주세요',
-};
 // 게시판 코드
 const platformCode = {
   afreeca: 0,
@@ -151,26 +132,20 @@ export default function CommunityPostWrite(): JSX.Element {
     };
 
     try {
-      createPostDto.content = getHtmlFromEditor(editor);
+      const nowContents = getHtmlFromEditor(editor);
+      const imageResoureces = replaceResources(nowContents);
+      createPostDto.content = imageResoureces.content;
+      const checkedPostDto = checkCreatePostDto(createPostDto);
 
-      // ['nickname', 'password', 'title', 'content'] 
-      // 중 빈 값 === '' 이 있는지 확인후 없으면 에러 스낵바
-      const keys = ['nickname', 'password', 'title', 'content'] as Array<keyof CreateCommunityPostDto & keyof typeof ErrorMessages>;
-
-      keys.forEach((key: keyof CreateCommunityPostDto & keyof typeof ErrorMessages) => {
-        const value = (key === 'content')
-          ? trimmedContent(createPostDto[key])
-          : createPostDto[key].trim();
-
-        if (value === '') throw new Error(ErrorMessages[key]);
-      });
+      // image가 존재하지 않을 수 있다. -> 빈 array
+      if (imageResoureces.resources.length !== 0) {
+        checkedPostDto.resources = imageResoureces.resources;
+      }
+      // createPostDto로 글 생성 요청
+      handleCreatePost(checkedPostDto);
     } catch (err) {
       ShowSnack(err.message, 'error', enqueueSnackbar);
-      return;
     }
-
-    // createPostDto로 글 생성 요청
-    handleCreatePost(createPostDto);
   }, [platform, handleCreatePost, editor, enqueueSnackbar]);
 
   const handleEdit = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -181,25 +156,20 @@ export default function CommunityPostWrite(): JSX.Element {
     };
 
     try {
-      updatePostDto.content = getHtmlFromEditor(editor);
+      const nowContents = getHtmlFromEditor(editor);
+      const imageResoureces = replaceResources(nowContents);
+      updatePostDto.content = imageResoureces.content;
+      const checkedPostDto = checkUpdatePostDto(updatePostDto);
 
-      // ['title', 'content'] 중 빈 값'' 이 있는지 확인
-      const keys = ['title', 'content'] as Array<keyof UpdateCommunityPostDto & keyof typeof ErrorMessages>;
-
-      keys.forEach((key: keyof UpdateCommunityPostDto & keyof typeof ErrorMessages) => {
-        const value = (key === 'content')
-          ? trimmedContent(updatePostDto[key])
-          : updatePostDto[key].trim();
-
-        if (value === '') throw new Error(ErrorMessages[key]);
-      });
+      // image가 존재하지 않을 수 있다. -> 빈 array
+      if (imageResoureces.resources.length !== 0) {
+        checkedPostDto.resources = imageResoureces.resources;
+      }
+      // updatePostDto로 글 수정 요청
+      handleEditPost(checkedPostDto);
     } catch (err) {
       ShowSnack(err.message, 'error', enqueueSnackbar);
-      return;
     }
-
-    // updatePostDto로 글 수정 요청
-    handleEditPost(updatePostDto);
   }, [handleEditPost, editor, enqueueSnackbar]);
 
   return (

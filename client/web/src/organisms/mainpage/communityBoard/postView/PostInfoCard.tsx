@@ -1,10 +1,12 @@
 import React, { memo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import {
-  Card, Chip, Divider, Grid, Typography,
+  Chip, Divider, Grid, Typography,
 } from '@material-ui/core';
+import classnames from 'classnames';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import dateExpression from '../../../../utils/dateExpression';
 
 const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
   postInfoCard: {
@@ -19,7 +21,7 @@ const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
     marginBottom: theme.spacing(1),
     fontSize: theme.typography.h5.fontSize,
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.spacing(1.5),
+      fontSize: theme.spacing(2.2),
     },
   },
   group: {
@@ -41,7 +43,14 @@ const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
       },
     },
   },
-
+  divider: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  date: {
+    // color: theme.palette.text.secondary,
+    fontSize: theme.spacing(1.8),
+  },
 }));
 
 interface PostProps {
@@ -57,14 +66,21 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
   const cardClass = usePostInfoCardStyle();
 
   return (
-
-    <Card className={cardClass.postInfoCard}>
+    <div className={cardClass.postInfoCard}>
       <Typography variant="h5" className={cardClass.title}>{title}</Typography>
+      <Divider orientation="horizontal" className={cardClass.divider} />
       <Grid container justify="space-between">
         <Grid item className={cardClass.group} xs={12} sm={6}>
-          <Typography className="text">{`${nickname}`}</Typography>
+          <Typography className="text">
+            {`${nickname}`}
+          </Typography>
           <Divider orientation="vertical" flexItem />
-          <Typography className="text">{createDate ? new Date(createDate).toLocaleString() : ''}</Typography>
+          <Typography className={classnames('text', cardClass.date)}>
+            {createDate ? dateExpression({
+              compoName: 'post-date',
+              createdAt: createDate,
+            }) : ''}
+          </Typography>
         </Grid>
         <Grid item className={cardClass.group} xs={12} sm={6} container justify="flex-end">
           <Typography className="text">{`조회 ${hit}`}</Typography>
@@ -80,7 +96,8 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
           </div>
         </Grid>
       </Grid>
-    </Card>
+      <Divider orientation="horizontal" className={cardClass.divider} />
+    </div>
   );
 }
 

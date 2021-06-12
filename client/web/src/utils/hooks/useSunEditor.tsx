@@ -66,6 +66,9 @@ export default function useSunEditor(): useSunEditorReturnType {
         buttonList: isMobile ? buttonList : originButtonList,
         showPathLabel: false,
         resizingBar: false,
+        imageUploadSizeLimit: 10485760,
+        imageWidth: '256',
+        imageHeight: '144',
       });
       editorRef.current = editorInstance;
     }
