@@ -259,8 +259,11 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
       <div className={classes.header}>
         <div className={classes.userInfo}>
           <Avatar component="span" className={classes.smallAvatar} src={profileImage} />
-          <Typography component="span" className="nickname">{nickname}</Typography>
-          {userId && <Typography component="span" className="userId">{`(${transformIdToAsterisk(userId)})`}</Typography>}
+          <Typography component="span" className="nickname">
+            { userId
+              ? `${nickname} (${transformIdToAsterisk(userId)})`
+              : nickname}
+          </Typography>
         </div>
         <div className={classes.headerActions}>
           {deleteFlag === 1 ? (

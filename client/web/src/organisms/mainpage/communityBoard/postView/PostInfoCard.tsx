@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import dateExpression from '../../../../utils/dateExpression';
+import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 
 const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
   postInfoCard: {
@@ -59,7 +60,7 @@ interface PostProps {
 }
 function PostInfoCard({ post, repliesCount }: PostProps) {
   const {
-    title, nickname, createDate, hit, recommend,
+    title, nickname, createDate, hit, recommend, userId,
   } = post;
 
   const { isMobile } = useMediaSize();
@@ -72,7 +73,7 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
       <Grid container justify="space-between">
         <Grid item className={cardClass.group} xs={12} sm={6}>
           <Typography className="text">
-            {`${nickname}`}
+            {`${nickname} ${userId ? `(${transformIdToAsterisk(userId)})` : ''}`}
           </Typography>
           <Divider orientation="vertical" flexItem />
           <Typography className={classnames('text', cardClass.date)}>

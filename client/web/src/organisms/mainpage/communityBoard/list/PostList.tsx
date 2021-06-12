@@ -17,6 +17,7 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import { useStyles, rowHeightBase } from '../style/PostList.style';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
+import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
@@ -119,7 +120,9 @@ function DesktopPostList({
           {post.repliesCount ? <span className={classes.replies}>{`[${post.repliesCount}]`}</span> : null}
         </>
       ),
-      nickname: post.nickname,
+      nickname: post.userId
+        ? `${post.nickname} (${transformIdToAsterisk(post.userId)})`
+        : post.nickname,
       createDate: `${getDateDisplay(post.createDate)}`,
       hit: post.hit,
       recommend: post.recommend,
@@ -245,7 +248,9 @@ function MobilePostList({
                   {`추천 ${post.recommend}`}
                 </Typography>
                 <Typography className={classnames(classes.mobileText, classes.mobileNickname)}>
-                  {post.nickname}
+                  { post.userId
+                    ? `${post.nickname} (${transformIdToAsterisk(post.userId)})`
+                    : post.nickname}
                 </Typography>
 
               </Grid>
