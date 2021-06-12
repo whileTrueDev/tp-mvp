@@ -1,4 +1,4 @@
-import { IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UpdateCommunityPostDto {
   @IsString()
@@ -7,4 +7,11 @@ export class UpdateCommunityPostDto {
 
   @IsString()
   content: string;
+
+  @IsOptional()
+  resources?: {fileName: string, src: string, signature: string}[]
+
+  @IsOptional()
+  @IsString()
+  userId?: string;
 }

@@ -22,6 +22,7 @@ import useScrollTop from '../../../utils/hooks/useScrollTop';
 import useSunEditor from '../../../utils/hooks/useSunEditor';
 import usePostWriteEditAPI from '../../../utils/hooks/usePostWriteEditAPI';
 import WritingInputFields from './write/WritingInputFields';
+import useAuthContext from '../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
@@ -88,6 +89,7 @@ interface Params{
  */
 export default function CommunityPostWrite(): JSX.Element {
   const classes = useStyles();
+  const auth = useAuthContext();
   const titleRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const nicknameRef = useRef<HTMLInputElement>(null);
@@ -104,9 +106,16 @@ export default function CommunityPostWrite(): JSX.Element {
   useScrollTop();
 
   useEffect(() => {
+    // 로그인 상태일 때
+    if (nicknameRef.current) {
+      nicknameRef.current.value = (auth.user && auth.user.userId) ? auth.user.nickName : '';
+    }
+  }, [auth.user]);
+
+  useEffect(() => {
     if (isEditMode) {
       // 글 수정하는 경우 글 내용과 제목 가져와서 보여줌
-      handleLoadPost((res: { data: { content: any; title: any; }; }) => {
+      handleLoadPost((res: { data: { content: any; title: any;}; }) => {
         const { content, title } = res.data;
         if (titleRef.current) {
           titleRef.current.value = title;
@@ -129,6 +138,7 @@ export default function CommunityPostWrite(): JSX.Element {
       password: (passwordRef.current && passwordRef.current.value) || '',
       platform: platformCode[platform], // 아프리카=0,트위치=1,자유게시판=2
       category: 0, // 일반글=0, 공지글=1
+      userId: auth.user.userId,
     };
 
     try {
@@ -146,7 +156,7 @@ export default function CommunityPostWrite(): JSX.Element {
     } catch (err) {
       ShowSnack(err.message, 'error', enqueueSnackbar);
     }
-  }, [platform, handleCreatePost, editor, enqueueSnackbar]);
+  }, [platform, auth.user.userId, editor, handleCreatePost, enqueueSnackbar]);
 
   const handleEdit = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // '글 수정'

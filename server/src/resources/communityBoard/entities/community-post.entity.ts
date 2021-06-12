@@ -44,4 +44,7 @@ export class CommunityPostEntity implements CommunityPost {
 
   @OneToMany((type) => CommunityReplyEntity, (reply) => reply.postId)
   replies? : CommunityReplyEntity[];
+
+  @Column({ nullable: true, comment: '글 작성자 userId, 비회원의 글은 null값 저장' })
+  userId: string;
 }

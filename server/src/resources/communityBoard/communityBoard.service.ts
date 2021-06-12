@@ -79,7 +79,13 @@ export class CommunityBoardService {
       return content;
     }
     await Promise.all(
-      createCommunityPostDto.resources.map(async ({ fileName, src, signature }: {fileName: string, src: string, signature: string}): Promise<void> => {
+      createCommunityPostDto.resources.map(async ({
+        fileName, src, signature,
+      }: {
+        fileName: string,
+        src: string,
+        signature: string
+      }): Promise<void> => {
         // 파일명 해싱
         const hashName = await bcrypt.hash(fileName, 1);
         // 파일 저장

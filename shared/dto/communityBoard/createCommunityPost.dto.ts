@@ -1,4 +1,6 @@
-import { IsString, IsNumber, MaxLength } from 'class-validator';
+import {
+  IsString, IsNumber, MaxLength, IsOptional,
+} from 'class-validator';
 
 export class CreateCommunityPostDto {
   @IsString()
@@ -21,4 +23,11 @@ export class CreateCommunityPostDto {
 
   @IsNumber()
   category: number;
+
+  @IsOptional()
+  @IsString()
+  userId?: string;
+
+  @IsOptional()
+  resources?: {fileName: string, src: string, signature: string}[]
 }
