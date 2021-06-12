@@ -140,6 +140,7 @@ export class CommunityBoardService {
         'post.category',
         'post.hit',
         'post.recommend',
+        'post.userId',
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
       .andWhere(`post.${searchColumn} like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
@@ -188,6 +189,7 @@ export class CommunityBoardService {
         'post.category',
         'post.hit',
         'post.recommend',
+        'post.userId',
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
       .loadRelationCountAndMap(

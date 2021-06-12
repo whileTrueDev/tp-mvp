@@ -20,6 +20,7 @@ import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import dateExpression from '../../../utils/dateExpression';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
+import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import CheckPasswordDialog from '../shared/CheckPasswordDialog';
 import FeatureReply from './sub/FeatureReply';
 import FeatureReplyInput from './sub/FeatureReplyInput';
@@ -234,7 +235,9 @@ export default function FeatureDetail({
               )}
             </Typography>
             <Typography variant="body1" color="textSecondary">
-              {currentFeatureData.userIp && (<span>{currentFeatureData.userIp}</span>)}
+              {transformIdToAsterisk(currentFeatureData.author
+                ? currentFeatureData.author.userId
+                : currentFeatureData.userIp)}
             </Typography>
           </Grid>
           <Grid item className={classes.metaRow}>

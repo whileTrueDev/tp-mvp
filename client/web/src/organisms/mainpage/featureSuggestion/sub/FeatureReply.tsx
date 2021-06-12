@@ -9,6 +9,7 @@ import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
+import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +67,7 @@ export default function FeatureReply({
         <div>
           <div className={classes.titleSection}>
             <Typography variant="body2" className={classes.title}>
-              {reply.author?.userId === 'Truepoint' ? reply.author?.userId : reply.userIp}
+              {transformIdToAsterisk(reply.author?.userId ? reply.author?.userId : reply.userIp)}
             </Typography>
             <Typography variant="caption">{moment(reply.createdAt).fromNow()}</Typography>
             {reply.author?.userId !== 'Truepoint' && (
