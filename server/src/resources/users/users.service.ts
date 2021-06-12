@@ -15,7 +15,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import Axios from 'axios';
 import bcrypt from 'bcrypt';
 import {
-  getConnection, Repository, IsNull, Not,
+  getConnection, Repository,
 } from 'typeorm';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
@@ -34,6 +34,7 @@ import { UserTokenEntity } from './entities/userToken.entity';
 import { UserDetailEntity } from './entities/userDetail.entity';
 import { EmailVerificationService } from '../auth/emailVerification.service';
 import { KakaoUserInfo, NaverUserInfo } from '../auth/auth.service';
+import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
@@ -484,16 +485,38 @@ export class UsersService {
   }
 
   async getCreatorsList(): Promise<any> {
-    const user = await this.usersRepository.find({
-      where: [
-        { afreeca: Not(IsNull()) }, // where (afreecaId is not null) or (twitchId is not null) 
-        { twitch: Not(IsNull()) },
-      ],
-      order: { nickName: 'ASC' },
-      relations: ['twitch', 'afreeca', 'afreeca.categories', 'twitch.categories'],
-    });
+    const afreeca = await this.afreecaRepository.createQueryBuilder('afreeca')
+      .select([
+        'afreeca.afreecaId AS creatorId',
+        'afreeca.afreecaStreamerName AS nickname',
+        'afreeca.logo AS logo',
+        'categories.name AS category',
+        'AVG(ratings.rating) AS averageRating',
+        'ratings.platform AS platform',
+      ])
+      .groupBy('afreeca.afreecaId')
+      .leftJoin('afreeca.categories', 'categories')
+      .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
+      .getRawMany();
 
-    return user;
+    const twitch = await this.twitchRepository.createQueryBuilder('twitch')
+      .select([
+        'twitch.twitchId AS creatorId',
+        'twitch.twitchStreamerName AS nickname',
+        'twitch.logo AS logo',
+        'categories.name AS category',
+        'AVG(ratings.rating) AS averageRating',
+        'ratings.platform AS platform',
+      ])
+      .groupBy('twitch.twitchId')
+      .leftJoin('twitch.categories', 'categories')
+      .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
+      .getRawMany();
+
+    const collator = new Intl.Collator('kr', { numeric: true, sensitivity: 'base' }); // kr 명시
+    const data = [...afreeca, ...twitch].sort((a, b) => collator.compare(a.nickname, b.nickname));
+
+    return data;
   }
 
   // **********************************************
