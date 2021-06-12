@@ -12,6 +12,7 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
+import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
@@ -227,8 +228,12 @@ export class UsersController {
     return this.usersService.getHighlightPointList(platform);
   }
 
+  /**
+   * 방송인 검색 페이지에서 사용하는 방송인 목록
+   * @returns 
+   */
   @Get('/creator-list')
-  getCreatorList(): Promise<any> {
+  getCreatorList(): Promise<Creator[]> {
     return this.usersService.getCreatorsList();
   }
 

@@ -12,6 +12,8 @@ import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface'
 import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
+import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+
 import Axios from 'axios';
 import bcrypt from 'bcrypt';
 import {
@@ -35,6 +37,7 @@ import { UserDetailEntity } from './entities/userDetail.entity';
 import { EmailVerificationService } from '../auth/emailVerification.service';
 import { KakaoUserInfo, NaverUserInfo } from '../auth/auth.service';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
+
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
@@ -484,39 +487,45 @@ export class UsersService {
     }
   }
 
-  async getCreatorsList(): Promise<any> {
-    const afreeca = await this.afreecaRepository.createQueryBuilder('afreeca')
-      .select([
-        'afreeca.afreecaId AS creatorId',
-        'afreeca.afreecaStreamerName AS nickname',
-        'afreeca.logo AS logo',
-        'categories.name AS category',
-        'AVG(ratings.rating) AS averageRating',
-        'ratings.platform AS platform',
-      ])
-      .groupBy('afreeca.afreecaId')
-      .leftJoin('afreeca.categories', 'categories')
-      .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
-      .getRawMany();
+  // 방송인 목록 검색
+  async getCreatorsList(): Promise<Creator[]> {
+    try {
+      const afreeca = await this.afreecaRepository.createQueryBuilder('afreeca')
+        .select([
+          'afreeca.afreecaId AS creatorId',
+          'afreeca.afreecaStreamerName AS nickname',
+          'afreeca.logo AS logo',
+          'GROUP_CONCAT(DISTINCT categories.name) as categories ',
+          'AVG(ratings.rating) AS averageRating',
+          '"afreeca" AS platform',
+        ])
+        .groupBy('afreeca.afreecaId')
+        .leftJoin('afreeca.categories', 'categories')
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
+        .getRawMany();
 
-    const twitch = await this.twitchRepository.createQueryBuilder('twitch')
-      .select([
-        'twitch.twitchId AS creatorId',
-        'twitch.twitchStreamerName AS nickname',
-        'twitch.logo AS logo',
-        'categories.name AS category',
-        'AVG(ratings.rating) AS averageRating',
-        'ratings.platform AS platform',
-      ])
-      .groupBy('twitch.twitchId')
-      .leftJoin('twitch.categories', 'categories')
-      .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
-      .getRawMany();
-
-    const collator = new Intl.Collator('kr', { numeric: true, sensitivity: 'base' }); // kr 명시
-    const data = [...afreeca, ...twitch].sort((a, b) => collator.compare(a.nickname, b.nickname));
-
-    return data;
+      const twitch = await this.twitchRepository.createQueryBuilder('twitch')
+        .select([
+          'twitch.twitchId AS creatorId',
+          'twitch.twitchStreamerName AS nickname',
+          'twitch.logo AS logo',
+          'GROUP_CONCAT(DISTINCT categories.name) as categories ',
+          'AVG(ratings.rating) AS averageRating',
+          '"twitch" AS platform',
+        ])
+        .groupBy('twitch.twitchId')
+        .leftJoin('twitch.categories', 'categories')
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
+        .getRawMany();
+      const collator = new Intl.Collator('kr', { numeric: true, sensitivity: 'base' }); // kr 명시
+      const data = [...afreeca, ...twitch]
+        .sort((a, b) => collator.compare(a.nickname, b.nickname))
+        .map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] }));
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in get creatorList');
+    }
   }
 
   // **********************************************
