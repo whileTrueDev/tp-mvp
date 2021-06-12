@@ -227,6 +227,11 @@ export class UsersController {
     return this.usersService.getHighlightPointList(platform);
   }
 
+  @Get('/creator-list')
+  getCreatorList(): Promise<any> {
+    return this.usersService.getCreatorsList();
+  }
+
   // 회원 가입
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)

@@ -14,7 +14,9 @@ import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interfac
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import Axios from 'axios';
 import bcrypt from 'bcrypt';
-import { getConnection, Repository } from 'typeorm';
+import {
+  getConnection, Repository, IsNull, Not,
+} from 'typeorm';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
@@ -479,6 +481,19 @@ export class UsersService {
       console.error(e);
       throw new InternalServerErrorException('Error in getEditingPointList');
     }
+  }
+
+  async getCreatorsList(): Promise<any> {
+    const user = await this.usersRepository.find({
+      where: [
+        { afreeca: Not(IsNull()) }, // where (afreecaId is not null) or (twitchId is not null) 
+        { twitch: Not(IsNull()) },
+      ],
+      order: { nickName: 'ASC' },
+      relations: ['twitch', 'afreeca', 'afreeca.categories', 'twitch.categories'],
+    });
+
+    return user;
   }
 
   // **********************************************
