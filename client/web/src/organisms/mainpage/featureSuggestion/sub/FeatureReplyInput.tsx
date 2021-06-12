@@ -110,8 +110,11 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
         color="primary"
         variant="contained"
         onClick={() => {
-          if (replyText.current && replyText.current.value.trim()) confirmDialog.handleOpen();
-          else ShowSnack('댓글을 입력해주세요.', 'error', enqueueSnackbar);
+          if (!(replyText.current && replyText.current.value.trim())) {
+            ShowSnack('댓글을 입력해주세요.', 'error', enqueueSnackbar);
+            return;
+          }
+          handleReplySubmit();
         }}
       >
         댓글 작성
