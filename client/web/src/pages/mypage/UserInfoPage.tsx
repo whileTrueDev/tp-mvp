@@ -1,8 +1,12 @@
-import { Box, Container, Hidden } from '@material-ui/core';
+import {
+  Box, Container, Grid, Hidden,
+} from '@material-ui/core';
 import React from 'react';
 import { RANKING_PAGE_CONTAINER_WIDTH } from '../../assets/constants';
 import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecoration';
 import PageTitle from '../../organisms/mainpage/shared/PageTitle';
+import MyComments from '../../organisms/mypage/userInfo/MyComments';
+import MyPosts from '../../organisms/mypage/userInfo/MyPosts';
 // import UserProfile from '../../organisms/mypage/dashboard/UserProfile';
 import MyRatings from '../../organisms/mypage/userInfo/MyRatings';
 import UserSetting from '../../organisms/mypage/userInfo/UserSetting';
@@ -24,6 +28,15 @@ export default function UserInfoPage(): JSX.Element {
         </Box>
 
         <MyRatings />
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <MyPosts />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <MyComments />
+          </Grid>
+        </Grid>
+
       </Container>
 
       <Footer />

@@ -9,6 +9,7 @@ export const useMyRatingsCreatorBoxStyles = makeStyles((theme: Theme) => {
       flexWrap: 'wrap',
       position: 'relative',
       padding: theme.spacing(2.5, 4),
+      marginBottom: theme.spacing(2),
       backgroundColor: theme.palette.background.paper,
       border: `4px solid ${theme.palette.grey[200]}`,
       borderTopWidth: borderWidth,
