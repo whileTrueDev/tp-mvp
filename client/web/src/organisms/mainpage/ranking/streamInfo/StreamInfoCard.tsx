@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface StreamInfoCardProps {
-  creator: User;
+  creator?: User;
   stream?: RecentStream;
   loading?: boolean;
   onUpVote: () => Promise<void>;
@@ -69,8 +69,8 @@ export default function StreamInfoCard({
     </>
   ), []);
 
-  const twitchUrl = useMemo(() => (creator.twitch ? `https://twitch.tv/${creator.twitch.twitchChannelName}` : ''), [creator.twitch]);
-  const afreecaUrl = useMemo(() => (creator.afreeca ? `https://bj.afreecatv.com/${creator.afreeca.afreecaId}` : ''), [creator.afreeca]);
+  const twitchUrl = useMemo(() => (creator && creator.twitch ? `https://twitch.tv/${creator.twitch.twitchChannelName}` : ''), [creator]);
+  const afreecaUrl = useMemo(() => (creator && creator.afreeca ? `https://bj.afreecatv.com/${creator.afreeca.afreecaId}` : ''), [creator]);
 
   const handleChannelClick = (url: string) => {
     window.open(url, '_blank');
@@ -80,12 +80,12 @@ export default function StreamInfoCard({
     <Grid container className={cardClasses.left}>
       <Grid container item xs={12} md={9} justify="space-around" alignItems="center">
         <Grid item xs={3} sm={4} className={classes.avatarContainer}>
-          <Avatar className={classes.avatar} src={creator.afreeca?.logo || creator.twitch?.logo || ''} />
+          <Avatar className={classes.avatar} src={creator ? (creator.afreeca?.logo || creator.twitch?.logo) : ''} />
         </Grid>
         <Grid item xs={9} sm={8} container direction="column" spacing={2} alignItems="flex-start" justify="flex-start">
-          {(loading && !stream)
+          {(loading && !stream && !creator)
             ? (loadingView)
-            : stream && (
+            : stream && creator && (
               <>
                 <Grid item>
                   <Typography className={streamInfoCardClasses.streamTitle}>{stream.title}</Typography>
