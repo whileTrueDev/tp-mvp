@@ -21,7 +21,7 @@ export default function CreatorEvaluation({
   const classes = useCreatorEvalutationCardStyle();
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
   const {
-    info, ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
+    ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
   } = useRatingData({ platform, creatorId });
 
   // 컴포넌트 마운트 이후 1회 실행, 크리에이터 초기 정보를 가져온다
@@ -42,7 +42,6 @@ export default function CreatorEvaluation({
       <CreatorInfoCard
         updateAverageRating={updateAverageRating}
         user={userData}
-        info={info}
         ratings={ratings}
         scores={scores}
       />

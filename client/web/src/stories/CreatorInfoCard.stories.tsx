@@ -26,10 +26,10 @@ Default.args = {
     average: 8,
     count: 1,
   },
-  info: {
-    platform: 'afreeca',
-    creatorId: 'bht0205',
-    logo: 'https://profile.img.afreecatv.com/LOGO/bh/bht0205/bht0205.jpg',
-    nickname: 'AZ.형태형',
-  },
+  // info: {
+  //   platform: 'afreeca',
+  //   creatorId: 'bht0205',
+  //   logo: 'https://profile.img.afreecatv.com/LOGO/bh/bht0205/bht0205.jpg',
+  //   nickname: 'AZ.형태형',
+  // },
 };

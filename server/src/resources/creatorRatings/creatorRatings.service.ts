@@ -50,7 +50,8 @@ export class CreatorRatingsService {
     }
   }
 
-  async findRatingListByUserId({ userId, page, itemPerPage }: {userId: string, page: number, itemPerPage: number}): Promise<any> {
+  async findRatingListByUserId({ userId, page, itemPerPage }: {
+      userId: string, page: number, itemPerPage: number}): Promise<any> {
     // userId로 매겨진 rating record
     const query = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
@@ -215,7 +216,6 @@ export class CreatorRatingsService {
    * @param platform 조회하려는 creator의 플랫폼 'twitch'|'afreeca'
    * @returns 
    * {
-      info: CreatorRatingCardInfo, // creator닉네임, 채널명, 프로필이미지 등의 정보
       ratings: CreatorAverageRatings, // 해당 creator의 평균평점과 횟수 정보
       scores: CreatorAverageScores, // 감탄, 웃음, 답답, 욕점수들
     }
@@ -224,72 +224,43 @@ export class CreatorRatingsService {
     creatorId: string,
     platform: 'twitch'|'afreeca',
   }): Promise<CreatorRatingInfoRes> {
-    const result = {
-      ratings: {
-        average: 0,
-        count: 0,
-      },
-      scores: {
-        admire: 0,
-        smile: 0,
-        frustrate: 0,
-        cuss: 0,
-      },
-      info: {
-        creatorId,
-        platform,
-        logo: '',
-        nickname: '',
-        twitchChannelName: null,
-      },
-    };
-    // creatorId의 평균 평점과 평가횟수를 찾는다
-    const { average, count } = await this.getAverageRatings(creatorId);
-    result.ratings = { average, count };
-
-    // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
-    const { recentCreateDate } = await this.rankingsRepository.createQueryBuilder('rank')
-      .select('max(rank.createDate) AS recentCreateDate')
-      .getRawOne();
-
-    const qb = await this.rankingsRepository.createQueryBuilder('rankings')
-      .select([
-        'AVG(smileScore) AS smile',
-        'AVG(frustrateScore) AS frustrate',
-        'AVG(admireScore) AS admire',
-        'AVG(cussScore) AS cuss',
-      ])
-      .where('creatorId = :creatorId', { creatorId })
-      .andWhere(`createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
-      .getRawOne();
-
-    result.scores.admire = qb.admire;
-    result.scores.smile = qb.smile;
-    result.scores.frustrate = qb.frustrate;
-    result.scores.cuss = qb.cuss;
-
     try {
-      if (platform === 'twitch') {
-        const twitchData = await this.twitchRepository.findOne({
-          where: {
-            twitchId: creatorId,
-          },
-          select: ['twitchStreamerName', 'twitchChannelName', 'logo'],
-        });
+      const result = {
+        ratings: {
+          average: 0,
+          count: 0,
+        },
+        scores: {
+          admire: 0,
+          smile: 0,
+          frustrate: 0,
+          cuss: 0,
+        },
+      };
+      // creatorId의 평균 평점과 평가횟수를 찾는다
+      const { average, count } = await this.getAverageRatings(creatorId);
+      result.ratings = { average, count };
 
-        result.info.logo = twitchData.logo;
-        result.info.nickname = twitchData.twitchStreamerName;
-        result.info.twitchChannelName = twitchData.twitchChannelName;
-      } else if (platform === 'afreeca') {
-        const afreecaData = await this.afreecaRepository.findOne({
-          where: {
-            afreecaId: creatorId,
-          },
-          select: ['logo', 'afreecaStreamerName'],
-        });
-        result.info.logo = afreecaData.logo;
-        result.info.nickname = afreecaData.afreecaStreamerName;
-      }
+      // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
+      const { recentCreateDate } = await this.rankingsRepository.createQueryBuilder('rank')
+        .select('max(rank.createDate) AS recentCreateDate')
+        .getRawOne();
+
+      const qb = await this.rankingsRepository.createQueryBuilder('rankings')
+        .select([
+          'AVG(smileScore) AS smile',
+          'AVG(frustrateScore) AS frustrate',
+          'AVG(admireScore) AS admire',
+          'AVG(cussScore) AS cuss',
+        ])
+        .where('creatorId = :creatorId', { creatorId })
+        .andWhere(`createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
+        .getRawOne();
+
+      result.scores.admire = qb.admire;
+      result.scores.smile = qb.smile;
+      result.scores.frustrate = qb.frustrate;
+      result.scores.cuss = qb.cuss;
 
       return result;
     } catch (error) {

@@ -9,7 +9,6 @@ import GoBackButton from '../../../atoms/Button/GoBackButton';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import useRatingData from '../../../utils/hooks/useRatingData';
 import PageTitle from '../shared/PageTitle';
-// import CreatorEvaluation from './CreatorEvaluation';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
 import { ProfileSection, ScoresSection } from './creatorInfo/CreatorInfoCard';
 import RecentStreamList from './RecentStreamList';
@@ -24,7 +23,7 @@ export default function CreatorDetails(): React.ReactElement {
   const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
   const { isMobile } = useMediaSize();
   const {
-    info, ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
+    ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
   } = useRatingData({ platform, creatorId });
   const [userData] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
 
@@ -51,7 +50,6 @@ export default function CreatorDetails(): React.ReactElement {
             <ProfileSection
               user={userData.data}
               ratings={ratings}
-              info={info}
               updateAverageRating={updateAverageRating}
             />
           </Grid>
@@ -90,7 +88,6 @@ export default function CreatorDetails(): React.ReactElement {
               <ProfileSection
                 user={userData.data}
                 ratings={ratings}
-                info={info}
                 updateAverageRating={updateAverageRating}
               />
             </Grid>

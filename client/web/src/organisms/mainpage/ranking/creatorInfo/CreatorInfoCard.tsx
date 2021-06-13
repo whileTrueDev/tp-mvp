@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
-  CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
+  CreatorRatingInfoRes, CreatorAverageRatings, CreatorAverageScores,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
 import { Textfit } from 'react-textfit';
@@ -40,10 +40,10 @@ const scoreLables: {name: columns, label: string, icon?: any}[] = [
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
  */
 export function ProfileSection({
-  user, info, updateAverageRating, ratings,
+  user,
+  updateAverageRating, ratings,
 }: {
   user?: User,
-  info: CreatorRatingCardInfo,
   updateAverageRating?: () => void,
   ratings: CreatorAverageRatings
 }): JSX.Element {
@@ -51,9 +51,12 @@ export function ProfileSection({
   const largeRating = useExLargeRatingStyle();
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-  const {
-    platform, creatorId, logo, nickname, twitchChannelName,
-  } = info;
+
+  const platform = user?.afreeca ? 'afreeca' : 'twitch';
+  const creatorId = user?.afreeca ? user?.afreeca?.afreecaId : user?.twitch?.twitchId;
+  const logo = user?.afreeca ? user?.afreeca?.logo : user?.twitch?.logo;
+  const nickname = user?.afreeca ? user?.afreeca?.afreecaStreamerName : user?.twitch?.twitchStreamerName;
+  const twitchChannelName = user?.twitch?.twitchChannelName;
 
   const { average: averageRating, count: ratingCount } = ratings;
   const [userRating, setUserRating] = useState<number|undefined>(); // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
@@ -229,7 +232,8 @@ export function ScoresSection({ scores }: {
  */
 export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Element {
   const {
-    info, ratings, scores, updateAverageRating, user,
+    // info, 
+    ratings, scores, updateAverageRating, user,
   } = props;
 
   const classes = useCreatorInfoCardStyles();
@@ -241,7 +245,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
         <ProfileSection
           user={user}
           ratings={ratings}
-          info={info}
+          // info={info}
           updateAverageRating={updateAverageRating}
         />
       </Grid>
