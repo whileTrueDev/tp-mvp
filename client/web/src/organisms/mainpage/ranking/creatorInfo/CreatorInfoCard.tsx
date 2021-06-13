@@ -7,7 +7,6 @@ import {
   CreatorRatingInfoRes, CreatorAverageRatings, CreatorAverageScores,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
-import { Textfit } from 'react-textfit';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import AdmireIcon from '../../../../atoms/svgIcons/AdmireIcon';
 import CussIcon from '../../../../atoms/svgIcons/CussIcon';
@@ -168,7 +167,7 @@ export function ProfileSection({
       <Grid item container className={classes.textContainer} xs={8}>
         <Grid item className={classes.nameContainer}>
           <Typography className={classes.nickname} component="div">
-            <Textfit mode="single" max={20}>{nickname}</Textfit>
+            {nickname}
           </Typography>
         </Grid>
         <Grid item className={classes.ratingContainer}>
