@@ -1,3 +1,4 @@
+import { CommunityPost } from './CommunityPost.interface';
 // tp 익명 자유게시판(아프리카, 트위치) 댓글 interface
 export interface CommunityReply{
   replyId: number;
@@ -15,6 +16,8 @@ export interface CommunityReply{
   createDate: Date;
 
   postId: number;
+
+  post: CommunityPost;
 
   deleteFlag: boolean;
 

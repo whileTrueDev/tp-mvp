@@ -4,6 +4,7 @@ import {
 } from 'typeorm';
 import { StreamComments } from '@truepoint/shared/dist/interfaces/StreamComments.interface';
 import { StreamCommentVoteEntity } from './streamCommentVote.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity({ name: 'StreamCommentTest' })
 @Index('IX_streamId', ['streamId'])
@@ -15,6 +16,8 @@ export class StreamCommentsEntity implements StreamComments {
   @PrimaryGeneratedColumn()
   commentId: number;
 
+  @JoinColumn({ name: 'userId' })
+  @ManyToOne((type) => UserEntity, (user) => user.streamComments, { nullable: true, onDelete: 'CASCADE' })
   @Column({ nullable: true, comment: '댓글을 단 userId' })
   userId: string;
 

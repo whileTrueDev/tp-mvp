@@ -11,6 +11,12 @@ import { PlatformYoutubeEntity } from './platformYoutube.entity';
 import { PlatformTwitchEntity } from './platformTwitch.entity';
 import { PlatformAfreecaEntity } from './platformAfreeca.entity';
 import { UserDetailEntity } from './userDetail.entity';
+import { CommunityPostEntity } from '../../communityBoard/entities/community-post.entity';
+import { CommunityReplyEntity } from '../../communityBoard/entities/community-reply.entity';
+import { CreatorCommentsEntity } from '../../creatorComment/entities/creatorComment.entity';
+import { StreamCommentsEntity } from '../../broadcast-info/entities/streamComment.entity';
+import { FeatureSuggestionEntity } from '../../featureSuggestion/entities/featureSuggestion.entity';
+import { FeatureSuggestionReplyEntity } from '../../featureSuggestion/entities/featureSuggestionReply.entity';
 
 @Entity({ name: 'UserTest' })
 export class UserEntity implements User {
@@ -92,4 +98,22 @@ export class UserEntity implements User {
 
   @Column({ nullable: true, comment: '카카오 로그인으로 가입된 회원의 kakao 회원번호' })
   kakaoId?: string;
+
+  @OneToMany((type) => CommunityPostEntity, (post) => post.userId)
+  communityPosts? : CommunityPostEntity[];
+
+  @OneToMany((type) => CommunityReplyEntity, (post) => post.userId)
+  communityReplies? : CommunityReplyEntity[];
+
+  @OneToMany((type) => CreatorCommentsEntity, (post) => post.userId)
+  creatorComments?: CreatorCommentsEntity[];
+
+  @OneToMany((type) => StreamCommentsEntity, (post) => post.userId)
+  streamComments?: StreamCommentsEntity[];
+
+  @OneToMany((type) => FeatureSuggestionEntity, (post) => post.author)
+  featureSuggestions?: FeatureSuggestionEntity[];
+
+  @OneToMany((type) => FeatureSuggestionReplyEntity, (post) => post.author)
+  featureSuggestionReplies?: FeatureSuggestionReplyEntity[];
 }
