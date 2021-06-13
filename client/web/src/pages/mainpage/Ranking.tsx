@@ -33,7 +33,7 @@ export default function Ranking(): JSX.Element {
         </Route>
 
         {/* 방송 정보를 포함한 방송인 정보 페이지 */}
-        <Route exact path={`${path}/:platform/:creatorId`}>
+        <Route exact path={`${path}/creator/:creatorId`}>
           <CreatorDetails />
         </Route>
 

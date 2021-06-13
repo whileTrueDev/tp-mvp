@@ -27,9 +27,8 @@ export default function CreatorSearchTable(): JSX.Element {
   const { isMobile } = useMediaSize();
   const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: Creator | undefined) => {
     if (!rowData) return;
-    const platform = rowData?.platform;
     const creatorId = rowData?.creatorId;
-    history.push(`/ranking/${platform}/${creatorId}`);
+    history.push(`/ranking/creator/${creatorId}`);
   };
   return (
     <div className={classes.border}>

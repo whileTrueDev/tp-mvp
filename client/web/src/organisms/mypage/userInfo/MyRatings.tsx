@@ -59,10 +59,11 @@ export function CreatorAvatarWithRating(props: CreatorAvatarProps): JSX.Element 
     rating, platform, creatorId, creatorDisplayName: name, creatorProfileImage: logo,
   } = props;
   const { isMobile } = useMediaSize();
+  const path = `/ranking/creator/${creatorId}`;
 
   if (isMobile) {
     return (
-      <Link className={mobileLinkAvatar} component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
+      <Link className={mobileLinkAvatar} component={RouterLink} to={path}>
 
         <AvatarWithPlatformBadge
           platform={platform}
@@ -82,7 +83,7 @@ export function CreatorAvatarWithRating(props: CreatorAvatarProps): JSX.Element 
   }
 
   return (
-    <Link className={linkAvatar} component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
+    <Link className={linkAvatar} component={RouterLink} to={path}>
       <AvatarWithPlatformBadge platform={platform} name={name} logo={logo} />
       <Typography align="center">{name}</Typography>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
