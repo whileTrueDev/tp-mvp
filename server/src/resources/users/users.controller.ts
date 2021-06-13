@@ -1,8 +1,9 @@
 import {
   Body,
   ClassSerializerInterceptor, Controller,
+  DefaultValuePipe,
   Delete, Get,
-  Param, Patch, Post,
+  Param, ParseIntPipe, Patch, Post,
   Query, Req, UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
@@ -23,12 +24,14 @@ import { AuthService } from '../auth/auth.service';
 import { SubscribeEntity } from './entities/subscribe.entity';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { UserPropertiesService } from './userProperties.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
+    private readonly userPropertiesService: UserPropertiesService,
   ) {}
 
   /**
@@ -235,6 +238,24 @@ export class UsersController {
   @Get('/creator-list')
   getCreatorList(): Promise<Creator[]> {
     return this.usersService.getCreatorsList();
+  }
+
+  @Get('/properties/posts')
+  findUserPosts(
+    @Query('userId') userId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('itemPerPage', new DefaultValuePipe(10), ParseIntPipe) itemPerPage: number,
+  ): Promise<any> {
+    return this.userPropertiesService.findUserPosts({ userId, page, itemPerPage });
+  }
+
+  @Get('/properties/comments')
+  findUserComments(
+    @Query('userId') userId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('itemPerPage', new DefaultValuePipe(10), ParseIntPipe) itemPerPage: number,
+  ): Promise<any> {
+    return this.userPropertiesService.findUserComments({ userId, page, itemPerPage });
   }
 
   // 회원 가입
