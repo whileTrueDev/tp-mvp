@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { UserEntity } from './entities/user.entity';
 
 const BOARD_PLATFORM_NAME = {
@@ -20,11 +21,7 @@ export class UserPropertiesService {
     userId: string,
     page: number,
     itemPerPage: number
-  }): Promise<any> {
-    /**
-     * 1페이지 0~10
-     * 2페이지 10~20
-     */
+  }): Promise<MyPostsRes> {
     const start = ((page - 1) * itemPerPage); // offset
     const end = start + itemPerPage;
 
@@ -71,7 +68,7 @@ export class UserPropertiesService {
     userId: string,
     page: number,
     itemPerPage: number
-  }): Promise<any> {
+  }): Promise<MyCommentsRes> {
     const start = ((page - 1) * itemPerPage); // offset
     const end = start + itemPerPage;
 
@@ -90,7 +87,6 @@ export class UserPropertiesService {
       ...user.communityReplies.map((comment) => ({
         to: `/community-board/${BOARD_PLATFORM_NAME[comment.post.platform].en}/view/${comment.post.postId}/#commentId-${comment.parentReplyId || comment.replyId}`, // TODO: 특정 댓글로 이동
         commentId: comment.replyId,
-        parendCommentId: comment.parentReplyId,
         createDate: comment.createDate,
         content: comment.content,
         belongTo: BOARD_PLATFORM_NAME[comment.post.platform].ko,
@@ -98,7 +94,6 @@ export class UserPropertiesService {
       ...user.creatorComments.map((comment) => ({
         to: `/ranking/creator/${comment.creatorId}/#commentId-${comment.parentCommentId || comment.commentId}`, // TODO: 해당 댓글로 이동하기
         commentId: comment.commentId,
-        parentCommentId: comment.parentCommentId,
         createDate: comment.createDate,
         content: comment.content,
         belongTo: '인방랭킹 방송인 프로필 게시판',
@@ -106,7 +101,6 @@ export class UserPropertiesService {
       ...user.streamComments.map((comment) => ({
         to: `/ranking/stream/${comment.streamId}/#commentId-${comment.parentCommentId || comment.commentId}`, // TODO: 해당 댓글로 이동하기
         commentId: comment.commentId,
-        parentCommentId: comment.parentCommentId,
         createDate: comment.createDate,
         content: comment.content,
         belongTo: '인방랭킹 방송 후기 게시판',
@@ -114,7 +108,6 @@ export class UserPropertiesService {
       ...user.featureSuggestionReplies.map((comment) => ({
         to: `/feature-suggestion/read/${comment.suggestionId}`,
         commentId: comment.replyId,
-        parentCommentId: null,
         createDate: comment.createdAt,
         content: comment.content,
         belongTo: '기능제안 게시판',

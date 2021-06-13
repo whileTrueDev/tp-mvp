@@ -2,6 +2,7 @@ import useAxios from 'axios-hooks';
 import React, { useEffect } from 'react';
 import Pagination, { PaginationProps } from '@material-ui/lab/Pagination';
 import { Grid, Link, Typography } from '@material-ui/core';
+import { MyPostsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { Link as RouterLink } from 'react-router-dom';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import TitleWithLogo from './TitleWithLogo';
@@ -61,20 +62,15 @@ export default function MyPosts(): JSX.Element {
     page, itemPerPage, handlePageChange,
   } = usePage({ defaultItemPerPage: 10 });
 
-  const [{ data, loading, error }, getMyPosts] = useAxios<{
-      totalCount: number,
-      totalPage: number,
-      hasMore: boolean,
-      posts: any[],
-    }>({
-      url: 'users/properties/posts',
-      method: 'get',
-      params: {
-        userId: auth.user.userId,
-        page,
-        itemPerPage,
-      },
-    });
+  const [{ data, loading, error }, getMyPosts] = useAxios<MyPostsRes>({
+    url: 'users/properties/posts',
+    method: 'get',
+    params: {
+      userId: auth.user.userId,
+      page,
+      itemPerPage,
+    },
+  });
 
   useEffect(() => {
     getMyPosts({

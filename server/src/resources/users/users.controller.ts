@@ -16,6 +16,7 @@ import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.i
 import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
+import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
 import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
 // import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -245,7 +246,7 @@ export class UsersController {
     @Query('userId') userId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('itemPerPage', new DefaultValuePipe(10), ParseIntPipe) itemPerPage: number,
-  ): Promise<any> {
+  ): Promise<MyPostsRes> {
     return this.userPropertiesService.findUserPosts({ userId, page, itemPerPage });
   }
 
@@ -254,7 +255,7 @@ export class UsersController {
     @Query('userId') userId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('itemPerPage', new DefaultValuePipe(10), ParseIntPipe) itemPerPage: number,
-  ): Promise<any> {
+  ): Promise<MyCommentsRes> {
     return this.userPropertiesService.findUserComments({ userId, page, itemPerPage });
   }
 

@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import useAxios from 'axios-hooks';
+import { MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import React, { useEffect } from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
@@ -15,20 +16,15 @@ export default function MyComments(): JSX.Element {
     page, itemPerPage, handlePageChange,
   } = usePage({ defaultItemPerPage: 10 });
 
-  const [{ data, loading, error }, getMyPosts] = useAxios<{
-      totalCount: number,
-      totalPage: number,
-      hasMore: boolean,
-      comments: any[],
-    }>({
-      url: 'users/properties/comments',
-      method: 'get',
-      params: {
-        userId: auth.user.userId,
-        page,
-        itemPerPage,
-      },
-    });
+  const [{ data, loading, error }, getMyPosts] = useAxios<MyCommentsRes>({
+    url: 'users/properties/comments',
+    method: 'get',
+    params: {
+      userId: auth.user.userId,
+      page,
+      itemPerPage,
+    },
+  });
 
   useEffect(() => {
     getMyPosts({
@@ -51,7 +47,7 @@ export default function MyComments(): JSX.Element {
           )}
           {data && data.comments.map((d) => (
             <MyPostItem
-              key={`${d.postId}_${d.to}`}
+              key={`${d.commentId}_${d.to}`}
               content={d.content}
               createDate={d.createDate}
               belongTo={d.belongTo}
