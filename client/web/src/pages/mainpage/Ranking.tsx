@@ -38,7 +38,7 @@ export default function Ranking(): JSX.Element {
         </Route>
 
         {/* 최근 방송 정보 섹션 */}
-        <Route exact path={`${path}/:platform/:creatorId/:streamId`}>
+        <Route exact path={`${path}/stream/:streamId`}>
           <Container className={wrapper.container}>
             <StreamEvaluation />
           </Container>

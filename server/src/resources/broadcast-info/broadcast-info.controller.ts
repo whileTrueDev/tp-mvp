@@ -110,13 +110,15 @@ export class BroadcastInfoController {
    * @param streamId 
    * @returns 
    */
-  @Get(':platform/:streamId')
+  @Get('/:streamId')
   async findOneStream(
     @Ip() ip: string,
     @Param(ValidationPipe) params: FindOneStreamDto,
   ): Promise<RecentStream> {
-    const { platform, streamId } = params;
-    const streamData = await this.broadcastService.findOneSteam(platform, streamId);
+    const {
+      streamId,
+    } = params;
+    const streamData = await this.broadcastService.findOneSteam(streamId);
     const vote = await this.broadcastService.checkIsVotedByIp(ip, streamId);
 
     if (vote) {
