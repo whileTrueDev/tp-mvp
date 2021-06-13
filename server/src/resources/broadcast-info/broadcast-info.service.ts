@@ -116,7 +116,7 @@ export class BroadcastInfoService {
    * @param streamId 스트림 고유 ID
    * @returns StreamEntity
    */
-  async findOneSteam(streamId: string): Promise<RecentStream> {
+  async findOneSteam(streamId: string, platform: string): Promise<RecentStream> {
     const result = await this.streamsRepository
       .query(
         `SELECT streamId, title, startDate, endDate, viewer, chatCount,
@@ -124,7 +124,7 @@ export class BroadcastInfoService {
           IFNULL(COUNT(*) - SUM(vote), 0) AS hateCount
         FROM ${this.streamsTableName} as s
         LEFT JOIN ${this.streamVoteRepo.metadata.tableName} as sv ON s.streamId = sv.streamStreamId
-        WHERE s.streamId = ?`, [streamId],
+        WHERE s.platform = ? AND s.streamId = ?`, [platform, streamId],
       );
     if (result.length === 0) return null;
     return result[0];
