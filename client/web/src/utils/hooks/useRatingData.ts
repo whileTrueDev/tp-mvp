@@ -5,7 +5,6 @@ import {
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 
 interface Props{
-  platform: 'afreeca'|'twitch',
   creatorId: string
 }
 export default function useRatingData(props: Props): {
@@ -14,9 +13,9 @@ export default function useRatingData(props: Props): {
   updateAverageRating: () => void;
   fetchCreatorRatingInfo: () => void;
 } {
-  const { platform, creatorId } = props;
+  const { creatorId } = props;
 
-  const [, getCreatorRatingInfo] = useAxios<CreatorRatingInfoRes>(`/ratings/info/${platform}/${creatorId}`, { manual: true });
+  const [, getCreatorRatingInfo] = useAxios<CreatorRatingInfoRes>(`/ratings/info/${creatorId}`, { manual: true });
   const [, refetchAverageRating] = useAxios<CreatorAverageRatings>(`/ratings/${creatorId}/average`, { manual: true });
 
   // 해당 크리에이터에 대한 평균평점과 평가횟수

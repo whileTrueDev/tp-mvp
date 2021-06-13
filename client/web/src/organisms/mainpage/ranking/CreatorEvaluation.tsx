@@ -19,10 +19,10 @@ export default function CreatorEvaluation({
   userData,
 }: CreatorEvaluationProps): JSX.Element {
   const classes = useCreatorEvalutationCardStyle();
-  const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
+  const { creatorId } = useParams<{creatorId: string}>();
   const {
     ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
-  } = useRatingData({ platform, creatorId });
+  } = useRatingData({ creatorId });
 
   // 컴포넌트 마운트 이후 1회 실행, 크리에이터 초기 정보를 가져온다
   useEffect(() => {

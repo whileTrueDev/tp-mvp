@@ -74,12 +74,11 @@ export class CreatorRatingsController {
    * @param creatorId 
    * @returns 
    */
-  @Get('info/:platform/:creatorId')
+  @Get('info/:creatorId')
   getCreatorRatingInfo(
-    @Param('platform') platform: 'afreeca'|'twitch',
     @Param('creatorId') creatorId: string,
   ): Promise<CreatorRatingInfoRes> {
-    return this.ratingsService.getCreatorRatingInfo({ creatorId, platform });
+    return this.ratingsService.getCreatorRatingInfo({ creatorId });
   }
 
   /**

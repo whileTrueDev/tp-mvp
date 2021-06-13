@@ -20,11 +20,11 @@ export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
   const { creatorEvaluationCardContainer } = useCreatorEvalutationCardStyle();
   const classes = useCreatorInfoCardStyles();
-  const { creatorId, platform } = useParams<{creatorId: string, platform: 'afreeca'|'twitch'}>();
+  const { creatorId } = useParams<{creatorId: string}>();
   const { isMobile } = useMediaSize();
   const {
     ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
-  } = useRatingData({ platform, creatorId });
+  } = useRatingData({ creatorId });
   const [userData] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
 
   // 컴포넌트 마운트 이후 1회 실행, 크리에이터 초기 정보를 가져온다

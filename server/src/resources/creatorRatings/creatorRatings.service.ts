@@ -213,16 +213,14 @@ export class CreatorRatingsService {
   /**
    * 방송인 정보페이지 상단에 사용될 정보
    * @param creatorId 조회하려는 creatorId
-   * @param platform 조회하려는 creator의 플랫폼 'twitch'|'afreeca'
    * @returns 
    * {
       ratings: CreatorAverageRatings, // 해당 creator의 평균평점과 횟수 정보
       scores: CreatorAverageScores, // 감탄, 웃음, 답답, 욕점수들
     }
    */
-  async getCreatorRatingInfo({ creatorId, platform }: {
+  async getCreatorRatingInfo({ creatorId }: {
     creatorId: string,
-    platform: 'twitch'|'afreeca',
   }): Promise<CreatorRatingInfoRes> {
     try {
       const result = {
