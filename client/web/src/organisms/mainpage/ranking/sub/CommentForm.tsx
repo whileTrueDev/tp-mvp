@@ -1,5 +1,5 @@
 import {
-  Button, Grid, Hidden, InputBase, TextField,
+  Button, InputBase, TextField,
 } from '@material-ui/core';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
@@ -78,62 +78,29 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
   };
   return (
     <form className={formStyle.form} onSubmit={onSubmit}>
-      <Hidden smUp>
-        <Grid container>
-          <Grid item xs={6}>
-            <TextField
-              label="닉네임"
-              name="nickname"
-              variant="outlined"
-              placeholder="닉네임"
-              inputProps={{ maxLength: 8 }}
-              className={formStyle.nicknameInput}
-              defaultValue={authContext.user.nickName}
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="비밀번호"
-              name="password"
-              type="password"
-              placeholder="비밀번호"
-              variant="outlined"
-              className={formStyle.passwordInput}
-              inputProps={{ maxLength: 4 }}
-              autoComplete="on"
-              size="small"
-            />
-          </Grid>
-        </Grid>
-      </Hidden>
-
-      {/* 데스크탑 화면인 경우 */}
-      <Hidden smDown>
-        <div>
-          <TextField
-            label="닉네임"
-            name="nickname"
-            variant="outlined"
-            placeholder="닉네임"
-            inputProps={{ maxLength: 8 }}
-            className={formStyle.nicknameInput}
-            defaultValue={authContext.user.nickName}
-            size="small"
-          />
-          <TextField
-            label="비밀번호"
-            name="password"
-            type="password"
-            placeholder="비밀번호"
-            variant="outlined"
-            className={formStyle.passwordInput}
-            inputProps={{ maxLength: 4 }}
-            autoComplete="on"
-            size="small"
-          />
-        </div>
-      </Hidden>
+      <div>
+        <TextField
+          label="닉네임"
+          name="nickname"
+          variant="outlined"
+          placeholder="닉네임"
+          inputProps={{ maxLength: 8 }}
+          className={formStyle.nicknameInput}
+          defaultValue={authContext.user.nickName}
+          size="small"
+        />
+        <TextField
+          label="비밀번호"
+          name="password"
+          type="password"
+          placeholder="비밀번호"
+          variant="outlined"
+          className={formStyle.passwordInput}
+          inputProps={{ maxLength: 4 }}
+          autoComplete="on"
+          size="small"
+        />
+      </div>
 
       <InputBase
         className={formStyle.contentTextArea}

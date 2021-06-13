@@ -19,6 +19,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
         marginLeft: theme.spacing(6),
         paddingLeft: theme.spacing(4),
         paddingRight: 0,
+        paddingBottom: theme.spacing(1),
         borderTop: `1px solid ${theme.palette.divider}`,
         [theme.breakpoints.down('sm')]: {
           marginLeft: theme.spacing(2),

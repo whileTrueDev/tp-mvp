@@ -255,7 +255,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
   const time = dayjs(createDate).format('YYYY-MM-DD HH:mm:ss');
 
   return (
-    <div className={classnames(classes.commentItem, { child: childComment })}>
+    <div className={classnames(classes.commentItem, { child: childComment })} id={`commentId-${commentId}`}>
       <div className={classes.header}>
         <div className={classes.userInfo}>
           <Avatar component="span" className={classes.smallAvatar} src={profileImage} />
