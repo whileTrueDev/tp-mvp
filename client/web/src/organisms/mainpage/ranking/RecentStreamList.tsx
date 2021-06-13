@@ -59,7 +59,7 @@ export default function RecentStreamList({
             key={stream.streamId}
             stream={stream}
             onClick={() => {
-              history.push(`/ranking/stream/${stream.streamId}`, userData.data);
+              history.push(`/ranking/${creatorId}/stream/${stream.streamId}`, userData.data);
             }}
           />
         ))}
@@ -76,7 +76,7 @@ export default function RecentStreamList({
               key={stream.streamId}
               stream={stream}
               onClick={() => {
-                history.push(`/ranking/stream/${stream.streamId}`, userData.data);
+                history.push(`/ranking/${creatorId}/stream/${stream.streamId}`, userData.data);
               }}
             />
           ))}
