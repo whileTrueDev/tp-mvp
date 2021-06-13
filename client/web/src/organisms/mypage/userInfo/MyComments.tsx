@@ -34,7 +34,7 @@ export default function MyComments(): JSX.Element {
         itemPerPage,
       },
     });
-  }, [page]);
+  }, [auth.user.userId, getMyPosts, itemPerPage, page]);
 
   return (
     <div>

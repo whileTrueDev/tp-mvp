@@ -58,7 +58,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   } = props;
   const classes = useStyles();
   const auth = useAuthContext();
-  const {user} = usePublicMainUser((state) => state);
+  const { user } = usePublicMainUser((state) => state);
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
@@ -131,7 +131,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
         ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar, user.userId]);
 
   /**
    * 달력 날짜 선택 핸들러

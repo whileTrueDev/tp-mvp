@@ -160,7 +160,7 @@ export default function MyRatings(): JSX.Element {
         itemPerPage,
       },
     });
-  }, [auth.user.userId, getMyRatingCreators, page]);
+  }, [auth.user.userId, getMyRatingCreators, itemPerPage, page]);
 
   useEffect(() => {
     setItemPerPage(isMobile ? 5 : 12);

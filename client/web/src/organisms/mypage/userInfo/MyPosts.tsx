@@ -80,7 +80,7 @@ export default function MyPosts(): JSX.Element {
         itemPerPage,
       },
     });
-  }, [page]);
+  }, [auth.user.userId, getMyPosts, itemPerPage, page]);
 
   return (
     <div>
