@@ -1,4 +1,8 @@
-import { IsString, MaxLength } from 'class-validator';
+import { } from '@nestjs/common';
+import {
+  IsString, MaxLength, IsArray, IsOptional,
+} from 'class-validator';
+import { ImageResource } from '../../interfaces/ImageResource.interface';
 
 export class UpdateCommunityPostDto {
   @IsString()
@@ -7,4 +11,8 @@ export class UpdateCommunityPostDto {
 
   @IsString()
   content: string;
+
+  @IsArray()
+  @IsOptional()
+  resources?: Array<ImageResource>;
 }
