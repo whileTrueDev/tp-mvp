@@ -51,7 +51,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
 
   const { enqueueSnackbar } = useSnackbar();
   const auth = useAuthContext();
-  const {user} = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
+  const { user } = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
 
   /* 다이얼로그 */
   const baseDialog = useDialog();

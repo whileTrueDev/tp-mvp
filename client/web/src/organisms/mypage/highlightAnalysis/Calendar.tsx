@@ -106,7 +106,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const auth = useAuthContext();
-  const {user} = usePublicMainUser((state) => state);
+  const { user } = usePublicMainUser((state) => state);
 
   const reRequest = 3;
   const [

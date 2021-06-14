@@ -97,7 +97,7 @@ export default function SidebarWithNavbar({
 }: SidebarWithNavbarProps): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
-  const {user} = usePublicMainUser((state) => state);
+  const { user } = usePublicMainUser((state) => state);
   const history = useHistory();
 
   const currentUserId = user.userId || auth.user.userId;

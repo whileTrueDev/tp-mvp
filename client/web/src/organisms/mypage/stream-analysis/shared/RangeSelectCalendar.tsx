@@ -44,7 +44,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const classes = useAllCalendarStyles();
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext();
-  const {user} = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
+  const { user } = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
 
@@ -121,7 +121,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [exampleMode, auth.user,user.userId, excuteGetStreams, enqueueSnackbar, currMonth]);
+  }, [exampleMode, auth.user, user.userId, excuteGetStreams, enqueueSnackbar, currMonth]);
 
   React.useEffect(() => {
     if (period.length > 1 && period[0] && period[1]) {

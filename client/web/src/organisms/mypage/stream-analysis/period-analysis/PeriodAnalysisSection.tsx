@@ -55,7 +55,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
 
   // const subscribe = React.useContext(SubscribeContext);
   const auth = useAuthContext(); // 유저 컨텍스트
-  const {user} = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
+  const { user } = usePublicMainUser((state) => state); // publicMypage에서 사용할 대체 userId
   const { enqueueSnackbar } = useSnackbar(); // 스낵바 컨텍스트 호출
   const { open, handleClose, handleOpen } = useDialog(); // 다이얼로그 훅
 
@@ -123,7 +123,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         }
       });
     }
-  }, [exampleMode, period, auth.user,user.userId, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, period, auth.user, user.userId, excuteGetStreams, enqueueSnackbar]);
 
   /* 네비바 유저 전환시 이전 값 초기화 -> CBT 주석 사항 */
   // React.useEffect(() => {

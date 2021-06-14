@@ -1,20 +1,22 @@
 import create from 'zustand';
-import { persist } from "zustand/middleware"
+import { persist } from 'zustand/middleware';
 
-
-const usePublicMainUser = create<{
-  user:{userId:string};
-  setUser: (userId:string) => void;
-}>(persist(
+interface PublicMainUserState {
+  user: {
+    userId: string,
+  },
+  setUser: (userId: string) => void
+}
+const usePublicMainUser = create<PublicMainUserState>(persist(
   (set) => ({
-    user:{
+    user: {
       userId: '',
     },
-    setUser: (userId: string) => set((state) => ({...state, user: {userId}}))
+    setUser: (userId: string) => set((state) => ({ ...state, user: { userId } })),
   }),
   {
-    name:'public-user-storage',
-  }
-))
+    name: 'public-user-storage',
+  },
+));
 
 export default usePublicMainUser;

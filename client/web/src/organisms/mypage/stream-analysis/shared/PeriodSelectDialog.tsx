@@ -85,7 +85,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
     period, base, selectedStreams, open,
     handleStreamList, handleClose,
     handlePeriod,
-    exampleMode = false
+    exampleMode = false,
   } = props;
   const classes = useStyles();
 

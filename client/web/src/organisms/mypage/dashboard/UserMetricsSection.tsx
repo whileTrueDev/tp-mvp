@@ -61,7 +61,7 @@ export interface DataCard {
 
 export default function UserMetricsSection(): JSX.Element {
   const auth = useAuthContext();
-  const {user} = usePublicMainUser((state) => state);
+  const { user } = usePublicMainUser((state) => state);
   const PLATFORM_LIST = ['afreeca', 'twitch', 'youtube'];
   const classes = useStyles();
 
