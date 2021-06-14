@@ -8,7 +8,6 @@ import {
   FormHelperText,
   InputAdornment,
   Button,
-  MenuItem,
   TextField,
   Grid,
   Typography,
@@ -28,16 +27,16 @@ import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import axios from '../../../utils/axios';
 import PageTitle from '../shared/PageTitle';
 
-// domain select용.
-const domains = [
-  { value: 'naver.com' },
-  { value: 'daum.net' },
-  { value: 'nate.com' },
-  { value: 'gmail.com' },
-  { value: 'hotmail.com' },
-  { value: 'yahoo.co.kr' },
-  { value: '직접입력' },
-];
+// // domain select용.
+// const domains = [
+//   { value: 'naver.com' },
+//   { value: 'daum.net' },
+//   { value: 'nate.com' },
+//   { value: 'gmail.com' },
+//   { value: 'hotmail.com' },
+//   { value: 'yahoo.co.kr' },
+//   { value: '직접입력' },
+// ];
 
 export interface Props {
   handleBack: () => void;
@@ -62,15 +61,9 @@ function PlatformRegistForm({
   const [loading, setLoading] = useState(0);
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  // const [numberType, setNumberType] = useState(true);
-  const [marketerCustomDomain, setCustomDomain] = useState('');
   const [, getRequest] = useAxios(
     '/users/check-id', { manual: true },
   );
-
-  function handleCustom(event: React.ChangeEvent<HTMLInputElement>): void {
-    setCustomDomain(event.target.value);
-  }
 
   const handleChange = (name: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: name, value: event.target.value });
@@ -108,9 +101,9 @@ function PlatformRegistForm({
       id, password, repasswd, checkDuplication, emailVerified, passEmailDuplication,
     } = state;
 
-    const mailId = state.email;
+    const { email } = state;
 
-    if (mailId === '') {
+    if (email === '') {
       ShowSnack('E-mail 입력이 올바르지 않습니다.', 'warning', enqueueSnackbar);
       return;
     }
@@ -127,13 +120,12 @@ function PlatformRegistForm({
       const { name } = state;
       const phone = state.phoneNum;
       const rawPassword = state.passwordValue;
-      const domain = state.domain === '직접입력' ? marketerCustomDomain : state.domain;
       const user = {
         userId,
         password: rawPassword,
         nickName,
         name,
-        mail: `${mailId}@${domain}`,
+        mail: email,
         phone,
       };
       setLoading(1);
@@ -146,7 +138,7 @@ function PlatformRegistForm({
   // 이메일 인증관련 --------------------------------------------
   const [emailSent, setEmailSent] = useState<boolean>(false); // 이메일이 발송여부 상태 저장, 해당 값이 true일 때 코드입력창을 보여준다
   const codeInputRef = useRef<HTMLInputElement>(null);
-  const getFullEmail = () => `${state.email}@${state.domain}`;
+  const getFullEmail = () => state.email;
 
   const requestEmailVerifyCode = async () => {
     // 이메일 주소 가져오기
@@ -184,7 +176,8 @@ function PlatformRegistForm({
     <Button
       variant="contained"
       color="primary"
-      disabled={state.email.trim() === '' || state.domain.trim() === '' || state.emailVerified}
+      fullWidth
+      disabled={!state.isValidEmail || state.emailVerified}
       onClick={requestEmailVerifyCode}
     >
       {emailSent ? '코드 재전송' : '코드 전송'}
@@ -341,57 +334,25 @@ function PlatformRegistForm({
                 />
               </Grid>
               <Grid container direction="row" alignItems="center">
-                <Grid item className={classes.row} xs={4}>
-                  <TextField
-                    required
-                    label="이메일"
-                    value={state.email}
-                    onChange={handleChange('email')}
-                    margin="dense"
-                    size="small"
-                    id="email"
-                    placeholder="이메일"
-                    InputProps={{
-                      endAdornment: <InputAdornment position="end" className={classes.adornment}><div>@</div></InputAdornment>,
-                    }}
-                  />
+                <Grid item>
+                  <InputLabel shrink>이메일</InputLabel>
                 </Grid>
-                <Grid item className={classes.row} xs={4}>
-                  {state.domain !== '직접입력' ? (
+                <Grid item container className={classes.row} alignItems="center">
+                  <Grid item xs={8}>
                     <TextField
                       required
-                      select
-                      label="도메인"
-                      value={state.domain}
-                      onChange={handleChange('domain')}
-                      placeholder="도메인"
+                      id="fullEmail"
+                      type="email"
+                      variant="outlined"
                       margin="dense"
                       size="small"
-                    >
-                      {domains.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.value}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-
-                  )
-                    : (
-                      <TextField
-                        required
-                        autoFocus
-                        label="도메인"
-                        value={marketerCustomDomain}
-                        onChange={handleCustom}
-                        helperText="이메일 도메인을 입력하세요."
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        margin="normal"
-                      />
-                    )}
+                      fullWidth
+                      onChange={handleChange('email')}
+                      placeholder="이메일"
+                    />
+                  </Grid>
+                  <Grid item xs={4}>{EmailVerifyCodeRequestButton}</Grid>
                 </Grid>
-                <Grid item className={classes.row} xs={4}>{EmailVerifyCodeRequestButton}</Grid>
               </Grid>
 
               {/* 이메일 코드 확인 인풋 */}
