@@ -1,6 +1,8 @@
 import {
-  IsString, IsNumber, MaxLength, IsOptional,
+  IsString, IsNumber, MaxLength, IsArray, IsOptional,
 } from 'class-validator';
+import { ImageResource } from '../../interfaces/ImageResource.interface';
+
 
 export class CreateCommunityPostDto {
   @IsString()
@@ -24,10 +26,12 @@ export class CreateCommunityPostDto {
   @IsNumber()
   category: number;
 
+  @IsArray()
+  @IsOptional()
+  resources?: Array<ImageResource>;
+
   @IsOptional()
   @IsString()
   userId?: string;
 
-  @IsOptional()
-  resources?: {fileName: string, src: string, signature: string}[]
 }

@@ -2,6 +2,7 @@ import SunEditor from 'suneditor/src/lib/core';
 import React from 'react';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
+import { ImageResource } from '@truepoint/shared/interfaces/ImageResource.interface';
 
 // 에러메시지
 export const ErrorMessages = {
@@ -59,7 +60,7 @@ export const replaceResources = (content: string): Required<Pick<CreateCommunity
   const parser = new DOMParser();
   const dom = parser.parseFromString(content, 'text/html');
   const imageList = dom.querySelectorAll('img');
-  const saveImages: { signature: string, fileName: string, src: string }[] = [];
+  const saveImages: ImageResource[] = [];
   imageList.forEach((element, i) => {
     // src는 따로 저장
     const replaceName = `*TRUEPOINT_IMG_SIG_${i}*`;
