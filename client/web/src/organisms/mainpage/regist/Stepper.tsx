@@ -6,6 +6,7 @@ import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useReducer, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import TruepointLogo from '../../../atoms/TruepointLogo';
 import PageTitle from '../shared/PageTitle';
@@ -109,7 +110,7 @@ function RegistStepper(): JSX.Element {
         <Grid item className={classes.center}>
           <Hidden xsDown>
             <Grid className={classes.center}>
-              <TruepointLogo width={300} />
+              <TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} />
             </Grid>
           </Hidden>
         </Grid>
@@ -148,7 +149,7 @@ function RegistStepper(): JSX.Element {
     <>
       <Hidden xsDown>
         <Grid className={classes.center}>
-          <TruepointLogo width={300} />
+          <TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} />
         </Grid>
       </Hidden>
       {getComponentByStep(activeStep)}

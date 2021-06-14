@@ -8,6 +8,7 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
@@ -115,7 +116,7 @@ export default function LoginForm(): JSX.Element {
         className={classnames(classes.formWidth, classes.alignCenter)}
       >
         <Hidden smDown>
-          <div><TruepointLogo width={280} /></div>
+          <div><TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} /></div>
           <Typography
             align="center"
             color="secondary"

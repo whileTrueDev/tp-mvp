@@ -50,7 +50,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
   const history = useHistory();
   const {
     open, anchorEl, onClose, avatarSrc,
-    nickName, email,
+    email,
     ...prop
   } = props;
 

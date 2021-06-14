@@ -7,6 +7,7 @@ import { useStyles } from '../../organisms/mainpage/login/FindIdForm';
 import LoginHelper from '../../atoms/LoginHelper';
 import axios from '../../utils/axios';
 import RegularButton from '../../atoms/Button/Button';
+import { LOGIN_PAGE_LOGO_SIZE } from '../../assets/constants';
 
 export default function GetTemporaryPassword(): JSX.Element {
   const classes = useStyles();
@@ -98,8 +99,8 @@ export default function GetTemporaryPassword(): JSX.Element {
   };
 
   return (
-    <div>
-      <TruepointLogo width={350} />
+    <div className={classes.wrapper}>
+      <TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} />
 
       <div className={classnames(classes.box, classes.content)}>
         <Typography variant="h6">회원 아이디와</Typography>
@@ -162,11 +163,18 @@ export default function GetTemporaryPassword(): JSX.Element {
           </RegularButton>
 
         </form>
+
+        <Button
+          className={classes.fullButton}
+          variant="contained"
+          component={Link}
+          to="/login"
+        >
+          로그인 하러 가기
+
+        </Button>
       </div>
 
-      <div style={{ marginTop: 16 }}>
-        <Button component={Link} to="/login">로그인 하러 가기</Button>
-      </div>
     </div>
   );
 }

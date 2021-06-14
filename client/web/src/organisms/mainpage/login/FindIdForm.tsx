@@ -4,6 +4,7 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
@@ -12,6 +13,12 @@ import useIamportCertification from '../../../utils/hooks/useIamportCertificatio
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 export const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   box: {
     padding: `${theme.spacing(8)}px ${theme.spacing(4)}px`,
     minWidth: 300,
@@ -119,7 +126,7 @@ export default function FindAccountForm(): JSX.Element {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <TruepointLogo width={350} />
+      <TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} />
       {helperTextDialog.open && helperText && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />

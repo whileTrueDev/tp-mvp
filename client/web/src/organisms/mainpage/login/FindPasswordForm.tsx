@@ -4,6 +4,7 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
@@ -125,7 +126,7 @@ export default function FindAccountForm(): JSX.Element {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <TruepointLogo width={350} />
+      <TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} />
       {helperText && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />
