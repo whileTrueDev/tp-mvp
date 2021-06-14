@@ -52,7 +52,6 @@ export class UserPropertiesService {
         })),
       ].sort((a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime()); // 내림차순 정렬
 
-      // TODO:삭제된 글 제외
       const totalCount = allPosts.length;
       const totalPage = Math.ceil(totalCount / itemPerPage);
       const posts = allPosts.slice(start, end);
@@ -78,17 +77,15 @@ export class UserPropertiesService {
       const start = ((page - 1) * itemPerPage); // offset
       const end = start + itemPerPage;
 
-      const user = await this.usersRepository.findOne({
-        where: [{ userId }],
-        relations: [
-          'communityReplies',
-          'communityReplies.post', // 해당 글 페이지로 이동하기 위해 post.platform값이 필요..
-          'creatorComments',
-          'streamComments',
-          'streamComments.stream',
-          'featureSuggestionReplies',
-        ],
-      });
+      const user = await this.usersRepository.createQueryBuilder('user')
+        .where('user.userId = :userId', { userId })
+        .leftJoinAndSelect('user.communityReplies', 'communityReplies', 'communityReplies.deleteFlag = 0')
+        .leftJoinAndSelect('communityReplies.post', 'post')
+        .leftJoinAndSelect('user.creatorComments', 'creatorComments', 'creatorComments.deleteFlag = 0')
+        .leftJoinAndSelect('user.streamComments', 'streamComments', 'streamComments.deleteFlag = 0')
+        .leftJoinAndSelect('streamComments.stream', 'stream')
+        .leftJoinAndSelect('user.featureSuggestionReplies', 'featureSuggestionReplies')
+        .getOne();
 
       const allComments = [
         ...user.communityReplies.map((comment) => ({
