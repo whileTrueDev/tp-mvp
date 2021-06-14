@@ -99,7 +99,7 @@ export class UserEntity implements User {
   @Column({ nullable: true, comment: '카카오 로그인으로 가입된 회원의 kakao 회원번호' })
   kakaoId?: string;
 
-  @OneToMany((type) => CommunityPostEntity, (post) => post.userId)
+  @OneToMany((type) => CommunityPostEntity, (post) => post.author)
   communityPosts? : CommunityPostEntity[];
 
   @OneToMany((type) => CommunityReplyEntity, (post) => post.userId)
