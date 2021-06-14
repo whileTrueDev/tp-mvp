@@ -18,5 +18,4 @@ export class UpdateCommunityPostDto {
   @IsOptional()
   @IsString()
   userId?: string;
-
 }

@@ -3,7 +3,6 @@ import {
 } from 'class-validator';
 import { ImageResource } from '../../interfaces/ImageResource.interface';
 
-
 export class CreateCommunityPostDto {
   @IsString()
   @MaxLength(20)
@@ -33,5 +32,4 @@ export class CreateCommunityPostDto {
   @IsOptional()
   @IsString()
   userId?: string;
-
 }
