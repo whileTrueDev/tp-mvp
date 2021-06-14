@@ -2,7 +2,7 @@ import {
   Controller, DefaultValuePipe, Get, ParseIntPipe, Query, ValidationPipe,
 } from '@nestjs/common';
 import {
-  DailyTotalViewersResType, MonthlyScoresResType, WeeklyViewersResType, RankingDataType,
+  DailyTotalViewersResType, RankingDataType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { ColumnType, RankingsService, PlatformType } from './rankings.service';
 @Controller('rankings')
@@ -11,28 +11,11 @@ export class RankingsController {
     private readonly rankingsService: RankingsService,
   ) {}
 
-  private columns = ['smile', 'frustrate', 'admire', 'cuss'];
-
-  /**
-   * 지난 월간 웃음/감탄/답답함점수 랭킹목록 반환 -> 지난 월간 웃음점수/감탄점수/답답함점수 막대그래프에 사용
-   * GET /rankings/monthly-scores
-   * @return 
-   * {
-   * smile: MonthlyRankData[],
-     frustrate: MonthlyRankData[],
-     admire: MonthlyRankData[]
-   * }
-   */
-  @Get('monthly-scores')
-  getMonthlyScoresRank(): Promise<MonthlyScoresResType> {
-    return this.rankingsService.getMonthlyScoresRank();
-  }
-
   /**
    * 반응별 랭킹 top 10
    * 반응 기준별로 감탄점수, 웃음점수, 답답함점수, 욕점수 상위 10명과 
    * 10명의 최근 7개 방송 점수 데이터 반환
-   * 
+   *
    * skip 파라미터는 skip개 이후 데이터를 가져오기 위해 사용
    * 
    * GET /rankings/top-ten?column=smile&skip=
@@ -80,21 +63,6 @@ export class RankingsController {
   @Get('daily-total-viewers')
   getDailyTotalViewers(): Promise<DailyTotalViewersResType> {
     return this.rankingsService.getDailyTotalViewers();
-  }
-
-  /**
-   * 주간 시청자수 랭킹
-   * GET /rankings/weekly-viewers
-   * 최근 7일 내 날짜별 트위치,아프리카 시청자수 상위 10인의 시청자수 총합
-   * @return 
-   * {
-   * afreeca: [{date:'2021-3-4',totalViewer:'23432'}, {date:'2021-3-3',totalViewer:'1235'}, ... ],
-   * twitch: [{date:'2021-3-4',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
-   * }
-   */
-  @Get('weekly-viewers')
-  getWeeklyViewers(): Promise<WeeklyViewersResType> {
-    return this.rankingsService.getWeeklyViewers();
   }
 
   /**

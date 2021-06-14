@@ -8,8 +8,7 @@ import {
 import {
   DailyTotalViewersResType,
   TopTenDataItem,
-  MonthlyScoresResType, MonthlyScoresItem,
-  WeeklyViewersResType, RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
+  RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
@@ -33,83 +32,6 @@ export class RankingsService {
     @InjectRepository(RankingsEntity)
     private readonly rankingsRepository: Repository<RankingsEntity>,
   ) {}
-
-  /**
-   * 월간 월간 웃음/감탄/답답함 점수 순위 구할 때 사용할 기본 쿼리 반환
-   * 
-   * 최근분석시간 기준으로 1개월 내에 생성된 데이터에 대하여
-   * creatorName, creatorId, platform정보를 
-   * 5개 가져오도록 한다(creatorId, platform별로 그룹화했을 때, 방송이 10개 이상인 경우만)
-   */
-  private async getMonthlyScoreBaseQuery(): Promise<SelectQueryBuilder<RankingsEntity>> {
-    const recentAnalysisDate = await this.getRecentAnalysysDate();
-    return this.rankingsRepository
-      .createQueryBuilder('rankings')
-      .select('creatorName')
-      .addSelect('creatorId')
-      .addSelect('platform')
-      .where(`streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 MONTH)`)
-      .groupBy('creatorId')
-      .addGroupBy('platform')
-      .having('COUNT(*) >= 10')
-      .limit(5);
-  }
-
-  /**
-   * monthlyScoreBaseQuery 기본 쿼리를 바탕으로
-   * 월간 평균점수컬럼을 추가하고, 
-   * 해당 평균점수 별로 내림차순 정렬하여 값을 가져온다
-   * @param column 'smileScore'|'frustrateScore'|'admireScore'
-   * @param errorHandler (error: any) => void 에러핸들링 할 함수
-   * @return MonthlyRankData[]
-    {
-      "creatorName": "랄로",
-      "creatorId": "fkffh",
-      "platform": "twitch",
-      "avgScore": 9.3595
-    }[]
-   */
-  private async getMonthlyRankByColumn(
-    column: ScoreColumn,
-    errorHandler?: (error: any) => void,
-  ): Promise<MonthlyScoresItem[]> {
-    const decimalPlace = 2;// 평균점수 소수점 2자리까 자른다
-    try {
-      const baseQuery = await this.getMonthlyScoreBaseQuery();
-      return baseQuery
-        .addSelect(`TRUNCATE(AVG(${column}),${decimalPlace})`, 'avgScore')
-        .orderBy('avgScore', 'DESC')
-        .getRawMany();
-    } catch (error) {
-      if (errorHandler) {
-        errorHandler(error);
-      }
-      throw new InternalServerErrorException(error, `error in getMonthlyRankByColumn column :${column}`);
-    }
-  }
-
-  /**
-   * 지난 월간 웃음/감탄/답답함 평균점수 상위 5명씩 뽑아서 반환 -> 지난 월간 웃음점수/감탄점수/답답함점수 막대그래프에 사용
-   * @return 
-   * {
-   * smile: MonthlyRankData[],
-     frustrate: MonthlyRankData[],
-     admire: MonthlyRankData[]
-   * }
-   */
-  async getMonthlyScoresRank(): Promise<MonthlyScoresResType> {
-    // 추후 함수별 분기처리 & 에러핸들러 추가 필요, 임시로 console.error만 실행하도록 넣어둠
-    const smile = await this.getMonthlyRankByColumn('smileScore', console.error);
-    const frustrate = await this.getMonthlyRankByColumn('frustrateScore', console.error);
-    const admire = await this.getMonthlyRankByColumn('admireScore', console.error);
-    const cuss = await this.getMonthlyRankByColumn('cussScore', console.error);
-    return {
-      smile,
-      frustrate,
-      admire,
-      cuss,
-    };
-  }
 
   /**
    * 최근분석시간 기준 24시간 내 해당 점수 상위 10명의 방송정보를 뽑아내는 함수
@@ -404,56 +326,6 @@ export class RankingsService {
     const afreeca = await this.getDailyTotalViewersByPlatform('afreeca', console.error);
 
     return { twitch, afreeca };
-  }
-
-  /**
-   * 주간 시청자수 랭킹 구하는 함수 -> 주간 시청자수 랭킹 카드에 사용됨
-   * 
-   * rankings테이블에서 생성날짜가 최근분석시간 기준 7일 내인 데이터를
-   * 생성날짜, 최대시청자수로 정렬 & 크리에이터별, 날짜별로 그룹화하여(A),
-   * 최대시청자 순으로 rank를 매기고(B),
-   * 날짜와 해당 날의 상위10인(rank <= 10)의 최대시청자수 총합을 가져와 플랫폼별, 날짜별로 그룹화함
-   * 
-   * @return 최근분석시간 기준 7일 내 플랫폼별 & 날짜별 시청자수 상위 10인의 시청자수 총합
-   * {
-   * afreeca: [{date:'2021-3-2',totalViewer:'23432'}, {date:'2021-3-3',totalViewer:'1235'}, ... ],
-   * twitch: [{date:'2021-3-2',totalViewer:'1234'}, {date:'2021-3-3',totalViewer:'3432'}, ... ]
-   * }
-   */
-  async getWeeklyViewers(): Promise<WeeklyViewersResType> {
-    const recentAnalysisDate = await this.getRecentAnalysysDate();
-    const query = `
-    SELECT platform, cdate AS "date", SUM(maxViewer) AS totalViewer
-    FROM(
-      SELECT A.*, ROW_NUMBER() OVER (partition by cdate, platform order by maxViewer DESC) AS "rank"
-      FROM (
-        SELECT creatorId, streamDate, platform, MAX(viewer) AS maxViewer, DATE_FORMAT(streamDate,"%Y-%m-%d") AS cdate
-        FROM Rankings
-        WHERE streamDate >= DATE_SUB('${recentAnalysisDate}', INTERVAL 1 WEEK)
-        Group by creatorId, cdate
-        Order by platform, streamDate DESC, maxViewer DESC
-      ) AS A
-    ) AS B
-    where "rank" <= 10 
-    group by platform, cdate
-    order by platform, streamDate DESC;`;
-
-    try {
-      const data = await getConnection().query(query);
-      const result = { afreeca: [], twitch: [] };
-      data
-        .forEach((item) => {
-          result[item.platform].push({ date: item.date, totalViewer: item.totalViewer });
-        });
-      // 최근 7개 날짜만 남겨서 날짜 오름차순으로 변경
-      result.afreeca = result.afreeca.slice(0, 7).reverse();
-      result.twitch = result.twitch.slice(0, 7).reverse();
-      return result;
-    } catch (error) {
-      // 에러 핸들러 함수 넣을 곳
-      console.error(error);
-      throw new InternalServerErrorException('error in getWeeklyViewers');
-    }
   }
 
   /**
