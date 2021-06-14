@@ -38,10 +38,13 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     height: '100%',
+    padding: theme.spacing(0, 0.5),
     paddingTop: COMMON_APP_BAR_HEIGHT + theme.spacing(5),
     [theme.breakpoints.down('sm')]: {
       paddingTop: SM_APP_BAR_HEIGHT + theme.spacing(2),
     },
+    overflowY: 'auto',
+    overflowX: 'hidden',
 
   },
 
