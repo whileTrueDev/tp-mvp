@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { useSnackbar } from 'notistack';
 
 import {
-  Paper,
   Typography,
   FormControlLabel,
   Checkbox,
@@ -16,6 +15,7 @@ import useStyles from './style/Paper.style';
 import Dialog from '../../../atoms/Dialog/Dialog';
 import terms from './source/registConfig';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import PageTitle from '../shared/PageTitle';
 
 interface CheckState<T> {
   checkedA: T;
@@ -28,6 +28,7 @@ type CheckAction = { key: 'checkedA'; value: boolean }
   | { key: 'checkedB'; value: boolean }
   | { key: 'checkedC'; value: boolean }
   | { key: 'reset' }
+  | { key: 'checkAll'}
 
 const reducer = (
   state: CheckState<boolean>,
@@ -42,6 +43,8 @@ const reducer = (
       return { ...state, checkedC: !state.checkedC };
     case 'reset':
       return { checkedA: false, checkedB: false, checkedC: false };
+    case 'checkAll':
+      return { checkedA: true, checkedB: true, checkedC: true };
     default:
       return state;
   }
@@ -95,18 +98,50 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
     setAgreement(state.checkedC);
   }
 
+  const [allChecked, setAllChecked] = useState<boolean>(false);
+  function checkAll(): void {
+    setAllChecked(true);
+    dispatch({ key: 'checkAll' });
+  }
+  function resetAllChecks(): void {
+    setAllChecked(false);
+    dispatch({ key: 'reset' });
+  }
+
   return (
     <div>
+      <PageTitle text="약관동의" />
       <div className={classnames(classes.box, classes.content)}>
         {terms.map((term: { title: string; state: string; text: string }) => (
-          <Paper className={classes.container} elevation={1} key={term.state}>
-            <Grid container direction="row" justify="space-between" alignItems="center" spacing={1}>
+          <div className={classes.container} key={term.state}>
+            <Grid container direction="row" alignItems="center" spacing={1}>
+              <Grid item>
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      onChange={(): void => {
+                      // 현재의 check를 확인하여 취소가 가능하게끔 만든다.
+                        if (state[term.state]) {
+                          handleCancel(term.state);
+                        } else {
+                          ShowSnack('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.', 'warning', enqueueSnackbar);
+                        }
+                      }}
+                      checked={state[term.state]}
+                      classes={{
+                        root: classes.checkboxRoot,
+                        checked: classes.checked,
+                      }}
+                    />
+                    )}
+                  label=""
+                  style={{ flex: 2, marginRight: 0 }}
+                />
+              </Grid>
               <Grid item>
                 <Typography component="p" style={{ flex: 8, fontSize: 13 }}>
                   {term.title}
                 </Typography>
-              </Grid>
-              <Grid item>
                 <Grid container direction="row" alignItems="center">
                   <Grid item>
                     <Button
@@ -116,53 +151,58 @@ function PaperSheet({ handleBack, handleNext, setAgreement }: Props): JSX.Elemen
                       약관보기
                     </Button>
                   </Grid>
-                  <Grid item>
-                    <Divider className={classes.divider} />
-                  </Grid>
-                  <Grid item>
-                    <FormControlLabel
-                      control={(
-                        <Checkbox
-                          onChange={(): void => {
-                            // 현재의 check를 확인하여 취소가 가능하게끔 만든다.
-                            if (state[term.state]) {
-                              handleCancel(term.state);
-                            } else {
-                              ShowSnack('약관보기를 통해 약관을 모두 읽어야 동의가 가능합니다.', 'warning', enqueueSnackbar);
-                            }
-                          }}
-                          checked={state[term.state]}
-                          classes={{
-                            root: classes.checkboxRoot,
-                            checked: classes.checked,
-                          }}
-                        />
-                    )}
-                      label=""
-                      style={{ flex: 2, marginRight: 0 }}
-                    />
-                  </Grid>
+
                 </Grid>
               </Grid>
             </Grid>
-          </Paper>
+          </div>
         ))}
+
+        {/* 모두 동의  */}
+        <FormControlLabel
+          control={(
+            <Checkbox
+              onChange={(): void => {
+                if (allChecked) {
+                  resetAllChecks();
+                } else {
+                  checkAll();
+                }
+              }}
+              checked={allChecked}
+              classes={{
+                root: classes.checkboxRoot,
+                checked: classes.checked,
+              }}
+            />
+          )}
+          label="모두 동의하기"
+        />
+
         <div className={classnames(classes.center, classes.content)}>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ color: 'white' }}
-            className={classes.fullButton}
-            onClick={finishReg}
-          >
-            <Typography>다음</Typography>
-          </Button>
-          <Button
-            onClick={handleBack}
-            className={classes.fullButton}
-          >
-            <Typography>뒤로</Typography>
-          </Button>
+          <Grid container justify="space-between" alignItems="center" spacing={1}>
+            <Grid item xs={6}>
+              <Button
+                onClick={handleBack}
+                className={classnames(classes.fullButton, classes.backButton)}
+              >
+                <Typography>뒤로</Typography>
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ color: 'white' }}
+                className={classes.fullButton}
+                onClick={finishReg}
+              >
+                <Typography>다음</Typography>
+              </Button>
+            </Grid>
+
+          </Grid>
+
         </div>
       </div>
       <Dialog

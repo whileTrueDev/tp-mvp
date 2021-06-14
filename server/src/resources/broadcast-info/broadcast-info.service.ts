@@ -116,7 +116,7 @@ export class BroadcastInfoService {
    * @param streamId 스트림 고유 ID
    * @returns StreamEntity
    */
-  async findOneSteam(platform: string, streamId: string): Promise<RecentStream> {
+  async findOneSteam(streamId: string, platform: string): Promise<RecentStream> {
     const result = await this.streamsRepository
       .query(
         `SELECT streamId, title, startDate, endDate, viewer, chatCount,

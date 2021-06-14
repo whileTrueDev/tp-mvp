@@ -23,6 +23,7 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SelectDateIcon from '../../../atoms/stream-analysis-icons/SelectDateIcon';
 // hooks
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -105,6 +106,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const auth = useAuthContext();
+  const { user } = usePublicMainUser((state) => state);
 
   const reRequest = 3;
   const [
@@ -130,7 +132,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
-      userId: exampleMode ? 'sal_gu' : auth.user.userId,
+      userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
@@ -146,7 +148,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
         ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
       }
     });
-  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, auth.user.userId, user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) handleClickedDate(newDate);

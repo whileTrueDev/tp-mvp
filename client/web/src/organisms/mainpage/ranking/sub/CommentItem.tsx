@@ -13,6 +13,7 @@ import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import useToggle from '../../../../utils/hooks/useToggle';
+import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
 import CommentForm from './CommentForm';
 import DeleteButton from './DeleteButton';
@@ -254,12 +255,15 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
   const time = dayjs(createDate).format('YYYY-MM-DD HH:mm:ss');
 
   return (
-    <div className={classnames(classes.commentItem, { child: childComment })}>
+    <div className={classnames(classes.commentItem, { child: childComment })} id={`commentId-${commentId}`}>
       <div className={classes.header}>
         <div className={classes.userInfo}>
           <Avatar component="span" className={classes.smallAvatar} src={profileImage} />
-          <Typography component="span" className="nickname">{nickname}</Typography>
-          {userId && <Typography component="span" className="userId">{`(${userId})`}</Typography>}
+          <Typography component="span" className="nickname">
+            { userId
+              ? `${nickname} (${transformIdToAsterisk(userId)})`
+              : nickname}
+          </Typography>
         </div>
         <div className={classes.headerActions}>
           {deleteFlag === 1 ? (

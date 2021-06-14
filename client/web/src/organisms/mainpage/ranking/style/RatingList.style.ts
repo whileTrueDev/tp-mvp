@@ -155,12 +155,10 @@ export const useRatingsListStyles = makeStyles((theme: Theme) => {
   const textStrokeColor = theme.palette.common.white;
   return createStyles({
     ratingsListSection: {
-      border: `${theme.spacing(1)}px solid ${theme.palette.common.black}`,
       borderRadius: theme.spacing(0.5),
       backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.background.paper,
       padding: theme.spacing(1, 0),
       [theme.breakpoints.down('sm')]: {
-        border: 'none',
         backgroundColor: theme.palette.background.paper,
       },
     },

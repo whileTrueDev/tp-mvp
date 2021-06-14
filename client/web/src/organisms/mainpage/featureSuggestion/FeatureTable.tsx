@@ -16,6 +16,7 @@ import Table from '../../../atoms/Table/MaterialTable';
 import dateExpression from '../../../utils/dateExpression';
 import useDialog from '../../../utils/hooks/useDialog';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
+import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import CheckPasswordDialog from '../shared/CheckPasswordDialog';
 
 const TABLE_ROW_HEIGHT = 45;
@@ -121,7 +122,7 @@ function DesktopRowCells({ row: eachRow }: {row: Omit<FeatureSuggestion, 'conten
         {eachRow.category}
       </TableCell>
       <TableCell className={classes.tableCell} scope="row" align="center">
-        {eachRow.userIp}
+        {transformIdToAsterisk(eachRow.author ? eachRow.author.userId : eachRow.userIp)}
       </TableCell>
       <TableCell className={classes.tableCell} scope="row" align="left">
 

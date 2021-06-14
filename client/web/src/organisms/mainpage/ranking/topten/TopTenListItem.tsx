@@ -79,7 +79,7 @@ function TopTenListItem(props: TopTenListItemProps): JSX.Element {
           className={classnames(classes.avatarContainer, classes.center)}
           style={{ width: isMobile ? '15%' : toPercentString(innerBackgroundWidths[1]) }}
         >
-          <Link component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
+          <Link component={RouterLink} to={`/ranking/creator/${creatorId}`}>
             <Avatar
               alt={d.creatorName}
               className={classes.avatarImage}

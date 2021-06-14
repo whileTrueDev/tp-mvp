@@ -9,15 +9,20 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { COMMON_APP_BAR_HEIGHT } from '../../assets/constants';
 import TruepointLogo from '../../atoms/TruepointLogo';
+import AvatarWithName from '../../atoms/User/AvatarWithName';
 import { TruepointTheme } from '../../interfaces/TruepointTheme';
+import useAnchorEl from '../../utils/hooks/useAnchorEl';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import { useStyles } from './styles/Appbar.style';
 import DarkModeToggleButtonContent from './sub/DarkModeToggleButtonContent';
 import MobileMenu from './sub/MobileMenu';
 import MobileNavigation from './sub/MobileNavigation';
+import UserMenuPopper from './sub/UserMenuPopover';
 
 interface AppBarProps {
   variant?: 'transparent';
+  appbarSpace?: boolean;
+  mobileNavigation?: boolean;
 }
 // 현재 활성화된 탭을 구하는 함수
 export function isActiveRoute(pagePath: string | string[]): boolean {
@@ -29,6 +34,8 @@ export function isActiveRoute(pagePath: string | string[]): boolean {
 
 export default function AppBar({
   variant,
+  appbarSpace = true,
+  mobileNavigation = true,
 }: AppBarProps): JSX.Element {
   const authContext = useAuthContext();
   const classes = useStyles();
@@ -43,10 +50,14 @@ export default function AppBar({
   function handleMobileMenuClose(): void {
     setMobileMoreAnchorEl(null);
   }
+
+  // 유저메뉴 팝오버 스테이트
+  const {
+    open, anchorEl, handleAnchorOpen, handleAnchorClose,
+  } = useAnchorEl();
+
+  const isLoggedIn = authContext.user.userId.length > 1 && authContext.accessToken;
   const links = [
-    {
-      name: '마이페이지', path: '/mypage/main', activeRouteString: '/mypage', hidden: !(authContext.user.userId.length > 1 && authContext.accessToken),
-    },
     { name: '인방랭킹', path: '/ranking', activeRouteString: ['/ranking', '/'] },
     { name: '방송인검색', path: '/creator-search', activeRouteString: '/creator-search' },
     { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
@@ -88,35 +99,16 @@ export default function AppBar({
             <Hidden mdUp>
               <div className={classes.leftspace} />
             </Hidden>
+
             <div className={classes.left}>
-              <TruepointLogo className={classes.logo} />
+              <TruepointLogo
+                type={variant === 'transparent' && !transparentDisabled ? 'light' : 'white'}
+                className={classes.logo}
+              />
 
               <div className={classes.links}>
-                {links.slice(0, 6).map((link) => (
+                {links.slice(0, 5).map((link) => (
                   <div className={classes.linkItem} key={link.name}>
-                    {!link.hidden && (
-                      <>
-                        <Button
-                          component={Link}
-                          to={link.path}
-                          className={classnames(classes.link, {
-                            [classes.selected]: isActiveRoute(link.activeRouteString),
-                          })}
-                        >
-                          <Typography noWrap className={classes.linkText}>{link.name}</Typography>
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className={classes.right}>
-              <div className={classes.links}>
-                {links.slice(6).map((link) => (
-                  <div className={classes.linkItem} key={link.name}>
-                    {!link.hidden && (
                     <>
                       <Button
                         component={Link}
@@ -128,23 +120,73 @@ export default function AppBar({
                         <Typography noWrap className={classes.linkText}>{link.name}</Typography>
                       </Button>
                     </>
-                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={classes.right}>
+              <div className={classes.links}>
+                {links.slice(5).map((link) => (
+                  <div className={classes.linkItem} key={link.name}>
+                    <>
+                      <Button
+                        component={Link}
+                        to={link.path}
+                        className={classnames(classes.link, {
+                          [classes.selected]: isActiveRoute(link.activeRouteString),
+                        })}
+                      >
+                        <Typography noWrap className={classes.linkText}>{link.name}</Typography>
+                      </Button>
+                    </>
                   </div>
                 ))}
 
-                <IconButton
-                  className={classes.darkModeToggleButton}
-                  onClick={theme.handleThemeChange}
-                >
-                  {darkModeToggleButtonContent}
-                </IconButton>
+                {
+                  isLoggedIn
+                    ? (
+                      <>
+                        <Button onClick={handleAnchorOpen}>
+                          <AvatarWithName
+                            logo={authContext.user.profileImage}
+                            name={authContext.user.nickName}
+                          />
+                        </Button>
+                        <UserMenuPopper
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={handleAnchorClose}
+                          avatarSrc={authContext.user.profileImage}
+                        />
+                      </>
+                    )
+                    : (
+                      <>
+                        <IconButton
+                          className={classnames(classes.darkModeToggleButton, classes.link)}
+                          onClick={theme.handleThemeChange}
+                        >
+                          {darkModeToggleButtonContent}
+                        </IconButton>
+                        <Button
+                          className={classnames(classes.loginButton, classes.link)}
+                          component={Link}
+                          to="/login"
+                          variant="outlined"
+                        >
+                          로그인
+                        </Button>
+                      </>
+                    )
+                }
               </div>
 
             </div>
 
             <Hidden mdUp>
-              <div className={classes.mobileMenu}>
-                <IconButton aria-haspopup="true" onClick={handleMobileMenuOpen}>
+              <div className={classes.mobileMenuButton}>
+                <IconButton className={classes.link} aria-haspopup="true" onClick={handleMobileMenuOpen}>
                   <MenuIcon />
                 </IconButton>
               </div>
@@ -159,8 +201,13 @@ export default function AppBar({
         />
       </div>
 
-      <div className={classes.appbarSpace} />
-      <MobileNavigation />
+      {/* 투명앱바가 아닌경우 appbarSpace(패딩)적용 */}
+      {(variant !== 'transparent' && !transparentDisabled)
+      && appbarSpace
+      && <div className={classes.appbarSpace} />}
+
+      {/* 모바일 화면에서 나오는 단축메뉴(인방랭킹, 방송인검색, 자유게시판) */}
+      {mobileNavigation && <MobileNavigation />}
     </>
   );
 }

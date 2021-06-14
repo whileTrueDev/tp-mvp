@@ -163,6 +163,7 @@ export default function FindAccountForm(): JSX.Element {
 
         <form className={classes.content} onSubmit={handleSubmit}>
           <PasswordTextField
+            variant="outlined"
             label="비밀번호"
             inputRef={passwordRef}
             autoComplete="off"
@@ -170,6 +171,7 @@ export default function FindAccountForm(): JSX.Element {
             inputProps={{ required: true, minLength: 8 }}
           />
           <PasswordTextField
+            variant="outlined"
             label="비밀번호 확인"
             inputRef={passwordConfirmRef}
             autoComplete="off"

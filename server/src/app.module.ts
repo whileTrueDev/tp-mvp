@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AccessControlModule } from 'nest-access-control';
 
+import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
 import { HighlightModule } from './resources/highlightPoint/hightlight.module';
@@ -16,6 +17,7 @@ import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysi
 import { CategoryModule } from './resources/category/category.module';
 
 import loadConfig from './config/loadConfig';
+import { mailerConfig } from './config/mailer.config';
 
 import { roles } from './roles/app.roles';
 import { SlackModule } from './resources/slack/slack.module';
@@ -60,6 +62,7 @@ import { S3Module } from './resources/s3/s3.module';
     CreatorCommentModule,
     CreatorCategoryModule,
     S3Module,
+    MailerModule.forRoot(mailerConfig),
   ],
 })
 export class AppModule { }

@@ -3,6 +3,7 @@ import {
 } from 'class-validator';
 import { ImageResource } from '../../interfaces/ImageResource.interface';
 
+
 export class CreateCommunityPostDto {
   @IsString()
   @MaxLength(20)
@@ -28,4 +29,9 @@ export class CreateCommunityPostDto {
   @IsArray()
   @IsOptional()
   resources?: Array<ImageResource>;
+
+  @IsOptional()
+  @IsString()
+  userId?: string;
+
 }

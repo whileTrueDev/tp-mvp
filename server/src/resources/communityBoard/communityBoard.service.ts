@@ -8,15 +8,16 @@ import { ImageResource } from '@truepoint/shared/interfaces/ImageResource.interf
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { S3Service } from '../s3/s3.service';
 import { CommunityPostEntity } from './entities/community-post.entity';
-import { CommunityReplyService } from './communityReply.service';
+import { UserEntity } from '../users/entities/user.entity';
 
 @Injectable()
 export class CommunityBoardService {
   constructor(
     private readonly s3Service: S3Service,
-    private readonly communityReplyService: CommunityReplyService,
     @InjectRepository(CommunityPostEntity)
     private readonly communityPostRepository: Repository<CommunityPostEntity>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
   private PLATFORM_CODE = {
@@ -101,11 +102,19 @@ export class CommunityBoardService {
       const { password } = createCommunityPostDto;
       const content = await this.saveResources(createCommunityPostDto);
       const hashedPassword = await bcrypt.hash(password, 10);
+      let user: UserEntity;
+
+      const { userId } = createCommunityPostDto;
+
+      if (userId) {
+        user = await this.usersRepository.findOne({ where: { userId } });
+      }
       const postData = {
         ...createCommunityPostDto,
         content,
         password: hashedPassword,
         ip,
+        author: user,
       };
       const post = await this.communityPostRepository.save(postData);
       return post;
@@ -136,6 +145,7 @@ export class CommunityBoardService {
         'post.category',
         'post.hit',
         'post.recommend',
+        'post.userId',
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
       .andWhere(`post.${searchColumn} like :${searchColumn}`, { [searchColumn]: `%${searchText}%` });
@@ -184,6 +194,7 @@ export class CommunityBoardService {
         'post.category',
         'post.hit',
         'post.recommend',
+        'post.userId',
       ])
       .where('post.platform = :platform', { platform: this.getPlatformCode(platform) })
       .loadRelationCountAndMap(

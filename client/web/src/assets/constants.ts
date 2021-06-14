@@ -33,5 +33,12 @@ export const BOARD_PAGE_MAX_WIDTH = 998;
 // 랭킹페이지 최대너비
 export const RANKING_PAGE_CONTAINER_WIDTH = 1000;
 
+// 로그인 회원가입 최대너비
+export const LOGIN_PAGE_SECTION_MAX_WIDTH = 980;
+export const LOGIN_PAGE_SECTION_MIN_WIDTH = 340;
+
 // carousel height
 export const CAROUSEL_HEIGHT = 272;
+
+// 데스크탑 화면 최대너비
+export const MAX_WIDTH_DESKTOP = 1080;
