@@ -78,7 +78,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
           <Avatar src={avatarSrc} />
           <div className={classes.descriptionDetail}>
             <Typography variant="h6">
-              {`${authContext.user.userId} ${nickName ? `(${nickName})` : ''}`}
+              {`${authContext.user.nickName}`}
             </Typography>
             <Typography variant="body2" component="span">{email}</Typography>
           </div>
