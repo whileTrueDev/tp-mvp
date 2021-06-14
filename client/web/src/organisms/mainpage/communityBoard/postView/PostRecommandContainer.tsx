@@ -133,7 +133,9 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
           />
           <Typography className="buttonText">비추</Typography>
         </Button>
-        <Typography className={classes.recommandText}>{notRecommendCount || (currentPost.notRecommendCount) || 0}</Typography>
+        <Typography className={classes.recommandText}>
+          {notRecommendCount || (currentPost.notRecommendCount) || 0}
+        </Typography>
       </div>
     </div>
   );

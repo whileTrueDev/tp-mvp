@@ -64,22 +64,16 @@ export const replaceResources = (content: string): Required<Pick<CreateCommunity
     // src는 따로 저장
     const replaceName = `*TRUEPOINT_IMG_SIG_${i}*`;
     const name: string = element.dataset.fileName || '';
-
-    // src가 기존의 truepoint인 경우에는 전처리를 하지 않는다.
     const tagSrc = element.getAttribute('src');
-
     if (!tagSrc || tagSrc?.slice(0, 4) === 'http') {
       return;
     }
-
     const obj = {
       signature: replaceName,
       fileName: name.replace(/ /gi, '+'),
       src: element.src,
     };
-
-    element.src = replaceName;
-
+    element.setAttribute('src', replaceName);
     saveImages.push(obj);
   });
 
