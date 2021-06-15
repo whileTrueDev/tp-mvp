@@ -148,6 +148,10 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => createStyle
     width: theme.spacing(3),
     height: theme.spacing(3),
     verticalAlign: 'middle',
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
+    },
   },
 }));
 

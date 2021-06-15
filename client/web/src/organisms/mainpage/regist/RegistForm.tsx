@@ -12,6 +12,7 @@ import {
   Grid,
   Typography,
   OutlinedInput,
+  CircularProgress,
 } from '@material-ui/core';
 import useAxios from 'axios-hooks';
 import Done from '@material-ui/icons/Done';
@@ -27,30 +28,12 @@ import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import axios from '../../../utils/axios';
 import PageTitle from '../shared/PageTitle';
 
-// // domain select용.
-// const domains = [
-//   { value: 'naver.com' },
-//   { value: 'daum.net' },
-//   { value: 'nate.com' },
-//   { value: 'gmail.com' },
-//   { value: 'hotmail.com' },
-//   { value: 'yahoo.co.kr' },
-//   { value: '직접입력' },
-// ];
-
 export interface Props {
   handleBack: () => void;
   handleUserSubmit: (user: any) => void;
   state: StepState;
   dispatch: (state: StepAction) => void;
 }
-// @hwasurr
-// 2020.10.13 eslint error 정리 중 주석처리. 사용하지 않는 interface
-// @chanuuuu 수정바랍니다.
-// interface ProfileData {
-//   marketerPlatformData: string;
-//   marketerMail: string;
-// }
 
 function PlatformRegistForm({
   handleBack,
@@ -137,6 +120,7 @@ function PlatformRegistForm({
 
   // 이메일 인증관련 --------------------------------------------
   const [emailSent, setEmailSent] = useState<boolean>(false); // 이메일이 발송여부 상태 저장, 해당 값이 true일 때 코드입력창을 보여준다
+  const [emailSending, setEmailSending] = useState<boolean>(false); // 이메일 발송중인지 여부(로딩상태)
   const codeInputRef = useRef<HTMLInputElement>(null);
   const getFullEmail = () => state.email;
 
@@ -154,6 +138,7 @@ function PlatformRegistForm({
       return;
     }
 
+    setEmailSending(true);
     // 이메일 주소로 코드 보내기 요청
     axios.get('/auth/email/code', { params: { email } })
       .then((res) => {
@@ -169,7 +154,8 @@ function PlatformRegistForm({
             alert(e.response.data.message);
           }
         }
-      });
+      })
+      .finally(() => setEmailSending(false));
   };
 
   const EmailVerifyCodeRequestButton = (
@@ -177,10 +163,18 @@ function PlatformRegistForm({
       variant="contained"
       color="primary"
       fullWidth
-      disabled={!state.isValidEmail || state.emailVerified}
+      disabled={!state.isValidEmail || state.emailVerified || emailSending}
       onClick={requestEmailVerifyCode}
     >
       {emailSent ? '코드 재전송' : '코드 전송'}
+      {emailSending && (
+        <CircularProgress
+          disableShrink
+          size={10}
+          thickness={5}
+          variant="indeterminate"
+        />
+      )}
     </Button>
   );
 

@@ -70,16 +70,18 @@ export default function MyPosts(): JSX.Element {
       page,
       itemPerPage,
     },
-  });
+  }, { manual: true });
 
   useEffect(() => {
-    getMyPosts({
-      params: {
-        userId: auth.user.userId,
-        page,
-        itemPerPage,
-      },
-    });
+    if (auth.user.userId) {
+      getMyPosts({
+        params: {
+          userId: auth.user.userId,
+          page,
+          itemPerPage,
+        },
+      });
+    }
   }, [auth.user.userId, getMyPosts, itemPerPage, page]);
 
   return (
