@@ -4,20 +4,16 @@ import {
 } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
-  CreatorRatingInfoRes, CreatorAverageRatings, CreatorAverageScores,
+  CreatorRatingInfoRes, CreatorAverageRatings,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import AdmireIcon from '../../../../atoms/svgIcons/AdmireIcon';
-import CussIcon from '../../../../atoms/svgIcons/CussIcon';
-import FrustratedIcon from '../../../../atoms/svgIcons/FrustratedIcon';
-import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
 import axios from '../../../../utils/axios';
 import {
   useCreatorInfoCardStyles, useExLargeRatingStyle,
-  useProfileSectionStyles, useScoreSectionStyles,
+  useProfileSectionStyles,
 } from '../style/CreatorInfoCard.style';
-import ScoreBar from '../topten/ScoreBar';
+import { ScoresSection } from '../../shared/ScoresSection';
 import StarRating from './StarRating';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 
@@ -25,16 +21,6 @@ export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
   user?: User;
   updateAverageRating?: () => void
 }
-
-type columns = 'admire' | 'smile'|'frustrate'|'cuss';
-
-const scoreLables: {name: columns, label: string, icon?: any}[] = [
-  { name: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
-  { name: 'smile', label: '웃음점수', icon: <SmileIcon /> },
-  { name: 'frustrate', label: '답답함점수', icon: <FrustratedIcon /> },
-  { name: 'cuss', label: '욕점수', icon: <CussIcon /> },
-];
-
 /**
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
  */
@@ -192,34 +178,6 @@ export function ProfileSection({
         </Grid>
 
       </Grid>
-    </>
-  );
-}
-
-/**
- * 감정점수 있는 부분
- */
-export function ScoresSection({ scores }: {
-  scores: CreatorAverageScores
-}): JSX.Element {
-  const classes = useScoreSectionStyles();
-  return (
-    <>
-      {scoreLables.map((score) => (
-        <Grid container key={score.name} className={classes.scoreItemContainer}>
-          <Grid item className={classes.scoreLabelContainer}>
-            <Typography className={classes.scoreLabelText}>
-              {score.icon}
-            </Typography>
-            <Typography className={classes.scoreLabelText}>
-              {score.label}
-            </Typography>
-          </Grid>
-          <Grid item className={classes.scoreBarContainer}>
-            <ScoreBar score={scores[score.name]} />
-          </Grid>
-        </Grid>
-      ))}
     </>
   );
 }
