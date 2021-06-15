@@ -13,6 +13,7 @@ import WeeklyLineCard from './WeeklyLineCard';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
 import PageTitle from '../shared/PageTitle';
+import FirstPlaceCreators from './sub/FirstPlaceCreators';
 
 export function CarouselSection(): JSX.Element {
   const carousel = useCarouselStyle();
@@ -28,6 +29,7 @@ export function CarouselSection(): JSX.Element {
           autoPlay={false}
           navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
         >
+          <FirstPlaceCreators />
           <SearchGuideBannerSlide />
           <ViewerComparisonPolarAreaCard />
           <WeeklyLineCard />
