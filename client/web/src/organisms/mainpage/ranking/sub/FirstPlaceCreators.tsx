@@ -57,12 +57,19 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
   } = props;
   const classes = useCreatorCardStyle();
 
-  // eslint-disable-next-line react/destructuring-assignment
-  const value = category === 'rating' ? props.averageRating : props[category];
+  let value: number | string;
+  if (category === 'rating') {
+    value = props.averageRating || 0;
+  } else if (category === 'viewer') {
+    value = props[category] || 0;
+  } else {
+    value = props[category]?.toFixed(2) || 0;
+  }
+
   const suffix = category === 'viewer' ? '명' : '점';
   const logo = afreecaProfileImage || twitchProfileImage || undefined;
   return (
-    <Link to={`/rankings/creator/${creatorId}`} className={classes.link}>
+    <Link to={`/ranking/creator/${creatorId}`} className={classes.link}>
       <Card className={classes.card} elevation={4}>
         <Typography className={classnames(classes.headerText, platform)}>
           {headerText}
