@@ -14,6 +14,7 @@ import { RankingsEntity } from './entities/rankings.entity';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
+import { CreatorRatingsService } from '../creatorRatings/creatorRatings.service';
 
 export type ScoreColumn = 'smileScore'|'frustrateScore'|'admireScore'|'cussScore';
 export type ColumnType = 'smile'| 'frustrate'| 'admire'| 'cuss' | 'viewer' | 'rating';
@@ -31,6 +32,7 @@ export class RankingsService {
   constructor(
     @InjectRepository(RankingsEntity)
     private readonly rankingsRepository: Repository<RankingsEntity>,
+    private readonly creatorRatingsService: CreatorRatingsService,
   ) {}
 
   private async getRankingList({
@@ -398,7 +400,13 @@ export class RankingsService {
         targetColumn: 'cussScore',
         ...commonOption,
       });
-      return { viewer: viewer[0], smile: smile[0], cuss: cuss[0] };
+      const { rankingData: rating } = await this.creatorRatingsService.getRankingList({
+        dateLimit: false,
+        ...commonOption,
+      });
+      return {
+        viewer: viewer[0], smile: smile[0], cuss: cuss[0], rating: rating[0],
+      };
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in getFirstPlacesByCategory');
