@@ -26,7 +26,8 @@ export function CarouselSection(): JSX.Element {
           PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon} />}
           indicators={false}
           animation="slide"
-          autoPlay={false}
+          autoPlay
+          interval={5000}
           navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
         >
           <FirstPlaceCreators />
