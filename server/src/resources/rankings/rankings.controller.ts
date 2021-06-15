@@ -73,4 +73,9 @@ export class RankingsController {
   getRecentAnalysisDate(): Promise<Date> {
     return this.rankingsService.getRecentAnalysysDate();
   }
+
+  @Get('first-places-by-category')
+  getFirstPlacesByCategory(): Promise<any> {
+    return this.rankingsService.getFirstPlacesByCategory();
+  }
 }

@@ -33,6 +33,116 @@ export class RankingsService {
     private readonly rankingsRepository: Repository<RankingsEntity>,
   ) {}
 
+  private async getRankingList({
+    targetColumn,
+    platformType,
+    categoryId,
+    skip,
+    limit,
+  }: {
+    targetColumn: string
+    platformType: PlatformType,
+    categoryId: number,
+    skip: number,
+    limit: number
+  }): Promise<{
+    totalDataCount: number,
+    rankingData: TopTenDataItem[],
+  }> {
+    // 최근분석날짜
+    const recentAnalysisDate = await this.getRecentAnalysysDate();
+    // 공통쿼리
+    const baseQuery = await getConnection()
+      .createQueryBuilder()
+      .select([
+        `T1.${targetColumn} AS ${targetColumn}`,
+        'T1.id AS id',
+        'T1.creatorId AS creatorId',
+        'T1.creatorName AS creatorName',
+        'T1.title AS title',
+        'T1.createDate AS createDate',
+        'T1.platform AS platform',
+        'AVG(ratings.rating) AS averageRating',
+      ])
+      .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
+        .select([
+          `MAX(rankings.${targetColumn}) AS maxScore`,
+          'rankings.creatorId AS creatorId',
+        ])
+        .from(RankingsEntity, 'rankings')
+        .groupBy('rankings.creatorId')
+        .where(`streamDate > DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
+      'MaxValueTable')
+      .from(RankingsEntity, 'T1')
+      .groupBy('T1.creatorId')
+      .where('T1.creatorId = MaxValueTable.creatorId')
+      .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId')
+      .andWhere(`T1.${targetColumn} = MaxValueTable.maxScore`); // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
+
+    let qb: SelectQueryBuilder<RankingsEntity>;
+    if (platformType === 'all') {
+      // 전체(아프리카 + 트위치) 추가 쿼리
+      qb = await baseQuery
+        .addSelect([
+          'Twitch.logo AS twitchProfileImage',
+          'Twitch.twitchChannelName AS twitchChannelName',
+          'Afreeca.logo AS afreecaProfileImage',
+        ])
+        .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
+        .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId');
+
+      if (categoryId !== 0) {
+        qb = await qb
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+      }
+    } else if (platformType === 'twitch') {
+      // 트위치 추가 쿼리
+      qb = await baseQuery
+        .addSelect([
+          'Twitch.logo AS twitchProfileImage',
+          'Twitch.twitchChannelName AS twitchChannelName',
+        ])
+        .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
+        .andWhere('T1.platform =:platformType', { platformType: 'twitch' });
+      if (categoryId !== 0) {
+        qb = await qb
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+      }
+    } else if (platformType === 'afreeca') {
+      // 아프리카 추가 쿼리
+      qb = await baseQuery
+        .addSelect([
+          'Afreeca.logo AS afreecaProfileImage',
+        ])
+        .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
+        .andWhere('T1.platform =:platformType', { platformType: 'afreeca' });
+
+      if (categoryId !== 0) {
+        qb = await qb
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+      }
+    }
+
+    // 해당 조건에 맞는 offset, limit 적용하지 않은 총 데이터 개수
+    const totalData = await qb.clone().getRawMany();
+    const totalDataCount = totalData.length;
+
+    const rankingData: TopTenDataItem[] = await qb
+      .orderBy(`T1.${targetColumn}`, 'DESC')
+      .offset(skip)
+      .limit(limit)
+      .getRawMany();
+
+    return {
+      totalDataCount,
+      rankingData,
+    };
+  }
+
   /**
    * 최근분석시간 기준 24시간 내 해당 점수 상위 10명의 방송정보를 뽑아내는 함수
    * 
@@ -75,93 +185,16 @@ export class RankingsService {
       : `${column}Score`;
 
     try {
-      // 최근분석날짜
-      const recentAnalysisDate = await this.getRecentAnalysysDate();
-      // 공통쿼리
-      const baseQuery = await getConnection()
-        .createQueryBuilder()
-        .select([
-          `T1.${targetColumn} AS ${targetColumn}`,
-          'T1.id AS id',
-          'T1.creatorId AS creatorId',
-          'T1.creatorName AS creatorName',
-          'T1.title AS title',
-          'T1.createDate AS createDate',
-          'T1.platform AS platform',
-          'AVG(ratings.rating) AS averageRating',
-        ])
-        .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
-          .select([
-            `MAX(rankings.${targetColumn}) AS maxScore`,
-            'rankings.creatorId AS creatorId',
-          ])
-          .from(RankingsEntity, 'rankings')
-          .groupBy('rankings.creatorId')
-          .where(`streamDate > DATE_SUB('${recentAnalysisDate}', INTERVAL 1 DAY)`),
-        'MaxValueTable')
-        .from(RankingsEntity, 'T1')
-        .groupBy('T1.creatorId')
-        .where('T1.creatorId = MaxValueTable.creatorId')
-        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = T1.creatorId')
-        .andWhere(`T1.${targetColumn} = MaxValueTable.maxScore`); // 최대점수를 가지는 레코드의 정보를 가져온다(t2와 T1의 creatorId와 점수가 같은 레코드)
-
-      let qb: SelectQueryBuilder<RankingsEntity>;
-      if (platformType === 'all') {
-        // 전체(아프리카 + 트위치) 추가 쿼리
-        qb = await baseQuery
-          .addSelect([
-            'Twitch.logo AS twitchProfileImage',
-            'Twitch.twitchChannelName AS twitchChannelName',
-            'Afreeca.logo AS afreecaProfileImage',
-          ])
-          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId');
-
-        if (categoryId !== 0) {
-          qb = await qb
-            .leftJoin('Afreeca.categories', 'afreecaCategories')
-            .leftJoin('Twitch.categories', 'twitchCategories')
-            .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
-        }
-      } else if (platformType === 'twitch') {
-        // 트위치 추가 쿼리
-        qb = await baseQuery
-          .addSelect([
-            'Twitch.logo AS twitchProfileImage',
-            'Twitch.twitchChannelName AS twitchChannelName',
-          ])
-          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
-          .andWhere('T1.platform =:platformType', { platformType: 'twitch' });
-        if (categoryId !== 0) {
-          qb = await qb
-            .leftJoin('Twitch.categories', 'twitchCategories')
-            .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
-        }
-      } else if (platformType === 'afreeca') {
-        // 아프리카 추가 쿼리
-        qb = await baseQuery
-          .addSelect([
-            'Afreeca.logo AS afreecaProfileImage',
-          ])
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
-          .andWhere('T1.platform =:platformType', { platformType: 'afreeca' });
-
-        if (categoryId !== 0) {
-          qb = await qb
-            .leftJoin('Afreeca.categories', 'afreecaCategories')
-            .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
-        }
-      }
-
-      // 해당 조건에 맞는 offset, limit 적용하지 않은 총 데이터 개수
-      const totalData = await qb.clone().getRawMany();
-      const totalDataCount = totalData.length;
-
-      const rankingData: TopTenDataItem[] = await qb
-        .orderBy(`T1.${targetColumn}`, 'DESC')
-        .offset(skip)
-        .limit(10)
-        .getRawMany();
+      const {
+        totalDataCount,
+        rankingData,
+      } = await this.getRankingList({
+        targetColumn,
+        platformType,
+        categoryId,
+        skip,
+        limit: 10,
+      });
 
       // 상위 10명 크리에이터의 아이디를 뽑아낸다
       const topTenCreatorIds = rankingData.map((d) => d.creatorId);
@@ -342,6 +375,33 @@ export class RankingsService {
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException('error in getRecentAnalysysDate');
+    }
+  }
+
+  async getFirstPlacesByCategory(): Promise<any> {
+    try {
+      const commonOption = {
+        platformType: 'all' as PlatformType,
+        categoryId: 0,
+        skip: 0,
+        limit: 1,
+      };
+      const { rankingData: viewer } = await this.getRankingList({
+        targetColumn: 'viewer',
+        ...commonOption,
+      });
+      const { rankingData: smile } = await this.getRankingList({
+        targetColumn: 'smileScore',
+        ...commonOption,
+      });
+      const { rankingData: cuss } = await this.getRankingList({
+        targetColumn: 'cussScore',
+        ...commonOption,
+      });
+      return { viewer: viewer[0], smile: smile[0], cuss: cuss[0] };
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in getFirstPlacesByCategory');
     }
   }
 }
