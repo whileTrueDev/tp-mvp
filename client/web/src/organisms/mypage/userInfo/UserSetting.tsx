@@ -4,7 +4,7 @@ import {
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
-import React from 'react';
+import React, { useEffect } from 'react';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import { useStyles } from '../dashboard/UserProfile';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
@@ -21,10 +21,16 @@ export default function UserSetting(): JSX.Element {
   const classes = useStyles();
   const { avatar } = useUserSettingStyle();
   const auth = useAuthContext();
-  const [profileRequestObject] = useAxios<User>({
+  const [profileRequestObject, getProfile] = useAxios<User>({
     url: 'users', method: 'GET', params: { userId: auth.user.userId },
-  });
+  }, { manual: true });
   const { isMobile } = useMediaSize();
+
+  useEffect(() => {
+    if (auth.user.userId) {
+      getProfile();
+    }
+  }, [auth.user.userId, getProfile]);
 
   return (
     <Paper className={classes.container}>
