@@ -111,7 +111,7 @@ export default function GetTemporaryPassword(): JSX.Element {
         <Typography className={classes.subcontent} variant="body2">
           아이디가 기억나지 않으신다면
           {' '}
-          <Button variant="outlined" component={Link} to="/find-id">아이디 찾으러 가기</Button>
+          <Link to="/find-id">아이디 찾으러 가기 &gt;</Link>
         </Typography>
 
         <form className={classes.content} onSubmit={handleSubmit}>
