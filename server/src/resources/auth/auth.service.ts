@@ -116,6 +116,7 @@ export class AuthService {
     const NOW_DATE = new Date();
 
     // 전달받은 refresh token이 만료되었는지 확인
+    // 리프레시 토큰 만료시 재로그인 필요
     let verifiedPrevRefreshToken: RefreshTokenData;
     try {
       verifiedPrevRefreshToken = await this.jwtService.verifyAsync<RefreshTokenData>(
@@ -129,13 +130,15 @@ export class AuthService {
     }
 
     // 토큰 스토어 (RDS - UserTokens테이블) 에 해당 refreshToken이 있는지 확인
+    // 리프레시 토큰이 만료되지 않음 && 토큰테이블에 없음 -> 로그아웃 한것이므로 재로그인 필요
     const token = await this.usersService.findOneToken(prevRefreshToken);
     if (!token) {
       throw new HttpException(
         'Error occurred during find refresh token',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.BAD_REQUEST,
       );
     }
+
     // 유저 정보 로드
     const userInfo = await this.usersService.findOne({ userId: verifiedPrevRefreshToken.userId });
     // 새로운 accessToken, refreshToken 생성

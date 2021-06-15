@@ -10,7 +10,7 @@ export default function useAutoLogin(
   // *******************************************
   // 자동로그인 체크하여 유효한 refresh token이 있는 경우 자동 로그인
   React.useLayoutEffect(() => {
-    if (!userId) {
+    if (!userId) { // userId 가 없을때(userId === '') refresh token확인
       // console.log('refreshing!...');
 
       // 로그인 로딩 start
@@ -24,7 +24,7 @@ export default function useAutoLogin(
             handleLoginLoadingEnd();
 
             // login, signup, find-id, find-pw인 경우 메인페이지로 이동
-            if (['/login', '/signup', 'find-id', 'find-pw', '/signup/completed']
+            if (['/login', '/signup', '/find-id', '/find-pw', '/signup/completed']
               .includes(window.location.pathname)) {
               window.location.href = '/';
             }
@@ -35,13 +35,11 @@ export default function useAutoLogin(
           // 로그인 로딩 end
           if (err.response && err.response.status === 400) {
             // refresh token이 유효하지 않은 경우. (시간이 지난 리프레시 토큰)
-            if (window.location.pathname !== '/') {
-              if (!(window.location.pathname === '/infoCBT') // CBT 페이지가 아닌 경우 &&  게시판 페이지가 아닌 경우 && 랭킹 페이지 아닌 경우 메인페이지로 옮겨짐.
-                  && !(window.location.pathname.includes('/community-board'))
-                  && !(window.location.pathname.includes('/ranking'))
-              ) {
-                window.location.href = '/';
-              }
+            if (window.location.pathname !== '/'
+            && !window.location.pathname.includes('/ranking')
+            && !window.location.pathname.includes('/community-board')
+            ) {
+              window.location.href = '/';
             }
             return Promise.reject(err);
           }
