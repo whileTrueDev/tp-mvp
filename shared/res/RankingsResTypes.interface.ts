@@ -53,4 +53,11 @@ export interface RankingDataType{
     rankingData: Array<TopTenDataItem>,
     weeklyTrends: WeeklyTrendsType,
     totalDataCount: number
-  }
+}
+
+export interface FirstPlacesRes {
+  viewer: TopTenDataItem,
+    smile: TopTenDataItem,
+    cuss: TopTenDataItem,
+    rating: TopTenDataItem,
+}

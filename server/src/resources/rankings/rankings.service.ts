@@ -9,6 +9,7 @@ import {
   DailyTotalViewersResType,
   TopTenDataItem,
   RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
+  FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
@@ -380,7 +381,7 @@ export class RankingsService {
     }
   }
 
-  async getFirstPlacesByCategory(): Promise<any> {
+  async getFirstPlacesByCategory(): Promise<FirstPlacesRes> {
     try {
       const commonOption = {
         platformType: 'all' as PlatformType,

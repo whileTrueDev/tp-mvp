@@ -2,7 +2,7 @@ import {
   Controller, DefaultValuePipe, Get, ParseIntPipe, Query, ValidationPipe,
 } from '@nestjs/common';
 import {
-  DailyTotalViewersResType, RankingDataType,
+  DailyTotalViewersResType, RankingDataType, FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { ColumnType, RankingsService, PlatformType } from './rankings.service';
 @Controller('rankings')
@@ -74,8 +74,12 @@ export class RankingsController {
     return this.rankingsService.getRecentAnalysysDate();
   }
 
+  /**
+   * 최고시청자수, 시청자 평점, 웃음점수, 욕점수 별 1위 방송인 정보 반환
+   * @returns 
+   */
   @Get('first-places-by-category')
-  getFirstPlacesByCategory(): Promise<any> {
+  getFirstPlacesByCategory(): Promise<FirstPlacesRes> {
     return this.rankingsService.getFirstPlacesByCategory();
   }
 }
