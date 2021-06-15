@@ -57,7 +57,7 @@ export interface RankingDataType{
 
 export interface FirstPlacesRes {
   viewer: TopTenDataItem,
-    smile: TopTenDataItem,
-    cuss: TopTenDataItem,
+    smileScore: TopTenDataItem,
+    cussScore: TopTenDataItem,
     rating: TopTenDataItem,
 }

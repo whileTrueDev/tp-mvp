@@ -406,7 +406,7 @@ export class RankingsService {
         ...commonOption,
       });
       return {
-        viewer: viewer[0], smile: smile[0], cuss: cuss[0], rating: rating[0],
+        viewer: viewer[0], smileScore: smile[0], cussScore: cuss[0], rating: rating[0],
       };
     } catch (error) {
       console.error(error);
