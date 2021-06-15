@@ -119,15 +119,42 @@ export class BroadcastInfoService {
   async findOneSteam(streamId: string, platform: string): Promise<RecentStream> {
     const result = await this.streamsRepository
       .query(
-        `SELECT streamId, title, startDate, endDate, viewer, chatCount,
+        `SELECT B.*,
+          IFNULL(smileScore, 0) as smileScore, 
+          IFNULL(frustrateScore, 0) as frustrateScore, 
+          IFNULL(admireScore, 0) as admireScore, 
+          IFNULL(cussScore, 0) as cussScore
+        FROM (
+        SELECT streamId, title, startDate, endDate, viewer, chatCount,
           IFNULL(SUM(vote), 0) AS likeCount,
           IFNULL(COUNT(*) - SUM(vote), 0) AS hateCount
         FROM ${this.streamsTableName} as s
         LEFT JOIN ${this.streamVoteRepo.metadata.tableName} as sv ON s.streamId = sv.streamStreamId
-        WHERE s.platform = ? AND s.streamId = ?`, [platform, streamId],
+        WHERE s.platform = ? AND s.streamId = ?
+        ) as B
+        LEFT JOIN Rankings USING(streamId)
+      `, [platform, streamId],
       );
     if (result.length === 0) return null;
-    return result[0];
+
+    // score 분할
+    const {
+      smileScore,
+      frustrateScore,
+      admireScore,
+      cussScore,
+      ...rest
+    } = result[0];
+
+    return {
+      ...rest,
+      scores: {
+        smile: smileScore,
+        frustrate: frustrateScore,
+        admire: admireScore,
+        cuss: cussScore,
+      },
+    };
   }
 
   /**

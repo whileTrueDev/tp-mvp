@@ -5,6 +5,7 @@ export const useScoreSectionStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     paddingRight: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
   scoreLabelContainer: {
     width: '35%',
@@ -20,19 +21,16 @@ export const useScoreSectionStyles = makeStyles((theme: Theme) => ({
       marginRight: theme.spacing(1),
     },
     [theme.breakpoints.down('sm')]: {
-      height: theme.spacing(4.5),
+      height: theme.spacing(6),
     },
     [theme.breakpoints.down('xs')]: {
-      height: theme.spacing(3),
+      height: theme.spacing(4),
     },
   },
   scoreLabelText: {
     fontSize: theme.typography.body2.fontSize,
-    // [theme.breakpoints.down('sm')]: {
-    // fontSize: theme.spacing(1.5),
-    // },
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.spacing(1.2),
+      fontSize: theme.spacing(1),
     },
   },
   scoreBarContainer: {
