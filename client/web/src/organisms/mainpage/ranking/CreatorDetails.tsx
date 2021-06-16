@@ -16,6 +16,7 @@ import RecentStreamList from './RecentStreamList';
 import { useCreatorInfoCardStyles } from './style/CreatorInfoCard.style';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 import { useRankingPageLayout } from './style/RankingPage.style';
+import RankingPageCommonLayout from './RankingPageCommonLayout';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -42,7 +43,7 @@ export default function CreatorDetails(): React.ReactElement {
   // 모바일 레이아웃
   if (isMobile) {
     return (
-      <>
+      <RankingPageCommonLayout>
         <Paper style={{ padding: '4px', marginBottom: '4px' }}>
 
           <PageTitle text="방송인 상세페이지" />
@@ -65,13 +66,13 @@ export default function CreatorDetails(): React.ReactElement {
           <CreatorCommentList creatorId={creatorId} />
         </Paper>
 
-      </>
+      </RankingPageCommonLayout>
     );
   }
 
   // 데스크탑 레이아웃
   return (
-    <>
+    <RankingPageCommonLayout>
 
       {/* 최근 방송 정보 섹션 */}
       <Container className={container}>
@@ -104,6 +105,6 @@ export default function CreatorDetails(): React.ReactElement {
           <CreatorCommentList creatorId={creatorId} />
         </div>
       </Container>
-    </>
+    </RankingPageCommonLayout>
   );
 }

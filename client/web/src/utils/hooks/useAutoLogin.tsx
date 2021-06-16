@@ -35,12 +35,12 @@ export default function useAutoLogin(
           // 로그인 로딩 end
           if (err.response && err.response.status === 400) {
             // refresh token이 유효하지 않은 경우. (시간이 지난 리프레시 토큰)
-            if (window.location.pathname !== '/'
-            && !window.location.pathname.includes('/ranking')
-            && !window.location.pathname.includes('/community-board')
-            ) {
-              window.location.href = '/';
+            console.error('invalid or expired refresh token');
+            if (window.location.pathname.includes('/mypage')) {
+              alert('재로그인이 필요합니다. 다시 로그인 해주세요.');
+              window.location.href = '/login';
             }
+
             return Promise.reject(err);
           }
           return Promise.reject(err);

@@ -14,6 +14,7 @@ import useMediaSize from '../../../utils/hooks/useMediaSize';
 import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
 import PageTitle from '../shared/PageTitle';
 import FirstPlaceCreators from './sub/FirstPlaceCreators';
+import RankingPageCommonLayout from './RankingPageCommonLayout';
 
 export function CarouselSection(): JSX.Element {
   const carousel = useCarouselStyle();
@@ -43,9 +44,8 @@ export function CarouselSection(): JSX.Element {
 export default function RankingMain(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const { isMobile } = useMediaSize();
-  // const footerDecoration = useMemo(() => <FooterDecoration />, []);
   return (
-    <div>
+    <RankingPageCommonLayout>
       {!isMobile && <CarouselSection />}
       <PageTitle text="인방랭킹" />
 
@@ -62,7 +62,6 @@ export default function RankingMain(): JSX.Element {
         </Grid>
       </Container>
 
-      {/* {!isMobile && footerDecoration} */}
-    </div>
+    </RankingPageCommonLayout>
   );
 }
