@@ -63,7 +63,9 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
   } else if (category === 'viewer') {
     value = props[category] || 0;
   } else {
-    value = props[category]?.toFixed(2) || 0;
+    // 감정점수 (10점 이상의 값을 가진 경우 10점 만점으로 보여준다)
+    const score = Math.min(10, props[category] || 0);
+    value = score.toFixed(2);
   }
 
   const suffix = category === 'viewer' ? '명' : '점';
