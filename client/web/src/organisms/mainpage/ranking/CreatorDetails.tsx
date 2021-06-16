@@ -4,7 +4,7 @@ import {
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Redirect, useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import useRatingData from '../../../utils/hooks/useRatingData';
@@ -40,6 +40,12 @@ export default function CreatorDetails(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 로딩중이 아닌데 유저데이터 없을때 -> 존재하지 않는 유저
+  if (!userData.loading && !userData.data) {
+    alert('존재하지 않는 방송인입니다. 메인 페이지로 돌아갑니다');
+    return (<Redirect to="/" />);
+  }
+
   // 모바일 레이아웃
   if (isMobile) {
     return (
@@ -50,7 +56,7 @@ export default function CreatorDetails(): React.ReactElement {
           <GoBackButton />
           <Grid container style={{ border: '1px solid grey', position: 'relative' }}>
             <ProfileSection
-              user={userData.data}
+              userData={userData}
               ratings={ratings}
               updateAverageRating={updateAverageRating}
             />
@@ -88,7 +94,7 @@ export default function CreatorDetails(): React.ReactElement {
             {/* 왼쪽 크리에이터 기본설명, 평점 */}
             <Grid container item className={classes.left} xs={7}>
               <ProfileSection
-                user={userData.data}
+                userData={userData}
                 ratings={ratings}
                 updateAverageRating={updateAverageRating}
               />
