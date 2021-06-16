@@ -60,13 +60,12 @@ export class EmailVerificationService {
 
     // 1. 랜덤 문자열 코드생성
     const code = this.createEmailVerificationCode();
-    // 2. 이메일 인증 테이블에 유저 email, 생성된 코드, 생성시간 저장
-    await this.saveVerificationCode({ email, code });
+
     try {
-      // 3. 메일로 코드 전송
+      // 2. 메일로 코드 전송
       await this.mailerService.sendMail({
         to: email, // list of receivers
-        from: 'noreply-----truepointceo@gmail.com', // sender address
+        // from: 'noreply-----truepointceo@gmail.com', // sender address
         subject: '트루포인트 회원가입 인증 코드', // Subject line
         html: `
         <h1>
@@ -82,6 +81,8 @@ export class EmailVerificationService {
         <p>이 메일을 요청한 적이 없으시다면 무시하시기 바랍니다.</p>
           `, // HTML body content
       });
+      // 3. 이메일 인증 테이블에 유저 email, 생성된 코드, 생성시간 저장
+      await this.saveVerificationCode({ email, code });
       return true;
     } catch (error) {
       console.error(error);
@@ -112,7 +113,7 @@ export class EmailVerificationService {
     try {
       await this.mailerService.sendMail({
         to: email, // list of receivers
-        from: 'noreply-----truepointceo@gmail.com', // sender address
+        // from: 'noreply-----truepointceo@gmail.com', // sender address
         subject: '트루포인트 임시 비밀번호 발급', // Subject line
         html: `
         <h1>
