@@ -1,3 +1,4 @@
+import { Container } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { RecentStream } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios from 'axios-hooks';
@@ -7,12 +8,15 @@ import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import PageTitle from '../shared/PageTitle';
+import RankingPageCommonLayout from './RankingPageCommonLayout';
 import StreamCommentList from './streamInfo/StreamCommentList';
 import StreamInfoCard from './streamInfo/StreamInfoCard';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
+import { useRankingPageLayout } from './style/RankingPage.style';
 
 export default function StreamEvaluation(): React.ReactElement {
   const { enqueueSnackbar } = useSnackbar();
+  const { container } = useRankingPageLayout();
   const classes = useCreatorEvalutationCardStyle();
   const { streamId, creatorId } = useParams<{streamId: string, creatorId: string}>();
 
@@ -52,19 +56,23 @@ export default function StreamEvaluation(): React.ReactElement {
   }
 
   return (
-    <div className={classes.creatorEvaluationCardContainer}>
-      <GoBackButton />
-      <PageTitle text="방송 후기 페이지" />
-      <StreamInfoCard
-        creator={creatorInfo}
-        stream={streamData}
-        loading={loading}
-        onUpVote={() => handleVote('up')}
-        onDownVote={() => handleVote('down')}
-        onVoteCancel={handleVoteDelete}
-      />
+    <RankingPageCommonLayout>
+      <Container className={container}>
+        <div className={classes.creatorEvaluationCardContainer}>
+          <GoBackButton />
+          <PageTitle text="방송 후기 페이지" />
+          <StreamInfoCard
+            creator={creatorInfo}
+            stream={streamData}
+            loading={loading}
+            onUpVote={() => handleVote('up')}
+            onDownVote={() => handleVote('down')}
+            onVoteCancel={handleVoteDelete}
+          />
 
-      <StreamCommentList streamId={streamId} />
-    </div>
+          <StreamCommentList streamId={streamId} />
+        </div>
+      </Container>
+    </RankingPageCommonLayout>
   );
 }
