@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useLayoutEffect, useRef, useState,
+  useEffect, useRef, useState,
 } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import routes from '../routes';
@@ -8,9 +8,9 @@ import useLayoutStyles from './MypageLayout.style';
 // organisms
 import AppBar from '../../../organisms/shared/Appbar';
 import PageSizeAlert from '../../../organisms/mypage/alertbar/PageSizeAlert';
-import useAuthContext from '../../../utils/hooks/useAuthContext';
 import MypageLoading from './MypageLoading';
 import SidebarWithNavbar from '../../../organisms/mypage/layouts/sidebar-with-navbar/SidebarWithNavbar';
+import useTokenRefreshLoading from '../../../utils/hooks/useTokenRefreshLoading';
 
 const UserDashboard = (): JSX.Element => {
   const classes = useLayoutStyles();
@@ -35,22 +35,7 @@ const UserDashboard = (): JSX.Element => {
    * ************************************************
    * 토큰리프레시 로딩 컴포넌트 Open을 위한 작업
    */
-  const auth = useAuthContext();
-  const [loadingOpen, setLoadingOpen] = useState(auth.loginLoading === true || !auth.user.userId);
-  useLayoutEffect(() => {
-    const maxTimeout = 2 * 1000; // 2초
-    if (!(!auth.loginLoading && auth.user.userId)) {
-      setLoadingOpen(true);
-    }
-
-    const timer = setTimeout(() => {
-      // 로딩이 끝났고, 유저 ID가 있는 경우(토큰이 있는 경우)
-      if (!auth.loginLoading && auth.user.userId && auth.accessToken) setLoadingOpen(false);
-      // 최대 타임아웃 이후에도 로딩이 끝나지 않았거나 액세스 토큰이 없는 경우 
-      else window.location.href = '/login';
-    }, maxTimeout);
-    return () => clearTimeout(timer);
-  }, [auth.accessToken, auth.loginLoading, auth.user.userId]);
+  const { loadingOpen } = useTokenRefreshLoading();
   // *************************************************
 
   // *************************************************

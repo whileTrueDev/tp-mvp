@@ -14,5 +14,6 @@ import { RankingsEntity } from '../rankings/entities/rankings.entity';
   ])],
   controllers: [CreatorRatingsController],
   providers: [CreatorRatingsService],
+  exports: [CreatorRatingsService],
 })
 export class CreatorRatingsModule {}

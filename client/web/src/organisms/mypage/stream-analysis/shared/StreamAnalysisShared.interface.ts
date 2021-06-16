@@ -51,6 +51,7 @@ export interface PeriodSelectDialogProps {
   handlePeriod: (startAt: Date, endAt: Date, base?: true) => void;
   handleClose: () => void;
   handleStreamList: (targetItem: StreamsListItem, isRemoved?: boolean | undefined) => void;
+  exampleMode?: boolean;
 }
 export interface PeriodStreamsListProps {
   selectedStreams: (StreamsListItem)[];

@@ -108,7 +108,7 @@ export default function PasswordChangeDialog({
 
         <DialogContent>
           <PasswordTextField
-            variant="filled"
+            variant="outlined"
             label="변경 비밀번호"
             margin="dense"
             id="edit-password"
@@ -120,7 +120,7 @@ export default function PasswordChangeDialog({
             helperText="특수문자를 포함한 8-20자 영문 또는 숫자만 가능합니다."
           />
           <PasswordTextField
-            variant="filled"
+            variant="outlined"
             label="변경 비밀번호 확인"
             margin="dense"
             id="confirm-password"

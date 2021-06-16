@@ -1,7 +1,9 @@
 import {
   createStyles, makeStyles,
 } from '@material-ui/core/styles';
-import { COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT, RANKING_PAGE_CONTAINER_WIDTH } from '../../../assets/constants';
+import {
+  COMMON_APP_BAR_HEIGHT, SM_APP_BAR_HEIGHT, MAX_WIDTH_DESKTOP,
+} from '../../../assets/constants';
 
 export const useStyles = makeStyles((theme) => createStyles({
   root: {
@@ -9,6 +11,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     position: 'fixed',
     width: '100%',
     zIndex: 1200,
+
   },
   container: {
     height: COMMON_APP_BAR_HEIGHT,
@@ -18,7 +21,9 @@ export const useStyles = makeStyles((theme) => createStyles({
     boxShadow: 'none',
     padding: `${theme.spacing(2)}px ${theme.spacing(1)}px`,
     borderBottom: 'none',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.type === 'light'
+      ? theme.palette.primary.main
+      : theme.palette.background.default,
     transition: theme.transitions.create('background'),
     [theme.breakpoints.down('sm')]: {
       height: SM_APP_BAR_HEIGHT,
@@ -27,6 +32,9 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   transparent: {
     backgroundColor: 'transparent',
+    '& $link': {
+      color: theme.palette.text.primary,
+    },
   },
   toolbar: {
     position: 'relative',
@@ -34,7 +42,7 @@ export const useStyles = makeStyles((theme) => createStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%',
-    minWidth: RANKING_PAGE_CONTAINER_WIDTH,
+    minWidth: MAX_WIDTH_DESKTOP,
     [theme.breakpoints.down('sm')]: {
       minWidth: '100%',
     },
@@ -52,7 +60,7 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   link: {
     marginRight: theme.spacing(2),
-    color: theme.palette.text.primary,
+    color: theme.palette.primary.contrastText,
     opacity: 0.8,
     '&:hover': {
       textShadow: theme.shadows[7],
@@ -86,6 +94,7 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   userInterfaceWrapper: { display: 'flex', flex: 1 },
   loginButton: {
+    color: 'inherit',
     marginRight: theme.spacing(4),
     fontSize: theme.typography.body1.fontSize,
     [theme.breakpoints.down('sm')]: {
@@ -94,21 +103,52 @@ export const useStyles = makeStyles((theme) => createStyles({
       marginRight: theme.spacing(0),
     },
   },
+  mobileToggleLoginButton: {
+    width: '100%',
+    padding: theme.spacing(1.5),
+    fontSize: theme.typography.body1.fontSize,
+    borderRadius: theme.spacing(3.5),
+  },
+  mobileToggleLogoutButton: {
+    color: theme.palette.primary.dark,
+    textDecoration: 'underline',
+  },
   leftspace: {
     [theme.breakpoints.down('sm')]: {
-      width: 24, height: 24,
+      width: 0, height: 0,
     },
   },
-  mobileMenu: {
+  mobileMenuButton: {
     position: 'absolute',
     right: 0,
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
   },
+  mobileMenuCloseButton: {
+    position: 'absolute',
+    right: 0,
+  },
+  mobileMenuProfileImage: {
+    width: theme.spacing(12),
+    height: theme.spacing(12),
+  },
+  mobileMenuProfileName: {
+    padding: theme.spacing(0, 1),
+    textDecoration: 'none',
+    display: 'block',
+    color: theme.palette.text.primary,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
   menuItem: {
+    width: theme.spacing(40),
     justifyContent: 'center',
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    padding: theme.spacing(1.5),
+    '&.active': {
+      color: theme.palette.primary.main,
+    },
   },
   mobileIcon: { marginRight: theme.spacing(1) },
   mobileText: {
@@ -118,7 +158,7 @@ export const useStyles = makeStyles((theme) => createStyles({
   mobileTextMyPage: { color: theme.palette.primary.main },
   darkModeToggleButton: {
     position: 'relative',
-    color: theme.palette.text.primary,
+    color: 'inherit',
     '&$menuItem': {
       width: '100%',
       borderTop: `2px solid ${theme.palette.divider}`,
@@ -130,6 +170,8 @@ export const useStyles = makeStyles((theme) => createStyles({
   },
   darkModeIcon: {
     display: theme.palette.type === 'dark' ? 'none' : 'block',
+  },
+  mobileToggleList: {
   },
 
 }));

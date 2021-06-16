@@ -1,5 +1,5 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-
+import { twitchItemBackgroundColor, afreecaItemBackgroundColor } from '../../../../assets/constants';
 // TopTenList 스타일
 export const useTopTenList = makeStyles((theme: Theme) => {
   // 별에 그라디언트 넣기 위한 색 설정
@@ -15,9 +15,6 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       backgroundImage: `linear-gradient(${startColor}, ${endColor})`,
     };
   });
-
-  const twitchItemBackgroundColor = '#c8add8';
-  const afreecaItemBackgroundColor = '#a2b9e1';
 
   return createStyles({
     topTenListWrapper: {

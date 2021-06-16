@@ -48,8 +48,10 @@ export const useProfileSectionStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
+    paddingTop: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
       order: 1, // 마지막 위치로
+      paddingTop: theme.spacing(1),
     },
   },
   averageRatingText: {
@@ -95,6 +97,7 @@ export const useScoreSectionStyles = makeStyles((theme: Theme) => ({
   scoreItemContainer: {
     display: 'flex',
     alignItems: 'center',
+    paddingRight: theme.spacing(1),
   },
   scoreLabelContainer: {
     width: '35%',
@@ -105,6 +108,7 @@ export const useScoreSectionStyles = makeStyles((theme: Theme) => ({
     borderRadius: theme.spacing(1),
     display: 'flex',
     alignItems: 'center',
+    boxShadow: '-3px -2px 4px 0 rgba(0, 0, 0, 0.07)',
     '&>:nth-child(1)': {
       marginRight: theme.spacing(1),
     },
@@ -121,39 +125,35 @@ export const useScoreSectionStyles = makeStyles((theme: Theme) => ({
 }
 ));
 
-export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => {
-  const commonBorderStyle = `${theme.spacing(0.5)}px solid ${theme.palette.common.black}`;
-  return createStyles({
-    creatorInfoContainer: {
+export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => createStyles({
+  creatorInfoContainer: {
+  },
+  left: {
+    position: 'relative',
+    padding: theme.spacing(2),
+    background: 'url("/images/rankingPage/streamer_detail_bg_3.svg") no-repeat 100% 100%',
+    backgroundSize: 'contain',
+    [theme.breakpoints.down('sm')]: {
+      border: `1px solid ${theme.palette.divider}`,
+      padding: theme.spacing(1),
     },
-    left: {
-      position: 'relative',
-      padding: theme.spacing(2),
-      border: commonBorderStyle,
-      background: 'url("/images/rankingPage/streamer_detail_bg_1_light.svg") no-repeat 100% 100%',
-      backgroundSize: 'contain',
-      [theme.breakpoints.down('sm')]: {
-        border: `1px solid ${theme.palette.divider}`,
-        padding: theme.spacing(1),
-      },
+  },
+  right: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  logo: {
+    marginRight: theme.spacing(1),
+    width: theme.spacing(3),
+    height: theme.spacing(3),
+    verticalAlign: 'middle',
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
     },
-    right: {
-      border: commonBorderStyle,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      [theme.breakpoints.down('sm')]: {
-        border: 'none',
-      },
-    },
-    logo: {
-      marginRight: theme.spacing(1),
-      width: theme.spacing(3),
-      height: theme.spacing(3),
-      verticalAlign: 'middle',
-    },
-  });
-});
+  },
+}));
 
 export const useExLargeRatingStyle = makeStyles((theme: Theme) => createStyles({
   root: {

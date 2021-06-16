@@ -4,65 +4,31 @@ import {
 } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
-  CreatorRatingInfoRes, CreatorRatingCardInfo, CreatorAverageRatings, CreatorAverageScores,
+  CreatorRatingInfoRes, CreatorAverageRatings,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
-import { Textfit } from 'react-textfit';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import AdmireIcon from '../../../../atoms/svgIcons/AdmireIcon';
-import CussIcon from '../../../../atoms/svgIcons/CussIcon';
-import FrustratedIcon from '../../../../atoms/svgIcons/FrustratedIcon';
-import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
 import axios from '../../../../utils/axios';
 import {
   useCreatorInfoCardStyles, useExLargeRatingStyle,
-  useProfileSectionStyles, useScoreSectionStyles,
+  useProfileSectionStyles,
 } from '../style/CreatorInfoCard.style';
-import ScoreBar from '../topten/ScoreBar';
+import { ScoresSection } from '../../shared/ScoresSection';
 import StarRating from './StarRating';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
-
-const KEY = '_tptrid';
-const getCookieValue = (key: string): string => {
-  const cookieKey = `${key}=`;
-  let result = '';
-  const cookieArr = document.cookie.split(';');
-
-  for (let i = 0; i < cookieArr.length; i += 1) {
-    if (cookieArr[i][0] === ' ') {
-      cookieArr[i] = cookieArr[i].substring(1);
-    }
-
-    if (cookieArr[i].indexOf(cookieKey) === 0) {
-      result = cookieArr[i].slice(cookieKey.length, cookieArr[i].length);
-      return result;
-    }
-  }
-  return result;
-};
 
 export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
   user?: User;
   updateAverageRating?: () => void
 }
-
-type columns = 'admire' | 'smile'|'frustrate'|'cuss';
-
-const scoreLables: {name: columns, label: string, icon?: any}[] = [
-  { name: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
-  { name: 'smile', label: '웃음점수', icon: <SmileIcon /> },
-  { name: 'frustrate', label: '답답함점수', icon: <FrustratedIcon /> },
-  { name: 'cuss', label: '욕점수', icon: <CussIcon /> },
-];
-
 /**
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
  */
 export function ProfileSection({
-  user, info, updateAverageRating, ratings,
+  user,
+  updateAverageRating, ratings,
 }: {
   user?: User,
-  info: CreatorRatingCardInfo,
   updateAverageRating?: () => void,
   ratings: CreatorAverageRatings
 }): JSX.Element {
@@ -70,16 +36,19 @@ export function ProfileSection({
   const largeRating = useExLargeRatingStyle();
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-  const {
-    platform, creatorId, logo, nickname, twitchChannelName,
-  } = info;
+
+  const platform = user?.afreeca ? 'afreeca' : 'twitch';
+  const creatorId = user?.afreeca ? user?.afreeca?.afreecaId : user?.twitch?.twitchId;
+  const logo = user?.afreeca ? user?.afreeca?.logo : user?.twitch?.logo;
+  const nickname = user?.afreeca ? user?.afreeca?.afreecaStreamerName : user?.twitch?.twitchStreamerName;
+  const twitchChannelName = user?.twitch?.twitchChannelName;
 
   const { average: averageRating, count: ratingCount } = ratings;
   const [userRating, setUserRating] = useState<number|undefined>(); // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
 
   useEffect(() => {
     const params = {
-      userId: localStorage.getItem(KEY),
+      userId: authContext.user.userId,
     };
     axios.get(`ratings/${creatorId}`, {
       params,
@@ -90,7 +59,7 @@ export function ProfileSection({
         }
       })
       .catch((error) => console.error(error));
-  }, [creatorId]);
+  }, [authContext.user.userId, creatorId]);
   /**
    * 평점 생성, 수정 핸들러 함수
    * 평점을 매기고, 평균평점을 새로 불러온다
@@ -103,15 +72,10 @@ export function ProfileSection({
     } else {
       axios.post(`ratings/${creatorId}`, {
         rating: score,
-        userId: authContext.user.userId || localStorage.getItem(KEY) || undefined,
+        userId: authContext.user.userId,
         platform,
       })
         .then(() => {
-          const tempId = localStorage.getItem(KEY);
-          if (!tempId) {
-            localStorage.setItem(KEY, getCookieValue(KEY));
-          }
-
           if (updateAverageRating) {
             updateAverageRating();
           }
@@ -135,7 +99,7 @@ export function ProfileSection({
   const cancelRatingHandler = useCallback((cb?: () => void) => {
     axios.delete(`ratings/${creatorId}`, {
       data: {
-        userId: authContext.user.userId || localStorage.getItem(KEY) || undefined,
+        userId: authContext.user.userId,
       },
     })
       .then(() => {
@@ -189,7 +153,7 @@ export function ProfileSection({
       <Grid item container className={classes.textContainer} xs={8}>
         <Grid item className={classes.nameContainer}>
           <Typography className={classes.nickname} component="div">
-            <Textfit mode="single" max={20}>{nickname}</Textfit>
+            {nickname}
           </Typography>
         </Grid>
         <Grid item className={classes.ratingContainer}>
@@ -219,41 +183,14 @@ export function ProfileSection({
 }
 
 /**
- * 감정점수 있는 부분
- */
-export function ScoresSection({ scores }: {
-  scores: CreatorAverageScores
-}): JSX.Element {
-  const classes = useScoreSectionStyles();
-  return (
-    <>
-      {scoreLables.map((score) => (
-        <Grid container key={score.name} className={classes.scoreItemContainer}>
-          <Grid item className={classes.scoreLabelContainer}>
-            <Typography className={classes.scoreLabelText}>
-              {score.icon}
-            </Typography>
-            <Typography className={classes.scoreLabelText}>
-              {score.label}
-            </Typography>
-          </Grid>
-          <Grid item className={classes.scoreBarContainer}>
-            <ScoreBar score={scores[score.name]} />
-          </Grid>
-        </Grid>
-      ))}
-    </>
-  );
-}
-
-/**
  * 방송인정보페이지 상단 방송인 정보와 별점 평가하는 컴포넌트
  * @param props 
  * @returns 
  */
 export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Element {
   const {
-    info, ratings, scores, updateAverageRating, user,
+    // info, 
+    ratings, scores, updateAverageRating, user,
   } = props;
 
   const classes = useCreatorInfoCardStyles();
@@ -265,7 +202,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
         <ProfileSection
           user={user}
           ratings={ratings}
-          info={info}
+          // info={info}
           updateAverageRating={updateAverageRating}
         />
       </Grid>

@@ -11,6 +11,7 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   replyId: number;
 
   @JoinColumn({ name: 'suggestionId' })
+  @Column()
   @ManyToOne((type) => FeatureSuggestionEntity, (fs) => fs.replies, { onDelete: 'CASCADE' })
   suggestionId: number;
 
@@ -18,7 +19,7 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   content: string;
 
   @JoinColumn({ name: 'author' })
-  @ManyToOne((type) => UserEntity, (user) => user.userId)
+  @ManyToOne((type) => UserEntity, (user) => user.featureSuggestionReplies, { nullable: true, onDelete: 'CASCADE' })
   author: UserEntity;
 
   @Column({ comment: '작성자 Ip' })

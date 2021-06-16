@@ -19,7 +19,7 @@ import useMediaSize from '../../../utils/hooks/useMediaSize';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   communitySection: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -36,10 +36,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   smallLogo: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
     color: theme.palette.primary.main,
     [theme.breakpoints.down('sm')]: {
       width: theme.spacing(2),
       height: theme.spacing(2),
+      marginRight: 0,
     },
   },
   hotPostSection: {
@@ -50,7 +53,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     margin: theme.spacing(2, 0),
   },
   tabsSection: {
-    padding: theme.spacing(1),
   },
 }));
 

@@ -24,6 +24,12 @@ const createPostItStyles = (theme: Theme, type: PostItType, color = '#ccae79'): 
   display: 'block',
   width: '120px',
   height: '30px',
+  [theme.breakpoints.down('sm')]: {
+    width: '35px',
+    height: '10px',
+    maxWidth: 'auto',
+    minWidth: 'auto',
+  },
   maxWidth: theme.spacing(15),
   minWidth: theme.spacing(10),
   backgroundColor: color,

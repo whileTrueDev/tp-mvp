@@ -1,14 +1,13 @@
 import {
-  IsIn, IsNumber, IsOptional, IsString,
+  IsIn, IsNumber, IsString,
 } from 'class-validator';
 
 export class RatingPostDto {
   @IsNumber()
   rating: number;
 
-  @IsOptional()
   @IsString()
-  userId?: string | undefined;
+  userId: string;
 
   @IsIn(['twitch', 'afreeca'])
   platform: string;

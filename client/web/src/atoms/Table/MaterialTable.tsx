@@ -53,12 +53,7 @@ export default function MaterialTable<RowDataType extends Record<string, any>>(
   const { columns, cellWidth, ...rest } = props;
 
   function styleColumn(_columns: Column<RowDataType>[], minWidth = 100): Column<RowDataType>[] {
-    _columns.map((col) => {
-      const column = col;
-      column.cellStyle = { minWidth, ...column };
-      return column;
-    });
-    return _columns;
+    return _columns.map((col) => ({ minWidth, ...col }));
   }
 
   return (

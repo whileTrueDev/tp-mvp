@@ -31,7 +31,7 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
             />
           </Grid>
           <Grid container item xs={5} alignItems="center" wrap="nowrap">
-            <Link className={classes.linkContainer} component={RouterLink} to={`/ranking/${platform}/${creatorId}`}>
+            <Link className={classes.linkContainer} component={RouterLink} to={`/ranking/creator/${creatorId}`}>
               <Avatar className={classes.avatarImage} alt={`${nickname} 프로필 이미지`} src={logo} />
 
               <Typography

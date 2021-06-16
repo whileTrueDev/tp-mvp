@@ -1,5 +1,5 @@
 import {
-  Button, Grid, Hidden, InputBase, TextField,
+  Button, InputBase, TextField,
 } from '@material-ui/core';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
@@ -66,10 +66,8 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
 
     axios.post(postUrl, { ...createCommentDto })
       .then((res) => {
-        if (!authContext.user.userName) {
-          nicknameInput.value = '';
-          passwordInput.value = '';
-        }
+        nicknameInput.value = authContext.user.nickName;
+        passwordInput.value = '';
         contentInput.value = '';
 
         if (callback) {
@@ -80,69 +78,29 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
   };
   return (
     <form className={formStyle.form} onSubmit={onSubmit}>
-      {/* 로그인 한 경우 */}
-      {/* {authContext.user.userId && authContext.accessToken && (
-        <Typography>{authContext.user.nickName}</Typography>
-      )} */}
-      {/* 로그인 안해도 authcontext.user값이 들어간 경우가 있어서(public mypage..) 
-        로그인 기능 활성화 후 다른 방식으로 처리 필요(public mypage에 authcontext.user 값 넣는 부분 수정필요)
-      */}
-      <Hidden smUp>
-        <Grid container>
-          <Grid item xs={6}>
-            <TextField
-              label="닉네임"
-              name="nickname"
-              variant="outlined"
-              placeholder="닉네임"
-              inputProps={{ maxLength: 8 }}
-              className={formStyle.nicknameInput}
-              defaultValue={authContext.user.userName}
-              size="small"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="비밀번호"
-              name="password"
-              type="password"
-              placeholder="비밀번호"
-              variant="outlined"
-              className={formStyle.passwordInput}
-              inputProps={{ maxLength: 4 }}
-              autoComplete="on"
-              size="small"
-            />
-          </Grid>
-        </Grid>
-      </Hidden>
-
-      {/* 데스크탑 화면인 경우 */}
-      <Hidden smDown>
-        <div>
-          <TextField
-            label="닉네임"
-            name="nickname"
-            variant="outlined"
-            placeholder="닉네임"
-            inputProps={{ maxLength: 8 }}
-            className={formStyle.nicknameInput}
-            defaultValue={authContext.user.userName}
-            size="small"
-          />
-          <TextField
-            label="비밀번호"
-            name="password"
-            type="password"
-            placeholder="비밀번호"
-            variant="outlined"
-            className={formStyle.passwordInput}
-            inputProps={{ maxLength: 4 }}
-            autoComplete="on"
-            size="small"
-          />
-        </div>
-      </Hidden>
+      <div>
+        <TextField
+          label="닉네임"
+          name="nickname"
+          variant="outlined"
+          placeholder="닉네임"
+          inputProps={{ maxLength: 8 }}
+          className={formStyle.nicknameInput}
+          defaultValue={authContext.user.nickName}
+          size="small"
+        />
+        <TextField
+          label="비밀번호"
+          name="password"
+          type="password"
+          placeholder="비밀번호"
+          variant="outlined"
+          className={formStyle.passwordInput}
+          inputProps={{ maxLength: 4 }}
+          autoComplete="on"
+          size="small"
+        />
+      </div>
 
       <InputBase
         className={formStyle.contentTextArea}

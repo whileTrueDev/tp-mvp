@@ -85,6 +85,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
     period, base, selectedStreams, open,
     handleStreamList, handleClose,
     handlePeriod,
+    exampleMode = false,
   } = props;
   const classes = useStyles();
 
@@ -109,7 +110,7 @@ export default function PeriodSelectDialog(props: PeriodSelectDialogProps): JSX.
 
             <div className={classes.calendar}>
               <RangeSelectCalendar
-                exampleMode
+                exampleMode={exampleMode}
                 period={period}
                 handlePeriod={handlePeriod}
                 handleDialogClose={handleClose}
