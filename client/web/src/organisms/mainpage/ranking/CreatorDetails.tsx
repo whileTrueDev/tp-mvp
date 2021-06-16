@@ -4,7 +4,7 @@ import {
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
 import React, { useEffect } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import useRatingData from '../../../utils/hooks/useRatingData';
@@ -17,6 +17,7 @@ import { useCreatorInfoCardStyles } from './style/CreatorInfoCard.style';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 import { useRankingPageLayout } from './style/RankingPage.style';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
+import PageNotFound from '../../../pages/others/PageNotFound';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -42,8 +43,7 @@ export default function CreatorDetails(): React.ReactElement {
 
   // 로딩중이 아닌데 유저데이터 없을때 -> 존재하지 않는 유저
   if (!userData.loading && !userData.data) {
-    alert('존재하지 않는 방송인입니다. 메인 페이지로 돌아갑니다');
-    return (<Redirect to="/" />);
+    return <PageNotFound />;
   }
 
   // 모바일 레이아웃

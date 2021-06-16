@@ -4,9 +4,10 @@ import { RecentStream } from '@truepoint/shared/dist/res/RecentStreamResType.int
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useEffect } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import PageNotFound from '../../../pages/others/PageNotFound';
 import PageTitle from '../shared/PageTitle';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
 import StreamCommentList from './streamInfo/StreamCommentList';
@@ -56,15 +57,12 @@ export default function StreamEvaluation(): React.ReactElement {
   }
 
   // 방송인 정보 로딩중이 아닌데 방송인정보가 없는 경우 -> 존재하지 않는 방송인
-  if (!creatorInfoLoading && !creatorInfo) {
-    alert('존재하지 않는 방송인입니다. 메인 페이지로 돌아갑니다');
-    return <Redirect to="/" />;
-  }
-
+  const creatorNotExist = !creatorInfoLoading && !creatorInfo;
   // 방송 정보 로딩중이 아닌데 방송정보가 없는 경우 -> 존재하지 않는 방송
-  if (!streamLoading && (!streamData?.streamId)) {
-    alert('해당 방송 정보가 존재하지 않습니다. 메인 페이지로 돌아갑니다');
-    return <Redirect to="/" />;
+  const streamNotExist = !streamLoading && (!streamData?.streamId);
+
+  if (creatorNotExist || streamNotExist) {
+    return <PageNotFound />;
   }
 
   return (

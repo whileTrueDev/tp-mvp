@@ -121,19 +121,6 @@ export function ProfileSection({
       });
   }, [authContext.user.userId, creatorId, updateAverageRating]);
 
-  if (!user) {
-    return (
-      <>
-        <Grid item className={classes.avatarContainer} xs={4}>
-          <Avatar className={classes.avatar} />
-        </Grid>
-        <Grid item container className={classes.textContainer} xs={8}>
-          <Typography>존재하지 않는 방송인입니다</Typography>
-        </Grid>
-      </>
-    );
-  }
-
   return (
     <>
       <Grid item xs={12} className={classes.linkButtons}>
