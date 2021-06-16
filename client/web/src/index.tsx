@@ -133,7 +133,7 @@ function Index(): JSX.Element {
               <Route exact path="/termsofuse" component={TermsOfUse} />
               <Route path="/community-board" component={CommunityBoard} />
               <Route path="/ranking" component={Ranking} />
-              <Route path="/creator-search" component={SearchCreator} />
+              <Route exact path="/creator-search" component={SearchCreator} />
               <Route exact path="/highlight-list" component={YoutubeHighlightList} />
               <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
               {/* <Route path="/mypage" component={Mypage} /> */}
