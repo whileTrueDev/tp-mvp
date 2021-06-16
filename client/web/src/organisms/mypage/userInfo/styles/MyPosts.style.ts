@@ -4,6 +4,8 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 export const useMyPostsItemStyle = makeStyles((theme: Theme) => createStyles({
   item: {
     color: theme.palette.text.primary,
+    marginTop: theme.spacing(0.5),
+    marginBottom: theme.spacing(1.5),
     width: '100%',
     display: 'block',
     '&:not(:last-child)': {

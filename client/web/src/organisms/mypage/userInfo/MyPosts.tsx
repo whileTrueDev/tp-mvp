@@ -49,7 +49,7 @@ export function MyPostItem(props: MyPostItemProps): JSX.Element {
         </Typography>
       </Grid>
 
-      <Typography className="origin">{`게시판: ${belongTo}`}</Typography>
+      <Typography className="origin">{`${belongTo}`}</Typography>
     </Link>
   );
 }
