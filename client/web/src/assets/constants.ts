@@ -45,3 +45,7 @@ export const CAROUSEL_HEIGHT = 272;
 
 // 회원가입, 로그인, 비밀번호, 아이디 찾기 화면 로고 사이즈
 export const LOGIN_PAGE_LOGO_SIZE = 280;
+
+// 트위치, 아프리카 플랫폼 아이템 배경색
+export const twitchItemBackgroundColor = '#c8add8';
+export const afreecaItemBackgroundColor = '#a2b9e1';

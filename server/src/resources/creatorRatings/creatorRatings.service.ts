@@ -406,11 +406,122 @@ export class CreatorRatingsService {
   }
 
   /**
+   * 평점별 방송인 순위 목록 가져옴
+   * @param limit 조회할 인원 수
+   * @returns 
+   */
+  public async getRankingList({
+    platformType,
+    categoryId,
+    skip,
+    limit,
+    dateLimit,
+  }: {
+    platformType: PlatformType,
+    categoryId: number,
+    skip: number,
+    limit: number,
+    dateLimit: boolean
+  }): Promise<Omit<RankingDataType, 'weeklyTrends'>> {
+    let baseQuery: SelectQueryBuilder<CreatorRatingsEntity>;
+
+    baseQuery = await this.ratingsRepository
+      .createQueryBuilder('ratings')
+      .select([
+        'ratings.id AS id',
+        'ratings.creatorId AS creatorId',
+        'AVG(ratings.rating) AS rating',
+        'ratings.platform AS platform',
+      ])
+      // .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
+      .groupBy('ratings.creatorId')
+      .orderBy('AVG(ratings.rating)', 'DESC')
+      .addOrderBy('COUNT(ratings.id)', 'DESC');
+
+    if (dateLimit) {
+      baseQuery = baseQuery.where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)');
+    }
+
+    let qb: SelectQueryBuilder<CreatorRatingsEntity>;
+    if (platformType === 'all') {
+      qb = await baseQuery
+        .addSelect([
+          'Twitch.logo AS twitchProfileImage',
+          'Twitch.twitchStreamerName AS twitchStreamerName',
+          'Twitch.twitchChannelName AS twitchChannelName',
+          'Afreeca.logo AS afreecaProfileImage',
+          'Afreeca.afreecaStreamerName AS afreecaStreamerName',
+        ])
+        .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
+        .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId');
+      if (categoryId !== 0) {
+        qb = await qb
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
+      }
+    } else if (platformType === 'afreeca') {
+      qb = await baseQuery
+        .addSelect([
+          'Afreeca.logo AS afreecaProfileImage',
+          'Afreeca.afreecaStreamerName AS afreecaStreamerName',
+        ])
+        .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
+        .andWhere('ratings.platform =:platformType', { platformType: 'afreeca' });
+
+      if (categoryId !== 0) {
+        qb = await qb
+          .leftJoin('Afreeca.categories', 'afreecaCategories')
+          .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
+      }
+    } else if (platformType === 'twitch') {
+      qb = await baseQuery
+        .addSelect([
+          'Twitch.logo AS twitchProfileImage',
+          'Twitch.twitchStreamerName AS twitchStreamerName',
+          'Twitch.twitchChannelName AS twitchChannelName',
+        ])
+        .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
+        .andWhere('ratings.platform =:platformType', { platformType: 'twitch' });
+
+      if (categoryId !== 0) {
+        qb = await qb
+          .leftJoin('Twitch.categories', 'twitchCategories')
+          .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
+      }
+    }
+
+    const totalData = await qb.clone().getRawMany();
+    const totalCount = totalData.length;
+
+    const data = await qb
+      .offset(skip)
+      .limit(limit)
+      .getRawMany();
+
+    const rankingData = data.map((d) => ({
+      id: d.id,
+      creatorId: d.creatorId,
+      creatorName: d.platform === 'twitch' ? d.twitchStreamerName : d.afreecaStreamerName,
+      platform: d.platform,
+      twitchProfileImage: d.twitchProfileImage,
+      afreecaProfileImage: d.afreecaProfileImage,
+      twitchChannelName: d.twitchChannelName,
+      averageRating: d.rating,
+    }));
+
+    return {
+      totalDataCount: totalCount,
+      rankingData,
+    };
+  }
+
+  /**
    * 일일 평점별 순위 구하는 메서드 (시청자 평점)
    * 
    * 본래 일일 평점별 순위 구하는 함수였으나
    * [tp3.0 특정 기간 반영이 없는 누적 평점 평균치를 게시] 기획에 따라 1달제한 주석처리
-   * dateLimit 파라미터에 false 넘기면 일일평점별 순위 반환함
+   * dateLimit 파라미터에 true 넘기면 일일평점별 순위 반환함
    * 
    * 
    * @param param0 
@@ -418,7 +529,10 @@ export class CreatorRatingsService {
    */
   async getDailyRatingRankings(
     {
-      skip, categoryId, platform: platformType, dateLimit = false,
+      skip,
+      categoryId,
+      platform: platformType,
+      dateLimit = false,
     }: {
       skip: number,
       categoryId: number,
@@ -427,102 +541,24 @@ export class CreatorRatingsService {
     },
   ): Promise<RankingDataType> {
     try {
-      let baseQuery: SelectQueryBuilder<CreatorRatingsEntity>;
-
-      baseQuery = await this.ratingsRepository
-        .createQueryBuilder('ratings')
-        .select([
-          'ratings.id AS id',
-          'ratings.creatorId AS creatorId',
-          'AVG(ratings.rating) AS rating',
-          'ratings.platform AS platform',
-        ])
-        // .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
-        .groupBy('ratings.creatorId')
-        .orderBy('AVG(ratings.rating)', 'DESC')
-        .addOrderBy('COUNT(ratings.id)', 'DESC');
-
-      if (dateLimit) {
-        baseQuery = baseQuery.where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)');
-      }
-
-      let qb: SelectQueryBuilder<CreatorRatingsEntity>;
-      if (platformType === 'all') {
-        qb = await baseQuery
-          .addSelect([
-            'Twitch.logo AS twitchProfileImage',
-            'Twitch.twitchStreamerName AS twitchStreamerName',
-            'Twitch.twitchChannelName AS twitchChannelName',
-            'Afreeca.logo AS afreecaProfileImage',
-            'Afreeca.afreecaStreamerName AS afreecaStreamerName',
-          ])
-          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId');
-        if (categoryId !== 0) {
-          qb = await qb
-            .leftJoin('Afreeca.categories', 'afreecaCategories')
-            .leftJoin('Twitch.categories', 'twitchCategories')
-            .andWhere(`(afreecaCategories.categoryId = ${categoryId} OR twitchCategories.categoryId = ${categoryId})`);
-        }
-      } else if (platformType === 'afreeca') {
-        qb = await baseQuery
-          .addSelect([
-            'Afreeca.logo AS afreecaProfileImage',
-            'Afreeca.afreecaStreamerName AS afreecaStreamerName',
-          ])
-          .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = ratings.creatorId')
-          .andWhere('ratings.platform =:platformType', { platformType: 'afreeca' });
-
-        if (categoryId !== 0) {
-          qb = await qb
-            .leftJoin('Afreeca.categories', 'afreecaCategories')
-            .andWhere(`(afreecaCategories.categoryId = ${categoryId})`);
-        }
-      } else if (platformType === 'twitch') {
-        qb = await baseQuery
-          .addSelect([
-            'Twitch.logo AS twitchProfileImage',
-            'Twitch.twitchStreamerName AS twitchStreamerName',
-            'Twitch.twitchChannelName AS twitchChannelName',
-          ])
-          .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = ratings.creatorId')
-          .andWhere('ratings.platform =:platformType', { platformType: 'twitch' });
-
-        if (categoryId !== 0) {
-          qb = await qb
-            .leftJoin('Twitch.categories', 'twitchCategories')
-            .andWhere(`(twitchCategories.categoryId = ${categoryId})`);
-        }
-      }
-
-      const totalData = await qb.clone().getRawMany();
-      const totalCount = totalData.length;
-
-      const data = await qb
-        .offset(skip)
-        .limit(10)
-        .getRawMany();
-
-      const rankingData = data.map((d) => ({
-        id: d.id,
-        creatorId: d.creatorId,
-        creatorName: d.platform === 'twitch' ? d.twitchStreamerName : d.afreecaStreamerName,
-        platform: d.platform,
-        twitchProfileImage: d.twitchProfileImage,
-        afreecaProfileImage: d.afreecaProfileImage,
-        twitchChannelName: d.twitchChannelName,
-        averageRating: d.rating,
-      }));
-
-      const selectedCreatorsId = data.map((d) => d.creatorId);
+      // 10명 목록 가져옴
+      const { totalDataCount, rankingData } = await this.getRankingList({
+        skip,
+        categoryId,
+        platformType,
+        limit: 10,
+        dateLimit,
+      });
+      const selectedCreatorsId = rankingData.map((d) => d.creatorId);
       const dates = this.getWeekDates();
 
+      // 해당 10명의 7일간 평점
       const weekData = await this.getRatingTrendsInWeek(selectedCreatorsId, dates);
 
       return {
         rankingData,
         weeklyTrends: weekData,
-        totalDataCount: totalCount,
+        totalDataCount,
       };
     } catch (error) {
       console.error(error);
