@@ -162,7 +162,7 @@ export default function StreamInfoCard({
                   isVoted={stream?.voteHistory?.type}
                   onClick={() => onUpVote()}
                   onCancel={() => {
-                    if (stream?.voteHistory && stream?.voteHistory.type === 'up') onVoteCancel(stream?.voteHistory.id);
+                    if (stream && stream.voteHistory && stream.voteHistory.type === 'up') onVoteCancel(stream.voteHistory.id);
                   }}
                 />
                 <VoteButton
@@ -172,7 +172,7 @@ export default function StreamInfoCard({
                   isVoted={stream?.voteHistory?.type}
                   onClick={() => onDownVote()}
                   onCancel={() => {
-                    if (stream?.voteHistory && stream?.voteHistory.type === 'down') onVoteCancel(stream?.voteHistory.id);
+                    if (stream && stream.voteHistory && stream.voteHistory.type === 'down') onVoteCancel(stream.voteHistory.id);
                   }}
                 />
               </Grid>
@@ -182,7 +182,6 @@ export default function StreamInfoCard({
             </Grid>
           </>
           )}
-
       </Grid>
     </Grid>
   );
