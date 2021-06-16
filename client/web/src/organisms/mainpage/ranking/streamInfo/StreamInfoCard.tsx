@@ -103,6 +103,14 @@ export default function StreamInfoCard({
     window.open(url, '_blank');
   };
 
+  const isVoted = stream?.voteHistory?.type;
+  const cancelUpVote = () => {
+    if (stream && stream.voteHistory && stream.voteHistory.type === 'up') onVoteCancel(stream.voteHistory.id);
+  };
+  const cancelDownVote = () => {
+    if (stream && stream.voteHistory && stream.voteHistory.type === 'down') onVoteCancel(stream.voteHistory.id);
+  };
+
   return (
     <Grid container className={cardClasses.left}>
       <Grid container item xs={12} md={12} justify="space-around" alignItems="center">
@@ -159,21 +167,17 @@ export default function StreamInfoCard({
                   type="up"
                   value={stream.likeCount}
                   size={theme.spacing(4)}
-                  isVoted={stream?.voteHistory?.type}
+                  isVoted={isVoted}
                   onClick={() => onUpVote()}
-                  onCancel={() => {
-                    if (stream && stream.voteHistory && stream.voteHistory.type === 'up') onVoteCancel(stream.voteHistory.id);
-                  }}
+                  onCancel={cancelUpVote}
                 />
                 <VoteButton
                   type="down"
                   value={stream.hateCount}
                   size={theme.spacing(4)}
-                  isVoted={stream?.voteHistory?.type}
+                  isVoted={isVoted}
                   onClick={() => onDownVote()}
-                  onCancel={() => {
-                    if (stream && stream.voteHistory && stream.voteHistory.type === 'down') onVoteCancel(stream.voteHistory.id);
-                  }}
+                  onCancel={cancelDownVote}
                 />
               </Grid>
             </Grid>
