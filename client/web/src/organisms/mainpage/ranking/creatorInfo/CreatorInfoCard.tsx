@@ -132,7 +132,7 @@ export function ProfileSection({
             href={user?.detail?.youtubeChannelAddress}
             label="Youtube 가기"
           />
-          ) : (null)}
+        ) : (null)}
         <Chip
           className={classes.chipLink}
           component="a"
