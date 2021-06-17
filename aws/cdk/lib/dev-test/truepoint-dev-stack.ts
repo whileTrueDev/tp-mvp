@@ -185,10 +185,10 @@ export class TruepointDevStack extends BaseStack {
         MAILER_USER: ecs.Secret.fromSsmParameter(this.getStringParam(ID_PREFIX, 'MAILER_USER')),
         MAILER_PASS: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'MAILER_PASS')),
 
-        // # Kakao account
+        // # Kakao
         KAKAO_REST_API_KEY: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'KAKAO_REST_API_KEY')),
 
-        // # Naver account
+        // # Naver
         NAVER_CLIENT_ID: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'NAVER_CLIENT_ID')),
         NAVER_CLIENT_SECRET: ecs.Secret.fromSsmParameter(this.getSecureParam(ID_PREFIX, 'NAVER_CLIENT_SECRET')),
       },
