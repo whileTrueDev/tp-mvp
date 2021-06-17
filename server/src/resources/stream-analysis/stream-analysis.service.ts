@@ -21,6 +21,8 @@ import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStrea
 import { StreamsInfo } from './interface/streamsInfo.interface';
 import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
 // import { TimeLineData } from './interface/timeLineData.interface';
+
+import { UsersService } from '../users/users.service';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
@@ -109,6 +111,7 @@ export class StreamAnalysisService {
       private readonly streamsRepository: Repository<StreamsEntity>,
     @InjectRepository(StreamSummaryEntity)
       private readonly streamSummaryRepository: Repository<StreamSummaryEntity>,
+      private readonly usersService: UsersService,
   ) {}
 
   /**
@@ -265,9 +268,13 @@ export class StreamAnalysisService {
       length    :  기간내 방송 당 방송 시간 평균 
       chatCount :  기간내 총 채팅 발생 수 -> 단순 합산
     */
+
+    const creatorIds = await this.usersService.findOneCreatorIds(userId);
+
     const streams = await this.streamsRepository
       .createQueryBuilder('streams')
-      .where('streams.userId = :id', { id: userId })
+      // .where('streams.userId = :id', { id: userId })
+      .where('streams.creatorId IN (:id)', { id: creatorIds })
       .andWhere('streams.startDate > DATE_SUB(NOW(), INTERVAL 10 DAY)')
       .getMany()
       .catch((err) => {

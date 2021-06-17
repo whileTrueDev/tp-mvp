@@ -143,9 +143,13 @@ function PostList(props: PostListProps): JSX.Element {
           component={Link}
           to={`/public-mypage/main/${rowData.userId}`}
         >
-          <Typography variant="subtitle1" align="center" className={classes.columnText}>
+          {/* 서버에서 받아오는 title이 가장 최근 방송 제목을 반영하지 않고 있음 */}
+          {/* <Typography variant="subtitle1" align="center" className={classes.columnText}>
             {`${rowData.title.slice(0, 15)}`}
             {rowData.title.length > 15 ? '...' : null}
+          </Typography> */}
+          <Typography variant="subtitle1" align="center" className={classes.columnText}>
+            편집점 확인
           </Typography>
         </Button>
       ),

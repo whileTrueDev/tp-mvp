@@ -17,6 +17,7 @@ import { StreamVotesEntity } from './entities/streamVotes.entity';
 import { UserEntity } from '../users/entities/user.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
+import { UsersService } from '../users/users.service';
 
 Injectable();
 export class BroadcastInfoService {
@@ -34,6 +35,7 @@ export class BroadcastInfoService {
     private readonly twitchRepo: Repository<PlatformTwitchEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
+    private readonly usersService: UsersService,
   ) {
     this.streamsTableName = this.configService.get('NODE_ENV') === 'production' ? this.streamsRepository.metadata.tableName : 'Streams';
   }
@@ -54,6 +56,8 @@ export class BroadcastInfoService {
     const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
     const compeleteAnalysisFlag = 0; // needAnalysis , 분석 완료 값을 비교하기 위한 체크값 (현재 0 이 완료이므로 0 으로 설정)
 
+    const creatorIds = await this.usersService.findOneCreatorIds(userId);
+
     const TermStreamsData: StreamDataType[] = await this.streamsRepository
       .createQueryBuilder('streams')
       .innerJoin(
@@ -62,14 +66,13 @@ export class BroadcastInfoService {
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
       .select(['streams.*, streamSummary.smileCount as smileCount'])
-      .where('streams.userId = :id', { id: userId })
+      .where('streams.creatorId IN (:id)', { id: creatorIds })
       .andWhere('streams.needAnalysis = :compeleteAnalysisFlag', { compeleteAnalysisFlag })
       .andWhere('streams.startDate >= :startDate', { startDate: momentStart })
       .andWhere('streams.startDate < :endDate', { endDate: momentEnd })
       .orderBy('streams.startDate', 'ASC')
       .execute()
       .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));
-
     return TermStreamsData;
   }
 

@@ -104,6 +104,30 @@ export class UsersService {
   }
 
   /**
+   * 특정 유저의 연동된 플랫폼 creatorId들의 정보 반환 (afreecaId, twitchId,,.)
+   * @param userId creatorId 얻고자 하는 유저id
+   */
+  async findOneCreatorIds(userId: string): Promise<string[]> {
+    const user = await this.usersRepository.findOne(userId, {
+      relations: ['twitch', 'afreeca', 'youtube'],
+    });
+
+    const creatorIds = [];
+
+    if (user.afreeca) {
+      creatorIds.push(user.afreeca.afreecaId);
+    }
+
+    if (user.twitch) {
+      creatorIds.push(user.twitch.twitchId);
+    }
+    if (user.youtube) {
+      creatorIds.push(user.youtube.youtubeId);
+    }
+    return creatorIds;
+  }
+
+  /**
    * 특정 유저의 연동된 플랫폼의 프로필 이미지 정보를 반환하는 메서드
    * @param userId 프로필 이미지 정보를 열람하고자 하는 유저 아이디
    */
@@ -318,9 +342,14 @@ export class UsersService {
   }
 
   async checkEmail(email: string): Promise<boolean> {
-    const user = await this.usersRepository.findOne({ where: { mail: email } });
-    if (user) return true;
-    return false;
+    try {
+      const user = await this.usersRepository.findOne({ where: { mail: email } });
+      if (user) return true;
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in check email');
+    }
   }
 
   // 이메일, 이름, id로 유저 존재하는지 파악
@@ -472,6 +501,7 @@ export class UsersService {
           'users.nickName AS nickname',
         ])
         .where('streams.platform = :platform', { platform })
+        .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
         .groupBy('streams.creatorId')
         .orderBy('MAX(streams.endDate)', 'DESC')
         .getRawMany();

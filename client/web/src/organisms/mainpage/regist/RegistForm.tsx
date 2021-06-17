@@ -183,7 +183,7 @@ function PlatformRegistForm({
   const checkVerificationCode = () => {
     if (!codeInputRef || !codeInputRef.current) return;
     const code = codeInputRef.current.value;
-    if (code.trim() === '') return;
+    if (code.trim() === '' || code.length < 6) return;
 
     const email = getFullEmail();
     axios.get('/auth/email/code/verify', { params: { email, code } })
