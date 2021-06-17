@@ -88,6 +88,26 @@
                 {
                     "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/AFREECA_SECRET_KEY",
                     "name": "AFREECA_SECRET_KEY"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/MAILER_USER",
+                    "name": "MAILER_USER"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/MAILER_PASS",
+                    "name": "MAILER_PASS"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/KAKAO_REST_API_KEY",
+                    "name": "KAKAO_REST_API_KEY"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/NAVER_CLIENT_ID",
+                    "name": "NAVER_CLIENT_ID"
+                },
+                {
+                    "valueFrom": "arn:aws:ssm:ap-northeast-2:576646866181:parameter/NAVER_CLIENT_SECRET",
+                    "name": "NAVER_CLIENT_SECRET"
                 }
             ],
             "dockerSecurityOptions": [],
