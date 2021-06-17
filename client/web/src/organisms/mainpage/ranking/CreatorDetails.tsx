@@ -17,6 +17,7 @@ import { useCreatorInfoCardStyles } from './style/CreatorInfoCard.style';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 import { useRankingPageLayout } from './style/RankingPage.style';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
+import PageNotFound from '../../../pages/others/PageNotFound';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -40,6 +41,11 @@ export default function CreatorDetails(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 로딩중이 아닌데 유저데이터 없을때 -> 존재하지 않는 유저
+  if (!userData.loading && !userData.data) {
+    return <PageNotFound />;
+  }
+
   // 모바일 레이아웃
   if (isMobile) {
     return (
@@ -50,7 +56,7 @@ export default function CreatorDetails(): React.ReactElement {
           <GoBackButton />
           <Grid container style={{ border: '1px solid grey', position: 'relative' }}>
             <ProfileSection
-              user={userData.data}
+              userData={userData}
               ratings={ratings}
               updateAverageRating={updateAverageRating}
             />
@@ -88,7 +94,7 @@ export default function CreatorDetails(): React.ReactElement {
             {/* 왼쪽 크리에이터 기본설명, 평점 */}
             <Grid container item className={classes.left} xs={7}>
               <ProfileSection
-                user={userData.data}
+                userData={userData}
                 ratings={ratings}
                 updateAverageRating={updateAverageRating}
               />

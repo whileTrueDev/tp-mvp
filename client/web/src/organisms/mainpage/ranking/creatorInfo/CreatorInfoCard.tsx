@@ -7,6 +7,7 @@ import {
   CreatorRatingInfoRes, CreatorAverageRatings,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
+import { ResponseValues } from 'axios-hooks';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import axios from '../../../../utils/axios';
 import {
@@ -25,10 +26,10 @@ export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
  */
 export function ProfileSection({
-  user,
+  userData,
   updateAverageRating, ratings,
 }: {
-  user?: User,
+  userData?: ResponseValues<User, any>
   updateAverageRating?: () => void,
   ratings: CreatorAverageRatings
 }): JSX.Element {
@@ -36,6 +37,8 @@ export function ProfileSection({
   const largeRating = useExLargeRatingStyle();
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
+
+  const user = userData?.data;
 
   const platform = user?.afreeca ? 'afreeca' : 'twitch';
   const creatorId = user?.afreeca ? user?.afreeca?.afreecaId : user?.twitch?.twitchId;
@@ -58,7 +61,7 @@ export function ProfileSection({
           setUserRating(res.data.score);
         }
       })
-      .catch((error) => console.error(error));
+      .catch((err) => console.error(err));
   }, [authContext.user.userId, creatorId]);
   /**
    * 평점 생성, 수정 핸들러 함수
@@ -83,8 +86,8 @@ export function ProfileSection({
             cb();
           }
         })
-        .catch((error) => {
-          console.error(error, error.response);
+        .catch((err) => {
+          console.error(err, err.response);
           if (cb) {
             cb();
           }
@@ -110,8 +113,8 @@ export function ProfileSection({
           cb();
         }
       })
-      .catch((error) => {
-        console.error(error, error.response);
+      .catch((err) => {
+        console.error(err, err.response);
         if (cb) {
           cb();
         }
@@ -151,6 +154,7 @@ export function ProfileSection({
       </Grid>
 
       <Grid item container className={classes.textContainer} xs={8}>
+
         <Grid item className={classes.nameContainer}>
           <Typography className={classes.nickname} component="div">
             {nickname}
@@ -189,8 +193,7 @@ export function ProfileSection({
  */
 export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Element {
   const {
-    // info, 
-    ratings, scores, updateAverageRating, user,
+    ratings, scores, updateAverageRating,
   } = props;
 
   const classes = useCreatorInfoCardStyles();
@@ -200,9 +203,7 @@ export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Elemen
       {/* 왼쪽 크리에이터 기본설명, 평점 */}
       <Grid container item className={classes.left} xs={7}>
         <ProfileSection
-          user={user}
           ratings={ratings}
-          // info={info}
           updateAverageRating={updateAverageRating}
         />
       </Grid>

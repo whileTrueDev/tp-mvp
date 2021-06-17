@@ -7,6 +7,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import PageNotFound from '../../../pages/others/PageNotFound';
 import PageTitle from '../shared/PageTitle';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
 import StreamCommentList from './streamInfo/StreamCommentList';
@@ -20,9 +21,9 @@ export default function StreamEvaluation(): React.ReactElement {
   const classes = useCreatorEvalutationCardStyle();
   const { streamId, creatorId } = useParams<{streamId: string, creatorId: string}>();
 
-  const [{ data: creatorInfo }] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
+  const [{ data: creatorInfo, loading: creatorInfoLoading }] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
   const platform = creatorInfo?.afreeca ? 'afreeca' : 'twitch';
-  const [{ data: streamData, loading }, refetch] = useAxios<RecentStream>({ url: `broadcast-info/${platform}/${streamId}`, method: 'get' });
+  const [{ data: streamData, loading: streamLoading }, refetch] = useAxios<RecentStream>({ url: `broadcast-info/${platform}/${streamId}`, method: 'get' });
 
   // creatorInfo가 갱신되었을 때 platform이 바뀌므로 다시 불러온다
   useEffect(() => {
@@ -55,6 +56,15 @@ export default function StreamEvaluation(): React.ReactElement {
       });
   }
 
+  // 방송인 정보 로딩중이 아닌데 방송인정보가 없는 경우 -> 존재하지 않는 방송인
+  const creatorNotExist = !creatorInfoLoading && !creatorInfo;
+  // 방송 정보 로딩중이 아닌데 방송정보가 없는 경우 -> 존재하지 않는 방송
+  const streamNotExist = !streamLoading && (!streamData?.streamId);
+
+  if (creatorNotExist || streamNotExist) {
+    return <PageNotFound />;
+  }
+
   return (
     <RankingPageCommonLayout>
       <Container className={container}>
@@ -64,7 +74,7 @@ export default function StreamEvaluation(): React.ReactElement {
           <StreamInfoCard
             creator={creatorInfo}
             stream={streamData}
-            loading={loading}
+            loading={streamLoading}
             onUpVote={() => handleVote('up')}
             onDownVote={() => handleVote('down')}
             onVoteCancel={handleVoteDelete}
