@@ -342,9 +342,14 @@ export class UsersService {
   }
 
   async checkEmail(email: string): Promise<boolean> {
-    const user = await this.usersRepository.findOne({ where: { mail: email } });
-    if (user) return true;
-    return false;
+    try {
+      const user = await this.usersRepository.findOne({ where: { mail: email } });
+      if (user) return true;
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in check email');
+    }
   }
 
   // 이메일, 이름, id로 유저 존재하는지 파악
