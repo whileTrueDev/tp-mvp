@@ -181,7 +181,8 @@ export default function StreamInfoCard({
               <ScoresSection scores={stream.scores} />
             </Grid>
           </>
-          )}
+          // eslint-disable-next-line indent
+        )}
 
       </Grid>
     </Grid>
