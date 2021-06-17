@@ -6,7 +6,7 @@ import 'dayjs/locale/ko';
 dayjs.extend(LocalizedFormat);
 dayjs.extend(relativeTime);
 interface makeDate {
-  compoName: string;
+  compoName?: string;
   createdAt: any;
   finishAt?: any;
 }
@@ -34,6 +34,8 @@ export default function dateExpression(data: makeDate): any {
 
     case 'fromNow':
       return dayjs(createdAt).fromNow();
+
+    case 'post-date': return (dayjs(createdAt).format('YY-MM-DD HH:mm:ss'));
 
     default: return (dayjs(createdAt).format('ll'));
   }

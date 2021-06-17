@@ -4,6 +4,7 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
@@ -11,7 +12,13 @@ import useDialog from '../../../utils/hooks/useDialog';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   box: {
     padding: `${theme.spacing(8)}px ${theme.spacing(4)}px`,
     minWidth: 300,
@@ -119,7 +126,7 @@ export default function FindAccountForm(): JSX.Element {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <TruepointLogo width={350} />
+      <TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} />
       {helperTextDialog.open && helperText && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />
@@ -141,14 +148,15 @@ export default function FindAccountForm(): JSX.Element {
             <Typography variant="body1">이메일 및 이름으로 아이디 찾기</Typography>
           </Button>
 
-          <Button
+          {/* 휴대폰 본인인증은 추후 기획에 따라 지원 */}
+          {/* <Button
             onClick={() => {
               handleNext(); handleSelectedMethod('본인인증');
             }}
             className={classes.selectButton}
           >
             <Typography variant="body1">휴대폰 본인인증으로 아이디 찾기</Typography>
-          </Button>
+          </Button> */}
         </div>
       </div>
       )}
@@ -159,7 +167,8 @@ export default function FindAccountForm(): JSX.Element {
         <Typography variant="h6">이메일, 이름으로</Typography>
         <Typography variant="h6">아이디를 찾습니다.</Typography>
         <Typography className={classes.subcontent} variant="body2">
-          가입시 입력한 이메일과 본인인증시 사용된 본명으로 아이디를 찾습니다.
+          {/* 가입시 입력한 이메일과 본인인증시 사용된 본명으로 아이디를 찾습니다. */}
+          가입시 입력한 이메일과 이름으로 아이디를 찾습니다.
         </Typography>
         <form className={classes.content} onSubmit={handleSubmit}>
           <TextField

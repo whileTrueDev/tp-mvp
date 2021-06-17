@@ -17,6 +17,7 @@ import { StreamVotesEntity } from './entities/streamVotes.entity';
 import { UserEntity } from '../users/entities/user.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
+import { UsersService } from '../users/users.service';
 
 Injectable();
 export class BroadcastInfoService {
@@ -34,6 +35,7 @@ export class BroadcastInfoService {
     private readonly twitchRepo: Repository<PlatformTwitchEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepo: Repository<UserEntity>,
+    private readonly usersService: UsersService,
   ) {
     this.streamsTableName = this.configService.get('NODE_ENV') === 'production' ? this.streamsRepository.metadata.tableName : 'Streams';
   }
@@ -54,6 +56,8 @@ export class BroadcastInfoService {
     const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
     const compeleteAnalysisFlag = 0; // needAnalysis , 분석 완료 값을 비교하기 위한 체크값 (현재 0 이 완료이므로 0 으로 설정)
 
+    const creatorIds = await this.usersService.findOneCreatorIds(userId);
+
     const TermStreamsData: StreamDataType[] = await this.streamsRepository
       .createQueryBuilder('streams')
       .innerJoin(
@@ -62,14 +66,13 @@ export class BroadcastInfoService {
         'streams.streamId = streamSummary.streamId and streams.platform = streamSummary.platform',
       )
       .select(['streams.*, streamSummary.smileCount as smileCount'])
-      .where('streams.userId = :id', { id: userId })
+      .where('streams.creatorId IN (:id)', { id: creatorIds })
       .andWhere('streams.needAnalysis = :compeleteAnalysisFlag', { compeleteAnalysisFlag })
       .andWhere('streams.startDate >= :startDate', { startDate: momentStart })
       .andWhere('streams.startDate < :endDate', { endDate: momentEnd })
       .orderBy('streams.startDate', 'ASC')
       .execute()
       .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));
-
     return TermStreamsData;
   }
 
@@ -116,18 +119,45 @@ export class BroadcastInfoService {
    * @param streamId 스트림 고유 ID
    * @returns StreamEntity
    */
-  async findOneSteam(platform: string, streamId: string): Promise<RecentStream> {
+  async findOneSteam(streamId: string, platform: string): Promise<RecentStream> {
     const result = await this.streamsRepository
       .query(
-        `SELECT streamId, title, startDate, endDate, viewer, chatCount,
+        `SELECT B.*,
+          IFNULL(smileScore, 0) as smileScore, 
+          IFNULL(frustrateScore, 0) as frustrateScore, 
+          IFNULL(admireScore, 0) as admireScore, 
+          IFNULL(cussScore, 0) as cussScore
+        FROM (
+        SELECT streamId, title, startDate, endDate, viewer, chatCount,
           IFNULL(SUM(vote), 0) AS likeCount,
           IFNULL(COUNT(*) - SUM(vote), 0) AS hateCount
         FROM ${this.streamsTableName} as s
         LEFT JOIN ${this.streamVoteRepo.metadata.tableName} as sv ON s.streamId = sv.streamStreamId
-        WHERE s.platform = ? AND s.streamId = ?`, [platform, streamId],
+        WHERE s.platform = ? AND s.streamId = ?
+        ) as B
+        LEFT JOIN Rankings USING(streamId)
+      `, [platform, streamId],
       );
     if (result.length === 0) return null;
-    return result[0];
+
+    // score 분할
+    const {
+      smileScore,
+      frustrateScore,
+      admireScore,
+      cussScore,
+      ...rest
+    } = result[0];
+
+    return {
+      ...rest,
+      scores: {
+        smile: smileScore,
+        frustrate: frustrateScore,
+        admire: admireScore,
+        cuss: cussScore,
+      },
+    };
   }
 
   /**

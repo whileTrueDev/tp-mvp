@@ -13,6 +13,8 @@ import WeeklyLineCard from './WeeklyLineCard';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
 import PageTitle from '../shared/PageTitle';
+import FirstPlaceCreators from './sub/FirstPlaceCreators';
+import RankingPageCommonLayout from './RankingPageCommonLayout';
 
 export function CarouselSection(): JSX.Element {
   const carousel = useCarouselStyle();
@@ -25,9 +27,11 @@ export function CarouselSection(): JSX.Element {
           PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon} />}
           indicators={false}
           animation="slide"
-          autoPlay={false}
+          autoPlay
+          interval={5000}
           navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
         >
+          <FirstPlaceCreators />
           <SearchGuideBannerSlide />
           <ViewerComparisonPolarAreaCard />
           <WeeklyLineCard />
@@ -40,9 +44,8 @@ export function CarouselSection(): JSX.Element {
 export default function RankingMain(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const { isMobile } = useMediaSize();
-  // const footerDecoration = useMemo(() => <FooterDecoration />, []);
   return (
-    <div>
+    <RankingPageCommonLayout>
       {!isMobile && <CarouselSection />}
       <PageTitle text="인방랭킹" />
 
@@ -59,7 +62,6 @@ export default function RankingMain(): JSX.Element {
         </Grid>
       </Container>
 
-      {/* {!isMobile && footerDecoration} */}
-    </div>
+    </RankingPageCommonLayout>
   );
 }

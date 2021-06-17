@@ -1,30 +1,34 @@
 import React from 'react';
-import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   Avatar, Chip, Typography,
 } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
+import { Rating } from '@material-ui/lab';
+import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+import useAxios from 'axios-hooks';
 import MaterialTable from '../../../../atoms/Table/MaterialTable';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useSearchTableStyle } from '../style/CreatorSearch.style';
 
-export interface CreatorSearchTableProps {
-  data: User[] | undefined;
-  loading: boolean;
+function getCellStyle(isMobile: boolean): React.CSSProperties {
+  return isMobile ? {
+    padding: '4px 0',
+    wordBreak: 'keep-all',
+  } : {};
 }
 
-export default function CreatorSearchTable(props: CreatorSearchTableProps): JSX.Element {
-  const { data, loading } = props;
+export default function CreatorSearchTable(): JSX.Element {
+  const [{ data, loading }] = useAxios<Creator[]>('users/creator-list');
   const classes = useSearchTableStyle();
   const theme = useTheme();
   const history = useHistory();
   const { isMobile } = useMediaSize();
-  const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: User | undefined) => {
-    const platform = rowData?.afreeca ? 'afreeca' : 'twitch';
-    const creatorId = rowData?.afreeca ? rowData?.afreeca.afreecaId : rowData?.twitch?.twitchId;
-    history.push(`/ranking/${platform}/${creatorId}`);
+  const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: Creator | undefined) => {
+    if (!rowData) return;
+    const creatorId = rowData?.creatorId;
+    history.push(`/ranking/creator/${creatorId}`);
   };
   return (
     <div className={classes.border}>
@@ -32,49 +36,49 @@ export default function CreatorSearchTable(props: CreatorSearchTableProps): JSX.
         cellWidth={0}
         columns={[
           {
-            width: '5%',
-            align: 'center',
-            render: (rowData) => (
-              <img
-                alt="logo"
-                width="32"
-                height="32"
-                src={`/images/logo/${rowData.twitch ? 'twitch' : 'afreeca'}Logo.png`}
-              />
-            ),
-          },
-          {
-            width: '50%',
+            width: '40%',
             align: 'center',
             title: '활동명',
-            field: 'nickName',
+            cellStyle: getCellStyle(isMobile),
+            field: 'nickname',
             render: (rowData) => (
               <div className={classes.info}>
-                <Avatar style={{ marginRight: '8px' }} src={rowData.twitch?.logo || rowData.afreeca?.logo} />
-                <Typography noWrap component="span">{rowData.nickName}</Typography>
+                <img
+                  className={classes.platformLogo}
+                  alt="logo"
+                  src={`/images/logo/${rowData.platform}Logo.png`}
+                />
+                <Avatar className={classes.avatar} src={rowData.logo} />
+                <Typography noWrap component="span" className={classes.creatorName}>{rowData.nickname}</Typography>
               </div>
             ),
           },
           {
-            width: '45%',
+            width: '30%',
             align: 'center',
             title: '카테고리',
+            cellStyle: getCellStyle(isMobile),
             render: (rowData) => (
               <div>
-                {rowData.twitch && rowData.twitch.categories && rowData.twitch.categories.map((category) => (
+                {rowData.categories.map((category) => (
                   <Chip
-                    style={{ fontSize: theme.typography[isMobile ? 'body2' : 'body1'].fontSize }}
-                    key={category.categoryId}
-                    label={category.name}
+                    size={isMobile ? 'small' : 'medium'}
+                    className={classes.categoryChip}
+                    key={category}
+                    label={category}
                   />
                 ))}
-                {rowData.afreeca && rowData.afreeca.categories && rowData.afreeca.categories.map((category) => (
-                  <Chip
-                    style={{ fontSize: theme.typography[isMobile ? 'body2' : 'body1'].fontSize }}
-                    key={category.categoryId}
-                    label={category.name}
-                  />
-                ))}
+              </div>
+            ),
+          },
+          {
+            width: '30%',
+            align: 'center',
+            title: '평점',
+            cellStyle: getCellStyle(isMobile),
+            render: (rowData) => (
+              <div>
+                <Rating size={isMobile ? 'small' : 'medium'} defaultValue={rowData.averageRating / 2} precision={0.5} readOnly />
               </div>
             ),
           },

@@ -1,25 +1,33 @@
+import { Container } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { RecentStream } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
-import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import PageTitle from '../shared/PageTitle';
+import RankingPageCommonLayout from './RankingPageCommonLayout';
 import StreamCommentList from './streamInfo/StreamCommentList';
 import StreamInfoCard from './streamInfo/StreamInfoCard';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
+import { useRankingPageLayout } from './style/RankingPage.style';
 
 export default function StreamEvaluation(): React.ReactElement {
   const { enqueueSnackbar } = useSnackbar();
+  const { container } = useRankingPageLayout();
   const classes = useCreatorEvalutationCardStyle();
-  const location = useLocation<User>();
-  const { platform, streamId } = useParams<{creatorId: string, platform: 'afreeca'|'twitch', streamId: string}>();
-  const creatorInfo = location.state;
+  const { streamId, creatorId } = useParams<{streamId: string, creatorId: string}>();
 
+  const [{ data: creatorInfo }] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
+  const platform = creatorInfo?.afreeca ? 'afreeca' : 'twitch';
   const [{ data: streamData, loading }, refetch] = useAxios<RecentStream>({ url: `broadcast-info/${platform}/${streamId}`, method: 'get' });
 
+  // creatorInfo가 갱신되었을 때 platform이 바뀌므로 다시 불러온다
+  useEffect(() => {
+    refetch();
+  }, [creatorInfo, refetch]);
   // ****************************************
   // 좋아요 / 싫어요
   const [, vote] = useAxios<number>({ url: 'broadcast-info/vote', method: 'post' }, { manual: true });
@@ -48,19 +56,23 @@ export default function StreamEvaluation(): React.ReactElement {
   }
 
   return (
-    <div className={classes.creatorEvaluationCardContainer}>
-      <GoBackButton />
-      <PageTitle text="방송 후기 페이지" />
-      <StreamInfoCard
-        creator={creatorInfo}
-        stream={streamData}
-        loading={loading}
-        onUpVote={() => handleVote('up')}
-        onDownVote={() => handleVote('down')}
-        onVoteCancel={handleVoteDelete}
-      />
+    <RankingPageCommonLayout>
+      <Container className={container}>
+        <div className={classes.creatorEvaluationCardContainer}>
+          <GoBackButton />
+          <PageTitle text="방송 후기 페이지" />
+          <StreamInfoCard
+            creator={creatorInfo}
+            stream={streamData}
+            loading={loading}
+            onUpVote={() => handleVote('up')}
+            onDownVote={() => handleVote('down')}
+            onVoteCancel={handleVoteDelete}
+          />
 
-      <StreamCommentList streamId={streamId} />
-    </div>
+          <StreamCommentList streamId={streamId} />
+        </div>
+      </Container>
+    </RankingPageCommonLayout>
   );
 }

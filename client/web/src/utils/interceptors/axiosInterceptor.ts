@@ -45,9 +45,11 @@ export function makeResponseRejectedHandler(
 
           // refresh token이 만료되어 새로운 토큰을 발급하지 못하여,
           // 새로운 로그인이 필요하므로 메인페이지 or login 페이지 로 이동
-          if (window.location.pathname !== '/') {
-            // 트루포인트 2.5 로그인 기능 추가 전이라 주석처리
-            // window.location.href = '/';
+          if (window.location.pathname !== '/'
+          && !window.location.pathname.includes('/ranking')
+          && !window.location.pathname.includes('/community-board')
+          ) {
+            window.location.href = '/';
           }
 
           Promise.reject(refreshError); // 로그인으로 강제 이동

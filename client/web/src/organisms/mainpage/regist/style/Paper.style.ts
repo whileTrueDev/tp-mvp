@@ -18,13 +18,14 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.gutters(),
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
-    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(0.5),
     display: 'flex',
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     fontSize: 13,
+    border: `1px solid ${theme.palette.divider}`,
   },
   inDialogContent: {
     outline: 'none',
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
   buttonStyle: {
     flex: 1,
-    backgroundColor: '#d6d6d6',
+    backgroundColor: theme.palette.grey.A100,
     height: '70%',
     fontSize: 13,
   },
@@ -58,14 +59,16 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   box: {
-    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
     minWidth: 320,
     maxWidth: 1000,
-    border: `1px solid ${theme.palette.divider}`,
   },
-  content: { width: '100%', marginTop: theme.spacing(4) },
+  content: { width: '100%' },
+
   fullButton: {
     padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%',
+  },
+  backButton: {
+    backgroundColor: theme.palette.grey.A100,
   },
 }));
 

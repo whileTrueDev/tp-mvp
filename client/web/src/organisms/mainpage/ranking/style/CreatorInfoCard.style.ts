@@ -48,8 +48,10 @@ export const useProfileSectionStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
+    paddingTop: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
       order: 1, // 마지막 위치로
+      paddingTop: theme.spacing(1),
     },
   },
   averageRatingText: {
@@ -146,6 +148,10 @@ export const useCreatorInfoCardStyles = makeStyles((theme: Theme) => createStyle
     width: theme.spacing(3),
     height: theme.spacing(3),
     verticalAlign: 'middle',
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
+    },
   },
 }));
 

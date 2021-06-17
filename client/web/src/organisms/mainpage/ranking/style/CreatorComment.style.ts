@@ -7,6 +7,11 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
       position: 'relative',
       padding: theme.spacing(0.5, 1, 0, 1),
       '& .time': { fontSize: theme.spacing(1.25) },
+      '& .nickname': {
+        [theme.breakpoints.down('sm')]: {
+          fontSize: theme.typography.caption.fontSize,
+        },
+      },
       '&:not(:first-child)': {
         borderTop: `1px solid ${theme.palette.divider}`,
       },
@@ -14,6 +19,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
         marginLeft: theme.spacing(6),
         paddingLeft: theme.spacing(4),
         paddingRight: 0,
+        paddingBottom: theme.spacing(1),
         borderTop: `1px solid ${theme.palette.divider}`,
         [theme.breakpoints.down('sm')]: {
           marginLeft: theme.spacing(2),
@@ -54,6 +60,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
         '& .nickname': {
           fontSize: theme.typography.body2.fontSize,
           fontWeight: theme.typography.fontWeightMedium,
+
         },
         '& .userId': {
           fontSize: theme.spacing(0.75),

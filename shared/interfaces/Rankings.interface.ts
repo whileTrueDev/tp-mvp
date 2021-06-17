@@ -20,4 +20,6 @@ export interface Rankings{
   frustrateScore: number;
 
   admireScore: number;
+
+  streamId: string;
 }

@@ -1,8 +1,16 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
-  form: {
-    marginTop: theme.spacing(6),
+  registForm: {
+    maxWidth: '470px',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '300px',
+    },
+  },
+  row: {
+    '&>*': {
+      width: '100%',
+    },
   },
   textField: {
     color: theme.palette.text.secondary,
@@ -30,8 +38,13 @@ const useStyles = makeStyles((theme) => ({
     margin: 2,
   },
   button: {
+    width: '100%',
+    padding: theme.spacing(2),
     marginTop: theme.spacing(1),
     marginRight: theme.spacing(1),
+    '&.back': {
+      backgroundColor: theme.palette.grey.A100,
+    },
   },
   adornment: {
     fontSize: '20px',

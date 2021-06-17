@@ -3,6 +3,7 @@ import {
 } from 'typeorm';
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
 import { StreamVotesEntity } from './streamVotes.entity';
+import { StreamCommentsEntity } from './streamComment.entity';
 
 @Entity({ name: 'Streams' })
 export class StreamsEntity implements Stream {
@@ -44,6 +45,9 @@ export class StreamsEntity implements Stream {
 
   @OneToMany(() => StreamVotesEntity, (vote) => vote.stream)
   votes: StreamVotesEntity[];
+
+  @OneToMany(() => StreamCommentsEntity, (comment) => comment.stream)
+  comments: StreamCommentsEntity[];
 
   constructor(partial: Partial<StreamsEntity>) {
     Object.assign(this, partial);

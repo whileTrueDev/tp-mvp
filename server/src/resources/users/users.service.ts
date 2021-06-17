@@ -12,9 +12,13 @@ import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface'
 import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
+import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+
 import Axios from 'axios';
 import bcrypt from 'bcrypt';
-import { Connection, getConnection, Repository } from 'typeorm';
+import {
+  getConnection, Repository,
+} from 'typeorm';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
@@ -30,6 +34,10 @@ import { SubscribeEntity } from './entities/subscribe.entity';
 import { UserEntity } from './entities/user.entity';
 import { UserTokenEntity } from './entities/userToken.entity';
 import { UserDetailEntity } from './entities/userDetail.entity';
+import { EmailVerificationService } from '../auth/emailVerification.service';
+import { KakaoUserInfo, NaverUserInfo } from '../auth/auth.service';
+import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
+
 @Injectable()
 export class UsersService {
   // eslint-disable-next-line max-params
@@ -62,7 +70,7 @@ export class UsersService {
     private readonly youtubeTargetStreamersRepository: Repository<YoutubeTargetStreamersEntity>,
     @InjectRepository(StreamsEntity)
     private readonly streamsRepository: Repository<StreamsEntity>,
-    private connection: Connection,
+    private readonly emailVerificationService: EmailVerificationService,
   ) {}
 
   private resizeingYoutubeLogo(youtubeLogoString: string): string {
@@ -93,6 +101,30 @@ export class UsersService {
       return user;
     }
     throw new BadRequestException('userId or creatorId parameter is required');
+  }
+
+  /**
+   * 특정 유저의 연동된 플랫폼 creatorId들의 정보 반환 (afreecaId, twitchId,,.)
+   * @param userId creatorId 얻고자 하는 유저id
+   */
+  async findOneCreatorIds(userId: string): Promise<string[]> {
+    const user = await this.usersRepository.findOne(userId, {
+      relations: ['twitch', 'afreeca', 'youtube'],
+    });
+
+    const creatorIds = [];
+
+    if (user.afreeca) {
+      creatorIds.push(user.afreeca.afreecaId);
+    }
+
+    if (user.twitch) {
+      creatorIds.push(user.twitch.twitchId);
+    }
+    if (user.youtube) {
+      creatorIds.push(user.youtube.youtubeId);
+    }
+    return creatorIds;
   }
 
   /**
@@ -208,11 +240,13 @@ export class UsersService {
     // Github Repository => https://github.com/kelektiv/node.bcrypt.js/
     const hashedPassword = await bcrypt.hash(user.password, 10);
 
+    await this.emailVerificationService.removeCodeEntityByEmail(user.mail);
     return this.usersRepository.save({ ...user, password: hashedPassword });
 
     // throw new HttpException('ID is duplicated', HttpStatus.BAD_REQUEST);
   }
 
+  // 관리자페이지에서 유저 등록
   async registerByAdmin(dto: RegisterUserByAdminDto): Promise<void> {
     // const hashedPassword = await bcrypt.hash(dto.password, 10);
 
@@ -304,6 +338,29 @@ export class UsersService {
     if (user) {
       return true;
     }
+    return false;
+  }
+
+  async checkEmail(email: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({ where: { mail: email } });
+    if (user) return true;
+    return false;
+  }
+
+  // 이메일, 이름, id로 유저 존재하는지 파악
+  async checkExistUser({ email, name, id }: {
+    email: string,
+    name: string,
+    id: string
+  }): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: {
+        userId: id,
+        name,
+        mail: email,
+      },
+    });
+    if (user) return true;
     return false;
   }
 
@@ -439,6 +496,7 @@ export class UsersService {
           'users.nickName AS nickname',
         ])
         .where('streams.platform = :platform', { platform })
+        .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
         .groupBy('streams.creatorId')
         .orderBy('MAX(streams.endDate)', 'DESC')
         .getRawMany();
@@ -451,6 +509,47 @@ export class UsersService {
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException('Error in getEditingPointList');
+    }
+  }
+
+  // 방송인 목록 검색
+  async getCreatorsList(): Promise<Creator[]> {
+    try {
+      const afreeca = await this.afreecaRepository.createQueryBuilder('afreeca')
+        .select([
+          'afreeca.afreecaId AS creatorId',
+          'afreeca.afreecaStreamerName AS nickname',
+          'afreeca.logo AS logo',
+          'GROUP_CONCAT(DISTINCT categories.name) as categories ',
+          'AVG(ratings.rating) AS averageRating',
+          '"afreeca" AS platform',
+        ])
+        .groupBy('afreeca.afreecaId')
+        .leftJoin('afreeca.categories', 'categories')
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
+        .getRawMany();
+
+      const twitch = await this.twitchRepository.createQueryBuilder('twitch')
+        .select([
+          'twitch.twitchId AS creatorId',
+          'twitch.twitchStreamerName AS nickname',
+          'twitch.logo AS logo',
+          'GROUP_CONCAT(DISTINCT categories.name) as categories ',
+          'AVG(ratings.rating) AS averageRating',
+          '"twitch" AS platform',
+        ])
+        .groupBy('twitch.twitchId')
+        .leftJoin('twitch.categories', 'categories')
+        .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
+        .getRawMany();
+      const collator = new Intl.Collator('kr', { numeric: true, sensitivity: 'base' }); // kr 명시
+      const data = [...afreeca, ...twitch]
+        .sort((a, b) => collator.compare(a.nickname, b.nickname))
+        .map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] }));
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in get creatorList');
     }
   }
 
@@ -775,5 +874,76 @@ export class UsersService {
       };
       await em.save(AfreecaActiveStreamsEntity, activeStreams);
     });
+  }
+
+  // ****************** 소셜로그인 관련 *******************
+  // provider와 sns 회원번호로 가입된 계정 찾기
+  async findUserByProviderId(provider: string, id: string): Promise<UserEntity> {
+    const sns = {
+      naver: 'naverId',
+      kakao: 'kakaoId',
+    };
+    const snsIdColumnName = sns[provider];
+
+    return this.usersRepository.findOne({
+      where: {
+        provider,
+        [snsIdColumnName]: id,
+      },
+    });
+  }
+
+  // 네이버 로그인 최초 로그인 시 유저 등록
+  async registNaverUser(user: NaverUserInfo): Promise<UserEntity> {
+    const naverUser = {
+      userId: user.naverId.slice(0, 20), // userId는 최대 20자 저장
+      userDI: `${user.naverId}_naver`,
+      nickName: user.nickname,
+      name: user.nickname,
+      mail: user.mail,
+      profileImage: user.profileImage,
+      phone: '',
+      password: '',
+      roles: 'user',
+      birth: '',
+      gender: '',
+      marketingAgreement: false,
+      provider: 'naver',
+      naverId: user.naverId,
+    };
+
+    try {
+      return this.usersRepository.save(naverUser);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in save naver login user');
+    }
+  }
+
+  // 카카오 로그인 최초 로그인 시 유저 등록
+  async registKakaoUser(user: KakaoUserInfo): Promise<UserEntity> {
+    const kakaoUser = {
+      userId: user.kakaoId, // userId는 최대 20자 저장
+      userDI: `${user.kakaoId}_kakao`,
+      nickName: user.nickname,
+      name: user.name,
+      mail: user.mail,
+      profileImage: user.profileImage,
+      phone: '',
+      password: '',
+      roles: 'user',
+      birth: '',
+      gender: '',
+      marketingAgreement: false,
+      provider: 'kakao',
+      kakaoId: user.kakaoId,
+    };
+
+    try {
+      return this.usersRepository.save(kakaoUser);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in save naver login user');
+    }
   }
 }

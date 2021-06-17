@@ -19,17 +19,17 @@ const listPositions = [
 interface RecentStreamListProps {
   userData: ResponseValues<User, any>;
   creatorId: string;
-  platform: 'twitch' | 'afreeca',
 }
 export default function RecentStreamList({
   userData,
   creatorId,
-  platform,
 }: RecentStreamListProps): React.ReactElement {
   const classes = useRecentStreamStyles();
   const history = useHistory();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const platform = userData.data?.afreeca ? 'afreeca' : 'twitch';
 
   const [{ data, error }] = useAxios<RecentStreamResType>({
     url: '/broadcast-info/bycreator',
@@ -59,7 +59,7 @@ export default function RecentStreamList({
             key={stream.streamId}
             stream={stream}
             onClick={() => {
-              history.push(`${window.location.pathname}/${stream.streamId}`, userData.data);
+              history.push(`/ranking/${creatorId}/stream/${stream.streamId}`, userData.data);
             }}
           />
         ))}
@@ -76,7 +76,7 @@ export default function RecentStreamList({
               key={stream.streamId}
               stream={stream}
               onClick={() => {
-                history.push(`${window.location.pathname}/${stream.streamId}`, userData.data);
+                history.push(`/ranking/${creatorId}/stream/${stream.streamId}`, userData.data);
               }}
             />
           ))}
@@ -91,7 +91,6 @@ export default function RecentStreamList({
           alt=""
         />
         )}
-
         {/* 플랫폼 로고 이미지 */}
         {isSm ? (null) : (<RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />)}
       </Container>

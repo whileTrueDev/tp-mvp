@@ -17,6 +17,7 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import { useStyles, rowHeightBase } from '../style/PostList.style';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
+import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
@@ -119,7 +120,9 @@ function DesktopPostList({
           {post.repliesCount ? <span className={classes.replies}>{`[${post.repliesCount}]`}</span> : null}
         </>
       ),
-      nickname: post.nickname,
+      nickname: post.userId
+        ? `${post.nickname} (${transformIdToAsterisk(post.userId)})`
+        : post.nickname,
       createDate: `${getDateDisplay(post.createDate)}`,
       hit: post.hit,
       recommend: post.recommend,
@@ -226,13 +229,19 @@ function MobilePostList({
               {getPlatformImage(post.platform)}
             </Grid>
             <Grid container item xs={10} direction="column" alignItems="flex-start">
-              <div>
-                <Typography component="span" className={classes.mobileTitle}>{post.title}</Typography>
-                {post.repliesCount > 0 && (
-                  <Typography component="span" className={classes.mobileTitle}>{`[${post.repliesCount}]`}</Typography>
-                )}
+              <Grid container justify="space-between">
+                <Typography component="span" className={classes.mobileTitle}>
+                  {post.repliesCount > 0
+                    ? `${post.title} [${post.repliesCount}]`
+                    : post.title}
+                </Typography>
+                <Typography className={classnames(classes.mobileText, classes.mobileNickname)}>
+                  { post.userId
+                    ? `${post.nickname} (${transformIdToAsterisk(post.userId)})`
+                    : post.nickname}
+                </Typography>
 
-              </div>
+              </Grid>
 
               <Grid container>
                 <Typography component="span" color="textSecondary" className={classes.mobileText}>
@@ -243,9 +252,6 @@ function MobilePostList({
                 </Typography>
                 <Typography component="span" color="primary" className={classes.mobileText}>
                   {`추천 ${post.recommend}`}
-                </Typography>
-                <Typography className={classnames(classes.mobileText, classes.mobileNickname)}>
-                  {post.nickname}
                 </Typography>
 
               </Grid>
@@ -305,11 +311,11 @@ function PostList(props: PostListProps): JSX.Element {
         {!loading
           && posts.length === 0
           && (
-            <Typography align="center">데이터가 없습니다...</Typography>
+            <Typography className={classes.listEmpty} align="center">작성된 게시글이 존재하지 않습니다.</Typography>
           )}
 
         {/* 로딩중인 경우 */}
-        {loading ? <CenterLoading /> : null}
+        {loading ? <CenterLoading className={classes.listEmpty} /> : null}
       </div>
     </div>
   );

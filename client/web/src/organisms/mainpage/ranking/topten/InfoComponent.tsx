@@ -27,7 +27,7 @@ function InfoComponent(props: InfoComponentProps): JSX.Element {
   return (
     <div className={classes.infoWrapper}>
       <div className={classes.infoHeader}>
-        <Link className={classes.nameLink} component={RouterLink} to={`/ranking/${d.platform}/${d.creatorId}`}>
+        <Link className={classes.nameLink} component={RouterLink} to={`/ranking/creator/${d.creatorId}`}>
           <Typography noWrap className={classes.creatorName}>
             {d.creatorName}
           </Typography>

@@ -1,4 +1,4 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsString, IsOptional } from 'class-validator';
 
 // 필수로 필요한 것은 반드시 존재해야한다.
 export class CreateUserDto {
@@ -11,23 +11,27 @@ export class CreateUserDto {
   @IsString()
   name!: string;
 
+  @IsOptional()
   @IsString()
   userDI: string;
 
   @IsString()
   password!: string;
 
+  @IsOptional()
   @IsString()
-  phone!: string;
+  phone: string;
 
   @IsString()
   mail!: string;
 
+  @IsOptional()
   @IsString()
-  birth!: string;
+  birth: string;
 
+  @IsOptional()
   @IsString()
-  gender!: string;
+  gender: string;
 
   @IsBoolean()
   marketingAgreement: boolean;
