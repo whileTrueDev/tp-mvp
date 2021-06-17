@@ -115,7 +115,12 @@ export function CreatorsBox(props: CreatorsBoxProps): JSX.Element {
   return (
     <div className={classes.box}>
       {loading && <CenterLoading />}
+      {/* 평점 매긴 방송인이 있을 경우 목록 렌더링 */}
       {!loading && creators && creators.map((d: any) => (<CreatorAvatarWithRating key={d.creatorId} {...d} />))}
+      {/* 평점 매긴 방송인이 없는 경우 */}
+      {!loading && creators && !creators.length && (
+        <Typography style={{ padding: '40px' }}>평점을 매긴 방송인이 없습니다</Typography>
+      )}
       <Button className={classnames(classes.button, 'prev')} onClick={prevButtonHandler} disabled={prevButtonDisabled}>
         <img src="/images/rankingPage/backArrowImage.png" alt="이전버튼" />
       </Button>
