@@ -62,7 +62,7 @@ function Index(): JSX.Element {
   // 로그인 관련 변수 및 함수 세트 가져오기
   const {
     user, accessToken, handleLogout, handleLogin,
-    loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
+    loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd, setUser,
   } = useLogin();
   /* subscribe 목록의 유저 전환 컨택스트 - CBT 주석 및 추후 User 와 병합 */
   // const {
@@ -96,7 +96,14 @@ function Index(): JSX.Element {
 
         {/* 로그인 여부 Context */}
         <AuthContext.Provider value={{
-          user, accessToken, handleLogin, handleLogout, loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd,
+          user,
+          accessToken,
+          handleLogin,
+          handleLogout,
+          loginLoading,
+          handleLoginLoadingStart,
+          handleLoginLoadingEnd,
+          setUser,
         }}
         >
 

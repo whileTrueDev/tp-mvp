@@ -16,6 +16,7 @@ export interface AuthContextValue {
   loginLoading: boolean;
   handleLoginLoadingStart: () => void;
   handleLoginLoadingEnd: () => void;
+  setUser: React.Dispatch<React.SetStateAction<LoginUser>>;
 }
 
 const defaultUserValue = {
@@ -30,7 +31,8 @@ const AuthContext = React.createContext<AuthContextValue>({
   loginLoading: false,
   handleLoginLoadingStart: () => {},
   handleLoginLoadingEnd: () => {},
-  /* eslint-enable @typescript-eslint/no-empty-function */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setUser: () => {},
 });
 
 export function useLogin(): AuthContextValue {
@@ -87,6 +89,7 @@ export function useLogin(): AuthContextValue {
     loginLoading,
     handleLoginLoadingStart,
     handleLoginLoadingEnd,
+    setUser,
   };
 }
 

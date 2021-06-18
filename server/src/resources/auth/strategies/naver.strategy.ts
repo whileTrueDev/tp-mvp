@@ -23,9 +23,10 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     done: VerifyCallback,
   ): Promise<any> {
     const {
-      id, displayName, emails, _json,
+      id, displayName, emails, _json, name,
     } = profile;
     const user = {
+      name,
       naverId: id,
       nickname: displayName,
       mail: emails[0].value,

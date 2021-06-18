@@ -20,6 +20,7 @@ export interface NaverUserInfo{
   mail: string;
   profileImage?: string;
   provider: string;
+  name: string;
 }
 
 // kakao strategy 통해 리턴되는 req.user

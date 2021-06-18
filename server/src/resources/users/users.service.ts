@@ -393,6 +393,28 @@ export class UsersService {
     }
   }
 
+  async changeNickname(userId: string, newNickname: string): Promise<boolean> {
+    try {
+      const user = await this.usersRepository
+        .findOne({ where: { userId } });
+
+      if (user) {
+        await this.usersRepository
+          .createQueryBuilder()
+          .update(user)
+          .set({
+            nickName: newNickname,
+          })
+          .where('userId = :userId', { userId })
+          .execute();
+        return true;
+      }
+      return false;
+    } catch {
+      throw new HttpException('update password error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   /*
     input   : userId (로그인한 유저 아이디) 
     output  : [{userId, subscribeperiod}, {userId, subscribeperiod} ... ]
@@ -904,7 +926,7 @@ export class UsersService {
       userId: user.naverId.slice(0, 20), // userId는 최대 20자 저장
       userDI: `${user.naverId}_naver`,
       nickName: user.nickname,
-      name: user.nickname,
+      name: user.name || user.nickname, // naver-passport 에서 전달된 user에 name 값이 없음 https://github.com/naver/passport-naver/issues/17
       mail: user.mail,
       profileImage: user.profileImage,
       phone: '',
