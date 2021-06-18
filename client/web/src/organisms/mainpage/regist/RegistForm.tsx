@@ -284,7 +284,7 @@ function PlatformRegistForm({
                   placeholder="비밀번호를 입력하세요."
                   className={classes.textField}
                   onChange={handleChange('password')}
-                  helperText={state.password ? '특수문자를 포함한 8-20자 영문 또는 숫자' : ' '}
+                  helperText={state.password ? '8-20자 영문 또는 숫자' : ' '}
                   error={state.password}
                 />
               </Grid>

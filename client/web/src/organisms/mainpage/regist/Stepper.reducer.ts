@@ -11,7 +11,8 @@ export interface StepState {
   emailVerified: boolean; // 이메일 인증코드 확인 pass 여부 - true이면 이메일인증 완료 / false이면 미인증 혹은 pass못함
   isValidEmail: boolean; // 유효한 이메일 주소인지 확인여부 - true 이면 유효한 이메일, false이면 유효하지 않은 이메일
   nickname: string;
-  passEmailDuplication: boolean; // 이메일 중복 여부 - true이면 중복확인 완료 & 중복안됨/ false 이면 중복 혹은 중복미확인
+  passEmailDuplication: boolean; // 이메일 중복 여부 - true이면 중복확인 완료 && 중복안됨,  false 이면 중복 혹은 중복미확인
+  passNicknameDuplication: boolean; // 닉네임 중복 여부 - trued이면 중복확인 완료 && 중복안됨, false이면 중복 혹은 중복미확인
 }
 
 export const initialState: StepState = {
@@ -28,6 +29,7 @@ export const initialState: StepState = {
   emailVerified: false,
   isValidEmail: false,
   passEmailDuplication: false,
+  passNicknameDuplication: false,
 };
 
 export type StepAction = { type: 'id'; value: string }
@@ -41,6 +43,7 @@ export type StepAction = { type: 'id'; value: string }
   | { type: 'nickname'; value: string }
   | { type: 'verifyEmail'; value: boolean}
   | { type: 'passEmailDuplication'; value: boolean}
+  | { type: 'passNicknameDuplication'; value: boolean}
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -65,7 +68,7 @@ export function myReducer(
     }
     // (?=.*[0-9])
     case 'password': {
-      const regx = /^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^*+=-]).{8,20}$/;
+      const regx = /^(?=.*[a-zA-Z0-9]).{8,20}$/;
       if (regx.test(action.value)) {
         return { ...state, passwordValue: action.value, password: false };
       }
@@ -100,6 +103,9 @@ export function myReducer(
     }
     case 'passEmailDuplication': {
       return { ...state, passEmailDuplication: action.value };
+    }
+    case 'passNicknameDuplication': {
+      return { ...state, passNicknameDuplication: action.value };
     }
     default: {
       return state;
