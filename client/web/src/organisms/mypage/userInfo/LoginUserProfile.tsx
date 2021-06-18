@@ -116,12 +116,16 @@ function UpdateNicknameDialog(props: UpdateDialogProps): JSX.Element {
       .then((res) => {
         setUser((prevUser) => ({ ...prevUser, nickName: newNickname }));
         ShowSnack('닉네임이 성공적으로 변경되었습니다.', 'success', enqueueSnackbar);
+        onClose();
       })
       .catch((error) => {
-        ShowSnack('닉네임 변경 중 오류가 발생했습니다. 문의 부탁드립니다.', 'error', enqueueSnackbar);
         console.error(error);
-      })
-      .finally(onClose);
+        if (error.response && error.response.status === 409) { // nickname conflict
+          ShowSnack('중복된 닉네임입니다. 다른 닉네임을 사용해주세요.', 'error', enqueueSnackbar);
+        } else {
+          ShowSnack('닉네임 변경 중 오류가 발생했습니다. 문의 부탁드립니다.', 'error', enqueueSnackbar);
+        }
+      });
   };
 
   return (
