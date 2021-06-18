@@ -1,10 +1,9 @@
 import {
-  Paper, CircularProgress, Avatar, Typography, Button, IconButton, DialogActions, Dialog, DialogContent,
+  Paper, CircularProgress, Avatar, Typography, Button,
+  IconButton, DialogActions, Dialog, DialogContent,
 } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import useAxios from 'axios-hooks';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useSnackbar } from 'notistack';
 import BuildIcon from '@material-ui/icons/Build';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
@@ -17,11 +16,16 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 
 const useUserSettingStyle = makeStyles((theme: Theme) => createStyles({
   smallAvatar: {
-    width: theme.spacing(6),
-    height: theme.spacing(6),
+    width: theme.spacing(14),
+    height: theme.spacing(14),
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(6),
+      height: theme.spacing(6),
+    },
   },
   avatarContainer: {
     marginRight: theme.spacing(1),
+    padding: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -38,44 +42,68 @@ const useUserSettingStyle = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-function AvatarAndName({ profile }: {profile: User}): JSX.Element|null {
+function AvatarAndName(): JSX.Element|null {
   const classes = useStyles();
+  const auth = useAuthContext();
   const { isMobile } = useMediaSize();
   const { smallAvatar, avatarContainer } = useUserSettingStyle();
+  // const { open, handleClose, handleOpen } = useDialog();
+
   return (
-    profile && (
-      <div className={avatarContainer}>
-        <Avatar className={isMobile ? smallAvatar : classes.avatar} src={profile.profileImage || ''} />
-        {/* 이름 */}
-        {profile.name && (
-        <Typography variant={isMobile ? 'h6' : 'h4'} className={classes.bold}>
-          {`${profile.name}`}
-        </Typography>
-        )}
-      </div>
-    )
+    <div className={avatarContainer}>
+      {/* <Badge
+        overlap="circle"
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        badgeContent={(
+          <IconButton
+            aria-label="프로필 사진 변경"
+            size="small"
+            onClick={handleOpen}
+          >
+            <BuildIcon fontSize="inherit" />
+          </IconButton>
+          )}
+      >
+        <Avatar
+          className={smallAvatar}
+          src={auth.user.profileImage}
+        />
+      </Badge>
+      <UpdateProfileImageDialog open={open} onClose={handleClose} /> */}
+      <Avatar
+        className={smallAvatar}
+        src={auth.user.profileImage}
+      />
+      {/* 이름 */}
+      <Typography variant={isMobile ? 'h6' : 'h4'} className={classes.bold}>
+        {`${auth.user.userName}`}
+      </Typography>
+    </div>
   );
 }
 
-export interface UpdateNicknameDialogProps{
+export interface UpdateDialogProps{
     open: boolean;
-    profile: User | undefined;
     onClose: () => void;
   }
-function UpdateNicknameDialog(props: UpdateNicknameDialogProps): JSX.Element {
-  const { open, onClose, profile } = props;
+function UpdateNicknameDialog(props: UpdateDialogProps): JSX.Element {
+  const { open, onClose } = props;
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { user, setUser } = useAuthContext();
+  const { setUser } = useAuthContext();
 
   const handleChangeNickname = () => {
     // 입력된 닉네임이 유효한지 확인
-    if (!inputRef.current || !profile) return;
+    if (!inputRef.current || !user.userId) return;
     const newNickname = inputRef.current.value.trim();
     if (newNickname.length < 2 || newNickname.length > 30) return;
 
     const data = {
-      userId: profile.userId,
+      userId: user.userId,
       nickname: newNickname,
     };
 
@@ -86,7 +114,7 @@ function UpdateNicknameDialog(props: UpdateNicknameDialogProps): JSX.Element {
       data,
     })
       .then((res) => {
-        setUser({ ...user, nickName: newNickname });
+        setUser((prevUser) => ({ ...prevUser, nickName: newNickname }));
         ShowSnack('닉네임이 성공적으로 변경되었습니다.', 'success', enqueueSnackbar);
       })
       .catch((error) => {
@@ -122,7 +150,7 @@ function UpdateNicknameDialog(props: UpdateNicknameDialogProps): JSX.Element {
   );
 }
 
-function NicknameAndEmail({ profile }: {profile: User}): JSX.Element|null {
+function NicknameAndEmail(): JSX.Element|null {
   const classes = useStyles();
   const { user } = useAuthContext();
   const { nickNameEditButton } = useUserSettingStyle();
@@ -143,23 +171,20 @@ function NicknameAndEmail({ profile }: {profile: User}): JSX.Element|null {
         >
           <BuildIcon fontSize="inherit" />
         </IconButton>
-        <UpdateNicknameDialog open={isNicknameDialogOpen} onClose={closeNicknameDialog} profile={profile} />
+        <UpdateNicknameDialog open={isNicknameDialogOpen} onClose={closeNicknameDialog} />
       </div>
 
-      <div>
-        {profile.mail && (
-        <Typography>{`이메일 : ${profile.mail}`}</Typography>
-        )}
-      </div>
+      <Typography>{`이메일 : ${user.mail}`}</Typography>
     </div>
   );
 }
-function PasswordChangeButton({ profile }: {profile: User}): JSX.Element|null {
+function PasswordChangeButton(): JSX.Element|null {
   const { isMobile } = useMediaSize();
+  const { user } = useAuthContext();
   const { passwordEditButton } = useUserSettingStyle();
   const { open: isPasswordDialogOpen, handleClose: closePasswordDialog, handleOpen: OpenPasswordDialog } = useDialog();
   return (
-    profile.provider === 'local'
+    user.provider === 'local'
       ? (
         <>
           <Button
@@ -180,32 +205,21 @@ function PasswordChangeButton({ profile }: {profile: User}): JSX.Element|null {
 
 export default function LoginUserProfile(): JSX.Element {
   const classes = useStyles();
-  const auth = useAuthContext();
-  const [profileRequestObject, getProfile] = useAxios<User>({
-    url: 'users', method: 'GET', params: { userId: auth.user.userId },
-  }, { manual: true });
-
-  useEffect(() => {
-    if (auth.user.userId) {
-      getProfile();
-    }
-  }, [auth.user.userId, getProfile]);
-
+  const { loginLoading, user } = useAuthContext();
   return (
     <Paper className={classes.container}>
       {/* 로딩중 */}
-      {profileRequestObject.loading && (
+      {loginLoading && (
       <div className={classes.loading}><CircularProgress /></div>
       )}
 
-      {!profileRequestObject.loading
-      && profileRequestObject.data
+      {!loginLoading
+      && user.userId
       && (
       <>
-        <AvatarAndName profile={profileRequestObject.data} />
-        <NicknameAndEmail profile={profileRequestObject.data} />
-        <PasswordChangeButton profile={profileRequestObject.data} />
-
+        <AvatarAndName />
+        <NicknameAndEmail />
+        <PasswordChangeButton />
       </>
       )}
     </Paper>
