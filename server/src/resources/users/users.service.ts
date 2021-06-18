@@ -393,6 +393,28 @@ export class UsersService {
     }
   }
 
+  async changeNickname(userId: string, newNickname: string): Promise<boolean> {
+    try {
+      const user = await this.usersRepository
+        .findOne({ where: { userId } });
+
+      if (user) {
+        await this.usersRepository
+          .createQueryBuilder()
+          .update(user)
+          .set({
+            nickName: newNickname,
+          })
+          .where('userId = :userId', { userId })
+          .execute();
+        return true;
+      }
+      return false;
+    } catch {
+      throw new HttpException('update password error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   /*
     input   : userId (로그인한 유저 아이디) 
     output  : [{userId, subscribeperiod}, {userId, subscribeperiod} ... ]
