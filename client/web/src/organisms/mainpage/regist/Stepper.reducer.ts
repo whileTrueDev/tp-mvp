@@ -4,7 +4,7 @@ export interface StepState {
   idValue: string;
   password: boolean;
   repasswd: boolean;
-  checkDuplication: boolean;
+  checkDuplication: boolean; // id 중복여부 - true이면 중복임, false면 중복아님
   email: string;
   phoneNum: string | number;
   name: string;
@@ -90,7 +90,7 @@ export function myReducer(
       return { ...state, name: action.value };
     }
     case 'nickname': {
-      return { ...state, nickname: action.value };
+      return { ...state, nickname: action.value, passNicknameDuplication: false };
     }
     case 'checkDuplication': {
       return { ...state, checkDuplication: action.value };
