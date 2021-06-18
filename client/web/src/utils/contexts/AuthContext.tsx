@@ -44,8 +44,10 @@ export function useLogin(): AuthContextValue {
     setAccessToken(accessToken);
     const u = jwtDecode<LoginUser>(accessToken);
     const userData = await axios.get('/users', { params: { userId: u.userId } });
-    const { profileImage } = userData.data;
-    setUser({ ...u, profileImage });
+    const { profileImage, mail, provider } = userData.data;
+    setUser({
+      ...u, profileImage, mail, provider,
+    });
 
     // 받아온 accessToken을 axios 기본 헤더로 설정
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;

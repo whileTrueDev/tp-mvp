@@ -40,7 +40,7 @@ export default function PasswordChangeDialog({
 
   // 비밀번호 벨리데이션 체크 함수
   function checkPwValidate(pw: string) {
-    const passwordRegx = /^(?=.*[a-zA-Z0-9])(?=.*[!@#$%^*+=-]).{8,20}$/;
+    const passwordRegx = /^(?=.*[a-zA-Z0-9]).{8,20}$/;
     return passwordRegx.test(pw);
   }
 
@@ -103,7 +103,7 @@ export default function PasswordChangeDialog({
         <div className={classes.titleSection}>
           <Typography variant="h6" className={classes.bold}>비밀번호 변경</Typography>
           <Typography variant="body2">변경할 비밀번호를 입력해주세요.</Typography>
-          <Typography color="textSecondary" variant="body2">*비밀번호는 특수문자를 포함한 8-20자, 영문 또는 숫자만 가능합니다.</Typography>
+          <Typography color="textSecondary" variant="body2">*비밀번호는 8-20자 영문 또는 숫자만 가능합니다.</Typography>
         </div>
 
         <DialogContent>
@@ -117,7 +117,7 @@ export default function PasswordChangeDialog({
             value={newPw}
             onChange={handleNewPwChange}
             error={!checkPwValidate(newPw)}
-            helperText="특수문자를 포함한 8-20자 영문 또는 숫자만 가능합니다."
+            helperText="8-20자 영문 또는 숫자만 가능합니다."
           />
           <PasswordTextField
             variant="outlined"

@@ -352,6 +352,17 @@ export class UsersService {
     }
   }
 
+  async checkNickname(nickname: string): Promise<boolean> {
+    try {
+      const user = await this.usersRepository.findOne({ where: { nickName: nickname } });
+      if (user) return true;
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in check nickname');
+    }
+  }
+
   // 이메일, 이름, id로 유저 존재하는지 파악
   async checkExistUser({ email, name, id }: {
     email: string,
@@ -394,6 +405,11 @@ export class UsersService {
   }
 
   async changeNickname(userId: string, newNickname: string): Promise<boolean> {
+    const isDuplicatedNickname = await this.checkNickname(newNickname);
+    if (isDuplicatedNickname) {
+      throw new HttpException('해당 닉네임을 가진 사용자가 존재합니다', HttpStatus.CONFLICT);
+    }
+
     try {
       const user = await this.usersRepository
         .findOne({ where: { userId } });
@@ -411,7 +427,7 @@ export class UsersService {
       }
       return false;
     } catch {
-      throw new HttpException('update password error', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('change nickname error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
