@@ -62,10 +62,13 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 320,
     maxWidth: 1000,
   },
-  content: { width: '100%' },
+  content: {
+    width: '100%',
+    padding: theme.spacing(0, 2),
+  },
 
   fullButton: {
-    padding: theme.spacing(2), marginTop: theme.spacing(2), width: '100%',
+    padding: theme.spacing(1), marginTop: theme.spacing(1.5), width: '100%',
   },
   backButton: {
     backgroundColor: theme.palette.grey.A100,
