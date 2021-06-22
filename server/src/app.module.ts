@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AccessControlModule } from 'nest-access-control';
+import { AdminModule } from '@admin-bro/nestjs';
+import AdminBro from 'admin-bro';
+import { Database, Resource } from '@admin-bro/typeorm'
+import { validate } from 'class-validator'
 
 import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './resources/auth/auth.module';
@@ -31,6 +35,11 @@ import { CreatorRatingsModule } from './resources/creatorRatings/creatorRatings.
 import { CreatorCommentModule } from './resources/creatorComment/creatorComment.module';
 import { CreatorCategoryModule } from './resources/creator-category/creator-category.module';
 import { S3Module } from './resources/s3/s3.module';
+import {UserEntity} from './resources/users/entities/user.entity';
+
+Resource.validate = validate;
+AdminBro.registerAdapter({Database, Resource});
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -63,6 +72,16 @@ import { S3Module } from './resources/s3/s3.module';
     CreatorCategoryModule,
     S3Module,
     MailerModule.forRoot(mailerConfig),
+    AdminModule.createAdminAsync({
+      useFactory: () => ({
+        adminBroOptions: {
+          rootPath: '/admin',
+          resources: [
+            UserEntity
+          ],
+        },
+      }),
+    }),
   ],
 })
 export class AppModule { }

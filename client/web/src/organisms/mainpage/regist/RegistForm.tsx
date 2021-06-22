@@ -184,6 +184,9 @@ function PlatformRegistForm({
           if (e.response.status === 400) { // 3분 내로 이메일 코드 인증을 다시 한 경우
             alert(e.response.data.message);
           }
+          if (e.response.status === 500) {
+            alert('이메일 코드 전송 에러가 발생했습니다. 문제가 계속되는 경우 고객센터로 문의 바랍니다.');
+          }
         }
       })
       .finally(() => setEmailSending(false));

@@ -1,6 +1,6 @@
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
-  Entity, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn,
+  Entity, BaseEntity, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 

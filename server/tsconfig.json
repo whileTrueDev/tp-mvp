@@ -11,10 +11,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
+    "skipLibCheck": true
   },
   "references": [
     {
       "path": "../shared"
     }
-  ]
+  ],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

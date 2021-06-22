@@ -65,6 +65,7 @@ export class EmailVerificationService {
       // 2. 메일로 코드 전송
       await this.mailerService.sendMail({
         to: email, // list of receivers
+        from: '"Truepoint" <noreply@truepoint.com>', // sender address
         subject: '트루포인트 회원가입 인증 코드', // Subject line
         html: `
         <h1>
@@ -112,6 +113,7 @@ export class EmailVerificationService {
     try {
       await this.mailerService.sendMail({
         to: email, // list of receivers
+        from: '"Truepoint" <noreply@truepoint.com>', // sender address
         subject: '트루포인트 임시 비밀번호 발급', // Subject line
         html: `
         <h1>
