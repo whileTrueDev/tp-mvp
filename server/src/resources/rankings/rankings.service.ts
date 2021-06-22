@@ -89,7 +89,10 @@ export class RankingsService {
         .addSelect([
           'Twitch.logo AS twitchProfileImage',
           'Twitch.twitchChannelName AS twitchChannelName',
+          'Twitch.twitchStreamerName AS twitchStreamerName',
+          'Afreeca.afreecaStreamerName AS afreecaStreamerName',
           'Afreeca.logo AS afreecaProfileImage',
+
         ])
         .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
         .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId');
@@ -106,6 +109,7 @@ export class RankingsService {
         .addSelect([
           'Twitch.logo AS twitchProfileImage',
           'Twitch.twitchChannelName AS twitchChannelName',
+          'Twitch.twitchStreamerName AS twitchStreamerName',
         ])
         .leftJoin(PlatformTwitchEntity, 'Twitch', 'Twitch.twitchId = T1.creatorId')
         .andWhere('T1.platform =:platformType', { platformType: 'twitch' });
@@ -119,6 +123,7 @@ export class RankingsService {
       qb = await baseQuery
         .addSelect([
           'Afreeca.logo AS afreecaProfileImage',
+          'Afreeca.afreecaStreamerName AS afreecaStreamerName',
         ])
         .leftJoin(PlatformAfreecaEntity, 'Afreeca', 'Afreeca.afreecaId = T1.creatorId')
         .andWhere('T1.platform =:platformType', { platformType: 'afreeca' });
@@ -134,11 +139,16 @@ export class RankingsService {
     const totalData = await qb.clone().getRawMany();
     const totalDataCount = totalData.length;
 
-    const rankingData: TopTenDataItem[] = await qb
+    const list: TopTenDataItem[] = await qb
       .orderBy(`T1.${targetColumn}`, 'DESC')
       .offset(skip)
       .limit(limit)
       .getRawMany();
+
+    const rankingData = list.map((item) => ({
+      ...item,
+      creatorName: item.platform === 'twitch' ? item.twitchStreamerName : item.afreecaStreamerName,
+    }));
 
     return {
       totalDataCount,

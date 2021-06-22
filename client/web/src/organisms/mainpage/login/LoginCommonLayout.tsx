@@ -10,7 +10,7 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    padding: theme.spacing(6),
+    paddingTop: theme.spacing(6),
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(1),
     },

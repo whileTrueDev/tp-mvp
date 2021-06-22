@@ -7,9 +7,8 @@ import HeaderDecoration from '../../organisms/mainpage/ranking/sub/HeaderDecorat
 import PageTitle from '../../organisms/mainpage/shared/PageTitle';
 import MyComments from '../../organisms/mypage/userInfo/MyComments';
 import MyPosts from '../../organisms/mypage/userInfo/MyPosts';
-// import UserProfile from '../../organisms/mypage/dashboard/UserProfile';
 import MyRatings from '../../organisms/mypage/userInfo/MyRatings';
-import UserSetting from '../../organisms/mypage/userInfo/UserSetting';
+import LoginUserProfile from '../../organisms/mypage/userInfo/LoginUserProfile';
 import Appbar from '../../organisms/shared/Appbar';
 import Footer from '../../organisms/shared/footer/Footer';
 
@@ -24,9 +23,8 @@ export default function UserInfoPage(): JSX.Element {
       <Container style={{ maxWidth: RANKING_PAGE_CONTAINER_WIDTH }}>
         <PageTitle text="내 프로필" />
         <Box mb={4}>
-          <UserSetting />
+          <LoginUserProfile />
         </Box>
-
         <MyRatings />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>

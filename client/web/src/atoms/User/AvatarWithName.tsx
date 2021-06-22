@@ -39,21 +39,12 @@ export default function AvatarWithName(props: AvatarWithNameProps): JSX.Element 
   const { logo, name, size } = props;
   return (
     <div className={classes.root}>
-      {logo ? (
-        <Avatar
-          style={size ? { width: size, height: size } : {}}
-          alt={`${name}_logo`}
-          src={logo}
-          className={classes.logoImg}
-        />
-      ) : (
-        <Avatar
-          style={size ? { width: size, height: size } : {}}
-          className={classes.logoImg}
-        >
-          {name && name.slice(0, 2)}
-        </Avatar>
-      )}
+      <Avatar
+        style={size ? { width: size, height: size } : {}}
+        alt={`${name}_logo`}
+        src={logo}
+        className={classes.logoImg}
+      />
       <Typography variant="subtitle1">{name}</Typography>
     </div>
   );

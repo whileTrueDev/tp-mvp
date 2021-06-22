@@ -90,9 +90,6 @@ export default function FirstPlaceCreators(): JSX.Element {
     url: 'rankings/first-places-by-category',
     method: 'get',
   });
-  if (error) {
-    return <div>error</div>;
-  }
   const firstPlaces: {category: keyof FirstPlacesRes, headerText: string}[] = [
     { category: 'viewer', headerText: '최고 시청자수 1위' },
     { category: 'rating', headerText: '시청자 평점 1위' },
@@ -107,6 +104,7 @@ export default function FirstPlaceCreators(): JSX.Element {
       alignItems: 'center',
     }}
     >
+      {error && (<Typography>데이터를 가져오지 못했습니다</Typography>)}
       {!loading && data
       && (
         firstPlaces.map((item) => (

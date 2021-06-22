@@ -352,6 +352,17 @@ export class UsersService {
     }
   }
 
+  async checkNickname(nickname: string): Promise<boolean> {
+    try {
+      const user = await this.usersRepository.findOne({ where: { nickName: nickname } });
+      if (user) return true;
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in check nickname');
+    }
+  }
+
   // 이메일, 이름, id로 유저 존재하는지 파악
   async checkExistUser({ email, name, id }: {
     email: string,
@@ -390,6 +401,33 @@ export class UsersService {
       return false;
     } catch {
       throw new HttpException('updatePW error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async changeNickname(userId: string, newNickname: string): Promise<boolean> {
+    const isDuplicatedNickname = await this.checkNickname(newNickname);
+    if (isDuplicatedNickname) {
+      throw new HttpException('해당 닉네임을 가진 사용자가 존재합니다', HttpStatus.CONFLICT);
+    }
+
+    try {
+      const user = await this.usersRepository
+        .findOne({ where: { userId } });
+
+      if (user) {
+        await this.usersRepository
+          .createQueryBuilder()
+          .update(user)
+          .set({
+            nickName: newNickname,
+          })
+          .where('userId = :userId', { userId })
+          .execute();
+        return true;
+      }
+      return false;
+    } catch {
+      throw new HttpException('change nickname error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -904,7 +942,7 @@ export class UsersService {
       userId: user.naverId.slice(0, 20), // userId는 최대 20자 저장
       userDI: `${user.naverId}_naver`,
       nickName: user.nickname,
-      name: user.nickname,
+      name: user.name || user.nickname, // naver-passport 에서 전달된 user에 name 값이 없음 https://github.com/naver/passport-naver/issues/17
       mail: user.mail,
       profileImage: user.profileImage,
       phone: '',

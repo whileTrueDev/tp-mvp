@@ -50,17 +50,15 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
   } = customOption;
 
   let value: string;
-  switch (series.name) {
-    case '시청자 수':
-      value = `${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명`;
-      break;
 
-    default:
-      value = `${Highcharts.numberFormat(y as number, 2, undefined, ',')} 점`;
-      break;
+  if (series.name === '시청자 수') {
+    value = `${Highcharts.numberFormat(y as number, 0, undefined, ',')} 명`;
+  } else {
+    value = `${Highcharts.numberFormat(y as number, 2, undefined, ',')} 점`;
   }
 
-  return `
+  return (
+    `
   <div>
     <span>${key}</span><br/>
     ${title ? `<span style="font-weight: bold">${title}</span><br/>` : ''}
@@ -68,8 +66,10 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
     <span style=" margin-right: 20px;">${series.name}</span>
     <span style="font-weight: bold">${value}</span>
   </div>
-  `;
+  `
+  );
 }
+
 export interface TrendsBarChartProps{
   data: WeeklyTrendsItem[],
   currentScoreName: keyof Scores
@@ -97,6 +97,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     plotOptions: {
       series: {
         color: theme.palette.primary.dark,
+        animation: false,
       },
     },
     xAxis: {

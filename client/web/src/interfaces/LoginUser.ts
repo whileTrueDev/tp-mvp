@@ -5,4 +5,6 @@ export interface LoginUser {
   roles: string;
   nickName: string;
   profileImage?: string;
+  provider?: string;
+  mail?: string;
 }

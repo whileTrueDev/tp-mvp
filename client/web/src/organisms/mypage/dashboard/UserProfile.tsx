@@ -14,7 +14,7 @@ import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
 
 export const useStyles = makeStyles((theme) => ({
   container: {
-    padding: theme.spacing(2), display: 'flex', alignItems: 'center',
+    padding: theme.spacing(2), display: 'flex', alignItems: 'center', position: 'relative',
   },
   loading: {
     display: 'flex', justifyContent: 'center', alignItems: 'center',

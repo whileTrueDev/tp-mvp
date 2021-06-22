@@ -4,7 +4,7 @@ import {
   DefaultValuePipe,
   Delete, Get,
   Param, ParseIntPipe, Patch, Post,
-  Query, Req, UseInterceptors,
+  Query, Req, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
@@ -19,7 +19,7 @@ import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interfac
 import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
 import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
-// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from '../auth/auth.service';
 import { SubscribeEntity } from './entities/subscribe.entity';
@@ -158,6 +158,14 @@ export class UsersController {
     return this.usersService.checkEmail(email);
   }
 
+  // 별명 중복 확인
+  @Get('/check-nickname')
+  async checkNickname(
+    @Query('nickname') nickname: string,
+  ): Promise<boolean> {
+    return this.usersService.checkNickname(nickname);
+  }
+
   // id, 이메일, 이름으로 가입된 회원이 있는지 확인
   @Get('/check-exist-user')
   async checkExistUser(
@@ -168,11 +176,22 @@ export class UsersController {
     return this.usersService.checkExistUser({ id, name, email });
   }
 
+  // 비밀번호 변경
   @Patch('/password')
+  @UseGuards(JwtAuthGuard)
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto,
   ): Promise<boolean> {
     return this.usersService.updatePW(userDI, password);
+  }
+
+  // 닉네임 변경
+  @Patch('/nickname')
+  @UseGuards(JwtAuthGuard)
+  async changeNickname(
+      @Body() { userId, nickName }: {userId: string, nickName: string},
+  ): Promise<boolean> {
+    return this.usersService.changeNickname(userId, nickName);
   }
 
   /*
