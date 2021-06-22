@@ -64,25 +64,31 @@ export default function UpdateUserInfoDialog(props: UpdateDialogProps): JSX.Elem
               트루포인트 서비스 안내에 사용할 이메일 주소입니다.
             </div>
           </div>
-          <div className={classes.thead}>
-            비밀번호
-          </div>
-          <div className={classes.tbody}>
-            ****
-            <div className={classes.tsub}>
-              보안을 위해 4자리만 표시됩니다.
-            </div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={OpenPasswordDialog}
-              className={classes.tbutton}
-            >
-              변경
-            </Button>
-          </div>
+          { user.provider === 'local' && (
+            <>
+              <div className={classes.thead}>
+                비밀번호
+              </div>
+              <div className={classes.tbody}>
+                ****
+                <div className={classes.tsub}>
+                  보안을 위해 4자리만 표시됩니다.
+                </div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={OpenPasswordDialog}
+                  className={classes.tbutton}
+                >
+                  변경
+                </Button>
+                <PasswordChangeDialog open={isPasswordDialogOpen} onClose={closePasswordDialog} />
+              </div>
+            </>
+          )}
+
         </div>
-        <PasswordChangeDialog open={isPasswordDialogOpen} onClose={closePasswordDialog} />
+
       </DialogContent>
       <DialogActions>
         <Button
