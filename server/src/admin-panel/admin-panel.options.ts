@@ -7,6 +7,7 @@ import {
   StreamCommentsResource, // TODO: streamEntity 와 relation 조회가 안되는듯함 (streamEntity primarykey 가 복합키인데 복합키로 조회하는방법 안찾아봄)
   StreamsResource,
   CreatorCommentsResource,
+  FeatureSuggestionResource,
 } from './resources';
 
 dotenv.config();
@@ -16,7 +17,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
     rootPath: '/admin', // 어드민 화면
     // auth: {},
     branding: {
-      companyName: '트루포인트',
+      companyName: '트루포인트 admin',
     },
     resources: [ // 리소스
       UserResource,
@@ -25,6 +26,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
       CommunityReplyResource,
       StreamCommentsResource,
       CreatorCommentsResource,
+      FeatureSuggestionResource,
     ],
     locale: {
       language: 'ko',
@@ -36,6 +38,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           StreamsEntity: '방송정보',
           StreamCommentsEntity: '방송 상세페이지 댓글(아직 오류해결못함)',
           CreatorCommentsEntity: '방송인 프로필 페이지 댓글',
+          FeatureSuggestionEntity: '기능제안 게시판 글',
         },
         properties: { // 모든 resource 의 property에 적용되는 이름
           title: '제목',
@@ -44,6 +47,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           content: '내용',
           deleteFlag: '삭제여부',
           reportCount: '신고수',
+          author: '작성자(회원)',
         },
         resources: { // 특정 resource의 property에만 적용되는 이름
           CommunityPostEntity: {
@@ -54,16 +58,11 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
               category: '분류',
             },
           },
-          CommunityReplyEntity: {
+          FeatureSuggestionEntity: {
             properties: {
-
+              state: '진행상태',
+              isLock: '비밀글 여부',
             },
-          },
-          StreamCommentsEntity: {
-
-          },
-          CreatorCommentsEntity: {
-
           },
         },
 
