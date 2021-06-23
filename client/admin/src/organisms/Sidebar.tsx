@@ -13,10 +13,15 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Link, NavLink } from 'react-router-dom';
-import { Box, IconButton, useTheme } from '@material-ui/core';
+import {
+  Box, IconButton, useTheme,
+  Link as LinkToNewPage,
+} from '@material-ui/core';
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ListProps } from '../App';
+import getApiHost from '../util/getApiHost';
 
 const drawerWidth = 240;
 
@@ -244,6 +249,21 @@ export default function Sidebar(props: Props): JSX.Element {
               </ListItem>
             </NavLink>
           ))}
+          {/* nestjs admin 페이지로 이동하는 버튼 */}
+          <LinkToNewPage href={`${getApiHost()}/admin`} className={classes.link}>
+            <ListItem
+              className={classes.linkButton}
+            >
+              <ListItemIcon>
+                <OpenInNewIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="db admin으로 이동"
+                secondary="게시판 글, 댓글 db 테이블 관리 페이지로 이동"
+              />
+            </ListItem>
+          </LinkToNewPage>
+
         </List>
       </Drawer>
       <main className={classes.content}>
