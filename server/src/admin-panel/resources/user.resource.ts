@@ -7,7 +7,7 @@ const UserResource: ResourceWithOptions = {
     properties: {
     },
     navigation: {
-      name: '유저 네비게이션',
+      name: '사용x . 계정설정 안해서 오류남 ',
       icon: '',
     },
   },

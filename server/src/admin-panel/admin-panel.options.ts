@@ -1,6 +1,6 @@
 import { AdminModuleOptions } from '@admin-bro/nestjs';
 import * as dotenv from 'dotenv';
-import { UserResource, CommunityPostResource } from './resources';
+import { UserResource, CommunityPostResource, CommunityReplyResource } from './resources';
 
 dotenv.config();
 
@@ -14,13 +14,15 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
     resources: [ // 리소스
       UserResource,
       CommunityPostResource,
+      CommunityReplyResource,
     ],
     locale: {
       language: 'ko',
       translations: {
-        labels: { // resource 이름
-          UserEntity: '유저 entity',
+        labels: { // resource 이름 - src/resources/**/enties/**.entity.ts 에서 export 되는 class이름을 사용한다
+          UserEntity: '유저',
           CommunityPostEntity: '자유게시판 글',
+          CommunityReplyEntity: '자유게시판 댓글',
         },
         properties: { // 모든 resource 의 property에 적용되는 이름
           title: '제목',
@@ -35,6 +37,12 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
               notRecommendCount: '비추',
               platform: '게시판',
               category: '분류',
+            },
+          },
+          CommunityReplyEntity: {
+            properties: {
+              deleteFlag: '삭제여부',
+              reportCount: '신고수',
             },
           },
         },
