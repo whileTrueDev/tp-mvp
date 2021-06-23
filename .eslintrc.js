@@ -84,7 +84,8 @@ module.exports = {
      * Typescript rules
      */
     '@typescript-eslint/brace-style': ['error'],
-    '@typescript-eslint/type-annotation-spacing': [2, { before: false, after: true, overrides: { arrow: { after: true, before: true } } }],
+    // '@typescript-eslint/type-annotation-spacing': [2, { before: false, after: true, overrides: { arrow: { after: true, before: true } } }],
+    '@typescript-eslint/type-annotation-spacing': [1, { before: false, after: true, overrides: { arrow: { after: true, before: true } } }],
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     // disable this rule for js, jsx files
@@ -94,7 +95,8 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 2,
 
     // do not allow unused variables
-    '@typescript-eslint/no-unused-vars': 2,
+    // '@typescript-eslint/no-unused-vars': 2,
+    '@typescript-eslint/no-unused-vars': 1,
     '@typescript-eslint/camelcase': 'off',
     /**
      * React rules
