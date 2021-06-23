@@ -1,12 +1,12 @@
 import {
-  Entity, Column, PrimaryColumn, OneToMany,
+  Entity, Column, PrimaryColumn, OneToMany, BaseEntity,
 } from 'typeorm';
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
 import { StreamVotesEntity } from './streamVotes.entity';
 import { StreamCommentsEntity } from './streamComment.entity';
 
 @Entity({ name: 'Streams' })
-export class StreamsEntity implements Stream {
+export class StreamsEntity extends BaseEntity implements Stream {
   @PrimaryColumn()
   streamId: string;
 
@@ -50,6 +50,7 @@ export class StreamsEntity implements Stream {
   comments: StreamCommentsEntity[];
 
   constructor(partial: Partial<StreamsEntity>) {
+    super();
     Object.assign(this, partial);
   }
 }

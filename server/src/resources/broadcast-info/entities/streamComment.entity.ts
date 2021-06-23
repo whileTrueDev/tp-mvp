@@ -1,6 +1,6 @@
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn, OneToMany, Index, ManyToOne, JoinColumn,
+  CreateDateColumn, PrimaryGeneratedColumn, OneToMany, Index, ManyToOne, JoinColumn, BaseEntity,
 } from 'typeorm';
 import { StreamComments } from '@truepoint/shared/dist/interfaces/StreamComments.interface';
 import { StreamCommentVoteEntity } from './streamCommentVote.entity';
@@ -9,8 +9,9 @@ import { StreamsEntity } from './streams.entity';
 
 @Entity({ name: 'StreamCommentTest' })
 @Index('IX_streamId', ['streamId'])
-export class StreamCommentsEntity implements StreamComments {
+export class StreamCommentsEntity extends BaseEntity implements StreamComments {
   constructor(partial: Partial<StreamCommentsEntity>) {
+    super();
     Object.assign(this, partial);
   }
 

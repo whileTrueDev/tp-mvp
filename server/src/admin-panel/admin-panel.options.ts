@@ -1,6 +1,12 @@
 import { AdminModuleOptions } from '@admin-bro/nestjs';
 import * as dotenv from 'dotenv';
-import { UserResource, CommunityPostResource, CommunityReplyResource } from './resources';
+import {
+  UserResource,
+  CommunityPostResource,
+  CommunityReplyResource,
+  StreamCommentsResource,
+  StreamsResource,
+} from './resources';
 
 dotenv.config();
 
@@ -13,8 +19,10 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
     },
     resources: [ // 리소스
       UserResource,
+      StreamsResource,
       CommunityPostResource,
       CommunityReplyResource,
+      StreamCommentsResource,
     ],
     locale: {
       language: 'ko',
@@ -23,6 +31,8 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           UserEntity: '유저',
           CommunityPostEntity: '자유게시판 글',
           CommunityReplyEntity: '자유게시판 댓글',
+          StreamsEntity: '방송정보',
+          StreamCommentsEntity: '방송 상세페이지 댓글',
         },
         properties: { // 모든 resource 의 property에 적용되는 이름
           title: '제목',
@@ -44,6 +54,9 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
               deleteFlag: '삭제여부',
               reportCount: '신고수',
             },
+          },
+          StreamCommentsEntity: {
+
           },
         },
 
