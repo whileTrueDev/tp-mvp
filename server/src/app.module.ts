@@ -22,7 +22,7 @@ import { CategoryModule } from './resources/category/category.module';
 
 import loadConfig from './config/loadConfig';
 import { mailerConfig } from './config/mailer.config';
-import { getAdminOptions } from './config/adminModule.config';
+import { getAdminOptions } from './admin-panel/admin-panel.options';
 
 import { roles } from './roles/app.roles';
 import { SlackModule } from './resources/slack/slack.module';
