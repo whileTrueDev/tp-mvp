@@ -6,6 +6,7 @@ import {
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
 import MaterialTable, { Icons } from 'material-table';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 
 const tableIcons: Icons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
@@ -43,7 +44,7 @@ function dateDiff(date1: any, date2: any) {
   **************************************************************************************************
   */
 interface SuggestTableProps {
-  tableData: any;
+  tableData?: FeatureSuggestion[];
   handleData: (Data: any) => void;
   ReplyPostModeOff: () => void;
   handleReplyModeOff: () => void;
@@ -132,43 +133,71 @@ export default function SuggestTable(props: SuggestTableProps): JSX.Element {
     <MaterialTable
       title="기능 제안"
       columns={[
-        { title: '카테고리', field: 'category', render: (rowData) => (<Typography>{rowData.category}</Typography>) },
+        {
+          title: '카테고리',
+          field: 'category',
+          render: (rowData) => {
+            const { category } = rowData;
+            return (<Typography>{category}</Typography>);
+          },
+        },
         {
           title: '제목',
           field: 'title',
-          render: (rowData) => (
-            <Typography className="title">
-              [신규 제안]
-              {rowData.title}
-              { dateDiff(new Date(), new Date(rowData.createdAt)) < 8 && (
-              <FiberNew style={{ color: '#929ef8' }} />
-              )}
-            </Typography>
-          ),
+          render: (rowData) => {
+            const { title, createdAt } = rowData;
+            return (
+              <Typography className="title">
+                [신규 제안]
+                {title}
+                { dateDiff(new Date(), new Date(createdAt)) < 8 && (
+                <FiberNew style={{ color: '#929ef8' }} />
+                )}
+              </Typography>
+            );
+          },
         },
         {
           title: '작성일',
           field: 'createdAt',
-          render: (rowData) => (
-            <Typography>{new Date(rowData.createdAt).toLocaleString()}</Typography>
-          ),
+          render: (rowData) => {
+            const { createdAt } = rowData;
+            return (
+              <Typography>{new Date(createdAt).toLocaleString()}</Typography>
+            );
+          },
         },
         {
           title: '작성자',
           field: 'author',
-          render: (rowData) => (
-            <Typography>{`${rowData.author.userId} ${rowData.author.nickName ? `(${rowData.author.nickName})` : ''}`}</Typography>
-          ),
+          render: (rowData) => {
+            const { author, userIp } = rowData;
+
+            let content: string;
+            if (author) {
+              const { userId, nickName } = author;
+              content = `${userId} ${nickName}`;
+            } else {
+              content = `${userIp}`;
+            }
+
+            return (
+              <Typography>{`${content}`}</Typography>
+            );
+          },
         },
         {
           title: '진행상태',
           field: 'state',
-          render: (rowData) => (
-            <Typography className="상태">{handleState(rowData.state)}</Typography>
-          ),
+          render: (rowData) => {
+            const { state } = rowData;
+            return (
+              <Typography className="상태">{handleState(state)}</Typography>
+            );
+          },
         },
       ]}
-      data={tableData}
+      data={tableData || []}
       onRowClick={(e, rowData: any) => {
         handleData(rowData);
         ReplyPostModeOff();

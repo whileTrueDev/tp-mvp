@@ -7,6 +7,7 @@ import {
 } from '@material-ui/icons';
 import MaterialTable, { Icons } from 'material-table';
 import { useHistory } from 'react-router';
+import { CbtInquiry } from '@truepoint/shared/dist/interfaces/CbtInquiry.interface';
 
 const tableIcons: Icons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
@@ -36,7 +37,7 @@ const tableIcons: Icons = {
   **************************************************************************************************
   */
 interface Props {
-  tableData: any;
+  tableData?: CbtInquiry[];
 }
 
 /*
@@ -104,66 +105,102 @@ export default function CbtTable(props: Props): JSX.Element {
   const isMdWidth = useMediaQuery('(min-width:1200px)');
 
   return (
-    <MaterialTable<any>
+    <MaterialTable<CbtInquiry>
       title="공지사항"
       icons={tableIcons}
       columns={[
         {
           title: '가입관리',
           field: 'register',
-          render: (rowData) => (
-            <div>
-              {rowData.isComplete ? (
-                <Typography>가입완료</Typography>
-              ) : (
-                <Button
-                  color="secondary"
-                  variant="contained"
-                  onClick={() => {
-                    history.push('/admin/creator');
-                  }}
-                >
-                  가입시키기
-                </Button>
-              )}
-            </div>
-          ),
+          render: (rowData) => {
+            const { isComplete } = rowData;
+            return (
+              <div>
+                {isComplete ? (
+                  <Typography>가입완료</Typography>
+                ) : (
+                  <Button
+                    color="secondary"
+                    variant="contained"
+                    onClick={() => {
+                      history.push('/admin/creator');
+                    }}
+                  >
+                    가입시키기
+                  </Button>
+                )}
+              </div>
+            );
+          },
         },
-        { title: '이름', field: 'name', render: (rowData) => (<Typography>{rowData.name}</Typography>) },
-        { title: '신청 Id', field: 'idForTest', render: (rowData) => (<Typography>{rowData.idForTest}</Typography>) },
-        { title: '활동명', field: 'creatorName', render: (rowData) => (<Typography>{rowData.creatorName}</Typography>) },
+        {
+          title: '이름',
+          field: 'name',
+          render: (rowData) => {
+            const { name } = rowData;
+            return (<Typography>{name}</Typography>);
+          },
+        },
+        {
+          title: '신청 Id',
+          field: 'idForTest',
+          render: (rowData) => {
+            const { idForTest } = rowData;
+            return (<Typography>{idForTest}</Typography>);
+          },
+        },
+        {
+          title: '활동명',
+          field: 'creatorName',
+          render: (rowData) => {
+            const { creatorName } = rowData;
+            return (<Typography>{creatorName}</Typography>);
+          },
+        },
         {
           title: 'email',
           field: 'email',
-          render: (rowData) => (
-            <Typography className="title">
-              {rowData.email}
-            </Typography>
-          ),
+          render: (rowData) => {
+            const { email } = rowData;
+            return (
+              <Typography className="title">
+                {email}
+              </Typography>
+            );
+          },
         },
         {
           title: '플랫폼',
           field: 'platform',
-          render: (rowData) => (
-            <Typography>{rowData.platform}</Typography>
-          ),
+          render: (rowData) => {
+            const { platform } = rowData;
+            return (
+              <Typography>{platform}</Typography>
+            );
+          },
         },
         {
           title: '휴대전화',
           field: 'phoneNum',
-          render: (rowData) => (
-            <Typography>{rowData.phoneNum}</Typography>
-          ),
+          render: (rowData) => {
+            const { phoneNum } = rowData;
+            return (
+              <Typography>{phoneNum}</Typography>
+            );
+          },
         },
         {
           title: '진행상태',
           field: 'isComplete',
-          render: (rowData) => (
-            <Typography>{rowData.isComplete ? '가입완료' : '가입 미완료'}</Typography>
-          ),
+          render: (rowData) => {
+            const { isComplete } = rowData;
+            return (
+              <Typography>{isComplete ? '가입완료' : '가입 미완료'}</Typography>
+            );
+          },
         },
       ]}
-      data={tableData}
+      data={tableData || []}
       options={{
         search: true,
         pageSize: isMdWidth ? 15 : 5,

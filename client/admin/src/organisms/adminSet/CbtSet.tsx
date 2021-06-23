@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
+import { CbtInquiry } from '@truepoint/shared/dist/interfaces/CbtInquiry.interface';
 // organisms
 import CbtTable from './table/CbtTable';
 
@@ -15,7 +16,7 @@ reload : 공지사항 글목록 변경사항을 랜더링하기위한 핸들러�
 **********************************************************************************
  */
 interface dataprops {
-  tabledata?: any;
+  tabledata?: CbtInquiry[];
   cbtLoading?: any;
   reload: () => void;
 }

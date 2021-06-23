@@ -4,6 +4,7 @@ import {
 } from '@material-ui/core';
 import Markdown from 'react-markdown';
 import useAxios from 'axios-hooks';
+import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 import CostomTableRow from './CostomTableRow';
 
 /* 
@@ -17,7 +18,7 @@ handleReload: 글 목록 게시글에 변경사항이 있을경우 리 렌더링
 ****************************************************************************************
 */
 interface Props {
-  replyData: any;
+  replyData: FeatureSuggestionReply;
   handleReplyEditModeOn: () => void;
   handleReload: () => void;
 }
@@ -45,18 +46,25 @@ export default function ReplyPreViewer(props: Props): JSX.Element {
     { url: '/feature-suggestion/reply', method: 'DELETE' }, { manual: true },
   );
 
+  let authorDisplay: string;
+  if (replyData.author) {
+    authorDisplay = `${replyData.author.userId} ${replyData.author.nickName}`;
+  } else {
+    authorDisplay = `${replyData.userIp}`;
+  }
+
   return (
     <Paper>
       <div style={{ padding: 28 }}>
         <Typography variant="h4">
-          {`${replyData.author.userId} ${replyData.author.nickName ? `(${replyData.author.nickName})` : ''}`}
+          {authorDisplay}
         </Typography>
         <div style={{
           display: 'flex', marginTop: 5, marginBottom: 5, justifyContent: 'space-bwtween',
         }}
         >
           <Table size="small">
-            <CostomTableRow title="작성자" data={`${replyData.author.userId} ${replyData.author.nickName ? `(${replyData.author.nickName})` : ''}`} />
+            <CostomTableRow title="작성자" data={authorDisplay} />
             <CostomTableRow title="기능제안글 ID" data={String(replyData.suggestionId)} />
           </Table>
         </div>

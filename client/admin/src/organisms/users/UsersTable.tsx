@@ -10,7 +10,7 @@ function NameLink(prop: Record<string, any>): JSX.Element {
   const { userId, nickName, display } = prop;
   // display 가 nickName이면 방송활동명, 
   //            userId이면 id를 표시함
-  const content = prop[display];
+  const content = display === 'nickName' ? nickName : userId;
 
   return (
     <Link to={{
@@ -71,7 +71,7 @@ const UsersTableColumns = [
 
 interface UsersTableProps extends Record<string, any>{
   data: BriefInfoDataResType | undefined,
-  loading? : boolean
+  loading?: boolean
 }
 
 const UsersTable = (props: UsersTableProps): JSX.Element => {

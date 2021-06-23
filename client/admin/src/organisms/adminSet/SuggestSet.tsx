@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 // organisms
 import SuggestPreview from './viewer/SuggestPreView';
 import SuggestTable from './table/SuggestTable';
@@ -18,7 +19,7 @@ SuggestSet을 위한 props입니다.
 **********************************************************************************
  */
 interface dataprops {
-  tabledata?: any;
+  tabledata?: FeatureSuggestion[];
   suggestLoading?: any;
   reload: () => void;
   ReplyModeOn: () => void;

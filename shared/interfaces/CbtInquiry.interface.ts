@@ -18,4 +18,6 @@ export class CbtInquiry {
   privacyAgreement: boolean;
 
   createdAt?: Date;
+
+  isComplete?: boolean;
 }

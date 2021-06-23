@@ -5,6 +5,7 @@ import {
   LastPage, ChevronRight, ChevronLeft, ArrowUpward, Search,
 } from '@material-ui/icons';
 import MaterialTable, { Icons } from 'material-table';
+import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 
 const tableIcons: Icons = {
   Check: forwardRef((props: any, ref) => <Check {...props} ref={ref} />),
@@ -35,7 +36,7 @@ const tableIcons: Icons = {
   by emma.sangeun
   */
 interface ReplyTableProps {
-  replyData: any;
+  replyData?: FeatureSuggestionReply[];
   handleReplyData: (Data: any) => void;
   handleReplyEditModeOff: () => void;
   selectedSuggestionId: string;
@@ -117,30 +118,48 @@ export default function ReplyTable(props: ReplyTableProps): JSX.Element {
         {
           title: '답변글 번호',
           field: 'replyId',
-          render: (rowData) => (
-            <Typography className="replyId">
-              { rowData.replyId }
-            </Typography>
-          ),
+          render: (rowData) => {
+            const { replyId } = rowData;
+            return (
+              <Typography className="replyId">
+                { replyId }
+              </Typography>
+            );
+          },
         },
 
         {
           title: '작성자',
           field: 'author',
-          render: (rowData) => (
-            <Typography>{`${rowData.author.userId} ${rowData.author.nickName ? `(${rowData.author.nickName})` : ''}`}</Typography>
-          ),
+          render: (rowData) => {
+            const { author, userIp } = rowData;
+
+            let content: string;
+            if (author) {
+              const { userId, nickName } = author;
+              content = `${userId} ${nickName}`;
+            } else {
+              content = `${userIp}`;
+            }
+
+            return (
+              <Typography>{`${content}`}</Typography>
+            );
+          },
         },
         {
           title: '작성일',
           field: 'createdAt',
-          render: (rowData) => (
-            <Typography className="createdAt">{ rowData.createdAt}</Typography>
-          ),
+          render: (rowData) => {
+            const { createdAt } = rowData;
+            return (
+              <Typography className="createdAt">{createdAt}</Typography>
+            );
+          },
         },
 
       ]}
-      data={replyData}
+      data={replyData || []}
       onRowClick={(e, rowData: any) => {
         handleReplyData(rowData);
         handleReplyEditModeOff();
