@@ -4,8 +4,9 @@ import {
   UserResource,
   CommunityPostResource,
   CommunityReplyResource,
-  StreamCommentsResource,
+  StreamCommentsResource, // TODO: streamEntity 와 relation 조회가 안되는듯함 (streamEntity primarykey 가 복합키인데 복합키로 조회하는방법 안찾아봄)
   StreamsResource,
+  CreatorCommentsResource,
 } from './resources';
 
 dotenv.config();
@@ -23,6 +24,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
       CommunityPostResource,
       CommunityReplyResource,
       StreamCommentsResource,
+      CreatorCommentsResource,
     ],
     locale: {
       language: 'ko',
@@ -32,13 +34,16 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           CommunityPostEntity: '자유게시판 글',
           CommunityReplyEntity: '자유게시판 댓글',
           StreamsEntity: '방송정보',
-          StreamCommentsEntity: '방송 상세페이지 댓글',
+          StreamCommentsEntity: '방송 상세페이지 댓글(아직 오류해결못함)',
+          CreatorCommentsEntity: '방송인 프로필 페이지 댓글',
         },
         properties: { // 모든 resource 의 property에 적용되는 이름
           title: '제목',
           createDate: '생성일',
           nickname: '닉네임',
           content: '내용',
+          deleteFlag: '삭제여부',
+          reportCount: '신고수',
         },
         resources: { // 특정 resource의 property에만 적용되는 이름
           CommunityPostEntity: {
@@ -51,11 +56,13 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           },
           CommunityReplyEntity: {
             properties: {
-              deleteFlag: '삭제여부',
-              reportCount: '신고수',
+
             },
           },
           StreamCommentsEntity: {
+
+          },
+          CreatorCommentsEntity: {
 
           },
         },
