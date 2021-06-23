@@ -77,7 +77,7 @@ export class AuthService {
         // Extracting password
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...result } = user;
-        return result;
+        return result as UserLoginPayload;
       }
     }
     return null;
