@@ -49,9 +49,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
 }));
-
 interface Props {
-  children? : React.ReactNode;
+  children?: React.ReactNode;
   footer?: boolean;
 }
 export default function LoginCommonLayout(props: Props): JSX.Element {

@@ -10,7 +10,7 @@ import useMediaSize from './useMediaSize';
 
 interface EditorContainerProps {
   style?: React.CSSProperties;
-  className? : string;
+  className?: string;
 }
 interface useSunEditorReturnType{
   editorRef: React.MutableRefObject<SunEditor | null>,

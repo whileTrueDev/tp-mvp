@@ -16,7 +16,7 @@ import Fade from '@material-ui/core/Fade';
 
 const ShowSnack = (message: string, type: 'success' | 'info' | 'warning' | 'error',
   enqueueSnackbar: (m: React.ReactNode, options?: any) => React.ReactText,
-  location? : 'top'| 'bottom'): React.ReactText => {
+  location?: 'top'| 'bottom'): React.ReactText => {
   // top, bottom을 추가하여 우선순위에 따라 위치를 변경할 수 있도록 한다.
   // transition을 Fade로 변경한다.
   const locationType = (location === 'top') ? {

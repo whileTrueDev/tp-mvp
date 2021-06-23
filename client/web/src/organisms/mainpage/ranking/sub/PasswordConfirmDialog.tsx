@@ -5,7 +5,7 @@ import CustomDialog from '../../../../atoms/Dialog/Dialog';
 export interface PasswordConfirmDialogProps {
  open: boolean;
  onClose: () => void,
- callback? : () => void,
+ callback?: () => void,
  passwordInputRef: React.RefObject<HTMLInputElement>
 }
 

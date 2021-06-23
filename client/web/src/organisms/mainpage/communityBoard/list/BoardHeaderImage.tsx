@@ -80,13 +80,13 @@ export default function BoardHeaderImage(): JSX.Element {
       <div className={classes.container}>
         <div className={classes.tvContainer}>
           <div className={classnames(classes.tv, classes.afreeca)}>
-            <img src={afreecaTopUser?.afreecaLogo} alt="" className={classes.userLogo} />
+            <img src={afreecaTopUser ? afreecaTopUser.afreecaLogo : undefined} alt="" className={classes.userLogo} />
           </div>
 
         </div>
         <div className={classes.tvContainer}>
           <div className={classnames(classes.tv, classes.twitch)}>
-            <img src={twitchTopUser?.twitchLogo} alt="" className={classes.userLogo} />
+            <img src={twitchTopUser ? twitchTopUser.twitchLogo : undefined} alt="" className={classes.userLogo} />
           </div>
         </div>
       </div>

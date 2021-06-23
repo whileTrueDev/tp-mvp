@@ -31,7 +31,7 @@ export default function FeatureReply({
   refetch,
 }: FeatureReplyProps): JSX.Element {
   const classes = useStyles();
-  const auth = useAuthContext();
+  const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const confirmDialog = useDialog();
 
@@ -59,7 +59,7 @@ export default function FeatureReply({
       <div className={classes.wrapper}>
         {/* 본인이 아닌 경우 프로필사진 기본 사진 처리 */}
         <Avatar
-          src={auth.user?.userId === reply.author?.userId || reply.author?.userId === 'Truepoint'
+          src={user.userId === reply.author.userId || reply.author.userId === 'Truepoint'
             ? reply.author.profileImage : ''}
           variant="square"
           className={classes.avatar}
