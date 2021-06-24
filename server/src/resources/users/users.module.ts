@@ -18,6 +18,7 @@ import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
 import { S3Module } from '../s3/s3.module';
 import { UserDetailEntity } from './entities/userDetail.entity';
 import { UserPropertiesService } from './userProperties.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([

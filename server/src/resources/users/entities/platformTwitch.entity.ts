@@ -4,6 +4,7 @@ import {
 } from 'typeorm';
 import { CreatorCategoryEntity } from '../../creator-category/entities/creatorCategory.entity';
 import { UserEntity } from './user.entity';
+
 @Entity({ name: 'PlatformTwitch' })
 export class PlatformTwitchEntity implements PlatformTwitch {
   @Column({ primary: true })
