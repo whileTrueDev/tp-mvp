@@ -6,6 +6,7 @@ import StreamsResource from './stream.resource';
 import CreatorCommentsResource from './creatorComments.resource';
 import FeatureSuggestionResource from './featureSuggestion.resource';
 import FeatureSuggestionReplyResource from './featurSuggestionReply.resource';
+import UserReactionResource from './userReaction.resource';
 
 export {
   UserResource,
@@ -16,4 +17,6 @@ export {
   CreatorCommentsResource,
   FeatureSuggestionResource,
   FeatureSuggestionReplyResource,
+  UserReactionResource,
+
 };

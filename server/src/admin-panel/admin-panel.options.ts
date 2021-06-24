@@ -9,6 +9,8 @@ import {
   CreatorCommentsResource,
   FeatureSuggestionResource,
   FeatureSuggestionReplyResource,
+  UserReactionResource,
+
 } from './resources';
 
 dotenv.config();
@@ -29,6 +31,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
       CreatorCommentsResource,
       FeatureSuggestionResource,
       FeatureSuggestionReplyResource,
+      UserReactionResource,
     ],
     locale: {
       language: 'ko',
@@ -42,6 +45,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           CreatorCommentsEntity: '방송인 프로필 페이지 댓글',
           FeatureSuggestionEntity: '기능제안 게시판 글',
           FeatureSuggestionReplyEntity: '기능제안 게시판 댓글',
+          UserReactionEntity: '잡담방',
         },
         properties: { // 모든 resource 의 property에 적용되는 이름
           title: '제목',

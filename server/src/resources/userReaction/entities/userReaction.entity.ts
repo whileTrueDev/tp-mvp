@@ -1,10 +1,11 @@
 import {
+  BaseEntity,
   Column, CreateDateColumn, Entity, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
 
 @Entity({ name: 'UserReactionsTest2' })
-export class UserReactionEntity implements UserReaction {
+export class UserReactionEntity extends BaseEntity implements UserReaction {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
