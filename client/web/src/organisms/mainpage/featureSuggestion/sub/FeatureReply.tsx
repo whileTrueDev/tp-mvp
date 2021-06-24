@@ -7,7 +7,6 @@ import moment from 'moment';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
@@ -31,7 +30,7 @@ export default function FeatureReply({
   refetch,
 }: FeatureReplyProps): JSX.Element {
   const classes = useStyles();
-  const { user } = useAuthContext();
+  // const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const confirmDialog = useDialog();
 
@@ -59,8 +58,7 @@ export default function FeatureReply({
       <div className={classes.wrapper}>
         {/* 본인이 아닌 경우 프로필사진 기본 사진 처리 */}
         <Avatar
-          src={user.userId === reply.author.userId || reply.author.userId === 'Truepoint'
-            ? reply.author.profileImage : ''}
+          src={reply.author ? reply.author.profileImage : ''}
           variant="square"
           className={classes.avatar}
         />
