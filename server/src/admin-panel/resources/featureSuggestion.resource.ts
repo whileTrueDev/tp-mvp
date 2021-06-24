@@ -1,6 +1,8 @@
-import { ResourceWithOptions } from 'admin-bro';
+import AdminBro, { ResourceWithOptions } from 'admin-bro';
 import { CREATED_AT__DESC } from '../config';
 import { FeatureSuggestionEntity } from '../../resources/featureSuggestion/entities/featureSuggestion.entity';
+
+const STATE_LABEL = AdminBro.bundle('../components/featureSuggestion-state-label.tsx');
 
 const FeatureSuggestionResource: ResourceWithOptions = {
   resource: FeatureSuggestionEntity,
@@ -21,6 +23,10 @@ const FeatureSuggestionResource: ResourceWithOptions = {
       title: { isTitle: true },
       content: { type: 'richtext' },
       state: {
+        components: {
+          list: STATE_LABEL,
+          show: STATE_LABEL,
+        },
         availableValues: [
           { value: '0', label: '미확인' },
           { value: '1', label: '검토중' },
