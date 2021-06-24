@@ -1,33 +1,32 @@
 import { AdminModuleOptions } from '@admin-bro/nestjs';
-// import AdminBro from 'admin-bro';
 import * as dotenv from 'dotenv';
-// import axios from 'axios';
-// import getApiHost from '../utils/getApiHost';
+import axios from 'axios';
+import getApiHost from '../utils/getApiHost';
 import { Resources } from './resources';
 
 dotenv.config();
 
 export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<AdminModuleOptions> => ({
-  // auth: { // admin 로그인 절차
-  //   authenticate: async (email, password) => {
-  //     try {
-  //       const { data: adminValidated } = await axios({
-  //         method: 'post',
-  //         url: `${getApiHost()}/auth/adminLogin`,
-  //         data: { userId: email, password },
-  //       });
-  //       if (!adminValidated) return null;
-  //     } catch (error) {
-  //       if (error.response) {
-  //         console.error(error.response.message);
-  //       }
-  //       return null;
-  //     }
-  //     return Promise.resolve({ email });
-  //   },
-  //   cookieName: 'test',
-  //   cookiePassword: 'testPass',
-  // },
+  auth: { // admin 로그인 절차
+    authenticate: async (email, password) => {
+      try {
+        const { data: adminValidated } = await axios({
+          method: 'post',
+          url: `${getApiHost()}/auth/adminLogin`,
+          data: { userId: email, password },
+        });
+        if (!adminValidated) return null;
+      } catch (error) {
+        if (error.response) {
+          console.error(error.response.message);
+        }
+        return null;
+      }
+      return Promise.resolve({ email });
+    },
+    cookieName: 'test',
+    cookiePassword: 'testPass',
+  },
   adminBroOptions: {
     rootPath: '/admin', // 어드민 화면
     branding: {

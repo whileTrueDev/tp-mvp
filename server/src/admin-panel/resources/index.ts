@@ -8,7 +8,7 @@ import FeatureSuggestionResource from './featureSuggestion.resource';
 import FeatureSuggestionReplyResource from './featurSuggestionReply.resource';
 import UserReactionResource from './userReaction.resource';
 
-export {
+export const Resources = [
   UserResource,
   CommunityPostResource,
   CommunityReplyResource,
@@ -18,5 +18,4 @@ export {
   FeatureSuggestionResource,
   FeatureSuggestionReplyResource,
   UserReactionResource,
-
-};
+];
