@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { UserEntity } from './entities/user.entity';
+import { StreamsEntity } from '../broadcast-info/entities/streams.entity';
 
 const BOARD_PLATFORM_NAME = {
   0: { ko: '아프리카 게시판', en: 'afreeca' },
@@ -83,9 +84,30 @@ export class UserPropertiesService {
         .leftJoinAndSelect('communityReplies.post', 'post')
         .leftJoinAndSelect('user.creatorComments', 'creatorComments', 'creatorComments.deleteFlag = 0')
         .leftJoinAndSelect('user.streamComments', 'streamComments', 'streamComments.deleteFlag = 0')
-        .leftJoinAndSelect('streamComments.stream', 'stream')
         .leftJoinAndSelect('user.featureSuggestionReplies', 'featureSuggestionReplies')
         .getOne();
+
+      // 방송댓글
+      const streamComments: {
+        createDate: Date;
+        content: string;
+        commentId: number;
+        parentCommentId: number;
+        streamId: number;
+        creatorId: string;
+      }[] = await this.usersRepository.createQueryBuilder('user')
+        .where('user.userId = :userId', { userId })
+        .select([
+          'streamComments.createDate AS createDate',
+          'streamComments.content AS content',
+          'streamComments.commentId AS commentId',
+          'streamComments.parentCommentId AS parentCommentId',
+          'streamComments.streamId AS streamId',
+          'streams.creatorId AS creatorId',
+        ])
+        .leftJoin('user.streamComments', 'streamComments', 'streamComments.deleteFlag = 0')
+        .leftJoin(StreamsEntity, 'streams', 'streams.streamId = streamComments.streamId')
+        .getRawMany();
 
       const allComments = [
         ...user.communityReplies.map((comment) => ({
@@ -102,8 +124,8 @@ export class UserPropertiesService {
           content: comment.content,
           belongTo: '인방랭킹 방송인 프로필 게시판',
         })),
-        ...user.streamComments.map((comment) => ({
-          to: `/ranking/${comment.stream.creatorId}/stream/${comment.streamId}/#commentId-${comment.parentCommentId || comment.commentId}`, // TODO: 해당 댓글로 이동하기
+        ...streamComments.map((comment) => ({
+          to: `/ranking/${comment.creatorId}/stream/${comment.streamId}/#commentId-${comment.parentCommentId || comment.commentId}`, // TODO: 해당 댓글로 이동하기
           commentId: comment.commentId,
           createDate: comment.createDate,
           content: comment.content,
