@@ -8,6 +8,7 @@ import {
   StreamsResource,
   CreatorCommentsResource,
   FeatureSuggestionResource,
+  FeatureSuggestionReplyResource,
 } from './resources';
 
 dotenv.config();
@@ -27,18 +28,20 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
       StreamCommentsResource,
       CreatorCommentsResource,
       FeatureSuggestionResource,
+      FeatureSuggestionReplyResource,
     ],
     locale: {
       language: 'ko',
       translations: {
         labels: { // resource 이름 - src/resources/**/enties/**.entity.ts 에서 export 되는 class이름을 사용한다
-          UserEntity: '유저',
+          UserEntity: '유저(관계 테이블 리소스 설정 안해서 조회안됨 - 유저와 연동된 컬럼 안뜸)',
           CommunityPostEntity: '자유게시판 글',
           CommunityReplyEntity: '자유게시판 댓글',
           StreamsEntity: '방송정보',
           StreamCommentsEntity: '방송 상세페이지 댓글(아직 오류해결못함)',
           CreatorCommentsEntity: '방송인 프로필 페이지 댓글',
           FeatureSuggestionEntity: '기능제안 게시판 글',
+          FeatureSuggestionReplyEntity: '기능제안 게시판 댓글',
         },
         properties: { // 모든 resource 의 property에 적용되는 이름
           title: '제목',
@@ -60,6 +63,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           },
           FeatureSuggestionEntity: {
             properties: {
+              suggestionId: '글번호',
               state: '진행상태',
               isLock: '비밀글 여부',
             },
