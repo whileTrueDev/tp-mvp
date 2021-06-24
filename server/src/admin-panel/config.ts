@@ -7,6 +7,9 @@ export const editAndFilterOnly = {
 export const filterOnly = {
   list: false, show: false, edit: true, filter: true,
 };
+export const showOnly = {
+  list: false, show: true, edit: false, filter: true,
+};
 
 type SORT = {
   direction: 'desc' | 'asc';
