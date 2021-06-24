@@ -1,9 +1,11 @@
 import { ResourceWithOptions } from 'admin-bro';
+import { CREATED_AT__DESC } from '../config';
 import { FeatureSuggestionEntity } from '../../resources/featureSuggestion/entities/featureSuggestion.entity';
 
 const FeatureSuggestionResource: ResourceWithOptions = {
   resource: FeatureSuggestionEntity,
   options: {
+    sort: CREATED_AT__DESC,
     listProperties: [
       'suggestionId',
       'title',

@@ -7,3 +7,16 @@ export const editAndFilterOnly = {
 export const filterOnly = {
   list: false, show: false, edit: true, filter: true,
 };
+
+type SORT = {
+  direction: 'desc' | 'asc';
+  sortBy: string;
+}
+export const CREATE_DATE__DESC: SORT = {
+  direction: 'desc',
+  sortBy: 'createDate',
+};
+export const CREATED_AT__DESC: SORT = {
+  direction: 'desc',
+  sortBy: 'createdAt',
+};
