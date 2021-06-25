@@ -17,7 +17,9 @@
     "nohoist": [
       "**/@nestjs/",
       "**/@nestjs/**",
-      "**/nest-access-control"
+      "**/nest-access-control",
+      "**/@admin-bro/",
+      "**/@admin-bro/**"
     ]
   },
   "resolutions": {
