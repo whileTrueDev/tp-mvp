@@ -20,14 +20,12 @@ module.exports = {
     "react",
     "react-hooks",
     '@typescript-eslint/eslint-plugin',
-    'prettier',
-    'jest'
+    'jest',
   ],
   extends: [
-    "plugin:react/recommended",
-    'airbnb-base',
     'airbnb',
-    'eslint:recommended',
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
   ],
@@ -50,11 +48,11 @@ module.exports = {
     'comma-dangle': 2,
     'linebreak-style': 'off',
     'no-useless-constructor': 0,
-    'max-len': ["error", {
-      code: 120, tabWidth: 2, ignoreComments: true, ignoreTrailingComments: true, ignoreStrings: true,
-      ignoreUrls: true, ignoreTemplateLiterals: true,
-      ignorePattern: "^import\\s.+\\sfrom\\s.+;$",
-    }],
+    // 'max-len': ["error", {
+    //   code: 120, tabWidth: 2, ignoreComments: true, ignoreTrailingComments: true, ignoreStrings: true,
+    //   ignoreUrls: true, ignoreTemplateLiterals: true,
+    //   ignorePattern: "^import\\s.+\\sfrom\\s.+;$",
+    // }],
     'max-params': ["warn", 4],
     "no-shadow": 2,
     /**
