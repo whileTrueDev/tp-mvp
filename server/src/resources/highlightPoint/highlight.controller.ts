@@ -3,6 +3,7 @@ import {
   Controller, Get, Query, Res, Req, HttpException, HttpStatus,
 } from '@nestjs/common';
 import { HighlightService } from './highlight.service';
+
 @Controller('highlight')
 export class HighlightController {
   constructor(private readonly highlightService: HighlightService) { }

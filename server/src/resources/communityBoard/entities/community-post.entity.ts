@@ -1,11 +1,12 @@
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, BaseEntity,
 } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { CommunityReplyEntity } from './community-reply.entity';
+
 @Entity({ name: 'CommunityPostTest1' })
-export class CommunityPostEntity implements CommunityPost {
+export class CommunityPostEntity extends BaseEntity implements CommunityPost {
   @PrimaryGeneratedColumn({ type: 'int' })
   postId: number;
 

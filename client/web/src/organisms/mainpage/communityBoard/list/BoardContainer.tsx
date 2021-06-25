@@ -32,9 +32,9 @@ interface BoardProps{
     totalRows: number;
     filter: FilterType;
   },
-  handlePostsLoad: ({ posts, total }: FindPostResType) => void;
-  currentPostId? : number,
-  titleComponent? : JSX.Element
+  handlePostsLoad: (props: FindPostResType) => void;
+  currentPostId?: number,
+  titleComponent?: JSX.Element
 }
 
 type postGetParam = {

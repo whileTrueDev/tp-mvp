@@ -15,7 +15,7 @@ import {
 */
 interface costomTableProps {
   title: string;
-  data?: string;
+  data?: string | number;
 }
 /* 
   CostomTableRow

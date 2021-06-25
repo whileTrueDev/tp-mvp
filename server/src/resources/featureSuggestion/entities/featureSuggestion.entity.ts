@@ -1,13 +1,13 @@
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, JoinColumn,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, JoinColumn, BaseEntity,
 } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionReplyEntity } from './featureSuggestionReply.entity';
 
 @Entity({ name: 'FeatureSuggestionTest' })
-export class FeatureSuggestionEntity implements FeatureSuggestion {
+export class FeatureSuggestionEntity extends BaseEntity implements FeatureSuggestion {
   @PrimaryGeneratedColumn()
   suggestionId: number;
 
@@ -49,6 +49,7 @@ export class FeatureSuggestionEntity implements FeatureSuggestion {
   replies? : FeatureSuggestionReplyEntity[];
 
   constructor(partial: Partial<FeatureSuggestionEntity>) {
+    super();
     Object.assign(this, partial);
   }
 }

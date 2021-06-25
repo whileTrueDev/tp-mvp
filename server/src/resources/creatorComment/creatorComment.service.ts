@@ -6,6 +6,7 @@ import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/crea
 import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
 import { UserEntity } from '../users/entities/user.entity';
+
 @Injectable()
 export class CreatorCommentService {
   constructor(

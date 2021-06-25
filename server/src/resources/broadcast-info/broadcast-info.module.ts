@@ -16,6 +16,7 @@ import { UserEntity } from '../users/entities/user.entity';
 import { StreamCommentsEntity } from './entities/streamComment.entity';
 import { StreamCommentVoteEntity } from './entities/streamCommentVote.entity';
 import { UsersModule } from '../users/users.module';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([

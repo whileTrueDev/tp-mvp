@@ -107,9 +107,12 @@ export default function UserlistTable(props: Props): JSX.Element {
           {
             title: '사용자',
             field: 'userId',
-            render: (rowData) => (
-              <AvatarWithName name={rowData.userId} />
-            ),
+            render: (rowData) => {
+              const { userId } = rowData;
+              return (
+                <AvatarWithName name={userId} />
+              );
+            },
           },
         ]}
         data={userData}

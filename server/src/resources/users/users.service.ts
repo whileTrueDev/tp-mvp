@@ -19,6 +19,7 @@ import bcrypt from 'bcrypt';
 import {
   getConnection, Repository,
 } from 'typeorm';
+import { CreateUserDto } from '@truepoint/shared/dto/users/createUser.dto';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
 import { TwitchTargetStreamersEntity } from '../../collector-entities/twitch/targetStreamers.entity';
@@ -235,7 +236,7 @@ export class UsersService {
    * @param user 유저 생성 엔터티
    * @returns UserEntity
    */
-  async register(user: UserEntity): Promise<UserEntity> {
+  async register(user: {provider: string} & CreateUserDto): Promise<UserEntity> {
     // 비밀번호 암호화 using bcrypt
     // Github Repository => https://github.com/kelektiv/node.bcrypt.js/
     const hashedPassword = await bcrypt.hash(user.password, 10);

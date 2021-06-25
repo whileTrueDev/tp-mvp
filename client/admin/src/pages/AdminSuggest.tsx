@@ -1,5 +1,6 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import Suggest from '../organisms/suggest/Suggest';
 import ReplySet from '../organisms/adminSet/ReplySet';
 
@@ -32,7 +33,7 @@ export default function AdminSuggest(): JSX.Element {
     setSuggestionId(id);
   }
 
-  const [{ loading: suggestionLoading, data: getData }, suggestreload] = useAxios(
+  const [{ loading: suggestionLoading, data: getData }, suggestreload] = useAxios<FeatureSuggestion[]>(
     { url: '/feature-suggestion', method: 'GET' },
   );
 

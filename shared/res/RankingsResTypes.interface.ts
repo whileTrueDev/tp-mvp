@@ -40,6 +40,8 @@ export interface TopTenDataItem extends Scores{
   afreecaProfileImage?: string | null,
   twitchChannelName?: string | null,
   averageRating?: number,
+  twitchStreamerName?: string,
+  afreecaStreamerName?: string
 }
 export interface WeeklyTrendsItem extends Scores{
     createDate: string,

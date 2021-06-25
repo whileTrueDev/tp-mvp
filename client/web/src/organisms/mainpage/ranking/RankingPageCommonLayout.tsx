@@ -6,7 +6,7 @@ import { useRankingPageLayout } from './style/RankingPage.style';
 import HeaderDecoration from './sub/HeaderDecoration';
 
 export default function RankingPageCommonLayout({ children }: {
-  children? : React.ReactNode;
+  children?: React.ReactNode;
 }): JSX.Element {
   const wrapper = useRankingPageLayout();
   const memoAppbar = useMemo(() => <Appbar />, []);

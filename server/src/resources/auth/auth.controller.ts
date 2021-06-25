@@ -345,7 +345,7 @@ export class AuthController {
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  kakao(): void{}
+  kakao(): void {}
 
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
@@ -360,5 +360,14 @@ export class AuthController {
 
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
     res.redirect(`${getFrontHost()}/mypage/main`);
+  }
+
+  // admin page 로그인
+  @Post('adminLogin')
+  adminLogin(
+    @Body('userId') userId: string,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.authService.validateAdmin(userId, password);
   }
 }

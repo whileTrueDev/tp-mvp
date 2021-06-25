@@ -8,6 +8,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import knownCreators from '../../data/knownCreators210419.json';
 
 const useStyles = makeStyles((theme) => ({
@@ -118,7 +119,7 @@ export default function RegisterCreatorDialog({
           <Controller
             name="platform"
             control={control}
-            defaultValue=""
+            defaultValue={undefined}
             rules={{
               required: {
                 value: true,

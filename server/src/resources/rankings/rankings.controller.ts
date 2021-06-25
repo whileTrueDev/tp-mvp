@@ -5,6 +5,7 @@ import {
   DailyTotalViewersResType, RankingDataType, FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { ColumnType, RankingsService, PlatformType } from './rankings.service';
+
 @Controller('rankings')
 export class RankingsController {
   constructor(

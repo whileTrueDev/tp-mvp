@@ -13,6 +13,7 @@ import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { RankingsEntity } from '../rankings/entities/rankings.entity';
 import { PlatformType } from '../rankings/rankings.service';
 import { AdminRating } from './creatorRatings.controller';
+
 @Injectable()
 export class CreatorRatingsService {
   constructor(

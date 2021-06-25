@@ -7,6 +7,7 @@ import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentRe
 import { CreatorCommentService } from './creatorComment.service';
 import { CreatorCommentVoteService } from './creatorCommentVote.service';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
+
 @Controller('creatorComment')
 export class CreatorCommentController {
   constructor(

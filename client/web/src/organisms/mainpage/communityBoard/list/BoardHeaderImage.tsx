@@ -72,7 +72,9 @@ export default function BoardHeaderImage(): JSX.Element {
   const classes = useStyles();
   const [{ data }] = useAxios<TodayTopViewerUsersRes>('broadcast-info/today-top-viewer');
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const twitchTopUser = useMemo(() => data?.find((x) => x.platform === 'twitch'), [data]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const afreecaTopUser = useMemo(() => data?.find((x) => x.platform === 'afreeca'), [data]);
 
   return (
@@ -80,13 +82,13 @@ export default function BoardHeaderImage(): JSX.Element {
       <div className={classes.container}>
         <div className={classes.tvContainer}>
           <div className={classnames(classes.tv, classes.afreeca)}>
-            <img src={afreecaTopUser?.afreecaLogo} alt="" className={classes.userLogo} />
+            <img src={afreecaTopUser ? afreecaTopUser.afreecaLogo : undefined} alt="" className={classes.userLogo} />
           </div>
 
         </div>
         <div className={classes.tvContainer}>
           <div className={classnames(classes.tv, classes.twitch)}>
-            <img src={twitchTopUser?.twitchLogo} alt="" className={classes.userLogo} />
+            <img src={twitchTopUser ? twitchTopUser.twitchLogo : undefined} alt="" className={classes.userLogo} />
           </div>
         </div>
       </div>

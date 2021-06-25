@@ -24,7 +24,7 @@ interface HighlightListProps{
     page: number;
     totalRows: number;
   },
-  titleComponent? : JSX.Element
+  titleComponent?: JSX.Element
 }
 
 export default function HighlightListContainer({
