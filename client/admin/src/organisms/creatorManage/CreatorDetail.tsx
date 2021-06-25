@@ -43,10 +43,12 @@ function CreatorDetail(): React.ReactElement {
       {data?.afreeca?.categories?.map((x) => <CategoryChip size="small" label={x.name} key={x.categoryId} />)}
       {data?.twitch?.categories?.map((x) => <CategoryChip size="small" label={x.name} key={x.categoryId} />)}
     </>
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   ), [data]);
 
   const currentImage = useMemo(() => (
     theme.palette.type === 'light' ? data?.detail?.heroImageLight : data?.detail?.heroImageDark
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   ), [data, theme.palette.type]);
 
   if (loading) return <CircularProgress />;

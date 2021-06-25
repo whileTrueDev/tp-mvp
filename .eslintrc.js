@@ -37,7 +37,7 @@ module.exports = {
      */
     'brace-style': 'off',
     camelcase: 1,
-    // 'no-console': [2, { allow: ['error'] }],
+    'no-alert': 'off',
     'no-console': [1, { allow: ['error'] }],
     'no-unused-vars': 'off',
     'no-use-before-define': 'off',

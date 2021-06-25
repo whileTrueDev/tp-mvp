@@ -72,7 +72,9 @@ export default function BoardHeaderImage(): JSX.Element {
   const classes = useStyles();
   const [{ data }] = useAxios<TodayTopViewerUsersRes>('broadcast-info/today-top-viewer');
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const twitchTopUser = useMemo(() => data?.find((x) => x.platform === 'twitch'), [data]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const afreecaTopUser = useMemo(() => data?.find((x) => x.platform === 'afreeca'), [data]);
 
   return (
