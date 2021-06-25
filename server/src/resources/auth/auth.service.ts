@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import {
   Injectable, HttpException, HttpStatus,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
@@ -77,7 +78,7 @@ export class AuthService {
         // Extracting password
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...result } = user;
-        return result;
+        return result as UserLoginPayload;
       }
     }
     return null;
@@ -267,5 +268,17 @@ export class AuthService {
       accessToken, refreshToken,
     } = await this.login(newUser, false);
     return { user: newUser, accessToken, refreshToken };
+  }
+
+  // adminpage 인증
+  async validateAdmin(userId: string, password: string): Promise<boolean> {
+    try {
+      const user = await this.usersService.findOne({ userId });
+      if (!user || user.roles !== 'admin') return false;
+      return bcrypt.compare(password, user.password);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in validate admin');
+    }
   }
 }

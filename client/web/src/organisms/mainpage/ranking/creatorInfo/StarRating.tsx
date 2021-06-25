@@ -52,9 +52,9 @@ export interface StarRatingProps{
  /** true이면 별점 수정이 불가능하다, 평가, 수정, 취소버튼도 뜨지않음 */
  readOnly?: boolean;
  /**  score는 null이거나 0~5 사이의 값으로 핸들러에 넘겨줘야함 */
- createRatingHandler? : (score: number|null, cb?: () => void) => void;
+ createRatingHandler?: (score: number|null, cb?: () => void) => void;
  /** 평점 취소 핸들러 */
- cancelRatingHandler? : (cb?: () => void) => void;
+ cancelRatingHandler?: (cb?: () => void) => void;
  /** Rating 컴포넌트에 적용될 prop 객체 */
  ratingProps?: Partial<RatingProps>;
 }

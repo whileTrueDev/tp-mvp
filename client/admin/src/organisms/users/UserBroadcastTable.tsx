@@ -7,7 +7,7 @@ import DateTimeDisplay from './sub/DateTimeDisplay';
 interface TableProps extends Record<string, any>{
   title?: string
   data: BroadcastDataForDownload[] | undefined,
-  loading? : boolean
+  loading?: boolean
 }
 
 // 특정 사용자의 편집점 데이터 보여주는 테이블의 컬럼 설정

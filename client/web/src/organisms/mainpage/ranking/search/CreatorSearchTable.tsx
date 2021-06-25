@@ -41,46 +41,55 @@ export default function CreatorSearchTable(): JSX.Element {
             title: '활동명',
             cellStyle: getCellStyle(isMobile),
             field: 'nickname',
-            render: (rowData) => (
-              <div className={classes.info}>
-                <img
-                  className={classes.platformLogo}
-                  alt="logo"
-                  src={`/images/logo/${rowData.platform}Logo.png`}
-                />
-                <Avatar className={classes.avatar} src={rowData.logo} />
-                <Typography noWrap component="span" className={classes.creatorName}>{rowData.nickname}</Typography>
-              </div>
-            ),
+            render: (rowData) => {
+              const { platform, logo, nickname } = rowData;
+              return (
+                <div className={classes.info}>
+                  <img
+                    className={classes.platformLogo}
+                    alt="logo"
+                    src={`/images/logo/${platform}Logo.png`}
+                  />
+                  <Avatar className={classes.avatar} src={logo} />
+                  <Typography noWrap component="span" className={classes.creatorName}>{nickname}</Typography>
+                </div>
+              );
+            },
           },
           {
             width: '30%',
             align: 'center',
             title: '카테고리',
             cellStyle: getCellStyle(isMobile),
-            render: (rowData) => (
-              <div>
-                {rowData.categories.map((category) => (
-                  <Chip
-                    size={isMobile ? 'small' : 'medium'}
-                    className={classes.categoryChip}
-                    key={category}
-                    label={category}
-                  />
-                ))}
-              </div>
-            ),
+            render: (rowData) => {
+              const { categories } = rowData;
+              return (
+                <div>
+                  {categories.map((category) => (
+                    <Chip
+                      size={isMobile ? 'small' : 'medium'}
+                      className={classes.categoryChip}
+                      key={category}
+                      label={category}
+                    />
+                  ))}
+                </div>
+              );
+            },
           },
           {
             width: '30%',
             align: 'center',
             title: '평점',
             cellStyle: getCellStyle(isMobile),
-            render: (rowData) => (
-              <div>
-                <Rating size={isMobile ? 'small' : 'medium'} defaultValue={rowData.averageRating / 2} precision={0.5} readOnly />
-              </div>
-            ),
+            render: (rowData) => {
+              const { averageRating } = rowData;
+              return (
+                <div>
+                  <Rating size={isMobile ? 'small' : 'medium'} defaultValue={averageRating / 2} precision={0.5} readOnly />
+                </div>
+              );
+            },
           },
         ]}
         data={data || []}

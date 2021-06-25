@@ -1,6 +1,6 @@
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import {
-  Entity, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn,
+  Entity, BaseEntity, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
@@ -19,9 +19,10 @@ import { FeatureSuggestionEntity } from '../../featureSuggestion/entities/featur
 import { FeatureSuggestionReplyEntity } from '../../featureSuggestion/entities/featureSuggestionReply.entity';
 
 @Entity({ name: 'UserTest' })
-export class UserEntity implements User {
+export class UserEntity extends BaseEntity implements User {
   // For Exclude Decorator
   constructor(partial: Partial<UserEntity>) {
+    super();
     Object.assign(this, partial);
   }
 

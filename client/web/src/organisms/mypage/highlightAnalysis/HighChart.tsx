@@ -9,10 +9,8 @@ import THEME_TYPE from '../../../interfaces/ThemeType';
 type MetricsType = 'chat'|'smile'|'funny'|'agree'|'surprise'|'disgust'|'highlight'|'question'
 
 interface DataType {
-  start_date: string;
-  end_date: string;
-  start_index: number;
-  end_index: number;
+  // eslint-disable-next-line camelcase
+  start_date: string; end_date: string; start_index: number; end_index: number;
   score: number
 }
 
@@ -22,8 +20,8 @@ interface ToTalDataType {
 }
 
 interface PointType extends Highcharts.Point {
-  start_index: number;
-  end_index: number
+  // eslint-disable-next-line camelcase
+  start_index: number; end_index: number
 }
 
 interface ChartProps {
@@ -138,6 +136,7 @@ export default function Chart({
       const clickedxAxisData = totalData[highlight.start_index].x;
 
       if (chartxAxisRef && chartDataRef && chartRef) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (chartxAxisRef.min! > clickedxAxisData || clickedxAxisData > chartxAxisRef.max!) {
           chartRef.zoomOut();
         }

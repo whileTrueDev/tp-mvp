@@ -6,6 +6,7 @@ import { CommunityBoardController } from './communityBoard.controller';
 import { CommunityPostEntity } from './entities/community-post.entity';
 import { CommunityReplyEntity } from './entities/community-reply.entity';
 import { UserEntity } from '../users/entities/user.entity';
+
 @Module({
   imports: [TypeOrmModule.forFeature([
     CommunityPostEntity,

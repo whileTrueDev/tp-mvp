@@ -10,6 +10,7 @@ import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.in
 import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 import { CommunityReplyEntity } from './entities/community-reply.entity';
+
 @Injectable()
 export class CommunityReplyService {
   constructor(

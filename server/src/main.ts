@@ -22,7 +22,19 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: '15mb' }));
 
   // helmet
-  app.use(helmet());
+  // app.use(helmet());
+  // adminbro admin page inlinescript 사용위한 설정
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", 'https:', 'data:'],
+      },
+    },
+  }));
 
   // Set morgan Logger
   app.use(colorizedMorgan);

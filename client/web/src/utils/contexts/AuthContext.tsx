@@ -58,7 +58,7 @@ export function useLogin(): AuthContextValue {
     url: '/auth/logout', method: 'POST',
   }, { manual: true });
 
-  function handleLogout(): void{
+  function handleLogout(): void {
     setAccessToken(undefined);
     setUser(defaultUserValue);
     // 백엔드 요청

@@ -41,6 +41,7 @@ export function highlightTerm(rowData: any): string {
   }
 
   const {
+    // eslint-disable-next-line camelcase
     start_date, end_date, start_index, end_index,
   } = rowData;
   const startTime = new Date(start_date);

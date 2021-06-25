@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 import SuggestSet from '../adminSet/SuggestSet';
 
 /*
@@ -21,7 +21,7 @@ interface ReplyModehandler{
   ReplyModeOff: () => void;
   suggestionLoading: any;
   reload: () => void;
-  suggestData: any;
+  suggestData?: FeatureSuggestion[];
   handleReplyModeOff: () => void;
   setSuggestionId: (id: any) => void;
 }

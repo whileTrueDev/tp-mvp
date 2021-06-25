@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -11,10 +12,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
+    "skipLibCheck": true // adminbro/@types/react 와 그냥 react 타입 중복체크하여 발생하는 오류 없애기 위해 적용
   },
   "references": [
     {
       "path": "../shared"
     }
-  ]
+  ],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }
