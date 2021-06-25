@@ -4,7 +4,7 @@ import {
 import React, { useRef } from 'react';
 // import { useSnackbar } from 'notistack';
 // import useAuthContext from '../../../utils/hooks/useAuthContext';
-import { UpdateDialogProps } from './LoginUserProfile';
+import { UpdateDialogProps } from './UpdateUserInfoDialog';
 
 /** 내정보 페이지 프로필 사진 변경시 사용할 다이얼로그.. */
 export function UpdateProfileImageDialog(props: UpdateDialogProps): JSX.Element {

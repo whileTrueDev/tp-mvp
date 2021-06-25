@@ -66,7 +66,6 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     padding: theme.spacing(0, 2),
   },
-
   fullButton: {
     padding: theme.spacing(1), marginTop: theme.spacing(1.5), width: '100%',
   },
