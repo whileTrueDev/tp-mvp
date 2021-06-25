@@ -19,9 +19,9 @@ export const useCreatorCardStyle = makeStyles((theme: Theme) => createStyles({
   },
   card: {
     width: theme.spacing(20),
+    height: theme.spacing(30),
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between',
     alignItems: 'center',
     '&>*': {
       marginBottom: theme.spacing(1),
@@ -78,8 +78,10 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
         </Typography>
         <Avatar src={logo} alt={creatorName} className={classes.avatar} />
         <Typography color="primary">{creatorName}</Typography>
-        <Rating readOnly precision={0.1} value={averageRating ? averageRating / 2 : 0} />
         <Typography>{`${value} ${suffix}`}</Typography>
+        { category === 'rating' && (
+          <Rating readOnly precision={0.1} value={averageRating ? averageRating / 2 : 0} />
+        )}
       </Card>
     </Link>
   );
@@ -93,8 +95,8 @@ export default function FirstPlaceCreators(): JSX.Element {
   const firstPlaces: {category: keyof FirstPlacesRes, headerText: string}[] = [
     { category: 'viewer', headerText: '최고 시청자수 1위' },
     { category: 'rating', headerText: '시청자 평점 1위' },
-    { category: 'smileScore', headerText: '웃음 점수 1위' },
-    { category: 'cussScore', headerText: '욕 점수 1위' },
+    { category: 'smileScore', headerText: '웃음 많은 방송 1위' },
+    { category: 'cussScore', headerText: '욕 많은 방송 1위' },
   ];
   return (
     <div style={{

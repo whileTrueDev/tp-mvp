@@ -25,7 +25,6 @@ export function CarouselSection(): JSX.Element {
         <Carousel
           NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon} />}
           PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon} />}
-          indicators={false}
           animation="slide"
           autoPlay
           interval={5000}
