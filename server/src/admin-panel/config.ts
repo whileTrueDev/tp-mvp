@@ -8,7 +8,7 @@ export const filterOnly = {
   list: false, show: false, edit: true, filter: true,
 };
 export const showOnly = {
-  list: false, show: true, edit: false, filter: true,
+  list: false, show: true, edit: false, filter: false,
 };
 
 type SORT = {

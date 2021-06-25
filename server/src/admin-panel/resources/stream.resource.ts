@@ -4,6 +4,10 @@ import { StreamsEntity } from '../../resources/broadcast-info/entities/streams.e
 const StreamsResource: ResourceWithOptions = {
   resource: StreamsEntity,
   options: {
+    actions: {
+      show: { isVisible: false },
+      list: { isVisible: false },
+    },
     properties: {
       streamId: { isId: true },
       platform: { isId: true },
