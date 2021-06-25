@@ -13,25 +13,24 @@ import { afreecaItemBackgroundColor, CAROUSEL_HEIGHT, twitchItemBackgroundColor 
 export const useCreatorCardStyle = makeStyles((theme: Theme) => createStyles({
   link: {
     '&:not(:last-child)': {
-      marginRight: theme.spacing(4),
+      marginRight: theme.spacing(5),
     },
     textDecoration: 'none',
   },
   card: {
-    width: theme.spacing(20),
-    height: theme.spacing(30),
+    width: theme.spacing(21.25),
+    height: theme.spacing(28),
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    '&>*': {
-      marginBottom: theme.spacing(1),
-    },
+    paddingBottom: theme.spacing(1),
   },
   headerText: {
     width: '100%',
     textAlign: 'center',
     fontWeight: theme.typography.fontWeightBold,
-    padding: theme.spacing(1),
+    padding: theme.spacing(0.5),
     color: theme.palette.primary.contrastText,
     '&.afreeca': {
       backgroundColor: afreecaItemBackgroundColor,
@@ -41,6 +40,7 @@ export const useCreatorCardStyle = makeStyles((theme: Theme) => createStyles({
     },
   },
   avatar: {
+    border: `${theme.spacing(0.5)}px solid ${theme.palette.text.primary}`,
     width: theme.spacing(11),
     height: theme.spacing(11),
   },
@@ -57,6 +57,7 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
   } = props;
   const classes = useCreatorCardStyle();
 
+  // category에 따라 다른 숫자값을 보여준다
   let value: number | string;
   if (category === 'rating') {
     value = props.averageRating || 0;
@@ -70,6 +71,22 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
 
   const suffix = category === 'viewer' ? '명' : '점';
   const logo = afreecaProfileImage || twitchProfileImage || undefined;
+
+  // category에 따라 별점 컴포넌트 혹은 연관 아이콘을 보여준다
+  const displayImage = (currentCategory: keyof Scores): JSX.Element => {
+    switch (currentCategory) {
+      case 'rating':
+        return <Rating size="small" readOnly precision={0.1} value={averageRating ? averageRating / 2 : 0} />;
+      case 'smileScore':
+        return <img src="/images/rankingPage/smile_icon.png" width="34" height="30" alt="웃는아이콘" />;
+      case 'cussScore':
+        return <img src="/images/rankingPage/angry_icon.png" width="34" height="30" alt="화난아이콘" />;
+      case 'viewer':
+        return <img src="/images/rankingPage/person_icon.png" width="34" height="30" alt="사람아이콘" />;
+      default:
+        return <div />;
+    }
+  };
   return (
     <Link to={`/ranking/creator/${creatorId}`} className={classes.link}>
       <Card className={classes.card} elevation={4}>
@@ -78,10 +95,8 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
         </Typography>
         <Avatar src={logo} alt={creatorName} className={classes.avatar} />
         <Typography color="primary">{creatorName}</Typography>
+        {displayImage(category)}
         <Typography>{`${value} ${suffix}`}</Typography>
-        { category === 'rating' && (
-          <Rating readOnly precision={0.1} value={averageRating ? averageRating / 2 : 0} />
-        )}
       </Card>
     </Link>
   );
