@@ -189,9 +189,9 @@ export class UsersController {
   @Patch('/nickname')
   @UseGuards(JwtAuthGuard)
   async changeNickname(
-      @Body() { userId, nickname }: {userId: string, nickname: string},
+      @Body() { userId, nickName }: {userId: string, nickName: string},
   ): Promise<boolean> {
-    return this.usersService.changeNickname(userId, nickname);
+    return this.usersService.changeNickname(userId, nickName);
   }
 
   /*

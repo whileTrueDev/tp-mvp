@@ -1,13 +1,39 @@
 import React, { useRef, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { Button, TextField, Typography } from '@material-ui/core';
 import classnames from 'classnames';
 import TruepointLogo from '../../atoms/TruepointLogo';
-import { useStyles } from '../../organisms/mainpage/login/FindIdForm';
 import LoginHelper from '../../atoms/LoginHelper';
 import axios from '../../utils/axios';
 import RegularButton from '../../atoms/Button/Button';
 import { LOGIN_PAGE_LOGO_SIZE } from '../../assets/constants';
+
+const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  box: {
+    padding: `${theme.spacing(4)}px ${theme.spacing(4)}px`,
+    maxWidth: 500,
+    border: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  subcontent: { marginTop: theme.spacing(1) },
+  content: { width: '100%', marginTop: theme.spacing(2) },
+  selectButton: { width: '100%', padding: 16, borderBottom: `1px solid ${theme.palette.divider}` },
+  fullButton: {
+    padding: theme.spacing(1), marginTop: theme.spacing(1.5), width: '100%',
+  },
+  inputField: { width: '100%' },
+  helper: { marginTop: 32, minWidth: 300, maxWidth: 500 },
+}));
 
 export default function GetTemporaryPassword(): JSX.Element {
   const classes = useStyles();
