@@ -4,7 +4,6 @@ import Carousel from 'react-material-ui-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { useCarouselStyle, useRankingPageLayout } from './style/RankingPage.style';
-// import FooterDecoration from './sub/FooterDecoration';
 import TopTenCard from './ToptenCard';
 import RatingsList from './RatingsList';
 import UserReactionCard from './UserReactionCard';
@@ -23,13 +22,20 @@ export function CarouselSection(): JSX.Element {
     <div className={wrapper.top}>
       <Container className={wrapper.container}>
         <Carousel
-          NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon} />}
-          PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon} />}
-          indicators={false}
+          NextIcon={<ArrowForwardIosIcon className={carousel.buttonIcon} />}
+          PrevIcon={<ArrowBackIosIcon className={carousel.buttonIcon} />}
           animation="slide"
+          indicators={false}
           autoPlay
           interval={5000}
-          navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
+          navButtonsProps={{
+            style: {
+              backgroundColor: 'transparent',
+              transform: 'translateY(-1rem)',
+              opacity: 0.8,
+            },
+            className: 'carousel-button',
+          }}
         >
           <FirstPlaceCreators />
           <SearchGuideBannerSlide />
