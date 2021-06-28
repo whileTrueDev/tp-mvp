@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
+import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 // organisms
 import useAxios from 'axios-hooks';
 import ReplyWrite from './writer/ReplyWrite';
@@ -37,11 +38,11 @@ export default function ReplySet(data: dataprops): JSX.Element {
   // 공지사항 선택을 위한 State
   // useState<NoticeData> 제네릭타입 //
   const { suggestionId } = data;
-  const [{ loading: replyLoading, data: replyData }, reload] = useAxios(
+  const [{ loading: replyLoading, data: replyData }, reload] = useAxios<FeatureSuggestionReply[]>(
     { url: '/feature-suggestion/reply', method: 'GET', params: { id: suggestionId } },
   );
 
-  const [selectedData, setSelectedData] = React.useState<any>();
+  const [selectedData, setSelectedData] = React.useState<FeatureSuggestionReply>();
   const [replyeditMode, setEditMode] = React.useState(false);
 
   function handleReload() {

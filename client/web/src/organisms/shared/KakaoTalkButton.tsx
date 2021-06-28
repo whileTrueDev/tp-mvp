@@ -14,8 +14,8 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 200,
   },
   kakaoImg: {
-    width: 50,
-    height: 50,
+    width: 80,
+    height: 80,
     [theme.breakpoints.down('sm')]: {
       width: 40, height: 40,
     },
@@ -31,7 +31,7 @@ function KakaoTalk(): JSX.Element {
   return (
     <Button className={classes.root} onClick={moveToTalk}>
       <Tooltip title="카카오톡 채팅 문의하기" placement="top">
-        <img src="/images/favicon/kakaoIcon.png" alt="" className={classes.kakaoImg} />
+        <img src="/images/main/inquiryButtonIcon.svg" alt="카카오톡 문의하기" className={classes.kakaoImg} />
       </Tooltip>
     </Button>
   );

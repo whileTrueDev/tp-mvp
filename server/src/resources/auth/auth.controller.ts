@@ -8,16 +8,16 @@ import {
   Req, Request,
   Res,
   UseFilters,
-  // UseGuards,
+  UseGuards,
 } from '@nestjs/common';
 import { CheckCertificationDto } from '@truepoint/shared/dist/dto/auth/checkCertification.dto';
 import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import express from 'express';
-// 가드 임시 주석처리
-// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-// import { LocalAuthGuard } from '../../guards/local-auth.guard';
-// import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
-// import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { LocalAuthGuard } from '../../guards/local-auth.guard';
+import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
+import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import {
   LogedInExpressRequest, UserLoginPayload,
@@ -27,19 +27,64 @@ import getFrontHost from '../../utils/getFrontHost';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from '../users/entities/platformYoutube.entity';
 import { UsersService } from '../users/users.service';
-import { AuthService } from './auth.service';
+import { AuthService, NaverUserInfo, KakaoUserInfo } from './auth.service';
 import { AfreecaLinkExceptionFilter } from './filters/afreeca-link.filter';
 import { TwitchLinkExceptionFilter } from './filters/twitch-link.filter';
 import { YoutubeLinkExceptionFilter } from './filters/youtube-link.filter';
 import { AfreecaLinker } from './strategies/afreeca.linker';
+import { EmailVerificationService } from './emailVerification.service';
 
+interface NaverCallbackRequest extends express.Request{
+  user: NaverUserInfo;
+}
+interface kakaoCallbackRequest extends express.Request{
+  user: KakaoUserInfo;
+}
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
     private readonly afreecaLinker: AfreecaLinker,
+    private readonly emailVerificationService: EmailVerificationService,
   ) {}
+
+  /**------------------------------------------------------------*/
+  // 이메일 본인 인증 코드(회원가입용) 요청
+  @Get('email/code')
+  async sendVerificationCode(
+    @Query('email') email: string,
+  ): Promise<any> {
+    return this.emailVerificationService.sendVerificationCodeMail(email);
+  }
+
+  // 이메일로 받은 본인인증코드 확인
+  @Get('email/code/verify')
+  async checkVerificationCode(
+    @Query('email') email: string,
+    @Query('code') code: string,
+  ): Promise<any> {
+    return this.emailVerificationService.checkVerificationCode(email, code);
+  }
+
+  // 이메일로 임시 비밀번호 발급 && 회원 비밀번호를 임시 비밀번호로 수정
+  @Get('email/temporary-password')
+  async sendTemporaryPassword(
+    @Query('email') email: string,
+    @Query('id') id: string,
+  ): Promise<any> {
+    // 임시 비밀번호 생성
+    const tempPassword = this.authService.createTempPassword();
+    // 이메일로 임시 비밀번호 전송
+    const emailSent = await this.emailVerificationService.sendTemporaryPassword(email, tempPassword);
+
+    // 이메일 코드 인증으로 가입한 유저의 userDI는 userId_mail의 형태로 저장하고 있음(RegistStepper.tsx)
+    const userDI = `${id}_${email}`;
+    // 유저 비밀번호를 임시 비밀번호로 변경하여 저장
+    const passwordChanged = await this.usersService.updatePW(userDI, tempPassword);
+    return emailSent && passwordChanged;
+  }
+  /**------------------------------------------------------------*/
 
   @Post('logout')
   async logout(
@@ -53,7 +98,7 @@ export class AuthController {
   }
 
   // 로그인 컨트롤러
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(
     @Body('stayLogedIn') stayLogedIn: boolean,
@@ -69,9 +114,9 @@ export class AuthController {
     // 연동된 플랫폼(아/트/유) 유저 정보 최신화 작업
 
     // 아프리카의 경우 아직 Profile Data를 제공하지 않아 불가능. 2020.12.08 @by hwasurr
-    // if (user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
-    if (user.twitch.twitchId) this.usersService.refreshTwitchInfo(user.twitch.twitchId);
-    if (user.youtube.youtubeId) this.usersService.refreshYoutubeInfo(user.youtube.youtubeId);
+    // if (user.afreeca && user.afreecaId) this.usersService.refreshAfreecaInfo(user.afreecaId);
+    if (user.twitch && user.twitch.twitchId) this.usersService.refreshTwitchInfo(user.twitch.twitchId);
+    if (user.youtube && user.youtube.youtubeId) this.usersService.refreshYoutubeInfo(user.youtube.youtubeId);
 
     // Set-Cookie 헤더로 refresh_token을 담은 HTTP Only 쿠키를 클라이언트에 심는다.
     res.cookie('refresh_token', refreshToken, { httpOnly: true });
@@ -84,7 +129,7 @@ export class AuthController {
    * @param req 로그인 user 정보를 포함한 요청 객체
    * @param password 패스워드 plain 문자열
    */
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('check-pw')
   async checkPw(
     @Req() req: LogedInExpressRequest,
@@ -137,7 +182,7 @@ export class AuthController {
    * @param id 연동하는 플랫폼의 고유 아이디
    */
   @Post('link')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async platformLink(
     @Req() req: LogedInExpressRequest,
     @Body('platform') platform: string, @Body('id') id: string,
@@ -154,7 +199,7 @@ export class AuthController {
    * @param platform 연동 제거할 플랫폼 문자열 twitch|youtube|afreeca 셋 중 하나.
    */
   @Delete('link')
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async deletePlatformLink(
     @Req() req: LogedInExpressRequest, @Body('platform') platform: string,
   ): Promise<string> {
@@ -170,14 +215,14 @@ export class AuthController {
   // *********** Twitch ******************
   // Twitch Link start
   @Get('twitch')
-  // @UseGuards(TwitchLinkGuard)
+  @UseGuards(TwitchLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   twitch(): void {}
 
   // Twitch oauth Callback url
   @Get('twitch/callback')
   @UseFilters(TwitchLinkExceptionFilter)
-  // @UseGuards(TwitchLinkGuard)
+  @UseGuards(TwitchLinkGuard)
   twitchCallback(
     @Req() req: express.Request,
     @Res() res: express.Response,
@@ -191,13 +236,13 @@ export class AuthController {
   // *********** Youtube ******************
   // Youtube link start
   @Get('youtube')
-  // @UseGuards(YoutubeLinkGuard)
+  @UseGuards(YoutubeLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   youtube(): void {}
 
   @Get('youtube/callback')
   @UseFilters(YoutubeLinkExceptionFilter)
-  // @UseGuards(YoutubeLinkGuard)
+  @UseGuards(YoutubeLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   youtubeCallback(
     @Req() req: express.Request,
@@ -269,5 +314,60 @@ export class AuthController {
       .catch((err) => {
         throw new Error(`${err.message}&platform=afreeca`);
       });
+  }
+
+  // *********** naver ******************
+  // 네이버 로그인
+  @Get('naver')
+  @UseGuards(AuthGuard('naver'))
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  naver(): void {}
+
+  @Get('naver/callback')
+  @UseGuards(AuthGuard('naver'))
+  async naverCallback(
+    @Req() req: NaverCallbackRequest,
+    @Res() res: express.Response,
+  ): Promise<any> {
+    const { user } = req;
+    const {
+      // user: userLoggedIn, 
+      // accessToken, 
+      refreshToken,
+    } = await this.authService.naverLogin(user);
+
+    res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    res.redirect(`${getFrontHost()}/mypage/main`);
+  }
+
+  // *********** kakao ******************
+  // 카카오 로그인
+  @Get('kakao')
+  @UseGuards(AuthGuard('kakao'))
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  kakao(): void {}
+
+  @Get('kakao/callback')
+  @UseGuards(AuthGuard('kakao'))
+  async kakaoCallback(
+    @Req() req: kakaoCallbackRequest,
+    @Res() res: express.Response,
+  ): Promise<void> {
+    const { user } = req;
+    const {
+      refreshToken,
+    } = await this.authService.kakaoLogin(user);
+
+    res.cookie('refresh_token', refreshToken, { httpOnly: true });
+    res.redirect(`${getFrontHost()}/mypage/main`);
+  }
+
+  // admin page 로그인
+  @Post('adminLogin')
+  adminLogin(
+    @Body('userId') userId: string,
+    @Body('password') password: string,
+  ): Promise<boolean> {
+    return this.authService.validateAdmin(userId, password);
   }
 }

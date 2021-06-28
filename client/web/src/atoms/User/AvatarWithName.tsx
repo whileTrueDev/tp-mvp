@@ -24,7 +24,7 @@ AvatarWithName을 위한 props입니다.
 **********************************************************************************
  */
 export interface AvatarWithNameProps {
- logo: string, name: string
+ logo: string, name: string, size?: number
 }
 
 /*
@@ -36,18 +36,15 @@ avatar를 보여주는 컴포넌트입니다.
  */
 export default function AvatarWithName(props: AvatarWithNameProps): JSX.Element {
   const classes = useStyles();
-  const { logo, name } = props;
+  const { logo, name, size } = props;
   return (
     <div className={classes.root}>
-      {logo ? (
-        <Avatar alt={`${name}_logo`} src={logo} className={classes.logoImg} />
-      ) : (
-        <Avatar
-          className={classes.logoImg}
-        >
-          {name && name.slice(0, 2)}
-        </Avatar>
-      )}
+      <Avatar
+        style={size ? { width: size, height: size } : {}}
+        alt={`${name}_logo`}
+        src={logo}
+        className={classes.logoImg}
+      />
       <Typography variant="subtitle1">{name}</Typography>
     </div>
   );

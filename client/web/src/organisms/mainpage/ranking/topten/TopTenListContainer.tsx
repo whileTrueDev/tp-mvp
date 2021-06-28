@@ -17,7 +17,7 @@ export interface TopTenListProps{
   currentTab: 'smile' |'frustrate'|'cuss'|'admire'|'viewer'|'rating', // 'smile'|'frustrate'|'cuss'|'admire',
   data: undefined | RankingDataType,
   loading?: boolean,
-  tabChanging? : boolean,
+  tabChanging?: boolean,
   weeklyGraphLabel?: string
   error?: AxiosError<any> | undefined
 }

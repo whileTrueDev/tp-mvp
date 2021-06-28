@@ -6,6 +6,7 @@ import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { RankingsEntity } from '../rankings/entities/rankings.entity';
+
 @Module({
   imports: [TypeOrmModule.forFeature([
     CreatorRatingsEntity,
@@ -14,5 +15,6 @@ import { RankingsEntity } from '../rankings/entities/rankings.entity';
   ])],
   controllers: [CreatorRatingsController],
   providers: [CreatorRatingsService],
+  exports: [CreatorRatingsService],
 })
 export class CreatorRatingsModule {}

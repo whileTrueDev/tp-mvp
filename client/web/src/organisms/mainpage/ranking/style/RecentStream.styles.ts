@@ -12,10 +12,6 @@ const useRecentStreamStyles = makeStyles((theme) => ({
   },
   itembox: {
     height: sectionHeight,
-    display: 'flex',
-    justifyContent: 'space-around',
-    padding: theme.spacing(2),
-    flexDirection: 'column',
     [theme.breakpoints.down('sm')]: {
       marginLeft: theme.spacing(1),
     },
@@ -57,9 +53,11 @@ const useRecentStreamStyles = makeStyles((theme) => ({
     '&>*': {
       marginRight: theme.spacing(1),
     },
+    marginTop: theme.spacing(3.5),
     [theme.breakpoints.down('sm')]: {
       backgroundColor: theme.palette.divider,
       marginBottom: theme.spacing(0.25),
+      marginTop: theme.spacing(0),
       padding: theme.spacing(0.5, 1),
       '&>*': {
         marginRight: 0,

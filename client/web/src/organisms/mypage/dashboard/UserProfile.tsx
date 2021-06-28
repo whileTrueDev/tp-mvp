@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import classnames from 'classnames';
 import {
-  Avatar, Chip, CircularProgress, Paper, Typography,
+  Avatar, CircularProgress, Paper, Typography,
 } from '@material-ui/core';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
@@ -11,10 +10,11 @@ import useAxios from 'axios-hooks';
 import useDialog from '../../../utils/hooks/useDialog';
 import MainDialog from './MainDialog';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
 
-const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles((theme) => ({
   container: {
-    padding: theme.spacing(2), display: 'flex', alignItems: 'center',
+    padding: theme.spacing(2), display: 'flex', alignItems: 'center', position: 'relative',
   },
   loading: {
     display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -30,8 +30,9 @@ const useStyles = makeStyles((theme) => ({
 export default function UserProfile(): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
+  const { user } = usePublicMainUser((state) => state);
   const [profileRequestObject, refetch] = useAxios<User>({
-    url: 'users', method: 'GET', params: { userId: auth.user.userId },
+    url: 'users', method: 'GET', params: { userId: user.userId || auth.user.userId },
   });
 
   const { open, handleOpen, handleClose } = useDialog();
@@ -93,10 +94,10 @@ export default function UserProfile(): JSX.Element {
             )}
 
             {/* 요금제 */}
-            <div className={classnames(classes.flexBox, classes.secondSection)}>
+            {/* <div className={classnames(classes.flexBox, classes.secondSection)}>
               <Typography className={classes.bold} variant="body1">요금제</Typography>
               <Chip label="클로즈베타 테스터" size="small" color="primary" className={classes.userTier} />
-            </div>
+            </div> */}
 
             {/* 클로즈베타 처리 - 잠시 제거 */}
             {/* <Typography className={classes.text} variant="body1" color="primary" paragraph>

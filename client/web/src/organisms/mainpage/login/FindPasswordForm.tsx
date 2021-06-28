@@ -4,6 +4,7 @@ import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
@@ -125,7 +126,7 @@ export default function FindAccountForm(): JSX.Element {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <TruepointLogo width={350} />
+      <TruepointLogo width={LOGIN_PAGE_LOGO_SIZE} />
       {helperText && (
         <div className={classes.helper}>
           <LoginHelper text={helperText} />
@@ -163,6 +164,7 @@ export default function FindAccountForm(): JSX.Element {
 
         <form className={classes.content} onSubmit={handleSubmit}>
           <PasswordTextField
+            variant="outlined"
             label="비밀번호"
             inputRef={passwordRef}
             autoComplete="off"
@@ -170,6 +172,7 @@ export default function FindAccountForm(): JSX.Element {
             inputProps={{ required: true, minLength: 8 }}
           />
           <PasswordTextField
+            variant="outlined"
             label="비밀번호 확인"
             inputRef={passwordConfirmRef}
             autoComplete="off"

@@ -80,8 +80,8 @@ const styles = makeStyles((theme) => ({
 export interface InitialPoint {
   startTime: string
   endTime: string
-  start_index: string
-  end_index: string
+  // eslint-disable-next-line camelcase
+  start_index: string; end_index: string;
   score: string
   index: number
 }

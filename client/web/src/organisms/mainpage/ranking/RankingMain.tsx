@@ -4,7 +4,6 @@ import Carousel from 'react-material-ui-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { useCarouselStyle, useRankingPageLayout } from './style/RankingPage.style';
-// import FooterDecoration from './sub/FooterDecoration';
 import TopTenCard from './ToptenCard';
 import RatingsList from './RatingsList';
 import UserReactionCard from './UserReactionCard';
@@ -13,21 +12,34 @@ import WeeklyLineCard from './WeeklyLineCard';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
 import PageTitle from '../shared/PageTitle';
+import FirstPlaceCreators from './sub/FirstPlaceCreators';
+import RankingPageCommonLayout from './RankingPageCommonLayout';
+import RatingGuideBannerSlide from './sub/RatingGuideBannerSlide';
 
 export function CarouselSection(): JSX.Element {
   const carousel = useCarouselStyle();
   const wrapper = useRankingPageLayout();
   return (
     <div className={wrapper.top}>
-      <Container className={wrapper.container}>
+      <Container className={wrapper.container} style={{ maxWidth: 1074, padding: 0 }}>
         <Carousel
-          NextIcon={<ArrowForwardIosIcon color="primary" className={carousel.buttonIcon} />}
-          PrevIcon={<ArrowBackIosIcon color="primary" className={carousel.buttonIcon} />}
-          indicators={false}
+          NextIcon={<ArrowForwardIosIcon className={carousel.buttonIcon} />}
+          PrevIcon={<ArrowBackIosIcon className={carousel.buttonIcon} />}
           animation="slide"
-          autoPlay={false}
-          navButtonsProps={{ style: { backgroundColor: 'transparent', transform: 'translateY(-2rem)' }, className: 'carousel-button' }}
+          indicators={false}
+          autoPlay
+          interval={5000}
+          navButtonsProps={{
+            style: {
+              backgroundColor: 'transparent',
+              transform: 'translateY(-1rem)',
+              opacity: 0.8,
+            },
+            className: 'carousel-button',
+          }}
         >
+          <FirstPlaceCreators />
+          <RatingGuideBannerSlide />
           <SearchGuideBannerSlide />
           <ViewerComparisonPolarAreaCard />
           <WeeklyLineCard />
@@ -40,9 +52,8 @@ export function CarouselSection(): JSX.Element {
 export default function RankingMain(): JSX.Element {
   const wrapper = useRankingPageLayout();
   const { isMobile } = useMediaSize();
-  // const footerDecoration = useMemo(() => <FooterDecoration />, []);
   return (
-    <div>
+    <RankingPageCommonLayout>
       {!isMobile && <CarouselSection />}
       <PageTitle text="인방랭킹" />
 
@@ -59,7 +70,6 @@ export default function RankingMain(): JSX.Element {
         </Grid>
       </Container>
 
-      {/* {!isMobile && footerDecoration} */}
-    </div>
+    </RankingPageCommonLayout>
   );
 }

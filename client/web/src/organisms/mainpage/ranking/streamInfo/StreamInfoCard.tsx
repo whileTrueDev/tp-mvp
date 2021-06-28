@@ -1,5 +1,5 @@
 import {
-  Avatar, Button, Grid, Typography, useTheme,
+  Avatar, Grid, Typography, useTheme,
 } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -7,23 +7,26 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { RecentStream } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import React, { useMemo } from 'react';
 import VoteButton from '../../../../atoms/Button/VoteButton';
+import { ScoresSection } from '../../shared/ScoresSection';
 import { useProfileSectionStyles, useCreatorInfoCardStyles } from '../style/CreatorInfoCard.style';
 
 const useStyles = makeStyles((theme: Theme) => ({
   linkText: {
     cursor: 'pointer',
+    color: theme.palette.secondary.dark,
     '&:hover': {
       textDecoration: 'underline',
     },
   },
   streamTitle: {
-    fontSize: theme.typography.h5.fontSize,
+    fontSize: theme.typography.h6.fontSize,
     fontWeight: theme.typography.fontWeightBold,
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.typography.subtitle1.fontSize,
+      fontSize: theme.typography.subtitle2.fontSize,
     },
   },
   contents: {
+    marginLeft: theme.spacing(1),
     '&>*': {
       fontSize: theme.typography.body2.fontSize,
       [theme.breakpoints.down('sm')]: {
@@ -31,10 +34,34 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
     },
   },
+  contentsHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: theme.spacing(0.5),
+    fontSize: theme.typography.body2.fontSize,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.25),
+    },
+  },
+  contentsValue: {
+    [theme.breakpoints.up('sm')]: {
+      display: 'flex',
+      alignItems: 'center',
+      fontWeight: 500,
+    },
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.25),
+    },
+  },
+  right: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
 }));
 
 interface StreamInfoCardProps {
-  creator: User;
+  creator?: User;
   stream?: RecentStream;
   loading?: boolean;
   onUpVote: () => Promise<void>;
@@ -69,75 +96,97 @@ export default function StreamInfoCard({
     </>
   ), []);
 
-  const twitchUrl = useMemo(() => (creator.twitch ? `https://twitch.tv/${creator.twitch.twitchChannelName}` : ''), [creator.twitch]);
-  const afreecaUrl = useMemo(() => (creator.afreeca ? `https://bj.afreecatv.com/${creator.afreeca.afreecaId}` : ''), [creator.afreeca]);
+  const twitchUrl = useMemo(() => (creator && creator.twitch ? `https://twitch.tv/${creator.twitch.twitchChannelName}` : ''), [creator]);
+  const afreecaUrl = useMemo(() => (creator && creator.afreeca ? `https://bj.afreecatv.com/${creator.afreeca.afreecaId}` : ''), [creator]);
 
   const handleChannelClick = (url: string) => {
     window.open(url, '_blank');
   };
 
+  const isVoted = stream?.voteHistory?.type;
+  const cancelUpVote = () => {
+    if (stream && stream.voteHistory && stream.voteHistory.type === 'up') onVoteCancel(stream.voteHistory.id);
+  };
+  const cancelDownVote = () => {
+    if (stream && stream.voteHistory && stream.voteHistory.type === 'down') onVoteCancel(stream.voteHistory.id);
+  };
+
   return (
     <Grid container className={cardClasses.left}>
-      <Grid container item xs={12} md={9} justify="space-around" alignItems="center">
-        <Grid item xs={3} sm={4} className={classes.avatarContainer}>
-          <Avatar className={classes.avatar} src={creator.afreeca?.logo || creator.twitch?.logo || ''} />
+      <Grid container item xs={12} md={12} justify="space-around" alignItems="center">
+        <Grid item xs={3} sm={2} className={classes.avatarContainer}>
+          <Avatar className={classes.avatar} src={creator ? (creator.afreeca?.logo || creator.twitch?.logo) : ''} />
         </Grid>
-        <Grid item xs={9} sm={8} container direction="column" spacing={2} alignItems="flex-start" justify="flex-start">
-          {(loading && !stream)
-            ? (loadingView)
-            : stream && (
-              <>
-                <Grid item>
-                  <Typography className={streamInfoCardClasses.streamTitle}>{stream.title}</Typography>
-                </Grid>
-                <Grid item className={streamInfoCardClasses.contents}>
-                  <Typography>{`${stream.startDate} ~ ${stream.endDate}`}</Typography>
-                  <Typography>{`최고 시청자수 ${stream.viewer ? stream.viewer.toLocaleString() : 0} 명`}</Typography>
-                  <Typography>{`채팅 발생량 ${stream.chatCount ? stream.chatCount.toLocaleString() : 0} 회`}</Typography>
-                  {creator.twitch && twitchUrl && (
-                  <Typography className={streamInfoCardClasses.linkText} onClick={() => handleChannelClick(twitchUrl)}>
-                    <img alt="트위치" src="/images/logo/twitchLogo.png" className={cardClasses.logo} />
-                    {twitchUrl}
-                  </Typography>
-                  )}
-                  {creator.afreeca && afreecaUrl && (
-                  <Typography className={streamInfoCardClasses.linkText} onClick={() => handleChannelClick(afreecaUrl)}>
-                    <img alt="아프리카" src="/images/logo/afreecaLogo.png" className={cardClasses.logo} />
-                    {afreecaUrl}
-                  </Typography>
-                  )}
-                </Grid>
-                <Grid item>
-                  <VoteButton
-                    type="up"
-                    value={stream.likeCount}
-                    size={theme.spacing(6)}
-                    isVoted={stream?.voteHistory?.type}
-                    onClick={() => onUpVote()}
-                    onCancel={() => {
-                      if (stream?.voteHistory && stream?.voteHistory.type === 'up') onVoteCancel(stream?.voteHistory.id);
-                    }}
-                  />
-                  <VoteButton
-                    type="down"
-                    value={stream.hateCount}
-                    size={theme.spacing(6)}
-                    isVoted={stream?.voteHistory?.type}
-                    onClick={() => onDownVote()}
-                    onCancel={() => {
-                      if (stream?.voteHistory && stream?.voteHistory.type === 'down') onVoteCancel(stream?.voteHistory.id);
-                    }}
-                  />
-                </Grid>
-              </>
-            )}
-          {!loading && !stream && (
-          <Grid item>
-            <Typography>죄송합니다. 방송 데이터를 불러올 수 없습니다.</Typography>
-            <Button variant="contained">돌아가기</Button>
-          </Grid>
-          )}
+        {!loading && !stream?.streamId && (
+        <Grid item>
+          <Typography>죄송합니다. 방송 데이터를 불러올 수 없습니다.</Typography>
         </Grid>
+        )}
+        {(loading && !stream && !creator)
+          ? (loadingView)
+          : stream?.streamId && creator && (
+          <>
+            <Grid item xs={9} sm={5} container direction="column" spacing={1} alignItems="flex-start" justify="center">
+              <Grid item>
+                <Typography className={streamInfoCardClasses.streamTitle}>{stream.title}</Typography>
+              </Grid>
+              <Grid item className={streamInfoCardClasses.contents}>
+                <Typography>{`${stream.startDate} ~ ${stream.endDate}`}</Typography>
+                <Grid container direction="row">
+                  <Typography className={streamInfoCardClasses.contentsHeader}>
+                    최고 시청자수
+                  </Typography>
+                  <Typography className={streamInfoCardClasses.contentsValue}>
+                    {`${stream.viewer ? stream.viewer.toLocaleString() : 0}명`}
+                  </Typography>
+                </Grid>
+                <Grid container direction="row">
+                  <Typography className={streamInfoCardClasses.contentsHeader}>
+                    채팅 발생량
+                    {' '}
+                  </Typography>
+                  <Typography className={streamInfoCardClasses.contentsValue}>
+                    {`${stream.chatCount ? stream.chatCount.toLocaleString() : 0}회`}
+                  </Typography>
+                </Grid>
+                {creator.twitch && twitchUrl && (
+                <Typography className={streamInfoCardClasses.linkText} onClick={() => handleChannelClick(twitchUrl)}>
+                  <img alt="트위치" src="/images/logo/twitchLogo.png" className={cardClasses.logo} />
+                  {twitchUrl}
+                </Typography>
+                )}
+                {creator.afreeca && afreecaUrl && (
+                <Typography className={streamInfoCardClasses.linkText} onClick={() => handleChannelClick(afreecaUrl)}>
+                  <img alt="아프리카" src="/images/logo/afreecaLogo.png" className={cardClasses.logo} />
+                  {afreecaUrl}
+                </Typography>
+                )}
+              </Grid>
+              <Grid item>
+                <VoteButton
+                  type="up"
+                  value={stream.likeCount}
+                  size={theme.spacing(4)}
+                  isVoted={isVoted}
+                  onClick={() => onUpVote()}
+                  onCancel={cancelUpVote}
+                />
+                <VoteButton
+                  type="down"
+                  value={stream.hateCount}
+                  size={theme.spacing(4)}
+                  isVoted={isVoted}
+                  onClick={() => onDownVote()}
+                  onCancel={cancelDownVote}
+                />
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={5} container direction="column" spacing={1} className={streamInfoCardClasses.right}>
+              <ScoresSection scores={stream.scores} />
+            </Grid>
+          </>
+          // eslint-disable-next-line indent
+        )}
       </Grid>
     </Grid>
   );

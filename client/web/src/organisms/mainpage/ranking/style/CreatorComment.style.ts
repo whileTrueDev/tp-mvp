@@ -7,6 +7,11 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
       position: 'relative',
       padding: theme.spacing(0.5, 1, 0, 1),
       '& .time': { fontSize: theme.spacing(1.25) },
+      '& .nickname': {
+        [theme.breakpoints.down('sm')]: {
+          fontSize: theme.typography.caption.fontSize,
+        },
+      },
       '&:not(:first-child)': {
         borderTop: `1px solid ${theme.palette.divider}`,
       },
@@ -14,6 +19,7 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
         marginLeft: theme.spacing(6),
         paddingLeft: theme.spacing(4),
         paddingRight: 0,
+        paddingBottom: theme.spacing(1),
         borderTop: `1px solid ${theme.palette.divider}`,
         [theme.breakpoints.down('sm')]: {
           marginLeft: theme.spacing(2),
@@ -38,32 +44,22 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     },
     userInfo: {
       display: 'flex',
+      alignItems: 'center',
       '&>*': {
         marginRight: theme.spacing(1),
       },
-      header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+      '& .nickname': {
+        fontSize: theme.typography.body2.fontSize,
+        fontWeight: theme.typography.fontWeightMedium,
       },
-      userInfo: {
-        display: 'flex',
-        '&>*': {
-          marginRight: theme.spacing(1),
-        },
-        '& .nickname': {
-          fontSize: theme.typography.body2.fontSize,
-          fontWeight: theme.typography.fontWeightMedium,
-        },
-        '& .userId': {
-          fontSize: theme.spacing(0.75),
-          color: theme.palette.text.secondary,
-        },
+      '& .userId': {
+        fontSize: theme.spacing(0.75),
+        color: theme.palette.text.secondary,
       },
     },
     smallAvatar: {
-      width: theme.spacing(1.75),
-      height: theme.spacing(1.75),
+      width: theme.spacing(2),
+      height: theme.spacing(2),
     },
     largeAvatar: {
       width: theme.spacing(7),

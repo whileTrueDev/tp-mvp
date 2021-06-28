@@ -1,16 +1,17 @@
 import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn, BaseEntity,
 } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { FeatureSuggestionEntity } from './featureSuggestion.entity';
 
 @Entity({ name: 'FeatureSuggestionReplyTest' })
-export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
+export class FeatureSuggestionReplyEntity extends BaseEntity implements FeatureSuggestionReply {
   @PrimaryGeneratedColumn()
   replyId: number;
 
   @JoinColumn({ name: 'suggestionId' })
+  @Column()
   @ManyToOne((type) => FeatureSuggestionEntity, (fs) => fs.replies, { onDelete: 'CASCADE' })
   suggestionId: number;
 
@@ -18,7 +19,7 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   content: string;
 
   @JoinColumn({ name: 'author' })
-  @ManyToOne((type) => UserEntity, (user) => user.userId)
+  @ManyToOne((type) => UserEntity, (user) => user.featureSuggestionReplies, { nullable: true, onDelete: 'CASCADE' })
   author: UserEntity;
 
   @Column({ comment: '작성자 Ip' })
@@ -28,6 +29,7 @@ export class FeatureSuggestionReplyEntity implements FeatureSuggestionReply {
   createdAt: Date;
 
   constructor(partial: Partial<FeatureSuggestionReplyEntity>) {
+    super();
     Object.assign(this, partial);
   }
 }

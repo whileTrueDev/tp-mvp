@@ -5,7 +5,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'CreatorRatingsTest2' })
-@Unique('UX_creatorId_userIp', ['creatorId', 'userIp', 'userId'])
+@Unique('UX_creatorId_userId', ['creatorId', 'userId'])
 export class CreatorRatingsEntity implements CreatorRatings {
   constructor(partial: Partial<CreatorRatingsEntity>) {
     Object.assign(this, partial);

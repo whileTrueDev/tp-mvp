@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Typography, Paper, Divider, Button, Grid, Table,
 } from '@material-ui/core';
+import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
 
 import { Viewer } from '@toast-ui/react-editor';
 import StatusChangeButton from '../../suggest/StatusChangeButton';
@@ -20,7 +21,7 @@ handleReload: 글 목록 게시글에 변경사항이 있을경우 리 렌더링
 ****************************************************************************************
 */
 interface Props {
-  selectedData: any;
+  selectedData: FeatureSuggestion;
   ReplyModeOn: () => void;
   ReplyModeOff: () => void;
   ReplyPostModeOff: () => void;
@@ -58,6 +59,15 @@ export default function SuggestPreview(props: Props): JSX.Element {
     }
   }
 
+  let authorDisplay: string;
+  const { author, userIp } = selectedData;
+  if (author) {
+    const { userId, nickName } = author;
+    authorDisplay = `${userId} ${nickName}`;
+  } else {
+    authorDisplay = `${userIp}`;
+  }
+
   return (
 
     <Paper>
@@ -70,7 +80,7 @@ export default function SuggestPreview(props: Props): JSX.Element {
         }}
         >
           <Table size="small">
-            <CostomTableRow title="작성자" data={`${selectedData.author.userId} ${selectedData.author.nickName ? `(${selectedData.author.nickName})` : ''}`} />
+            <CostomTableRow title="작성자" data={`${authorDisplay}`} />
             <CostomTableRow title="SuggestionId" data={selectedData.suggestionId} />
             <CostomTableRow title="날짜" data={new Date(selectedData.createdAt).toLocaleString()} />
             <CostomTableRow title="카테고리" data={selectedData.category} />

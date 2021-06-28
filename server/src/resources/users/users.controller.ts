@@ -1,9 +1,10 @@
 import {
   Body,
   ClassSerializerInterceptor, Controller,
+  DefaultValuePipe,
   Delete, Get,
-  Param, Patch, Post,
-  Query, Req, UseInterceptors,
+  Param, ParseIntPipe, Patch, Post,
+  Query, Req, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
 import { PasswordDto } from '@truepoint/shared/dist/dto/users/password.dto';
@@ -12,22 +13,26 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
+import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
+import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { CertificationInfo, CertificationType, CheckIdType } from '../../interfaces/certification.interface';
 import { LogedInExpressRequest } from '../../interfaces/logedInUser.interface';
-// import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { AuthService } from '../auth/auth.service';
 import { SubscribeEntity } from './entities/subscribe.entity';
 import { UserEntity } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { UserPropertiesService } from './userProperties.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
+    private readonly userPropertiesService: UserPropertiesService,
   ) {}
 
   /**
@@ -145,11 +150,48 @@ export class UsersController {
     return this.usersService.checkID(query);
   }
 
+  // 이메일 중복 확인
+  @Get('/check-email')
+  async checkEmail(
+    @Query('email') email: string,
+  ): Promise<boolean> {
+    return this.usersService.checkEmail(email);
+  }
+
+  // 별명 중복 확인
+  @Get('/check-nickname')
+  async checkNickname(
+    @Query('nickname') nickname: string,
+  ): Promise<boolean> {
+    return this.usersService.checkNickname(nickname);
+  }
+
+  // id, 이메일, 이름으로 가입된 회원이 있는지 확인
+  @Get('/check-exist-user')
+  async checkExistUser(
+    @Query('id') id: string,
+    @Query('name') name: string,
+    @Query('email') email: string,
+  ): Promise<boolean> {
+    return this.usersService.checkExistUser({ id, name, email });
+  }
+
+  // 비밀번호 변경
   @Patch('/password')
+  @UseGuards(JwtAuthGuard)
   async findPassword(
     @Body(new ValidationPipe()) { userDI, password }: PasswordDto,
   ): Promise<boolean> {
     return this.usersService.updatePW(userDI, password);
+  }
+
+  // 닉네임 변경
+  @Patch('/nickname')
+  @UseGuards(JwtAuthGuard)
+  async changeNickname(
+      @Body() { userId, nickName }: {userId: string, nickName: string},
+  ): Promise<boolean> {
+    return this.usersService.changeNickname(userId, nickName);
   }
 
   /*
@@ -209,13 +251,44 @@ export class UsersController {
     return this.usersService.getHighlightPointList(platform);
   }
 
+  /**
+   * 방송인 검색 페이지에서 사용하는 방송인 목록
+   * @returns 
+   */
+  @Get('/creator-list')
+  getCreatorList(): Promise<Creator[]> {
+    return this.usersService.getCreatorsList();
+  }
+
+  @Get('/properties/posts')
+  findUserPosts(
+    @Query('userId') userId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('itemPerPage', new DefaultValuePipe(10), ParseIntPipe) itemPerPage: number,
+  ): Promise<MyPostsRes> {
+    return this.userPropertiesService.findUserPosts({ userId, page, itemPerPage });
+  }
+
+  @Get('/properties/comments')
+  findUserComments(
+    @Query('userId') userId: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('itemPerPage', new DefaultValuePipe(10), ParseIntPipe) itemPerPage: number,
+  ): Promise<MyCommentsRes> {
+    return this.userPropertiesService.findUserComments({ userId, page, itemPerPage });
+  }
+
   // 회원 가입
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   async create(
     @Body(new ValidationPipe()) createUserDto: CreateUserDto,
   ): Promise<UserEntity> {
-    return this.usersService.register(createUserDto);
+    const createUserDtoLocal = {
+      ...createUserDto,
+      provider: 'local', // sns로그인이 아닌 트루포인트 웹 가입시 provider = local로 저장함
+    };
+    return this.usersService.register(createUserDtoLocal);
   }
 
   @Post('/byadmin')

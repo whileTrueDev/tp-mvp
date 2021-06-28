@@ -1,11 +1,12 @@
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import {
-  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany,
+  Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany, ManyToOne, BaseEntity,
 } from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 import { CommunityReplyEntity } from './community-reply.entity';
 
 @Entity({ name: 'CommunityPostTest1' })
-export class CommunityPostEntity implements CommunityPost {
+export class CommunityPostEntity extends BaseEntity implements CommunityPost {
   @PrimaryGeneratedColumn({ type: 'int' })
   postId: number;
 
@@ -42,6 +43,13 @@ export class CommunityPostEntity implements CommunityPost {
   @Column({ type: 'int', default: 0, comment: '비추천 수' })
   notRecommendCount: number;
 
-  @OneToMany((type) => CommunityReplyEntity, (reply) => reply.postId)
+  @OneToMany((type) => CommunityReplyEntity, (reply) => reply.post)
   replies? : CommunityReplyEntity[];
+
+  @Column({ nullable: true, comment: '글 작성자 userId, 비회원의 글은 null값 저장' })
+  userId: string;
+
+  // @JoinColumn({ name: 'userId' })
+  @ManyToOne((type) => UserEntity, (user) => user.communityPosts, { nullable: true, onDelete: 'CASCADE' })
+  author?: UserEntity;
 }

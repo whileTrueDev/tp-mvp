@@ -24,6 +24,12 @@ const RECENT_STREAM_DATA = {
   height: 80,
   likeCount: 1,
   hateCount: 1,
+  scores: {
+    smile: 3.8,
+    frustrate: 2.2,
+    admire: 8.7,
+    cuss: 1.44444,
+  },
 };
 const defaultArgs: RecentStreamListItemProps = {
   onClick: () => alert('click handler'),

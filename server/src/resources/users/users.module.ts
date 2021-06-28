@@ -17,6 +17,8 @@ import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/act
 import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
 import { S3Module } from '../s3/s3.module';
 import { UserDetailEntity } from './entities/userDetail.entity';
+import { UserPropertiesService } from './userProperties.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -40,12 +42,13 @@ import { UserDetailEntity } from './entities/userDetail.entity';
   ],
   providers: [
     UsersService,
+    UserPropertiesService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
   ],
   controllers: [UsersController],
-  exports: [UsersService],
+  exports: [UsersService, UserPropertiesService],
 })
 export class UsersModule {}

@@ -10,7 +10,7 @@ import useMediaSize from './useMediaSize';
 
 interface EditorContainerProps {
   style?: React.CSSProperties;
-  className? : string;
+  className?: string;
 }
 interface useSunEditorReturnType{
   editorRef: React.MutableRefObject<SunEditor | null>,
@@ -66,6 +66,9 @@ export default function useSunEditor(): useSunEditorReturnType {
         buttonList: isMobile ? buttonList : originButtonList,
         showPathLabel: false,
         resizingBar: false,
+        imageUploadSizeLimit: 10485760,
+        imageWidth: '256',
+        imageHeight: '144',
       });
       editorRef.current = editorInstance;
     }

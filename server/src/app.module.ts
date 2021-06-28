@@ -2,7 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AccessControlModule } from 'nest-access-control';
+import { AdminModule } from '@admin-bro/nestjs';
+import AdminBro from 'admin-bro';
+import { Database, Resource } from '@admin-bro/typeorm';
+import { validate } from 'class-validator';
 
+import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
 import { HighlightModule } from './resources/highlightPoint/hightlight.module';
@@ -16,6 +21,8 @@ import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysi
 import { CategoryModule } from './resources/category/category.module';
 
 import loadConfig from './config/loadConfig';
+import { mailerConfig } from './config/mailer.config';
+import { getAdminOptions } from './admin-panel/admin-panel.options';
 
 import { roles } from './roles/app.roles';
 import { SlackModule } from './resources/slack/slack.module';
@@ -29,6 +36,10 @@ import { CreatorRatingsModule } from './resources/creatorRatings/creatorRatings.
 import { CreatorCommentModule } from './resources/creatorComment/creatorComment.module';
 import { CreatorCategoryModule } from './resources/creator-category/creator-category.module';
 import { S3Module } from './resources/s3/s3.module';
+
+Resource.validate = validate;
+AdminBro.registerAdapter({ Database, Resource });
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
@@ -60,6 +71,10 @@ import { S3Module } from './resources/s3/s3.module';
     CreatorCommentModule,
     CreatorCategoryModule,
     S3Module,
+    MailerModule.forRoot(mailerConfig),
+    AdminModule.createAdminAsync({
+      useFactory: getAdminOptions,
+    }),
   ],
 })
 export class AppModule { }

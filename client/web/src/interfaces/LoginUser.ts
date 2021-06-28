@@ -4,4 +4,7 @@ export interface LoginUser {
   userDI: string;
   roles: string;
   nickName: string;
+  profileImage?: string;
+  provider?: string;
+  mail?: string;
 }

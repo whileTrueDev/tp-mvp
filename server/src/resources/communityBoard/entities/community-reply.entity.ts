@@ -1,16 +1,15 @@
 import { CommunityReply } from '@truepoint/shared/dist/interfaces/CommunityReply.interface';
 import {
+  BaseEntity,
   Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UserEntity } from '../../users/entities/user.entity';
 import { CommunityPostEntity } from './community-post.entity';
 
 @Entity({ name: 'CommunityReplyTest1' })
-export class CommunityReplyEntity implements CommunityReply {
+export class CommunityReplyEntity extends BaseEntity implements CommunityReply {
   @PrimaryGeneratedColumn({ type: 'int' })
   replyId: number;
-
-  @Column({ nullable: true, comment: '댓글을 단 사용자의 userId' })
-  userId: string;
 
   @Column({ type: 'varchar', length: 12, comment: '12자 제한' })
   nickname: string;
@@ -35,6 +34,8 @@ export class CommunityReplyEntity implements CommunityReply {
 
   @ManyToOne((type) => CommunityPostEntity, (post) => post.replies, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'postId' })
+  post: CommunityPostEntity;
+
   @Column(({ comment: '댓글이 달린 글의 id' }))
   postId: number;
 
@@ -45,4 +46,9 @@ export class CommunityReplyEntity implements CommunityReply {
 
   @OneToMany((type) => CommunityReplyEntity, (comment) => comment.parentReplyId)
   childrenComments?: CommunityReplyEntity[];
+
+  @JoinColumn({ name: 'userId' })
+  @ManyToOne((type) => UserEntity, (user) => user.communityReplies, { nullable: true, onDelete: 'CASCADE' })
+  @Column({ nullable: true, comment: '댓글을 단 사용자의 userId' })
+  userId: string;
 }

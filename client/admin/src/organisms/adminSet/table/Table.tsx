@@ -102,24 +102,51 @@ export default function Table(props: Props): JSX.Element {
       title="공지사항"
       icons={tableIcons}
       columns={[
-        { title: '글번호', field: 'id', render: (rowData) => (<Typography>{rowData.id}</Typography>) },
-        { title: '카테고리', field: 'category', render: (rowData) => (<Typography>{rowData.category}</Typography>) },
-        { title: '중요공지', field: 'isImportant', render: (rowData) => (<Typography>{rowData.isImportant ? ('[중요]') : '[일반]'}</Typography>) },
+        {
+          title: '글번호',
+          field: 'id',
+          render: (rowData) => {
+            const { id } = rowData;
+            return (<Typography>{id}</Typography>);
+          },
+        },
+        {
+          title: '카테고리',
+          field: 'category',
+          render: (rowData) => {
+            const { category } = rowData;
+            return (<Typography>{category}</Typography>);
+          },
+        },
+        {
+          title: '중요공지',
+          field: 'isImportant',
+          render: (rowData) => {
+            const { isImportant } = rowData;
+            return (<Typography>{isImportant ? ('[중요]') : '[일반]'}</Typography>);
+          },
+        },
         {
           title: '글제목',
           field: 'title',
-          render: (rowData) => (
-            <Typography className="title">
-              {rowData.title}
-            </Typography>
-          ),
+          render: (rowData) => {
+            const { title } = rowData;
+            return (
+              <Typography className="title">
+                {title}
+              </Typography>
+            );
+          },
         },
         {
           title: '작성자',
           field: 'author',
-          render: (rowData) => (
-            <Typography>{rowData.author}</Typography>
-          ),
+          render: (rowData) => {
+            const { author } = rowData;
+            return (
+              <Typography>{author}</Typography>
+            );
+          },
         },
       ]}
       data={tableData}

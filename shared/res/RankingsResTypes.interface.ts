@@ -15,32 +15,13 @@ export interface DailyTotalViewersResType{
   twitch: DailyTotalViewersData
 }
 
-// 월간 막대차트
-export interface MonthlyScoresItem{
-  creatorName: string;
-  creatorId: string;
-  platform: string;
-  avgScore: number;
-}
-export interface MonthlyScoresResType{
-  smile: MonthlyScoresItem[],
-  frustrate: MonthlyScoresItem[],
-  admire: MonthlyScoresItem[],
-  cuss: MonthlyScoresItem[],
-}
-
 // 주간시청자수 그래프
 export interface WeeklyData{
   date: string;
   totalViewer: string;
 }
-export interface WeeklyViewersResType{
-  afreeca: WeeklyData[],
-  twitch: WeeklyData[]
-}
 
 // 탑텐
-
 export interface Scores{
   admireScore?: number,
   frustrateScore?: number,
@@ -59,6 +40,8 @@ export interface TopTenDataItem extends Scores{
   afreecaProfileImage?: string | null,
   twitchChannelName?: string | null,
   averageRating?: number,
+  twitchStreamerName?: string,
+  afreecaStreamerName?: string
 }
 export interface WeeklyTrendsItem extends Scores{
     createDate: string,
@@ -72,4 +55,11 @@ export interface RankingDataType{
     rankingData: Array<TopTenDataItem>,
     weeklyTrends: WeeklyTrendsType,
     totalDataCount: number
-  }
+}
+
+export interface FirstPlacesRes {
+  viewer: TopTenDataItem,
+    smileScore: TopTenDataItem,
+    cussScore: TopTenDataItem,
+    rating: TopTenDataItem,
+}

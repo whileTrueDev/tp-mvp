@@ -50,7 +50,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
   const history = useHistory();
   const {
     open, anchorEl, onClose, avatarSrc,
-    nickName, email,
+    email,
     ...prop
   } = props;
 
@@ -78,7 +78,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
           <Avatar src={avatarSrc} />
           <div className={classes.descriptionDetail}>
             <Typography variant="h6">
-              {`${authContext.user.userId} ${nickName ? `(${nickName})` : ''}`}
+              {`${authContext.user.nickName}`}
             </Typography>
             <Typography variant="body2" component="span">{email}</Typography>
           </div>
@@ -90,7 +90,7 @@ export default function UserMenuPopper(props: UserMenuPopperProps): JSX.Element 
               button
               className={classes.menulistItem}
               onClick={() => {
-                history.push('/mypage/my-office/settings');
+                history.push('/mypage');
               }}
             >
               <AccountBox color="action" />

@@ -36,10 +36,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   smallLogo: {
     width: theme.spacing(4),
     height: theme.spacing(4),
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
     color: theme.palette.primary.main,
     [theme.breakpoints.down('sm')]: {
       width: theme.spacing(2),
       height: theme.spacing(2),
+      marginRight: 0,
     },
   },
   hotPostSection: {

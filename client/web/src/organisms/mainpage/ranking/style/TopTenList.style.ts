@@ -1,5 +1,5 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-
+import { twitchItemBackgroundColor, afreecaItemBackgroundColor } from '../../../../assets/constants';
 // TopTenList 스타일
 export const useTopTenList = makeStyles((theme: Theme) => {
   // 별에 그라디언트 넣기 위한 색 설정
@@ -15,9 +15,6 @@ export const useTopTenList = makeStyles((theme: Theme) => {
       backgroundImage: `linear-gradient(${startColor}, ${endColor})`,
     };
   });
-
-  const twitchItemBackgroundColor = '#c8add8';
-  const afreecaItemBackgroundColor = '#a2b9e1';
 
   return createStyles({
     topTenListWrapper: {
@@ -192,9 +189,10 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     scoreText: {
       position: 'relative',
       textAlign: 'right',
-      fontSize: theme.spacing(1.5),
+      fontSize: theme.spacing(1.75),
       fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.primary.dark,
+      color: '#c6443e', // opgg 
+
     },
   });
 });

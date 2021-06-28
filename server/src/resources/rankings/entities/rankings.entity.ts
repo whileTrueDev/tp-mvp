@@ -6,6 +6,7 @@ import {
 
 @Entity({ name: 'Rankings' })
 @Index('IX_creatorId_createDate', ['creatorId', 'createDate'])
+@Index('Rankings_streamId_IDX', ['streamId'])
 export class RankingsEntity implements Rankings {
   @PrimaryGeneratedColumn()
   id: number;
@@ -18,6 +19,9 @@ export class RankingsEntity implements Rankings {
 
   @Column()
   creatorName: string;
+
+  @Column()
+  streamId: string;
 
   @Column()
   title: string;

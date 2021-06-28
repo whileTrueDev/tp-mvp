@@ -16,6 +16,7 @@ export interface AuthContextValue {
   loginLoading: boolean;
   handleLoginLoadingStart: () => void;
   handleLoginLoadingEnd: () => void;
+  setUser: React.Dispatch<React.SetStateAction<LoginUser>>;
 }
 
 const defaultUserValue = {
@@ -30,7 +31,8 @@ const AuthContext = React.createContext<AuthContextValue>({
   loginLoading: false,
   handleLoginLoadingStart: () => {},
   handleLoginLoadingEnd: () => {},
-  /* eslint-enable @typescript-eslint/no-empty-function */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setUser: () => {},
 });
 
 export function useLogin(): AuthContextValue {
@@ -41,7 +43,11 @@ export function useLogin(): AuthContextValue {
   async function handleLogin(accessToken: string): Promise<void> {
     setAccessToken(accessToken);
     const u = jwtDecode<LoginUser>(accessToken);
-    setUser(u);
+    const userData = await axios.get('/users', { params: { userId: u.userId } });
+    const { profileImage, mail, provider } = userData.data;
+    setUser({
+      ...u, profileImage, mail, provider,
+    });
 
     // 받아온 accessToken을 axios 기본 헤더로 설정
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
@@ -52,7 +58,7 @@ export function useLogin(): AuthContextValue {
     url: '/auth/logout', method: 'POST',
   }, { manual: true });
 
-  function handleLogout(): void{
+  function handleLogout(): void {
     setAccessToken(undefined);
     setUser(defaultUserValue);
     // 백엔드 요청
@@ -85,6 +91,7 @@ export function useLogin(): AuthContextValue {
     loginLoading,
     handleLoginLoadingStart,
     handleLoginLoadingEnd,
+    setUser,
   };
 }
 
