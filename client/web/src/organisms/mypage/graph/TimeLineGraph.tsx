@@ -2,12 +2,12 @@ import React, {
   useRef, useLayoutEffect,
 } from 'react';
 import { useTheme } from '@material-ui/core/styles';
+import { TimelineGraphInterface } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import setGraphComponent from './setTimeLineGraph';
-// import { timelineGraphInterface } from './graphsInterface';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
 
 export default function TimeLineGraph({ data, selectedMetric }: {
-  data: any[]; selectedMetric: string[];
+  data: TimelineGraphInterface[] | []; selectedMetric: string[];
 }): JSX.Element {
   const theme = useTheme<TruepointTheme>();
   const chartRef = useRef<any>(null);

@@ -19,14 +19,14 @@ import { StreamAnalysisResType } from '@truepoint/shared/dist/res/StreamAnalysis
 import { EachStream } from '@truepoint/shared/dist/dto/stream-analysis/eachStream.dto';
 // interfaces
 import { StreamsInfo } from './interface/streamsInfo.interface';
-import { S3StreamData, OrganizedData } from './interface/S3StreamData.interface';
+import { S3StreamData } from './interface/S3StreamData.interface';
 // import { TimeLineData } from './interface/timeLineData.interface';
 
 import { UsersService } from '../users/users.service';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
-import { groupingData } from './stream-grouping';
+import { groupingData, getDateCount } from './stream-grouping';
 
 // aws s3
 dotenv.config();
@@ -463,9 +463,9 @@ export class StreamAnalysisService {
       return 0;
     };
     /* 리턴 데이터 포맷 설정 함수 정의 */
-    const organizeData = () => new Promise<OrganizedData>(
+    const organizeData = () => new Promise<PeriodAnalysisResType>(
       (resolveOrganize, rejectOrganize) => {
-        const organizeArray: OrganizedData = {
+        const organizeArray: PeriodAnalysisResType = {
           start_date: calculatedArray[0].start_date,
           end_date: calculatedArray[calculatedArray.length - 1].end_date,
           chat_count: 0,
@@ -506,6 +506,7 @@ export class StreamAnalysisService {
     const getAllDatas = (list: string[]) => Promise.all(
       list.map((stream) => dataFunc(stream)),
     );
+
     /* S3 데이터 조회 후 연산 함수 실행 */
     const result = await getAllKeys(s3Request).then(() => getAllDatas(keyArray) // 조회
       .then(() => calculateData() // 연산
@@ -519,7 +520,9 @@ export class StreamAnalysisService {
         // console.log('[Error in get s3 Data] : ', err.message);
         throw new InternalServerErrorException(err);
       }));
-    const newDatas = groupingData(result);
+
+    const dateCount: number = getDateCount(s3Request);
+    const newDatas: PeriodAnalysisResType = groupingData(result, dateCount);
     return newDatas;
   }
 }
