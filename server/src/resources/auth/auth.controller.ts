@@ -15,7 +15,7 @@ import { LogoutDto } from '@truepoint/shared/dist/dto/auth/logout.dto';
 import express from 'express';
 import { AuthGuard } from '@nestjs/passport';
 // import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-// import { LocalAuthGuard } from '../../guards/local-auth.guard';
+import { LocalAuthGuard } from '../../guards/local-auth.guard';
 // import { TwitchLinkGuard } from '../../guards/twitch-link.guard';
 // import { YoutubeLinkGuard } from '../../guards/youtube-link.guard';
 import { CertificationInfo } from '../../interfaces/certification.interface';
@@ -98,7 +98,7 @@ export class AuthController {
   }
 
   // 로그인 컨트롤러
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(
     @Body('stayLogedIn') stayLogedIn: boolean,
