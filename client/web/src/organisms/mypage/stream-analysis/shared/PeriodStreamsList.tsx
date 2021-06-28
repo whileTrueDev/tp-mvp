@@ -260,9 +260,9 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
                 {/* 날짜 표현 컴포넌트로 변경 */}
 
                 {dateExpression({
-                  createdAt: new Date(stream.startDate),
+                  createdAt: stream.startDate,
                   compoName: 'analysys-calender',
-                  finishAt: new Date(stream.endDate),
+                  finishAt: stream.endDate,
                 })}
               </Typography>
 
@@ -304,9 +304,9 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
             <div className={classes.listItemContainer}>
               <Typography className={classes.removedListItemText}>
                 {dateExpression({
-                  createdAt: new Date(stream.startDate),
+                  createdAt: stream.startDate,
                   compoName: 'analysys-calender',
-                  finishAt: new Date(stream.endDate),
+                  finishAt: stream.endDate,
 
                 })}
               </Typography>
