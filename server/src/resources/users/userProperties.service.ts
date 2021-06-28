@@ -105,8 +105,8 @@ export class UserPropertiesService {
           'streamComments.streamId AS streamId',
           'streams.creatorId AS creatorId',
         ])
-        .leftJoin('user.streamComments', 'streamComments', 'streamComments.deleteFlag = 0')
-        .leftJoin(StreamsEntity, 'streams', 'streams.streamId = streamComments.streamId')
+        .innerJoin('user.streamComments', 'streamComments', 'streamComments.deleteFlag = 0')
+        .innerJoin(StreamsEntity, 'streams', 'streams.streamId = streamComments.streamId')
         .getRawMany();
 
       const allComments = [
