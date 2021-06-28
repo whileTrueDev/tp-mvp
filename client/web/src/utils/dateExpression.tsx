@@ -27,6 +27,15 @@ export default function dateExpression(data: makeDate): any {
     case 'highlight-calendar': {
       return (moment(createdAt).format('DD일 HH:mm ~ ') + moment(finishAt).format('DD일 HH:mm'));
     }
+
+    case 'metric-graph-tooltip': {
+      return moment(createdAt).format('YY-MM-DD HH시');
+    }
+
+    case 'metric-graph': {
+      return moment(createdAt).format('YY-MM-DD');
+    }
+
     case 'table-view': return (dayjs(createdAt).format('ll'));
 
     case 'selected-view':
