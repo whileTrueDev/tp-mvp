@@ -124,7 +124,7 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => moment(new Date(streamInfo.startDate)).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => moment(streamInfo.startDate).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.message) {
@@ -188,9 +188,9 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
      * 선택된 비교방송/기준방송 인 날 인 경우에
      */
     if (date && hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
-      if ((compareStream && moment(new Date(compareStream.startDate)).format('YYYY-MM-DD')
+      if ((compareStream && moment(compareStream.startDate).format('YYYY-MM-DD')
       === moment(date).format('YYYY-MM-DD'))
-      || (baseStream && moment(new Date(baseStream.startDate)).format('YYYY-MM-DD')
+      || (baseStream && moment(baseStream.startDate).format('YYYY-MM-DD')
       === moment(date).format('YYYY-MM-DD'))) {
         /* 방송이 존재함을 표시하는 날짜 컴포넌트를 렌더링한다. */
         return (

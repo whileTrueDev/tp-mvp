@@ -141,7 +141,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => moment(new Date(streamInfo.startDate)).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => moment(streamInfo.startDate).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.message) {
