@@ -189,9 +189,10 @@ export const useTopTenList = makeStyles((theme: Theme) => {
     scoreText: {
       position: 'relative',
       textAlign: 'right',
-      fontSize: theme.spacing(1.5),
+      fontSize: theme.spacing(1.75),
       fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.primary.dark,
+      color: '#c6443e', // opgg 
+
     },
   });
 });

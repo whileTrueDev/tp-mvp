@@ -35,10 +35,10 @@ type MainTabColumns = {
 const mainTabColumns: MainTabColumns[] = [
   { column: 'viewer', label: '최고 시청자수', icon: <TVIcon /> },
   { column: 'rating', label: '시청자 평점', icon: <StarBorderIcon /> },
-  { column: 'admire', label: '감탄점수', icon: <AdmireIcon /> },
-  { column: 'smile', label: '웃음점수', icon: <SmileIcon /> },
-  { column: 'frustrate', label: '답답함점수', icon: <FrustratedIcon /> },
-  { column: 'cuss', label: '욕점수', icon: <CussIcon /> },
+  { column: 'admire', label: '감탄 많은 방송', icon: <AdmireIcon /> },
+  { column: 'smile', label: '웃음 많은 방송', icon: <SmileIcon /> },
+  { column: 'frustrate', label: '답답한 방송', icon: <FrustratedIcon /> },
+  { column: 'cuss', label: '욕많은 방송', icon: <CussIcon /> },
 ];
 
 type PlatformFilterType = 'all' | 'twitch' | 'afreeca';
