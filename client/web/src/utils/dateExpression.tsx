@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import moment from 'moment';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
@@ -23,7 +24,9 @@ export default function dateExpression(data: makeDate): any {
 
     case 'highlight-table': return (dayjs(createdAt).format('YY-MM-DD HH:mm:ss'));
 
-    case 'highlight-calendar': return (dayjs(createdAt).format('DD일 HH:mm ~ ') + dayjs(finishAt).format('DD일 HH:mm'));
+    case 'highlight-calendar': {
+      return (moment(createdAt).format('DD일 HH:mm ~ ') + moment(finishAt).format('DD일 HH:mm'));
+    }
     case 'table-view': return (dayjs(createdAt).format('ll'));
 
     case 'selected-view':

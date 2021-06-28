@@ -194,8 +194,8 @@ export default function StreamList(props: StreamListProps): JSX.Element {
             <Typography className={classes.listItemText}>
               {dateExpression({
                 compoName: 'analysys-calender',
-                createdAt: new Date(stream.startDate),
-                finishAt: new Date(stream.endDate),
+                createdAt: stream.startDate,
+                finishAt: stream.endDate,
 
               })}
             </Typography>
