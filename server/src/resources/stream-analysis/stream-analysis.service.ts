@@ -26,6 +26,8 @@ import { UsersService } from '../users/users.service';
 // database entities
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
+import { groupingData } from './stream-grouping';
+
 // aws s3
 dotenv.config();
 const s3 = new AWS.S3();
@@ -496,6 +498,7 @@ export class StreamAnalysisService {
         }
       },
     );
+
     /* S3 데이터 조회 Promise.all 함수 선언 */
     const getAllKeys = (data: SearchEachS3StreamData[]) => Promise.all(
       data.map((stream) => keyFunc(stream)),
@@ -516,6 +519,7 @@ export class StreamAnalysisService {
         // console.log('[Error in get s3 Data] : ', err.message);
         throw new InternalServerErrorException(err);
       }));
-    return result;
+    const newDatas = groupingData(result);
+    return newDatas;
   }
 }
