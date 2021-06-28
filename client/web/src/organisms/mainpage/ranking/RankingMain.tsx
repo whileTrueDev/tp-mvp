@@ -14,6 +14,7 @@ import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
 import PageTitle from '../shared/PageTitle';
 import FirstPlaceCreators from './sub/FirstPlaceCreators';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
+import RatingGuideBannerSlide from './sub/RatingGuideBannerSlide';
 
 export function CarouselSection(): JSX.Element {
   const carousel = useCarouselStyle();
@@ -38,6 +39,7 @@ export function CarouselSection(): JSX.Element {
           }}
         >
           <FirstPlaceCreators />
+          <RatingGuideBannerSlide />
           <SearchGuideBannerSlide />
           <ViewerComparisonPolarAreaCard />
           <WeeklyLineCard />
