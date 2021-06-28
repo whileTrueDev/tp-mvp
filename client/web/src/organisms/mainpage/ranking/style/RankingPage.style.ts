@@ -23,8 +23,7 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
       },
     },
     top: {
-      backgroundColor: '#f1f1f1',
-      // backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.paper,
       marginBottom: theme.spacing(6),
     },
     left: {
