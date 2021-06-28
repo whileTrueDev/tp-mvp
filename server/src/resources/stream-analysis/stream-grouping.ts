@@ -1,5 +1,9 @@
 // 일간 또는 시간간 데이터 그룹화
-import { OrganizedData } from './interface/S3StreamData.interface';
+import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
+import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
+
+// 8개 이상인 경우, 일간 데이터로 변환한다.
+const DATE_FORMATTING_COUNT = 8;
 
 const getFormattingDate = (dateString: string): string => {
   const newDate = new Date(dateString);
@@ -13,10 +17,16 @@ const getFormattingDate = (dateString: string): string => {
   return result;
 };
 
-const getGroup = (groupDate: string): string => {
+// 2시간 단위로 그룹화 또는 1일 단위로 그룹화
+const getGroup = (groupDate: string, dateCount: number): string => {
   const splitedGroupDate = groupDate.split(' ');
   let dateString: string = splitedGroupDate[0];
   let timeNumber: number = parseInt(splitedGroupDate[1], 10);
+  // 선택된 데이터의 날짜 갯수가 10이상일 때,
+  if (dateCount > DATE_FORMATTING_COUNT) {
+    return dateString;
+  }
+
   // 홀수면 +1 
   if (timeNumber % 2 === 1) {
     timeNumber += 1;
@@ -31,7 +41,16 @@ const getGroup = (groupDate: string): string => {
   return `${dateString} ${timeNumber}`;
 };
 
-export const groupingData = (organizedData: OrganizedData): any => {
+export const getDateCount = (s3Request: SearchEachS3StreamData[]): number => {
+  const dateSet = new Set();
+  s3Request.forEach((element) => {
+    const dateString = element.startedAt.split('T')[0];
+    dateSet.add(dateString);
+  });
+  return dateSet.size;
+};
+
+export const groupingData = (periodAnalysisResType: PeriodAnalysisResType, dateCount: number): PeriodAnalysisResType => {
   // 기존 데이터에 대해 날짜 체크 
   const groupedData = [];
   let count = 0;
@@ -79,11 +98,11 @@ export const groupingData = (organizedData: OrganizedData): any => {
     }
   };
 
-  organizedData.value.forEach((timeData) => {
+  periodAnalysisResType.value.forEach((timeData) => {
     // string형식의 데이터이므로 date로 변환후 시간을 뺴온다. ex) '2021-04-06 3'
     let groupDate = timeData.date.split(':')[0];
     // 2일간의 그룹핑을 위해 재변환한다.
-    groupDate = getGroup(groupDate);
+    groupDate = getGroup(groupDate, dateCount);
     save(groupDate);
     add(timeData, groupDate);
     // 현재의 value에 더하기
@@ -91,7 +110,7 @@ export const groupingData = (organizedData: OrganizedData): any => {
   save(nowGroup);
 
   return {
-    ...organizedData,
+    ...periodAnalysisResType,
     value: groupedData,
   };
 };

@@ -2,12 +2,21 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themesKelly from '@amcharts/amcharts4/themes/kelly';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
+import { TimelineGraphInterface } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import graphColor from './Color';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
-import { timelineDataInterface } from './graphsInterface';
 // @hwasurr - 2020.10.13 eslint error 정리 중
 // any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
-export default function setComponent(data: timelineDataInterface[] | [], theme: TruepointTheme, selectedMetric?: string[]): am4charts.XYChart {
+const getTooptip = (dateString: string) => {
+  const dateArray = dateString.split(' ');
+  if (dateArray.length === 1) {
+    return 'yyyy-MM-dd';
+  }
+  return 'yyyy-MM-dd HH시';
+};
+
+export default function setComponent(data: TimelineGraphInterface[] | [],
+  theme: TruepointTheme, selectedMetric?: string[]): am4charts.XYChart {
   am4core.useTheme(am4themesKelly);
   am4core.useTheme(am4themesAnimated);
 
@@ -24,10 +33,11 @@ export default function setComponent(data: timelineDataInterface[] | [], theme: 
 
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.skipEmptyPeriods = true;
-  dateAxis.tooltipDateFormat = 'yyyy-MM-dd HH시';
-  dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]');
+  dateAxis.tooltipDateFormat = getTooptip(data[0].date);
+  dateAxis.periodChangeDateFormats.setKey('month', '[bold]MM-dd[/]');
   dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
   dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]');
+  dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]');
   dateAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   // dateAxis.groupCount = 100;
   // dateAxis.renderer.inside = true; // 축 라벨을 grid 안으로 넣기/빼기
@@ -92,7 +102,6 @@ export default function setComponent(data: timelineDataInterface[] | [], theme: 
   // chatSeries.fillOpacity = 0.2;
   chatSeries.groupFields.valueY = 'sum';
   chatSeries.tooltipText = '채팅 발생 수: [bold]{chat_count}[/]';
-  // chatSeries.connect = true;
   // chatSeries.hidden = true; // 기본 그래프 설정.
   chatSeries.toFront();
 
