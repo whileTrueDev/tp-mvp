@@ -42,6 +42,6 @@ export const useRankingPageLayout = makeStyles((theme: Theme) => {
 export const useCarouselStyle = makeStyles((theme: Theme) => createStyles({
   buttonIcon: {
     color: theme.palette.common.black,
-    fontSize: theme.typography.h1.fontSize,
+    fontSize: theme.typography.h2.fontSize,
   },
 }));
