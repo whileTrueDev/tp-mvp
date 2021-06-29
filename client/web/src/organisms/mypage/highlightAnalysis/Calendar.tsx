@@ -15,8 +15,6 @@ import { Theme } from '@material-ui/core/styles';
 // shared dto and interfaces 
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-// date library
-import moment from 'moment';
 // atoms
 import useAxios from 'axios-hooks';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
@@ -24,6 +22,7 @@ import SelectDateIcon from '../../../atoms/stream-analysis-icons/SelectDateIcon'
 // hooks
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -122,8 +121,10 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
    */
   const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
     if (originDate) {
-      const rangeStart = moment(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
-      const rangeEnd = moment(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      let rangeStart = dayjsFormatter(originDate);
+      rangeStart = rangeStart.subtract(reRequest, 'month').toISOString();
+      let rangeEnd = dayjsFormatter(originDate);
+      rangeEnd = rangeEnd.add(reRequest, 'month').toISOString();
       return [rangeStart, rangeEnd];
     }
 
@@ -141,7 +142,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => moment(streamInfo.startDate).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => dayjsFormatter(streamInfo.startDate).format('YYYY-MM-DD')),
       );
     }).catch((err) => {
       if (err.message) {
@@ -157,7 +158,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       if (getStreamsData) {
         getStreamsData.forEach((stream: StreamDataType) => {
           if (newDate
-            && moment(newDate).format('YYYY-MM-DD') === moment(stream.startDate).format('YYYY-MM-DD')) {
+            && dayjsFormatter(newDate).format('YYYY-MM-DD') === dayjsFormatter(stream.startDate).format('YYYY-MM-DD')) {
             // 마케팅을 위한 개발 목적 => 추후 변경
             if (!exampleMode) {
               dayStreamList.push(stream);
@@ -174,7 +175,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   };
 
   const handleMonthChange2 = (newMonth: MaterialUiPickersDate) => {
-    if (newMonth && Math.abs(moment(newMonth).diff(moment(currMonth), 'month')) >= reRequest) {
+    if (newMonth && Math.abs(dayjsFormatter(newMonth).diff(dayjsFormatter(currMonth), 'month')) >= reRequest) {
       setCurrMonth(newMonth);
     }
   };
@@ -185,15 +186,15 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element,
   ) => {
-    if (date && hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
+    if (date && hasStreamDays.includes(dayjsFormatter(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
       return (
         <div className={classnames({
-          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(dayjsFormatter(date).format('YYYY-MM-DD')),
         })}
         >
           {dayComponent}
           <div className={classnames({
-            [classes.hasStreamDayDot]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+            [classes.hasStreamDayDot]: hasStreamDays.includes(dayjsFormatter(date).format('YYYY-MM-DD')),
           })}
           />
         </div>

@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import moment from 'moment';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
@@ -10,6 +9,16 @@ interface makeDate {
   compoName?: string;
   createdAt: any;
   finishAt?: any;
+}
+
+export function dayjsFormatter(date: string | Date | null, rest?: any[]): any {
+  if (date) {
+    if (rest) {
+      return dayjs(date, ...rest);
+    }
+    return dayjs(date);
+  }
+  return null;
 }
 
 export default function dateExpression(data: makeDate): any {
@@ -25,15 +34,20 @@ export default function dateExpression(data: makeDate): any {
     case 'highlight-table': return (dayjs(createdAt).format('YY-MM-DD HH:mm:ss'));
 
     case 'highlight-calendar': {
-      return (moment(createdAt).format('DD일 HH:mm ~ ') + moment(finishAt).format('DD일 HH:mm'));
+      return (dayjs(createdAt).format('DD일 HH:mm ~ ') + dayjs(finishAt).format('DD일 HH:mm'));
     }
+
+    case 'day-js-object':
+      return dayjs(createdAt);
 
     case 'metric-graph-tooltip': {
-      return moment(createdAt).format('YY-MM-DD HH시');
+      return dayjs(createdAt).format('YY-MM-DD HH시');
     }
+    case 'string-format':
+      return dayjs(createdAt).toISOString();
 
     case 'metric-graph': {
-      return moment(createdAt).format('YY-MM-DD');
+      return dayjs(createdAt).format('YY-MM-DD');
     }
 
     case 'table-view': return (dayjs(createdAt).format('ll'));
