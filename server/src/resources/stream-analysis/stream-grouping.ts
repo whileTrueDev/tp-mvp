@@ -50,7 +50,8 @@ export const getDateCount = (s3Request: SearchEachS3StreamData[]): number => {
   return dateSet.size;
 };
 
-export const groupingData = (periodAnalysisResType: PeriodAnalysisResType, dateCount: number): PeriodAnalysisResType => {
+export const groupingData = (periodAnalysisResType: PeriodAnalysisResType,
+  dateCount: number): PeriodAnalysisResType => {
   // 기존 데이터에 대해 날짜 체크 
   const groupedData = [];
   let count = 0;
