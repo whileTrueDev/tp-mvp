@@ -1,14 +1,33 @@
-import { LinearProgress, Typography } from '@material-ui/core';
+import { Grid, LinearProgress, Typography } from '@material-ui/core';
 import React, { useMemo } from 'react';
 import { useProgressBar, useTopTenList } from '../style/TopTenList.style';
 
 const MIN = 0;
+
+function getRankLabel({ total, scoreRank }: {
+  total: number | undefined,
+  scoreRank: number | undefined
+}): string | null {
+  if (!total || !scoreRank) return null;
+
+  const percentile = Math.round((scoreRank / total) * 100);
+
+  if (scoreRank < 20) return `랭킹 ${scoreRank}위`;
+  if (percentile < 30) return `상위 ${percentile}%`;
+  if (percentile > 70) return '거의 없는 편';
+
+  return '평범한 편';
+}
 interface Props{
   score: number;
+  total?: number;
+  scoreRank?: number;
   max?: number;
 }
 function ScoreBar(props: Props): JSX.Element {
-  const { score, max = 10 } = props;
+  const {
+    score, max = 10, total, scoreRank,
+  } = props;
   const progressBarStyles = useProgressBar();
   const classes = useTopTenList();
   /**
@@ -21,6 +40,9 @@ function ScoreBar(props: Props): JSX.Element {
   const normalizedScore = useMemo(() => (
     Number((((score - MIN) * 100) / (max - MIN) || 0).toFixed(2))
   ), [max, score]);
+
+  const rankLabel = getRankLabel({ total, scoreRank });
+
   return (
     <div>
       <LinearProgress
@@ -32,17 +54,21 @@ function ScoreBar(props: Props): JSX.Element {
         classes={progressBarStyles}
         value={Math.min(100, normalizedScore)}
       />
-      {score && (
-      <Typography
-        component="span"
-        className={classes.scoreText}
-        style={{
-          transform: `translateX(${(10 - score) * (-10)}%`,
-        }}
-      >
-        {score ? `${Math.min(10, Number(score.toFixed(2)))}` : 0}
-      </Typography>
-      )}
+      <Grid container justify="space-between">
+        {score && (
+        <Typography
+          component="span"
+          className={classes.scoreText}
+        >
+          {score ? `${Math.min(10, Number(score.toFixed(2)))}` : 0}
+        </Typography>
+        )}
+        { rankLabel && (
+        <Typography component="span" style={{ color: 'black', fontSize: '14px' }}>
+          {rankLabel}
+        </Typography>
+        )}
+      </Grid>
 
     </div>
 

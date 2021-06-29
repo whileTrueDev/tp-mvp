@@ -7,26 +7,30 @@ import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { ModuleRef } from '@nestjs/core';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
-import { RankingsEntity } from '../rankings/entities/rankings.entity';
-import { PlatformType } from '../rankings/rankings.service';
+import { PlatformType, RankingsService } from '../rankings/rankings.service';
 import { AdminRating } from './creatorRatings.controller';
 
 @Injectable()
 export class CreatorRatingsService {
+  private rankingsService: RankingsService;
+
   constructor(
+    private moduleRef: ModuleRef,
     @InjectRepository(CreatorRatingsEntity)
     private readonly ratingsRepository: Repository<CreatorRatingsEntity>,
     @InjectRepository(PlatformAfreecaEntity)
     private readonly afreecaRepository: Repository<PlatformAfreecaEntity>,
     @InjectRepository(PlatformTwitchEntity)
     private readonly twitchRepository: Repository<PlatformTwitchEntity>,
-    @InjectRepository(RankingsEntity)
-    private readonly rankingsRepository: Repository<RankingsEntity>,
-
   ) {}
+
+  onModuleInit(): void { // retrieve instace from module reference
+    this.rankingsService = this.moduleRef.get(RankingsService, { strict: false }); // pass { strict: false } if the provider has been injected from another module
+  }
 
   /**
    * 관리자페이지에서 평점 생성 요청시
@@ -52,7 +56,16 @@ export class CreatorRatingsService {
   }
 
   async findRatingListByUserId({ userId, page, itemPerPage }: {
-      userId: string, page: number, itemPerPage: number}): Promise<any> {
+      userId: string, page: number, itemPerPage: number}): Promise<{
+        hasMore: boolean,
+        creators: {
+          rating: number;
+          platform: 'afreeca' | 'twitch',
+          creatorId: string,
+          creatorDisplayName: string,
+          creatorProfileImage: string
+        }[]
+      }> {
     // userId로 매겨진 rating record
     const query = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
@@ -164,7 +177,10 @@ export class CreatorRatingsService {
   "count": 2
 }
    */
-  async getAverageRatings(creatorId: string): Promise<any> {
+  async getAverageRatings(creatorId: string): Promise<{
+    average: number,
+    count: number
+  }> {
     try {
       const data = await this.ratingsRepository.createQueryBuilder('ratings')
         .select([
@@ -224,44 +240,21 @@ export class CreatorRatingsService {
     creatorId: string,
   }): Promise<CreatorRatingInfoRes> {
     try {
-      const result = {
-        ratings: {
-          average: 0,
-          count: 0,
-        },
-        scores: {
-          admire: 0,
-          smile: 0,
-          frustrate: 0,
-          cuss: 0,
-        },
-      };
       // creatorId의 평균 평점과 평가횟수를 찾는다
       const { average, count } = await this.getAverageRatings(creatorId);
-      result.ratings = { average, count };
 
-      // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
-      const { recentCreateDate } = await this.rankingsRepository.createQueryBuilder('rank')
-        .select('max(rank.createDate) AS recentCreateDate')
-        .getRawOne();
+      // 1달 내 방송한 전체 방송인 수
+      const total = await this.rankingsService.getCreatorCountWithin1Month();
 
-      const qb = await this.rankingsRepository.createQueryBuilder('rankings')
-        .select([
-          'AVG(smileScore) AS smile',
-          'AVG(frustrateScore) AS frustrate',
-          'AVG(admireScore) AS admire',
-          'AVG(cussScore) AS cuss',
-        ])
-        .where('creatorId = :creatorId', { creatorId })
-        .andWhere(`createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
-        .getRawOne();
-
-      result.scores.admire = qb.admire;
-      result.scores.smile = qb.smile;
-      result.scores.frustrate = qb.frustrate;
-      result.scores.cuss = qb.cuss;
-
-      return result;
+      // 해당 방송인의 평균감정점수와 순위
+      const scoresAndRanks = await this.rankingsService.getAverageScoresAndRank(creatorId);
+      return {
+        ratings: { average, count },
+        scores: {
+          ...scoresAndRanks,
+          total,
+        },
+      };
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error in getCreatorRatingInfo, creatorId : ${creatorId}`);

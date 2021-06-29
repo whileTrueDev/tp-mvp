@@ -8,9 +8,21 @@ export interface CreatorAverageScores{
   frustrate: number,
   cuss: number
 }
+
+export interface CreatorAverageScoresWithRank{
+  admire: number,
+  smile: number,
+  frustrate: number,
+  cuss: number,
+  total: number,
+  admireRank: number,
+  smileRank: number,
+  frustrateRank: number,
+  cussRank: number,
+}
 export interface CreatorRatingInfoRes {
   ratings: CreatorAverageRatings,
-  scores: CreatorAverageScores,
+  scores: CreatorAverageScores | CreatorAverageScoresWithRank,
 }
 
 export interface WeeklyRatingRankingItem{
