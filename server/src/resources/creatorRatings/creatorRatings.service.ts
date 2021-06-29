@@ -234,6 +234,11 @@ export class CreatorRatingsService {
           smile: 0,
           frustrate: 0,
           cuss: 0,
+          total: 0,
+          admireRank: 0,
+          smileRank: 0,
+          frustrateRank: 0,
+          cussRank: 0,
         },
       };
       // creatorId의 평균 평점과 평가횟수를 찾는다
@@ -245,21 +250,59 @@ export class CreatorRatingsService {
         .select('max(rank.createDate) AS recentCreateDate')
         .getRawOne();
 
-      const qb = await this.rankingsRepository.createQueryBuilder('rankings')
+      // const qb = await this.rankingsRepository.createQueryBuilder('rankings')
+      //   .select([
+      //     'AVG(smileScore) AS smile',
+      //     'AVG(frustrateScore) AS frustrate',
+      //     'AVG(admireScore) AS admire',
+      //     'AVG(cussScore) AS cuss',
+      //   ])
+      //   .where('creatorId = :creatorId', { creatorId })
+      //   .andWhere(`createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
+      //   .getRawOne();
+
+      const total = await this.rankingsRepository.createQueryBuilder('rankings')
         .select([
-          'AVG(smileScore) AS smile',
-          'AVG(frustrateScore) AS frustrate',
-          'AVG(admireScore) AS admire',
-          'AVG(cussScore) AS cuss',
+          'COUNT(DISTINCT creatorId) AS total',
         ])
-        .where('creatorId = :creatorId', { creatorId })
-        .andWhere(`createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
+        .where(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
         .getRawOne();
 
-      result.scores.admire = qb.admire;
-      result.scores.smile = qb.smile;
-      result.scores.frustrate = qb.frustrate;
-      result.scores.cuss = qb.cuss;
+      const test = await getConnection()
+        .createQueryBuilder()
+        .select([
+          'T.*',
+        ])
+        .from((subQuery) => subQuery
+          .select([
+            'rankings.creatorId AS creatorId',
+            'ROUND(AVG(rankings.smileScore),2) AS smile',
+            'ROUND(AVG(rankings.frustrateScore),2) AS frustrate',
+            'ROUND(AVG(rankings.admireScore),2) AS admire',
+            'ROUND(AVG(rankings.cussScore),2) AS cuss',
+            'rank() over(order by avg(rankings.cussScore) DESC) as cussRank',
+            'rank() over(order by avg(rankings.smileScore) DESC) as smileRank',
+            'rank() over(order by avg(rankings.admireScore) DESC) as admireRank',
+            'rank() over(order by avg(rankings.frustrateScore) DESC) as frustrateRank',
+          ])
+          .from(RankingsEntity, 'rankings')
+          .groupBy('rankings.creatorId')
+          .andWhere(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`),
+        'T')
+        .where('T.creatorId = :creatorId', { creatorId })
+        .getRawOne();
+
+      console.log(test, total);
+
+      result.scores.admire = test.admire;
+      result.scores.smile = test.smile;
+      result.scores.frustrate = test.frustrate;
+      result.scores.cuss = test.cuss;
+      result.scores.admireRank = Number(test.admireRank);
+      result.scores.smileRank = Number(test.smileRank);
+      result.scores.frustrateRank = Number(test.frustrateRank);
+      result.scores.cussRank = Number(test.cussRank);
+      result.scores.total = Number(total.total);
 
       return result;
     } catch (error) {

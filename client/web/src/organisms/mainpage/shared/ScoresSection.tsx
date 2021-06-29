@@ -42,7 +42,12 @@ export function ScoresSection({ scores }: {
             </Typography>
           </Grid>
           <Grid item className={classes.scoreBarContainer}>
-            <ScoreBar score={scores[score.name]} />
+            <ScoreBar
+              total={scores.total}
+              scoreRank={scores[`${score.name}Rank` as const]}
+              score={scores[score.name]}
+            />
+
           </Grid>
         </Grid>
       ))}
