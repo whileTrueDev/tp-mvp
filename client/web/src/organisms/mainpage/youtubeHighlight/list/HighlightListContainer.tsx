@@ -4,9 +4,8 @@ import {
   makeStyles, createStyles,
 } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
-import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
-import PostList from './PostList';
+import HighlightlistTable from './HighlightListTable';
 
 const useStyles = makeStyles(() => createStyles({
   root: {
@@ -17,33 +16,21 @@ const useStyles = makeStyles(() => createStyles({
 
 interface HighlightListProps{
   platform: 'afreeca' | 'twitch',
-  setList: React.Dispatch<React.SetStateAction<any[]>>;
-  boardState: {
-    posts: PostFound[],
-    list: EditingPointListResType[];
-    page: number;
-    totalRows: number;
-  },
   titleComponent?: JSX.Element
 }
 
 export default function HighlightListContainer({
   platform,
-  setList,
   titleComponent,
-  boardState,
 }: HighlightListProps): JSX.Element {
   const classes = useStyles();
-  const {
-    list,
-  } = boardState;
   const url = useMemo(() => `/highlight/highlight-point-list/${platform}`, [platform]);
 
-  const [{ loading }, getList] = useAxios({ url }, { manual: true });
+  const [{ loading, data }, getList] = useAxios<EditingPointListResType[]>({ url }, { manual: true });
 
   useEffect(() => {
     getList().then((res) => {
-      setList(res.data);
+      // setList(res.data);
     }).catch((e) => {
       console.error(e);
     });
@@ -52,8 +39,8 @@ export default function HighlightListContainer({
 
   return (
     <div className={classes.root}>
-      <PostList
-        posts={list}
+      <HighlightlistTable
+        posts={data || []}
         loading={loading}
         titleComponent={titleComponent}
       />
