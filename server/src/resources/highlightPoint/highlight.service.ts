@@ -155,6 +155,7 @@ export class HighlightService {
         ])
         .where('streams.platform = :platform', { platform })
         .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
+        .andWhere('users.nickName like :search', { search: `%${search}%` })
         .groupBy('streams.creatorId')
         .orderBy('MAX(streams.endDate)', 'DESC');
 
@@ -165,7 +166,6 @@ export class HighlightService {
         totalCount, page, take, totalPage, hasMore,
       });
 
-      console.log({ search });
       const dataWithoutProfileImage = await qb
         .offset((page - 1) * take)
         .limit(take)
