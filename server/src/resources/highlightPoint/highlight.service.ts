@@ -133,10 +133,17 @@ export class HighlightService {
       logo: string // 크리에이터 로고
    * }[]
    */
-  async getHighlightPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
+  async getHighlightPointList({
+    platform, page, take, search,
+  }: {
+    platform: 'afreeca'|'twitch',
+    page: number,
+    take: number,
+    search: string
+  }): Promise<EditingPointListResType[]> {
     try {
       const matchingId = `${platform}Id`;
-      const dataWithoutProfileImage = await this.streamsRepository.createQueryBuilder('streams')
+      const qb = await this.streamsRepository.createQueryBuilder('streams')
         .leftJoinAndSelect(UserEntity, 'users', `streams.creatorId = users.${matchingId}`)
         .select([
           'streams.creatorId AS creatorId',
@@ -149,8 +156,20 @@ export class HighlightService {
         .where('streams.platform = :platform', { platform })
         .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
         .groupBy('streams.creatorId')
-        .orderBy('MAX(streams.endDate)', 'DESC')
-        .getRawMany();
+        .orderBy('MAX(streams.endDate)', 'DESC');
+
+      const totalCount = (await qb.clone().getRawMany()).length;
+      const totalPage = Math.ceil(totalCount / take);
+      const hasMore = page < totalPage;
+      console.log({
+        totalCount, page, take, totalPage, hasMore,
+      });
+
+      console.log({ search });
+      const dataWithoutProfileImage = await qb
+        .offset((page - 1) * take)
+        .limit(take)
+        .getRawMany(); // skip, take 안먹음
 
       const userHighlightData = Promise.all(dataWithoutProfileImage.map(async (row) => {
         const getUserProfileImage = await this.usersService.findOneProfileImage(row.userId);

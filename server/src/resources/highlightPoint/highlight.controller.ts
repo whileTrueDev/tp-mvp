@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  Controller, Get, Query, Res, Req, HttpException, HttpStatus, Param,
+  Controller, Get, Query, Res, Req, HttpException, HttpStatus, Param, ParseIntPipe, DefaultValuePipe,
 } from '@nestjs/common';
 import { HighlightService } from './highlight.service';
 
@@ -52,6 +52,8 @@ export class HighlightController {
    * 크리에이터 활동명, userId, 최근방송제목, 최근방송종료시간, 플랫폼 정보를 반환한다
    * 
    * @param platform 'afreeca' | 'twitch'
+   * @param page 몇 번째 페이지 
+   * @param take 페이지 당 몇 개
    * 
    * @return EditingPointListResType[]
    * {   
@@ -66,7 +68,12 @@ export class HighlightController {
   @Get('/highlight-point-list/:platform')
   getHighlightPointList(
     @Param('platform') platform: 'afreeca'|'twitch',
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('take', new DefaultValuePipe(30), ParseIntPipe) take: number,
+    @Query('search', new DefaultValuePipe('')) search: string,
   ): Promise<any[]> {
-    return this.highlightService.getHighlightPointList(platform);
+    return this.highlightService.getHighlightPointList({
+      platform, page, take, search,
+    });
   }
 }
