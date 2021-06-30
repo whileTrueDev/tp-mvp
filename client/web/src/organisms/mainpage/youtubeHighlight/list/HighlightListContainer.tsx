@@ -37,7 +37,7 @@ export default function HighlightListContainer({
   const {
     list,
   } = boardState;
-  const url = useMemo(() => `/users/highlight-point-list/${platform}`, [platform]);
+  const url = useMemo(() => `/highlight/highlight-point-list/${platform}`, [platform]);
 
   const [{ loading }, getList] = useAxios({ url }, { manual: true });
 

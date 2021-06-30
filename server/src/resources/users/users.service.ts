@@ -9,7 +9,6 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
-import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
@@ -508,52 +507,6 @@ export class UsersService {
       .orderBy('MAX(streams.endDate)', 'DESC')
       .getRawMany();
     return result;
-  }
-
-  /**
-   * 유투브 편집점 페이지 편집점 제공 목록
-   * 해당 플랫폼에서 크리에이터당 최신 방송날짜를 가져온다
-   * @param platform 'afreeca' | 'twitch'
-   * 
-   * @return EditingPointListResType[]
-   * {   
-   *  creatorId: string, // 크리에이터 ID
-      platform: string, // 플랫폼 'afreeca' | 'twitch'
-      userId: string,   // userId
-      title: string,   // 가장 최근 방송 제목
-      endDate: Date,   // 가장 최근 방송의 종료시간
-      nickname: string // 크리에이터 활동명
-      logo: string // 크리에이터 로고
-   * }[]
-   */
-  async getHighlightPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
-    try {
-      const matchingId = `${platform}Id`;
-      const dataWithoutProfileImage = await this.streamsRepository.createQueryBuilder('streams')
-        .leftJoinAndSelect(UserEntity, 'users', `streams.creatorId = users.${matchingId}`)
-        .select([
-          'streams.creatorId AS creatorId',
-          'streams.platform AS platform',
-          'streams.title AS title',
-          'MAX(streams.endDate) AS endDate',
-          'users.userId AS userId',
-          'users.nickName AS nickname',
-        ])
-        .where('streams.platform = :platform', { platform })
-        .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
-        .groupBy('streams.creatorId')
-        .orderBy('MAX(streams.endDate)', 'DESC')
-        .getRawMany();
-
-      const userHighlightData = Promise.all(dataWithoutProfileImage.map(async (row) => {
-        const getUserProfileImage = await this.findOneProfileImage(row.userId);
-        return { ...row, logo: getUserProfileImage[0].logo };
-      }));
-      return userHighlightData;
-    } catch (e) {
-      console.error(e);
-      throw new InternalServerErrorException('Error in getEditingPointList');
-    }
   }
 
   // 방송인 목록 검색
