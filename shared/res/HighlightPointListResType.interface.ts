@@ -1,4 +1,4 @@
-export interface EditingPointListResType{
+export interface HighlightPointListResType{
   creatorId: string,
   platform: string,
   userId: string,

@@ -9,7 +9,7 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
-import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
+import { HighlightPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
@@ -526,7 +526,7 @@ export class UsersService {
       logo: string // 크리에이터 로고
    * }[]
    */
-  async getHighlightPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
+  async getHighlightPointList(platform: 'afreeca'|'twitch'): Promise<HighlightPointListResType[]> {
     try {
       const matchingId = `${platform}Id`;
       const dataWithoutProfileImage = await this.streamsRepository.createQueryBuilder('streams')
