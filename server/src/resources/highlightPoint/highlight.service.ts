@@ -175,6 +175,16 @@ export class HighlightService {
         const getUserProfileImage = await this.usersService.findOneProfileImage(row.userId);
         return { ...row, logo: getUserProfileImage[0].logo };
       }));
+
+      // const tempRes = {
+      //   data: await userHighlightData,
+      //   totalCount,
+      //   page,
+      //   take,
+      //   totalPage,
+      //   hasMore,
+      // };
+      // console.log({ tempRes });
       return userHighlightData;
     } catch (e) {
       console.error(e);
