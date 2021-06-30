@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import {
   Typography, TablePagination, Button, Grid, Avatar,
 } from '@material-ui/core';
@@ -7,19 +7,14 @@ import {
 } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 
-// 라이브러리
-import dayjs from 'dayjs';
-// import 'dayjs/locale/ko';
-import relativeTime from 'dayjs/plugin/relativeTime';
 // 응답타입
-import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
+import { HighlightPointListResType } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
 // 컴포넌트
 import { Column } from 'material-table';
 import Table from '../../../../atoms/Table/MaterialTable';
 import AvatarWithName from '../../../../atoms/User/AvatarWithName';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
-
-dayjs.extend(relativeTime);
+import dateExpression from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -40,18 +35,13 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-interface PostListProps {
-  posts: EditingPointListResType[],
+interface HighlightlistTableProps {
+  posts: HighlightPointListResType[],
   loading?: boolean,
   titleComponent: JSX.Element | undefined,
 }
 
-// 날짜표현함수
-function getDateDisplay(createDate: Date|undefined): string {
-  return createDate ? dayjs(createDate).fromNow() : '';
-}
-
-function PostList(props: PostListProps): JSX.Element {
+export default function HighlightlistTable(props: HighlightlistTableProps): JSX.Element {
   const {
     posts, loading, titleComponent,
   } = props;
@@ -64,7 +54,7 @@ function PostList(props: PostListProps): JSX.Element {
       title: '방송인',
       width: '70%',
       field: 'nickname',
-      render: (rowData: EditingPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListResType): JSX.Element => {
         const { nickname, logo, endDate } = rowData;
         return (
           <Grid container spacing={1}>
@@ -73,7 +63,9 @@ function PostList(props: PostListProps): JSX.Element {
             </Grid>
             <Grid item>
               <Typography variant="h6">{nickname}</Typography>
-              <Typography variant="caption" color="textSecondary">{dayjs(endDate).format('YY.MM.DD HH:mm')}</Typography>
+              <Typography variant="caption" color="textSecondary">
+                {dateExpression({ compoName: 'highlight-table', createdAt: endDate })}
+              </Typography>
             </Grid>
           </Grid>
         );
@@ -85,7 +77,7 @@ function PostList(props: PostListProps): JSX.Element {
       align: 'center',
       field: 'userId',
       sorting: false,
-      render: (rowData: EditingPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListResType): JSX.Element => {
         const { userId } = rowData;
         return (
           <Button
@@ -100,14 +92,14 @@ function PostList(props: PostListProps): JSX.Element {
         );
       },
     },
-  ] as Column<EditingPointListResType>[];
+  ] as Column<HighlightPointListResType>[];
 
   const desktopColumns = [
     {
       title: '방송인',
       width: '40%',
       field: 'nickname',
-      render: (rowData: EditingPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListResType): JSX.Element => {
         const { logo, nickname } = rowData;
         return (
           <>
@@ -120,7 +112,7 @@ function PostList(props: PostListProps): JSX.Element {
       title: '아이디',
       width: '20%',
       field: 'userId',
-      render: (rowData: EditingPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListResType): JSX.Element => {
         const { userId } = rowData;
         return (
           <Typography variant="subtitle1" align="center" className={classes.columnText}>
@@ -135,11 +127,11 @@ function PostList(props: PostListProps): JSX.Element {
       field: 'endDate',
       searchable: false,
       sorting: false,
-      render: (rowData: EditingPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListResType): JSX.Element => {
         const { endDate } = rowData;
         return (
           <Typography variant="subtitle1" align="center" className={classes.columnText}>
-            {getDateDisplay(endDate)}
+            {dateExpression({ compoName: 'fromNow', createdAt: endDate })}
           </Typography>
         );
       },
@@ -150,7 +142,7 @@ function PostList(props: PostListProps): JSX.Element {
       align: 'center',
       searchable: false,
       sorting: false,
-      render: (rowData: EditingPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListResType): JSX.Element => {
         const { userId } = rowData;
         return (
           <Button
@@ -170,7 +162,7 @@ function PostList(props: PostListProps): JSX.Element {
         );
       },
     },
-  ] as Column<EditingPointListResType>[];
+  ] as Column<HighlightPointListResType>[];
 
   return (
     <div className={classes.root}>
@@ -183,6 +175,8 @@ function PostList(props: PostListProps): JSX.Element {
           Pagination: (Props) => (
             <TablePagination
               {...Props}
+              page={1}
+              count={5}
             />
           ),
         }}
@@ -217,5 +211,3 @@ function PostList(props: PostListProps): JSX.Element {
     </div>
   );
 }
-
-export default memo(PostList);

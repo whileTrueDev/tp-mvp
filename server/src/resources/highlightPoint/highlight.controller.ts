@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  Controller, Get, Query, Res, Req, HttpException, HttpStatus,
+  Controller, Get, Query, Res, Req, HttpException, HttpStatus, Param, ParseIntPipe, DefaultValuePipe,
 } from '@nestjs/common';
 import { HighlightService } from './highlight.service';
 
@@ -43,5 +43,37 @@ export class HighlightController {
       });
       zip.pipe(res);
     }
+  }
+
+  /**
+   * 유투브 편집점 페이지 편집점 제공 목록 요청
+   * GET /users/highlight-point-list/:platform
+   * 플랫폼에 따라 최근 방송 종료순으로 
+   * 크리에이터 활동명, userId, 최근방송제목, 최근방송종료시간, 플랫폼 정보를 반환한다
+   * 
+   * @param platform 'afreeca' | 'twitch'
+   * @param page 몇 번째 페이지 
+   * @param take 페이지 당 몇 개
+   * 
+   * @return HighlightPointListResType[]
+   * {   
+   *  creatorId: string, // 크리에이터 ID(아프리카아이디 || 트위치아이디)
+      platform: string, // 플랫폼 'afreeca' | 'twitch'
+      userId: string,   // userId
+      title: string,   // 가장 최근 방송 제목
+      endDate: Date,   // 가장 최근 방송의 종료시간
+      nickname: string // 크리에이터 활동명
+   * }[]
+   */
+  @Get('/highlight-point-list/:platform')
+  getHighlightPointList(
+    @Param('platform') platform: 'afreeca'|'twitch',
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('take', new DefaultValuePipe(30), ParseIntPipe) take: number,
+    @Query('search', new DefaultValuePipe('')) search: string,
+  ): Promise<any[]> {
+    return this.highlightService.getHighlightPointList({
+      platform, page, take, search,
+    });
   }
 }
