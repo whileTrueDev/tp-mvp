@@ -2,6 +2,7 @@ import express from 'express';
 import {
   Controller, Get, Query, Res, Req, HttpException, HttpStatus, Param, ParseIntPipe, DefaultValuePipe,
 } from '@nestjs/common';
+import { HighlightPointListResType } from '@truepoint/shared/res/HighlightPointListResType.interface';
 import { HighlightService } from './highlight.service';
 
 @Controller('highlight')
@@ -54,16 +55,6 @@ export class HighlightController {
    * @param platform 'afreeca' | 'twitch'
    * @param page 몇 번째 페이지 
    * @param take 페이지 당 몇 개
-   * 
-   * @return HighlightPointListResType[]
-   * {   
-   *  creatorId: string, // 크리에이터 ID(아프리카아이디 || 트위치아이디)
-      platform: string, // 플랫폼 'afreeca' | 'twitch'
-      userId: string,   // userId
-      title: string,   // 가장 최근 방송 제목
-      endDate: Date,   // 가장 최근 방송의 종료시간
-      nickname: string // 크리에이터 활동명
-   * }[]
    */
   @Get('/highlight-point-list/:platform')
   getHighlightPointList(
@@ -71,7 +62,7 @@ export class HighlightController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('take', new DefaultValuePipe(30), ParseIntPipe) take: number,
     @Query('search', new DefaultValuePipe('')) search: string,
-  ): Promise<any[]> {
+  ): Promise<HighlightPointListResType> {
     return this.highlightService.getHighlightPointList({
       platform, page, take, search,
     });

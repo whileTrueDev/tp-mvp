@@ -140,7 +140,7 @@ export class HighlightService {
     page: number,
     take: number,
     search: string
-  }): Promise<HighlightPointListResType[]> {
+  }): Promise<HighlightPointListResType> {
     try {
       const matchingId = `${platform}Id`;
       const qb = await this.streamsRepository.createQueryBuilder('streams')
@@ -176,16 +176,15 @@ export class HighlightService {
         return { ...row, logo: getUserProfileImage[0].logo };
       }));
 
-      // const tempRes = {
-      //   data: await userHighlightData,
-      //   totalCount,
-      //   page,
-      //   take,
-      //   totalPage,
-      //   hasMore,
-      // };
-      // console.log({ tempRes });
-      return userHighlightData;
+      const res = {
+        data: await userHighlightData,
+        totalCount,
+        page,
+        take,
+        totalPage,
+        hasMore,
+      };
+      return res;
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException('Error in getHighlightPointList');
