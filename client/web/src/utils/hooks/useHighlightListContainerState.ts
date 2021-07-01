@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import useAxios from 'axios-hooks';
 import { useState, useRef, useEffect } from 'react';
+import { forceCheck } from 'react-lazyload';
 import { HighlightPointListResType } from '../../../../../shared/dist/res/HighlightPointListResType.interface';
 
 export const useHighlightListContainerState = (platform: 'afreeca' | 'twitch'): {
@@ -49,6 +50,9 @@ export const useHighlightListContainerState = (platform: 'afreeca' | 'twitch'): 
         take,
         search,
       },
+    }).then((res) => {
+      // 목록 새로 불러온 후 아바타 이미지가 뷰포트에 들어와 있는지 재확인하여 lazyloading
+      forceCheck();
     }).catch((error) => {
       if (!Axios.isCancel(error)) {
         console.error(error);

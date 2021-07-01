@@ -14,8 +14,8 @@ import { HighlightPointListResType, HighlightPointListItem } from '@truepoint/sh
 
 import Table from '../../../../atoms/Table/MaterialTable';
 import AvatarWithName from '../../../../atoms/User/AvatarWithName';
-import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import dateExpression from '../../../../utils/dateExpression';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -61,7 +61,7 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
         return (
           <Grid container spacing={1} wrap="nowrap">
             <Grid item style={{ display: 'flex', alignItems: 'center' }}>
-              <LazyLoad once height={40} placeholder={<Avatar />}>
+              <LazyLoad height={40} placeholder={<Avatar />}>
                 <Avatar alt={nickname} src={logo} />
               </LazyLoad>
 
@@ -107,7 +107,7 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
       render: (rowData: HighlightPointListItem): JSX.Element => {
         const { logo, nickname } = rowData;
         return (
-          <LazyLoad once height={40} placeholder={<Avatar />}>
+          <LazyLoad height={40} placeholder={<Avatar />}>
             <AvatarWithName name={nickname} logo={logo} />
           </LazyLoad>
         );
