@@ -87,6 +87,7 @@
     "@types/react": "^17.0.0",
     "@types/react-datepicker": "^3.1.1",
     "@types/react-dom": "^17.0.0",
+    "@types/react-lazyload": "^3.1.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-slick": "^0.23.4",
     "@types/react-window": "^1.8.2",
@@ -105,6 +106,7 @@
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.0",
     "prettier": "^2.0.5",
+    "react-lazyload": "^3.2.0",
     "react-material-ui-carousel": "^2.2.1",
     "suneditor": "^2.36.3"
   },

@@ -6,12 +6,12 @@ import {
   makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-
-// 응답타입
-import { HighlightPointListResType, HighlightPointListItem } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
-// 컴포넌트
 import { Column, Options } from 'material-table';
 import { Pagination, PaginationItem } from '@material-ui/lab';
+import LazyLoad from 'react-lazyload';
+// 응답타입
+import { HighlightPointListResType, HighlightPointListItem } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
+
 import Table from '../../../../atoms/Table/MaterialTable';
 import AvatarWithName from '../../../../atoms/User/AvatarWithName';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
@@ -61,7 +61,10 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
         return (
           <Grid container spacing={1} wrap="nowrap">
             <Grid item style={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar alt={nickname} src={logo} />
+              <LazyLoad once height={40} placeholder={<Avatar />}>
+                <Avatar alt={nickname} src={logo} />
+              </LazyLoad>
+
             </Grid>
             <Grid item>
               <Typography variant="h6">{nickname}</Typography>
@@ -104,9 +107,9 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
       render: (rowData: HighlightPointListItem): JSX.Element => {
         const { logo, nickname } = rowData;
         return (
-          <>
+          <LazyLoad once height={40} placeholder={<Avatar />}>
             <AvatarWithName name={nickname} logo={logo} />
-          </>
+          </LazyLoad>
         );
       },
     },
