@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 // material-ui core components
 import {
   Typography, List, ListItem, IconButton, ListItemIcon, Button,
@@ -19,7 +18,7 @@ import TwitchIcon from '../../../../atoms/stream-analysis-icons/TwitchIcon';
 import AfreecaIcon from '../../../../atoms/stream-analysis-icons/AfreecaIcon';
 // interfaces
 import { PeriodStreamsListProps, StreamsListItem } from './StreamAnalysisShared.interface';
-import dateExpression from '../../../../utils/dateExpression';
+import dateExpression, { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({
   listWrapper: {
@@ -337,7 +336,7 @@ export default function PeriodStreamsList(props: PeriodStreamsListProps): JSX.El
     <List className={classes.listWrapper}>
       {selectedDate && selectedStreams.length > 0
         && selectedStreams
-          .filter((stream) => moment(stream.startDate).format('YYYY-MM-DD') === moment(selectedDate).format('YYYY-MM-DD'))
+          .filter((stream) => dayjsFormatter(stream.startDate, 'date-only') === dayjsFormatter(selectedDate, 'date-only'))
           .map((stream) => listItem(stream, stream.isRemoved))}
       {!selectedDate && selectedStreams.length > 0 && selectedStreams
         .map((stream) => listItem(stream, stream.isRemoved))}

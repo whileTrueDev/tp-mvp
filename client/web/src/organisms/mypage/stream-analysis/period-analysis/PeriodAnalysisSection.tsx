@@ -28,7 +28,7 @@ import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text
 // context
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 
-import dateExpression from '../../../../utils/dateExpression';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 // hooks
 import useDialog from '../../../../utils/hooks/useDialog';
@@ -148,10 +148,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
       .filter((stream) => !stream.isRemoved)
       .map((dayStreamInfo) => ({
         creatorId: dayStreamInfo.creatorId,
-        startedAt: dateExpression({
-          compoName: 'string-format',
-          createdAt: dayStreamInfo.startDate,
-        }),
+        startedAt: dayjsFormatter(dayStreamInfo.startDate).toISOString(),
         streamId: dayStreamInfo.streamId,
         platform: dayStreamInfo.platform,
         viewer: dayStreamInfo.viewer,

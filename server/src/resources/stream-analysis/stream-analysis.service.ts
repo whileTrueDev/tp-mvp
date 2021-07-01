@@ -9,7 +9,6 @@ import {
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 // date library
-import moment from 'moment';
 // shared dto , interfaces
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchStreamInfoByStreamId } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByStreamId.dto';
@@ -27,6 +26,7 @@ import { UsersService } from '../users/users.service';
 import { StreamsEntity } from './entities/streams.entity';
 import { StreamSummaryEntity } from './entities/streamSummary.entity';
 import { groupingData, getDateCount } from './stream-grouping';
+import dayjsFormatter from '../../utils/dateExpression';
 
 // aws s3
 dotenv.config();
@@ -178,8 +178,8 @@ export class StreamAnalysisService {
       1. 기준 기간 타임라인, 비교 기간 타임라인 startedAt 기준 오름차순 정렬
       오름 차순 정렬 통해 병합 여부 판단 
     */
-    timeline[0].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
-    timeline[1].sort((a, b) => (moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1));
+    timeline[0].sort((a, b) => (dayjsFormatter(a.startDate).isBefore(dayjsFormatter(b.startDate)) ? -1 : 1));
+    timeline[1].sort((a, b) => (dayjsFormatter(a.startDate).isBefore(dayjsFormatter(b.startDate)) ? -1 : 1));
     /* 
       2. 각 타임라인 같은 날짜에 대한 데이터는 평균으로 병합
       시청자수, 채팅수, 웃음 발생수 3가지 지표값에 대해 
@@ -197,7 +197,7 @@ export class StreamAnalysisService {
         viewer: Math.round(tempResult[0] / temp.arr.length),
         chatCount: Math.round(tempResult[1] / temp.arr.length),
         smileCount: Math.round(tempResult[2] / temp.arr.length),
-        startDate: moment(tempResult[3]).format('YYYY-MM-DD'),
+        startDate: dayjsFormatter(tempResult[3], 'YYYY-MM-DD'),
         isRemoved: false,
       });
     }
@@ -218,11 +218,11 @@ export class StreamAnalysisService {
         } else {
           /* 전후 비교 및 temp 삽입 */
           const prev = timeline[periodIndex][index - 1];
-          if (moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
+          if (dayjsFormatter(curr.startDate).isSame(dayjsFormatter(prev.startDate), 'days')) {
             /* 같은 날짜일 경우 temp에 방송 정보값 임시 저장 */
             temp.arr.push(curr);
             temp.count += 1;
-          } else if (!moment(curr.startDate).isSame(moment(prev.startDate), 'days')) {
+          } else if (!dayjsFormatter(curr.startDate).isSame(dayjsFormatter(prev.startDate), 'days')) {
             /* 다른 날짜일 경우 temp 병합 후 temp 초기화 */
             merge(temp, periodIndex);
             temp.arr = []; temp.count = 0;
@@ -376,9 +376,9 @@ export class StreamAnalysisService {
        * 현재 방송에 다음 방송이 포함 되는 경우 (끝점 일치 포함)
        * 포함 되는 부분 만큼만 타임라인을 병합한다.
        */
-      if (moment(currStream.end_date) >= moment(nextStream.end_date)) {
+      if (dayjsFormatter(currStream.end_date) >= dayjsFormatter(nextStream.end_date)) {
         isContained = true;
-        const timeDuration = moment(nextStream.start_date).diff(moment(currStream.start_date), 'seconds');
+        const timeDuration = dayjsFormatter(nextStream.start_date).diff(dayjsFormatter(currStream.start_date), 'seconds');
         gapSize = nextStream.total_index;
         gapStartIndex = Math.round(timeDuration / 30);
       } else {
@@ -386,7 +386,7 @@ export class StreamAnalysisService {
        * 현재 방송에 다음 방송이 일부 겹치는 경우 
        * 일부 겹치는 부분만 타임라인을 병합한다.
        */
-        const timeDuration = moment(currStream.end_date).diff(moment(nextStream.start_date), 'seconds');
+        const timeDuration = dayjsFormatter(currStream.end_date).diff(dayjsFormatter(nextStream.start_date), 'seconds');
         gapSize = Math.round(timeDuration / 30);
         gapStartIndex = currStream.total_index - gapSize;
       }
@@ -424,9 +424,9 @@ export class StreamAnalysisService {
     /* 시작 날짜 기준 오름 차순 , 시작 날짜 동일 시 방송 길이 기준 오름 차순 */
       if (dataArray.length < 1) reject(new Error('Empty S3 Data Array ...'));
       const ASCdataArray = dataArray.sort((obj1, obj2) => {
-        if (moment(obj1.start_date) > moment(obj2.start_date)) return 1;
-        if (moment(obj1.start_date) < moment(obj2.start_date)) return -1;
-        if (moment(obj1.start_date) === moment(obj2.start_date)) {
+        if (dayjsFormatter(obj1.start_date) > dayjsFormatter(obj2.start_date)) return 1;
+        if (dayjsFormatter(obj1.start_date) < dayjsFormatter(obj2.start_date)) return -1;
+        if (dayjsFormatter(obj1.start_date) === dayjsFormatter(obj2.start_date)) {
           if (obj1.time_line.length >= obj2.time_line.length) return 1;
           return -1;
         }
@@ -439,7 +439,7 @@ export class StreamAnalysisService {
           /* 루프 현재 방송과 다음 방송의 겹침 여부 판단 후 로직 수행 */
             const currStream = ASCdataArray[i];
             const nextStream = ASCdataArray[i + 1];
-            if (moment(currStream.end_date) >= moment(nextStream.start_date)) {
+            if (dayjsFormatter(currStream.end_date) >= dayjsFormatter(nextStream.start_date)) {
             /* 겹쳐진 방송은 하나로 합쳐 다음 루프 수행 */
               ASCdataArray[i + 1] = crossFunc(currStream, nextStream);
             } else {
@@ -481,7 +481,7 @@ export class StreamAnalysisService {
                 smile_count: timeline.smile_count,
                 chat_count: timeline.chat_count,
                 viewer_count: timeline.viewer_count,
-                date: (moment(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss'),
+                date: (dayjsFormatter(s3Data.start_date).add(timelineIndex * 30, 'seconds')).format('YYYY-MM-DD HH:mm:ss'),
               });
             });
             if (index === calculatedArray.length - 1) {

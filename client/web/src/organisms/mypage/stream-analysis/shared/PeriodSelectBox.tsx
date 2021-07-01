@@ -2,15 +2,13 @@ import React from 'react';
 import {
   Box, Typography, TextField,
 } from '@material-ui/core';
-
 import {
   makeStyles, Theme, createStyles,
 } from '@material-ui/core/styles';
 import classnames from 'classnames';
-// date library
-import moment from 'moment';
 // interfaces
 import { PeriodSelectBoxProps } from './StreamAnalysisShared.interface';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
@@ -101,20 +99,20 @@ export default function PeriodSelectBox(props: PeriodSelectBoxProps): JSX.Elemen
           <TextField
             disabled
             className={classes.textField}
-            placeholder={moment(now).subtract(1, 'day').format('YYYY년MM월DD일')}
+            placeholder={dayjsFormatter(now).subtract(1, 'day').format('YYYY년MM월DD일')}
             inputProps={{ style: { textAlign: 'center' }, className: classes.textFieldIntput }}
             value={period[0]
-              ? moment(period[0]).format('YYYY년MM월DD일')
+              ? dayjsFormatter(period[0], 'YYYY년MM월DD일')
               : ''}
           />
           <Typography>~</Typography>
           <TextField
             disabled
             className={classes.textField}
-            placeholder={moment(now).format('YYYY년MM월DD일')}
+            placeholder={dayjsFormatter(now, 'YYYY년MM월DD일')}
             inputProps={{ style: { textAlign: 'center' }, className: classes.textFieldIntput }}
             value={period[1]
-              ? moment(period[1]).format('YYYY년MM월DD일')
+              ? dayjsFormatter(period[1], 'YYYY년MM월DD일')
               : ''}
           />
 

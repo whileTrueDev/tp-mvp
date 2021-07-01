@@ -142,7 +142,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => dayjsFormatter(streamInfo.startDate).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only')),
       );
     }).catch((err) => {
       if (err.message) {
@@ -158,7 +158,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       if (getStreamsData) {
         getStreamsData.forEach((stream: StreamDataType) => {
           if (newDate
-            && dayjsFormatter(newDate).format('YYYY-MM-DD') === dayjsFormatter(stream.startDate).format('YYYY-MM-DD')) {
+            && dayjsFormatter(newDate, 'date-only') === dayjsFormatter(stream.startDate, 'date-only')) {
             // 마케팅을 위한 개발 목적 => 추후 변경
             if (!exampleMode) {
               dayStreamList.push(stream);
@@ -186,15 +186,15 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
     dayInCurrentMonth: boolean,
     dayComponent: JSX.Element,
   ) => {
-    if (date && hasStreamDays.includes(dayjsFormatter(date).format('YYYY-MM-DD')) && dayInCurrentMonth) {
+    if (date && hasStreamDays.includes(dayjsFormatter(date, 'date-only')) && dayInCurrentMonth) {
       return (
         <div className={classnames({
-          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(dayjsFormatter(date).format('YYYY-MM-DD')),
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')),
         })}
         >
           {dayComponent}
           <div className={classnames({
-            [classes.hasStreamDayDot]: hasStreamDays.includes(dayjsFormatter(date).format('YYYY-MM-DD')),
+            [classes.hasStreamDayDot]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')),
           })}
           />
         </div>

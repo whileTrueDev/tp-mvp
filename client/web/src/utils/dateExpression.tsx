@@ -11,14 +11,23 @@ interface makeDate {
   finishAt?: any;
 }
 
-export function dayjsFormatter(date: string | Date | null, rest?: any[]): any {
+export function dayjsFormatter(date?: string | Date | null | undefined, format?: 'default' | 'date-only' | string): any {
   if (date) {
-    if (rest) {
-      return dayjs(date, ...rest);
+    switch (format) {
+      case 'default':
+        return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
+
+      case 'date-only':
+        return dayjs(date).format('YYYY-MM-DD');
+
+      default:
+        if (format) {
+          return dayjs(date).format(format);
+        }
+        return dayjs(date);
     }
-    return dayjs(date);
   }
-  return null;
+  return dayjs();
 }
 
 export default function dateExpression(data: makeDate): any {
@@ -31,37 +40,15 @@ export default function dateExpression(data: makeDate): any {
     case 'analysys-calender':
       return (dayjs(createdAt).format('DD일 HH:mm ~ ') + dayjs(finishAt).format('DD일 HH:mm'));
 
-    case 'highlight-table': return (dayjs(createdAt).format('YY-MM-DD HH:mm:ss'));
-
     case 'highlight-calendar': {
       return (dayjs(createdAt).format('DD일 HH:mm ~ ') + dayjs(finishAt).format('DD일 HH:mm'));
     }
-
-    case 'day-js-object':
-      return dayjs(createdAt);
-
-    case 'metric-graph-tooltip': {
-      return dayjs(createdAt).format('YY-MM-DD HH시');
-    }
-    case 'string-format':
-      return dayjs(createdAt).toISOString();
-
-    case 'metric-graph': {
-      return dayjs(createdAt).format('YY-MM-DD');
-    }
-
-    case 'table-view': return (dayjs(createdAt).format('ll'));
 
     case 'selected-view':
       if (((current.getTime() - postdate.getTime()) / 1000 / 3600 / 24) < 1) {
         return (dayjs(createdAt).startOf('day').fromNow());
       }
       return (dayjs(createdAt).format('lll'));
-
-    case 'fromNow':
-      return dayjs(createdAt).fromNow();
-
-    case 'post-date': return (dayjs(createdAt).format('YY-MM-DD HH:mm:ss'));
 
     default: return (dayjs(createdAt).format('ll'));
   }

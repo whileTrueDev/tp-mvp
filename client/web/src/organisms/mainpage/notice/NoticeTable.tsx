@@ -8,7 +8,7 @@ import NotificationImportantIcon from '@material-ui/icons/NotificationImportant'
 import shortid from 'shortid';
 import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
-import dateExpression from '../../../utils/dateExpression';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 
 const TABLE_ROW_HEIGHT = 45;
@@ -112,10 +112,7 @@ export default function MaterialTable({
                             {eachRow.title}
                           </Typography>
                           <Typography variant="caption" color="textSecondary">
-                            {dateExpression({
-                              compoName: 'table-view',
-                              createdAt: eachRow.createdAt,
-                            })}
+                            {dayjsFormatter(eachRow.createdAt, 'll')}
                           </Typography>
                         </TableCell>
                       </>
@@ -150,10 +147,7 @@ export default function MaterialTable({
                           {eachRow.title}
                         </TableCell>
                         <TableCell className={classes.tableCell} scope="row" align="center">
-                          {dateExpression({
-                            compoName: 'table-view',
-                            createdAt: eachRow.createdAt,
-                          })}
+                          {dayjsFormatter(eachRow.createdAt, 'll')}
                         </TableCell>
                       </>
                     )}

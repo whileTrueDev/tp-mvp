@@ -4,7 +4,6 @@ import React, {
   useCallback, useEffect, useState,
 } from 'react';
 import { useSnackbar } from 'notistack';
-import dayjs from 'dayjs';
 import {
   ICreatorCommentsRes, ICreatorCommentData,
 } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
@@ -16,10 +15,11 @@ import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import CommentSortButtons, { CommentFilter, filters } from '../sub/CommentSortButtons';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 export function isWithin24Hours(date: string): boolean {
-  const now = dayjs();
-  const targetDate = dayjs(date);
+  const now = dayjsFormatter();
+  const targetDate = dayjsFormatter(date);
   return now.diff(targetDate, 'hour') < 24;
 }
 

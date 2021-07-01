@@ -7,7 +7,7 @@ import am4langKoKr from '@amcharts/amcharts4/lang/ko_KR';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import getPlatformColor from '../../../../utils/getPlatformColor';
-import dateExpression from '../../../../utils/dateExpression';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 import makeGroupedData from '../utils/makeGroupedData';
 
 am4core.useTheme(am4themesAnimated);
@@ -54,10 +54,9 @@ export default function UserMetricsChart({
     categoryAxis.renderer.minGridDistance = 60;
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.dataItems.template.text = '';
-    categoryAxis.adapter.add('tooltipText', () => dateExpression({
-      compoName: 'metric-graph-tooltip',
-      createdAt: categoryAxis.tooltipDataItem.dataContext.startDate,
-    }));
+    categoryAxis.adapter.add('tooltipText', () => dayjsFormatter(
+      categoryAxis.tooltipDataItem.dataContext.startDate, 'YY-MM-DD HH시',
+    ));
 
     if (categoryAxis.tooltip) {
       categoryAxis.tooltip.background.opacity = 1;
@@ -138,10 +137,7 @@ export default function UserMetricsChart({
                 if (!tempArray[alreadyPushedIndex][itemName]) {
                   tempArray[alreadyPushedIndex] = {
                     ...tempArray[alreadyPushedIndex],
-                    realName: dateExpression({
-                      compoName: 'metric-graph',
-                      createdAt: item.startDate,
-                    }),
+                    realName: dayjsFormatter(item.startDate, 'date-only'),
                     [itemName]: item.value,
                     title: item.title,
                   };
@@ -149,10 +145,7 @@ export default function UserMetricsChart({
                   // 그 안에 해당 플랫폼 데이터가 있는 경우
                   tempArray.push({
                     category: `${date}_${index}`,
-                    realName: dateExpression({
-                      compoName: 'metric-graph',
-                      createdAt: item.startDate,
-                    }),
+                    realName: dayjsFormatter(item.startDate, 'date-only'),
                     [itemName]: item.value,
                     title: item.title,
                     date,
@@ -162,10 +155,7 @@ export default function UserMetricsChart({
               } else {
                 tempArray.push({
                   category: `${date}_${index}`,
-                  realName: dateExpression({
-                    compoName: 'metric-graph',
-                    createdAt: item.startDate,
-                  }),
+                  realName: dayjsFormatter(item.startDate, 'date-only'),
                   [itemName]: item.value,
                   title: item.title,
                   date,
@@ -186,10 +176,7 @@ export default function UserMetricsChart({
             count += 1;
             tempArray.push({
               category: `${date}_${0}`,
-              realName: dateExpression({
-                compoName: 'metric-graph',
-                createdAt: providerData[itemName].startDate,
-              }),
+              realName: dayjsFormatter(providerData[itemName].startDate, 'date-only'),
               [itemName]: providerData[itemName].value,
               title: providerData[itemName].title,
               date,

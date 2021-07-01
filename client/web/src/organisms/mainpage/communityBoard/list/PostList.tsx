@@ -3,9 +3,6 @@ import { useHistory } from 'react-router-dom';
 import { Grid, Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 // 라이브러리
-import dayjs from 'dayjs';
-import 'dayjs/locale/ko';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import classnames from 'classnames';
 // 응답타입
 import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
@@ -18,9 +15,8 @@ import { useStyles, rowHeightBase } from '../style/PostList.style';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
-dayjs.locale('ko');
-dayjs.extend(relativeTime);
 interface PostListProps {
   take: number,
   page: number,
@@ -48,7 +44,7 @@ interface ColumnData {
 function getDateDisplay(createDate: Date|undefined): string {
   let dateDisplay = '';
   if (createDate) {
-    dateDisplay = dayjs(createDate).format('YY/MM/DD');
+    dateDisplay = dayjsFormatter(createDate, 'YY/MM/DD');
   }
   return dateDisplay;
 }
@@ -245,7 +241,7 @@ function MobilePostList({
 
               <Grid container>
                 <Typography component="span" color="textSecondary" className={classes.mobileText}>
-                  {post.createDate ? dayjs(post.createDate).fromNow() : ''}
+                  {post.createDate ? dayjsFormatter(post.createDate).fromNow() : ''}
                 </Typography>
                 <Typography component="span" color="textSecondary" className={classes.mobileText}>
                   {`조회수 ${post.hit}`}

@@ -6,7 +6,7 @@ import {
 import classnames from 'classnames';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
-import dateExpression from '../../../../utils/dateExpression';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 
 const usePostInfoCardStyle = makeStyles((theme: Theme) => createStyles({
@@ -77,10 +77,7 @@ function PostInfoCard({ post, repliesCount }: PostProps) {
           </Typography>
           <Divider orientation="vertical" flexItem />
           <Typography className={classnames('text', cardClass.date)}>
-            {createDate ? dateExpression({
-              compoName: 'post-date',
-              createdAt: createDate,
-            }) : ''}
+            {createDate ? dayjsFormatter(createDate, 'default') : ''}
           </Typography>
         </Grid>
         <Grid item className={cardClass.group} xs={12} sm={6} container justify="flex-end">
