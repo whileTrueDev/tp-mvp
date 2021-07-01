@@ -184,11 +184,10 @@ export class CreatorRatingsService {
     try {
       const data = await this.ratingsRepository.createQueryBuilder('ratings')
         .select([
-          'AVG(rating) AS average',
+          'ROUND(AVG(rating),2) AS average',
           'Count(id) AS count',
         ])
         .where('creatorId = :creatorId', { creatorId })
-        // .andWhere('createDate >= DATE_SUB(curDate(), INTERVAL 1 MONTH)')
         .getRawOne();
       return {
         average: Number(data.average),
@@ -305,7 +304,7 @@ export class CreatorRatingsService {
     const query = `
     SELECT 
       DATE_FORMAT(createDate, '%Y-%m-%d') AS "date", 
-      CAST(AVG(rating) as decimal(10,2)) AS avgRating,
+      ROUND(AVG(rating),2) AS avgRating,
       platform
     FROM ${this.ratingsRepository.metadata.tableName}
     Where
@@ -348,7 +347,7 @@ export class CreatorRatingsService {
       This.creatorId AS creatorId,
       This.platform AS platform,
       IFNULL( (CAST(Prev.rownum AS SIGNED) - CAST(This.rownum AS SIGNED)), 9999) AS rankChange,
-      This.avgRating AS avgRating,
+      ROUND(This.avgRating,2) AS avgRating,
       This.twitchStreamerName AS twitchStreamerName,
       This.twitchLogo AS twitchLogo,
       This.afreecaLogo AS afreecaLogo,
@@ -424,7 +423,7 @@ export class CreatorRatingsService {
       .select([
         'ratings.id AS id',
         'ratings.creatorId AS creatorId',
-        'AVG(ratings.rating) AS rating',
+        'ROUND(AVG(ratings.rating),2) AS rating',
         'ratings.platform AS platform',
       ])
       // .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
@@ -565,7 +564,7 @@ export class CreatorRatingsService {
     const data = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
         'ratings.creatorId AS creatorId',
-        'AVG(ratings.rating) AS avgRating',
+        'ROUND(AVG(ratings.rating),2) AS avgRating',
         'DATE_FORMAT(ratings.createDate, "%Y-%m-%d") AS date',
       ])
       .where(`ratings.creatorId IN ('${ids.join("','")}')`)

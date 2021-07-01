@@ -60,7 +60,7 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
   // category에 따라 다른 숫자값을 보여준다
   let value: number | string;
   if (category === 'rating') {
-    value = props.averageRating || 0;
+    value = props.averageRating ? props.averageRating.toFixed(2) : 0;
   } else if (category === 'viewer') {
     value = props[category] || 0;
   } else {

@@ -66,7 +66,7 @@ export class RankingsService {
         'T1.title AS title',
         'T1.createDate AS createDate',
         'T1.platform AS platform',
-        'AVG(ratings.rating) AS averageRating',
+        'ROUND(AVG(ratings.rating),2) AS averageRating',
       ])
       .addFrom((subQuery) => subQuery // 최근분석시간 기중 24시간 내 방송을 creatorId별로 그룹화하여 creatorId와 최대점수를 구한 테이블(t2)
         .select([
