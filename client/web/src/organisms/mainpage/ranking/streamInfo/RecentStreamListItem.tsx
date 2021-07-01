@@ -33,7 +33,6 @@ export default function RecentStreamListItem({
     stream.title.length > 25
       ? `${stream.title.slice(0, 25)}...`
       : stream.title), [stream.title]);
-
   const date = useMemo(() => dayjsFormatter(stream.startDate, 'date-only'), [stream.startDate]);
   const viewer = useMemo(() => `평균 시청자 수 : ${stream.viewer} 명`, [stream.viewer]);
   const likeCount = useMemo(() => ` ${stream.likeCount ? stream.likeCount.toLocaleString() : 0}`, [stream.likeCount]);

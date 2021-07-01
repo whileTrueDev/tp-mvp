@@ -69,7 +69,7 @@ function ReplyForm({
     } catch (e) {
       ShowSnack(e.message, 'error', enqueueSnackbar);
     }
-  }, [afterCreateReplyHandler, enqueueSnackbar, postCreatReply, postId]);
+  }, [afterCreateReplyHandler, enqueueSnackbar, postCreatReply]);
 
   return (
     <div>
