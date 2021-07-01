@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
-  Typography, TablePagination, Button, Grid, Avatar,
+  Typography, Button, Grid, Avatar,
 } from '@material-ui/core';
 import {
-  makeStyles, createStyles, Theme, useTheme,
+  makeStyles, createStyles, Theme,
 } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 
 // 응답타입
-import { HighlightPointListResType } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
+import { HighlightPointListResType, HighlightPointListItem } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
 // 컴포넌트
-import { Column } from 'material-table';
+import { Column, Options } from 'material-table';
+import { Pagination, PaginationItem } from '@material-ui/lab';
 import Table from '../../../../atoms/Table/MaterialTable';
 import AvatarWithName from '../../../../atoms/User/AvatarWithName';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
@@ -36,28 +37,29 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface HighlightlistTableProps {
-  posts: HighlightPointListResType[],
+  data: HighlightPointListResType | undefined,
   loading?: boolean,
-  titleComponent: JSX.Element | undefined,
+  handlePageChange: (event: React.ChangeEvent<unknown>, value: number) => void
+  header?: React.ComponentType<any> | undefined
+  take: number
 }
 
 export default function HighlightlistTable(props: HighlightlistTableProps): JSX.Element {
   const {
-    posts, loading, titleComponent,
+    data, loading, handlePageChange, header, take,
   } = props;
-  const theme = useTheme();
   const classes = useStyles();
   const { isMobile } = useMediaSize();
 
   const mobileColumns = [
     {
       title: '방송인',
-      width: '70%',
+      width: '80%',
       field: 'nickname',
-      render: (rowData: HighlightPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListItem): JSX.Element => {
         const { nickname, logo, endDate } = rowData;
         return (
-          <Grid container spacing={1}>
+          <Grid container spacing={1} wrap="nowrap">
             <Grid item style={{ display: 'flex', alignItems: 'center' }}>
               <Avatar alt={nickname} src={logo} />
             </Grid>
@@ -73,11 +75,11 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
     },
     {
       title: '편집점 살펴보기',
-      width: '30%',
+      width: '20%',
       align: 'center',
       field: 'userId',
       sorting: false,
-      render: (rowData: HighlightPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListItem): JSX.Element => {
         const { userId } = rowData;
         return (
           <Button
@@ -92,14 +94,14 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
         );
       },
     },
-  ] as Column<HighlightPointListResType>[];
+  ] as Column<HighlightPointListItem>[];
 
   const desktopColumns = [
     {
       title: '방송인',
-      width: '40%',
+      width: '60%',
       field: 'nickname',
-      render: (rowData: HighlightPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListItem): JSX.Element => {
         const { logo, nickname } = rowData;
         return (
           <>
@@ -109,25 +111,12 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
       },
     },
     {
-      title: '아이디',
-      width: '20%',
-      field: 'userId',
-      render: (rowData: HighlightPointListResType): JSX.Element => {
-        const { userId } = rowData;
-        return (
-          <Typography variant="subtitle1" align="center" className={classes.columnText}>
-            {userId}
-          </Typography>
-        );
-      },
-    },
-    {
       title: '최근 방송',
       width: '10%',
       field: 'endDate',
       searchable: false,
       sorting: false,
-      render: (rowData: HighlightPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListItem): JSX.Element => {
         const { endDate } = rowData;
         return (
           <Typography variant="subtitle1" align="center" className={classes.columnText}>
@@ -142,7 +131,7 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
       align: 'center',
       searchable: false,
       sorting: false,
-      render: (rowData: HighlightPointListResType): JSX.Element => {
+      render: (rowData: HighlightPointListItem): JSX.Element => {
         const { userId } = rowData;
         return (
           <Button
@@ -162,50 +151,55 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
         );
       },
     },
-  ] as Column<HighlightPointListResType>[];
+  ] as Column<HighlightPointListItem>[];
+
+  const customPagination = () => (
+    <td
+      style={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        padding: 16,
+      }}
+    >
+      <Pagination
+        size={isMobile ? 'small' : 'medium'}
+        renderItem={(item) => (<PaginationItem {...item} />)}
+        variant="outlined"
+        showFirstButton
+        showLastButton
+        onChange={handlePageChange}
+        count={data ? data.totalPage : 1}
+        page={data ? data.page : 1}
+      />
+    </td>
+  );
+
+  const options: Options<HighlightPointListItem> = useMemo(() => ({
+    padding: 'dense',
+    search: false,
+    pageSizeOptions: [take],
+    pageSize: take,
+    header: !isMobile,
+    showTitle: false,
+    draggable: false,
+    toolbar: false,
+    loadingType: 'linear',
+  }), [isMobile, take]);
 
   return (
     <div className={classes.root}>
       <Table
-        title={titleComponent}
         columns={isMobile ? mobileColumns : desktopColumns}
-        data={posts || []}
+        data={data ? data.data : []}
         isLoading={loading}
         components={{
-          Pagination: (Props) => (
-            <TablePagination
-              {...Props}
-              page={1}
-              count={5}
-            />
-          ),
+          Pagination: customPagination,
+          Header: header,
         }}
-        options={{
-          search: true,
-          pageSizeOptions: [10, 30, 50],
-          pageSize: isMobile ? 10 : 30,
-          searchFieldAlignment: 'right',
-          headerStyle: {
-            textAlign: 'center',
-            fontWeight: 600,
-            minWidth: 170,
-            fontSize: theme.typography.body1.fontSize,
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.common.white,
-            wordBreak: 'keep-all',
-          },
-          header: !isMobile,
-          showTitle: !isMobile,
-          draggable: false,
-          paginationType: 'stepped',
-          toolbar: true,
-          loadingType: 'linear',
-          searchFieldStyle: { borderRadius: 8, backgroundColor: theme.palette.divider },
-        }}
+        options={options}
         style={{
           boxShadow: 'none',
-          borderRadius: theme.spacing(2),
-          border: `2px solid ${theme.palette.primary.main}`,
         }}
       />
     </div>
