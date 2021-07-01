@@ -162,9 +162,6 @@ export class HighlightService {
       const totalCount = (await qb.clone().getRawMany()).length;
       const totalPage = Math.ceil(totalCount / take);
       const hasMore = page < totalPage;
-      console.log({
-        totalCount, page, take, totalPage, hasMore,
-      });
 
       const dataWithoutProfileImage = await qb
         .offset((page - 1) * take)
