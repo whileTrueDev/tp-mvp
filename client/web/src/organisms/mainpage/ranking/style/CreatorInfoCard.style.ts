@@ -15,8 +15,8 @@ export const useProfileSectionStyles = makeStyles((theme: Theme) => ({
     width: theme.spacing(19),
     height: theme.spacing(19),
     [theme.breakpoints.down('sm')]: {
-      width: theme.spacing(9),
-      height: theme.spacing(9),
+      width: theme.spacing(10),
+      height: theme.spacing(10),
     },
   },
   textContainer: {
@@ -69,8 +69,11 @@ export const useProfileSectionStyles = makeStyles((theme: Theme) => ({
     fontSize: theme.typography.body2.fontSize,
     width: '100%',
     whiteSpace: 'pre-wrap',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('xs')]: {
       fontSize: theme.spacing(1.25),
+    },
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.spacing(1.5),
     },
   },
   linkButtons: {

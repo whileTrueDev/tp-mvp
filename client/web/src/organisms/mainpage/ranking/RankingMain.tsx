@@ -14,13 +14,14 @@ import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
 import PageTitle from '../shared/PageTitle';
 import FirstPlaceCreators from './sub/FirstPlaceCreators';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
+import RatingGuideBannerSlide from './sub/RatingGuideBannerSlide';
 
 export function CarouselSection(): JSX.Element {
   const carousel = useCarouselStyle();
   const wrapper = useRankingPageLayout();
   return (
     <div className={wrapper.top}>
-      <Container className={wrapper.container}>
+      <Container className={wrapper.container} style={{ maxWidth: 1074, padding: 0 }}>
         <Carousel
           NextIcon={<ArrowForwardIosIcon className={carousel.buttonIcon} />}
           PrevIcon={<ArrowBackIosIcon className={carousel.buttonIcon} />}
@@ -38,6 +39,7 @@ export function CarouselSection(): JSX.Element {
           }}
         >
           <FirstPlaceCreators />
+          <RatingGuideBannerSlide />
           <SearchGuideBannerSlide />
           <ViewerComparisonPolarAreaCard />
           <WeeklyLineCard />
