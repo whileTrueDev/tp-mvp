@@ -1,4 +1,6 @@
-import { Container, useMediaQuery, useTheme } from '@material-ui/core';
+import {
+  Typography, useMediaQuery, useTheme,
+} from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResType.interface';
 import useAxios, { ResponseValues } from 'axios-hooks';
@@ -6,16 +8,8 @@ import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import PageTitle from '../shared/PageTitle';
 import RecentStreamListItem from './streamInfo/RecentStreamListItem';
-import RecentStreamListLeftDecorator from './streamInfo/RecentStreamListLeftDecorator';
 import useRecentStreamStyles from './style/RecentStream.styles';
 
-const listPositions = [
-  { marginLeft: 70 },
-  { marginLeft: 120 },
-  { marginLeft: 130 },
-  { marginLeft: 120 },
-  { marginLeft: 70 },
-];
 interface RecentStreamListProps {
   userData: ResponseValues<User, any>;
   creatorId: string;
@@ -29,30 +23,21 @@ export default function RecentStreamList({
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const platform = userData.data?.afreeca ? 'afreeca' : 'twitch';
-
   const [{ data, error }] = useAxios<RecentStreamResType>({
     url: '/broadcast-info/bycreator',
     method: 'GET',
     params: { creatorId, limit: 5 },
   });
 
-  function createListData(d: RecentStreamResType) {
-    return d.map((_d, idx) => ({
-      ..._d,
-      marginLeft: listPositions[idx].marginLeft,
-    }));
-  }
-
   const dataSource = useMemo(() => {
     if (!data) return [];
-    return createListData(data);
+    return data;
   }, [data]);
 
   if (isSm) {
     return (
 
-      <section>
+      <section className={classes.itembox}>
         <PageTitle text="최근 방송" />
         {!error && dataSource && dataSource.map((stream) => (
           <RecentStreamListItem
@@ -69,8 +54,22 @@ export default function RecentStreamList({
 
   return (
     <section className={classes.section} id="broad-list">
-      <Container style={{ position: 'relative', overflow: 'hidden' }}>
-        <div className={classes.itembox}>
+
+      {/* 스트리머 프로필이미지 */}
+      {!userData.loading && userData.data && (
+        <img
+          draggable={false}
+          className={classes.profileImage}
+          src={theme.palette.type === 'light' ? userData.data.detail?.heroImageLight : userData.data.detail?.heroImageDark}
+          alt=""
+        />
+      )}
+
+      <section className={classes.streamListSection}>
+        <Typography className={classes.titleText}>방송 후기 게시판</Typography>
+        <div
+          className={classes.itembox}
+        >
           {!error && dataSource && dataSource.map((stream) => (
             <RecentStreamListItem
               key={stream.streamId}
@@ -81,19 +80,7 @@ export default function RecentStreamList({
             />
           ))}
         </div>
-
-        {/* 우측 스트리머 프로필이미지 */}
-        {!userData.loading && userData.data && (
-        <img
-          draggable={false}
-          className={classes.profileImage}
-          src={theme.palette.type === 'light' ? userData.data.detail?.heroImageLight : userData.data.detail?.heroImageDark}
-          alt=""
-        />
-        )}
-        {/* 플랫폼 로고 이미지 */}
-        {isSm ? (null) : (<RecentStreamListLeftDecorator themeType={theme.palette.type} platform={platform} />)}
-      </Container>
+      </section>
 
     </section>
 

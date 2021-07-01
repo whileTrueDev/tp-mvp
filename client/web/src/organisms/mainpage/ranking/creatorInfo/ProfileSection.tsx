@@ -3,25 +3,15 @@ import {
   Avatar, Chip, Grid, Typography,
 } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import {
-  CreatorRatingInfoRes, CreatorAverageRatings,
-} from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { CreatorAverageRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
 import { ResponseValues } from 'axios-hooks';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import axios from '../../../../utils/axios';
-import {
-  useCreatorInfoCardStyles, useExLargeRatingStyle,
-  useProfileSectionStyles,
-} from '../style/CreatorInfoCard.style';
-import { ScoresSection } from '../../shared/ScoresSection';
+import { useExLargeRatingStyle, useProfileSectionStyles } from '../style/CreatorInfoCard.style';
 import StarRating from './StarRating';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 
-export interface CreatorInfoCardProps extends CreatorRatingInfoRes{
-  user?: User;
-  updateAverageRating?: () => void
-}
 /**
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
  */
@@ -183,36 +173,5 @@ export function ProfileSection({
 
       </Grid>
     </>
-  );
-}
-
-/**
- * 방송인정보페이지 상단 방송인 정보와 별점 평가하는 컴포넌트
- * @param props 
- * @returns 
- */
-export default function CreatorInfoCard(props: CreatorInfoCardProps): JSX.Element {
-  const {
-    ratings, scores, updateAverageRating,
-  } = props;
-
-  const classes = useCreatorInfoCardStyles();
-
-  return (
-    <Grid container className={classes.creatorInfoContainer}>
-      {/* 왼쪽 크리에이터 기본설명, 평점 */}
-      <Grid container item className={classes.left} xs={7}>
-        <ProfileSection
-          ratings={ratings}
-          updateAverageRating={updateAverageRating}
-        />
-      </Grid>
-
-      {/* 오른쪽 크리에이터 점수 */}
-      <Grid item className={classes.right} xs={5}>
-        <ScoresSection scores={scores} />
-      </Grid>
-
-    </Grid>
   );
 }
