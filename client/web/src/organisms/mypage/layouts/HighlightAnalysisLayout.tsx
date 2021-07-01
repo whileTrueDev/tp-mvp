@@ -149,7 +149,8 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
                   <Typography className={classes.cardText}>
                     {dateExpression({
                       compoName: 'analysys-calender',
-                      createdAt: new Date(selectedStream.startDate),
+                      createdAt: selectedStream.startDate,
+                      finishAt: selectedStream.endDate,
                     })}
                   </Typography>
                   <Typography className={classes.listItemText} style={{ marginLeft: '24px' }} display="inline">

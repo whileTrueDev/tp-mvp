@@ -3,12 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
 import useAxios from 'axios-hooks';
-import moment from 'moment';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useDialog from '../../../../utils/hooks/useDialog';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,7 +67,7 @@ export default function FeatureReply({
             <Typography variant="body2" className={classes.title}>
               {transformIdToAsterisk(reply.author?.userId ? reply.author?.userId : reply.userIp)}
             </Typography>
-            <Typography variant="caption">{moment(reply.createdAt).fromNow()}</Typography>
+            <Typography variant="caption">{dayjsFormatter(reply.createdAt).fromNow()}</Typography>
             {reply.author?.userId !== 'Truepoint' && (
             <IconButton
               size="small"

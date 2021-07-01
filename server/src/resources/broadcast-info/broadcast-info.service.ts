@@ -1,7 +1,6 @@
 import {
   Injectable, InternalServerErrorException,
 } from '@nestjs/common';
-import moment from 'moment';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -18,6 +17,7 @@ import { UserEntity } from '../users/entities/user.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { UsersService } from '../users/users.service';
+import dayjsFormatter from '../../utils/dateExpression';
 
 Injectable();
 export class BroadcastInfoService {
@@ -52,8 +52,9 @@ export class BroadcastInfoService {
     userId: string,
     startDate: string, endDate: string,
   ): Promise<StreamDataType[]> {
-    const momentStart = moment(startDate).format('YYYY-MM-DD HH:mm:ss');
-    const momentEnd = moment(endDate).format('YYYY-MM-DD HH:mm:ss');
+    const formattedStart = dayjsFormatter(startDate, 'default');
+    const formattedEnd = dayjsFormatter(endDate, 'default');
+
     const compeleteAnalysisFlag = 0; // needAnalysis , 분석 완료 값을 비교하기 위한 체크값 (현재 0 이 완료이므로 0 으로 설정)
 
     const creatorIds = await this.usersService.findOneCreatorIds(userId);
@@ -68,8 +69,8 @@ export class BroadcastInfoService {
       .select(['streams.*, streamSummary.smileCount as smileCount'])
       .where('streams.creatorId IN (:id)', { id: creatorIds })
       .andWhere('streams.needAnalysis = :compeleteAnalysisFlag', { compeleteAnalysisFlag })
-      .andWhere('streams.startDate >= :startDate', { startDate: momentStart })
-      .andWhere('streams.startDate < :endDate', { endDate: momentEnd })
+      .andWhere('streams.startDate >= :startDate', { startDate: formattedStart })
+      .andWhere('streams.startDate < :endDate', { endDate: formattedEnd })
       .orderBy('streams.startDate', 'ASC')
       .execute()
       .catch((err) => new InternalServerErrorException(err, 'Mysql Error in BroadcastService ... '));

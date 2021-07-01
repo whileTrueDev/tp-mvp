@@ -4,13 +4,14 @@ import {
 import React, { memo, useCallback, useRef } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { useSnackbar } from 'notistack';
-import dayjs from 'dayjs';
+
 import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
 import DeleteButton from './DeleteButton';
 import PasswordConfirmDialog from './PasswordConfirmDialog';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 import useDialog from '../../../../utils/hooks/useDialog';
 import axios from '../../../../utils/axios';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 
 const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
@@ -53,7 +54,7 @@ function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
   const { open: isPasswordDialogOpen, handleOpen: openPasswordDialog, handleClose: closePasswordDialog } = useDialog();
   const { open: isConfirmDialogOpen, handleOpen: openConfirmDialog, handleClose: closeConfirmDialog } = useDialog();
-  const date = dayjs(data.createDate).format('hh:mm A');
+  const date = dayjsFormatter(data.createDate, 'hh:mm A');
 
   const onDeleteButtonClick = useCallback(() => {
     openPasswordDialog();

@@ -6,13 +6,13 @@ import {
 } from '@material-ui/core';
 import { CommunityReply } from '@truepoint/shared/dist/interfaces/CommunityReply.interface';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
-import dayjs from 'dayjs';
 import EditIcon from '@material-ui/icons/Edit';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import InputField from '../write/InputField';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const useReplyItemStyle = makeStyles((theme: Theme) => createStyles({
   replyItem: {
@@ -131,7 +131,7 @@ function ReplyItem({
           : (<Typography>{content}</Typography>)}
       </div>
 
-      <Typography variant="caption" className={classes.date}>{dayjs(createDate).format('YY-MM-DD HH:mm:ss')}</Typography>
+      <Typography variant="caption" className={classes.date}>{dayjsFormatter(createDate, 'default')}</Typography>
       <div className={classes.actions}>
         {isEditMode
           ? (

@@ -7,10 +7,6 @@ import {
 } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 
-// 라이브러리
-import dayjs from 'dayjs';
-// import 'dayjs/locale/ko';
-import relativeTime from 'dayjs/plugin/relativeTime';
 // 응답타입
 import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 // 컴포넌트
@@ -18,8 +14,7 @@ import { Column } from 'material-table';
 import Table from '../../../../atoms/Table/MaterialTable';
 import AvatarWithName from '../../../../atoms/User/AvatarWithName';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
-
-dayjs.extend(relativeTime);
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -48,7 +43,7 @@ interface PostListProps {
 
 // 날짜표현함수
 function getDateDisplay(createDate: Date|undefined): string {
-  return createDate ? dayjs(createDate).fromNow() : '';
+  return createDate ? dayjsFormatter(createDate).fromNow() : '';
 }
 
 function PostList(props: PostListProps): JSX.Element {
@@ -73,7 +68,7 @@ function PostList(props: PostListProps): JSX.Element {
             </Grid>
             <Grid item>
               <Typography variant="h6">{nickname}</Typography>
-              <Typography variant="caption" color="textSecondary">{dayjs(endDate).format('YY.MM.DD HH:mm')}</Typography>
+              <Typography variant="caption" color="textSecondary">{dayjsFormatter(endDate, 'YY.MM.DD HH:mm')}</Typography>
             </Grid>
           </Grid>
         );

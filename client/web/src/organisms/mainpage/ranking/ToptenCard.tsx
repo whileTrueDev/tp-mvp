@@ -4,7 +4,6 @@ import {
 
 import { RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import useAxios, { RefetchOptions } from 'axios-hooks';
-import dayjs from 'dayjs';
 import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react';
@@ -21,6 +20,7 @@ import TopTenListContainer from './topten/TopTenListContainer';
 import axios from '../../../utils/axios';
 import { CategoryTab, MainTab, PlatformTab } from './topten/filter';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 import RankingDropDown from './topten/filter/RankingDropDown';
 
 export type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer'|'rating';
@@ -273,7 +273,7 @@ function TopTenCard(): JSX.Element {
   return (
     <>
       <Typography className={classes.recentAnalysisDate}>
-        {recentAnalysisDate ? `${dayjs(recentAnalysisDate).format('YYYY-MM-DD')} 기준` : ' '}
+        {recentAnalysisDate ? `${dayjsFormatter(recentAnalysisDate, 'date-only')} 기준` : ' '}
       </Typography>
       <Grid ref={scrollRef} container component="section" className={classes.topTenWrapper}>
         <Grid item xs={2} className={classes.left}>

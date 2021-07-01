@@ -7,6 +7,7 @@ import am4langKoKr from '@amcharts/amcharts4/lang/ko_KR';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import getPlatformColor from '../../../../utils/getPlatformColor';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 import makeGroupedData from '../utils/makeGroupedData';
 
 am4core.useTheme(am4themesAnimated);
@@ -48,14 +49,15 @@ export default function UserMetricsChart({
     chart.language.locale = am4langKoKr;
 
     // will use this to store colors of the same items
-
     const categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.dataFields.category = 'category';
     categoryAxis.renderer.minGridDistance = 60;
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.dataItems.template.text = '';
-    categoryAxis.adapter.add('tooltipText', () => `${new Date(categoryAxis.tooltipDataItem.dataContext.startDate).toLocaleDateString()}
-    ${new Date(categoryAxis.tooltipDataItem.dataContext.startDate).toLocaleTimeString()}`);
+    categoryAxis.adapter.add('tooltipText', () => dayjsFormatter(
+      categoryAxis.tooltipDataItem.dataContext.startDate, 'YY-MM-DD HH시',
+    ));
+
     if (categoryAxis.tooltip) {
       categoryAxis.tooltip.background.opacity = 1;
     }
@@ -71,7 +73,7 @@ export default function UserMetricsChart({
     function createLineSeries(field, color) {
       const lineSeries = chart.series.push(new am4charts.LineSeries());
       lineSeries.name = field;
-      lineSeries.tooltipText = `${capitalize(field)}: {valueY}${unit}[/]\n{realName}\n{title}`;
+      lineSeries.tooltipText = `${capitalize(field)}: {valueY}${unit}[/]\n{title}`;
       lineSeries.tooltip.background.zIndex = 1;
       lineSeries.dataFields.categoryX = 'category';
       lineSeries.dataFields.valueY = field;
@@ -135,7 +137,7 @@ export default function UserMetricsChart({
                 if (!tempArray[alreadyPushedIndex][itemName]) {
                   tempArray[alreadyPushedIndex] = {
                     ...tempArray[alreadyPushedIndex],
-                    realName: new Date(item.startDate).toLocaleTimeString(),
+                    realName: dayjsFormatter(item.startDate, 'date-only'),
                     [itemName]: item.value,
                     title: item.title,
                   };
@@ -143,7 +145,7 @@ export default function UserMetricsChart({
                   // 그 안에 해당 플랫폼 데이터가 있는 경우
                   tempArray.push({
                     category: `${date}_${index}`,
-                    realName: new Date(item.startDate).toLocaleTimeString(),
+                    realName: dayjsFormatter(item.startDate, 'date-only'),
                     [itemName]: item.value,
                     title: item.title,
                     date,
@@ -153,7 +155,7 @@ export default function UserMetricsChart({
               } else {
                 tempArray.push({
                   category: `${date}_${index}`,
-                  realName: new Date(item.startDate).toLocaleTimeString(),
+                  realName: dayjsFormatter(item.startDate, 'date-only'),
                   [itemName]: item.value,
                   title: item.title,
                   date,
@@ -174,7 +176,7 @@ export default function UserMetricsChart({
             count += 1;
             tempArray.push({
               category: `${date}_${0}`,
-              realName: new Date(providerData[itemName].startDate).toLocaleTimeString(),
+              realName: dayjsFormatter(providerData[itemName].startDate, 'date-only'),
               [itemName]: providerData[itemName].value,
               title: providerData[itemName].title,
               date,

@@ -42,11 +42,3 @@ export interface CompareGraphData {
   compareDate?: string;
   metricType: string;
 }
-
-export interface timelineInterface {
-  start_date: string,
-  end_date: string,
-  view_count?: number,
-  chat_count?: number,
-  value: timelineGraphInterface[]
-}
