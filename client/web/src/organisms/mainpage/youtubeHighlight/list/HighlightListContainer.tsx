@@ -1,48 +1,84 @@
-import React, { useEffect, useMemo } from 'react';
-
-import {
-  makeStyles, createStyles,
-} from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
-import { HighlightPointListResType } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
+import React, { useMemo } from 'react';
+import SearchIcon from '@material-ui/icons/Search';
+import { Chip, IconButton, InputBase } from '@material-ui/core';
 import HighlightlistTable from './HighlightListTable';
-
-const useStyles = makeStyles(() => createStyles({
-  root: {
-    height: '100%',
-    width: '100%',
-  },
-}));
+import BoardTitle from '../../communityBoard/share/BoardTitle';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import { useHighlightListContainerState } from '../../../../utils/hooks/useHighlightListContainerState';
+import { useHighlightListStyle, StyleProps } from '../style/useHighLightListStyle';
 
 interface HighlightListProps{
   platform: 'afreeca' | 'twitch',
-  titleComponent?: JSX.Element
 }
 
 export default function HighlightListContainer({
   platform,
-  titleComponent,
 }: HighlightListProps): JSX.Element {
-  const classes = useStyles();
-  const url = useMemo(() => `/highlight/highlight-point-list/${platform}`, [platform]);
+  const { isMobile } = useMediaSize();
+  const styleProps: StyleProps = { platform, isMobile };
+  const classes = useHighlightListStyle(styleProps);
+  const {
+    doSearch, searchText, clearSearchText,
+    data, loading, handlePageChange, take, inputRef,
+  } = useHighlightListContainerState(platform);
 
-  const [{ loading, data }, getList] = useAxios<HighlightPointListResType[]>({ url }, { manual: true });
+  const titleComponent = useMemo(() => (
+    <BoardTitle boardType platform={platform} />
+  ), [platform]);
 
-  useEffect(() => {
-    getList().then((res) => {
-      // setList(res.data);
-    }).catch((e) => {
-      console.error(e);
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const searchInput = useMemo(() => (
+    <div className={classes.searchInputContainer}>
+      <InputBase
+        className="inputBase"
+        inputRef={inputRef}
+        inputProps={{
+          placeholder: '활동명',
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            doSearch();
+          }
+        }}
+        startAdornment={searchText && (
+        <Chip
+          label={searchText}
+          onDelete={clearSearchText}
+          color="primary"
+          variant="outlined"
+        />
+        )}
+        endAdornment={(
+          <IconButton onClick={doSearch}>
+            <SearchIcon className="searchIcon" />
+          </IconButton>
+        )}
+      />
+    </div>
+  ), [classes.searchInputContainer, clearSearchText, doSearch, inputRef, searchText]);
+
+  const customHeader = () => (
+    <thead className={classes.customTHeader}>
+      <tr className="tr">
+        <th className="th" colSpan={3}>
+          활동명
+          {data && <span className="totalCount">{`(${data.totalCount})`}</span>}
+        </th>
+      </tr>
+    </thead>
+  );
 
   return (
-    <div className={classes.root}>
+    <div className={classes.tableWrapper}>
+      <div className={classes.toolbarContainer}>
+        {!isMobile && titleComponent}
+        {searchInput}
+      </div>
       <HighlightlistTable
-        posts={data || []}
+        data={data}
         loading={loading}
-        titleComponent={titleComponent}
+        handlePageChange={handlePageChange}
+        header={customHeader}
+        take={take}
       />
     </div>
   );

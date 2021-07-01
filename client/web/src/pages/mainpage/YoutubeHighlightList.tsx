@@ -1,12 +1,9 @@
-import React, {
-  useMemo,
-} from 'react';
+import React from 'react';
 import {
   Grid, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import YoutubeHighlightListLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
-import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
 import HighlightListContainer from '../../organisms/mainpage/youtubeHighlight/list/HighlightListContainer';
 import YoutubeHighlightListHero from '../../organisms/mainpage/youtubeHighlight/YoutubeHighlightListHero';
 import useMediaSize from '../../utils/hooks/useMediaSize';
@@ -34,13 +31,6 @@ export default function YoutubeHighlightList(): JSX.Element {
   const classes = youtubeHighlightListLayout();
   const { isMobile } = useMediaSize();
 
-  const afreecaTitleComponent = useMemo(() => (
-    <BoardTitle platform="afreeca" boardType />
-  ), []);
-  const twitchTitleComponent = useMemo(() => (
-    <BoardTitle platform="twitch" boardType />
-  ), []);
-
   return (
     <YoutubeHighlightListLayout>
 
@@ -48,14 +38,12 @@ export default function YoutubeHighlightList(): JSX.Element {
         <MobileYoutubeHighlightList
           afreecaBoard={(
             <HighlightListContainer
-              titleComponent={afreecaTitleComponent}
               platform="afreeca"
             />
           )}
           twitchBoard={(
             <HighlightListContainer
               platform="twitch"
-              titleComponent={twitchTitleComponent}
             />
           )}
         />
@@ -79,14 +67,12 @@ export default function YoutubeHighlightList(): JSX.Element {
           >
             <Grid item xs={6}>
               <HighlightListContainer
-                titleComponent={afreecaTitleComponent}
                 platform="afreeca"
               />
             </Grid>
             <Grid item xs={6}>
               <HighlightListContainer
                 platform="twitch"
-                titleComponent={twitchTitleComponent}
               />
             </Grid>
           </Grid>
