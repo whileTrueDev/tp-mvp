@@ -1,21 +1,21 @@
-import Axios from 'axios';
-import useAxios from 'axios-hooks';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import Axios, { AxiosPromise, AxiosRequestConfig } from 'axios';
+import { RefetchOptions } from 'axios-hooks';
 import { useState, useRef, useEffect } from 'react';
 import { forceCheck } from 'react-lazyload';
-import { HighlightPointListResType } from '../../../../../shared/dist/res/HighlightPointListResType.interface';
 
-export const useHighlightListContainerState = (platform: 'afreeca' | 'twitch'): {
-  data: HighlightPointListResType | undefined,
-  loading: boolean,
+interface PaginationState {
   searchText: string,
   take: number,
   inputRef: React.MutableRefObject<HTMLInputElement | undefined>,
   doSearch: () => void,
   clearSearchText: () => void,
-  handlePageChange: (event: React.ChangeEvent<unknown>, value: number) => void,
-} => {
-  const url = `/highlight/highlight-point-list/${platform}`;
-  const [{ loading, data }, getList] = useAxios<HighlightPointListResType>({ url }, { manual: true });
+  handlePageChange: (event: React.ChangeEvent<unknown>, value: number
+) => void,
+}
+export const usePaginationState = (
+  getList: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>,
+): PaginationState => {
   const [page, setPage] = useState(1);
   const [take] = useState(30);
   const [search, setSearch] = useState(''); // 검색어
@@ -88,6 +88,11 @@ export const useHighlightListContainerState = (platform: 'afreeca' | 'twitch'): 
   }, []);
 
   return {
-    doSearch, searchText, clearSearchText, data, loading, handlePageChange, take, inputRef,
+    doSearch,
+    searchText,
+    clearSearchText,
+    handlePageChange,
+    take,
+    inputRef,
   };
 };
