@@ -25,7 +25,7 @@ export default function HighlightListContainer({
   const {
     doSearch, searchText, clearSearchText,
     handlePageChange, take, inputRef,
-  } = usePaginationState(getList);
+  } = usePaginationState({ getList, itemPerPage: isMobile ? 10 : 30 });
 
   const titleComponent = useMemo(() => (
     <BoardTitle boardType platform={platform} />

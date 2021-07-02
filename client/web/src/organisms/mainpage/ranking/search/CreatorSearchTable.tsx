@@ -30,7 +30,7 @@ export default function CreatorSearchTable(): JSX.Element {
     clearSearchText,
     inputRef,
     handlePageChange,
-  } = usePaginationState(getList);
+  } = usePaginationState({ getList, itemPerPage: 20 });
   const classes = useSearchTableStyle();
   const theme = useTheme();
   const history = useHistory();

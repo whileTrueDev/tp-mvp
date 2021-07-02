@@ -188,6 +188,7 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
     draggable: false,
     toolbar: false,
     loadingType: 'linear',
+    emptyRowsWhenPaging: false,
   }), [isMobile, take]);
 
   return (
