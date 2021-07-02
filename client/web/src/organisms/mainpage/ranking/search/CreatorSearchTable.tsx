@@ -9,6 +9,7 @@ import { Pagination, PaginationItem, Rating } from '@material-ui/lab';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import useAxios from 'axios-hooks';
+import LazyLoad from 'react-lazyload';
 import MaterialTable from '../../../../atoms/Table/MaterialTable';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useSearchTableStyle } from '../style/CreatorSearch.style';
@@ -71,12 +72,17 @@ export default function CreatorSearchTable(): JSX.Element {
               const { platform, logo, nickname } = rowData;
               return (
                 <div className={classes.info}>
-                  <img
-                    className={classes.platformLogo}
-                    alt="logo"
-                    src={`/images/logo/${platform}Logo.png`}
-                  />
-                  <Avatar className={classes.avatar} src={logo} />
+                  <LazyLoad>
+                    <img
+                      className={classes.platformLogo}
+                      alt="logo"
+                      src={`/images/logo/${platform}Logo.png`}
+                    />
+                  </LazyLoad>
+                  <LazyLoad height={isMobile ? 24 : 40} placeholder={<Avatar className={classes.avatar} />}>
+                    <Avatar className={classes.avatar} src={logo} />
+                  </LazyLoad>
+
                   <Typography noWrap component="span" className={classes.creatorName}>{nickname}</Typography>
                 </div>
               );
