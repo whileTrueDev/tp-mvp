@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   Avatar, Chip, Typography,
 } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
-import { Rating } from '@material-ui/lab';
-import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+import { Pagination, PaginationItem, Rating } from '@material-ui/lab';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import useAxios from 'axios-hooks';
 import MaterialTable from '../../../../atoms/Table/MaterialTable';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useSearchTableStyle } from '../style/CreatorSearch.style';
+import { usePaginationState } from '../../../../utils/hooks/usePaginationState';
+import SearchInput from '../../shared/SearchInput';
 
 function getCellStyle(isMobile: boolean): React.CSSProperties {
   return isMobile ? {
@@ -20,18 +23,41 @@ function getCellStyle(isMobile: boolean): React.CSSProperties {
 }
 
 export default function CreatorSearchTable(): JSX.Element {
-  const [{ data, loading }] = useAxios<Creator[]>('users/creator-list');
+  const [{ data, loading }, getList] = useAxios<CreatorListRes>('users/creator-list');
+  const {
+    doSearch,
+    searchText,
+    clearSearchText,
+    inputRef,
+    handlePageChange,
+  } = usePaginationState(getList);
   const classes = useSearchTableStyle();
   const theme = useTheme();
   const history = useHistory();
   const { isMobile } = useMediaSize();
+
   const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: Creator | undefined) => {
     if (!rowData) return;
     const creatorId = rowData?.creatorId;
     history.push(`/ranking/creator/${creatorId}`);
   };
+
+  const searchInput = useMemo(() => (
+    <SearchInput
+      doSearch={doSearch}
+      searchText={searchText}
+      clearSearchText={clearSearchText}
+      inputRef={inputRef}
+    />
+  ), [clearSearchText, doSearch, inputRef, searchText]);
+
   return (
     <div className={classes.border}>
+      <div className={classes.searchWrapper}>
+        <Typography component="span">방송인 검색 </Typography>
+        {searchInput}
+      </div>
+
       <MaterialTable
         cellWidth={0}
         columns={[
@@ -86,35 +112,57 @@ export default function CreatorSearchTable(): JSX.Element {
               const { averageRating } = rowData;
               return (
                 <div>
-                  <Rating size={isMobile ? 'small' : 'medium'} defaultValue={averageRating / 2} precision={0.5} readOnly />
+                  <Rating size={isMobile ? 'small' : 'medium'} value={averageRating / 2} precision={0.5} readOnly />
                 </div>
               );
             },
           },
         ]}
-        data={data || []}
+        data={data ? data.data : []}
         onRowClick={onRowClick}
         isLoading={loading}
         title="방송인 검색"
+        components={{
+          Pagination: () => (
+            <td
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                padding: 16,
+              }}
+            >
+              <Pagination
+                size={isMobile ? 'small' : 'medium'}
+                renderItem={(item) => (<PaginationItem {...item} />)}
+                variant="outlined"
+                showFirstButton
+                showLastButton
+                onChange={handlePageChange}
+                count={data ? data.totalPage : 1}
+                page={data ? data.page : 1}
+              />
+            </td>
+          ),
+        }}
         options={{
           padding: isMobile ? 'dense' : 'default',
           showTitle: !isMobile,
           pageSize: 20,
-          pageSizeOptions: [20, 40],
-          searchFieldAlignment: 'left',
+          pageSizeOptions: [20],
+          sorting: false,
+          draggable: false,
+          search: false,
+          toolbar: false,
           headerStyle: {
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
             fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,
           },
-          searchFieldVariant: 'outlined',
-          searchFieldStyle: {
-            fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,
-          },
           rowStyle: {
             fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,
           },
-
+          emptyRowsWhenPaging: false,
         }}
         style={{
           boxShadow: 'none',

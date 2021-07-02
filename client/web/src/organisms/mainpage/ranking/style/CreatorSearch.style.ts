@@ -43,7 +43,11 @@ export const useSearchTableStyle = makeStyles((theme: Theme) => {
       },
     },
     border: {
+      backgroundColor: theme.palette.background.paper,
       [theme.breakpoints.down('sm')]: { padding: theme.spacing(1) },
+    },
+    searchWrapper: {
+      padding: theme.spacing(1),
     },
   });
 });
