@@ -72,8 +72,10 @@ export default function CreatorSearchTable(): JSX.Element {
               const { platform, logo, nickname } = rowData;
               return (
                 <div className={classes.info}>
-                  <LazyLoad>
+                  <LazyLoad height={isMobile ? 24 : 40}>
                     <img
+                      width={isMobile ? 24 : 40}
+                      height={isMobile ? 24 : 40}
                       className={classes.platformLogo}
                       alt="logo"
                       src={`/images/logo/${platform}Logo.png`}
@@ -173,7 +175,6 @@ export default function CreatorSearchTable(): JSX.Element {
         style={{
           boxShadow: 'none',
           backgroundColor: theme.palette.background.paper,
-          padding: theme.spacing(1),
         }}
       />
     </div>
