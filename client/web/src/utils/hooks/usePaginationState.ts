@@ -13,14 +13,20 @@ interface PaginationState {
   handlePageChange: (event: React.ChangeEvent<unknown>, value: number
 ) => void,
 }
-export const usePaginationState = (
+
+interface Props{
   getList: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>,
-): PaginationState => {
+  itemPerPage?: number;
+}
+export const usePaginationState = (props: Props): PaginationState => {
+  const { getList, itemPerPage = 30 } = props;
   const [page, setPage] = useState(1);
-  const [take] = useState(30);
+  const [take, setTake] = useState(itemPerPage);
   const [search, setSearch] = useState(''); // 검색어
   const [searchText, setSearchedText] = useState(''); // 검색했던 내용 (검색 후 인풋창에 표시)
   const inputRef = useRef<HTMLInputElement>();
+
+  useEffect(() => setTake(itemPerPage), [itemPerPage]);
 
   const doSearch = () => {
     if (inputRef.current) {
