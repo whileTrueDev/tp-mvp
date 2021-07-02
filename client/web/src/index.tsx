@@ -1,4 +1,3 @@
-import 'moment/locale/ko';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {

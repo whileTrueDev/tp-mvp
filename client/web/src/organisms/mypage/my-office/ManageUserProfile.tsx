@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import {
   Typography, Avatar, Button, TextField, makeStyles,
 } from '@material-ui/core';
@@ -13,6 +12,7 @@ import PasswordChangeDialog from './sub/PasswordChangeDialog';
 import EditableInput from './sub/EditableInput';
 import EditableRadio from './sub/EditableGenderRadio';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import ProfileImageChangeDialog from './sub/ProfileImageChangeDialog';
 import NickNameChangeDialog from './sub/NicknameChangeDialog';
@@ -164,7 +164,7 @@ export default function ManageUserProfile({
       {/* 마지막 수정 시간 */}
       <div className={classes.caption}>
         <Typography variant="caption">
-          {`마지막 수정 : ${moment(userProfileData.updatedAt).fromNow()}`}
+          {`마지막 수정 : ${dayjsFormatter(userProfileData.updatedAt).fromNow()}`}
         </Typography>
       </div>
     </>

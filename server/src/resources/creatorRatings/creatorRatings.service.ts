@@ -1,7 +1,6 @@
 import {
   Injectable, InternalServerErrorException,
 } from '@nestjs/common';
-import dayjs from 'dayjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
@@ -13,6 +12,7 @@ import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity'
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformType, RankingsService } from '../rankings/rankings.service';
 import { AdminRating } from './creatorRatings.controller';
+import dayjsFormatter from '../../utils/dateExpression';
 
 @Injectable()
 export class CreatorRatingsService {
@@ -264,7 +264,7 @@ export class CreatorRatingsService {
   // return ['2021-04-14','2021-04-15','2021-04-16','2021-04-17','2021-04-18','2021-04-19','2021-04-20']
   private getWeekDates(): string[] {
     return new Array(7).fill('').map((val, index) => (
-      dayjs().subtract(index, 'days').format('YYYY-MM-DD')
+      dayjsFormatter().subtract(index, 'days').format('YYYY-MM-DD')
     )).reverse();
   }
 
@@ -337,7 +337,7 @@ export class CreatorRatingsService {
    * @returns 
    */
   async getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
-    const startDayOfThisWeek = dayjs().day(1); // 0 sunday ~ 6 saturday
+    const startDayOfThisWeek = dayjsFormatter().day(1); // 0 sunday ~ 6 saturday
     const endDayOfThisWeek = startDayOfThisWeek.add(6, 'day');
     const endDatOfPrevWeek = startDayOfThisWeek.subtract(1, 'day');
     const startDayOfPrevWeek = endDatOfPrevWeek.subtract(1, 'week');

@@ -14,8 +14,8 @@ import { HighlightPointListResType, HighlightPointListItem } from '@truepoint/sh
 
 import Table from '../../../../atoms/Table/MaterialTable';
 import AvatarWithName from '../../../../atoms/User/AvatarWithName';
-import dateExpression from '../../../../utils/dateExpression';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -44,6 +44,11 @@ interface HighlightlistTableProps {
   take: number
 }
 
+// 날짜표현함수
+function getDateDisplay(createDate: Date|undefined): string {
+  return createDate ? dayjsFormatter(createDate).fromNow() : '';
+}
+
 export default function HighlightlistTable(props: HighlightlistTableProps): JSX.Element {
   const {
     data, loading, handlePageChange, header, take,
@@ -68,9 +73,7 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
             </Grid>
             <Grid item>
               <Typography variant="h6">{nickname}</Typography>
-              <Typography variant="caption" color="textSecondary">
-                {dateExpression({ compoName: 'highlight-table', createdAt: endDate })}
-              </Typography>
+              <Typography variant="caption" color="textSecondary">{dayjsFormatter(endDate, 'YY.MM.DD HH:mm')}</Typography>
             </Grid>
           </Grid>
         );
@@ -123,7 +126,7 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
         const { endDate } = rowData;
         return (
           <Typography variant="subtitle1" align="center" className={classes.columnText}>
-            {dateExpression({ compoName: 'fromNow', createdAt: endDate })}
+            {getDateDisplay(endDate)}
           </Typography>
         );
       },

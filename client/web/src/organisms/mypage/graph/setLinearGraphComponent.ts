@@ -77,16 +77,19 @@ export default function setComponent(data: any[],
   chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd';
   chart.paddingRight = 15;
   chart.paddingLeft = 5;
+
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.skipEmptyPeriods = true;
   dateAxis.tooltipDateFormat = 'yyyy-MM-dd';
-  dateAxis.dateFormats.setKey('day', 'MM-dd');
+  dateAxis.dateFormats.setKey('day', '[bold]MM-dd[/]');
   setSeries(selectedMetric, chart, opposite, fontColor);
   dateAxis.renderer.labels.template.fill = am4core.color(fontColor || '#000');
+
   // ****************************** cursor ***************************
   // Make a panning cursor
   chart.cursor = new am4charts.XYCursor();
   chart.cursor.xAxis = dateAxis;
+
   const legend = new am4charts.Legend();
   legend.labels.template.fill = am4core.color(fontColor || '#000');
   chart.legend = legend;
