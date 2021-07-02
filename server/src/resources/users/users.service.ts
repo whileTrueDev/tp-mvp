@@ -11,12 +11,12 @@ import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.i
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+import { CreatorListRes } from '@truepoint/shared/dist/res/CreatorList.interface';
 
 import Axios from 'axios';
 import bcrypt from 'bcrypt';
 import {
-  getConnection, Repository,
+  getConnection, Repository, getManager,
 } from 'typeorm';
 import { CreateUserDto } from '@truepoint/shared/dto/users/createUser.dto';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
@@ -510,9 +510,15 @@ export class UsersService {
   }
 
   // 방송인 목록 검색
-  async getCreatorsList(): Promise<Creator[]> {
+  async getCreatorsList({
+    page, take, search,
+  }: {
+    page: number,
+    take: number,
+    search: string
+  }): Promise<CreatorListRes> {
     try {
-      const afreeca = await this.afreecaRepository.createQueryBuilder('afreeca')
+      const afreecaQuery = await this.afreecaRepository.createQueryBuilder('afreeca')
         .select([
           'afreeca.afreecaId AS creatorId',
           'afreeca.afreecaStreamerName AS nickname',
@@ -524,9 +530,8 @@ export class UsersService {
         .groupBy('afreeca.afreecaId')
         .leftJoin('afreeca.categories', 'categories')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
-        .getRawMany();
-
-      const twitch = await this.twitchRepository.createQueryBuilder('twitch')
+        .getQuery();
+      const twitchQuery = await this.twitchRepository.createQueryBuilder('twitch')
         .select([
           'twitch.twitchId AS creatorId',
           'twitch.twitchStreamerName AS nickname',
@@ -538,12 +543,50 @@ export class UsersService {
         .groupBy('twitch.twitchId')
         .leftJoin('twitch.categories', 'categories')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
-        .getRawMany();
-      const collator = new Intl.Collator('kr', { numeric: true, sensitivity: 'base' }); // kr 명시
-      const data = [...afreeca, ...twitch]
-        .sort((a, b) => collator.compare(a.nickname, b.nickname))
-        .map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] }));
-      return data;
+        .getQuery();
+
+      const { total: totalCount } = (await getManager().query(`
+      SELECT COUNT(*) AS total
+      FROM (
+        (${afreecaQuery})
+        UNION
+        (${twitchQuery})
+      ) AS Creators
+      WHERE Creators.nickname LIKE '%${search}%'
+      `))[0];
+
+      const totalPage = Math.ceil(totalCount / take);
+      const hasMore = page < totalPage;
+
+      const data = await getManager().query(`
+      SELECT *
+      FROM (
+        (${afreecaQuery})
+        UNION
+        (${twitchQuery})
+      ) AS Creators
+      WHERE Creators.nickname LIKE '%${search}%'
+      ORDER BY 
+        (CASE 
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) < 128 THEN 2 ELSE 1 
+        END), 
+        BINARY(Creators.nickname)
+      LIMIT ${take}
+      OFFSET ${(page - 1) * take}
+      `);
+
+      const tempRes = {
+        data: data.map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] })),
+        totalCount,
+        page,
+        totalPage,
+        take,
+        hasMore,
+      };
+
+      return tempRes;
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in get creatorList');

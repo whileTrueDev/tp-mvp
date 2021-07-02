@@ -6,3 +6,12 @@ export interface Creator {
   'averageRating': number;
   'platform': string;
 }
+
+export interface CreatorListRes {
+  data: Creator[],
+  totalCount: number,
+  page: number,
+  totalPage: number,
+  take: number,
+  hasMore: boolean,
+}
