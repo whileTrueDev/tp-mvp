@@ -508,11 +508,13 @@ export class UsersService {
 
   // 방송인 목록 검색
   async getCreatorsList({
-    page, take, search,
+    page, take, search, sort, direction,
   }: {
     page: number,
     take: number,
-    search: string
+    search: string,
+    sort: string,
+    direction: string
   }): Promise<CreatorListRes> {
     try {
       const afreecaQuery = await this.afreecaRepository.createQueryBuilder('afreeca')
@@ -522,10 +524,12 @@ export class UsersService {
           'afreeca.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
           'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'user.searchCount AS searchCount',
           '"afreeca" AS platform',
         ])
         .groupBy('afreeca.afreecaId')
         .leftJoin('afreeca.categories', 'categories')
+        .leftJoin('afreeca.user', 'user')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
         .getQuery();
       const twitchQuery = await this.twitchRepository.createQueryBuilder('twitch')
@@ -535,14 +539,16 @@ export class UsersService {
           'twitch.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
           'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'user.searchCount AS searchCount',
           '"twitch" AS platform',
         ])
         .groupBy('twitch.twitchId')
         .leftJoin('twitch.categories', 'categories')
+        .leftJoin('twitch.user', 'user')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
         .getQuery();
 
-      const { total: totalCount } = (await getManager().query(`
+      const query = `
       SELECT COUNT(*) AS total
       FROM (
         (${afreecaQuery})
@@ -550,12 +556,16 @@ export class UsersService {
         (${twitchQuery})
       ) AS Creators
       WHERE Creators.nickname LIKE '%${search}%'
-      `))[0];
+      `;
+
+      const { total: totalCount } = (await getManager().query(query))[0];
 
       const totalPage = Math.ceil(totalCount / take);
       const hasMore = page < totalPage;
 
-      const data = await getManager().query(`
+      const sortCondition = sort ? `Creators.${sort} ${direction},` : '';
+
+      const query2 = `
       SELECT *
       FROM (
         (${afreecaQuery})
@@ -564,6 +574,7 @@ export class UsersService {
       ) AS Creators
       WHERE Creators.nickname LIKE '%${search}%'
       ORDER BY 
+        ${sortCondition}
         (CASE 
           WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
           WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
@@ -572,7 +583,9 @@ export class UsersService {
         BINARY(Creators.nickname)
       LIMIT ${take}
       OFFSET ${(page - 1) * take}
-      `);
+      `;
+
+      const data = await getManager().query(query2);
 
       const tempRes = {
         data: data.map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] })),
@@ -587,6 +600,20 @@ export class UsersService {
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in get creatorList');
+    }
+  }
+
+  // 방송인 검색횟수 증가
+  async increaseSearchCount({ creatorId }: {
+    creatorId: string
+  }): Promise<any> {
+    try {
+      const target = await this.findOne({ creatorId });
+      target.searchCount += 1;
+      return this.usersRepository.save(target);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, `error in increase SearchCount of creatorId: ${creatorId}`);
     }
   }
 
