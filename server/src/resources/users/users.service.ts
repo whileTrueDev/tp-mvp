@@ -32,7 +32,6 @@ import { PlatformTwitchEntity } from './entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
 import { UserEntity } from './entities/user.entity';
-import { UserTokenEntity } from './entities/userToken.entity';
 import { UserDetailEntity } from './entities/userDetail.entity';
 import { EmailVerificationService } from '../auth/emailVerification.service';
 import { KakaoUserInfo, NaverUserInfo } from '../auth/auth.service';
@@ -50,8 +49,6 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(UserDetailEntity)
     private readonly userDetailRepo: Repository<UserDetailEntity>,
-    @InjectRepository(UserTokenEntity)
-    private readonly userTokensRepository: Repository<UserTokenEntity>,
     @InjectRepository(SubscribeEntity)
     private readonly subscribeRepository: Repository<SubscribeEntity>,
     @InjectRepository(PlatformTwitchEntity)
@@ -591,34 +588,6 @@ export class UsersService {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in get creatorList');
     }
-  }
-
-  // **********************************************
-  // User Tokens 관련
-
-  // Find User Tokens
-  async findOneToken(refreshToken: string): Promise<UserTokenEntity> {
-    const userToken = await this.userTokensRepository.findOne({
-      refreshToken,
-    });
-
-    return userToken;
-  }
-
-  // Refresh Token 삭제 - 로그아웃을 위해
-  async removeOneToken(userId: string): Promise<UserTokenEntity> {
-    const userToken = await this.userTokensRepository.findOne(userId);
-    if (!userToken) {
-      throw new InternalServerErrorException('userToken waht you request to logout is not exists');
-    }
-    return this.userTokensRepository.remove(userToken);
-  }
-
-  // Update User Tokens
-  async saveRefreshToken(
-    newTokenEntity: UserTokenEntity,
-  ): Promise<UserTokenEntity> {
-    return this.userTokensRepository.save(newTokenEntity);
   }
 
   // ***********************************************
