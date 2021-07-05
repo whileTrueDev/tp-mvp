@@ -6,12 +6,21 @@ import 'dayjs/locale/ko';
 dayjs.extend(LocalizedFormat);
 dayjs.extend(relativeTime);
 
-export default function dayjsFormatter(date?: string | Date | null, format?: string): any {
+export default function dayjsFormatter(date?: string | Date | null | undefined, format?: 'default' | 'date-only' | string): any {
   if (date) {
-    if (format) {
-      return dayjs(date).format(format);
+    switch (format) {
+      case 'default':
+        return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
+
+      case 'date-only':
+        return dayjs(date).format('YYYY-MM-DD');
+
+      default:
+        if (format) {
+          return dayjs(date).format(format);
+        }
+        return dayjs(date);
     }
-    return dayjs(date);
   }
   return dayjs();
 }
