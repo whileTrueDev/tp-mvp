@@ -36,4 +36,7 @@ export class PlatformTwitchEntity implements PlatformTwitch {
   @ManyToMany((type) => CreatorCategoryEntity, (category) => category.twitchCreator)
   @JoinTable()
   categories?: CreatorCategoryEntity[]
+
+  @Column({ default: 0, comment: '방송인 검색횟수' })
+  searchCount?: number;
 }

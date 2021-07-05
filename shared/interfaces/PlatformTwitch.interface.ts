@@ -16,4 +16,6 @@ export interface PlatformTwitch {
   updatedAt?: Date;
 
   categories?: CreatorCategory[];
+
+  searchCount?: number;
 }

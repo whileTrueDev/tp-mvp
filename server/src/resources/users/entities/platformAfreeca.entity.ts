@@ -31,4 +31,7 @@ export class PlatformAfreecaEntity implements PlatformAfreeca {
   @ManyToMany((type) => CreatorCategoryEntity, (category) => category.afreecaCreator)
   @JoinTable()
   categories?: CreatorCategoryEntity[]
+
+  @Column({ default: 0, comment: '방송인 검색횟수' })
+  searchCount?: number;
 }
