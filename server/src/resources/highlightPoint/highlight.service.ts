@@ -3,7 +3,6 @@ import * as dotenv from 'dotenv';
 import {
   HttpException, HttpStatus, Injectable, InternalServerErrorException,
 } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 import * as archiver from 'archiver';
 import { HighlightPointListResType } from '@truepoint/shared/res/HighlightPointListResType.interface';
 import { Repository } from 'typeorm';
@@ -17,17 +16,11 @@ const s3 = new AWS.S3();
 
 @Injectable()
 export class HighlightService {
-  private usersService: UsersService;
-
   constructor(
+    private readonly usersService: UsersService,
     @InjectRepository(StreamsEntity)
     private readonly streamsRepository: Repository<StreamsEntity>,
-    private moduleRef: ModuleRef,
   ) {}
-
-  onModuleInit(): void {
-    this.usersService = this.moduleRef.get(UsersService, { strict: false });
-  }
 
   async getHighlightData(streamId: string, platform: string, creatorId: string): Promise<any> {
     const getParams = {
