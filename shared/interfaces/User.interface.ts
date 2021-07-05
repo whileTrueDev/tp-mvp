@@ -66,4 +66,6 @@ export interface User {
   communityReplies?: CommunityReply[];
 
   communityPosts? : CommunityPost[];
+
+  searchCount? : number;
 }

@@ -10,6 +10,4 @@ export interface PlatformAfreeca {
   afreecaStreamerName?: string;
 
   categories?: CreatorCategory[];
-
-  searchCount?: number;
 }

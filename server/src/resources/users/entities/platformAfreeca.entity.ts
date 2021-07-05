@@ -19,7 +19,7 @@ export class PlatformAfreecaEntity implements PlatformAfreeca {
   @Column({ nullable: true })
   logo?: string;
 
-  @OneToOne(() => UserEntity, (user) => user.twitch)
+  @OneToOne(() => UserEntity, (user) => user.afreeca)
   user?: UserEntity;
 
   @CreateDateColumn({ type: 'timestamp', comment: '첫 연동 날짜' })
@@ -31,7 +31,4 @@ export class PlatformAfreecaEntity implements PlatformAfreeca {
   @ManyToMany((type) => CreatorCategoryEntity, (category) => category.afreecaCreator)
   @JoinTable()
   categories?: CreatorCategoryEntity[]
-
-  @Column({ default: 0, comment: '방송인 검색횟수' })
-  searchCount?: number;
 }
