@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import useAxios from 'axios-hooks';
+import Axios from 'axios';
 import React, {
   useCallback, useEffect, useState,
 } from 'react';
@@ -52,7 +53,9 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     }).then((res) => {
       setCommentList(res.data.comments);
     }).catch((error) => {
-      console.error(error);
+      if (!Axios.isCancel(error)) {
+        console.error(error);
+      }
     });
   }, [getCommentData]);
 

@@ -561,7 +561,6 @@ export class CreatorRatingsService {
 
   // dates에 해당하는 크리에이터 일간 평균 평점
   async getRatingTrendsInWeek(ids: string[], dates: string[]): Promise<WeeklyTrendsType> {
-    console.log({ dates });
     const data = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
         'ratings.creatorId AS creatorId',
