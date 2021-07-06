@@ -517,6 +517,44 @@ export class UsersService {
     direction: string
   }): Promise<CreatorListRes> {
     try {
+      const test = await this.usersRepository.createQueryBuilder('users')
+        .select([
+          'users.userId AS userId',
+          'users.nickName AS nickname',
+          `(CASE 
+              WHEN users.afreecaId IS NOT NULL THEN users.afreecaId
+              WHEN users.twitchId IS NOT NULL THEN users.twitchId
+              ELSE null 
+            END) AS creatorId`,
+          `(CASE 
+            WHEN users.afreecaId IS NOT NULL THEN 'afreeca'
+            WHEN users.twitchId IS NOT NULL THEN 'twitch'
+            ELSE null 
+          END) AS platform`,
+          `(CASE 
+            WHEN afreeca.logo IS NOT NULL THEN afreeca.logo
+            WHEN twitch.logo IS NOT NULL THEN twitch.logo
+            ELSE null 
+          END) AS logo`,
+          `(CASE 
+            WHEN afreeca.logo IS NOT NULL THEN GROUP_CONCAT(DISTINCT afreecaCategories.name)
+            WHEN twitch.logo IS NOT NULL THEN GROUP_CONCAT(DISTINCT twitchCategories.name)
+            ELSE null 
+          END) AS categories`,
+          'ROUND(AVG(ratings.rating),2) AS averageRating',
+        ])
+        .groupBy('creatorId')
+        .where('users.afreecaId IS NOT NULL')
+        .orWhere('users.twitchId IS NOT NULL')
+        .leftJoin(CreatorRatingsEntity, 'ratings', '(ratings.creatorId = users.afreecaId) OR (ratings.creatorId = users.twitchId)')
+        .leftJoin('users.afreeca', 'afreeca')
+        .leftJoin('afreeca.categories', 'afreecaCategories')
+        .leftJoin('users.twitch', 'twitch')
+        .leftJoin('twitch.categories', 'twitchCategories')
+        .getManyAndCount();
+
+      console.log(test);
+
       const afreecaQuery = await this.afreecaRepository.createQueryBuilder('afreeca')
         .select([
           'afreeca.afreecaId AS creatorId',
