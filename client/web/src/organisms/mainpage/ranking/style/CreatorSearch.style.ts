@@ -1,6 +1,18 @@
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 
+export const useMostSearchedCreatorListStyle = makeStyles((theme: Theme) => createStyles({
+  listItem: {
+    justifyContent: 'space-around',
+    '& .order': { width: theme.spacing(4) },
+    '& .logos': { width: 60, display: 'flex' },
+    '& .logo': { width: 20, height: 20 },
+    '& .platform.logo': { marginRight: 4 },
+    '& .nickname': { width: 90 },
+    '& .searchCount': { width: 90, color: theme.palette.text.secondary },
+  },
+}));
+
 export const useStyles = makeStyles((theme: Theme) => createStyles({
   background: {
     backgroundColor: theme.palette.background.paper,
