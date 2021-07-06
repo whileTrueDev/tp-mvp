@@ -548,7 +548,7 @@ export class UsersService {
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
         .getQuery();
 
-      const query = `
+      const totalCountQuery = `
       SELECT COUNT(*) AS total
       FROM (
         (${afreecaQuery})
@@ -558,14 +558,30 @@ export class UsersService {
       WHERE Creators.nickname LIKE '%${search}%'
       `;
 
-      const { total: totalCount } = (await getManager().query(query))[0];
-
+      const totalCountResult = await getManager().query(totalCountQuery);
+      const { total: totalCount } = totalCountResult[0];
       const totalPage = Math.ceil(totalCount / take);
       const hasMore = page < totalPage;
 
+      if (search) {
+        const nicknameSearchQuery = `
+        SELECT DISTINCT(Creators.creatorId)
+        FROM (
+          (${afreecaQuery})
+          UNION
+          (${twitchQuery})
+        ) AS Creators
+        WHERE Creators.nickname LIKE '%${search}%'
+        `;
+
+        const creatorIdList = await getManager().query(nicknameSearchQuery);
+        await Promise.all(creatorIdList.map(({ creatorId }) => this.increaseSearchCount({ creatorId })))
+          .catch((error) => console.error(error));
+      }
+
       const sortCondition = sort ? `Creators.${sort} ${direction},` : '';
 
-      const query2 = `
+      const query = `
       SELECT *
       FROM (
         (${afreecaQuery})
@@ -585,7 +601,7 @@ export class UsersService {
       OFFSET ${(page - 1) * take}
       `;
 
-      const data = await getManager().query(query2);
+      const data = await getManager().query(query);
 
       const tempRes = {
         data: data.map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] })),

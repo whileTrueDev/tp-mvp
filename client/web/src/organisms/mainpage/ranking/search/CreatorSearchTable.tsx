@@ -26,10 +26,6 @@ function getCellStyle(isMobile: boolean): React.CSSProperties {
 
 export default function CreatorSearchTable(): JSX.Element {
   const [{ data, loading }, getList] = useAxios<CreatorListRes>('users/creator-list');
-  const [, increaseSearchCount] = useAxios({
-    url: '/users/creator-list',
-    method: 'post',
-  }, { manual: true });
   const {
     doSearch,
     searchText,
@@ -45,18 +41,7 @@ export default function CreatorSearchTable(): JSX.Element {
   const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: Creator | undefined) => {
     if (!rowData) return;
     const creatorId = rowData?.creatorId;
-
-    // 해당 방송인의 활동명 일부를 검색하고 클릭한 경우에만 검색횟수 증가요청
-    if (searchText && rowData.nickname.includes(searchText)) {
-      increaseSearchCount({ data: { creatorId } })
-        .then(() => {
-          history.push(`/ranking/creator/${creatorId}`);
-        }).catch((error) => {
-          console.error(error);
-        });
-    } else {
-      history.push(`/ranking/creator/${creatorId}`);
-    }
+    history.push(`/ranking/creator/${creatorId}`);
   };
 
   const searchInput = useMemo(() => (
