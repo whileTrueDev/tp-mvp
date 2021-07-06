@@ -7,7 +7,6 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   container: {
     maxWidth: MAX_WIDTH_DESKTOP,
-    border: `1px solid ${theme.palette.divider}`,
     padding: theme.spacing(1),
   },
 }));
@@ -48,6 +47,7 @@ export const useSearchTableStyle = makeStyles((theme: Theme) => {
     },
     border: {
       backgroundColor: theme.palette.background.paper,
+      border: `1px solid ${theme.palette.divider}`,
       [theme.breakpoints.down('sm')]: { padding: theme.spacing(1) },
     },
     searchWrapper: {

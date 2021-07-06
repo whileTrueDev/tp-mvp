@@ -13,7 +13,7 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
-import { CreatorListRes } from '@truepoint/shared/dist/res/CreatorList.interface';
+import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
@@ -236,7 +236,7 @@ export class UsersController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
     @Query('search', new DefaultValuePipe('')) search: string,
-    @Query('sort', new DefaultValuePipe('')) sort: string,
+    @Query('sort', new DefaultValuePipe('')) sort: '' | keyof Creator,
     @Query('direction', new DefaultValuePipe('desc')) direction: string,
   ): Promise<CreatorListRes> {
     return this.usersService.getCreatorsList({
