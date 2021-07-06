@@ -565,7 +565,7 @@ export class UsersService {
           'afreeca.afreecaStreamerName AS nickname',
           'afreeca.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
-          'AVG(ratings.rating) AS averageRating',
+          'ROUND(AVG(ratings.rating),2) AS averageRating',
           '"afreeca" AS platform',
         ])
         .groupBy('afreeca.afreecaId')
@@ -579,7 +579,7 @@ export class UsersService {
           'twitch.twitchStreamerName AS nickname',
           'twitch.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
-          'AVG(ratings.rating) AS averageRating',
+          'ROUND(AVG(ratings.rating),2) AS averageRating',
           '"twitch" AS platform',
         ])
         .groupBy('twitch.twitchId')
