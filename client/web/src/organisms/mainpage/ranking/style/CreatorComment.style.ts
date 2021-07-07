@@ -1,7 +1,9 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
-  const smallTextSize = theme.spacing(1.5);
+  const smallTextSize = theme.spacing(1.75);
+  const likeColor = '#ee6d6d';
+  const hateColor = '#7777ee';
   return createStyles({
     commentItem: {
       position: 'relative',
@@ -76,7 +78,10 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
       },
     },
     content: {
-      fontSize: theme.spacing(1.5),
+      fontSize: theme.typography.body1.fontSize,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: theme.typography.body2.fontSize,
+      },
     },
     actions: {
       display: 'flex',
@@ -95,7 +100,6 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     nestedComments: {
     },
     recommendIcons: {
-      marginTop: theme.spacing(-2),
       '&>*:not(:last-child)': {
         marginRight: theme.spacing(1),
       },
@@ -105,12 +109,17 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     },
     countText: {
       fontSize: smallTextSize,
+      fontWeight: 'bold',
+      '.likeButton &': {
+        color: likeColor,
+      },
+      '.hateButton &': {
+        color: hateColor,
+      },
     },
     liked: {
-      color: theme.palette.primary.main,
     },
     hated: {
-      color: theme.palette.secondary.main,
     },
     commentFormContainer: {
       display: 'none',
