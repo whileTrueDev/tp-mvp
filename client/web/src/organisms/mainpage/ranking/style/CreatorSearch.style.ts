@@ -3,7 +3,6 @@ import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 
 export const useMostSearchedCreatorListStyle = makeStyles((theme: Theme) => createStyles({
   listItem: {
-    justifyContent: 'space-around',
     '& .order': { width: theme.spacing(4) },
     '& .logos': { width: 60, display: 'flex' },
     '& .logo': { width: 20, height: 20 },

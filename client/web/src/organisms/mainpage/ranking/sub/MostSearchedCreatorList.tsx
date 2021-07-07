@@ -37,17 +37,31 @@ export default function MostSearchedCreatorList(): JSX.Element {
 
   const renderList = (creatorList: Creator[]) => {
     if (!creatorList.length) return null;
-    return creatorList.map((creator, i) => (
-      <ListItem component="li" button key={creator.nickname} onClick={handleClick(creator)} className={classes.listItem}>
-        <Typography component="span" color={i >= 10 ? 'textSecondary' : 'textPrimary'} className="order">{i + 1}</Typography>
-        <div className="logos">
-          <Avatar className={classnames('logo', 'platform')} src={`/images/logo/${creator.platform}Logo.png`} />
-          <Avatar className="logo" src={creator.logo} />
-        </div>
-        <Typography component="span" className={classnames(creatorName, 'nickname')}>{creator.nickname}</Typography>
-        <Typography component="span" variant="caption" align="right" className="searchCount">{creator.searchCount}</Typography>
-      </ListItem>
-    ));
+    return creatorList.map((creator, i) => {
+      if (creator.searchCount > 0) {
+        return (
+          <ListItem component="li" button key={creator.nickname} onClick={handleClick(creator)} className={classes.listItem}>
+            <Typography component="span" color={i >= 10 ? 'textSecondary' : 'textPrimary'} className="order">{i + 1}</Typography>
+            <div className="logos">
+              <Avatar className={classnames('logo', 'platform')} src={`/images/logo/${creator.platform}Logo.png`} />
+              <Avatar className="logo" src={creator.logo} />
+            </div>
+            <Typography component="span" className={classnames(creatorName, 'nickname')}>{creator.nickname}</Typography>
+            <Typography component="span" variant="caption" align="right" className="searchCount">{`${creator.searchCount}회 검색`}</Typography>
+          </ListItem>
+        );
+      }
+      return (
+        <ListItem component="li" key={creator.nickname} className={classes.listItem}>
+          <Typography component="span" color={i >= 10 ? 'textSecondary' : 'textPrimary'} className="order">{i + 1}</Typography>
+          <div className="logos">
+            <Avatar className="logo" />
+          </div>
+          <Typography component="span" className={classnames(creatorName, 'nickname')}>-</Typography>
+          <Typography component="span" variant="caption" align="right" className="searchCount">-</Typography>
+        </ListItem>
+      );
+    });
   };
 
   return (
