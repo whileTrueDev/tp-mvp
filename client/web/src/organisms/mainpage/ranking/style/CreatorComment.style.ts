@@ -2,6 +2,8 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
   const smallTextSize = theme.spacing(1.75);
+  const likeColor = '#ee6d6d';
+  const hateColor = '#7777ee';
   return createStyles({
     commentItem: {
       position: 'relative',
@@ -107,12 +109,17 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     },
     countText: {
       fontSize: smallTextSize,
+      fontWeight: 'bold',
+      '.likeButton &': {
+        color: likeColor,
+      },
+      '.hateButton &': {
+        color: hateColor,
+      },
     },
     liked: {
-      color: theme.palette.primary.main,
     },
     hated: {
-      color: theme.palette.secondary.main,
     },
     commentFormContainer: {
       display: 'none',
