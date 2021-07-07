@@ -517,44 +517,6 @@ export class UsersService {
     direction: string
   }): Promise<CreatorListRes> {
     try {
-      const test = await this.usersRepository.createQueryBuilder('users')
-        .select([
-          'users.userId AS userId',
-          'users.nickName AS nickname',
-          `(CASE 
-              WHEN users.afreecaId IS NOT NULL THEN users.afreecaId
-              WHEN users.twitchId IS NOT NULL THEN users.twitchId
-              ELSE null 
-            END) AS creatorId`,
-          `(CASE 
-            WHEN users.afreecaId IS NOT NULL THEN 'afreeca'
-            WHEN users.twitchId IS NOT NULL THEN 'twitch'
-            ELSE null 
-          END) AS platform`,
-          `(CASE 
-            WHEN afreeca.logo IS NOT NULL THEN afreeca.logo
-            WHEN twitch.logo IS NOT NULL THEN twitch.logo
-            ELSE null 
-          END) AS logo`,
-          `(CASE 
-            WHEN afreeca.logo IS NOT NULL THEN GROUP_CONCAT(DISTINCT afreecaCategories.name)
-            WHEN twitch.logo IS NOT NULL THEN GROUP_CONCAT(DISTINCT twitchCategories.name)
-            ELSE null 
-          END) AS categories`,
-          'ROUND(AVG(ratings.rating),2) AS averageRating',
-        ])
-        .groupBy('creatorId')
-        .where('users.afreecaId IS NOT NULL')
-        .orWhere('users.twitchId IS NOT NULL')
-        .leftJoin(CreatorRatingsEntity, 'ratings', '(ratings.creatorId = users.afreecaId) OR (ratings.creatorId = users.twitchId)')
-        .leftJoin('users.afreeca', 'afreeca')
-        .leftJoin('afreeca.categories', 'afreecaCategories')
-        .leftJoin('users.twitch', 'twitch')
-        .leftJoin('twitch.categories', 'twitchCategories')
-        .getManyAndCount();
-
-      console.log(test);
-
       const afreecaQuery = await this.afreecaRepository.createQueryBuilder('afreeca')
         .select([
           'afreeca.afreecaId AS creatorId',
@@ -586,13 +548,17 @@ export class UsersService {
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
         .getQuery();
 
-      const totalCountQuery = `
-      SELECT COUNT(*) AS total
-      FROM (
+      // PlatformAfreeca + PlatformTwitch 방송인 테이블
+      const Creators = `(
         (${afreecaQuery})
         UNION
         (${twitchQuery})
-      ) AS Creators
+      ) AS Creators`;
+
+      // Creators 테이블에서 검색된 인원 수 구하는 쿼리
+      const totalCountQuery = `
+      SELECT COUNT(*) AS total
+      FROM ${Creators}
       WHERE Creators.nickname LIKE '%${search}%'
       `;
 
@@ -601,14 +567,11 @@ export class UsersService {
       const totalPage = Math.ceil(totalCount / take);
       const hasMore = page < totalPage;
 
+      // 검색어가 있는 경우 - 검색된 방송인들의 검색횟수 증가
       if (search) {
         const nicknameSearchQuery = `
         SELECT DISTINCT(Creators.creatorId)
-        FROM (
-          (${afreecaQuery})
-          UNION
-          (${twitchQuery})
-        ) AS Creators
+        FROM ${Creators}
         WHERE Creators.nickname LIKE '%${search}%'
         `;
 
@@ -617,22 +580,24 @@ export class UsersService {
           .catch((error) => console.error(error));
       }
 
+      // 정렬기준(sort)이 있는 경우(검색횟수) 쿼리에 추가
       const sortCondition = sort ? `Creators.${sort} ${direction},` : '';
 
+      // 방송인 테이블에서 검색어, limit, take적용하여 조회하고, nickname 한글-소문자-대문자-숫자-기타순으로 정렬
+      // ascii 48~57 : 숫자
+      // ascii 65~90 : 대문자
+      // ascii 97~122: 소문자 
       const query = `
       SELECT *
-      FROM (
-        (${afreecaQuery})
-        UNION
-        (${twitchQuery})
-      ) AS Creators
+      FROM ${Creators}
       WHERE Creators.nickname LIKE '%${search}%'
       ORDER BY 
         ${sortCondition}
         (CASE 
-          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
-          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
-          WHEN ASCII(SUBSTRING(Creators.nickname,1)) < 128 THEN 2 ELSE 1 
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 4
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 65 AND 90 THEN 3
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 97 AND 122 THEN 2
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) < 128 THEN 5 ELSE 1 
         END), 
         BINARY(Creators.nickname)
       LIMIT ${take}
