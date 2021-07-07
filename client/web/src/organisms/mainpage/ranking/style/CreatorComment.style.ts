@@ -1,7 +1,7 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
-  const smallTextSize = theme.spacing(1.5);
+  const smallTextSize = theme.spacing(1.75);
   return createStyles({
     commentItem: {
       position: 'relative',
@@ -76,7 +76,10 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
       },
     },
     content: {
-      fontSize: theme.spacing(1.5),
+      fontSize: theme.typography.body1.fontSize,
+      [theme.breakpoints.down('sm')]: {
+        fontSize: theme.typography.body2.fontSize,
+      },
     },
     actions: {
       display: 'flex',
@@ -95,7 +98,6 @@ export const useCreatorCommentItemStyle = makeStyles((theme: Theme) => {
     nestedComments: {
     },
     recommendIcons: {
-      marginTop: theme.spacing(-2),
       '&>*:not(:last-child)': {
         marginRight: theme.spacing(1),
       },
