@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  Controller, Get, Query, Res, Req, HttpException, HttpStatus,
+  Controller, Get, Query, Res, Req, HttpException, HttpStatus, DefaultValuePipe,
 } from '@nestjs/common';
 import { HighlightService } from './highlight.service';
 
@@ -18,6 +18,7 @@ export class HighlightController {
     throw new HttpException('id is required!!', HttpStatus.BAD_REQUEST);
   }
 
+  // eslint-disable-next-line max-params
   @Get('/export')
   async getZipFile(
     @Query('creatorId') creatorId: string,
@@ -26,6 +27,7 @@ export class HighlightController {
     @Query('exportCategory') exportCategory: string,
     @Query('srt') srt: number,
     @Query('csv') csv: number,
+    @Query('startTime', new DefaultValuePipe('')) startTime: string,
     // @Query('txt') txt: number,
     @Req() req: express.Request, @Res() res: express.Response,
   ): Promise<any> {
@@ -34,6 +36,7 @@ export class HighlightController {
       const fileName = `${timestamp}`;
       const zip = await this.highlightService.getZipFile(
         creatorId, platform, streamId, exportCategory, srt, csv,
+        startTime,
         // txt,
       );
       res.set({

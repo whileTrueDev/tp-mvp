@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as archiver from 'archiver';
 
-// import { parseString, modify, stringify } from '../../utils/highlishtFileUtils';
+import { parseString, modify, stringify } from '../../utils/highlishtFileUtils';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -20,9 +20,11 @@ export class HighlightService {
     return returnHighlight.Body.toString('utf-8');
   }
 
+  // eslint-disable-next-line max-params
   async getZipFile(
     creatorId: string, platform: 'afreeca'|'youtube'|'twitch', streamId: string,
     exportCategory: string, srt: number, csv: number,
+    startTime?: string,
     // , txt: number,
   ): Promise<any> {
     const boolCsv = Boolean(Number(csv));
@@ -70,11 +72,11 @@ export class HighlightService {
       }, HttpStatus.NOT_FOUND);
     }
 
-    const doGetSelectedFiles = await this.getSelectedFile(getArray);
+    const doGetSelectedFiles = await this.getSelectedFile(getArray, startTime);
     return doGetSelectedFiles;
   }
 
-  async getSelectedFile(fileName: string[]): Promise<any> {
+  async getSelectedFile(fileName: string[], startTime?: string): Promise<any> {
     const zip = archiver.create('zip');
     Promise.all(fileName.map(async (key) => {
       const getParams = {
@@ -88,28 +90,29 @@ export class HighlightService {
         .then((value) => {
           const fileData = value.Body.toString('utf-8');
 
-          // const editTime = '00:12:29,000';
-
-          // let ext: 'srt'|'csv';
-          // if (key.includes('srt')) {
-          //   ext = 'srt';
-          // } else if (key.includes('csv')) {
-          //   ext = 'csv';
-          // }
-
-          // // 파일데이터 보정
-          // const parsed = parseString(fileData, ext);
-          // const modified = modify(parsed, editTime);
-          // const resultStr = stringify(modified, ext);
-          // zip.append(resultStr, {
-          //   name: `부분영상_시작시간${ext}_${editTime}_${key.split('/')[5]}`,
-          // });
-
-          // 파일압축 (source: string | internal.Readable | Buffer) => archiver.Archiver
-          const toSaveName = key.split('/')[5];
-          zip.append(fileData, {
-            name: toSaveName,
-          });
+          if (startTime) {
+            // 시작시간 있는 경우 - 부분 영상 편집점 내보내기
+            let ext: 'srt'|'csv';
+            if (key.includes('srt')) {
+              ext = 'srt';
+            } else if (key.includes('csv')) {
+              ext = 'csv';
+            }
+            // 파일데이터 보정
+            const parsed = parseString(fileData, ext);
+            const modified = modify(parsed, startTime);
+            const resultStr = stringify(modified, ext);
+            zip.append(resultStr, {
+              name: `부분영상_시작시간${ext}_${startTime}_${key.split('/')[5]}`,
+            });
+          } else {
+            // 시작시간 없는 경우 - 파일 그대로 내보내기
+            // 파일압축 (source: string | internal.Readable | Buffer) => archiver.Archiver
+            const toSaveName = key.split('/')[5];
+            zip.append(fileData, {
+              name: toSaveName,
+            });
+          }
         }).catch((err) => {
           console.error(err);
         });
