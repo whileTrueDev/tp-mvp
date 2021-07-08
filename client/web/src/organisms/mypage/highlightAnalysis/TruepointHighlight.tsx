@@ -9,6 +9,8 @@ import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';
 import Highcharts from './HighChart';
+import HighlightPartialExport from './HighlightPartialExport';
+import SoundFileExport from './SoundFileExport';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -174,8 +176,9 @@ export default function TruepointHighlight({
                   편집점 파일 활용법
                 </Button>
               </div>
-
             </div>
+            <HighlightPartialExport />
+            <SoundFileExport />
           </Grid>
         </Grid>
       </Grid>
