@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as archiver from 'archiver';
 
+// import { parseString, modify, stringify } from '../../utils/highlishtFileUtils';
+
 dotenv.config();
 const s3 = new AWS.S3();
 
@@ -80,9 +82,30 @@ export class HighlightService {
         Key: `${key}`,
       };
 
+      /** 필요한 값과 메서드 */
+
       await s3.getObject(getParams).promise()
         .then((value) => {
           const fileData = value.Body.toString('utf-8');
+
+          // const editTime = '00:12:29,000';
+
+          // let ext: 'srt'|'csv';
+          // if (key.includes('srt')) {
+          //   ext = 'srt';
+          // } else if (key.includes('csv')) {
+          //   ext = 'csv';
+          // }
+
+          // // 파일데이터 보정
+          // const parsed = parseString(fileData, ext);
+          // const modified = modify(parsed, editTime);
+          // const resultStr = stringify(modified, ext);
+          // zip.append(resultStr, {
+          //   name: `부분영상_시작시간${ext}_${editTime}_${key.split('/')[5]}`,
+          // });
+
+          // 파일압축 (source: string | internal.Readable | Buffer) => archiver.Archiver
           const toSaveName = key.split('/')[5];
           zip.append(fileData, {
             name: toSaveName,
@@ -91,6 +114,7 @@ export class HighlightService {
           console.error(err);
         });
     })).then(() => {
+      // 파일 생성
       zip.finalize();
     });
     return zip;
