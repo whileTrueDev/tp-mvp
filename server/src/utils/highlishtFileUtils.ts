@@ -175,3 +175,21 @@ export function getExtention(key: string): 'srt'|'csv' {
   }
   return ext;
 }
+
+/**
+ * 편집점 파일데이터를 입력된 시작시간에 따라 잘라내어
+ * 문자열형태로 반환
+*/
+export function cutFile({
+  key, fileData, startTime,
+}: {
+  key: string,
+  fileData: string,
+  startTime: string
+}): string {
+  const ext = getExtention(key);
+  const parsed = parseString(fileData, ext);
+  const modified = modify(parsed, startTime);
+  const resultStr = stringify(modified, ext);
+  return resultStr;
+}
