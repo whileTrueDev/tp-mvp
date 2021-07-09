@@ -1,8 +1,13 @@
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
-import { HighlightExportProps } from '../../organisms/shared/sub/HighlightExport';
+
+interface HighlightExportProps {
+  selectedStream: StreamDataType | null,
+  exportCategory: string,
+}
 
 type StartTime = {
   hour: number,
@@ -14,11 +19,15 @@ type CheckboxState = {
   csvCheckBox: boolean;
 };
 
+export type ExportClickOptions = {
+  partialExport: boolean
+}
+
 type Return = {
   isChecked: CheckboxState,
   setIsChecked: React.Dispatch<React.SetStateAction<CheckboxState>>,
   handleCheckbox: (e: React.ChangeEvent<HTMLInputElement>) => void,
-  handleExportClick: () => Promise<void>,
+  handleExportClick: (options: ExportClickOptions) => Promise<void>,
   time: StartTime,
   setTime: React.Dispatch<React.SetStateAction<StartTime>>,
   handleTimeChange: (e: React.FormEvent<HTMLInputElement>) => void,
@@ -26,9 +35,10 @@ type Return = {
 
 export const padLeft = (value: number, length = 2): string => value.toString().padStart(length, '0');
 
+// StartTime }객체를 -> 03:02:11,000 문자로 포맷팅
 function startTimeFormatter(time: StartTime): string {
   const { hour, minute, seconds } = time;
-  if (!hour || !minute || !seconds) return '';
+  if (!hour && !minute && !seconds) return '';
   return `${padLeft(hour)}:${padLeft(minute)}:${padLeft(seconds)},000`;
 }
 
@@ -91,17 +101,26 @@ export default function useHighlightExport(
   }
 
   // 편집점 내보내기 버튼 클릭 시 실행함수
-  const handleExportClick = async () => {
+  // 부분 영상 편집점 내보내기 시 {partialExport : true} 옵션을 넘긴다
+  const handleExportClick = async ({ partialExport = false }: {partialExport: boolean}) => {
     if (selectedStream) {
       const { streamId, platform, creatorId } = selectedStream;
       const srt = isChecked.srtCheckBox ? 1 : 0;
       const csv = isChecked.csvCheckBox ? 1 : 0;
       // const txt = isChecked.txtCheckBox ? 1 : 0;
 
-      const startTime = startTimeFormatter(time);
+      if (partialExport) {
+        exportFileName = `부분영상_${exportFileName}`;
+      }
       doExport({
         params: {
-          creatorId, platform, streamId, exportCategory, srt, csv, startTime,
+          creatorId,
+          platform,
+          streamId,
+          exportCategory,
+          srt,
+          csv,
+          startTime: partialExport ? startTimeFormatter(time) : '',
           // txt
         },
       })

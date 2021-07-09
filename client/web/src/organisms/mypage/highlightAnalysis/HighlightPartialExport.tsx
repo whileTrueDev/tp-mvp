@@ -1,19 +1,24 @@
 import { Button, Typography } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 
-export default function HighlightPartialExport(): JSX.Element {
-  const [time, setTime] = useState({
-    hour: 0,
-    minute: 0,
-    seconds: 0,
-  });
+export interface HighlightPartialExportProps{
+  time: {
+    hour: number,
+    minute: number,
+    seconds: number,
+  },
+  handleTimeChange: (e: React.FormEvent<HTMLInputElement>) => void,
+  handleExportClick: () => Promise<void>,
+}
+export default function HighlightPartialExport(props: HighlightPartialExportProps): JSX.Element {
+  const { time, handleTimeChange: handleChange, handleExportClick } = props;
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const target = e.currentTarget;
-    const { value, min, max } = target;
-    if (Number(value) > Number(max) || Number(value) < Number(min)) return;
-    setTime((prevTime) => ({ ...prevTime, [target.name]: Number(value) }));
-  };
+  const submit = useCallback(() => {
+    if (!time.hour && !time.minute && !time.seconds) {
+      return;
+    }
+    handleExportClick();
+  }, [handleExportClick, time.hour, time.minute, time.seconds]);
   return (
     <div>
       <Typography gutterBottom style={{ marginBottom: 32 }}>
@@ -27,7 +32,9 @@ export default function HighlightPartialExport(): JSX.Element {
         download
         target="_blank"
         rel="noreferrer"
-        style={{ color: 'green', display: 'block', marginBottom: 32 }}
+        style={{
+          color: 'green', display: 'block', marginBottom: 32, fontSize: '1rem',
+        }}
       >
         (반드시 확인!) 부분 영상에 편집점 적용하는 방법
       </a>
@@ -40,7 +47,6 @@ export default function HighlightPartialExport(): JSX.Element {
           autoComplete="off"
           onSubmit={(e) => {
             e.preventDefault();
-            console.log(time);
           }}
         >
 
@@ -88,7 +94,8 @@ export default function HighlightPartialExport(): JSX.Element {
           <Button
             style={{ marginLeft: 32 }}
             variant="outlined"
-            type="submit"
+            disabled={!time.hour && !time.minute && !time.seconds}
+            onClick={submit}
           >
             부분 영상 편집점 내보내기
 
