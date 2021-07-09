@@ -1,9 +1,13 @@
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException, HttpStatus, Injectable, InternalServerErrorException,
+} from '@nestjs/common';
 import * as archiver from 'archiver';
 
-import { parseString, modify, stringify } from '../../utils/highlishtFileUtils';
+import {
+  parseString, modify, stringify, getExtention,
+} from '../../utils/highlishtFileUtils';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -84,30 +88,23 @@ export class HighlightService {
         Key: `${key}`,
       };
 
-      /** 필요한 값과 메서드 */
-
       await s3.getObject(getParams).promise()
         .then((value) => {
           const fileData = value.Body.toString('utf-8');
 
           if (startTime) {
             // 시작시간 있는 경우 - 부분 영상 편집점 내보내기
-            let ext: 'srt'|'csv';
-            if (key.includes('srt')) {
-              ext = 'srt';
-            } else if (key.includes('csv')) {
-              ext = 'csv';
-            }
+            const ext = getExtention(key);
             // 파일데이터 보정
             const parsed = parseString(fileData, ext);
             const modified = modify(parsed, startTime);
             const resultStr = stringify(modified, ext);
+            const partialFileSaveName = `부분시작시간+${startTime.split(',')[0]}__${key.split('/')[5]}`;
             zip.append(resultStr, {
-              name: `부분영상_시작시간${ext}_${startTime}_${key.split('/')[5]}`,
+              name: partialFileSaveName,
             });
           } else {
             // 시작시간 없는 경우 - 파일 그대로 내보내기
-            // 파일압축 (source: string | internal.Readable | Buffer) => archiver.Archiver
             const toSaveName = key.split('/')[5];
             zip.append(fileData, {
               name: toSaveName,
@@ -119,6 +116,9 @@ export class HighlightService {
     })).then(() => {
       // 파일 생성
       zip.finalize();
+    }).catch((error) => {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in getSelectedFile');
     });
     return zip;
   }

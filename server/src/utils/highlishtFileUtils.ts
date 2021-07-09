@@ -1,34 +1,4 @@
-export function parseTimestamp(timestamp: string): number {
-  const match = timestamp.match(/^(?:(\d{1,}):)?(\d{2}):(\d{2})[,.](\d{3})$/);
-
-  if (!match) {
-    throw new Error(`Invalid SRT or VTT time format: "${timestamp}"`);
-  }
-
-  const hours = match[1] ? parseInt(match[1], 10) * 3600000 : 0;
-  const minutes = parseInt(match[2], 10) * 60000;
-  const seconds = parseInt(match[3], 10) * 1000;
-  const milliseconds = parseInt(match[4], 10);
-
-  return hours + minutes + seconds + milliseconds;
-}
-
-export function formatTimestampToString(timestamp: number): any {
-  if (timestamp < 0) {
-    return '00:00:00,000';
-  }
-  const hours = Math.floor(timestamp / 60 / 60 / 1000);
-  const hoursInMillisec = hours * 60 * 60 * 1000;
-
-  const minutes = Math.floor((timestamp - hoursInMillisec) / 60 / 1000);
-  const minutesInMillisec = minutes * 60 * 1000;
-
-  const seconds = Math.floor((timestamp - hoursInMillisec - minutesInMillisec) / 1000);
-
-  const formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')},000`;
-
-  return formatted;
-}
+import { parseTimestamp, formatTimestampToString } from './timestampFormatter';
 
 type Block = {
   index: number;
@@ -40,6 +10,11 @@ type Block = {
   topPercentage: string;
 }
 
+/**
+ * 문자열 srt파일을 Block[]객체로 반환
+ * @param srtStr srt파일 문자열 형태
+ * @returns 
+ */
 export function parseSRT(srtStr: string): Block[] {
   const blocks = srtStr.split('\n\n').slice(1);
   return blocks.map((block) => {
@@ -58,6 +33,11 @@ export function parseSRT(srtStr: string): Block[] {
   });
 }
 
+/**
+ * 문자열 csv 파일을 Block[]객체로 반환
+ * @param csvStr csv 파일 문자열 
+ * @returns 
+ */
 export function parseCSV(csvStr: string): Block[] {
   return csvStr.split('\n').map((block) => {
     const [index, startTime, endTime, highlightScore, topPercentage] = block.split(',');
@@ -85,6 +65,12 @@ export function parseCSV(csvStr: string): Block[] {
     });
 }
 
+/**
+ * 파일 확장자에 따라 문자열 파일을 파싱하여 Block[] 객체형태로 반환
+ * @param strData 문자열 파일 데이터
+ * @param ext 파일 확장자
+ * @returns 
+ */
 export function parseString(strData: string, ext: 'srt'|'csv'): Block[] {
   let parsed;
   if (ext === 'srt') {
@@ -96,11 +82,18 @@ export function parseString(strData: string, ext: 'srt'|'csv'): Block[] {
   return parsed;
 }
 
+/**
+ * Block[] 형태의 객체를 입력받아
+ * 부분영상 시작시간만큼 시간 빼서 반환
+ * @param parsed 
+ * @param editTime 부분영상 시작시간
+ * @returns 
+ */
 export function modify(parsed: Block[], editTime: string): Block[] {
   const match = editTime.match(/^(?:(\d{1,}):)?(\d{2}):(\d{2})[,.](\d{3})$/);
 
   if (!match) {
-    throw new Error(`Invalid SRT or VTT time format: "${editTime}"`);
+    throw new Error(`Invalid SRT time format: "${editTime}"`);
   }
   const editTimestamp = parseTimestamp(editTime);
 
@@ -121,6 +114,11 @@ export function modify(parsed: Block[], editTime: string): Block[] {
   return resynced;
 }
 
+/**
+ * Block[] 형태의 데이터를 문자열 srt파일로 반환
+ * @param parsed 
+ * @returns 
+ */
 export function stringifySRT(parsed: Block[]): string {
   const blockList = parsed.map((block) => {
     const {
@@ -133,6 +131,11 @@ export function stringifySRT(parsed: Block[]): string {
   return [metaBlock, ...blockList].join('\n\n');
 }
 
+/**
+ * Block[] 형태의 데이터를 문자열 csv파일로 반환
+ * @param parsed 
+ * @returns 
+ */
 export function stringifyCSV(parsed: Block[]): string {
   const blockList = parsed.map((block) => {
     const {
@@ -144,6 +147,12 @@ export function stringifyCSV(parsed: Block[]): string {
   return [metaBlock, ...blockList].join('\n');
 }
 
+/**
+ * Block[]형태로 파싱된 데이터를 srt|csv 파일 문자열 형태로 반환
+ * @param parsed 
+ * @param ext 파일확장자
+ * @returns 
+ */
 export function stringify(parsed: Block[], ext: 'srt'|'csv'): string {
   if (ext === 'srt') {
     return stringifySRT(parsed);
@@ -151,4 +160,18 @@ export function stringify(parsed: Block[], ext: 'srt'|'csv'): string {
     return stringifyCSV(parsed);
   }
   throw new Error(`extention accepts only 'srt', 'csv' \n invalid ext : ${ext}`);
+}
+
+// s3 파일 키에서 확장자 찾아서 해당 파일의 확장자 반환
+export function getExtention(key: string): 'srt'|'csv' {
+  let ext;
+  if (key.includes('srt')) {
+    ext = 'srt';
+  } else if (key.includes('csv')) {
+    ext = 'csv';
+  }
+  if (!ext) {
+    throw new Error('key must include srt or csv');
+  }
+  return ext;
 }
