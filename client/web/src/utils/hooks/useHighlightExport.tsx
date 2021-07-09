@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
 
-interface HighlightExportProps {
+export interface HighlightExportProps {
   selectedStream: StreamDataType | null,
   exportCategory: string,
 }
@@ -35,11 +35,21 @@ type Return = {
 
 export const padLeft = (value: number, length = 2): string => value.toString().padStart(length, '0');
 
-// StartTime }객체를 -> 03:02:11,000 문자로 포맷팅
+// StartTime객체를 -> 03:02:11,000 문자로 포맷팅
 function startTimeFormatter(time: StartTime): string {
   const { hour, minute, seconds } = time;
   if (!hour && !minute && !seconds) return '';
   return `${padLeft(hour)}:${padLeft(minute)}:${padLeft(seconds)},000`;
+}
+
+// 파일다운로드
+export function downloadFile(data: BlobPart, exportFileName: string): void {
+  const url = window.URL.createObjectURL(new Blob([data], { type: 'application/zip' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', `${exportFileName}.zip`);
+  link.click();
+  link.remove();
 }
 
 export default function useHighlightExport(
@@ -125,12 +135,7 @@ export default function useHighlightExport(
         },
       })
         .then((res) => {
-          const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/zip' }));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', `${exportFileName}.zip`);
-          document.body.appendChild(link);
-          link.click();
+          downloadFile(res.data, exportFileName);
         }).catch((err) => {
           console.error(err);
           ShowSnack('지금은 다운로드 할 수 없습니다.', 'error', enqueueSnackbar);
