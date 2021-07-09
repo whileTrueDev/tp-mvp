@@ -72,4 +72,22 @@ export class HighlightController {
     }
     return `no streamId : ${streamId}`;
   }
+
+  // eslint-disable-next-line max-params
+  @Get('/full-sound-file-test')
+  async getFullSoundFileTest(
+    @Query('creatorId') creatorId: string,
+    @Query('platform') platform: 'afreeca'|'youtube'|'twitch',
+    @Query('streamId') streamId: string,
+      // @Req() req: express.Request, @Res() res: express.Response,
+  ): Promise<any> {
+    console.log('full sound test');
+    if (streamId) {
+      const url = await this.highlightService.getSoundFileStream(
+        { creatorId, platform, streamId },
+      );
+      return url;
+    }
+    return `no streamId : ${streamId}`;
+  }
 }

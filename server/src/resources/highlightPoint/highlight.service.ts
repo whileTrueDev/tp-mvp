@@ -4,9 +4,10 @@ import {
   HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common';
 import * as archiver from 'archiver';
-
+// import { Readable } from 'stream';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { cutFile } from '../../utils/highlishtFileUtils';
+import { AWS_REGION } from '../../config/loadConfig';
 
 dotenv.config();
 const s3 = new AWS.S3();
@@ -195,5 +196,42 @@ export class HighlightService {
     // audio 폴더 내 파일이 있는 경우
     // 파일 키를 이용하여 파일을 가져온다
     return this.getSelectedFileToZip(keyArray, this.appendSoundFile);
+  }
+
+  async getSoundFileStream(props: {
+    creatorId: string,
+    platform: 'afreeca'|'youtube'|'twitch',
+    streamId: string,
+  }): Promise<any> {
+    const {
+      creatorId, platform, streamId,
+    } = props;
+
+    const getParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Prefix: `export_files/${platform}/${creatorId}/${streamId}/audio`, // 사운드파일 저장 위치
+    };
+
+    // audio폴더 아래 있는 파일의 키 저장
+    const keyArray = await this.getFileKeys(getParams);
+
+    if (keyArray.length === 0) {
+      // audio 폴더 내 파일이 없는 경우(오디오 파일이 없는 경우)
+      throw new NotFoundException('사운드 파일이 존재하지 않습니다');
+    }
+    const key = keyArray[0];
+    // return key;
+
+    const encodedKey = encodeURIComponent(key).replace('%20', '+');
+
+    const url = [
+      'https://',
+      process.env.BUCKET_NAME,
+      '.s3.',
+      AWS_REGION,
+      '.amazonaws.com/',
+    ].join('') + encodedKey;
+
+    return url;
   }
 }
