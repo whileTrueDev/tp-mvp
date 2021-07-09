@@ -34,7 +34,7 @@ export class HighlightController {
     if (streamId) {
       const timestamp = new Date().getTime();
       const fileName = `${timestamp}`;
-      const zip = await this.highlightService.getZipFile(
+      const zip = await this.highlightService.getHighlightZipFile(
         creatorId, platform, streamId, exportCategory, srt, csv,
         startTime,
         // txt,
@@ -46,5 +46,30 @@ export class HighlightController {
       });
       zip.pipe(res);
     }
+  }
+
+  // eslint-disable-next-line max-params
+  @Get('/full-sound-file')
+  async getFullSoundFile(
+    @Query('creatorId') creatorId: string,
+    @Query('platform') platform: 'afreeca'|'youtube'|'twitch',
+    @Query('streamId') streamId: string,
+    @Req() req: express.Request, @Res() res: express.Response,
+  ): Promise<any> {
+    if (streamId) {
+      const timestamp = new Date().getTime();
+      const fileName = `${timestamp}`;
+
+      const zip = await this.highlightService.getSoundZipFile(
+        { creatorId, platform, streamId },
+      );
+      res.set({
+        'Content-Type': 'audio/mpeg3;audio/x-mpeg-3;video/mpeg;video/x-mpeg;text/xml',
+        'Content-Disposition': `attachment; filename=${fileName}.zip`,
+        'Access-Control-Expose-Headers': 'Content-Disposition',
+      });
+      zip.pipe(res);
+    }
+    return `no streamId : ${streamId}`;
   }
 }
