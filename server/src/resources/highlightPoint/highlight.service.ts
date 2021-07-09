@@ -1,19 +1,63 @@
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import {
-  HttpException, HttpStatus, Injectable, InternalServerErrorException,
+  HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common';
 import * as archiver from 'archiver';
 
-import {
-  parseString, modify, stringify, getExtention,
-} from '../../utils/highlishtFileUtils';
+import { PromiseResult } from 'aws-sdk/lib/request';
+import { cutFile } from '../../utils/highlishtFileUtils';
 
 dotenv.config();
 const s3 = new AWS.S3();
 
+type GetObjectCallbackOptions = {startTime?: string}
+type GetObjectCallbackProps = {
+  value: PromiseResult<AWS.S3.GetObjectOutput, AWS.AWSError>,
+  options?: GetObjectCallbackOptions,
+  zip: archiver.Archiver,
+  key: string
+};
+type GetObjectCallback = (props: GetObjectCallbackProps) => Promise<void>
+
 @Injectable()
 export class HighlightService {
+  // 해당 폴더 내 파일의 key를 배열에 저장하여 리턴
+  private async getFileKeys(params: AWS.S3.ListObjectsRequest): Promise<string[]> {
+    const getArray = [];
+    await s3.listObjects(params).promise()
+      .then((value) => {
+        value.Contents.forEach((content) => {
+          getArray.push(content.Key);
+        });
+      }).catch((error) => console.error(error, 'error in get File keys'));
+    return getArray;
+  }
+
+  // zip 객체에 편집점 파일을 추가
+  private async appendHighlightFiles({
+    value, options, zip, key,
+  }: GetObjectCallbackProps): Promise<void> {
+    const fileData = value.Body.toString('utf-8');
+
+    if (options && options.startTime) {
+      // 시작시간 있는 경우 - 부분 영상 편집점 내보내기
+      const { startTime } = options;
+
+      const resultStr = cutFile({ key, fileData, startTime });
+      const cutFileSaveName = `부분시작시간+${startTime.split(',')[0]}__${key.split('/')[5]}`;
+      zip.append(resultStr, {
+        name: cutFileSaveName,
+      });
+    } else {
+      // 시작시간 없는 경우 - 파일 그대로 내보내기
+      const toSaveName = key.split('/')[5];
+      zip.append(fileData, {
+        name: toSaveName,
+      });
+    }
+  }
+
   async getHighlightData(streamId: string, platform: string, creatorId: string): Promise<any> {
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
@@ -25,12 +69,12 @@ export class HighlightService {
   }
 
   // eslint-disable-next-line max-params
-  async getZipFile(
+  async getHighlightZipFile(
     creatorId: string, platform: 'afreeca'|'youtube'|'twitch', streamId: string,
     exportCategory: string, srt: number, csv: number,
     startTime?: string,
     // , txt: number,
-  ): Promise<any> {
+  ): Promise<archiver.Archiver> {
     const boolCsv = Boolean(Number(csv));
     const boolSrt = Boolean(Number(srt));
     // const boolTxt = Boolean(Number(txt));
@@ -38,13 +82,8 @@ export class HighlightService {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
       Prefix: `export_files/${platform}/${creatorId}/${streamId}/${exportCategory}`,
     };
-    const getArray = [];
-    await s3.listObjects(getParams).promise()
-      .then((value) => {
-        value.Contents.forEach((content) => {
-          getArray.push(content.Key);
-        });
-      });
+    const getArray = await this.getFileKeys(getParams);
+
     if (!boolSrt) {
       getArray.forEach((value, index) => {
         if (value.indexOf('srt') !== -1) {
@@ -76,11 +115,23 @@ export class HighlightService {
       }, HttpStatus.NOT_FOUND);
     }
 
-    const doGetSelectedFiles = await this.getSelectedFile(getArray, startTime);
-    return doGetSelectedFiles;
+    return this.getSelectedFileToZip(getArray, this.appendHighlightFiles, { startTime });
   }
 
-  async getSelectedFile(fileName: string[], startTime?: string): Promise<any> {
+  /**
+   * fileName(key) 배열을 받아서 
+   * 해당 key 가진 파일에 callback함수 적용하여 
+   * 압축후 압축파일 리턴
+   * @param fileName key의 배열
+   * @param callback 해당 key를 가진 object에 적용할 콜백함수. value, callbackOption, zip(archiver), key 를 인자로 받는다
+   * @param options 콜백함수에 전달할 옵션
+   * @returns 
+   */
+  async getSelectedFileToZip(
+    fileName: string[],
+    callback: GetObjectCallback,
+    options?: GetObjectCallbackOptions,
+  ): Promise<archiver.Archiver> {
     const zip = archiver.create('zip');
     Promise.all(fileName.map(async (key) => {
       const getParams = {
@@ -90,36 +141,59 @@ export class HighlightService {
 
       await s3.getObject(getParams).promise()
         .then((value) => {
-          const fileData = value.Body.toString('utf-8');
-
-          if (startTime) {
-            // 시작시간 있는 경우 - 부분 영상 편집점 내보내기
-            const ext = getExtention(key);
-            // 파일데이터 보정
-            const parsed = parseString(fileData, ext);
-            const modified = modify(parsed, startTime);
-            const resultStr = stringify(modified, ext);
-            const partialFileSaveName = `부분시작시간+${startTime.split(',')[0]}__${key.split('/')[5]}`;
-            zip.append(resultStr, {
-              name: partialFileSaveName,
-            });
-          } else {
-            // 시작시간 없는 경우 - 파일 그대로 내보내기
-            const toSaveName = key.split('/')[5];
-            zip.append(fileData, {
-              name: toSaveName,
-            });
-          }
+          callback({
+            value,
+            options,
+            zip,
+            key,
+          });
         }).catch((err) => {
           console.error(err);
         });
     })).then(() => {
-      // 파일 생성
       zip.finalize();
     }).catch((error) => {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in getSelectedFile');
     });
     return zip;
+  }
+
+  // zip 객체에 사운드 파일 추가
+  private async appendSoundFile({
+    value, zip, key,
+  }: GetObjectCallbackProps): Promise<void> {
+    const body = Buffer.from(value.Body);
+    const toSaveName = key.split('/')[5];
+    zip.append(body, {
+      name: toSaveName,
+    });
+  }
+
+  async getSoundZipFile(props: {
+    creatorId: string,
+    platform: 'afreeca'|'youtube'|'twitch',
+    streamId: string,
+  }): Promise<archiver.Archiver> {
+    const {
+      creatorId, platform, streamId,
+    } = props;
+
+    const getParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Prefix: `export_files/${platform}/${creatorId}/${streamId}/audio`, // 사운드파일 저장 위치
+    };
+
+    // audio폴더 아래 있는 파일의 키 저장
+    const keyArray = await this.getFileKeys(getParams);
+
+    if (keyArray.length === 0) {
+      // audio 폴더 내 파일이 없는 경우(오디오 파일이 없는 경우)
+      throw new NotFoundException('사운드 파일이 존재하지 않습니다');
+    }
+
+    // audio 폴더 내 파일이 있는 경우
+    // 파일 키를 이용하여 파일을 가져온다
+    return this.getSelectedFileToZip(keyArray, this.appendSoundFile);
   }
 }
