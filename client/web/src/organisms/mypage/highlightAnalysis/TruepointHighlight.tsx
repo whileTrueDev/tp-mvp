@@ -187,7 +187,14 @@ export default function TruepointHighlight({
               handleTimeChange={handleTimeChange}
               handleExportClick={() => handleExportClick({ partialExport: true })}
             />
-            <SoundFileExport />
+            {/* 현재 모든 크리에이터 대상으로 수집중이 아니므로 witch  175163251 (피닉스박) 일때만 풀사운드 다운받기 버튼 보이도록 함 */}
+            {selectedStream && selectedStream.creatorId === '175163251' && (
+              <SoundFileExport
+                selectedStream={selectedStream}
+                exportCategory="highlight"
+              />
+            )}
+
           </Grid>
         </Grid>
       </Grid>
