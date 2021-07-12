@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import React from 'react';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import {
-  downloadFile,
+  downloadMp3File,
   HighlightExportProps,
 } from '../../../utils/hooks/useHighlightExport';
 
@@ -25,11 +25,14 @@ export default function SoundFileExport(props: HighlightExportProps): JSX.Elemen
           streamId, platform, creatorId, exportCategory,
         },
       }).then((res) => {
-        const exportFileName = '풀영상 사운드 파일';
-        downloadFile(res.data, exportFileName);
+        const exportFileName = `${selectedStream.startDate} 방송`;
+        downloadMp3File(res.data, exportFileName);
       }).catch((error) => {
-        if (error.response && error.response.status === 404) {
-          console.error({ ...error });
+        console.error(error);
+        if (error.response && error.response.status === 403) {
+          // 오디오 수집 대상자가 아닌 경우
+          ShowSnack('사운드 파일 수집 대상자가 아닙니다! 사운드 파일 기능을 이용하고 싶으시면 고객센터로 문의해주세요.', 'error', enqueueSnackbar);
+        } else if (error.response && error.response.status === 404) {
           // 오디오 파일이 존재하지 않는 경우
           ShowSnack('사운드 파일이 존재하지 않습니다!', 'error', enqueueSnackbar);
         } else {
