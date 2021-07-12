@@ -54,39 +54,19 @@ export class HighlightController {
     @Query('creatorId') creatorId: string,
     @Query('platform') platform: 'afreeca'|'youtube'|'twitch',
     @Query('streamId') streamId: string,
-    @Req() req: express.Request, @Res() res: express.Response,
+    @Res() res: express.Response,
   ): Promise<any> {
     if (streamId) {
-      const timestamp = new Date().getTime();
-      const fileName = `${timestamp}`;
-
-      const zip = await this.highlightService.getSoundZipFile(
+      const stream = await this.highlightService.getSoundFileStream(
         { creatorId, platform, streamId },
       );
+
       res.set({
         'Content-Type': 'audio/mpeg3;audio/x-mpeg-3;video/mpeg;video/x-mpeg;text/xml',
-        'Content-Disposition': `attachment; filename=${fileName}.zip`,
+        'Content-Disposition': 'attachment',
         'Access-Control-Expose-Headers': 'Content-Disposition',
       });
-      zip.pipe(res);
-    }
-    return `no streamId : ${streamId}`;
-  }
-
-  // eslint-disable-next-line max-params
-  @Get('/full-sound-file-test')
-  async getFullSoundFileTest(
-    @Query('creatorId') creatorId: string,
-    @Query('platform') platform: 'afreeca'|'youtube'|'twitch',
-    @Query('streamId') streamId: string,
-      // @Req() req: express.Request, @Res() res: express.Response,
-  ): Promise<any> {
-    console.log('full sound test');
-    if (streamId) {
-      const url = await this.highlightService.getSoundFileStream(
-        { creatorId, platform, streamId },
-      );
-      return url;
+      stream.pipe(res);
     }
     return `no streamId : ${streamId}`;
   }
