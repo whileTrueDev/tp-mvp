@@ -13,6 +13,7 @@ import { LoginToken } from './interfaces/loginToken.interface';
 import { LogedinUser, UserLoginPayload } from '../../interfaces/logedInUser.interface';
 import { CertificationInfo } from '../../interfaces/certification.interface';
 import { UserEntity } from '../users/entities/user.entity';
+import { TokenService } from './token.service';
 
 // naver strategy 통해서 리턴되는 req.user
 export interface NaverUserInfo{
@@ -37,6 +38,7 @@ export interface KakaoUserInfo{
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private tokenService: TokenService,
     private jwtService: JwtService,
   ) {}
 
@@ -98,7 +100,7 @@ export class AuthService {
     // 로그인 상태 유지에 따라 다른 유지기간의 refresh token 발급
     const refreshToken = this.createRefreshToken(user.userId, stayLogedIn);
     // refresh token 적재
-    await this.usersService.saveRefreshToken({
+    await this.tokenService.saveRefreshToken({
       userId: user.userId, refreshToken,
     });
     return { accessToken, refreshToken };
@@ -106,7 +108,7 @@ export class AuthService {
 
   // Logout = DB에서 refresh token 삭제
   public async logout({ userId }: LogoutDto): Promise<boolean> {
-    const removed = await this.usersService.removeOneToken(userId);
+    const removed = await this.tokenService.removeOneToken(userId);
     if (removed) {
       return true;
     }
@@ -133,7 +135,7 @@ export class AuthService {
 
     // 토큰 스토어 (RDS - UserTokens테이블) 에 해당 refreshToken이 있는지 확인
     // 리프레시 토큰이 만료되지 않음 && 토큰테이블에 없음 -> 로그아웃 한것이므로 재로그인 필요
-    const token = await this.usersService.findOneToken(prevRefreshToken);
+    const token = await this.tokenService.findOneToken(prevRefreshToken);
     if (!token) {
       throw new HttpException(
         'Error occurred during find refresh token',
@@ -174,7 +176,7 @@ export class AuthService {
       userInfo.userId, verifiedPrevRefreshToken.refreshSelf,
     );
     // 새로운 refreshToken을 UserTokens에 적재
-    this.usersService.saveRefreshToken({
+    this.tokenService.saveRefreshToken({
       userId: userInfo.userId, refreshToken: newRefreshToken,
     });
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };

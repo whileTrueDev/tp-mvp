@@ -578,7 +578,7 @@ export class CreatorRatingsService {
       ...resultObj,
       [id]: dates.map((d) => {
         const dateMatchedItem: {date: string; avgRating: number} = data.find((item) => (
-          item.date === d && item.creatorId === id
+          (item.date === d) && (item.creatorId === id)
         ));
         return {
           createDate: d,

@@ -6,9 +6,9 @@ import { RecentStreamResType } from '@truepoint/shared/dist/res/RecentStreamResT
 import useAxios, { ResponseValues } from 'axios-hooks';
 import React, { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
-import PageTitle from '../shared/PageTitle';
-import RecentStreamListItem from './streamInfo/RecentStreamListItem';
-import useRecentStreamStyles from './style/RecentStream.styles';
+import PageTitle from '../../shared/PageTitle';
+import RecentStreamListItem from '../streamInfo/RecentStreamListItem';
+import useRecentStreamStyles from '../style/RecentStream.styles';
 
 interface RecentStreamListProps {
   userData: ResponseValues<User, any>;

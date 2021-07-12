@@ -32,7 +32,6 @@ import { PlatformTwitchEntity } from './entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
 import { UserEntity } from './entities/user.entity';
-import { UserTokenEntity } from './entities/userToken.entity';
 import { UserDetailEntity } from './entities/userDetail.entity';
 import { EmailVerificationService } from '../auth/emailVerification.service';
 import { KakaoUserInfo, NaverUserInfo } from '../auth/auth.service';
@@ -50,8 +49,6 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(UserDetailEntity)
     private readonly userDetailRepo: Repository<UserDetailEntity>,
-    @InjectRepository(UserTokenEntity)
-    private readonly userTokensRepository: Repository<UserTokenEntity>,
     @InjectRepository(SubscribeEntity)
     private readonly subscribeRepository: Repository<SubscribeEntity>,
     @InjectRepository(PlatformTwitchEntity)
@@ -511,11 +508,13 @@ export class UsersService {
 
   // 방송인 목록 검색
   async getCreatorsList({
-    page, take, search,
+    page, take, search, sort, direction,
   }: {
     page: number,
     take: number,
-    search: string
+    search: string,
+    sort: string,
+    direction: string
   }): Promise<CreatorListRes> {
     try {
       const afreecaQuery = await this.afreecaRepository.createQueryBuilder('afreeca')
@@ -525,10 +524,12 @@ export class UsersService {
           'afreeca.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
           'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'user.searchCount AS searchCount',
           '"afreeca" AS platform',
         ])
         .groupBy('afreeca.afreecaId')
         .leftJoin('afreeca.categories', 'categories')
+        .leftJoin('afreeca.user', 'user')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
         .getQuery();
       const twitchQuery = await this.twitchRepository.createQueryBuilder('twitch')
@@ -538,44 +539,72 @@ export class UsersService {
           'twitch.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
           'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'user.searchCount AS searchCount',
           '"twitch" AS platform',
         ])
         .groupBy('twitch.twitchId')
         .leftJoin('twitch.categories', 'categories')
+        .leftJoin('twitch.user', 'user')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
         .getQuery();
 
-      const { total: totalCount } = (await getManager().query(`
-      SELECT COUNT(*) AS total
-      FROM (
+      // PlatformAfreeca + PlatformTwitch 방송인 테이블
+      const Creators = `(
         (${afreecaQuery})
         UNION
         (${twitchQuery})
-      ) AS Creators
-      WHERE Creators.nickname LIKE '%${search}%'
-      `))[0];
+      ) AS Creators`;
 
+      // Creators 테이블에서 검색된 인원 수 구하는 쿼리
+      const totalCountQuery = `
+      SELECT COUNT(*) AS total
+      FROM ${Creators}
+      WHERE Creators.nickname LIKE '%${search}%'
+      `;
+
+      const totalCountResult = await getManager().query(totalCountQuery);
+      const { total: totalCount } = totalCountResult[0];
       const totalPage = Math.ceil(totalCount / take);
       const hasMore = page < totalPage;
 
-      const data = await getManager().query(`
+      // 검색어가 있는 경우 - 검색된 방송인들의 검색횟수 증가
+      if (search) {
+        const nicknameSearchQuery = `
+        SELECT DISTINCT(Creators.creatorId)
+        FROM ${Creators}
+        WHERE Creators.nickname LIKE '%${search}%'
+        `;
+
+        const creatorIdList = await getManager().query(nicknameSearchQuery);
+        await Promise.all(creatorIdList.map(({ creatorId }) => this.increaseSearchCount({ creatorId })))
+          .catch((error) => console.error(error));
+      }
+
+      // 정렬기준(sort)이 있는 경우(검색횟수) 쿼리에 추가
+      const sortCondition = sort ? `Creators.${sort} ${direction},` : '';
+
+      // 방송인 테이블에서 검색어, limit, take적용하여 조회하고, nickname 한글-소문자-대문자-숫자-기타순으로 정렬
+      // ascii 48~57 : 숫자
+      // ascii 65~90 : 대문자
+      // ascii 97~122: 소문자 
+      const query = `
       SELECT *
-      FROM (
-        (${afreecaQuery})
-        UNION
-        (${twitchQuery})
-      ) AS Creators
+      FROM ${Creators}
       WHERE Creators.nickname LIKE '%${search}%'
       ORDER BY 
+        ${sortCondition}
         (CASE 
-          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
-          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 3
-          WHEN ASCII(SUBSTRING(Creators.nickname,1)) < 128 THEN 2 ELSE 1 
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 4
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 65 AND 90 THEN 3
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 97 AND 122 THEN 2
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) < 128 THEN 5 ELSE 1 
         END), 
         BINARY(Creators.nickname)
       LIMIT ${take}
       OFFSET ${(page - 1) * take}
-      `);
+      `;
+
+      const data = await getManager().query(query);
 
       const tempRes = {
         data: data.map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] })),
@@ -593,32 +622,18 @@ export class UsersService {
     }
   }
 
-  // **********************************************
-  // User Tokens 관련
-
-  // Find User Tokens
-  async findOneToken(refreshToken: string): Promise<UserTokenEntity> {
-    const userToken = await this.userTokensRepository.findOne({
-      refreshToken,
-    });
-
-    return userToken;
-  }
-
-  // Refresh Token 삭제 - 로그아웃을 위해
-  async removeOneToken(userId: string): Promise<UserTokenEntity> {
-    const userToken = await this.userTokensRepository.findOne(userId);
-    if (!userToken) {
-      throw new InternalServerErrorException('userToken waht you request to logout is not exists');
+  // 방송인 검색횟수 증가
+  async increaseSearchCount({ creatorId }: {
+    creatorId: string
+  }): Promise<any> {
+    try {
+      const target = await this.findOne({ creatorId });
+      target.searchCount += 1;
+      return this.usersRepository.save(target);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, `error in increase SearchCount of creatorId: ${creatorId}`);
     }
-    return this.userTokensRepository.remove(userToken);
-  }
-
-  // Update User Tokens
-  async saveRefreshToken(
-    newTokenEntity: UserTokenEntity,
-  ): Promise<UserTokenEntity> {
-    return this.userTokensRepository.save(newTokenEntity);
   }
 
   // ***********************************************

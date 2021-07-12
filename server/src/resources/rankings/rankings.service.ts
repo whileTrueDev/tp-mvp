@@ -430,44 +430,67 @@ export class RankingsService {
 
   // 1달 내 방송을 진행한 총 방송인 수
   async getCreatorCountWithin1Month(): Promise<number> {
-    const recentCreateDate = await this.getRecentAnalysysDate();
-    const { total } = await this.rankingsRepository.createQueryBuilder('rankings')
-      .select([
-        'COUNT(DISTINCT creatorId) AS total',
-      ])
-      .where(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
-      .getRawOne();
-    return total;
+    try {
+      const recentCreateDate = await this.getRecentAnalysysDate();
+      const { total } = await this.rankingsRepository.createQueryBuilder('rankings')
+        .select([
+          'COUNT(DISTINCT creatorId) AS total',
+        ])
+        .where(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
+        .getRawOne();
+      return total;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in get creator count within 1 month');
+    }
   }
 
   // 특정 방송인의 1달 내 평균감정점수와 순위
   async getAverageScoresAndRank(creatorId: string): Promise<CreatorAverageScoresWithRank> {
-    const recentCreateDate = await this.getRecentAnalysysDate();
-    const result = await getConnection()
-      .createQueryBuilder()
-      .select([
-        'T.*',
-      ])
-      .from((subQuery) => subQuery
+    try {
+      const recentCreateDate = await this.getRecentAnalysysDate();
+      const result = await getConnection()
+        .createQueryBuilder()
         .select([
-          'rankings.creatorId AS creatorId',
-          'ROUND(AVG(rankings.smileScore),2) AS smile',
-          'ROUND(AVG(rankings.frustrateScore),2) AS frustrate',
-          'ROUND(AVG(rankings.admireScore),2) AS admire',
-          'ROUND(AVG(rankings.cussScore),2) AS cuss',
-          'rank() over(order by avg(rankings.cussScore) DESC) as cussRank',
-          'rank() over(order by avg(rankings.smileScore) DESC) as smileRank',
-          'rank() over(order by avg(rankings.admireScore) DESC) as admireRank',
-          'rank() over(order by avg(rankings.frustrateScore) DESC) as frustrateRank',
+          'T.*',
         ])
-        .from(RankingsEntity, 'rankings')
-        .groupBy('rankings.creatorId')
-        .andWhere(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`),
-      'T')
-      .where('T.creatorId = :creatorId', { creatorId })
-      .getRawOne();
+        .from((subQuery) => subQuery
+          .select([
+            'rankings.creatorId AS creatorId',
+            'ROUND(AVG(rankings.smileScore),2) AS smile',
+            'ROUND(AVG(rankings.frustrateScore),2) AS frustrate',
+            'ROUND(AVG(rankings.admireScore),2) AS admire',
+            'ROUND(AVG(rankings.cussScore),2) AS cuss',
+            'rank() over(order by avg(rankings.cussScore) DESC) as cussRank',
+            'rank() over(order by avg(rankings.smileScore) DESC) as smileRank',
+            'rank() over(order by avg(rankings.admireScore) DESC) as admireRank',
+            'rank() over(order by avg(rankings.frustrateScore) DESC) as frustrateRank',
+          ])
+          .from(RankingsEntity, 'rankings')
+          .groupBy('rankings.creatorId')
+          .andWhere(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`),
+        'T')
+        .where('T.creatorId = :creatorId', { creatorId })
+        .getRawOne();
 
-    delete result.creatorId;
-    return result;
+      if (result) {
+        delete result.creatorId;
+        return result;
+      }
+      return {
+        admire: 0,
+        smile: 0,
+        frustrate: 0,
+        cuss: 0,
+        total: 0,
+        admireRank: 0,
+        smileRank: 0,
+        frustrateRank: 0,
+        cussRank: 0,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in get average scores and rank');
+    }
   }
 }

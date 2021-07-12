@@ -18,7 +18,8 @@ import SearchInput from '../../shared/SearchInput';
 
 function getCellStyle(isMobile: boolean): React.CSSProperties {
   return isMobile ? {
-    padding: '4px 0',
+    padding: 0,
+    whiteSpace: 'pre',
     wordBreak: 'keep-all',
   } : {};
 }
@@ -63,7 +64,7 @@ export default function CreatorSearchTable(): JSX.Element {
         cellWidth={0}
         columns={[
           {
-            width: '40%',
+            width: '30%',
             align: 'center',
             title: '활동명',
             cellStyle: getCellStyle(isMobile),
@@ -91,7 +92,7 @@ export default function CreatorSearchTable(): JSX.Element {
             },
           },
           {
-            width: '30%',
+            width: '20%',
             align: 'center',
             title: '카테고리',
             cellStyle: getCellStyle(isMobile),
@@ -112,7 +113,7 @@ export default function CreatorSearchTable(): JSX.Element {
             },
           },
           {
-            width: '30%',
+            width: '25%',
             align: 'center',
             title: '평점',
             cellStyle: getCellStyle(isMobile),
@@ -122,6 +123,18 @@ export default function CreatorSearchTable(): JSX.Element {
                 <div>
                   <Rating size={isMobile ? 'small' : 'medium'} value={averageRating / 2} precision={0.5} readOnly />
                 </div>
+              );
+            },
+          },
+          {
+            width: '25%',
+            align: 'center',
+            title: '검색횟수',
+            cellStyle: getCellStyle(isMobile),
+            render: (rowData) => {
+              const { searchCount } = rowData;
+              return (
+                <Typography noWrap component="span" variant="caption" color="textSecondary">{searchCount}</Typography>
               );
             },
           },
@@ -165,7 +178,8 @@ export default function CreatorSearchTable(): JSX.Element {
           headerStyle: {
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
-            fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,
+            fontSize: isMobile ? 10 : theme.typography.h6.fontSize,
+            whiteSpace: 'pre',
           },
           rowStyle: {
             fontSize: theme.typography[isMobile ? 'body2' : 'h6'].fontSize,

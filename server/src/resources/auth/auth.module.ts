@@ -11,10 +11,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { TwitchStrategy } from './strategies/twitch.strategy';
 import { YoutubeStrategy } from './strategies/youtube.strategy';
 import { AfreecaLinker } from './strategies/afreeca.linker';
+import { UserTokenEntity } from './entities/userToken.entity';
 import { EmailVerificationCodeEntity } from './entities/emailVerification.entity';
 import { EmailVerificationService } from './emailVerification.service';
 import { NaverStrategy } from './strategies/naver.strategy';
 import { KakaoStrategy } from './strategies/kakao.strategy';
+import { TokenService } from './token.service';
 
 @Module({
   imports: [
@@ -23,13 +25,15 @@ import { KakaoStrategy } from './strategies/kakao.strategy';
       useClass: JwtConfigService,
     }),
     forwardRef(() => UsersModule), // Resolve circular dependencies between Moduels
-    TypeOrmModule.forFeature([EmailVerificationCodeEntity,
+    TypeOrmModule.forFeature([
+      EmailVerificationCodeEntity,
+      UserTokenEntity,
     ]),
   ],
   providers: [
     AuthService, LocalStrategy, EmailVerificationService,
     JwtStrategy, TwitchStrategy, YoutubeStrategy, AfreecaLinker,
-    NaverStrategy, KakaoStrategy,
+    NaverStrategy, KakaoStrategy, TokenService,
   ],
   controllers: [AuthController],
   exports: [AuthService, AfreecaLinker, EmailVerificationService],

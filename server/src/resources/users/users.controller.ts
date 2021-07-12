@@ -13,7 +13,7 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
-import { CreatorListRes } from '@truepoint/shared/dist/res/CreatorList.interface';
+import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
@@ -230,13 +230,28 @@ export class UsersController {
    * 방송인 검색 페이지에서 사용하는 방송인 목록
    * @returns 
    */
+  // eslint-disable-next-line max-params
   @Get('/creator-list')
   getCreatorList(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
     @Query('search', new DefaultValuePipe('')) search: string,
+    @Query('sort', new DefaultValuePipe('')) sort: '' | keyof Creator,
+    @Query('direction', new DefaultValuePipe('desc')) direction: string,
   ): Promise<CreatorListRes> {
-    return this.usersService.getCreatorsList({ page, take, search });
+    return this.usersService.getCreatorsList({
+      page, take, search, sort, direction,
+    });
+  }
+
+  /**
+   * 방송인 검색 페이지 - 특정 방송인 검색횟수 증가
+   */
+  @Post('/creator-list')
+  increaseCreatorSearchCount(
+    @Body('creatorId') creatorId: string,
+  ): Promise<any> {
+    return this.usersService.increaseSearchCount({ creatorId });
   }
 
   @Get('/properties/posts')

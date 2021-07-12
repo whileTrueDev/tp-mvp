@@ -1,10 +1,11 @@
 export interface Creator {
-  'creatorId': string;
-  'nickname': string;
-  'logo': string;
-  'categories': string[];
-  'averageRating': number;
-  'platform': string;
+  creatorId: string;
+  nickname: string;
+  logo: string;
+  categories: string[];
+  averageRating: number;
+  platform: string;
+  searchCount: number;
 }
 
 export interface CreatorListRes {
