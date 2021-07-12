@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import React from 'react';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import {
-  downloadMp3File,
+  downloadFile,
   HighlightExportProps,
 } from '../../../utils/hooks/useHighlightExport';
 
@@ -26,7 +26,7 @@ export default function SoundFileExport(props: HighlightExportProps): JSX.Elemen
         },
       }).then((res) => {
         const exportFileName = `${selectedStream.startDate} 방송`;
-        downloadMp3File(res.data, exportFileName);
+        downloadFile(res.data, exportFileName, 'mp3');
       }).catch((error) => {
         console.error(error);
         if (error.response && error.response.status === 403) {

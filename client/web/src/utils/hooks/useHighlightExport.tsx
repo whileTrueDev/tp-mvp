@@ -42,12 +42,29 @@ function startTimeFormatter(time: StartTime): string {
   return `${padLeft(hour)}:${padLeft(minute)}:${padLeft(seconds)},000`;
 }
 
+function getMimetypeAndExt(type: string): {mimetype: string, ext: string} {
+  let mimetype: string;
+  let ext: string;
+  switch (type) {
+    case 'mp3':
+      mimetype = 'audio/mp3';
+      ext = 'mp3';
+      break;
+    default:
+      mimetype = 'application/zip';
+      ext = 'zip';
+      break;
+  }
+  return { mimetype, ext };
+}
+
 // 파일다운로드
-export function downloadFile(data: BlobPart, exportFileName: string): void {
-  const url = window.URL.createObjectURL(new Blob([data], { type: 'application/zip' }));
+export function downloadFile(data: BlobPart, exportFileName: string, type = 'zip'): void {
+  const { mimetype, ext } = getMimetypeAndExt(type);
+  const url = window.URL.createObjectURL(new Blob([data], { type: mimetype }));
   const link = document.createElement('a');
   link.href = url;
-  link.setAttribute('download', `${exportFileName}.zip`);
+  link.setAttribute('download', `${exportFileName}.${ext}`);
   link.click();
   link.remove();
 }
