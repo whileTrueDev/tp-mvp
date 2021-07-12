@@ -2,9 +2,13 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { MAX_WIDTH_DESKTOP } from '../../../../assets/constants';
 
 export const useStyles = makeStyles((theme: Theme) => createStyles({
+  background: {
+    backgroundColor: theme.palette.background.paper,
+  },
   container: {
     maxWidth: MAX_WIDTH_DESKTOP,
-    padding: theme.spacing(0, 0, 3, 0),
+    border: `1px solid ${theme.palette.divider}`,
+    padding: theme.spacing(1),
   },
 }));
 
@@ -43,7 +47,11 @@ export const useSearchTableStyle = makeStyles((theme: Theme) => {
       },
     },
     border: {
+      backgroundColor: theme.palette.background.paper,
       [theme.breakpoints.down('sm')]: { padding: theme.spacing(1) },
+    },
+    searchWrapper: {
+      padding: theme.spacing(1),
     },
   });
 });

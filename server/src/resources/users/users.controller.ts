@@ -3,7 +3,7 @@ import {
   ClassSerializerInterceptor, Controller,
   DefaultValuePipe,
   Delete, Get,
-  Param, ParseIntPipe, Patch, Post,
+  ParseIntPipe, Patch, Post,
   Query, Req, UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '@truepoint/shared/dist/dto/users/createUser.dto';
@@ -13,7 +13,7 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { SubscribeUsers } from '@truepoint/shared/dist/dto/users/subscribeUsers.dto';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
-import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+import { CreatorListRes } from '@truepoint/shared/dist/res/CreatorList.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { MyPostsRes, MyCommentsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
@@ -227,37 +227,16 @@ export class UsersController {
   }
 
   /**
-   * 유투브 편집점 페이지 편집점 제공 목록 요청
-   * GET /users/highlight-point-list/:platform
-   * 플랫폼에 따라 최근 방송 종료순으로 
-   * 크리에이터 활동명, userId, 최근방송제목, 최근방송종료시간, 플랫폼 정보를 반환한다
-   * 
-   * @param platform 'afreeca' | 'twitch'
-   * 
-   * @return EditingPointListResType[]
-   * {   
-   *  creatorId: string, // 크리에이터 ID(아프리카아이디 || 트위치아이디)
-      platform: string, // 플랫폼 'afreeca' | 'twitch'
-      userId: string,   // userId
-      title: string,   // 가장 최근 방송 제목
-      endDate: Date,   // 가장 최근 방송의 종료시간
-      nickname: string // 크리에이터 활동명
-   * }[]
-   */
-  @Get('/highlight-point-list/:platform')
-  getHighlightPointList(
-    @Param('platform') platform: 'afreeca'|'twitch',
-  ): Promise<any[]> {
-    return this.usersService.getHighlightPointList(platform);
-  }
-
-  /**
    * 방송인 검색 페이지에서 사용하는 방송인 목록
    * @returns 
    */
   @Get('/creator-list')
-  getCreatorList(): Promise<Creator[]> {
-    return this.usersService.getCreatorsList();
+  getCreatorList(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('take', new DefaultValuePipe(20), ParseIntPipe) take: number,
+    @Query('search', new DefaultValuePipe('')) search: string,
+  ): Promise<CreatorListRes> {
+    return this.usersService.getCreatorsList({ page, take, search });
   }
 
   @Get('/properties/posts')

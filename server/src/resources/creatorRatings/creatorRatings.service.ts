@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable, InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +8,6 @@ import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
-import { ModuleRef } from '@nestjs/core';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
@@ -16,10 +17,9 @@ import dayjsFormatter from '../../utils/dateExpression';
 
 @Injectable()
 export class CreatorRatingsService {
-  private rankingsService: RankingsService;
-
   constructor(
-    private moduleRef: ModuleRef,
+    @Inject(forwardRef(() => RankingsService))
+    private readonly rankingsService: RankingsService,
     @InjectRepository(CreatorRatingsEntity)
     private readonly ratingsRepository: Repository<CreatorRatingsEntity>,
     @InjectRepository(PlatformAfreecaEntity)
@@ -27,10 +27,6 @@ export class CreatorRatingsService {
     @InjectRepository(PlatformTwitchEntity)
     private readonly twitchRepository: Repository<PlatformTwitchEntity>,
   ) {}
-
-  onModuleInit(): void { // retrieve instace from module reference
-    this.rankingsService = this.moduleRef.get(RankingsService, { strict: false }); // pass { strict: false } if the provider has been injected from another module
-  }
 
   /**
    * 관리자페이지에서 평점 생성 요청시

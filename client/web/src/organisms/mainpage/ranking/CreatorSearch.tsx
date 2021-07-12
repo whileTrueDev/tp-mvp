@@ -8,9 +8,12 @@ export default function CreatorSearch(): JSX.Element {
   const classes = useStyles();
 
   return (
-    <Container className={classes.container}>
-      <PageTitle text="방송인 검색" />
-      <CreatorSearchTable />
-    </Container>
+    <div className={classes.background}>
+      <Container className={classes.container}>
+        <PageTitle text="방송인 검색" />
+        <CreatorSearchTable />
+      </Container>
+    </div>
+
   );
 }

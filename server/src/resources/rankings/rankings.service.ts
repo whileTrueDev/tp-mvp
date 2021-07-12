@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  forwardRef, Inject, Injectable, InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   getConnection,
@@ -34,6 +36,7 @@ export class RankingsService {
   constructor(
     @InjectRepository(RankingsEntity)
     private readonly rankingsRepository: Repository<RankingsEntity>,
+    @Inject(forwardRef(() => CreatorRatingsService))
     private readonly creatorRatingsService: CreatorRatingsService,
   ) {}
 

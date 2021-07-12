@@ -1,13 +1,27 @@
 import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException, HttpStatus, Injectable, InternalServerErrorException,
+} from '@nestjs/common';
 import * as archiver from 'archiver';
+import { HighlightPointListResType } from '@truepoint/shared/res/HighlightPointListResType.interface';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from '../users/entities/user.entity';
+import { StreamsEntity } from '../stream-analysis/entities/streams.entity';
+import { UsersService } from '../users/users.service';
 
 dotenv.config();
 const s3 = new AWS.S3();
 
 @Injectable()
 export class HighlightService {
+  constructor(
+    private readonly usersService: UsersService,
+    @InjectRepository(StreamsEntity)
+    private readonly streamsRepository: Repository<StreamsEntity>,
+  ) {}
+
   async getHighlightData(streamId: string, platform: string, creatorId: string): Promise<any> {
     const getParams = {
       Bucket: process.env.BUCKET_NAME, // your bucket name,
@@ -94,5 +108,76 @@ export class HighlightService {
       zip.finalize();
     });
     return zip;
+  }
+
+  /**
+   * 유투브 편집점 페이지 편집점 제공 목록
+   * 해당 플랫폼에서 크리에이터당 최신 방송날짜를 가져온다
+   * @param platform 'afreeca' | 'twitch'
+   * 
+   * @return HighlightPointListResType[]
+   * {   
+   *  creatorId: string, // 크리에이터 ID
+      platform: string, // 플랫폼 'afreeca' | 'twitch'
+      userId: string,   // userId
+      title: string,   // 가장 최근 방송 제목
+      endDate: Date,   // 가장 최근 방송의 종료시간
+      nickname: string // 크리에이터 활동명
+      logo: string // 크리에이터 로고
+   * }[]
+   */
+  async getHighlightPointList({
+    platform, page, take, search,
+  }: {
+    platform: 'afreeca'|'twitch',
+    page: number,
+    take: number,
+    search: string
+  }): Promise<HighlightPointListResType> {
+    try {
+      const matchingId = `${platform}Id`;
+      const qb = await this.streamsRepository.createQueryBuilder('streams')
+        .leftJoinAndSelect(UserEntity, 'users', `streams.creatorId = users.${matchingId}`)
+        .select([
+          'streams.creatorId AS creatorId',
+          'streams.platform AS platform',
+          'streams.title AS title',
+          'MAX(streams.endDate) AS endDate',
+          'users.userId AS userId',
+          'users.nickName AS nickname',
+        ])
+        .where('streams.platform = :platform', { platform })
+        .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
+        .andWhere('users.nickName like :search', { search: `%${search}%` })
+        .groupBy('streams.creatorId')
+        .orderBy('MAX(streams.endDate)', 'DESC');
+
+      const totalCount = (await qb.clone().getRawMany()).length;
+      const totalPage = Math.ceil(totalCount / take);
+      const hasMore = page < totalPage;
+
+      const dataWithoutProfileImage = await qb
+        .offset((page - 1) * take)
+        .limit(take)
+        .getRawMany(); // skip, take 안먹음
+
+      const userHighlightData = Promise.all(dataWithoutProfileImage.map(async (row) => {
+        const getUserProfileImage = await this.usersService.findOneProfileImage(row.userId);
+        return { ...row, logo: getUserProfileImage[0].logo };
+      }));
+
+      const res = {
+        data: await userHighlightData,
+        totalCount,
+        page,
+        take,
+        totalPage,
+        hasMore,
+      };
+      return res;
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException('Error in getHighlightPointList');
+    }
   }
 }
