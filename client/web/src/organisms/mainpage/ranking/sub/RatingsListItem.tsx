@@ -39,7 +39,7 @@ export default function RatingsListItem(props: RatingsListItemProps): JSX.Elemen
                   classes.creatorName, { [classes.black]: order && order < 5 },
                 )}
               >
-                {nickname.length > 4 ? `${nickname.slice(0, 4)}...` : nickname}
+                {(nickname && nickname.length > 4) ? `${nickname.slice(0, 4)}...` : nickname}
               </Typography>
             </Link>
           </Grid>

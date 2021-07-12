@@ -23,6 +23,8 @@ export default function RecentStreamList({
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const platform = userData.data?.afreeca ? 'afreeca' : 'twitch';
+
   const [{ data, error }] = useAxios<RecentStreamResType>({
     url: '/broadcast-info/bycreator',
     method: 'GET',
