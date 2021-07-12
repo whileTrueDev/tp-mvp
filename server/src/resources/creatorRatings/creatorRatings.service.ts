@@ -1,32 +1,36 @@
 import {
   Injectable, InternalServerErrorException,
 } from '@nestjs/common';
-import dayjs from 'dayjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { ModuleRef } from '@nestjs/core';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
-import { RankingsEntity } from '../rankings/entities/rankings.entity';
-import { PlatformType } from '../rankings/rankings.service';
+import { PlatformType, RankingsService } from '../rankings/rankings.service';
 import { AdminRating } from './creatorRatings.controller';
+import dayjsFormatter from '../../utils/dateExpression';
 
 @Injectable()
 export class CreatorRatingsService {
+  private rankingsService: RankingsService;
+
   constructor(
+    private moduleRef: ModuleRef,
     @InjectRepository(CreatorRatingsEntity)
     private readonly ratingsRepository: Repository<CreatorRatingsEntity>,
     @InjectRepository(PlatformAfreecaEntity)
     private readonly afreecaRepository: Repository<PlatformAfreecaEntity>,
     @InjectRepository(PlatformTwitchEntity)
     private readonly twitchRepository: Repository<PlatformTwitchEntity>,
-    @InjectRepository(RankingsEntity)
-    private readonly rankingsRepository: Repository<RankingsEntity>,
-
   ) {}
+
+  onModuleInit(): void { // retrieve instace from module reference
+    this.rankingsService = this.moduleRef.get(RankingsService, { strict: false }); // pass { strict: false } if the provider has been injected from another module
+  }
 
   /**
    * 관리자페이지에서 평점 생성 요청시
@@ -52,7 +56,16 @@ export class CreatorRatingsService {
   }
 
   async findRatingListByUserId({ userId, page, itemPerPage }: {
-      userId: string, page: number, itemPerPage: number}): Promise<any> {
+      userId: string, page: number, itemPerPage: number}): Promise<{
+        hasMore: boolean,
+        creators: {
+          rating: number;
+          platform: 'afreeca' | 'twitch',
+          creatorId: string,
+          creatorDisplayName: string,
+          creatorProfileImage: string
+        }[]
+      }> {
     // userId로 매겨진 rating record
     const query = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
@@ -164,15 +177,17 @@ export class CreatorRatingsService {
   "count": 2
 }
    */
-  async getAverageRatings(creatorId: string): Promise<any> {
+  async getAverageRatings(creatorId: string): Promise<{
+    average: number,
+    count: number
+  }> {
     try {
       const data = await this.ratingsRepository.createQueryBuilder('ratings')
         .select([
-          'AVG(rating) AS average',
+          'ROUND(AVG(rating),2) AS average',
           'Count(id) AS count',
         ])
         .where('creatorId = :creatorId', { creatorId })
-        // .andWhere('createDate >= DATE_SUB(curDate(), INTERVAL 1 MONTH)')
         .getRawOne();
       return {
         average: Number(data.average),
@@ -224,44 +239,21 @@ export class CreatorRatingsService {
     creatorId: string,
   }): Promise<CreatorRatingInfoRes> {
     try {
-      const result = {
-        ratings: {
-          average: 0,
-          count: 0,
-        },
-        scores: {
-          admire: 0,
-          smile: 0,
-          frustrate: 0,
-          cuss: 0,
-        },
-      };
       // creatorId의 평균 평점과 평가횟수를 찾는다
       const { average, count } = await this.getAverageRatings(creatorId);
-      result.ratings = { average, count };
 
-      // 크리에이터의 1달 내 평균점수, 닉네임, 로고 정보를 찾는다
-      const { recentCreateDate } = await this.rankingsRepository.createQueryBuilder('rank')
-        .select('max(rank.createDate) AS recentCreateDate')
-        .getRawOne();
+      // 1달 내 방송한 전체 방송인 수
+      const total = await this.rankingsService.getCreatorCountWithin1Month();
 
-      const qb = await this.rankingsRepository.createQueryBuilder('rankings')
-        .select([
-          'AVG(smileScore) AS smile',
-          'AVG(frustrateScore) AS frustrate',
-          'AVG(admireScore) AS admire',
-          'AVG(cussScore) AS cuss',
-        ])
-        .where('creatorId = :creatorId', { creatorId })
-        .andWhere(`createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
-        .getRawOne();
-
-      result.scores.admire = qb.admire;
-      result.scores.smile = qb.smile;
-      result.scores.frustrate = qb.frustrate;
-      result.scores.cuss = qb.cuss;
-
-      return result;
+      // 해당 방송인의 평균감정점수와 순위
+      const scoresAndRanks = await this.rankingsService.getAverageScoresAndRank(creatorId);
+      return {
+        ratings: { average, count },
+        scores: {
+          ...scoresAndRanks,
+          total,
+        },
+      };
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error in getCreatorRatingInfo, creatorId : ${creatorId}`);
@@ -272,7 +264,7 @@ export class CreatorRatingsService {
   // return ['2021-04-14','2021-04-15','2021-04-16','2021-04-17','2021-04-18','2021-04-19','2021-04-20']
   private getWeekDates(): string[] {
     return new Array(7).fill('').map((val, index) => (
-      dayjs().subtract(index, 'days').format('YYYY-MM-DD')
+      dayjsFormatter().subtract(index, 'days').format('YYYY-MM-DD')
     )).reverse();
   }
 
@@ -312,7 +304,7 @@ export class CreatorRatingsService {
     const query = `
     SELECT 
       DATE_FORMAT(createDate, '%Y-%m-%d') AS "date", 
-      CAST(AVG(rating) as decimal(10,2)) AS avgRating,
+      ROUND(AVG(rating),2) AS avgRating,
       platform
     FROM ${this.ratingsRepository.metadata.tableName}
     Where
@@ -345,7 +337,7 @@ export class CreatorRatingsService {
    * @returns 
    */
   async getWeeklyRatingsRanking(): Promise<WeeklyRatingRankingRes> {
-    const startDayOfThisWeek = dayjs().day(1); // 0 sunday ~ 6 saturday
+    const startDayOfThisWeek = dayjsFormatter().day(1); // 0 sunday ~ 6 saturday
     const endDayOfThisWeek = startDayOfThisWeek.add(6, 'day');
     const endDatOfPrevWeek = startDayOfThisWeek.subtract(1, 'day');
     const startDayOfPrevWeek = endDatOfPrevWeek.subtract(1, 'week');
@@ -355,7 +347,7 @@ export class CreatorRatingsService {
       This.creatorId AS creatorId,
       This.platform AS platform,
       IFNULL( (CAST(Prev.rownum AS SIGNED) - CAST(This.rownum AS SIGNED)), 9999) AS rankChange,
-      This.avgRating AS avgRating,
+      ROUND(This.avgRating,2) AS avgRating,
       This.twitchStreamerName AS twitchStreamerName,
       This.twitchLogo AS twitchLogo,
       This.afreecaLogo AS afreecaLogo,
@@ -431,7 +423,7 @@ export class CreatorRatingsService {
       .select([
         'ratings.id AS id',
         'ratings.creatorId AS creatorId',
-        'AVG(ratings.rating) AS rating',
+        'ROUND(AVG(ratings.rating),2) AS rating',
         'ratings.platform AS platform',
       ])
       // .where('ratings.createDate > DATE_SUB(NOW(), INTERVAL 1 DAY)')
@@ -572,7 +564,7 @@ export class CreatorRatingsService {
     const data = await this.ratingsRepository.createQueryBuilder('ratings')
       .select([
         'ratings.creatorId AS creatorId',
-        'AVG(ratings.rating) AS avgRating',
+        'ROUND(AVG(ratings.rating),2) AS avgRating',
         'DATE_FORMAT(ratings.createDate, "%Y-%m-%d") AS date',
       ])
       .where(`ratings.creatorId IN ('${ids.join("','")}')`)
@@ -590,7 +582,7 @@ export class CreatorRatingsService {
       ...resultObj,
       [id]: dates.map((d) => {
         const dateMatchedItem: {date: string; avgRating: number} = data.find((item) => (
-          item.date === d && item.creatorId === id
+          (item.date === d) && (item.creatorId === id)
         ));
         return {
           createDate: d,

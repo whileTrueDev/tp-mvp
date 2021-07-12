@@ -2,13 +2,21 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import am4themesKelly from '@amcharts/amcharts4/themes/kelly';
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated';
+import { TimelineGraphInterface } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import graphColor from './Color';
 import { TruepointTheme } from '../../../interfaces/TruepointTheme';
-
 // @hwasurr - 2020.10.13 eslint error 정리 중
 // any 타입 disable 처리. => 작성자@chanuuuu가 올바른 타입 정의 수정바랍니다.
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export default function setComponent(data: any, theme: TruepointTheme, selectedMetric?: string[]): am4charts.XYChart {
+const getTooptip = (dateString: string) => {
+  const dateArray = dateString.split(' ');
+  if (dateArray.length === 1) {
+    return 'yyyy-MM-dd';
+  }
+  return 'yyyy-MM-dd HH시';
+};
+
+export default function setComponent(data: TimelineGraphInterface[] | [],
+  theme: TruepointTheme, selectedMetric?: string[]): am4charts.XYChart {
   am4core.useTheme(am4themesKelly);
   am4core.useTheme(am4themesAnimated);
 
@@ -17,14 +25,19 @@ export default function setComponent(data: any, theme: TruepointTheme, selectedM
 
   const chart: am4charts.XYChart = am4core.create('chartdiv', am4charts.XYChart);
   chart.data = data;
-  chart.dateFormatter.inputDateFormat = 'i';
+  chart.dateFormatter.inputDateFormat = 'yyyy-MM-dd HH';
+  // chart.dateFormatter.inputDateFormat = 'i';
+
   chart.paddingRight = 15;
   chart.paddingLeft = 5;
 
   const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.skipEmptyPeriods = true;
-  dateAxis.tooltipDateFormat = 'yyyy-MM-dd HH:mm:ss';
-  dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
+  dateAxis.tooltipDateFormat = getTooptip(data[0].date);
+  dateAxis.periodChangeDateFormats.setKey('month', '[bold]MM-dd[/]');
+  dateAxis.periodChangeDateFormats.setKey('day', '[bold]MM-dd[/]'); // 일간의 간격(gap)에 대한 명시를 하기 위해
+  dateAxis.periodChangeDateFormats.setKey('hour', '[bold]MM-dd[/]');
+  dateAxis.periodChangeDateFormats.setKey('minute', '[bold]MM-dd[/]');
   dateAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   // dateAxis.groupCount = 100;
   // dateAxis.renderer.inside = true; // 축 라벨을 grid 안으로 넣기/빼기
@@ -46,7 +59,7 @@ export default function setComponent(data: any, theme: TruepointTheme, selectedM
     valueAxis.syncWithAxis = chart.yAxes.getIndex(0);
   }
   const series: any = chart.series.push(new am4charts.LineSeries());
-
+  series.xAxis = dateAxis;
   series.yAxis = valueAxis;
   series.dataFields.valueY = 'smile_count';
   series.groupFields.valueY = 'sum';
@@ -56,8 +69,6 @@ export default function setComponent(data: any, theme: TruepointTheme, selectedM
   series.tooltipText = '웃음 발생 수: [bold]{smile_count}[/]';
   series.strokeWidth = 2.5;
   series.tensionX = 0.8;
-  // series.fillOpacity = 0.2;
-  // series.connect = true;
   // series.hidden = true; // 기본 그래프 설정.
   series.toFront();
 
@@ -75,6 +86,7 @@ export default function setComponent(data: any, theme: TruepointTheme, selectedM
   const chatAxis = chart.yAxes.push(new am4charts.ValueAxis());
   chatAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
   chatAxis.renderer.opposite = true;
+  chatSeries.xAxis = dateAxis;
   chatSeries.yAxis = chatAxis;
   chatSeries.dataFields.valueY = 'chat_count';
   chatSeries.dataFields.dateX = 'date';
@@ -90,7 +102,6 @@ export default function setComponent(data: any, theme: TruepointTheme, selectedM
   // chatSeries.fillOpacity = 0.2;
   chatSeries.groupFields.valueY = 'sum';
   chatSeries.tooltipText = '채팅 발생 수: [bold]{chat_count}[/]';
-  // chatSeries.connect = true;
   // chatSeries.hidden = true; // 기본 그래프 설정.
   chatSeries.toFront();
 
@@ -98,6 +109,7 @@ export default function setComponent(data: any, theme: TruepointTheme, selectedM
   const viewerSeries = chart.series.push(new am4charts.LineSeries());
   const viewerAxis = chart.yAxes.push(new am4charts.ValueAxis());
   viewerAxis.renderer.labels.template.fill = am4core.color(theme.palette.text.secondary);
+  viewerSeries.xAxis = dateAxis;
   viewerSeries.yAxis = viewerAxis;
   viewerSeries.dataFields.valueY = 'viewer_count';
   viewerSeries.dataFields.dateX = 'date';
@@ -112,10 +124,7 @@ export default function setComponent(data: any, theme: TruepointTheme, selectedM
   viewerSeries.fill = am4core.color(graphColor.viewer);
   viewerSeries.tensionX = 0.8;
   viewerSeries.tooltipText = '평균 시청자 수: [bold]{viewer_count}[/]';
-  // viewerSeries.hidden = true; // 기본 그래프 설정.
   viewerSeries.toBack();
-  // viewerSeries.connect = true;
-  // viewerSeries.baseAxis = viewerSeries.yAxis; // 기준축을 y 축으로 (배경색이 위에서 부터 차오름)
 
   // ************************ selected metric series ************************
   if (selectedMetric) {

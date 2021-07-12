@@ -11,7 +11,6 @@ export const useStyles = makeStyles((theme) => createStyles({
     position: 'fixed',
     width: '100%',
     zIndex: 1200,
-
   },
   container: {
     height: COMMON_APP_BAR_HEIGHT,

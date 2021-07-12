@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 // @material-ui core components
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
@@ -15,6 +14,7 @@ import { ChangeReadState } from '@truepoint/shared/dist/dto/notification/changeR
 // context
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 
 export interface Notification {
   index: number;
@@ -154,7 +154,7 @@ function NotificationPopper({
                     </span>
                   </Typography>
                   <Typography variant="caption" gutterBottom noWrap>
-                    <span>{`${moment(noti.createdAt).format('YYYY-MM-DD HH:mm')} / TruePoint`}</span>
+                    <span>{`${dayjsFormatter(noti.createdAt, 'YYYY-MM-DD HH:mm')} / TruePoint`}</span>
                   </Typography>
                 </div>
               </MenuItem>

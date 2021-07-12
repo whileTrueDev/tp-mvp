@@ -10,7 +10,7 @@ import useMediaSize from '../../../utils/hooks/useMediaSize';
 import useRatingData from '../../../utils/hooks/useRatingData';
 import PageTitle from '../shared/PageTitle';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
-import { ProfileSection } from './creatorInfo/CreatorInfoCard';
+import { ProfileSection } from './creatorInfo/ProfileSection';
 import { ScoresSection } from '../shared/ScoresSection';
 import RecentStreamList from './RecentStreamList';
 import { useCreatorInfoCardStyles } from './style/CreatorInfoCard.style';

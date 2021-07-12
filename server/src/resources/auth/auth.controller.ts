@@ -242,7 +242,7 @@ export class AuthController {
 
   @Get('youtube/callback')
   @UseFilters(YoutubeLinkExceptionFilter)
-  // @UseGuards(YoutubeLinkGuard)
+  @UseGuards(YoutubeLinkGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   youtubeCallback(
     @Req() req: express.Request,

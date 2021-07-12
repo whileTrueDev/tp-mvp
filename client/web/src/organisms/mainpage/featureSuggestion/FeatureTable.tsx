@@ -13,7 +13,7 @@ import shortid from 'shortid';
 import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
-import dateExpression from '../../../utils/dateExpression';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 import useDialog from '../../../utils/hooks/useDialog';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
@@ -94,10 +94,7 @@ function MobileRowCells({ row }: {row: Omit<FeatureSuggestion, 'content'>}): JSX
             </Typography>
             <div className={classes.infoRow}>
               <Typography className="date">
-                {dateExpression({
-                  compoName: 'fromNow',
-                  createdAt: row.createdAt,
-                })}
+                {dayjsFormatter(row.createdAt).fromNow()}
               </Typography>
               <Typography className="state">{FeatureProgressChip(row.state)}</Typography>
 
@@ -142,10 +139,7 @@ function DesktopRowCells({ row: eachRow }: {row: Omit<FeatureSuggestion, 'conten
 
       </TableCell>
       <TableCell className={classes.tableCell} scope="row" align="center">
-        {dateExpression({
-          compoName: 'table-view',
-          createdAt: eachRow.createdAt,
-        })}
+        {dayjsFormatter(eachRow.createdAt, 'll')}
       </TableCell>
       <TableCell className={classes.tableCell} scope="row" align="center">
         {FeatureProgressChip(eachRow.state)}

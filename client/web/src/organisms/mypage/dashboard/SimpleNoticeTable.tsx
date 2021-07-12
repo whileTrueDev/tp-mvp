@@ -13,7 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 // 날짜표현추가
 import useAxios from 'axios-hooks';
-import dateExpression from '../../../utils/dateExpression';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -62,10 +62,7 @@ export default function SimpleNoticeTable(): JSX.Element {
                 </TableCell>
                 <TableCell width={250} align="right">
                   <Typography>
-                    {dateExpression({
-                      compoName: 'table-view',
-                      createdAt: new Date(row.createdAt),
-                    })}
+                    {dayjsFormatter(row.createdAt, 'll')}
                   </Typography>
                 </TableCell>
               </TableRow>
