@@ -1,5 +1,11 @@
 import { parseTimestamp, formatTimestampToString } from './timestampFormatter';
 
+/**
+ * srt, csv 파일을 문자열로 받아와서
+ * -> Block[]형태로 파싱
+ * -> 시간수정
+ * -> Block[] 형태를 다시 str, csv 형태 문자열 파일로 변환
+ */
 type Block = {
   index: number;
   startTime: string;
@@ -98,7 +104,7 @@ export function modify(parsed: Block[], editTime: string): Block[] {
   const editTimestamp = parseTimestamp(editTime);
 
   const filtered = parsed.filter((block) => block.endTimestamp > editTimestamp);
-  const resynced = filtered.map((block, index) => {
+  const timeModified = filtered.map((block, index) => {
     const resyncedStartTimestamp = block.startTimestamp - editTimestamp;
     const resyncedEndTimestamp = block.endTimestamp - editTimestamp;
     return ({
@@ -111,7 +117,7 @@ export function modify(parsed: Block[], editTime: string): Block[] {
     });
   });
 
-  return resynced;
+  return timeModified;
 }
 
 /**

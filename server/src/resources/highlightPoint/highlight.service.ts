@@ -2,23 +2,15 @@ import * as AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
 import {
   ForbiddenException,
-  HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException,
+  Injectable, InternalServerErrorException, NotFoundException,
 } from '@nestjs/common';
 import * as archiver from 'archiver';
-import { PromiseResult } from 'aws-sdk/lib/request';
 import { cutFile } from '../../utils/highlishtFileUtils';
 
 dotenv.config();
 const s3 = new AWS.S3();
 
-type GetObjectCallbackOptions = {startTime?: string}
-type GetObjectCallbackProps = {
-  value: PromiseResult<AWS.S3.GetObjectOutput, AWS.AWSError>,
-  options?: GetObjectCallbackOptions,
-  zip: archiver.Archiver,
-  key: string
-};
-type GetObjectCallback = (props: GetObjectCallbackProps) => Promise<void>
+type GetObjectOptions = {startTime?: string}
 
 @Injectable()
 export class HighlightService {
@@ -70,55 +62,17 @@ export class HighlightService {
     //   getArray = getArray.filter((key) => !key.includes('txt'));
     // }
 
-    // getArry가 빈 배열일 경우 - 분석된 데이터가 없는것으로 보고
-    // 에러 발생시킴
+    // getArry가 빈 배열일 경우 - 분석된 데이터가 없는것으로 보고 에러 발생시킴
     if (!getArray.length) {
-      throw new HttpException({
-        status: HttpStatus.NOT_FOUND,
-        error: '데이터가 없습니다',
-      }, HttpStatus.NOT_FOUND);
+      throw new NotFoundException('분석된 방송 데이터가 없습니다');
     }
 
-    return this.getSelectedFileToZip(getArray, this.appendHighlightFiles, { startTime });
+    return this.getSelectedFileToZip(getArray, { startTime });
   }
 
-  // zip 객체에 편집점 파일을 추가
-  private async appendHighlightFiles({
-    value, options, zip, key,
-  }: GetObjectCallbackProps): Promise<void> {
-    const fileData = value.Body.toString('utf-8');
-
-    if (options && options.startTime) {
-      // 시작시간 있는 경우 - 부분 영상 편집점 내보내기
-      const { startTime } = options;
-
-      const resultStr = cutFile({ key, fileData, startTime });
-      const cutFileSaveName = `부분시작시간+${startTime.split(',')[0]}__${key.split('/')[5]}`;
-      zip.append(resultStr, {
-        name: cutFileSaveName,
-      });
-    } else {
-      // 시작시간 없는 경우 - 파일 그대로 내보내기
-      const toSaveName = key.split('/')[5];
-      zip.append(fileData, {
-        name: toSaveName,
-      });
-    }
-  }
-
-  /**
-   * fileName(key) 배열을 받아서 
-   * 해당 key 가진 파일에 callback함수 적용하여 
-   * 압축후 압축파일 리턴
-   * @param fileName key의 배열
-   * @param callback 해당 key를 가진 object에 적용할 콜백함수. value, callbackOption, zip(archiver), key 를 인자로 받는다
-   * @param options 콜백함수에 전달할 옵션
-   * @returns 
-   */
   async getSelectedFileToZip(
     fileName: string[],
-    callback: GetObjectCallback,
-    options?: GetObjectCallbackOptions,
+    options?: GetObjectOptions,
   ): Promise<archiver.Archiver> {
     const zip = archiver.create('zip');
     Promise.all(fileName.map(async (key) => {
@@ -129,12 +83,24 @@ export class HighlightService {
 
       await s3.getObject(getParams).promise()
         .then((value) => {
-          callback({
-            value,
-            options,
-            zip,
-            key,
-          });
+          const fileData = value.Body.toString('utf-8');
+
+          if (options && options.startTime) {
+            // 시작시간 있는 경우 - 시작시간으로 수정한 부분 영상 편집점 내보내기
+            const { startTime } = options;
+
+            const resultStr = cutFile({ key, fileData, startTime });
+            const cutFileSaveName = `부분시작시간+${startTime.split(',')[0]}__${key.split('/')[5]}`;
+            zip.append(resultStr, {
+              name: cutFileSaveName,
+            });
+          } else {
+            // 시작시간 없는 경우 - 파일 그대로 내보내기
+            const toSaveName = key.split('/')[5];
+            zip.append(fileData, {
+              name: toSaveName,
+            });
+          }
         }).catch((err) => {
           console.error(err);
         });
