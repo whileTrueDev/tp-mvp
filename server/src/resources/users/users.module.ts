@@ -8,7 +8,6 @@ import { UserEntity } from './entities/user.entity';
 import { PlatformAfreecaEntity } from './entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from './entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
-import { UserTokenEntity } from './entities/userToken.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
 import { AfreecaTargetStreamersEntity } from '../../collector-entities/afreeca/targetStreamers.entity';
 import { YoutubeTargetStreamersEntity } from '../../collector-entities/youtube/targetStreamers.entity';
@@ -27,7 +26,6 @@ import { UserPropertiesService } from './userProperties.service';
       PlatformYoutubeEntity,
       UserEntity,
       UserDetailEntity,
-      UserTokenEntity,
       SubscribeEntity,
       StreamsEntity,
     ]),

@@ -1,61 +1,70 @@
-import React, { useEffect, useMemo } from 'react';
-
-import {
-  makeStyles, createStyles,
-} from '@material-ui/core/styles';
+import React, { useMemo } from 'react';
+import { HighlightPointListResType } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
 import useAxios from 'axios-hooks';
-import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
-import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
-import PostList from './PostList';
-
-const useStyles = makeStyles(() => createStyles({
-  root: {
-    height: '100%',
-    width: '100%',
-  },
-}));
+import HighlightlistTable from './HighlightListTable';
+import BoardTitle from '../../communityBoard/share/BoardTitle';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import { usePaginationState } from '../../../../utils/hooks/usePaginationState';
+import { useHighlightListStyle, StyleProps } from '../style/useHighLightListStyle';
+import SearchInput from '../../shared/SearchInput';
 
 interface HighlightListProps{
   platform: 'afreeca' | 'twitch',
-  setList: React.Dispatch<React.SetStateAction<any[]>>;
-  boardState: {
-    posts: PostFound[],
-    list: EditingPointListResType[];
-    page: number;
-    totalRows: number;
-  },
-  titleComponent?: JSX.Element
 }
 
 export default function HighlightListContainer({
   platform,
-  setList,
-  titleComponent,
-  boardState,
 }: HighlightListProps): JSX.Element {
-  const classes = useStyles();
+  const { isMobile } = useMediaSize();
+  const styleProps: StyleProps = { platform, isMobile };
+  const classes = useHighlightListStyle(styleProps);
+
+  const url = `/highlight/highlight-point-list/${platform}`;
+  const [{ loading, data }, getList] = useAxios<HighlightPointListResType>({ url }, { manual: true });
+
   const {
-    list,
-  } = boardState;
-  const url = useMemo(() => `/users/highlight-point-list/${platform}`, [platform]);
+    doSearch, searchText, clearSearchText,
+    handlePageChange, take, inputRef,
+  } = usePaginationState({ getList, itemPerPage: isMobile ? 10 : 30 });
 
-  const [{ loading }, getList] = useAxios({ url }, { manual: true });
+  const titleComponent = useMemo(() => (
+    <BoardTitle boardType platform={platform} />
+  ), [platform]);
 
-  useEffect(() => {
-    getList().then((res) => {
-      setList(res.data);
-    }).catch((e) => {
-      console.error(e);
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const searchInput = useMemo(() => (
+    <SearchInput
+      fullWidth
+      inputRef={inputRef}
+      doSearch={doSearch}
+      searchText={searchText}
+      clearSearchText={clearSearchText}
+      className={classes.searchInputContainer}
+    />
+  ), [classes.searchInputContainer, clearSearchText, doSearch, inputRef, searchText]);
+
+  const customHeader = () => (
+    <thead className={classes.customTHeader}>
+      <tr className="tr">
+        <th className="th" colSpan={3}>
+          활동명
+          {data && <span className="totalCount">{`(${data.totalCount})`}</span>}
+        </th>
+      </tr>
+    </thead>
+  );
 
   return (
-    <div className={classes.root}>
-      <PostList
-        posts={list}
+    <div className={classes.tableWrapper}>
+      <div className={classes.toolbarContainer}>
+        {!isMobile && titleComponent}
+        {searchInput}
+      </div>
+      <HighlightlistTable
+        data={data}
         loading={loading}
-        titleComponent={titleComponent}
+        handlePageChange={handlePageChange}
+        header={customHeader}
+        take={take}
       />
     </div>
   );

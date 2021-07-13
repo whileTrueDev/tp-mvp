@@ -9,41 +9,42 @@ import {
 } from '@material-ui/core';
 import { configure } from 'axios-hooks';
 import { SnackbarProvider } from 'notistack';
+import loadable from '@loadable/component';
+
 import axios from './utils/axios';
 import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
 import defaultTheme from './theme';
-// Pages and organisms
-import Main from './pages/mainpage/Main';
-import PrivacyPolicy from './pages/others/PrivacyPolicy';
-import TermsOfUse from './pages/others/TermsOfUse';
-// import Mypage from './pages/mypage/layouts/MypageLayout';
-import PublickMypage from './pages/mainpage/PublicMypage';
-import KakaoTalk from './organisms/shared/KakaoTalkButton';
-import Login from './pages/mainpage/Login';
-import Regist from './pages/mainpage/Regist';
-import FindId from './pages/others/FindId';
-import FindPassword from './pages/others/FindPassword';
-import FeatureSuggestion from './pages/mainpage/FeatureSuggestion';
-import FeatureSuggestionWrite from './pages/mainpage/FeatureSuggestionWrite';
-import CommunityBoard from './pages/mainpage/CommunityBoard';
-
+import './assets/truepoint.css';
 // hooks
 import useTruepointThemeType from './utils/hooks/useTruepointThemeType';
 import AuthContext, { useLogin } from './utils/contexts/AuthContext';
-import { TruepointTheme } from './interfaces/TruepointTheme';
-import Notice from './pages/mainpage/Notice';
-// import SubscribeContext, { useSubscribe } from './utils/contexts/SubscribeContext';
-
-import './assets/truepoint.css';
-import PageNotFound from './pages/others/PageNotFound';
-import Ranking from './pages/mainpage/Ranking';
-import YoutubeHighlightList from './pages/mainpage/YoutubeHighlightList';
-import SearchCreator from './pages/mainpage/SearchCreator';
-import useAutoLogin from './utils/hooks/useAutoLogin';
-import UserInfoPage from './pages/mypage/UserInfoPage';
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { TruepointTheme } from './interfaces/TruepointTheme';
+
+// Pages and organisms
+import KakaoTalk from './organisms/shared/KakaoTalkButton';
+import useAutoLogin from './utils/hooks/useAutoLogin';
+// import Mypage from './pages/mypage/layouts/MypageLayout';
+
+const Main = loadable(() => import('./pages/mainpage/Main'));
+const PrivacyPolicy = loadable(() => import('./pages/others/PrivacyPolicy'));
+const TermsOfUse = loadable(() => import('./pages/others/TermsOfUse'));
+const PublickMypage = loadable(() => import('./pages/mainpage/PublicMypage'));
+const Login = loadable(() => import('./pages/mainpage/Login'));
+const Regist = loadable(() => import('./pages/mainpage/Regist'));
+const FindId = loadable(() => import('./pages/others/FindId'));
+const FindPassword = loadable(() => import('./pages/others/FindPassword'));
+const FeatureSuggestion = loadable(() => import('./pages/mainpage/FeatureSuggestion'));
+const FeatureSuggestionWrite = loadable(() => import('./pages/mainpage/FeatureSuggestionWrite'));
+const CommunityBoard = loadable(() => import('./pages/mainpage/CommunityBoard'));
+const PageNotFound = loadable(() => import('./pages/others/PageNotFound'));
+const Ranking = loadable(() => import('./pages/mainpage/Ranking'));
+const YoutubeHighlightList = loadable(() => import('./pages/mainpage/YoutubeHighlightList'));
+const SearchCreator = loadable(() => import('./pages/mainpage/SearchCreator'));
+const UserInfoPage = loadable(() => import('./pages/mypage/UserInfoPage'));
+const Notice = loadable(() => import('./pages/mainpage/Notice'));
+
 function Index(): JSX.Element {
   // *******************************************
   // Theme Configurations

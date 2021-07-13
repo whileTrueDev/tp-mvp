@@ -9,15 +9,14 @@ import { RegisterUserByAdminDto } from '@truepoint/shared/dist/dto/users/registe
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { BriefInfoDataResType } from '@truepoint/shared/dist/res/BriefInfoData.interface';
 import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
-import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+import { CreatorListRes } from '@truepoint/shared/dist/res/CreatorList.interface';
 
 import Axios from 'axios';
 import bcrypt from 'bcrypt';
 import {
-  getConnection, Repository,
+  getConnection, Repository, getManager,
 } from 'typeorm';
 import { CreateUserDto } from '@truepoint/shared/dto/users/createUser.dto';
 import { AfreecaActiveStreamsEntity } from '../../collector-entities/afreeca/activeStreams.entity';
@@ -33,7 +32,6 @@ import { PlatformTwitchEntity } from './entities/platformTwitch.entity';
 import { PlatformYoutubeEntity } from './entities/platformYoutube.entity';
 import { SubscribeEntity } from './entities/subscribe.entity';
 import { UserEntity } from './entities/user.entity';
-import { UserTokenEntity } from './entities/userToken.entity';
 import { UserDetailEntity } from './entities/userDetail.entity';
 import { EmailVerificationService } from '../auth/emailVerification.service';
 import { KakaoUserInfo, NaverUserInfo } from '../auth/auth.service';
@@ -51,8 +49,6 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(UserDetailEntity)
     private readonly userDetailRepo: Repository<UserDetailEntity>,
-    @InjectRepository(UserTokenEntity)
-    private readonly userTokensRepository: Repository<UserTokenEntity>,
     @InjectRepository(SubscribeEntity)
     private readonly subscribeRepository: Repository<SubscribeEntity>,
     @InjectRepository(PlatformTwitchEntity)
@@ -510,119 +506,134 @@ export class UsersService {
     return result;
   }
 
-  /**
-   * 유투브 편집점 페이지 편집점 제공 목록
-   * 해당 플랫폼에서 크리에이터당 최신 방송날짜를 가져온다
-   * @param platform 'afreeca' | 'twitch'
-   * 
-   * @return EditingPointListResType[]
-   * {   
-   *  creatorId: string, // 크리에이터 ID
-      platform: string, // 플랫폼 'afreeca' | 'twitch'
-      userId: string,   // userId
-      title: string,   // 가장 최근 방송 제목
-      endDate: Date,   // 가장 최근 방송의 종료시간
-      nickname: string // 크리에이터 활동명
-      logo: string // 크리에이터 로고
-   * }[]
-   */
-  async getHighlightPointList(platform: 'afreeca'|'twitch'): Promise<EditingPointListResType[]> {
-    try {
-      const matchingId = `${platform}Id`;
-      const dataWithoutProfileImage = await this.streamsRepository.createQueryBuilder('streams')
-        .leftJoinAndSelect(UserEntity, 'users', `streams.creatorId = users.${matchingId}`)
-        .select([
-          'streams.creatorId AS creatorId',
-          'streams.platform AS platform',
-          'streams.title AS title',
-          'MAX(streams.endDate) AS endDate',
-          'users.userId AS userId',
-          'users.nickName AS nickname',
-        ])
-        .where('streams.platform = :platform', { platform })
-        .andWhere('streams.needAnalysis = 0') // needAnalysis 가 0인 stream 데이터만
-        .groupBy('streams.creatorId')
-        .orderBy('MAX(streams.endDate)', 'DESC')
-        .getRawMany();
-
-      const userHighlightData = Promise.all(dataWithoutProfileImage.map(async (row) => {
-        const getUserProfileImage = await this.findOneProfileImage(row.userId);
-        return { ...row, logo: getUserProfileImage[0].logo };
-      }));
-      return userHighlightData;
-    } catch (e) {
-      console.error(e);
-      throw new InternalServerErrorException('Error in getEditingPointList');
-    }
-  }
-
   // 방송인 목록 검색
-  async getCreatorsList(): Promise<Creator[]> {
+  async getCreatorsList({
+    page, take, search, sort, direction,
+  }: {
+    page: number,
+    take: number,
+    search: string,
+    sort: string,
+    direction: string
+  }): Promise<CreatorListRes> {
     try {
-      const afreeca = await this.afreecaRepository.createQueryBuilder('afreeca')
+      const afreecaQuery = await this.afreecaRepository.createQueryBuilder('afreeca')
         .select([
           'afreeca.afreecaId AS creatorId',
           'afreeca.afreecaStreamerName AS nickname',
           'afreeca.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
           'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'user.searchCount AS searchCount',
           '"afreeca" AS platform',
         ])
         .groupBy('afreeca.afreecaId')
         .leftJoin('afreeca.categories', 'categories')
+        .leftJoin('afreeca.user', 'user')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = afreeca.afreecaId')
-        .getRawMany();
-
-      const twitch = await this.twitchRepository.createQueryBuilder('twitch')
+        .getQuery();
+      const twitchQuery = await this.twitchRepository.createQueryBuilder('twitch')
         .select([
           'twitch.twitchId AS creatorId',
           'twitch.twitchStreamerName AS nickname',
           'twitch.logo AS logo',
           'GROUP_CONCAT(DISTINCT categories.name) as categories ',
           'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'user.searchCount AS searchCount',
           '"twitch" AS platform',
         ])
         .groupBy('twitch.twitchId')
         .leftJoin('twitch.categories', 'categories')
+        .leftJoin('twitch.user', 'user')
         .leftJoin(CreatorRatingsEntity, 'ratings', 'ratings.creatorId = twitch.twitchId')
-        .getRawMany();
-      const collator = new Intl.Collator('kr', { numeric: true, sensitivity: 'base' }); // kr 명시
-      const data = [...afreeca, ...twitch]
-        .sort((a, b) => collator.compare(a.nickname, b.nickname))
-        .map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] }));
-      return data;
+        .getQuery();
+
+      // PlatformAfreeca + PlatformTwitch 방송인 테이블
+      const Creators = `(
+        (${afreecaQuery})
+        UNION
+        (${twitchQuery})
+      ) AS Creators`;
+
+      // Creators 테이블에서 검색된 인원 수 구하는 쿼리
+      const totalCountQuery = `
+      SELECT COUNT(*) AS total
+      FROM ${Creators}
+      WHERE Creators.nickname LIKE '%${search}%'
+      `;
+
+      const totalCountResult = await getManager().query(totalCountQuery);
+      const { total: totalCount } = totalCountResult[0];
+      const totalPage = Math.ceil(totalCount / take);
+      const hasMore = page < totalPage;
+
+      // 검색어가 있는 경우 - 검색된 방송인들의 검색횟수 증가
+      if (search) {
+        const nicknameSearchQuery = `
+        SELECT DISTINCT(Creators.creatorId)
+        FROM ${Creators}
+        WHERE Creators.nickname LIKE '%${search}%'
+        `;
+
+        const creatorIdList = await getManager().query(nicknameSearchQuery);
+        await Promise.all(creatorIdList.map(({ creatorId }) => this.increaseSearchCount({ creatorId })))
+          .catch((error) => console.error(error));
+      }
+
+      // 정렬기준(sort)이 있는 경우(검색횟수) 쿼리에 추가
+      const sortCondition = sort ? `Creators.${sort} ${direction},` : '';
+
+      // 방송인 테이블에서 검색어, limit, take적용하여 조회하고, nickname 한글-소문자-대문자-숫자-기타순으로 정렬
+      // ascii 48~57 : 숫자
+      // ascii 65~90 : 대문자
+      // ascii 97~122: 소문자 
+      const query = `
+      SELECT *
+      FROM ${Creators}
+      WHERE Creators.nickname LIKE '%${search}%'
+      ORDER BY 
+        ${sortCondition}
+        (CASE 
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 48 AND 57 THEN 4
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 65 AND 90 THEN 3
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) BETWEEN 97 AND 122 THEN 2
+          WHEN ASCII(SUBSTRING(Creators.nickname,1)) < 128 THEN 5 ELSE 1 
+        END), 
+        BINARY(Creators.nickname)
+      LIMIT ${take}
+      OFFSET ${(page - 1) * take}
+      `;
+
+      const data = await getManager().query(query);
+
+      const tempRes = {
+        data: data.map((item) => ({ ...item, categories: item.categories ? item.categories.split(',') : [] })),
+        totalCount,
+        page,
+        totalPage,
+        take,
+        hasMore,
+      };
+
+      return tempRes;
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in get creatorList');
     }
   }
 
-  // **********************************************
-  // User Tokens 관련
-
-  // Find User Tokens
-  async findOneToken(refreshToken: string): Promise<UserTokenEntity> {
-    const userToken = await this.userTokensRepository.findOne({
-      refreshToken,
-    });
-
-    return userToken;
-  }
-
-  // Refresh Token 삭제 - 로그아웃을 위해
-  async removeOneToken(userId: string): Promise<UserTokenEntity> {
-    const userToken = await this.userTokensRepository.findOne(userId);
-    if (!userToken) {
-      throw new InternalServerErrorException('userToken waht you request to logout is not exists');
+  // 방송인 검색횟수 증가
+  async increaseSearchCount({ creatorId }: {
+    creatorId: string
+  }): Promise<any> {
+    try {
+      const target = await this.findOne({ creatorId });
+      target.searchCount += 1;
+      return this.usersRepository.save(target);
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, `error in increase SearchCount of creatorId: ${creatorId}`);
     }
-    return this.userTokensRepository.remove(userToken);
-  }
-
-  // Update User Tokens
-  async saveRefreshToken(
-    newTokenEntity: UserTokenEntity,
-  ): Promise<UserTokenEntity> {
-    return this.userTokensRepository.save(newTokenEntity);
   }
 
   // ***********************************************

@@ -117,4 +117,7 @@ export class UserEntity extends BaseEntity implements User {
 
   @OneToMany((type) => FeatureSuggestionReplyEntity, (post) => post.author)
   featureSuggestionReplies?: FeatureSuggestionReplyEntity[];
+
+  @Column({ default: 0, comment: '검색횟수' })
+  searchCount?: number;
 }

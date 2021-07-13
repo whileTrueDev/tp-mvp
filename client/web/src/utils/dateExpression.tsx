@@ -3,6 +3,7 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
 
+dayjs.locale('ko');
 dayjs.extend(LocalizedFormat);
 dayjs.extend(relativeTime);
 interface makeDate {
