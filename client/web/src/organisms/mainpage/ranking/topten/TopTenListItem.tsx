@@ -9,7 +9,6 @@ import { useTopTenList } from '../style/TopTenList.style';
 
 import InfoComponent from './InfoComponent';
 import TrendsBarChart from './TrendsBarChart';
-import '@fortawesome/fontawesome-free/css/all.css';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 /**
  * '80%' -> 80으로 반환하는 함수
@@ -35,7 +34,7 @@ export interface TopTenListItemProps{
   currentScoreName: keyof Scores,
   weeklyTrendsData: WeeklyTrendsItem[]
 }
-function TopTenListItem(props: TopTenListItemProps): JSX.Element {
+export default function TopTenListItem(props: TopTenListItemProps): JSX.Element {
   const classes = useTopTenList();
   const {
     data: d, index, headerColumns, currentScoreName, weeklyTrendsData,
@@ -64,9 +63,9 @@ function TopTenListItem(props: TopTenListItemProps): JSX.Element {
           className={classnames(classes.orderContainer, classes.center)}
           style={{ width: isMobile ? '10%' : toPercentString(innerBackgroundWidths[0]) }}
         >
-          {index < 3
-            ? <i className="fas fa-star" />
-            : null}
+          {index === 0 && <img src="images/rankingPage/star_icon_gold.png" alt="1위" />}
+          {index === 1 && <img src="images/rankingPage/star_icon_silver.png" alt="2위" />}
+          {index === 2 && <img src="images/rankingPage/star_icon_bronze.png" alt="3위" />}
           <Typography>{index + 1}</Typography>
           <img
             className={classnames(classes.platformLogo, { twitch: platform === 'twitch' }, { afreeca: platform === 'afreeca' })}
@@ -109,5 +108,3 @@ function TopTenListItem(props: TopTenListItemProps): JSX.Element {
     </div>
   );
 }
-
-export default TopTenListItem;

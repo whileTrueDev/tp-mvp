@@ -6,7 +6,6 @@
     "@amcharts/amcharts4": "^4.10.4",
     "@date-io/date-fns": "1.3.13",
     "@date-io/moment": "^2.10.6",
-    "@fortawesome/fontawesome-free": "^5.15.3",
     "@loadable/component": "^5.15.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
