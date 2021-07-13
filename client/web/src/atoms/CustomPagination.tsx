@@ -1,19 +1,27 @@
 import React from 'react';
 import { usePagination, UsePaginationProps } from '@material-ui/lab/Pagination';
-import { makeStyles } from '@material-ui/core/styles';
 import { PaginationItem } from '@material-ui/lab';
-import { ButtonBase } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => createStyles({
   ul: {
     listStyle: 'none',
     padding: 0,
     margin: 0,
     display: 'flex',
   },
-});
+  item: {
+    color: theme.palette.action.disabled,
+    '&.Mui-selected': {
+      color: theme.palette.primary.contrastText,
+      backgroundColor: theme.palette.primary.main,
+    },
+
+  },
+}));
 
 export default function CustomPagination(props: UsePaginationProps): JSX.Element {
   const classes = useStyles();
@@ -31,16 +39,35 @@ export default function CustomPagination(props: UsePaginationProps): JSX.Element
             children = '…';
           } else if (type === 'page' || type === 'previous' || type === 'next') {
             children = (
-              <PaginationItem page={page} type={type} selected={selected} {...item} />
-            );
-          } else {
-            children = (
-              <ButtonBase
+              <PaginationItem
+                className={classes.item}
+                shape="rounded"
+                variant="outlined"
+                page={page}
+                type={type}
+                selected={selected}
                 {...item}
+              />
+            );
+          } else if (type === 'first') {
+            children = (
+              <Button
+                {...item}
+                style={{ padding: '0 6px', height: 32 }}
+                startIcon={<NavigateBeforeIcon />}
               >
-                {type === 'first' && '첫페이지'}
-                {type === 'last' && '끝페이지'}
-              </ButtonBase>
+                첫페이지
+              </Button>
+            );
+          } else if (type === 'last') {
+            children = (
+              <Button
+                {...item}
+                style={{ padding: '0 6px', height: 32 }}
+                endIcon={<NavigateNextIcon />}
+              >
+                끝페이지
+              </Button>
             );
           }
 
