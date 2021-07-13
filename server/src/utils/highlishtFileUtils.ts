@@ -130,7 +130,7 @@ export function stringifySRT(parsed: Block[]): string {
     const {
       index, startTime, endTime, topPercentage,
     } = block;
-    const timesStr = `${startTime} ---> ${endTime}`;
+    const timesStr = `${startTime} --> ${endTime}`;
     return [index + 2, timesStr, topPercentage].join('\n'); // 첫번째 블럭은 트루포인트 편집점이 들어감
   });
   const metaBlock = [1, '00:00:00,000 --> 00:00:01,000', '★Truepoint★ 편집점'].join('\n');
