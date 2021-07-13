@@ -567,19 +567,6 @@ export class UsersService {
       const totalPage = Math.ceil(totalCount / take);
       const hasMore = page < totalPage;
 
-      // 검색어가 있는 경우 - 검색된 방송인들의 검색횟수 증가
-      if (search) {
-        const nicknameSearchQuery = `
-        SELECT DISTINCT(Creators.creatorId)
-        FROM ${Creators}
-        WHERE Creators.nickname LIKE '%${search}%'
-        `;
-
-        const creatorIdList = await getManager().query(nicknameSearchQuery);
-        await Promise.all(creatorIdList.map(({ creatorId }) => this.increaseSearchCount({ creatorId })))
-          .catch((error) => console.error(error));
-      }
-
       // 정렬기준(sort)이 있는 경우(검색횟수) 쿼리에 추가
       const sortCondition = sort ? `Creators.${sort} ${direction},` : '';
 
