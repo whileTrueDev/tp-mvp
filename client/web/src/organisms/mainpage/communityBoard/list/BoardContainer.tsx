@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  Pagination, PaginationItem, ToggleButtonGroup,
-} from '@material-ui/lab';
+import { ToggleButtonGroup } from '@material-ui/lab';
 import { Button, Typography } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import useAxios from 'axios-hooks';
@@ -175,22 +173,8 @@ export default function BoardContainer({
         loading={loading}
         error={error}
       />
-
-      <Pagination
-        className={classes.pagination}
-        variant="outlined"
-        shape="rounded"
-        page={page}
-        count={paginationCount}
-        onChange={pagenationHandler}
-        renderItem={(item) => (
-          <PaginationItem
-            className={classes.paginationItem}
-            {...item}
-          />
-        )}
-      />
       <CustomPagination
+        className={classes.pagination}
         showFirstButton
         showLastButton
         defaultPage={1}
