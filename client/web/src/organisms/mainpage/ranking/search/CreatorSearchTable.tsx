@@ -26,6 +26,10 @@ function getCellStyle(isMobile: boolean): React.CSSProperties {
 
 export default function CreatorSearchTable(): JSX.Element {
   const [{ data, loading }, getList] = useAxios<CreatorListRes>('users/creator-list');
+  const [, increaseSearchCount] = useAxios({
+    url: 'users/creator-list',
+    method: 'post',
+  }, { manual: true });
   const {
     doSearch,
     searchText,
@@ -41,7 +45,14 @@ export default function CreatorSearchTable(): JSX.Element {
   const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: Creator | undefined) => {
     if (!rowData) return;
     const creatorId = rowData?.creatorId;
-    history.push(`/ranking/creator/${creatorId}`);
+    // 검색횟수 증가 요청
+    increaseSearchCount({
+      data: {
+        creatorId,
+      },
+    }).then(() => {
+      history.push(`/ranking/creator/${creatorId}`);
+    }).catch((error) => console.error(error));
   };
 
   const searchInput = useMemo(() => (
