@@ -181,6 +181,7 @@ export default function BoardContainer({
         page={page}
         count={paginationCount}
         onChange={pagenationHandler}
+        size={isMobile ? 'small' : 'medium'}
       />
       <SearchForm
         className={classes.searchForm}

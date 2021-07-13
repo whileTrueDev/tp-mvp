@@ -18,16 +18,37 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.main,
     },
-
+  },
+  buttonStyle: { padding: '0 6px', height: 32 },
+  sizeSmall: {
+    minWidth: 26,
+    height: 26,
+    borderRadius: 26 / 2,
+    margin: '0 1px',
+    padding: '0 4px',
+    '& $icon': {
+      fontSize: theme.typography.pxToRem(18),
+    },
+  },
+  sizeLarge: {
+    minWidth: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+    padding: '0 10px',
+    fontSize: theme.typography.pxToRem(15),
+    '& $icon': {
+      fontSize: theme.typography.pxToRem(22),
+    },
   },
 }));
 
 interface CustomPatinationProps extends UsePaginationProps{
   className?: string,
+  size?: 'medium' | 'small' | 'large'
 }
 
 export default function CustomPagination(props: CustomPatinationProps): JSX.Element {
-  const { className, ...paginationProps } = props;
+  const { className, size = 'medium', ...paginationProps } = props;
   const classes = useStyles();
   const { items } = usePagination({ ...paginationProps });
 
@@ -50,6 +71,7 @@ export default function CustomPagination(props: CustomPatinationProps): JSX.Elem
                 page={page}
                 type={type}
                 selected={selected}
+                size={size}
                 {...item}
               />
             );
@@ -57,7 +79,7 @@ export default function CustomPagination(props: CustomPatinationProps): JSX.Elem
             children = (
               <Button
                 {...item}
-                style={{ padding: '0 6px', height: 32 }}
+                className={classnames(classes.buttonStyle, { sizeSmall: size === 'small' }, { sizeLarge: size === 'large' })}
                 startIcon={<NavigateBeforeIcon />}
               >
                 첫페이지
@@ -67,7 +89,7 @@ export default function CustomPagination(props: CustomPatinationProps): JSX.Elem
             children = (
               <Button
                 {...item}
-                style={{ padding: '0 6px', height: 32 }}
+                className={classnames(classes.buttonStyle, { sizeSmall: size === 'small' }, { sizeLarge: size === 'large' })}
                 endIcon={<NavigateNextIcon />}
               >
                 끝페이지
