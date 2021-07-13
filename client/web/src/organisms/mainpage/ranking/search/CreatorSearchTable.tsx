@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   Avatar, Chip, Typography,
 } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
-import { Pagination, PaginationItem, Rating } from '@material-ui/lab';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import {
+  // Pagination, PaginationItem,
+  Rating,
+} from '@material-ui/lab';
 import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import useAxios from 'axios-hooks';
 import LazyLoad from 'react-lazyload';
@@ -15,6 +16,7 @@ import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useSearchTableStyle } from '../style/CreatorSearch.style';
 import { usePaginationState } from '../../../../utils/hooks/usePaginationState';
 import SearchInput from '../../shared/SearchInput';
+import CustomPagination from '../../../../atoms/CustomPagination';
 
 function getCellStyle(isMobile: boolean): React.CSSProperties {
   return isMobile ? {
@@ -156,15 +158,17 @@ export default function CreatorSearchTable(): JSX.Element {
         title="방송인 검색"
         components={{
           Pagination: () => (
-            <td
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                padding: 16,
-              }}
-            >
-              <Pagination
+            <td>
+              <CustomPagination
+                size={isMobile ? 'small' : 'medium'}
+                siblingCount={isMobile ? 0 : undefined}
+                showFirstButton
+                showLastButton
+                onChange={handlePageChange}
+                count={data ? data.totalPage : 1}
+                page={data ? data.page : 1}
+              />
+              {/* <Pagination
                 size={isMobile ? 'small' : 'medium'}
                 renderItem={(item) => (<PaginationItem {...item} />)}
                 variant="outlined"
@@ -173,7 +177,7 @@ export default function CreatorSearchTable(): JSX.Element {
                 onChange={handlePageChange}
                 count={data ? data.totalPage : 1}
                 page={data ? data.page : 1}
-              />
+              /> */}
             </td>
           ),
         }}

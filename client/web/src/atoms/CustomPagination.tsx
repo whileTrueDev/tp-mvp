@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   ul: {
     listStyle: 'none',
     display: 'flex',
+    paddingInlineStart: 0,
   },
   item: {
     borderRadius: theme.spacing(1),
