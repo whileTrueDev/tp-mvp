@@ -7,11 +7,17 @@ export interface HighlightPartialExportProps{
     minute: number,
     seconds: number,
   },
+  isChecked: {
+    srtCheckBox: boolean;
+    csvCheckBox: boolean;
+  },
   handleTimeChange: (e: React.FormEvent<HTMLInputElement>) => void,
   handleExportClick: () => Promise<void>,
 }
 export default function HighlightPartialExport(props: HighlightPartialExportProps): JSX.Element {
-  const { time, handleTimeChange: handleChange, handleExportClick } = props;
+  const {
+    time, handleTimeChange: handleChange, handleExportClick, isChecked,
+  } = props;
 
   const submit = useCallback(() => {
     if (!time.hour && !time.minute && !time.seconds) {
@@ -92,7 +98,8 @@ export default function HighlightPartialExport(props: HighlightPartialExportProp
           <Button
             style={{ marginLeft: 32 }}
             variant="outlined"
-            disabled={!time.hour && !time.minute && !time.seconds}
+            disabled={(!time.hour && !time.minute && !time.seconds)
+              || !(isChecked.srtCheckBox || isChecked.csvCheckBox)}
             onClick={submit}
           >
             부분 영상 편집점 내보내기
