@@ -12,6 +12,7 @@ import PostList from './PostList';
 import SearchForm from './SearchForm';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useStyles, StyledToggleButton, useToggleButtonGroupsStyle } from '../style/CommunityBoardList.style';
+import CustomPagination from '../../../../atoms/CustomPagination';
 
 const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
   { key: 'all', text: '전체글', class: 'all' },
@@ -188,6 +189,14 @@ export default function BoardContainer({
             {...item}
           />
         )}
+      />
+      <CustomPagination
+        showFirstButton
+        showLastButton
+        defaultPage={1}
+        page={page}
+        count={paginationCount}
+        onChange={pagenationHandler}
       />
       <SearchForm
         className={classes.searchForm}
