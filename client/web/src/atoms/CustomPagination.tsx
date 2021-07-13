@@ -5,16 +5,15 @@ import { Button } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import classnames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   ul: {
     listStyle: 'none',
-    padding: 0,
-    margin: 0,
     display: 'flex',
   },
   item: {
-    color: theme.palette.action.disabled,
+    borderRadius: theme.spacing(1),
     '&.Mui-selected': {
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.main,
@@ -23,16 +22,22 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-export default function CustomPagination(props: UsePaginationProps): JSX.Element {
+interface CustomPatinationProps extends UsePaginationProps{
+  className?: string,
+}
+
+export default function CustomPagination(props: CustomPatinationProps): JSX.Element {
+  const { className, ...paginationProps } = props;
   const classes = useStyles();
-  const { items } = usePagination({ ...props });
+  const { items } = usePagination({ ...paginationProps });
 
   return (
     <nav>
-      <ul className={classes.ul}>
+      <ul className={classnames(classes.ul, className)}>
         {items.map(({
           page, type, selected, ...item
         }, index) => {
+          const key = `${type}_${index}`;
           let children = null;
 
           if (type === 'start-ellipsis' || type === 'end-ellipsis') {
@@ -41,7 +46,6 @@ export default function CustomPagination(props: UsePaginationProps): JSX.Element
             children = (
               <PaginationItem
                 className={classes.item}
-                shape="rounded"
                 variant="outlined"
                 page={page}
                 type={type}
@@ -71,8 +75,7 @@ export default function CustomPagination(props: UsePaginationProps): JSX.Element
             );
           }
 
-          // eslint-disable-next-line react/no-array-index-key
-          return <li key={index}>{children}</li>;
+          return <li key={key}>{children}</li>;
         })}
       </ul>
     </nav>
