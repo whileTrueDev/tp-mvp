@@ -136,6 +136,10 @@ export default function useHighlightExport(
       const csv = isChecked.csvCheckBox ? 1 : 0;
       // const txt = isChecked.txtCheckBox ? 1 : 0;
 
+      if (!srt && !csv) {
+        ShowSnack('다운받을 편집점 파일 확장자를 하나 이상 선택해주세요', 'error', enqueueSnackbar);
+      }
+
       if (partialExport) {
         exportFileName = `부분영상_${exportFileName}`;
       }

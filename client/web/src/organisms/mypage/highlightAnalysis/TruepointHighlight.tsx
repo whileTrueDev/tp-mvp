@@ -184,6 +184,7 @@ export default function TruepointHighlight({
             </div>
             <HighlightPartialExport
               time={time}
+              isChecked={isChecked}
               handleTimeChange={handleTimeChange}
               handleExportClick={() => handleExportClick({ partialExport: true })}
             />
