@@ -1,6 +1,5 @@
 import useAxios from 'axios-hooks';
 import React, { useEffect } from 'react';
-import Pagination, { PaginationProps } from '@material-ui/lab/Pagination';
 import { Grid, Link, Typography } from '@material-ui/core';
 import { MyPostsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { Link as RouterLink } from 'react-router-dom';
@@ -11,12 +10,12 @@ import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import { usePage } from '../../../utils/hooks/usePage';
 import { useMyPostsItemStyle } from './styles/MyPosts.style';
 import { dayjsFormatter } from '../../../utils/dateExpression';
+import CustomPagination, { CustomPatinationProps } from '../../../atoms/CustomPagination';
 
 //* *내가 쓴 글 && 댓글 페이지네이션 컴포넌트********************* */
-export function MyPostPagination(props: PaginationProps): JSX.Element {
+export function MyPostPagination(props: CustomPatinationProps): JSX.Element {
   return (
-    <Pagination
-      shape="rounded"
+    <CustomPagination
       showFirstButton
       showLastButton
       defaultPage={1}

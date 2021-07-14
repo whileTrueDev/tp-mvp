@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
 }));
 
-interface CustomPatinationProps extends UsePaginationProps{
+export interface CustomPatinationProps extends UsePaginationProps{
   className?: string,
   size?: 'medium' | 'small' | 'large'
 }
