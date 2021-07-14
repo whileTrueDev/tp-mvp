@@ -11,13 +11,16 @@ import { usePage } from '../../../utils/hooks/usePage';
 import { useMyPostsItemStyle } from './styles/MyPosts.style';
 import { dayjsFormatter } from '../../../utils/dateExpression';
 import CustomPagination, { CustomPatinationProps } from '../../../atoms/CustomPagination';
+import useMediaSize from '../../../utils/hooks/useMediaSize';
 
 //* *내가 쓴 글 && 댓글 페이지네이션 컴포넌트********************* */
 export function MyPostPagination(props: CustomPatinationProps): JSX.Element {
+  const { isMobile } = useMediaSize();
   return (
     <CustomPagination
       showFirstButton
       showLastButton
+      size={isMobile ? 'small' : 'medium'}
       defaultPage={1}
       {...props}
     />
