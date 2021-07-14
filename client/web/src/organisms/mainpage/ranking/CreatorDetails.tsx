@@ -12,7 +12,7 @@ import PageTitle from '../shared/PageTitle';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
 import { ProfileSection } from './creatorInfo/ProfileSection';
 import { ScoresSection } from '../shared/ScoresSection';
-import RecentStreamList from './RecentStreamList';
+import RecentStreamList from './creatorInfo/RecentStreamList';
 import { useCreatorInfoCardStyles } from './style/CreatorInfoCard.style';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 import { useRankingPageLayout } from './style/RankingPage.style';

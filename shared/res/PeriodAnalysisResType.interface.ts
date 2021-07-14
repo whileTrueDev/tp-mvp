@@ -3,12 +3,12 @@ export interface PeriodAnalysisResType{
   end_date: string;
   view_count: number;
   chat_count: number;
-  value:
-    {
-      chat_count: number;
-      // viewer?: number;
-      smile_count: number;
-      viewer_count: number;
-      date: string;
-    }[];
+  value: TimelineGraphInterface[];
+}
+
+export interface TimelineGraphInterface {
+  smile_count: number;
+  chat_count: number;
+  viewer_count: number;
+  date: string;
 }

@@ -3,7 +3,6 @@ import {
 } from '@material-ui/core';
 import ReplyIcon from '@material-ui/icons/Reply';
 import classnames from 'classnames';
-import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
 import React, {
   useCallback, useEffect, useRef, useState,
@@ -14,6 +13,7 @@ import useDialog from '../../../../utils/hooks/useDialog';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import useToggle from '../../../../utils/hooks/useToggle';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
 import CommentForm from './CommentForm';
 import DeleteButton from './DeleteButton';
@@ -252,7 +252,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
     }
   }, [closeReportDialog, commentId, onReport]);
 
-  const time = dayjs(createDate).format('YYYY-MM-DD HH:mm:ss');
+  const time = dayjsFormatter(createDate, 'default');
 
   return (
     <div className={classnames(classes.commentItem, { child: childComment })} id={`commentId-${commentId}`}>

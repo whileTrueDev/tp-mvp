@@ -27,14 +27,8 @@ export default function setComponent(data: CompareGraphData[], theme: TruepointT
    */
   const valueAxis: any = chart.yAxes.push(new am4charts.ValueAxis());
   valueAxis.tooltip.disabled = true;
-  valueAxis.renderer.labels.template.fill = am4core.color(graphColor.basePeriod);
+  valueAxis.renderer.labels.template.fill = am4core.color(graphColor.axis);
   valueAxis.renderer.minWidth = 60;
-
-  const valueAxis2: any = chart.yAxes.push(new am4charts.ValueAxis());
-  valueAxis2.tooltip.disabled = true;
-  valueAxis2.renderer.labels.template.fill = am4core.color(graphColor.comparePeriod);
-  valueAxis2.renderer.minWidth = 60;
-  valueAxis2.syncWithAxis = valueAxis;
 
   /**
    * multi X label axes
@@ -88,7 +82,7 @@ export default function setComponent(data: CompareGraphData[], theme: TruepointT
   const newSeries = chart.series.push(new am4charts.LineSeries());
   newSeries.name = '비교 기간';
   newSeries.xAxis = dateAxis2;
-  newSeries.yAxis = valueAxis2;
+  newSeries.yAxis = valueAxis;
   newSeries.dataFields.valueY = 'compareValue';
   newSeries.dataFields.dateX = 'compareDate';
   if (newSeries.tooltip) {

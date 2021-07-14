@@ -16,6 +16,7 @@ import HighlightExport from '../../shared/sub/HighlightExport';
 import Highcharts from './HighChart';
 import { initialPoint } from './TruepointHighlight';
 import ScorePicker from './ScorePicker';
+import useHighlightExport from '../../../utils/hooks/useHighlightExport';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -102,6 +103,13 @@ export default function MetricsAccordian(
   const [smilePicked97, setSmilePicked97] = React.useState(true);
   const [categoryPicked97, setCategoryPicked97] = React.useState(true);
   const [selectedCategory, setSelectedCategory] = React.useState(categories[0]);
+  const { isChecked: chatCheckState, handleCheckbox: handleChatCheckbox, handleExportClick: handleChatExportClick } = useHighlightExport({ selectedStream, exportCategory: 'chat' });
+  const { isChecked: funnyCheckState, handleCheckbox: handleFunnyCheckbox, handleExportClick: handleFunnyExportClick } = useHighlightExport({ selectedStream, exportCategory: 'funny' });
+  const {
+    isChecked: categoryCheckSTate,
+    handleCheckbox: handleCategoryCheckbox,
+    handleExportClick: handleCategoryExportClick,
+  } = useHighlightExport({ selectedStream, exportCategory: selectedCategory.category });
 
   const chatHightlight97 = useMemo(() => highlightData.chat_points_97.map((atPoint: number) => ({
     ...highlightData.chat_points[atPoint],
@@ -189,8 +197,9 @@ export default function MetricsAccordian(
                 />
                 <div className={classes.buttonWraper}>
                   <HighlightExport
-                    selectedStream={selectedStream}
-                    exportCategory="chat"
+                    isChecked={chatCheckState}
+                    handleCheckbox={handleChatCheckbox}
+                    handleExportClick={handleChatExportClick}
                   />
                 </div>
               </Grid>
@@ -257,8 +266,9 @@ export default function MetricsAccordian(
                 />
                 <div className={classes.buttonWraper}>
                   <HighlightExport
-                    selectedStream={selectedStream}
-                    exportCategory="funny"
+                    isChecked={funnyCheckState}
+                    handleCheckbox={handleFunnyCheckbox}
+                    handleExportClick={handleFunnyExportClick}
                   />
                 </div>
               </Grid>
@@ -362,8 +372,9 @@ export default function MetricsAccordian(
                 />
                 <div className={classes.buttonWraper}>
                   <HighlightExport
-                    selectedStream={selectedStream}
-                    exportCategory={selectedCategory.category}
+                    isChecked={categoryCheckSTate}
+                    handleCheckbox={handleCategoryCheckbox}
+                    handleExportClick={handleCategoryExportClick}
                   />
                 </div>
               </Grid>

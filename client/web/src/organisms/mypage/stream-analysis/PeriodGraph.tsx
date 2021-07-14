@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 import TimeLineGraph from '../graph/TimeLineGraph';
-// import { timelineInterface } from '../graph/graphsInterface';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import SectionTitle from '../../shared/sub/SectionTitles';
 

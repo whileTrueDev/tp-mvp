@@ -9,7 +9,6 @@ import {
 } from '@material-ui/pickers';
 import useTheme from '@material-ui/core/styles/useTheme';
 
-import moment from 'moment';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
@@ -34,6 +33,7 @@ import useAllCalendarStyles from './RangeSelectCalendar.style';
 import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
 import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
+import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const reRequest = 3;
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
@@ -95,8 +95,8 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
    */
   const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
     if (originDate) {
-      const rangeStart = moment(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
-      const rangeEnd = moment(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      const rangeStart = dayjsFormatter(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+      const rangeEnd = dayjsFormatter(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
       return [rangeStart, rangeEnd];
     }
 
@@ -114,7 +114,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       params,
     }).then((result) => {
       setHasStreamDays(
-        result.data.map((streamInfo) => moment(new Date(streamInfo.startDate)).format('YYYY-MM-DD')),
+        result.data.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only')),
       );
     }).catch((err) => {
       if (err.response) {
@@ -176,7 +176,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       setPoint2(newDate);
       if (point1.getTime() <= newDate.getTime()) {
         if (point1.getTime() === newDate.getTime()) {
-          handlePeriod(timeFormatter(point1, true), timeFormatter(moment(newDate).add(1, 'days').toDate()), base);
+          handlePeriod(timeFormatter(point1, true), timeFormatter(dayjsFormatter(newDate).add(1, 'days').toDate()), base);
         } else {
           handlePeriod(timeFormatter(point1, true), timeFormatter(newDate), base);
         }
@@ -197,7 +197,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
    * @param newMonth 해당 달의 첫째 날의 Date 객체
    */
   const handleMonthChange = (newMonth: MaterialUiPickersDate) => {
-    if (newMonth && Math.abs(moment(newMonth).diff(moment(currMonth), 'month')) >= reRequest) {
+    if (newMonth && Math.abs(dayjsFormatter(newMonth).diff(dayjsFormatter(currMonth), 'month')) >= reRequest) {
       setCurrMonth(newMonth);
     }
   };
@@ -241,13 +241,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     <div className={classnames({
       [classes.rangeDayBase]: base,
       [classes.rangeDayCompare]: !base,
-      [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+      [classes.hasStreamDayDotContainer]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')),
     })}
     >
       {dayComponent}
       <div className={classnames({
-        [classes.hasStreamDayDotBase]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && base,
-        [classes.hasStreamDayDotCompare]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && !base,
+        [classes.hasStreamDayDotBase]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')) && base,
+        [classes.hasStreamDayDotCompare]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')) && !base,
       })}
       />
     </div>
@@ -287,13 +287,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
         }
         return (
           <div className={classnames({
-            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+            [classes.hasStreamDayDotContainer]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')),
           })}
           >
             {dayComponent}
             <div className={classnames({
-              [classes.hasStreamDayDotBase]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && base,
-              [classes.hasStreamDayDotCompare]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && !base,
+              [classes.hasStreamDayDotBase]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')) && base,
+              [classes.hasStreamDayDotCompare]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')) && !base,
             })}
             />
           </div>
@@ -338,13 +338,13 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
     if (date && dayInCurrentMonth) {
       return (
         <div className={classnames({
-          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')),
+          [classes.hasStreamDayDotContainer]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')),
         })}
         >
           {dayComponent}
           <div className={classnames({
-            [classes.hasStreamDayDotBase]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && base,
-            [classes.hasStreamDayDotCompare]: hasStreamDays.includes(moment(date).format('YYYY-MM-DD')) && !base,
+            [classes.hasStreamDayDotBase]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')) && base,
+            [classes.hasStreamDayDotCompare]: hasStreamDays.includes(dayjsFormatter(date, 'date-only')) && !base,
           })}
           />
         </div>

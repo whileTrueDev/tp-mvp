@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RankingsController } from './rankings.controller';
 import { RankingsService } from './rankings.service';
@@ -10,9 +10,10 @@ import { CreatorRatingsModule } from '../creatorRatings/creatorRatings.module';
     TypeOrmModule.forFeature([
       RankingsEntity,
     ]),
-    CreatorRatingsModule,
+    forwardRef(() => CreatorRatingsModule),
   ],
   controllers: [RankingsController],
   providers: [RankingsService],
+  exports: [RankingsService],
 })
 export class RankingsModule {}

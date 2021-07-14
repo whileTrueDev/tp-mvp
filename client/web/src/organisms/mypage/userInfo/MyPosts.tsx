@@ -10,7 +10,7 @@ import { useMyRatingsCreatorBoxStyles } from './styles/MyRatings.style';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import { usePage } from '../../../utils/hooks/usePage';
 import { useMyPostsItemStyle } from './styles/MyPosts.style';
-import dateExpression from '../../../utils/dateExpression';
+import { dayjsFormatter } from '../../../utils/dateExpression';
 
 //* *내가 쓴 글 && 댓글 페이지네이션 컴포넌트********************* */
 export function MyPostPagination(props: PaginationProps): JSX.Element {
@@ -41,14 +41,9 @@ export function MyPostItem(props: MyPostItemProps): JSX.Element {
       <Grid container justify="space-between">
         <Typography className="content">{content}</Typography>
         <Typography className="date">
-          {dateExpression({
-            compoName: 'fromNow',
-            createdAt: createDate,
-          })}
-
+          {dayjsFormatter(createDate).fromNow()}
         </Typography>
       </Grid>
-
       <Typography className="origin">{`${belongTo}`}</Typography>
     </Link>
   );

@@ -5,5 +5,7 @@ import Component2 from '../dist/admin-panel/components/community-post-category-l
 AdminBro.UserComponents.Component2 = Component2
 import Component3 from '../dist/admin-panel/components/community-post-link'
 AdminBro.UserComponents.Component3 = Component3
-import Component4 from '../dist/admin-panel/components/featureSuggestion-state-label'
+import Component4 from '../dist/admin-panel/components/creator-comment-link'
 AdminBro.UserComponents.Component4 = Component4
+import Component5 from '../dist/admin-panel/components/featureSuggestion-state-label'
+AdminBro.UserComponents.Component5 = Component5
