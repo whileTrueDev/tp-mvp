@@ -4,10 +4,7 @@ import {
 } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
-import {
-  // Pagination, PaginationItem,
-  Rating,
-} from '@material-ui/lab';
+import { Rating } from '@material-ui/lab';
 import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import useAxios from 'axios-hooks';
 import LazyLoad from 'react-lazyload';
@@ -158,7 +155,13 @@ export default function CreatorSearchTable(): JSX.Element {
         title="방송인 검색"
         components={{
           Pagination: () => (
-            <td>
+            <td
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
               <CustomPagination
                 size={isMobile ? 'small' : 'medium'}
                 siblingCount={isMobile ? 0 : undefined}
@@ -168,16 +171,6 @@ export default function CreatorSearchTable(): JSX.Element {
                 count={data ? data.totalPage : 1}
                 page={data ? data.page : 1}
               />
-              {/* <Pagination
-                size={isMobile ? 'small' : 'medium'}
-                renderItem={(item) => (<PaginationItem {...item} />)}
-                variant="outlined"
-                showFirstButton
-                showLastButton
-                onChange={handlePageChange}
-                count={data ? data.totalPage : 1}
-                page={data ? data.page : 1}
-              /> */}
             </td>
           ),
         }}

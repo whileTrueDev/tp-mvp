@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     borderRadius: 26 / 2,
     margin: '0 1px',
     padding: '0 4px',
+    fontSize: theme.spacing(1.5),
     '& $icon': {
       fontSize: theme.typography.pxToRem(18),
     },
@@ -49,7 +50,9 @@ interface CustomPatinationProps extends UsePaginationProps{
 }
 
 export default function CustomPagination(props: CustomPatinationProps): JSX.Element {
-  const { className, size = 'medium', ...paginationProps } = props;
+  const {
+    className, size = 'medium', ...paginationProps
+  } = props;
   const classes = useStyles();
   const { items } = usePagination({ ...paginationProps });
 
@@ -80,7 +83,11 @@ export default function CustomPagination(props: CustomPatinationProps): JSX.Elem
             children = (
               <Button
                 {...item}
-                className={classnames(classes.buttonStyle, { sizeSmall: size === 'small' }, { sizeLarge: size === 'large' })}
+                className={classnames(
+                  classes.buttonStyle,
+                  { [classes.sizeSmall]: size === 'small' },
+                  { [classes.sizeLarge]: size === 'large' },
+                )}
                 startIcon={<NavigateBeforeIcon />}
               >
                 첫페이지
@@ -90,7 +97,11 @@ export default function CustomPagination(props: CustomPatinationProps): JSX.Elem
             children = (
               <Button
                 {...item}
-                className={classnames(classes.buttonStyle, { sizeSmall: size === 'small' }, { sizeLarge: size === 'large' })}
+                className={classnames(
+                  classes.buttonStyle,
+                  { [classes.sizeSmall]: size === 'small' },
+                  { [classes.sizeLarge]: size === 'large' },
+                )}
                 endIcon={<NavigateNextIcon />}
               >
                 끝페이지
