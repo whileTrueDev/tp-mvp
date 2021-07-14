@@ -142,11 +142,13 @@ export const useStyles = makeStyles((theme) => createStyles({
     },
   },
   menuItem: {
-    width: theme.spacing(40),
-    justifyContent: 'center',
-    padding: theme.spacing(1.5),
-    '&.active': {
-      color: theme.palette.primary.main,
+    '&.MuiListItem-root': {
+      width: theme.spacing(40),
+      justifyContent: 'center',
+      padding: theme.spacing(1.5),
+      '&.active': {
+        color: theme.palette.primary.main,
+      },
     },
   },
   mobileIcon: { marginRight: theme.spacing(1) },
