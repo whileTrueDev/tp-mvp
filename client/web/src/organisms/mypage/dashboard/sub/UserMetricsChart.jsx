@@ -54,9 +54,14 @@ export default function UserMetricsChart({
     categoryAxis.renderer.minGridDistance = 60;
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.dataItems.template.text = '';
-    categoryAxis.adapter.add('tooltipText', () => dayjsFormatter(
-      categoryAxis.tooltipDataItem.dataContext.startDate, 'YY-MM-DD HH시',
-    ));
+    categoryAxis.adapter.add('tooltipText', () => {
+      if (categoryAxis.tooltipDataItem) {
+        return dayjsFormatter(
+          categoryAxis.tooltipDataItem.dataContext.startDate, 'YY-MM-DD HH시',
+        );
+      }
+      return undefined;
+    });
 
     if (categoryAxis.tooltip) {
       categoryAxis.tooltip.background.opacity = 1;

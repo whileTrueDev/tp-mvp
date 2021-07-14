@@ -6,7 +6,6 @@ import {
 import { Button, Typography } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import useAxios from 'axios-hooks';
-import { EditingPointListResType } from '@truepoint/shared/dist/res/EditingPointListResType.interface';
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FilterType } from '../../../../utils/hooks/useBoardListState';
 import PostList from './PostList';
@@ -27,7 +26,6 @@ interface BoardProps{
   postFilterHandler: (categoryFilter: FilterType) => void;
   boardState: {
     posts: PostFound[];
-    list: EditingPointListResType[];
     page: number;
     totalRows: number;
     filter: FilterType;

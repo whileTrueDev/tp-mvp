@@ -9,6 +9,9 @@ import HighlightExport from '../../shared/sub/HighlightExport';
 import ScorePicker from './ScorePicker';
 import HelperPopOver from '../../shared/HelperPopOver';
 import Highcharts from './HighChart';
+import HighlightPartialExport from './HighlightPartialExport';
+import SoundFileExport from './SoundFileExport';
+import useHighlightExport from '../../../utils/hooks/useHighlightExport';
 
 const styles = makeStyles((theme) => ({
   root: {
@@ -113,6 +116,9 @@ export default function TruepointHighlight({
   const [page, setPage] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(5);
   const [point, setPoint] = React.useState(initialPoint);
+  const {
+    time, handleTimeChange, isChecked, handleCheckbox, handleExportClick,
+  } = useHighlightExport({ selectedStream, exportCategory: 'highlight' });
 
   return (
     <Paper className={classes.root}>
@@ -158,8 +164,9 @@ export default function TruepointHighlight({
             />
             <div className={classes.buttonWraper}>
               <HighlightExport
-                selectedStream={selectedStream}
-                exportCategory="highlight"
+                isChecked={isChecked}
+                handleCheckbox={handleCheckbox}
+                handleExportClick={handleExportClick}
               />
               <div>
                 <div className={classes.helperPopOver}>
@@ -174,8 +181,18 @@ export default function TruepointHighlight({
                   편집점 파일 활용법
                 </Button>
               </div>
-
             </div>
+            <HighlightPartialExport
+              time={time}
+              isChecked={isChecked}
+              handleTimeChange={handleTimeChange}
+              handleExportClick={() => handleExportClick({ partialExport: true })}
+            />
+            <SoundFileExport
+              selectedStream={selectedStream}
+              exportCategory="highlight"
+            />
+
           </Grid>
         </Grid>
       </Grid>
