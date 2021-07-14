@@ -11,7 +11,6 @@ import PageSizeAlert from '../../organisms/mypage/alertbar/PageSizeAlert';
 import SidebarWithNavbar from '../../organisms/mypage/layouts/sidebar-with-navbar/SidebarWithNavbar';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import useDialog from '../../utils/hooks/useDialog';
-import useMediaSize from '../../utils/hooks/useMediaSize';
 import usePublicMainUser from '../../utils/hooks/usePublicMainUser';
 
 export interface ParamTypes {
@@ -20,7 +19,6 @@ export interface ParamTypes {
 
 export default function PublicMypage(): JSX.Element {
   const classes = useLayoutStyles();
-  const { isMobile } = useMediaSize();
   const { userId } = useParams<ParamTypes>();
   const { setUser } = usePublicMainUser((state) => state);
   const auth = useAuthContext();
@@ -79,7 +77,6 @@ export default function PublicMypage(): JSX.Element {
         {/* 마이페이지 메인 패널 */}
         <main ref={mainPanel} className={classes.mainPanel}>
           <div className={classes.contents}>
-            {!isMobile && (
             <Switch>
               {routes.map((route) => (
                 route.nested
@@ -100,7 +97,6 @@ export default function PublicMypage(): JSX.Element {
                   )
               ))}
             </Switch>
-            )}
 
           </div>
         </main>
