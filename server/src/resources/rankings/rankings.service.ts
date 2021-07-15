@@ -13,6 +13,7 @@ import {
   RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
   FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import dayjs from 'dayjs';
 import { CreatorAverageScoresWithRank } from '@truepoint/shared/res/CreatorRatingResType.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
@@ -494,19 +495,82 @@ export class RankingsService {
     }
   }
 
-  async getTestScoreHistory(): Promise<any> {
-    return this.rankingsRepository.query(`
-    select 
-      date(streamDate) AS 'date',
-      title,
-      max(viewer) AS avgViewer,
-      round(avg(smileScore),2) AS avgSmileScore,
-      round(avg(frustrateScore),2) AS avgFrustrateScore,
-      round(avg(admireScore),2) AS avgAdmireScore,
-      round(avg(cussScore),2) AS avgCussScore
-      from Rankings 
-      where creatorId="devil0108"
-      group by date
+  async getTestScoreHistory(creatorId: string): Promise<any> {
+    // const creatorId = 'devil0108';
+
+    // 첫방송데이터 날짜
+    const { firstBroadDate } = await this.rankingsRepository.createQueryBuilder('rankings')
+      .select('date(min(streamDate)) as firstBroadDate')
+      .where('rankings.creatorId = :creatorId', { creatorId })
+      .getRawOne();
+
+    const defaultStartDate = dayjs().subtract(3, 'month'); // 3개월 이전 날짜
+    const dateFirstBroad = dayjs(firstBroadDate);
+    // 첫 방송 데이터가 3개월이 안된 경우 - 첫방송 데이터 날짜부터 오늘날짜까지
+    // 첫 방송 데이터가 3개월보다 오래된 경우 - 3개월 전 날짜부터 오늘날짜까지
+    const selectStartDate = dateFirstBroad.isBefore(defaultStartDate)
+      ? defaultStartDate.format('YYYY-MM-DD')
+      : dateFirstBroad.format('YYYY-MM-DD');
+
+    const scoresGroupByDateQuery = this.getAvgScoresGroupByDateForOneCreator(creatorId);
+
+    const rankings = await this.rankingsRepository.query(`
+    WITH RECURSIVE Dates as (
+      select '${selectStartDate}' as dt
+    UNION
+      SELECT 
+        DATE_ADD(Dates.dt, INTERVAL 1 DAY) 
+        FROM Dates 
+        WHERE DATE_ADD(Dates.dt, INTERVAL 1 DAY) <= curdate()
+    )
+    select * 
+    FROM Dates 
+    left join (${scoresGroupByDateQuery}) as A on Dates.dt = A.date
     `);
+    // left join (
+    //   select creatorId, date(updateDate) as date,
+    //   round(avg(rating),2) as avgRating
+    //   from CreatorRatingsTest2
+    //   where creatorId="${creatorId}"
+    //   group by date(updateDate)
+    // ) as B on Dates.dt = B.date
+
+    const ratings = await this.creatorRatingsService.getAvgScoresGroupByDateForOneCreator(creatorId);
+
+    return { rankings, ratings };
+  }
+
+  getAvgScoresGroupByDateForOneCreator(creatorId: string): string {
+    return this.rankingsRepository.createQueryBuilder('rankings')
+      .select([
+        'date(streamDate) AS `date`',
+        'title as title',
+        'max(viewer) AS avgViewer',
+        'round(avg(smileScore),2) AS avgSmileScore',
+        'round(avg(frustrateScore),2) AS avgFrustrateScore',
+        'round(avg(admireScore),2) AS avgAdmireScore',
+        'round(avg(cussScore),2) AS avgCussScore',
+      ])
+      .where(`creatorId="${creatorId}"`)
+      .groupBy('date')
+      .getSql();
   }
 }
+
+/**
+ * 
+ * select * 
+ * from (select 
+id,
+creatorId,
+date(updateDate) as dt,
+round(avg(rating) over(rows between unbounded preceding and current row),2) as avgRating
+from CreatorRatingsTest2
+where creatorId="103825127"
+order by updateDate asc ) A inner join (
+select max(id) as id
+from CreatorRatingsTest2
+where creatorId="103825127"
+group by date(updateDate)
+) B on A.id = B.id;
+ */

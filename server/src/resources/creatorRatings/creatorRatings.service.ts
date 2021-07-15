@@ -589,4 +589,27 @@ export class CreatorRatingsService {
 
     return result;
   }
+
+  getAvgScoresGroupByDateForOneCreator(creatorId: string): Promise<any> {
+    return this.ratingsRepository.query(`
+      select 
+        A.dt as date, 
+        A.avgRating as avgRating 
+        from (
+          select 
+          id,
+          creatorId,
+          date(updateDate) as dt,
+          round(avg(rating) over(rows between unbounded preceding and current row),2) as avgRating
+          from CreatorRatingsTest2
+          where creatorId="${creatorId}"
+          order by updateDate asc 
+          ) A 
+          inner join (
+          select max(id) as id
+          from CreatorRatingsTest2
+          where creatorId="${creatorId}"
+          group by date(updateDate)
+          ) B on A.id = B.id;`);
+  }
 }

@@ -85,7 +85,9 @@ export class RankingsController {
   }
 
   @Get('test-score-history')
-  getTestScoreHistory(): Promise<any> {
-    return this.rankingsService.getTestScoreHistory();
+  getTestScoreHistory(
+    @Query('creatorId') creatorId: string,
+  ): Promise<any> {
+    return this.rankingsService.getTestScoreHistory(creatorId);
   }
 }

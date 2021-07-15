@@ -64,6 +64,7 @@ export default function CreatorDetails(): React.ReactElement {
           </Grid>
 
           <RecentStreamList userData={userData} creatorId={creatorId} />
+          <TestScoreHistory creatorId={creatorId} />
         </Paper>
 
         <Paper style={{ padding: '4px', marginBottom: '4px' }}>
@@ -84,7 +85,7 @@ export default function CreatorDetails(): React.ReactElement {
       {/* 최근 방송 정보 섹션 */}
       <Container className={container}>
         <RecentStreamList userData={userData} creatorId={creatorId} />
-        <TestScoreHistory />
+        <TestScoreHistory creatorId={creatorId} />
       </Container>
 
       <Container className={container}>
