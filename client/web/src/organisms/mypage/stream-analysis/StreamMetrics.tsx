@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   card: {
-    height: '94px',
     borderRadius: '4px',
     backgroundColor: '#959abb',
     borderWidth: 0,
@@ -87,11 +86,11 @@ export default function StreamAnalysis(
                         <CardContent className={classes.center}>
                           <Grid container direction="row" justify="center" spacing={1}>
                             <Grid item>
-                              <Typography className={classes.main}>
-                                {type ? '기준 기간' : `"${element.broad1Title}" ` }
+                              <Typography>
+                                {type ? '기준 기간' : <Typography component="span">{`"${element.broad1Title}" `}</Typography> }
                                 이
                                 {' '}
-                                {type ? '비교 기간' : `"${element.broad2Title}" ` }
+                                {type ? '비교 기간' : <Typography component="span">{`"${element.broad2Title}" `}</Typography> }
                                 보다
                                 {' '}
                                 {element.title}
