@@ -493,4 +493,20 @@ export class RankingsService {
       throw new InternalServerErrorException(error, 'error in get average scores and rank');
     }
   }
+
+  async getTestScoreHistory(): Promise<any> {
+    return this.rankingsRepository.query(`
+    select 
+      date(streamDate) AS 'date',
+      title,
+      max(viewer) AS avgViewer,
+      round(avg(smileScore),2) AS avgSmileScore,
+      round(avg(frustrateScore),2) AS avgFrustrateScore,
+      round(avg(admireScore),2) AS avgAdmireScore,
+      round(avg(cussScore),2) AS avgCussScore
+      from Rankings 
+      where creatorId="devil0108"
+      group by date
+    `);
+  }
 }

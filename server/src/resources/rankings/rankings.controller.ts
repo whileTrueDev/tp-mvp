@@ -83,4 +83,9 @@ export class RankingsController {
   getFirstPlacesByCategory(): Promise<FirstPlacesRes> {
     return this.rankingsService.getFirstPlacesByCategory();
   }
+
+  @Get('test-score-history')
+  getTestScoreHistory(): Promise<any> {
+    return this.rankingsService.getTestScoreHistory();
+  }
 }

@@ -18,6 +18,7 @@ import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 import { useRankingPageLayout } from './style/RankingPage.style';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
 import PageNotFound from '../../../pages/others/PageNotFound';
+import TestScoreHistory from './creatorInfo/TestScoreHistory';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -83,7 +84,7 @@ export default function CreatorDetails(): React.ReactElement {
       {/* 최근 방송 정보 섹션 */}
       <Container className={container}>
         <RecentStreamList userData={userData} creatorId={creatorId} />
-
+        <TestScoreHistory />
       </Container>
 
       <Container className={container}>
