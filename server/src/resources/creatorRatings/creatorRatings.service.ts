@@ -9,6 +9,7 @@ import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
+import { DailyAverageRatingsEntity } from './entities/dailyAverageRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformType, RankingsService } from '../rankings/rankings.service';
@@ -22,6 +23,8 @@ export class CreatorRatingsService {
     private readonly rankingsService: RankingsService,
     @InjectRepository(CreatorRatingsEntity)
     private readonly ratingsRepository: Repository<CreatorRatingsEntity>,
+    @InjectRepository(DailyAverageRatingsEntity)
+    private readonly avgRatingRepository: Repository<DailyAverageRatingsEntity>,
     @InjectRepository(PlatformAfreecaEntity)
     private readonly afreecaRepository: Repository<PlatformAfreecaEntity>,
     @InjectRepository(PlatformTwitchEntity)
@@ -590,26 +593,15 @@ export class CreatorRatingsService {
     return result;
   }
 
-  getAvgScoresGroupByDateForOneCreator(creatorId: string): Promise<any> {
-    return this.ratingsRepository.query(`
-      select 
-        A.dt as date, 
-        A.avgRating as avgRating 
-        from (
-          select 
-          id,
-          creatorId,
-          date(updateDate) as dt,
-          round(avg(rating) over(rows between unbounded preceding and current row),2) as avgRating
-          from CreatorRatingsTest2
-          where creatorId="${creatorId}"
-          order by updateDate asc 
-          ) A 
-          inner join (
-          select max(id) as id
-          from CreatorRatingsTest2
-          where creatorId="${creatorId}"
-          group by date(updateDate)
-          ) B on A.id = B.id;`);
+  async getAvgScoresGroupByDateForOneCreator(creatorId: string): Promise<any> {
+    return this.avgRatingRepository.createQueryBuilder('avgRating')
+      .select([
+        'Date(date) as date',
+        'averageRating',
+      ])
+      .where('creatorId = :creatorId', { creatorId })
+      .getRawMany();
   }
+
+  async
 }

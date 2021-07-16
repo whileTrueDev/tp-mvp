@@ -506,14 +506,15 @@ export class RankingsService {
 
     const defaultStartDate = dayjs().subtract(3, 'month'); // 3개월 이전 날짜
     const dateFirstBroad = dayjs(firstBroadDate);
-    // 첫 방송 데이터가 3개월이 안된 경우 - 첫방송 데이터 날짜부터 오늘날짜까지
-    // 첫 방송 데이터가 3개월보다 오래된 경우 - 3개월 전 날짜부터 오늘날짜까지
+    // 첫 방송 데이터가 3개월이 안된 경우 - 첫방송 데이터 날짜부터 어제날짜까지
+    // 첫 방송 데이터가 3개월보다 오래된 경우 - 3개월 전 날짜부터 어제날짜까지
     const selectStartDate = dateFirstBroad.isBefore(defaultStartDate)
       ? defaultStartDate.format('YYYY-MM-DD')
       : dateFirstBroad.format('YYYY-MM-DD');
 
     const scoresGroupByDateQuery = this.getAvgScoresGroupByDateForOneCreator(creatorId);
 
+    // curdate()-1 어제날짜까지
     const rankings = await this.rankingsRepository.query(`
     WITH RECURSIVE Dates as (
       select '${selectStartDate}' as dt
@@ -521,19 +522,12 @@ export class RankingsService {
       SELECT 
         DATE_ADD(Dates.dt, INTERVAL 1 DAY) 
         FROM Dates 
-        WHERE DATE_ADD(Dates.dt, INTERVAL 1 DAY) <= curdate()
+        WHERE DATE_ADD(Dates.dt, INTERVAL 1 DAY) <= curdate()-1
     )
     select * 
     FROM Dates 
     left join (${scoresGroupByDateQuery}) as A on Dates.dt = A.date
     `);
-    // left join (
-    //   select creatorId, date(updateDate) as date,
-    //   round(avg(rating),2) as avgRating
-    //   from CreatorRatingsTest2
-    //   where creatorId="${creatorId}"
-    //   group by date(updateDate)
-    // ) as B on Dates.dt = B.date
 
     const ratings = await this.creatorRatingsService.getAvgScoresGroupByDateForOneCreator(creatorId);
 
@@ -556,21 +550,3 @@ export class RankingsService {
       .getSql();
   }
 }
-
-/**
- * 
- * select * 
- * from (select 
-id,
-creatorId,
-date(updateDate) as dt,
-round(avg(rating) over(rows between unbounded preceding and current row),2) as avgRating
-from CreatorRatingsTest2
-where creatorId="103825127"
-order by updateDate asc ) A inner join (
-select max(id) as id
-from CreatorRatingsTest2
-where creatorId="103825127"
-group by date(updateDate)
-) B on A.id = B.id;
- */

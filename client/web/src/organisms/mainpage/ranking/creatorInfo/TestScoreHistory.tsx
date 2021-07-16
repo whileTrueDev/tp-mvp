@@ -66,7 +66,7 @@ export default function TestScoreHistory({ creatorId }: {creatorId: string}): JS
       const { dt } = cur;
       const ratingData = data.ratings.find(({ date }: {date: string}) => date === dt);
       if (ratingData) {
-        return [...acc, [dt, ratingData.avgRating]];
+        return [...acc, [dt, ratingData.averageRating]];
       }
       if (index === 0) {
         return [...acc, [dt, null]];
@@ -74,11 +74,17 @@ export default function TestScoreHistory({ creatorId }: {creatorId: string}): JS
       const lastAvgRating = acc[acc.length - 1][1];
       return [...acc, [dt, lastAvgRating]];
     }, []);
+
+    const firstRatingIndex = test.findIndex(([_, rating]: [string, number|null]) => rating);
+    console.log({ firstRatingIndex });
+    console.log(test.slice(firstRatingIndex));
+    // 평점 매겨진 적이 없는 경우 문구 표시 필요 -> 
+
     setChartOptions({
       series: [
         {
           type: 'line',
-          data: test,
+          data: firstRatingIndex === -1 ? test : test.slice(firstRatingIndex),
         },
       ],
     });
