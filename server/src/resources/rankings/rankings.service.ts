@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  forwardRef, Inject, Injectable, InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   getConnection,
@@ -11,6 +13,7 @@ import {
   RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
   FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import dayjs from 'dayjs';
 import { CreatorAverageScoresWithRank } from '@truepoint/shared/res/CreatorRatingResType.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
@@ -34,6 +37,7 @@ export class RankingsService {
   constructor(
     @InjectRepository(RankingsEntity)
     private readonly rankingsRepository: Repository<RankingsEntity>,
+    @Inject(forwardRef(() => CreatorRatingsService))
     private readonly creatorRatingsService: CreatorRatingsService,
   ) {}
 
@@ -427,44 +431,122 @@ export class RankingsService {
 
   // 1달 내 방송을 진행한 총 방송인 수
   async getCreatorCountWithin1Month(): Promise<number> {
-    const recentCreateDate = await this.getRecentAnalysysDate();
-    const { total } = await this.rankingsRepository.createQueryBuilder('rankings')
-      .select([
-        'COUNT(DISTINCT creatorId) AS total',
-      ])
-      .where(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
-      .getRawOne();
-    return total;
+    try {
+      const recentCreateDate = await this.getRecentAnalysysDate();
+      const { total } = await this.rankingsRepository.createQueryBuilder('rankings')
+        .select([
+          'COUNT(DISTINCT creatorId) AS total',
+        ])
+        .where(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`)
+        .getRawOne();
+      return total;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in get creator count within 1 month');
+    }
   }
 
   // 특정 방송인의 1달 내 평균감정점수와 순위
   async getAverageScoresAndRank(creatorId: string): Promise<CreatorAverageScoresWithRank> {
-    const recentCreateDate = await this.getRecentAnalysysDate();
-    const result = await getConnection()
-      .createQueryBuilder()
-      .select([
-        'T.*',
-      ])
-      .from((subQuery) => subQuery
+    try {
+      const recentCreateDate = await this.getRecentAnalysysDate();
+      const result = await getConnection()
+        .createQueryBuilder()
         .select([
-          'rankings.creatorId AS creatorId',
-          'ROUND(AVG(rankings.smileScore),2) AS smile',
-          'ROUND(AVG(rankings.frustrateScore),2) AS frustrate',
-          'ROUND(AVG(rankings.admireScore),2) AS admire',
-          'ROUND(AVG(rankings.cussScore),2) AS cuss',
-          'rank() over(order by avg(rankings.cussScore) DESC) as cussRank',
-          'rank() over(order by avg(rankings.smileScore) DESC) as smileRank',
-          'rank() over(order by avg(rankings.admireScore) DESC) as admireRank',
-          'rank() over(order by avg(rankings.frustrateScore) DESC) as frustrateRank',
+          'T.*',
         ])
-        .from(RankingsEntity, 'rankings')
-        .groupBy('rankings.creatorId')
-        .andWhere(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`),
-      'T')
-      .where('T.creatorId = :creatorId', { creatorId })
+        .from((subQuery) => subQuery
+          .select([
+            'rankings.creatorId AS creatorId',
+            'ROUND(AVG(rankings.smileScore),2) AS smile',
+            'ROUND(AVG(rankings.frustrateScore),2) AS frustrate',
+            'ROUND(AVG(rankings.admireScore),2) AS admire',
+            'ROUND(AVG(rankings.cussScore),2) AS cuss',
+            'rank() over(order by avg(rankings.cussScore) DESC) as cussRank',
+            'rank() over(order by avg(rankings.smileScore) DESC) as smileRank',
+            'rank() over(order by avg(rankings.admireScore) DESC) as admireRank',
+            'rank() over(order by avg(rankings.frustrateScore) DESC) as frustrateRank',
+          ])
+          .from(RankingsEntity, 'rankings')
+          .groupBy('rankings.creatorId')
+          .andWhere(`rankings.createDate >= DATE_SUB('${recentCreateDate}', INTERVAL 1 MONTH)`),
+        'T')
+        .where('T.creatorId = :creatorId', { creatorId })
+        .getRawOne();
+
+      if (result) {
+        delete result.creatorId;
+        return result;
+      }
+      return {
+        admire: 0,
+        smile: 0,
+        frustrate: 0,
+        cuss: 0,
+        total: 0,
+        admireRank: 0,
+        smileRank: 0,
+        frustrateRank: 0,
+        cussRank: 0,
+      };
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in get average scores and rank');
+    }
+  }
+
+  async getTestScoreHistory(creatorId: string): Promise<any> {
+    // const creatorId = 'devil0108';
+
+    // 첫방송데이터 날짜
+    const { firstBroadDate } = await this.rankingsRepository.createQueryBuilder('rankings')
+      .select('date(min(streamDate)) as firstBroadDate')
+      .where('rankings.creatorId = :creatorId', { creatorId })
       .getRawOne();
 
-    delete result.creatorId;
-    return result;
+    const defaultStartDate = dayjs().subtract(3, 'month'); // 3개월 이전 날짜
+    const dateFirstBroad = dayjs(firstBroadDate);
+    // 첫 방송 데이터가 3개월이 안된 경우 - 첫방송 데이터 날짜부터 어제날짜까지
+    // 첫 방송 데이터가 3개월보다 오래된 경우 - 3개월 전 날짜부터 어제날짜까지
+    const selectStartDate = dateFirstBroad.isBefore(defaultStartDate)
+      ? defaultStartDate.format('YYYY-MM-DD')
+      : dateFirstBroad.format('YYYY-MM-DD');
+
+    const scoresGroupByDateQuery = this.getAvgScoresGroupByDateForOneCreator(creatorId);
+
+    // curdate()-1 어제날짜까지
+    const rankings = await this.rankingsRepository.query(`
+    WITH RECURSIVE Dates as (
+      select '${selectStartDate}' as dt
+    UNION
+      SELECT 
+        DATE_ADD(Dates.dt, INTERVAL 1 DAY) 
+        FROM Dates 
+        WHERE DATE_ADD(Dates.dt, INTERVAL 1 DAY) <= curdate()-1
+    )
+    select * 
+    FROM Dates 
+    left join (${scoresGroupByDateQuery}) as A on Dates.dt = A.date
+    `);
+
+    const ratings = await this.creatorRatingsService.getAvgScoresGroupByDateForOneCreator(creatorId);
+
+    return { rankings, ratings };
+  }
+
+  getAvgScoresGroupByDateForOneCreator(creatorId: string): string {
+    return this.rankingsRepository.createQueryBuilder('rankings')
+      .select([
+        'date(streamDate) AS `date`',
+        'title as title',
+        'max(viewer) AS avgViewer',
+        'round(avg(smileScore),2) AS avgSmileScore',
+        'round(avg(frustrateScore),2) AS avgFrustrateScore',
+        'round(avg(admireScore),2) AS avgAdmireScore',
+        'round(avg(cussScore),2) AS avgCussScore',
+      ])
+      .where(`creatorId="${creatorId}"`)
+      .groupBy('date')
+      .getSql();
   }
 }

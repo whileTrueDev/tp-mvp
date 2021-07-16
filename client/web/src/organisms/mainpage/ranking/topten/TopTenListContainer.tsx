@@ -1,5 +1,5 @@
 import { Divider, Typography, Hidden } from '@material-ui/core';
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Scores, RankingDataType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 
 import { AxiosError } from 'axios';
@@ -7,12 +7,6 @@ import { useTopTenList } from '../style/TopTenList.style';
 import ListItemSkeleton from './ListItemSkeleton';
 import TopTenListItem from './TopTenListItem';
 
-type HeaderColumn = {
-  key: string,
-  label: string,
-  width: string,
-  textAlign?: string
-}
 export interface TopTenListProps{
   currentTab: 'smile' |'frustrate'|'cuss'|'admire'|'viewer'|'rating', // 'smile'|'frustrate'|'cuss'|'admire',
   data: undefined | RankingDataType,
@@ -31,31 +25,19 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
   const classes = useTopTenList();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const headerColumns: HeaderColumn[] = useMemo(() => (
-    [
-      {
-        key: 'order', label: '순위', width: '5%', textAlign: 'center',
-      },
-      { key: 'profileImage', label: '', width: '15%' },
-      { key: 'bjName', label: '활동명', width: '50%' },
-      { key: 'weeklyScoreGraph', label: weeklyGraphLabel, width: '30%' },
-    ]
-  ), [weeklyGraphLabel]);
-
   return (
     <div className={classes.topTenListWrapper}>
       {/* 목록 헤더 */}
       <Hidden smDown>
         <div className={classes.header}>
-          {headerColumns.map((column) => (
-            <div
-              key={column.key}
-              className={classes.headerColumn}
-              style={{ width: column.width || 'auto' }}
-            >
-              <Typography>{column.label}</Typography>
-            </div>
-          ))}
+          <div className={classes.header} style={{ width: '70%' }}>
+            <Typography className={classes.headerColumn} style={{ width: '30%' }}>순위</Typography>
+            <Typography className={classes.headerColumn} style={{ width: '70%' }}>활동명</Typography>
+          </div>
+          <div className={classes.header} style={{ width: '30%' }}>
+            {/* 선택된 탭에 따라 '주간 점수 그래프', '일일 평균 평점 추이', '주간 시청자수 추이' 로 바뀜 */}
+            <Typography className={classes.headerColumn}>{weeklyGraphLabel}</Typography>
+          </div>
         </div>
         <Divider />
       </Hidden>
@@ -73,14 +55,13 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
               key={d.id}
               index={index}
               data={d}
-              headerColumns={headerColumns}
               currentScoreName={currentScoreName}
               weeklyTrendsData={weeklyTrendsData}
             />
           );
         })}
         {(loading || tabChanging) && (Array.from(Array(10).keys())).map((v: number) => (
-          <ListItemSkeleton key={v} headerColumns={headerColumns} />
+          <ListItemSkeleton key={v} />
         ))}
         {!loading && !tabChanging && data
         && data.rankingData.length === 0

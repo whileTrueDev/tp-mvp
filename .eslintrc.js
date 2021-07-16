@@ -95,8 +95,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 2,
 
     // do not allow unused variables
-    // '@typescript-eslint/no-unused-vars': 2,
-    '@typescript-eslint/no-unused-vars': 1,
+    '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/camelcase': 'off',
     /**
      * React rules

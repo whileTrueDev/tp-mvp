@@ -78,7 +78,7 @@ export default function BoardTitle({
           />
           <Typography className={classes.titleText}>
             {`${PLATFORM_NAMES[platform]}
-          ${boardType ? '방송인' : '게시판'}`}
+          ${boardType ? 'TV' : '게시판'}`}
           </Typography>
         </>
       ) : (

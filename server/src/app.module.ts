@@ -7,6 +7,7 @@ import AdminBro from 'admin-bro';
 import { Database, Resource } from '@admin-bro/typeorm';
 import { validate } from 'class-validator';
 
+import { ScheduleModule } from '@nestjs/schedule';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './resources/auth/auth.module';
 import { UsersModule } from './resources/users/users.module';
@@ -75,6 +76,7 @@ AdminBro.registerAdapter({ Database, Resource });
     AdminModule.createAdminAsync({
       useFactory: getAdminOptions,
     }),
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule { }

@@ -310,7 +310,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
         <div className={classes.recommendIcons}>
           <Button
             onClick={clickLike}
-            className={classnames(classes.actionButton, { [classes.liked]: likeClicked })}
+            className={classnames(classes.actionButton, 'likeButton', { [classes.liked]: likeClicked })}
             size={isMobile ? 'small' : undefined}
             startIcon={
             isMobile
@@ -327,7 +327,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
           </Button>
           <Button
             onClick={clickHate}
-            className={classnames(classes.actionButton, { [classes.hated]: hateClicked })}
+            className={classnames(classes.actionButton, 'hateButton', { [classes.hated]: hateClicked })}
             size={isMobile ? 'small' : undefined}
             startIcon={
               isMobile

@@ -7,11 +7,17 @@ export interface HighlightPartialExportProps{
     minute: number,
     seconds: number,
   },
+  isChecked: {
+    srtCheckBox: boolean;
+    csvCheckBox: boolean;
+  },
   handleTimeChange: (e: React.FormEvent<HTMLInputElement>) => void,
   handleExportClick: () => Promise<void>,
 }
 export default function HighlightPartialExport(props: HighlightPartialExportProps): JSX.Element {
-  const { time, handleTimeChange: handleChange, handleExportClick } = props;
+  const {
+    time, handleTimeChange: handleChange, handleExportClick, isChecked,
+  } = props;
 
   const submit = useCallback(() => {
     if (!time.hour && !time.minute && !time.seconds) {
@@ -25,10 +31,8 @@ export default function HighlightPartialExport(props: HighlightPartialExportProp
         <Typography component="span" color="secondary">풀영상이 아닌 </Typography>
         부분 영상 파일을 다루고 계시면 아래 기능을 활용해주세요!!
       </Typography>
-
       <a
-        href="https://truepoint.s3.ap-northeast-2.amazonaws.com/tp-introduction/201014+%E1%84%90%E1%85%B3%E1%84%85%E1%85%AE%E1%84%91%E1%85%A9%E1%84%8B%E1%85%B5%E1%86%AB%E1%84%90%E1%85%B3+%E1%84%89%E1%85%A5%E1%84%87%E1%85%B5%E1%84%89%E1%85%B3+%E1%84%8C%E1%85%B5%E1%86%AB%E1%84%92%E1%85%A2%E1%86%BC+%E1%84%80%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B2%E1%84%8B%E1%85%AD%E1%86%BC++(1).pdf"
-        // 임시로 아무거나 붙여놓은 링크임. 추후 이미지 전달받으면 변경하기
+        href="https://drive.google.com/file/d/1d5ilSrz4GJxPbNWODufVpbA8BXKTOhxv/view?usp=sharing"
         download
         target="_blank"
         rel="noreferrer"
@@ -94,7 +98,8 @@ export default function HighlightPartialExport(props: HighlightPartialExportProp
           <Button
             style={{ marginLeft: 32 }}
             variant="outlined"
-            disabled={!time.hour && !time.minute && !time.seconds}
+            disabled={(!time.hour && !time.minute && !time.seconds)
+              || !(isChecked.srtCheckBox || isChecked.csvCheckBox)}
             onClick={submit}
           >
             부분 영상 편집점 내보내기

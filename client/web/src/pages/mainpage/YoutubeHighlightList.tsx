@@ -1,13 +1,9 @@
-import React, {
-  useMemo,
-} from 'react';
+import React from 'react';
 import {
   Grid, Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import YoutubeHighlightListLayout from '../../organisms/mainpage/communityBoard/share/CommunityBoardCommonLayout';
-import useBoardState from '../../utils/hooks/useBoardListState';
-import BoardTitle from '../../organisms/mainpage/communityBoard/share/BoardTitle';
 import HighlightListContainer from '../../organisms/mainpage/youtubeHighlight/list/HighlightListContainer';
 import YoutubeHighlightListHero from '../../organisms/mainpage/youtubeHighlight/YoutubeHighlightListHero';
 import useMediaSize from '../../utils/hooks/useMediaSize';
@@ -35,50 +31,21 @@ export default function YoutubeHighlightList(): JSX.Element {
   const classes = youtubeHighlightListLayout();
   const { isMobile } = useMediaSize();
 
-  const {
-    boardState: afreecaHighlightList,
-    setList: afreecaLoadHandler,
-  } = useBoardState({}); // 아프리카 유투브 편집점 상태, 핸들러
-
-  const {
-    boardState: twitchHighlightList,
-    setList: twitchLoadHandler,
-  } = useBoardState({});// 트위치 유투브 편집점 상태, 핸들러
-
-  const afreecaTitleComponent = useMemo(() => (
-    <BoardTitle platform="afreeca" boardType />
-  ), []);
-  const twitchTitleComponent = useMemo(() => (
-    <BoardTitle platform="twitch" boardType />
-  ), []);
-
-  const AfreecaBoard = useMemo(() => (
-    <HighlightListContainer
-      titleComponent={afreecaTitleComponent}
-      platform="afreeca"
-      setList={afreecaLoadHandler}
-      boardState={afreecaHighlightList}
-    />
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [afreecaHighlightList]);
-
-  const TwitchBoard = useMemo(() => (
-    <HighlightListContainer
-      platform="twitch"
-      titleComponent={twitchTitleComponent}
-      setList={twitchLoadHandler}
-      boardState={twitchHighlightList}
-    />
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [twitchHighlightList]);
-
   return (
     <YoutubeHighlightListLayout>
 
       {isMobile ? (
         <MobileYoutubeHighlightList
-          afreecaBoard={AfreecaBoard}
-          twitchBoard={TwitchBoard}
+          afreecaBoard={(
+            <HighlightListContainer
+              platform="afreeca"
+            />
+          )}
+          twitchBoard={(
+            <HighlightListContainer
+              platform="twitch"
+            />
+          )}
         />
       ) : (
         <>
@@ -98,8 +65,16 @@ export default function YoutubeHighlightList(): JSX.Element {
             className={classes.boardWrapper}
             spacing={2}
           >
-            <Grid item xs={6}>{AfreecaBoard}</Grid>
-            <Grid item xs={6}>{TwitchBoard}</Grid>
+            <Grid item xs={6}>
+              <HighlightListContainer
+                platform="afreeca"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <HighlightListContainer
+                platform="twitch"
+              />
+            </Grid>
           </Grid>
         </>
       )}
