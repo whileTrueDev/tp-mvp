@@ -2,12 +2,15 @@ import {
   forwardRef,
   Inject,
   Injectable, InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import dayjs from 'dayjs';
+import { Cron } from '@nestjs/schedule';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { DailyAverageRatingsEntity } from './entities/dailyAverageRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
@@ -18,6 +21,9 @@ import dayjsFormatter from '../../utils/dateExpression';
 
 @Injectable()
 export class CreatorRatingsService {
+  private readonly logger = new Logger(CreatorRatingsService.name);
+
+  // eslint-disable-next-line max-params
   constructor(
     @Inject(forwardRef(() => RankingsService))
     private readonly rankingsService: RankingsService,
@@ -603,5 +609,54 @@ export class CreatorRatingsService {
       .getRawMany();
   }
 
-  async
+  /**
+   * 매일 자정에 실행되는 방송인 평균 평점 저장 함수
+   * 전날 하루동안 평점 매겨진 방송인에 대해 평점 평균을 계산하고
+   * DailyAverageRating에 날짜, 방송인, 평균평점을 저장
+   */
+  @Cron('0 0 * * *') // 매일 자정 실행
+  async saveDailyAverageRating(): Promise<void> {
+    try {
+      const targetDate = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
+      this.logger.log(`${targetDate}의 방송인 평균 평점 저장 시작`);
+      // 1. 전날 날짜로 매겨진 방송인 찾기
+      const creatorsRatedToday = await this.ratingsRepository.createQueryBuilder('ratings')
+        .select(['DISTINCT ratings.creatorId AS creatorId'])
+        .where('DATE(ratings.updateDate) = curdate()-1')
+        .getRawMany();
+
+      const creatorIds = creatorsRatedToday.map(({ creatorId }: {creatorId: string}) => creatorId);
+
+      // 1-1. 평점 매겨진 방송인이 없는 경우 종료
+      if (creatorIds.length === 0) {
+        this.logger.log(`${targetDate} 매겨진 평점 없음 - 방송인 평균 평점 저장 종료`);
+        return;
+      }
+
+      // 2. 해당되는 방송인의 평점 평균 구하기
+      const creatorsAndAverageRatings = await this.ratingsRepository.createQueryBuilder('ratings')
+        .select([
+          'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'CURDATE() AS date',
+          'ratings.creatorId AS creatorId',
+        ])
+        .where('ratings.creatorId IN (:creatorIds)', { creatorIds })
+        .groupBy('ratings.creatorId')
+        .getRawMany();
+      this.logger.log(`${targetDate} 매겨진 평점 \n ${JSON.stringify(creatorsAndAverageRatings)}`);
+
+      // 3. 전날 날짜, creatorId, 평점평균 저장하기
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(DailyAverageRatingsEntity)
+        .values(creatorsAndAverageRatings)
+        .execute();
+
+      this.logger.log('saved in DailyAverageRating, 방송인 평균 평점 저장 종료');
+    } catch (error) {
+      this.logger.error({ ...error });
+      throw new InternalServerErrorException('error in saveDailyAverageRating', error);
+    }
+  }
 }
