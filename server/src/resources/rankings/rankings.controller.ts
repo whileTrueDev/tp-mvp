@@ -84,10 +84,11 @@ export class RankingsController {
     return this.rankingsService.getFirstPlacesByCategory();
   }
 
-  @Get('test-score-history')
+  @Get('/scores/history')
   getTestScoreHistory(
     @Query('creatorId') creatorId: string,
+    // @Query('startDate') startDate: Date, 조회 시작 날짜
   ): Promise<any> {
-    return this.rankingsService.getTestScoreHistory(creatorId);
+    return this.rankingsService.getScoresHistory(creatorId);
   }
 }

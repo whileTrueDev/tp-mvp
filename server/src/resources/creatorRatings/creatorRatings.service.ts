@@ -599,14 +599,19 @@ export class CreatorRatingsService {
     return result;
   }
 
-  async getAvgScoresGroupByDateForOneCreator(creatorId: string): Promise<any> {
-    return this.avgRatingRepository.createQueryBuilder('avgRating')
-      .select([
-        'Date(date) as date',
-        'averageRating',
-      ])
-      .where('creatorId = :creatorId', { creatorId })
-      .getRawMany();
+  async getAvgRatingsByDateForOneCreator(creatorId: string): Promise<any> {
+    try {
+      return this.avgRatingRepository.createQueryBuilder('avgRating')
+        .select([
+          'Date(date) as date',
+          'averageRating',
+        ])
+        .where('creatorId = :creatorId', { creatorId })
+        .getRawMany();
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in getAvgRatingsByDateForOneCreator');
+    }
   }
 
   /**
