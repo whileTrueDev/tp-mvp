@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { AverageRating, CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import dayjs from 'dayjs';
 import { Cron } from '@nestjs/schedule';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
@@ -599,7 +599,7 @@ export class CreatorRatingsService {
     return result;
   }
 
-  async getAvgRatingsByDateForOneCreator(creatorId: string): Promise<any> {
+  async getAvgRatingsByDateForOneCreator(creatorId: string): Promise<AverageRating[]> {
     try {
       return this.avgRatingRepository.createQueryBuilder('avgRating')
         .select([

@@ -4,6 +4,7 @@ import {
 import {
   DailyTotalViewersResType, RankingDataType, FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import { ScoreHistoryData } from '@truepoint/shared/res/CreatorRatingResType.interface';
 import { ColumnType, RankingsService, PlatformType } from './rankings.service';
 
 @Controller('rankings')
@@ -88,7 +89,7 @@ export class RankingsController {
   getTestScoreHistory(
     @Query('creatorId') creatorId: string,
     // @Query('startDate') startDate: Date, 조회 시작 날짜
-  ): Promise<any> {
+  ): Promise<ScoreHistoryData[]> {
     return this.rankingsService.getScoresHistory(creatorId);
   }
 }

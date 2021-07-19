@@ -14,7 +14,7 @@ import {
   FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import dayjs from 'dayjs';
-import { CreatorAverageScoresWithRank } from '@truepoint/shared/res/CreatorRatingResType.interface';
+import { CreatorAverageScoresWithRank, ScoreHistoryData } from '@truepoint/shared/res/CreatorRatingResType.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
@@ -495,7 +495,7 @@ export class RankingsService {
     }
   }
 
-  async getScoresHistory(creatorId: string, userInputDate?: Date): Promise<any> {
+  async getScoresHistory(creatorId: string, userInputDate?: Date): Promise<ScoreHistoryData[]> {
     // 기록 조회 시작 일자
     const scoreHistoryStartDate = await this.getScoreHistoryStartDate(creatorId, userInputDate);
     // 감정점수 날짜별 조회 쿼리
@@ -505,7 +505,7 @@ export class RankingsService {
     // 기록 조회 시작 일자(scoreHistoryStartDate)부터 어제(curdate()-1)까지의
     // 날짜테이블(Dates) 생성하여 
     // 감정점수 날짜별 조회와 조인
-      const scores = await this.rankingsRepository.query(`
+      const scores: Omit<ScoreHistoryData, 'rating'>[] = await this.rankingsRepository.query(`
       WITH RECURSIVE Dates as (
         select '${scoreHistoryStartDate}' as dt
       UNION
@@ -527,18 +527,8 @@ export class RankingsService {
       `);
 
       const ratings = await this.creatorRatingsService.getAvgRatingsByDateForOneCreator(creatorId);
-      /**
-       * [{"date": "2021-06-01","rating": 9.67},
-       * {"date": "2021-07-12","rating": 9.71}]
-       * 
-       * [{"date": "2021-05-31","rating": null},
-       * {"date": "2021-06-01","rating": 9.67},
-       * {"date": "2021-06-02","rating": 9.67}, ...
-       * {"date": "2021-07-11","rating": 9.67},
-       * {"date": "2021-07-12","rating": 9.71}]
-       * 처럼 바꿔서 보내기
-       */
-      let result: any[] = [];
+
+      let result: ScoreHistoryData[] = [];
 
       // 평점이 매겨진 적 없는 경우 모두 null로 채워서 내보냄
       if (ratings.length === 0) {
@@ -546,7 +536,7 @@ export class RankingsService {
       }
 
       // 매겨진 적 있는 경우 해당 날짜에 맞는 평점을 채워서 내보냄
-      result = scores.reduce((acc: any[], cur: {date: string}, index: number) => {
+      result = scores.reduce((acc: ScoreHistoryData[], cur, index: number) => {
         const { date } = cur;
         const ratingData = ratings.find((r) => r.date === date);
         if (ratingData) {
