@@ -517,7 +517,7 @@ export class RankingsService {
       SELECT
         Dates.dt AS date,
         Scores.title AS title,
-        Scores.avgViewer AS viewer,
+        Scores.maxViewer AS viewer,
         Scores.avgSmileScore AS smile,
         Scores.avgFrustrateScore AS frustrate,
         Scores.avgAdmireScore AS admire,
@@ -582,7 +582,7 @@ export class RankingsService {
       .select([
         'date(streamDate) AS `date`',
         'title as title',
-        'max(viewer) AS avgViewer',
+        'max(viewer) AS maxViewer',
         'round(avg(smileScore),2) AS avgSmileScore',
         'round(avg(frustrateScore),2) AS avgFrustrateScore',
         'round(avg(admireScore),2) AS avgAdmireScore',

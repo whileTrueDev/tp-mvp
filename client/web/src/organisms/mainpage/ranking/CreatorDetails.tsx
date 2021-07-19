@@ -12,13 +12,12 @@ import PageTitle from '../shared/PageTitle';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
 import { ProfileSection } from './creatorInfo/ProfileSection';
 import { ScoresSection } from '../shared/ScoresSection';
-import RecentStreamList from './creatorInfo/RecentStreamList';
 import { useCreatorInfoCardStyles } from './style/CreatorInfoCard.style';
 import { useCreatorEvalutationCardStyle } from './style/Evaluation.style';
 import { useRankingPageLayout } from './style/RankingPage.style';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
 import PageNotFound from '../../../pages/others/PageNotFound';
-import TestScoreHistory from './creatorInfo/TestScoreHistory';
+import ScoresHistorySection from './creatorInfo/ScoresHistorySection';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -62,9 +61,7 @@ export default function CreatorDetails(): React.ReactElement {
               updateAverageRating={updateAverageRating}
             />
           </Grid>
-
-          <RecentStreamList userData={userData} creatorId={creatorId} />
-          <TestScoreHistory creatorId={creatorId} />
+          <ScoresHistorySection creatorId={creatorId} />
         </Paper>
 
         <Paper style={{ padding: '4px', marginBottom: '4px' }}>
@@ -84,8 +81,7 @@ export default function CreatorDetails(): React.ReactElement {
 
       {/* 최근 방송 정보 섹션 */}
       <Container className={container}>
-        <RecentStreamList userData={userData} creatorId={creatorId} />
-        <TestScoreHistory creatorId={creatorId} />
+        <ScoresHistorySection creatorId={creatorId} />
       </Container>
 
       <Container className={container}>
