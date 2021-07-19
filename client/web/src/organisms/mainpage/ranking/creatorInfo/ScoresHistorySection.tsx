@@ -15,6 +15,11 @@ import { Icons } from '../ToptenCard';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 
 NoDataToDisplay(Highcharts);
+Highcharts.setOptions({
+  time: {
+    timezoneOffset: -9 * 60, // 9시간 느리게 표시됨.. timezone 옵션 변경하려면 moment.js 설치필요, dayjs 사용하고 있는 상태에서 굳이 momentjs 설치할 필요가 없다고 생각해서 offset값 지정함
+  },
+});
 
 type ScoresHistoryControlButton = {
   key: keyof ScoreHistoryData,
@@ -56,7 +61,6 @@ export default function ScoresHistorySection({ creatorId }: {creatorId: string})
     legend: {
       enabled: false,
     },
-
     plotOptions: {
       series: {
         connectNulls: true,
@@ -75,11 +79,14 @@ export default function ScoresHistorySection({ creatorId }: {creatorId: string})
 
   useEffect(() => {
     if (!data) return;
-    const minDate = data[0].date || undefined;
-    const maxDate = data[data.length - 1].date || undefined;
-    let series = data.map((item) => [dayjs(item.date).valueOf(), item[buttonState]]);
-    const isEmptyData = series.every((elem) => elem[1] === null);
-    if (isEmptyData) {
+    // 데이터 중 값이 null이 아닌 첫번째 인덱스 찾기
+    const firstNotNullItemIndex = data.findIndex((item) => item[buttonState]);
+    const validData = data.slice(firstNotNullItemIndex);
+
+    let series = validData.map((item) => [dayjs(item.date).valueOf(), item[buttonState]]);
+    const minDate = validData[0].date || undefined;
+    const maxDate = validData[validData.length - 1].date || undefined;
+    if (firstNotNullItemIndex === -1) {
       series = [];
     }
     let max: number | null = null;
@@ -88,6 +95,9 @@ export default function ScoresHistorySection({ creatorId }: {creatorId: string})
     }
     const min = buttonState === 'rating' ? null : 0;
     setChartOptions({
+      chart: {
+        backgroundColor: theme.palette.background.paper,
+      },
       series: [
         {
           type: 'line',
@@ -110,13 +120,17 @@ export default function ScoresHistorySection({ creatorId }: {creatorId: string})
           align: 'center',
           verticalAlign: 'middle',
         },
-
+      },
+      plotOptions: {
+        series: {
+          color: theme.palette.primary.dark,
+        },
       },
     });
-  }, [buttonState, data]);
+  }, [buttonState, data, theme.palette.background.paper, theme.palette.primary.dark]);
 
   return (
-    <Grid container style={{ backgroundColor: 'white' }}>
+    <Grid container style={{ backgroundColor: theme.palette.background.paper }}>
       <Grid
         item
         xs={12}
@@ -138,6 +152,7 @@ export default function ScoresHistorySection({ creatorId }: {creatorId: string})
               size={isDownSm ? 'small' : 'medium'}
               style={{
                 backgroundColor: buttonState === button.key ? theme.palette.primary.main : 'transparent',
+                color: buttonState === button.key ? theme.palette.primary.contrastText : theme.palette.text.primary,
                 width: isDownXs ? 48 : 'auto',
               }}
             >
