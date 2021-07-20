@@ -1,11 +1,12 @@
 import useAxios from 'axios-hooks';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ScoreHistoryData } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import dayjs from 'dayjs';
 import Highcharts from 'highcharts';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
-import { Icons } from '../../organisms/mainpage/ranking/ToptenCard';
+import { useScoresHistoryButton } from '../../store/scoresHistoryButton';
 
 // 데이터 없을때 문구 표시하기 위한 모듈
 NoDataToDisplay(Highcharts);
@@ -97,22 +98,6 @@ function makeSeriesData(
     };
   });
 }
-
-export type ScoresHistoryControlButton = {
-  key: keyof ScoreHistoryData,
-  label: string,
-  icon?: string | React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
-}
-// 그래프 바꾸는 버튼
-export const buttons: ScoresHistoryControlButton[] = [
-  { key: 'viewer' as const, label: '최고 시청자 수' },
-  { key: 'rating' as const, label: '시청자 평점' },
-  { key: 'admire' as const, label: '감탄점수' },
-  { key: 'smile' as const, label: '웃음점수' },
-  { key: 'frustrate' as const, label: '답답함점수' },
-  { key: 'cuss' as const, label: '욕점수' },
-].map((button) => ({ ...button, icon: Icons[button.key] }));
-
 // 그래프 섹션 높이
 const ScoresHistorySectionHeight = 280;
 
@@ -126,7 +111,7 @@ export default function useScoresHistoryChartOptions({ creatorId }: {creatorId: 
     },
   });
 
-  const [selectedButton, setSelectedButton] = useState<ScoresHistoryControlButton>(buttons[0]);
+  const { selectedButton } = useScoresHistoryButton();
 
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
     chart: {
@@ -206,8 +191,6 @@ export default function useScoresHistoryChartOptions({ creatorId }: {creatorId: 
   }, [data, selectedButton, theme.palette.background.paper, theme.palette.primary.dark]);
 
   return {
-    setSelectedButton,
-    selectedButton,
     chartOptions,
     loading,
   };

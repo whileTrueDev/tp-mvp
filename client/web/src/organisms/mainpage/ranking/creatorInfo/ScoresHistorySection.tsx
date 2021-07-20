@@ -4,20 +4,22 @@ import { useTheme } from '@material-ui/core/styles';
 import { Button, Grid } from '@material-ui/core';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import useScoresHistoryChartOptions,
-{ highCharts, buttons } from '../../../../utils/hooks/useScoresHistoryChartOptions';
+{ highCharts } from '../../../../utils/hooks/useScoresHistoryChartOptions';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
+import { buttons, useScoresHistoryButton } from '../../../../store/scoresHistoryButton';
 
 export default function ScoresHistorySection({ creatorId }: {creatorId: string}): JSX.Element {
   const theme = useTheme();
   const { isMobile: isDownSm, isDownXs } = useMediaSize();
+  const { selectedButton, changeButton } = useScoresHistoryButton();
   const {
-    setSelectedButton,
-    selectedButton,
     chartOptions,
     loading,
   } = useScoresHistoryChartOptions({ creatorId });
-    // 차트컨테이너 ref
-  const chartRef = useRef<{chart: Highcharts.Chart, container: React.RefObject<HTMLDivElement>}>(null);
+  const chartRef = useRef<{
+    chart: Highcharts.Chart,
+    container: React.RefObject<HTMLDivElement>
+  }>(null);
 
   return (
     <Grid container style={{ backgroundColor: theme.palette.background.paper }}>
@@ -36,7 +38,7 @@ export default function ScoresHistorySection({ creatorId }: {creatorId: string})
           buttons.map((button) => (
             <Button
               key={button.key}
-              onClick={() => setSelectedButton(button)}
+              onClick={() => changeButton(button)}
               startIcon={isDownXs ? undefined : button.icon}
               variant="outlined"
               size={isDownSm ? 'small' : 'medium'}
