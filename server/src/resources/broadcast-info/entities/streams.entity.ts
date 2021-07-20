@@ -1,9 +1,7 @@
 import {
-  Entity, Column, PrimaryColumn, OneToMany, BaseEntity,
+  Entity, Column, PrimaryColumn, BaseEntity,
 } from 'typeorm';
 import { Stream } from '@truepoint/shared/dist/interfaces/Stream.interface';
-import { StreamVotesEntity } from './streamVotes.entity';
-// import { StreamCommentsEntity } from './streamComment.entity';
 
 @Entity({ name: 'Streams' })
 export class StreamsEntity extends BaseEntity implements Stream {
@@ -42,12 +40,6 @@ export class StreamsEntity extends BaseEntity implements Stream {
 
   @Column({ type: 'boolean', default: 1 })
   needAnalysis: boolean;
-
-  @OneToMany(() => StreamVotesEntity, (vote) => vote.stream)
-  votes: StreamVotesEntity[];
-
-  // @OneToMany(() => StreamCommentsEntity, (comment) => comment.stream)
-  // comments: StreamCommentsEntity[];
 
   constructor(partial: Partial<StreamsEntity>) {
     super();

@@ -1,16 +1,11 @@
 import { TodayTopViewerUsersRes } from '@truepoint/shared/dist/res/TodayTopViewerUsersRes.interface';
-import { CreateStreamVoteDto } from '@truepoint/shared/dist/dto/broadcast-info/CreateStreamVote.dto';
 import {
-  Body,
-  Controller, Delete, Get, Ip, Param, ParseIntPipe, Post, Query,
+  Controller, Get, Param, Query,
 } from '@nestjs/common';
-import { FindOneStreamDto } from '@truepoint/shared/dist/dto/broadcast-info/FindOneStream.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { BroadcastDataForDownload } from '@truepoint/shared/dist/interfaces/BroadcastDataForDownload.interface';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
-// service
-import { RecentStream, RecentStreamResType } from '@truepoint/shared/res/RecentStreamResType.interface';
 // pipe
 import { ValidationPipe } from '../../pipes/validation.pipe';
 import { BroadcastInfoService } from './broadcast-info.service';
@@ -34,41 +29,6 @@ export class BroadcastInfoController {
       findDaysStreamRequest.startDate,
       findDaysStreamRequest.endDate,
     );
-  }
-
-  /**
-   * 해당 크리에이터의 최근 방송 정보를 가져옵니다.
-   * creatorId (twitch, afreeca 고유 ID) 를 통해 방송 목록을 가져옵니다.
-   * @param creatorId 방송목록을 가져올 유저(afreeca,twitch)고유 아이디
-   * @param limit 가져올 방송 목록 갯수
-   */
-  @Get('bycreator')
-  async getStreamsByCreatorId(
-    @Query('creatorId') creatorId: string,
-    @Query('limit', ParseIntPipe) limit: number,
-  ): Promise<RecentStreamResType> {
-    const result = await this.broadcastService.getStreamsByCreatorId(creatorId, limit);
-    return result;
-  }
-
-  /**
-   * 방송에 대한 좋아요 / 싫어요를 추가합니다.
-   * @param ip 요청자 IP
-   * @param dto CreateSteramVoteDto
-   * @returns 1 | 0
-   */
-  @Post('vote')
-  vote(@Ip() ip: string, @Body(ValidationPipe) dto: CreateStreamVoteDto): Promise<number> {
-    return this.broadcastService.vote({ ...dto, ip });
-  }
-
-  /**
-   * 방송에대한 좋아요 / 싫어요를 삭제합니다.
-   * @param id 삭제할 vote의 고유ID
-   */
-  @Delete('vote')
-  cancelVote(@Query('id') id: number): Promise<number> {
-    return this.broadcastService.cancelVote(id);
   }
 
   /**
@@ -102,34 +62,5 @@ export class BroadcastInfoController {
   @Get('today-top-viewer')
   getTodayTopViewerUserByPlatform(): Promise<TodayTopViewerUsersRes> {
     return this.broadcastService.getTodayTopViewerUserByPlatform();
-  }
-
-  /**
-   * 1개의 스트림에 대한 정보를 반환
-   * @param platform twitch | afreeca
-   * @param streamId 
-   * @returns 
-   */
-  @Get('/:platform/:streamId')
-  async findOneStream(
-    @Ip() ip: string,
-    @Param(ValidationPipe) params: FindOneStreamDto,
-  ): Promise<RecentStream> {
-    const {
-      streamId, platform,
-    } = params;
-    const streamData = await this.broadcastService.findOneSteam(streamId, platform);
-    const vote = await this.broadcastService.checkIsVotedByIp(ip, streamId);
-
-    if (vote) {
-      return {
-        ...streamData,
-        voteHistory: {
-          ...vote,
-          type: vote.vote ? 'up' : 'down',
-        },
-      };
-    }
-    return streamData;
   }
 }
