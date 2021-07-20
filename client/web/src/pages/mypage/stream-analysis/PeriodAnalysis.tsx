@@ -29,7 +29,12 @@ export default function PeriodAnalysis(): JSX.Element {
   const [selectedMetric, selectMetric] = useState<string[]>([]);
   /* 기간 추이 분석 분석 결과 요청 */
   const [{ error, loading }, getRequest] = useAxios<PeriodAnalysisResType>(
-    '/stream-analysis/period', { manual: true },
+    {
+      url: '/stream-analysis/period',
+      method: 'get',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    },
+    { manual: true },
   );
   const subscribe = React.useContext(SubscribeContext);
   const { enqueueSnackbar } = useSnackbar();
