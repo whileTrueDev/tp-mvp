@@ -1,7 +1,6 @@
-import classnames from 'classnames';
 import { makeStyles, Tooltip } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import { Comment, Image } from '@material-ui/icons';
+import { Comment } from '@material-ui/icons';
 import { UserDetail } from '@truepoint/shared/dist/interfaces/UserDetail.interface';
 import React from 'react';
 
@@ -51,11 +50,6 @@ export default function CreatorListItem({
         {detail?.description && (
         <Tooltip title="상세 설명 있음">
           <Comment color="secondary" fontSize="small" className={classes.icon} />
-        </Tooltip>
-        )}
-        {(detail?.heroImageLight || detail?.heroImageDark) && (
-        <Tooltip title={`대문이미지 ${detail?.heroImageLight ? '라이트모드' : ''} ${detail?.heroImageDark ? ',다크모드' : ''} 있음`}>
-          <Image fontSize="small" className={classnames(classes.icon, classes.success)} />
         </Tooltip>
         )}
       </span>
