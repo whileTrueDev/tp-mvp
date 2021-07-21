@@ -25,14 +25,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
   card: {
-    height: '94px',
     borderRadius: '4px',
     backgroundColor: '#959abb',
     borderWidth: 0,
   },
   main: {
-    fontSize: '18px',
-    fontWeight: 'normal',
+    fontSize: theme.typography.h6.fontSize,
     color: theme.palette.text.primary,
   },
   bold: {
@@ -85,27 +83,25 @@ export default function StreamAnalysis(
                     <Grid item>
                       <Card className={classes.card} variant="outlined">
                         <CardContent className={classes.center}>
-                          <Grid container direction="row" justify="center" spacing={1}>
+                          <Grid container direction="row" justify="center">
                             <Grid item>
-                              <Typography className={classes.main}>
-                                {type ? '기준 기간' : `"${element.broad1Title}" ` }
-                                이
-                                {' '}
-                                {type ? '비교 기간' : `"${element.broad2Title}" ` }
+                              <Typography>
+                                {type ? '기준 기간' : <Typography className={classes.main} component="span">{`"${element.broad1Title}" `}</Typography> }
+                                이&nbsp;
+                                {type ? '비교 기간' : <Typography className={classes.main} component="span">{`"${element.broad2Title}" `}</Typography> }
                                 보다
-                                {' '}
-                                {element.title}
-                                가
-                                {' '}
                               </Typography>
                             </Grid>
                             <Grid item>
-                              <Typography className={classnames(classes.main, classes.bold)}>
-                                {element.diff}
-                              </Typography>
-                            </Grid>
-                            <Grid item>
-                              <Typography className={classes.main}>
+                              <Typography gutterBottom className={classes.main}>
+                                <Typography component="span" className={classnames(classes.main, classes.bold)}>
+                                  {element.title}
+                                </Typography>
+                                가&nbsp;
+                                <Typography component="span" className={classnames(classes.main, classes.bold)}>
+                                  {element.diff}
+                                  &nbsp;
+                                </Typography>
                                 {element.sign ? '더 많습니다.' : '더 적습니다.'}
                               </Typography>
                             </Grid>

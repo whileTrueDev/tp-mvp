@@ -23,22 +23,7 @@ export const useStyles = makeStyles((theme: Theme) => createStyles({
     padding: theme.spacing(2),
     backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? '100' : 'A400'],
     marginBottom: theme.spacing(2),
-    '& .MuiPagination-ul>*:first-child>.MuiPaginationItem-root': {
-      border: '1px solid currentColor',
-    },
-    '& .MuiPagination-ul>*:last-child>.MuiPaginationItem-root': {
-      border: '1px solid currentColor',
-    },
-  },
-  paginationItem: {
-    '&.MuiPaginationItem-root': {
-      color: theme.palette.text.secondary,
-      border: 'none',
-      fontSize: theme.typography.body1.fontSize,
-    },
-    '&.Mui-selected': {
-      color: theme.palette.text.primary,
-    },
+    marginTop: 0,
   },
   controls: {
     display: 'flex',
