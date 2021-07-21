@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import useAxios from 'axios-hooks';
 import {
-  CreatorRatingInfoRes, CreatorAverageRatings, CreatorAverageScores, CreatorAverageScoresWithRank,
+  CreatorRatingInfoRes, CreatorAverageRatings, CreatorAverageScoresWithRank,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 
 interface Props{
