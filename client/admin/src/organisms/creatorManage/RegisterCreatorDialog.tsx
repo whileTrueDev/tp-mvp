@@ -81,7 +81,7 @@ export default function RegisterCreatorDialog({
       }
     }
     const dto: RegisterUserByAdminDto = {
-      logo: formData.platform === 'twitch' ? formData.logo : `https://profile.img.afreecatv.com/LOGO/${formData.platformId.slice(0, 2)}/${formData.platformId}.jpg`,
+      logo: formData.platform === 'twitch' ? formData.logo : `https://profile.img.afreecatv.com/LOGO/${formData.platformId.slice(0, 2)}/${formData.platformId}/${formData.platformId}.jpg`,
       password: 'test',
       userId: formData.platformId,
       nickname: formData.nickname,
