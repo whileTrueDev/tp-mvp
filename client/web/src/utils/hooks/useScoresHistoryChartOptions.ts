@@ -42,13 +42,15 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
   return `
   <b>${dayjs(x).format('ll')}</b>
   <table>
-  <tr>
-    <td>${point.options.title || ''}</td>
-  </tr>
-  <tr>
-    <td style="color: ${series.options.color}">${series.name}: </td>
-    <td><b>${number}</b></td>
-  </tr>
+    <tr>
+      <td>${point.options.title || ''}</td>
+    </tr>
+    <tr>
+      <td>
+        <span style="color: ${series.options.color}">${series.name}: </span>
+        <b>${number}</b>
+      </td>
+    </tr>
   </table>
 `;
 }
