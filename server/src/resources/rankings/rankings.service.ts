@@ -563,9 +563,13 @@ export class RankingsService {
         .select('date(min(streamDate)) as firstBroadDate')
         .where('rankings.creatorId = :creatorId', { creatorId })
         .getRawOne();
-
       const defaultStartDate = userInputDate ? dayjs(userInputDate) : dayjs().subtract(3, 'month'); // 3개월 이전 날짜
       const dateFirstBroad = dayjs(firstBroadDate);
+
+      if (!firstBroadDate) {
+        return defaultStartDate.format('YYYY-MM-DD');
+      }
+
       // 첫 방송 데이터가 3개월이 안된 경우 - 첫방송 데이터 날짜부터 어제날짜까지
       // 첫 방송 데이터가 3개월보다 오래된 경우 - 3개월 전 날짜부터 어제날짜까지
       return dateFirstBroad.isBefore(defaultStartDate)
