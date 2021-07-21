@@ -10,10 +10,12 @@ import { useSnackbar } from 'notistack';
 import React, { useCallback, useEffect, useRef } from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import { isAvailableNickname } from '../../../utils/checkAvailableNickname';
 import { useUserReactionStyle } from './style/UserReactionCard.style';
 import UserReactionListItem from './sub/UserReactionListItem';
 
 const userReactionUrl = '/user-reactions';
+
 export default function UserReactionCard(): JSX.Element {
   const classes = useUserReactionStyle();
   const { enqueueSnackbar } = useSnackbar();
@@ -68,10 +70,17 @@ export default function UserReactionCard(): JSX.Element {
     if (!formRef.current) {
       return;
     }
+
+    const userNickname = formRef.current.username.value.trim();
+    if (!isAvailableNickname(userNickname)) {
+      ShowSnack('사용할 수 없는 닉네임입니다. 다른 닉네임을 입력해주세요.', 'error', enqueueSnackbar);
+      return;
+    }
     if (formRef.current.content.value.trim() === '' || formRef.current.password.value.trim() === '') {
       ShowSnack('비밀번호와 내용을 입력해주세요', 'error', enqueueSnackbar);
       return;
     }
+
     createUserReaction({
       username: formRef.current.username.value.trim() || '시청자',
       password: formRef.current.password.value,
