@@ -93,6 +93,7 @@ function TrendsBarChart(props: TrendsBarChartProps): JSX.Element {
     chart: {
       margin: 0,
     },
+    lang: { noData: undefined },
     legend: { enabled: false },
     plotOptions: {
       series: {
