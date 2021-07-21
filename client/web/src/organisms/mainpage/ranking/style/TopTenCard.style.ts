@@ -77,24 +77,16 @@ export const useTabItem = makeStyles((theme: Theme) => {
   const rootHeight = theme.spacing(5.5);
   return createStyles({
     root: {
-      textTransform: 'initial',
-      height: rootHeight,
-      minHeight: rootHeight,
-      padding: 0,
-      paddingLeft: theme.spacing(0.5),
-      overflow: 'visible',
-      position: 'relative',
-      justifyContent: 'flex-start',
-      minWidth: 'auto',
-      '&:after': {
-        content: '" "',
-        display: 'none',
-        position: 'absolute',
-        top: 0,
-        right: `-${rootHeight / 4}px`,
-        borderLeft: `${rootHeight / 4}px solid ${defaultBgColor}`,
-        borderTop: `${rootHeight / 2}px solid transparent`,
-        borderBottom: `${rootHeight / 2}px solid transparent`,
+      '&.MuiButtonBase-root': {
+        textTransform: 'initial',
+        height: rootHeight,
+        minHeight: rootHeight,
+        padding: 0,
+        paddingLeft: theme.spacing(0.5),
+        overflow: 'visible',
+        position: 'relative',
+        justifyContent: 'flex-start',
+        minWidth: 'auto',
       },
     },
     selected: {
@@ -103,26 +95,26 @@ export const useTabItem = makeStyles((theme: Theme) => {
         backgroundColor: defaultBgColor,
         zIndex: 1,
       },
-      '&$root:after': {
-        display: 'block',
-      },
-      '& $wrapper': {
+      '&$root $wrapper': {
         color: theme.palette.secondary.main,
       },
     },
     wrapper: {
-      color: defaultLabelColor,
-      position: 'relative',
-      fontSize: theme.typography.button.fontSize,
-      fontWeight: theme.typography.fontWeightBold,
-      flexDirection: 'row',
-      width: 'auto',
-      alignItems: 'center',
-      '& svg': {
-        fontSize: svgFontSize,
-        marginRight: theme.spacing(0.5),
+      '&.MuiTab-wrapper': {
+        color: defaultLabelColor,
+        position: 'relative',
+        fontSize: theme.typography.button.fontSize,
+        fontWeight: theme.typography.fontWeightBold,
+        flexDirection: 'row',
+        width: 'auto',
+        alignItems: 'center',
+        '& svg': {
+          fontSize: svgFontSize,
+          marginRight: theme.spacing(0.5),
+        },
+        wordBreak: 'keep-all',
       },
-      wordBreak: 'keep-all',
+
     },
   });
 });
@@ -133,11 +125,13 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
     display: 'none',
   },
   root: {
-    display: 'inline-flex',
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
-    borderRadius: theme.spacing(1),
-    padding: theme.spacing(0.25),
-    minHeight: theme.spacing(3.75),
+    '&.MuiTabs-root': {
+      display: 'inline-flex',
+      backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
+      borderRadius: theme.spacing(1),
+      padding: theme.spacing(0.25),
+      minHeight: theme.spacing(3.75),
+    },
   },
 }));
 
@@ -145,15 +139,17 @@ export const useHorizontalTabsStyle = makeStyles((theme: Theme) => createStyles(
 // ToptenCard 내 상단 가로형 탭 아이템 컴포넌트 스타일
 export const useHorizontalTabItemStyle = makeStyles((theme: Theme) => createStyles({
   root: {
-    minWidth: theme.spacing(7.5),
-    minHeight: theme.spacing(3.75),
-    alignItems: 'center',
-    opacity: 1,
-    overflow: 'initial',
-    padding: theme.spacing(0, 1),
-    borderRadius: theme.spacing(1),
-    color: theme.palette.text.primary,
-    transition: '0.2s',
+    '&.MuiButtonBase-root': {
+      minWidth: theme.spacing(7.5),
+      minHeight: theme.spacing(3.75),
+      alignItems: 'center',
+      opacity: 1,
+      overflow: 'initial',
+      padding: theme.spacing(0, 1),
+      borderRadius: theme.spacing(1),
+      color: theme.palette.text.primary,
+      transition: '0.2s',
+    },
   },
   selected: {
     boxShadow: theme.shadows[2],
@@ -182,19 +178,23 @@ export const useHorizontalTabItemStyle = makeStyles((theme: Theme) => createStyl
 
 export const usePlatformTabsStyle = makeStyles((theme: Theme) => createStyles({
   root: {
-    padding: theme.spacing(0.5),
-    marginBottom: theme.spacing(2.5),
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
-    minHeight: 'auto',
+    '&.MuiTabs-root': {
+      padding: theme.spacing(0.5),
+      marginBottom: theme.spacing(2.5),
+      backgroundColor: theme.palette.type === 'light' ? theme.palette.divider : theme.palette.background.default,
+      minHeight: 'auto',
+    },
   },
   indicator: { display: 'none' },
 }));
 export const usePlatformTabItemStyle = makeStyles((theme: Theme) => createStyles({
   root: {
-    minHeight: 'auto',
-    minWidth: 'auto',
-    height: theme.spacing(2),
-    padding: theme.spacing(0, 1),
+    '&.MuiButtonBase-root': {
+      minHeight: 'auto',
+      minWidth: 'auto',
+      height: theme.spacing(2),
+      padding: theme.spacing(0, 1),
+    },
   },
   wrapper: {
     fontSize: theme.typography.button.fontSize,

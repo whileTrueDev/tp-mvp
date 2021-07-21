@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   Avatar, Chip, Typography,
 } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
-import { Pagination, PaginationItem, Rating } from '@material-ui/lab';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Rating } from '@material-ui/lab';
 import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import useAxios from 'axios-hooks';
 import LazyLoad from 'react-lazyload';
@@ -15,6 +13,7 @@ import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useSearchTableStyle } from '../style/CreatorSearch.style';
 import { usePaginationState } from '../../../../utils/hooks/usePaginationState';
 import SearchInput from '../../shared/SearchInput';
+import CustomPagination from '../../../../atoms/CustomPagination';
 
 function getCellStyle(isMobile: boolean): React.CSSProperties {
   return isMobile ? {
@@ -161,13 +160,11 @@ export default function CreatorSearchTable(): JSX.Element {
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
-                padding: 16,
               }}
             >
-              <Pagination
+              <CustomPagination
                 size={isMobile ? 'small' : 'medium'}
-                renderItem={(item) => (<PaginationItem {...item} />)}
-                variant="outlined"
+                siblingCount={isMobile ? 0 : undefined}
                 showFirstButton
                 showLastButton
                 onChange={handlePageChange}

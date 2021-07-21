@@ -40,7 +40,7 @@ import CheckBoxGroup from '../shared/CheckBoxGroup';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import PeriodSelectDialog from '../shared/PeriodSelectDialog';
-import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../../store/usePublicMainUser';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {

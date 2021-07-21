@@ -1,9 +1,10 @@
-import { Pagination } from '@material-ui/lab';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
 import React, { useEffect, useMemo } from 'react';
 import { useStyles } from '../style/CommunityBoardView.style';
 import RepliesSection from './RepliesSection';
 import CommentForm from '../../ranking/sub/CommentForm';
+import CustomPagination from '../../../../atoms/CustomPagination';
+import useMediaSize from '../../../../utils/hooks/useMediaSize';
 
 export interface RepliesContainerProps {
   replies: FindReplyResType | undefined,
@@ -23,6 +24,7 @@ export default function RepliesContainer(props: RepliesContainerProps): JSX.Elem
     setReplyPage,
   } = props;
   const classes = useStyles();
+  const { isMobile } = useMediaSize();
 
   const replyPaginationCount = useMemo(() => {
     if (replies) {
@@ -50,14 +52,15 @@ export default function RepliesContainer(props: RepliesContainerProps): JSX.Elem
         replies={replies ? replies.replies : []}
         loadReplies={loadReplies}
       />
-      <Pagination
+      <CustomPagination
         className={classes.replyPagenation}
-        shape="rounded"
         page={replyPage}
+        showFirstButton
+        showLastButton
+        size={isMobile ? 'small' : 'medium'}
         count={replyPaginationCount}
         onChange={changeReplyPage}
       />
-
       <CommentForm
         postUrl={`/community/posts/${postId}/replies`}
         callback={loadReplies}
