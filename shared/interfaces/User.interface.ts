@@ -3,7 +3,6 @@ import { PlatformTwitch } from './PlatformTwitch.interface';
 import { PlatformYoutube } from './PlatformYoutube.interface';
 import { Subscribe } from './Subscribe.interface';
 import { UserDetail } from './UserDetail.interface';
-import { StreamComments } from './StreamComments.interface';
 import { FeatureSuggestion } from './FeatureSuggestion.interface';
 import { FeatureSuggestionReply } from './FeatureSuggestionReply.interface';
 import { CreatorComments } from './CreatorComments.interface';
@@ -54,8 +53,6 @@ export interface User {
   naverId?: string;
 
   kakaoId?: string;
-
-  streamComments?: StreamComments[];
 
   featureSuggestions?: FeatureSuggestion[];
 

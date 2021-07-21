@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import {
-  Pagination, PaginationItem, ToggleButtonGroup,
-} from '@material-ui/lab';
+import { ToggleButtonGroup } from '@material-ui/lab';
 import { Button, Typography } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import useAxios from 'axios-hooks';
@@ -12,6 +10,7 @@ import PostList from './PostList';
 import SearchForm from './SearchForm';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useStyles, StyledToggleButton, useToggleButtonGroupsStyle } from '../style/CommunityBoardList.style';
+import CustomPagination from '../../../../atoms/CustomPagination';
 
 const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
   { key: 'all', text: '전체글', class: 'all' },
@@ -174,20 +173,15 @@ export default function BoardContainer({
         loading={loading}
         error={error}
       />
-
-      <Pagination
+      <CustomPagination
         className={classes.pagination}
-        variant="outlined"
-        shape="rounded"
+        showFirstButton
+        showLastButton
+        defaultPage={1}
         page={page}
         count={paginationCount}
         onChange={pagenationHandler}
-        renderItem={(item) => (
-          <PaginationItem
-            className={classes.paginationItem}
-            {...item}
-          />
-        )}
+        size={isMobile ? 'small' : 'medium'}
       />
       <SearchForm
         className={classes.searchForm}

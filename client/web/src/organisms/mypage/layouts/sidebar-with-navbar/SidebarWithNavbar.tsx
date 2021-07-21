@@ -16,7 +16,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { COMMON_APP_BAR_HEIGHT, SIDE_BAR_WIDTH } from '../../../../assets/constants';
 import { MypageRoute } from '../../../../pages/mypage/routes';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
-import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../../store/usePublicMainUser';
 
 const useStyles = makeStyles((theme) => createStyles({
   root: { display: 'flex' },

@@ -548,10 +548,9 @@ export class CreatorRatingsService {
         dateLimit,
       });
       const selectedCreatorsId = rankingData.map((d) => d.creatorId);
-      const dates = this.getWeekDates();
 
       // 해당 10명의 7일간 평점
-      const weekData = await this.getRatingTrendsInWeek(selectedCreatorsId, dates);
+      const weekData = await this.getRatingTrendsInWeek(selectedCreatorsId);
 
       return {
         rankingData,
@@ -565,36 +564,56 @@ export class CreatorRatingsService {
   }
 
   // dates에 해당하는 크리에이터 일간 평균 평점
-  async getRatingTrendsInWeek(ids: string[], dates: string[]): Promise<WeeklyTrendsType> {
-    const data = await this.ratingsRepository.createQueryBuilder('ratings')
-      .select([
-        'ratings.creatorId AS creatorId',
-        'ROUND(AVG(ratings.rating),2) AS avgRating',
-        'DATE_FORMAT(ratings.createDate, "%Y-%m-%d") AS date',
-      ])
-      .where(`ratings.creatorId IN ('${ids.join("','")}')`)
-      .andWhere(`DATE_FORMAT(ratings.createDate, "%Y-%m-%d") IN ('${dates.join("','")}')`)
-      .groupBy('ratings.creatorId')
-      .addGroupBy('date')
-      .orderBy('ratings.creatorId')
-      .addOrderBy('date', 'ASC')
-      .getRawMany();
+  async getRatingTrendsInWeek(ids: string[]): Promise<WeeklyTrendsType> {
+    const dateWeekAgo = dayjs().subtract(7, 'day');
 
-    // 데이터를 
-    // {[creatorId] : [{"createDate": "2021-04-16","rating": 3.25}, ... ]}
-    // 형태로 바꿈
-    const result = ids.reduce((resultObj, id) => ({
-      ...resultObj,
-      [id]: dates.map((d) => {
-        const dateMatchedItem: {date: string; avgRating: number} = data.find((item) => (
-          (item.date === d) && (item.creatorId === id)
-        ));
-        return {
-          createDate: d,
-          rating: dateMatchedItem ? dateMatchedItem.avgRating : 0,
-        };
-      }),
-    }), {});
+    const result = await ids.reduce(async (promise, id) => {
+      const obj = await promise.then();
+      const datesArr = Array(7).fill(0).map((_, index) => {
+        const date = dayjs().subtract(8 - (index + 1), 'day').format('YYYY-MM-DD');
+        return { createDate: date };
+      });
+
+      const avgRatings = await this.avgRatingRepository.createQueryBuilder('avgRating')
+        .select(['date(date) AS date', 'averageRating'])
+        .where(`creatorId = '${id}'`)
+        .orderBy('date', 'ASC')
+        .getRawMany();
+
+      // avgRating에 일자별로 모든 평균 평점이 저장되어 있지 않음
+      // 7일 이전 날짜 중 가장 최근에 저장된 평점 데이터의 인덱스 찾기
+      const lastIndex = avgRatings.findIndex((r) => {
+        const ratingDate = dayjs(r.date);
+        const isSameDate = dateWeekAgo.isSame(ratingDate);
+        const isBefore = dateWeekAgo.isBefore(ratingDate);
+        return isSameDate || isBefore;
+      });
+
+      // 평점 데이터가 없거나 모두 7일 이전에 매겨진 데이터인 경우
+      if (lastIndex === -1 || lastIndex === 0) {
+        const { averageRating } = avgRatings[avgRatings.length - 1];
+        const ratings = datesArr.map((date) => ({ ...date, rating: averageRating }));
+        return Promise.resolve({ ...obj, [id]: ratings });
+      }
+
+      // 7일 내 매겨진 데이터가 있는 경우, 그 이전 날짜부터 평점 가져옴
+      const slicedArr = avgRatings.slice(lastIndex - 1);
+      // 날짜에 맞게 평점 데이터 배치(평점 바뀌지 않으면 이전 평점 표시, 바뀐 이후부터는 바뀐 평점 표시)
+      const ratings = datesArr.reduce((acc: any[], cur, index: number) => {
+        const { createDate } = cur;
+        const ratingChangedData = slicedArr.find((r) => r.date === createDate);
+        if (ratingChangedData) {
+          return [...acc, { ...cur, rating: ratingChangedData.averageRating }];
+        }
+        if (index === 0) {
+          return [...acc, { ...cur, rating: slicedArr[0].averageRating }];
+        }
+        const lastRating = acc[index - 1].rating;
+        return [...acc, { ...cur, rating: lastRating }];
+      }, []);
+
+      return Promise.resolve({ ...obj, [id]: ratings });
+    }, Promise.resolve({}));
 
     return result;
   }
