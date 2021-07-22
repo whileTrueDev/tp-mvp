@@ -10,7 +10,6 @@ import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { AverageRating, CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import dayjs from 'dayjs';
-import { Cron } from '@nestjs/schedule';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { DailyAverageRatingsEntity } from './entities/dailyAverageRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
@@ -635,10 +634,7 @@ export class CreatorRatingsService {
 
   /**
    * 매일 자정에 실행되는 방송인 평균 평점 저장 함수
-   * 전날 하루동안 평점 매겨진 방송인에 대해 평점 평균을 계산하고
-   * DailyAverageRating에 날짜, 방송인, 평균평점을 저장
    */
-  @Cron('0 0 * * *') // 매일 자정 실행
   async saveDailyAverageRating(): Promise<void> {
     try {
       const targetDate = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
