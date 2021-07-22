@@ -139,42 +139,39 @@ export function ProfileSection({
           label="방송 보러 가기"
         />
       </Grid>
-      <Grid item container xs={12}>
-        <Grid item className={classes.avatarContainer} xs={4}>
-          <Avatar className={classes.avatar} src={logo} />
-        </Grid>
-
-        <Grid item container className={classes.textContainer} xs={8}>
-
-          <Grid item className={classes.nameContainer}>
-            <Typography className={classes.nickname} component="div">
-              {nickname}
-            </Typography>
-          </Grid>
-          <Grid item className={classes.ratingContainer}>
-            <Typography className={classes.averageRatingText}>
-              평균★
-              {averageRating.toFixed(2)}
-              {`(${ratingCount}명)`}
-            </Typography>
-            <StarRating
-              createRatingHandler={createRatingHandler}
-              cancelRatingHandler={cancelRatingHandler}
-              score={userRating}
-              ratingProps={{
-                classes: largeRating,
-              }}
-            />
-          </Grid>
-          <Grid item className={classes.descriptionContainer}>
-            <Typography component="pre" className={classes.creatorDescription}>
-              {user?.detail?.description ? String(user.detail.description) : ''}
-            </Typography>
-          </Grid>
-
-        </Grid>
+      <Grid item className={classes.avatarContainer} xs={4}>
+        <Avatar className={classes.avatar} src={logo} />
       </Grid>
 
+      <Grid item container className={classes.textContainer} xs={8}>
+
+        <Grid item className={classes.nameContainer}>
+          <Typography className={classes.nickname} component="div">
+            {nickname}
+          </Typography>
+        </Grid>
+        <Grid item className={classes.ratingContainer}>
+          <Typography className={classes.averageRatingText}>
+            평균★
+            {averageRating.toFixed(2)}
+            {`(${ratingCount}명)`}
+          </Typography>
+          <StarRating
+            createRatingHandler={createRatingHandler}
+            cancelRatingHandler={cancelRatingHandler}
+            score={userRating}
+            ratingProps={{
+              classes: largeRating,
+            }}
+          />
+        </Grid>
+        <Grid item className={classes.descriptionContainer}>
+          <Typography component="pre" className={classes.creatorDescription}>
+            {user?.detail?.description ? String(user.detail.description) : ''}
+          </Typography>
+        </Grid>
+
+      </Grid>
     </>
   );
 }

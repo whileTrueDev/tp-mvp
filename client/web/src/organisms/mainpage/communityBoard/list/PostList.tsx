@@ -232,7 +232,6 @@ function MobilePostList({
                 <Typography className={classnames(classes.mobileText, classes.mobileNickname)}>
                   {displayNickname(post.userId, post.nickname as string)}
                 </Typography>
-
               </Grid>
 
               <Grid container>

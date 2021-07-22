@@ -46,7 +46,6 @@ export function MyPostItem(props: MyPostItemProps): JSX.Element {
           {dayjsFormatter(createDate).fromNow()}
         </Typography>
       </Grid>
-
       <Typography className="origin">{`${belongTo}`}</Typography>
     </Link>
   );
