@@ -10,6 +10,12 @@ export const filterOnly = {
 export const showOnly = {
   list: false, show: true, edit: false, filter: false,
 };
+export const listAndShowOnly = {
+  list: true, show: true, edit: false, filter: false,
+};
+export const editOnly = {
+  list: false, show: false, edit: true, filter: false,
+};
 
 type SORT = {
   direction: 'desc' | 'asc';

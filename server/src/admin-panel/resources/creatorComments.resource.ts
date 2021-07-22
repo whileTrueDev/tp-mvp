@@ -26,6 +26,7 @@ const CreatorCommentsResource: ResourceWithOptions = {
       content: { isTitle: true, position: 1 },
       createComment: {
         components: { show: AdminBro.bundle('../components/child-comment-for-creator-comment') },
+        isVisible: showOnly,
         position: 2,
       },
       link: {

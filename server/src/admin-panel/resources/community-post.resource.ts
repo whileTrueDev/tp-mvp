@@ -1,6 +1,6 @@
 import AdminBro, { ResourceWithOptions } from 'admin-bro';
 import { CommunityPostEntity } from '../../resources/communityBoard/entities/community-post.entity';
-import { CREATE_DATE__DESC, showOnly } from '../config';
+import { CREATE_DATE__DESC, showOnly, listAndShowOnly } from '../config';
 
 const PLATFORM_LABEL = AdminBro.bundle('../components/community-post-platform-label.tsx');
 const CATEGORY_LABEL = AdminBro.bundle('../components/community-post-category-label.tsx');
@@ -59,6 +59,11 @@ const CommunityPostResource: ResourceWithOptions = {
         isVisible: showOnly,
         position: 3,
       },
+      password: { isVisible: false },
+      hit: { isVisible: listAndShowOnly },
+      recommend: { isVisible: listAndShowOnly },
+      notRecommendCount: { isVisible: listAndShowOnly },
+      ip: { isVisible: listAndShowOnly },
     },
     navigation: {
       name: '글',
