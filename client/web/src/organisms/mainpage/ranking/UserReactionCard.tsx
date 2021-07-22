@@ -10,7 +10,7 @@ import { useSnackbar } from 'notistack';
 import React, { useCallback, useEffect, useRef } from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import { isAvailableNickname } from '../../../utils/checkAvailableNickname';
+import { isAvailableNickname, UNAVAILABLE_NICKNAME_ERROR_MESSAGE } from '../../../utils/checkAvailableNickname';
 import { useUserReactionStyle } from './style/UserReactionCard.style';
 import UserReactionListItem from './sub/UserReactionListItem';
 
@@ -73,7 +73,7 @@ export default function UserReactionCard(): JSX.Element {
 
     const userNickname = formRef.current.username.value.trim();
     if (!isAvailableNickname(userNickname)) {
-      ShowSnack('사용할 수 없는 닉네임입니다. 다른 닉네임을 입력해주세요.', 'error', enqueueSnackbar);
+      ShowSnack(UNAVAILABLE_NICKNAME_ERROR_MESSAGE, 'error', enqueueSnackbar);
       return;
     }
     if (formRef.current.content.value.trim() === '' || formRef.current.password.value.trim() === '') {
