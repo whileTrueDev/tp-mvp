@@ -65,7 +65,9 @@ export default function FeatureReply({
         <div>
           <div className={classes.titleSection}>
             <Typography variant="body2" className={classes.title}>
-              {transformIdToAsterisk(reply.author?.userId ? reply.author?.userId : reply.userIp)}
+              {reply.author?.userId === 'Truepoint'
+                ? reply.author?.userId
+                : transformIdToAsterisk(reply.author?.userId ? reply.author?.userId : reply.userIp)}
             </Typography>
             <Typography variant="caption">{dayjsFormatter(reply.createdAt).fromNow()}</Typography>
             {reply.author?.userId !== 'Truepoint' && (

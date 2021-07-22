@@ -68,6 +68,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
               notRecommendCount: '비추',
               platform: '게시판',
               category: '분류',
+              userId: 'userId - *** 관리자인 경우 "Truepoint" 입력 ***',
             },
           },
           FeatureSuggestionEntity: {
@@ -85,6 +86,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           UserReactionEntity: {
             properties: {
               username: '닉네임',
+              userId: 'userId - *** 관리자인 경우 "Truepoint" 입력 ***',
             },
           },
           CommunityReplyEntity: {

@@ -10,6 +10,9 @@ const FeatureSuggestionReplyResource: ResourceWithOptions = {
     ],
     properties: {
     },
+    actions: {
+      new: { isVisible: false },
+    },
     navigation: {
       name: '댓글',
       icon: '',

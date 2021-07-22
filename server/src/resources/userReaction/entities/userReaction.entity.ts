@@ -23,4 +23,7 @@ export class UserReactionEntity extends BaseEntity implements UserReaction {
 
   @Column({ select: false, comment: 'bcrypt로 암호화된 비밀번호' })
   password: string;
+
+  @Column({ nullable: true, default: null, comment: '작성자 userId, 관리자인 경우 Truepoint 로 저장한다' })
+  userId: string;
 }

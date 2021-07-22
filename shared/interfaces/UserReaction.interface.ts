@@ -5,4 +5,5 @@ export interface UserReaction{
   content: string;
   createDate: Date;
   password: string;
+  userId: string;
 }
