@@ -177,18 +177,6 @@ export class UsersService {
       youtubeChannelAddress: dto.youtubeChannelAddress,
     });
 
-    if (dto.heroImageLight) {
-      const heroImageUrl = await this.s3Service.uploadBase64ImageToS3(
-        `heroImage/${dto.userId}/light`, dto.heroImageLight,
-      );
-      detail.heroImageLight = heroImageUrl;
-    }
-    if (dto.heroImageDark) {
-      const heroImageUrl = await this.s3Service.uploadBase64ImageToS3(
-        `heroImage/${dto.userId}/dark`, dto.heroImageDark,
-      );
-      detail.heroImageDark = heroImageUrl;
-    }
     await this.userDetailRepo.save(detail);
 
     const user = this.usersRepository.create({

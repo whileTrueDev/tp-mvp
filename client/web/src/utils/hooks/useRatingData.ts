@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import useAxios from 'axios-hooks';
 import {
-  CreatorRatingInfoRes, CreatorAverageRatings, CreatorAverageScores,
+  CreatorRatingInfoRes, CreatorAverageRatings, CreatorAverageScoresWithRank,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 
 interface Props{
@@ -9,7 +9,7 @@ interface Props{
 }
 export default function useRatingData(props: Props): {
   ratings: CreatorAverageRatings;
-  scores: CreatorAverageScores;
+  scores: CreatorAverageScoresWithRank;
   updateAverageRating: () => void;
   fetchCreatorRatingInfo: () => void;
 } {
@@ -23,11 +23,16 @@ export default function useRatingData(props: Props): {
     average: 0,
     count: 0,
   });
-  const [scores, setScores] = useState<CreatorAverageScores>({
+  const [scores, setScores] = useState<CreatorAverageScoresWithRank>({
     admire: 0,
     smile: 0,
     frustrate: 0,
     cuss: 0,
+    total: 0,
+    admireRank: 0,
+    smileRank: 0,
+    frustrateRank: 0,
+    cussRank: 0,
   });
   // 유저가 평점을 매긴 후 평균평점을 다시 불러온다
   const updateAverageRating = useCallback(() => {
@@ -43,7 +48,7 @@ export default function useRatingData(props: Props): {
     getCreatorRatingInfo()
       .then((res) => {
         setRatings(res.data.ratings);
-        setScores(res.data.scores);
+        setScores((prev) => ({ ...prev, ...res.data.scores }));
       })
       .catch((error) => console.error(error));
   }, [getCreatorRatingInfo]);

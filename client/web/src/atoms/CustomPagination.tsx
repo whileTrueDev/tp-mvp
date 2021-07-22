@@ -28,9 +28,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     margin: '0 1px',
     padding: '0 4px',
     fontSize: theme.spacing(1.5),
-    '& $icon': {
-      fontSize: theme.typography.pxToRem(18),
-    },
   },
   sizeLarge: {
     minWidth: 40,
@@ -38,9 +35,6 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     borderRadius: 40 / 2,
     padding: '0 10px',
     fontSize: theme.typography.pxToRem(15),
-    '& $icon': {
-      fontSize: theme.typography.pxToRem(22),
-    },
   },
 }));
 

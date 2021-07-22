@@ -3,7 +3,7 @@ import {
   Grid, Typography,
 } from '@material-ui/core';
 import {
-  CreatorAverageScores,
+  CreatorAverageScoresWithRank,
 } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import ScoreBar from '../ranking/topten/ScoreBar';
 import { useScoreSectionStyles } from './ScoresSection.style';
@@ -25,7 +25,7 @@ const scoreLables: {name: columns, label: string, icon?: any}[] = [
 ];
 
 export function ScoresSection({ scores }: {
-  scores: CreatorAverageScores
+  scores: CreatorAverageScoresWithRank
 }): JSX.Element {
   const classes = useScoreSectionStyles();
 

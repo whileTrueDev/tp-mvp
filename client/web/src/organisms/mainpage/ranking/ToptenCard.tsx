@@ -23,7 +23,16 @@ import useMediaSize from '../../../utils/hooks/useMediaSize';
 import { dayjsFormatter } from '../../../utils/dateExpression';
 import RankingDropDown from './topten/filter/RankingDropDown';
 
-export type MainTabName = 'admire'|'smile'|'cuss'|'frustrate'|'viewer'|'rating';
+export const Icons = {
+  viewer: <TVIcon />,
+  rating: <StarBorderIcon />,
+  admire: <AdmireIcon />,
+  smile: <SmileIcon />,
+  frustrate: <FrustratedIcon />,
+  cuss: <CussIcon />,
+};
+
+export type MainTabName = keyof typeof Icons;
 type MainTabColumns = {
   column: MainTabName;
   label: string;
@@ -33,13 +42,13 @@ type MainTabColumns = {
 
 // 탭목록
 const mainTabColumns: MainTabColumns[] = [
-  { column: 'viewer', label: '최고 시청자수', icon: <TVIcon /> },
-  { column: 'rating', label: '시청자 평점', icon: <StarBorderIcon /> },
-  { column: 'admire', label: '감탄 많은 방송', icon: <AdmireIcon /> },
-  { column: 'smile', label: '웃음 많은 방송', icon: <SmileIcon /> },
-  { column: 'frustrate', label: '답답한 방송', icon: <FrustratedIcon /> },
-  { column: 'cuss', label: '욕많은 방송', icon: <CussIcon /> },
-];
+  { column: 'viewer' as const, label: '최고 시청자수' },
+  { column: 'rating' as const, label: '시청자 평점' },
+  { column: 'admire' as const, label: '감탄 많은 방송' },
+  { column: 'smile' as const, label: '웃음 많은 방송' },
+  { column: 'frustrate' as const, label: '답답한 방송' },
+  { column: 'cuss' as const, label: '욕많은 방송' },
+].map((col) => ({ ...col, icon: Icons[col.column] }));
 
 type PlatformFilterType = 'all' | 'twitch' | 'afreeca';
 // 플랫폼 필터 탭 목록

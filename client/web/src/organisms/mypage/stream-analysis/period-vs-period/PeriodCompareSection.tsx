@@ -32,7 +32,7 @@ import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 import SectionTitle from '../../../shared/sub/SectionTitles';
 // attoms snackbar
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../../store/usePublicMainUser';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {

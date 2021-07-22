@@ -11,7 +11,7 @@ import PageSizeAlert from '../../organisms/mypage/alertbar/PageSizeAlert';
 import SidebarWithNavbar from '../../organisms/mypage/layouts/sidebar-with-navbar/SidebarWithNavbar';
 import useAuthContext from '../../utils/hooks/useAuthContext';
 import useDialog from '../../utils/hooks/useDialog';
-import usePublicMainUser from '../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../store/usePublicMainUser';
 
 export interface ParamTypes {
   userId: string

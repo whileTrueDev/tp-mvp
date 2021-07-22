@@ -64,7 +64,7 @@ function ScoreBar(props: Props): JSX.Element {
         </Typography>
         )}
         { rankLabel && (
-        <Typography component="span" style={{ color: 'black', fontSize: '14px' }}>
+        <Typography component="span" style={{ fontSize: '14px' }}>
           {rankLabel}
         </Typography>
         )}
