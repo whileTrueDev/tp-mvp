@@ -81,4 +81,4 @@ AdminBro.registerAdapter({ Database, Resource });
     ScheduleTaskModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
