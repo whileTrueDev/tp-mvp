@@ -37,8 +37,7 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
   const {
     x, y, series, point,
   } = this;
-  const value = point.options ? point.options.custom?.originValue : y;
-  const number = formatNumber(series.name, Number(value));
+  const number = formatNumber(series.name, Number(y));
   return `
   <b>${dayjs(x).format('ll')}</b>
   <table>
@@ -57,7 +56,7 @@ function tooltipFormatter(this: Highcharts.TooltipFormatterContextObject) {
 
 // 그래프에 뜨는 데이터 표시 함수
 function dataLabelFormatter(this: Highcharts.PointLabelObject) {
-  const number = Number(this.point.options?.custom?.originValue) || 0;
+  const number = Number(this.y) || 0;
   return formatNumber(this.series.name, number);
 }
 
