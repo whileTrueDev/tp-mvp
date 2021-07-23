@@ -21,7 +21,7 @@ import { NotificationModule } from './resources/notification/notification.module
 import { StreamAnalysisModule } from './resources/stream-analysis/stream-analysis.module';
 import { CategoryModule } from './resources/category/category.module';
 
-import loadConfig from './config/loadConfig';
+import configOptions from './config/configOptions';
 import { mailerConfig } from './config/mailer.config';
 import { getAdminOptions } from './admin-panel/admin-panel.options';
 
@@ -44,7 +44,7 @@ AdminBro.registerAdapter({ Database, Resource });
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
+    ConfigModule.forRoot(configOptions),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),

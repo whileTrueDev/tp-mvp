@@ -1,10 +1,7 @@
 import * as Joi from 'joi';
+import loadConfig from './loadConfig';
 
 export const validationSchema = Joi.object({
-  NODE_ENV: Joi.string()
-    .valid('development', 'production', 'test', 'provision')
-    .default('development'),
-  PORT: Joi.number().default(3000),
   // AWS credentials
   AWS_ACCESS_KEY_ID: Joi.string().required(),
   AWS_SECRET_ACCESS_KEY: Joi.string().required(),
@@ -26,15 +23,17 @@ export const validationSchema = Joi.object({
   AFREECA_KEY: Joi.string().required(),
   AFREECA_SECRET_KEY: Joi.string().required(),
   // Mailer account(트루포인트 메일링 계정 - ttps://mail.mytruepoint.com/)
-  MAILER_USER: Joi.string().required(),
+  MAILER_USER: Joi.string().email().required(),
   MAILER_PASS: Joi.string().required(),
-  // kakao(변경)
+  // kakao
   KAKAO_REST_API_KEY: Joi.string().required(),
   // Naver
   NAVER_CLIENT_ID: Joi.string().required(),
   NAVER_CLIENT_SECRET: Joi.string().required(),
 });
 
-export const validationOptions = {
-
+export default {
+  isGlobal: true,
+  load: [loadConfig],
+  validationSchema,
 };
