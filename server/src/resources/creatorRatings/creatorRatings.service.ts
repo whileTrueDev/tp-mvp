@@ -2,13 +2,16 @@ import {
   forwardRef,
   Inject,
   Injectable, InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { AverageRating, CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import dayjs from 'dayjs';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
+import { DailyAverageRatingsEntity } from './entities/dailyAverageRatings.entity';
 import { PlatformAfreecaEntity } from '../users/entities/platformAfreeca.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
 import { PlatformType, RankingsService } from '../rankings/rankings.service';
@@ -17,11 +20,16 @@ import dayjsFormatter from '../../utils/dateExpression';
 
 @Injectable()
 export class CreatorRatingsService {
+  private readonly logger = new Logger(CreatorRatingsService.name);
+
+  // eslint-disable-next-line max-params
   constructor(
     @Inject(forwardRef(() => RankingsService))
     private readonly rankingsService: RankingsService,
     @InjectRepository(CreatorRatingsEntity)
     private readonly ratingsRepository: Repository<CreatorRatingsEntity>,
+    @InjectRepository(DailyAverageRatingsEntity)
+    private readonly avgRatingRepository: Repository<DailyAverageRatingsEntity>,
     @InjectRepository(PlatformAfreecaEntity)
     private readonly afreecaRepository: Repository<PlatformAfreecaEntity>,
     @InjectRepository(PlatformTwitchEntity)
@@ -539,10 +547,9 @@ export class CreatorRatingsService {
         dateLimit,
       });
       const selectedCreatorsId = rankingData.map((d) => d.creatorId);
-      const dates = this.getWeekDates();
 
       // 해당 10명의 7일간 평점
-      const weekData = await this.getRatingTrendsInWeek(selectedCreatorsId, dates);
+      const weekData = await this.getRatingTrendsInWeek(selectedCreatorsId);
 
       return {
         rankingData,
@@ -556,37 +563,120 @@ export class CreatorRatingsService {
   }
 
   // dates에 해당하는 크리에이터 일간 평균 평점
-  async getRatingTrendsInWeek(ids: string[], dates: string[]): Promise<WeeklyTrendsType> {
-    const data = await this.ratingsRepository.createQueryBuilder('ratings')
-      .select([
-        'ratings.creatorId AS creatorId',
-        'ROUND(AVG(ratings.rating),2) AS avgRating',
-        'DATE_FORMAT(ratings.createDate, "%Y-%m-%d") AS date',
-      ])
-      .where(`ratings.creatorId IN ('${ids.join("','")}')`)
-      .andWhere(`DATE_FORMAT(ratings.createDate, "%Y-%m-%d") IN ('${dates.join("','")}')`)
-      .groupBy('ratings.creatorId')
-      .addGroupBy('date')
-      .orderBy('ratings.creatorId')
-      .addOrderBy('date', 'ASC')
-      .getRawMany();
+  async getRatingTrendsInWeek(ids: string[]): Promise<WeeklyTrendsType> {
+    const dateWeekAgo = dayjs().subtract(7, 'day');
 
-    // 데이터를 
-    // {[creatorId] : [{"createDate": "2021-04-16","rating": 3.25}, ... ]}
-    // 형태로 바꿈
-    const result = ids.reduce((resultObj, id) => ({
-      ...resultObj,
-      [id]: dates.map((d) => {
-        const dateMatchedItem: {date: string; avgRating: number} = data.find((item) => (
-          (item.date === d) && (item.creatorId === id)
-        ));
-        return {
-          createDate: d,
-          rating: dateMatchedItem ? dateMatchedItem.avgRating : 0,
-        };
-      }),
-    }), {});
+    const result = await ids.reduce(async (promise, id) => {
+      const obj = await promise.then();
+      const datesArr = Array(7).fill(0).map((_, index) => {
+        const date = dayjs().subtract(8 - (index + 1), 'day').format('YYYY-MM-DD');
+        return { createDate: date };
+      });
+
+      const avgRatings = await this.avgRatingRepository.createQueryBuilder('avgRating')
+        .select(['date(date) AS date', 'averageRating'])
+        .where(`creatorId = '${id}'`)
+        .orderBy('date', 'ASC')
+        .getRawMany();
+
+      // avgRating에 일자별로 모든 평균 평점이 저장되어 있지 않음
+      // 7일 이전 날짜 중 가장 최근에 저장된 평점 데이터의 인덱스 찾기
+      const lastIndex = avgRatings.findIndex((r) => {
+        const ratingDate = dayjs(r.date);
+        const isSameDate = dateWeekAgo.isSame(ratingDate);
+        const isBefore = dateWeekAgo.isBefore(ratingDate);
+        return isSameDate || isBefore;
+      });
+
+      // 평점 데이터가 없거나 모두 7일 이전에 매겨진 데이터인 경우
+      if (lastIndex === -1 || lastIndex === 0) {
+        const { averageRating } = avgRatings[avgRatings.length - 1];
+        const ratings = datesArr.map((date) => ({ ...date, rating: averageRating }));
+        return Promise.resolve({ ...obj, [id]: ratings });
+      }
+
+      // 7일 내 매겨진 데이터가 있는 경우, 그 이전 날짜부터 평점 가져옴
+      const slicedArr = avgRatings.slice(lastIndex - 1);
+      // 날짜에 맞게 평점 데이터 배치(평점 바뀌지 않으면 이전 평점 표시, 바뀐 이후부터는 바뀐 평점 표시)
+      const ratings = datesArr.reduce((acc: any[], cur, index: number) => {
+        const { createDate } = cur;
+        const ratingChangedData = slicedArr.find((r) => r.date === createDate);
+        if (ratingChangedData) {
+          return [...acc, { ...cur, rating: ratingChangedData.averageRating }];
+        }
+        if (index === 0) {
+          return [...acc, { ...cur, rating: slicedArr[0].averageRating }];
+        }
+        const lastRating = acc[index - 1].rating;
+        return [...acc, { ...cur, rating: lastRating }];
+      }, []);
+
+      return Promise.resolve({ ...obj, [id]: ratings });
+    }, Promise.resolve({}));
 
     return result;
+  }
+
+  async getAvgRatingsByDateForOneCreator(creatorId: string): Promise<AverageRating[]> {
+    try {
+      return this.avgRatingRepository.createQueryBuilder('avgRating')
+        .select([
+          'Date(date) as date',
+          'averageRating',
+        ])
+        .where('creatorId = :creatorId', { creatorId })
+        .getRawMany();
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in getAvgRatingsByDateForOneCreator');
+    }
+  }
+
+  /**
+   * 매일 자정에 실행되는 방송인 평균 평점 저장 함수
+   */
+  async saveDailyAverageRating(): Promise<void> {
+    try {
+      const targetDate = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
+      this.logger.log(`${targetDate}의 방송인 평균 평점 저장 시작`);
+      // 1. 전날 날짜로 매겨진 방송인 찾기
+      const creatorsRatedToday = await this.ratingsRepository.createQueryBuilder('ratings')
+        .select(['DISTINCT ratings.creatorId AS creatorId'])
+        .where('DATE(ratings.updateDate) = curdate()-1')
+        .getRawMany();
+
+      const creatorIds = creatorsRatedToday.map(({ creatorId }: {creatorId: string}) => creatorId);
+
+      // 1-1. 평점 매겨진 방송인이 없는 경우 종료
+      if (creatorIds.length === 0) {
+        this.logger.log(`${targetDate} 매겨진 평점 없음 - 방송인 평균 평점 저장 종료`);
+        return;
+      }
+
+      // 2. 해당되는 방송인의 평점 평균 구하기
+      const creatorsAndAverageRatings = await this.ratingsRepository.createQueryBuilder('ratings')
+        .select([
+          'ROUND(AVG(ratings.rating),2) AS averageRating',
+          'CURDATE() AS date',
+          'ratings.creatorId AS creatorId',
+        ])
+        .where('ratings.creatorId IN (:creatorIds)', { creatorIds })
+        .groupBy('ratings.creatorId')
+        .getRawMany();
+      this.logger.log(`${targetDate} 매겨진 평점 \n ${JSON.stringify(creatorsAndAverageRatings)}`);
+
+      // 3. 전날 날짜, creatorId, 평점평균 저장하기
+      await getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(DailyAverageRatingsEntity)
+        .values(creatorsAndAverageRatings)
+        .execute();
+
+      this.logger.log('saved in DailyAverageRating, 방송인 평균 평점 저장 종료');
+    } catch (error) {
+      this.logger.error({ ...error });
+      throw new InternalServerErrorException('error in saveDailyAverageRating', error);
+    }
   }
 }

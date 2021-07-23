@@ -13,7 +13,8 @@ import {
   RankingDataType, DailyTotalViewersData, WeeklyTrendsType,
   FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { CreatorAverageScoresWithRank } from '@truepoint/shared/res/CreatorRatingResType.interface';
+import dayjs from 'dayjs';
+import { CreatorAverageScoresWithRank, ScoreHistoryData } from '@truepoint/shared/res/CreatorRatingResType.interface';
 import { RankingsEntity } from './entities/rankings.entity';
 import { CreatorRatingsEntity } from '../creatorRatings/entities/creatorRatings.entity';
 import { PlatformTwitchEntity } from '../users/entities/platformTwitch.entity';
@@ -492,5 +493,107 @@ export class RankingsService {
       console.error(error);
       throw new InternalServerErrorException(error, 'error in get average scores and rank');
     }
+  }
+
+  async getScoresHistory(creatorId: string, userInputDate?: Date): Promise<ScoreHistoryData[]> {
+    // 기록 조회 시작 일자
+    const scoreHistoryStartDate = await this.getScoreHistoryStartDate(creatorId, userInputDate);
+    // 감정점수 날짜별 조회 쿼리
+    const scoresGroupByDateQuery = this.getSqlAvgScoresGroupByDateForOneCreator(creatorId);
+
+    try {
+    // 기록 조회 시작 일자(scoreHistoryStartDate)부터 어제(curdate()-1)까지의
+    // 날짜테이블(Dates) 생성하여 
+    // 감정점수 날짜별 조회와 조인
+      const scores: Omit<ScoreHistoryData, 'rating'>[] = await this.rankingsRepository.query(`
+      WITH RECURSIVE Dates as (
+        select '${scoreHistoryStartDate}' as dt
+      UNION
+        SELECT 
+          DATE_ADD(Dates.dt, INTERVAL 1 DAY) 
+          FROM Dates 
+          WHERE DATE_ADD(Dates.dt, INTERVAL 1 DAY) <= curdate()-1
+      )
+      SELECT
+        Dates.dt AS date,
+        Scores.title AS title,
+        Scores.maxViewer AS viewer,
+        Scores.avgSmileScore AS smile,
+        Scores.avgFrustrateScore AS frustrate,
+        Scores.avgAdmireScore AS admire,
+        Scores.avgCussScore AS cuss
+      FROM Dates 
+      LEFT JOIN (${scoresGroupByDateQuery}) as Scores on Dates.dt = Scores.date
+      `);
+
+      const ratings = await this.creatorRatingsService.getAvgRatingsByDateForOneCreator(creatorId);
+
+      let result: ScoreHistoryData[] = [];
+
+      // 평점이 매겨진 적 없는 경우 모두 null로 채워서 내보냄
+      if (ratings.length === 0) {
+        result = scores.map((item) => ({ ...item, rating: null }));
+      }
+
+      // 매겨진 적 있는 경우 해당 날짜에 맞는 평점을 채워서 내보냄
+      result = scores.reduce((acc: ScoreHistoryData[], cur, index: number) => {
+        const { date } = cur;
+        const ratingData = ratings.find((r) => r.date === date);
+        if (ratingData) {
+          return [...acc, { ...cur, rating: ratingData.averageRating }];
+        }
+        if (index === 0) {
+          return [...acc, { ...cur, rating: null }];
+        }
+        const lastRating = acc[index - 1].rating;
+        return [...acc, { ...cur, rating: lastRating }];
+      }, []);
+
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in getTestScoreHistory');
+    }
+  }
+
+  private async getScoreHistoryStartDate(creatorId: string, userInputDate?: Date): Promise<string> {
+    try {
+    // 첫방송데이터 날짜
+      const { firstBroadDate } = await this.rankingsRepository.createQueryBuilder('rankings')
+        .select('date(min(streamDate)) as firstBroadDate')
+        .where('rankings.creatorId = :creatorId', { creatorId })
+        .getRawOne();
+      const defaultStartDate = userInputDate ? dayjs(userInputDate) : dayjs().subtract(3, 'month'); // 3개월 이전 날짜
+      const dateFirstBroad = dayjs(firstBroadDate);
+
+      if (!firstBroadDate) {
+        return defaultStartDate.format('YYYY-MM-DD');
+      }
+
+      // 첫 방송 데이터가 3개월이 안된 경우 - 첫방송 데이터 날짜부터 어제날짜까지
+      // 첫 방송 데이터가 3개월보다 오래된 경우 - 3개월 전 날짜부터 어제날짜까지
+      return dateFirstBroad.isBefore(defaultStartDate)
+        ? defaultStartDate.format('YYYY-MM-DD')
+        : dateFirstBroad.format('YYYY-MM-DD');
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException(error, 'error in getScoreHistoryStartDate');
+    }
+  }
+
+  getSqlAvgScoresGroupByDateForOneCreator(creatorId: string): string {
+    return this.rankingsRepository.createQueryBuilder('rankings')
+      .select([
+        'date(streamDate) AS `date`',
+        'title as title',
+        'max(viewer) AS maxViewer',
+        'round(avg(smileScore),2) AS avgSmileScore',
+        'round(avg(frustrateScore),2) AS avgFrustrateScore',
+        'round(avg(admireScore),2) AS avgAdmireScore',
+        'round(avg(cussScore),2) AS avgCussScore',
+      ])
+      .where(`creatorId = '${creatorId}'`)
+      .groupBy('date')
+      .getSql();
   }
 }

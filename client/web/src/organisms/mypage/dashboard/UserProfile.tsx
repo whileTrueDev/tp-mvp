@@ -10,7 +10,7 @@ import useAxios from 'axios-hooks';
 import useDialog from '../../../utils/hooks/useDialog';
 import MainDialog from './MainDialog';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
-import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../store/usePublicMainUser';
 
 export const useStyles = makeStyles((theme) => ({
   container: {

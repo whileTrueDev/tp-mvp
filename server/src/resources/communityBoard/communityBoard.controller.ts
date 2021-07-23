@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { CreateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/createCommunityPost.dto';
 import { UpdateCommunityPostDto } from '@truepoint/shared/dist/dto/communityBoard/updateCommunityPost.dto';
-import { CreateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/createReply.dto';
+import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { UpdateReplyDto } from '@truepoint/shared/dist/dto/communityBoard/updateReply.dto';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
@@ -71,6 +71,7 @@ export class CommunityBoardController {
    * @param qtext 검색어
    * @param qtype 'title' | 'nickname', 제목 검색 | 작성자 검색
    */
+  // eslint-disable-next-line max-params
   @Get('posts')
   findAllPosts(
     @Query('platform') platform: string,
@@ -226,7 +227,7 @@ export class CommunityBoardController {
   createReply(
     @Ip() userIp: string,
     @Param('postId', ParseIntPipe) postId: number,
-    @Body() createReplyDto: CreateReplyDto,
+    @Body() createReplyDto: CreateCommentDto,
   ): Promise<CommunityReplyEntity> {
     return this.communityReplyService.createReply(postId, createReplyDto, userIp);
   }
@@ -236,7 +237,7 @@ export class CommunityBoardController {
   createChildReply(
     @Ip() userIp: string,
     @Param('replyId', ParseIntPipe) replyId: number,
-    @Body() createReplyDto: CreateReplyDto,
+    @Body() createReplyDto: CreateCommentDto,
   ): Promise<CommunityReplyEntity> {
     return this.communityReplyService.createChildReply({
       parentReplyId: replyId,

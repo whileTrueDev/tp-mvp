@@ -14,8 +14,8 @@ import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import { useStyles, rowHeightBase } from '../style/PostList.style';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
-import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
+import { displayNickname } from '../../../../utils/checkAvailableNickname';
 
 interface PostListProps {
   take: number,
@@ -116,9 +116,7 @@ function DesktopPostList({
           {post.repliesCount ? <span className={classes.replies}>{`[${post.repliesCount}]`}</span> : null}
         </>
       ),
-      nickname: post.userId
-        ? `${post.nickname} (${transformIdToAsterisk(post.userId)})`
-        : post.nickname,
+      nickname: displayNickname(post.userId, post.nickname as string),
       createDate: `${getDateDisplay(post.createDate)}`,
       hit: post.hit,
       recommend: post.recommend,
@@ -232,9 +230,7 @@ function MobilePostList({
                     : post.title}
                 </Typography>
                 <Typography className={classnames(classes.mobileText, classes.mobileNickname)}>
-                  { post.userId
-                    ? `${post.nickname} (${transformIdToAsterisk(post.userId)})`
-                    : post.nickname}
+                  {displayNickname(post.userId, post.nickname as string)}
                 </Typography>
 
               </Grid>

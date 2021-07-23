@@ -1,10 +1,11 @@
 import AdminBro, { ResourceWithOptions } from 'admin-bro';
 import { CommunityPostEntity } from '../../resources/communityBoard/entities/community-post.entity';
-import { CREATE_DATE__DESC, showOnly } from '../config';
+import { CREATE_DATE__DESC, showOnly, listAndShowOnly } from '../config';
 
 const PLATFORM_LABEL = AdminBro.bundle('../components/community-post-platform-label.tsx');
 const CATEGORY_LABEL = AdminBro.bundle('../components/community-post-category-label.tsx');
 const LINK = AdminBro.bundle('../components/community-post-link.tsx');
+const CREATE_COMMENT_FOR_POST = AdminBro.bundle('../components/comment-for-post');
 
 const CommunityPostResource: ResourceWithOptions = {
   resource: CommunityPostEntity,
@@ -24,7 +25,7 @@ const CommunityPostResource: ResourceWithOptions = {
     properties: {
       postId: { isId: true },
       title: { isTitle: true },
-      content: { type: 'richtext' },
+      content: { type: 'richtext', position: 1 },
       platform: {
         components: {
           list: PLATFORM_LABEL,
@@ -51,7 +52,18 @@ const CommunityPostResource: ResourceWithOptions = {
           show: LINK, // 글 상세보기 페이지에서 이미지, 동영상이 깨지는 문제 해결 못함. 임시로 해당 글로 이동하는 링크 추가
         },
         isVisible: showOnly,
+        position: 2,
       },
+      createCommentForThisPost: {
+        components: { show: CREATE_COMMENT_FOR_POST },
+        isVisible: showOnly,
+        position: 3,
+      },
+      password: { isVisible: false },
+      hit: { isVisible: listAndShowOnly },
+      recommend: { isVisible: listAndShowOnly },
+      notRecommendCount: { isVisible: listAndShowOnly },
+      ip: { isVisible: listAndShowOnly },
     },
     navigation: {
       name: '글',

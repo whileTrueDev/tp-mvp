@@ -48,13 +48,13 @@ function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
   const classes = useUserReactionListItemStyle();
   const { data, reloadItems } = props;
   const {
-    username, content, id,
+    username, content, id, createDate, userId,
   } = data;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const { open: isPasswordDialogOpen, handleOpen: openPasswordDialog, handleClose: closePasswordDialog } = useDialog();
   const { open: isConfirmDialogOpen, handleOpen: openConfirmDialog, handleClose: closeConfirmDialog } = useDialog();
-  const date = dayjsFormatter(data.createDate, 'hh:mm A');
+  const date = dayjsFormatter(createDate, 'hh:mm A');
 
   const onDeleteButtonClick = useCallback(() => {
     openPasswordDialog();
@@ -102,7 +102,10 @@ function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
     <>
       <ListItem alignItems="flex-start">
         <ListItemAvatar className={classes.avatarContainer}>
-          <Avatar className={classes.avatar} />
+          {userId === 'Truepoint'
+            ? <Avatar className={classes.avatar} src="/images/favicon/android-icon-36x36.png" />
+            : <Avatar className={classes.avatar} />}
+
         </ListItemAvatar>
         <ListItemText
           classes={{ primary: classes.itemPrimaryText }}

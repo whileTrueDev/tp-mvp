@@ -1,5 +1,4 @@
 import {
-  IsDataURI,
   IsIn, IsOptional, IsString,
 } from 'class-validator';
 
@@ -23,16 +22,6 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   profileImage?: string;
-
-  @IsString()
-  @IsDataURI()
-  @IsOptional()
-  heroImageLight?: string;
-
-  @IsString()
-  @IsDataURI()
-  @IsOptional()
-  heroImageDark?: string;
 
   @IsString()
   @IsOptional()

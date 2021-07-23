@@ -7,7 +7,6 @@ import {
 } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { Column, Options } from 'material-table';
-import { Pagination, PaginationItem } from '@material-ui/lab';
 import LazyLoad from 'react-lazyload';
 // 응답타입
 import { HighlightPointListResType, HighlightPointListItem } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
@@ -16,6 +15,7 @@ import Table from '../../../../atoms/Table/MaterialTable';
 import AvatarWithName from '../../../../atoms/User/AvatarWithName';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
+import CustomPagination from '../../../../atoms/CustomPagination';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   root: {
@@ -168,10 +168,8 @@ export default function HighlightlistTable(props: HighlightlistTableProps): JSX.
         padding: 16,
       }}
     >
-      <Pagination
+      <CustomPagination
         size={isMobile ? 'small' : 'medium'}
-        renderItem={(item) => (<PaginationItem {...item} />)}
-        variant="outlined"
         showFirstButton
         showLastButton
         onChange={handlePageChange}
