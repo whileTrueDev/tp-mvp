@@ -6,6 +6,7 @@ import { useSnackbar } from 'notistack';
 import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import axios from '../../../../utils/axios';
+import { isAvailableNickname, UNAVAILABLE_NICKNAME_ERROR_MESSAGE } from '../../../../utils/checkAvailableNickname';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import { useCreatorCommentFormStyle } from '../style/CreatorComment.style';
 
@@ -62,6 +63,11 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
       createCommentDto.nickname = nickname;
       createCommentDto.password = password;
       createCommentDto.content = content;
+    }
+
+    if (!isAvailableNickname(createCommentDto.nickname)) {
+      ShowSnack(UNAVAILABLE_NICKNAME_ERROR_MESSAGE, 'error', enqueueSnackbar);
+      return;
     }
 
     axios.post(postUrl, { ...createCommentDto })

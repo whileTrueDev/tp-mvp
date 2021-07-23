@@ -12,7 +12,6 @@ import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import useToggle from '../../../../utils/hooks/useToggle';
-import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 import { useCreatorCommentItemStyle } from '../style/CreatorComment.style';
 import CommentForm from './CommentForm';
@@ -20,6 +19,7 @@ import DeleteButton from './DeleteButton';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 import PasswordConfirmDialog from './PasswordConfirmDialog';
 import ReportConfirmDialog from './ReportConfirmDialog';
+import { displayNickname } from '../../../../utils/checkAvailableNickname';
 
 export interface CommentItemProps extends Record<string, any>{
   /** 대상이 되는 댓글(commentId), 글(postId), 크리에이터(creatorId) */
@@ -258,11 +258,15 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
     <div className={classnames(classes.commentItem, { child: childComment })} id={`commentId-${commentId}`}>
       <div className={classes.header}>
         <div className={classes.userInfo}>
-          <Avatar component="span" className={classes.smallAvatar} src={profileImage} />
+          <Avatar
+            component="span"
+            className={classes.smallAvatar}
+            src={userId !== 'Truepoint'
+              ? profileImage
+              : '/images/favicon/android-icon-36x36.png'}
+          />
           <Typography component="span" className="nickname">
-            { userId
-              ? `${nickname} (${transformIdToAsterisk(userId)})`
-              : nickname}
+            { displayNickname(userId, nickname)}
           </Typography>
         </div>
         <div className={classes.headerActions}>

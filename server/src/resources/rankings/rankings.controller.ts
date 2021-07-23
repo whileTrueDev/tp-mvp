@@ -4,6 +4,7 @@ import {
 import {
   DailyTotalViewersResType, RankingDataType, FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
+import { ScoreHistoryData } from '@truepoint/shared/res/CreatorRatingResType.interface';
 import { ColumnType, RankingsService, PlatformType } from './rankings.service';
 
 @Controller('rankings')
@@ -82,5 +83,13 @@ export class RankingsController {
   @Get('first-places-by-category')
   getFirstPlacesByCategory(): Promise<FirstPlacesRes> {
     return this.rankingsService.getFirstPlacesByCategory();
+  }
+
+  @Get('/scores/history')
+  getTestScoreHistory(
+    @Query('creatorId') creatorId: string,
+    // @Query('startDate') startDate: Date, 조회 시작 날짜
+  ): Promise<ScoreHistoryData[]> {
+    return this.rankingsService.getScoresHistory(creatorId);
   }
 }

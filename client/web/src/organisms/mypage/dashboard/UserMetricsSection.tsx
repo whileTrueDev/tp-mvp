@@ -15,7 +15,7 @@ import ProgressBar from '../../../atoms/Progressbar/ProgressBar';
 import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
 import UserMetricsChart from './sub/UserMetricsChart';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
-import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../store/usePublicMainUser';
 
 const useStyles = makeStyles((theme) => ({
   chartContainer: { padding: theme.spacing(4), height: 575, overflow: 'hidden' },

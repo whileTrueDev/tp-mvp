@@ -26,7 +26,7 @@ import { StreamCalendarProps } from './StreamCompareSectioninterface';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 // attoms snackbar
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../../store/usePublicMainUser';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme: Theme) => ({

@@ -32,7 +32,7 @@ import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAllCalendarStyles from './RangeSelectCalendar.style';
 import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
-import usePublicMainUser from '../../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../../store/usePublicMainUser';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 
 const reRequest = 3;

@@ -14,7 +14,6 @@ import { UserDetailEntity } from './userDetail.entity';
 import { CommunityPostEntity } from '../../communityBoard/entities/community-post.entity';
 import { CommunityReplyEntity } from '../../communityBoard/entities/community-reply.entity';
 import { CreatorCommentsEntity } from '../../creatorComment/entities/creatorComment.entity';
-import { StreamCommentsEntity } from '../../broadcast-info/entities/streamComment.entity';
 import { FeatureSuggestionEntity } from '../../featureSuggestion/entities/featureSuggestion.entity';
 import { FeatureSuggestionReplyEntity } from '../../featureSuggestion/entities/featureSuggestionReply.entity';
 
@@ -108,9 +107,6 @@ export class UserEntity extends BaseEntity implements User {
 
   @OneToMany((type) => CreatorCommentsEntity, (post) => post.userId)
   creatorComments?: CreatorCommentsEntity[];
-
-  @OneToMany((type) => StreamCommentsEntity, (post) => post.userId)
-  streamComments?: StreamCommentsEntity[];
 
   @OneToMany((type) => FeatureSuggestionEntity, (post) => post.author)
   featureSuggestions?: FeatureSuggestionEntity[];

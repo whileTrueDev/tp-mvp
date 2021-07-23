@@ -153,7 +153,7 @@ export default function StreamCompareSection(
         </Grid>
 
         {/* 선택된 방송 목록 */}
-        <Grid item xs container alignItems="center">
+        <Grid item xs container alignItems="center" wrap="nowrap">
           {/* 리스트 클릭시 base , compare 방송 정보 카드 렌더링 */}
           <Grid item>
             <StreamCard

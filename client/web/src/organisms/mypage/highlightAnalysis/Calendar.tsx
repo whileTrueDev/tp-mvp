@@ -21,7 +21,7 @@ import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SelectDateIcon from '../../../atoms/stream-analysis-icons/SelectDateIcon';
 // hooks
 import useAuthContext from '../../../utils/hooks/useAuthContext';
-import usePublicMainUser from '../../../utils/hooks/usePublicMainUser';
+import usePublicMainUser from '../../../store/usePublicMainUser';
 import { dayjsFormatter } from '../../../utils/dateExpression';
 
 const useStyles = makeStyles((theme) => ({
