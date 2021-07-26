@@ -12,6 +12,7 @@ import { SnackbarProvider } from 'notistack';
 import loadable from '@loadable/component';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import axios from './utils/axios';
 import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
@@ -89,7 +90,16 @@ function Index(): JSX.Element {
   // 화면 렌더링시 최상단 으로 고정
   // useScrollTop();
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: process.env.NODE_ENV === 'production',
+        refetchOnWindowFocus: process.env.NODE_ENV === 'production',
+        refetchOnReconnect: process.env.NODE_ENV === 'production',
+        refetchOnMount: process.env.NODE_ENV === 'production',
+      },
+    },
+  });
   return (
 
     <ThemeProvider<TruepointTheme> theme={truepointTheme}>
@@ -154,6 +164,7 @@ function Index(): JSX.Element {
             </BrowserRouter>
             {/* </SubscribeContext.Provider> */}
           </AuthContext.Provider>
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </SnackbarProvider>
     </ThemeProvider>
