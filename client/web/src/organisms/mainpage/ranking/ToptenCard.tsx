@@ -68,7 +68,6 @@ function TopTenCard(): JSX.Element {
   const { isMobile } = useMediaSize();
   // 스타일
   const classes = useTopTenCard();
-  const tabRef = useRef<any>(null);
   const scrollRef = useRef<any>(null);
 
   const [categoryTabColumns, setCategoryTabColumns] = useState<{categoryId: number, label: string}[]>([
@@ -214,13 +213,6 @@ function TopTenCard(): JSX.Element {
   };
 
   useEffect(() => {
-    // mui-tabs기본스타일 덮어쓰기위해 인라인스타일 적용
-    if (tabRef.current && tabRef.current.querySelector('.MuiTabs-scroller')) {
-      tabRef.current.querySelector('.MuiTabs-scroller').setAttribute('style', 'overflow: visible;');
-    }
-    // const { column } = currentMainTab;
-    // const { categoryId } = currentCategoryTab;
-    // const { platform } = currentPlatformTab;
     const { column } = mainTabColumns[mainTabIndex];
     const { categoryId } = categoryTabColumns[categoryTabIndex];
     const { platform } = platformTabColumns[platformTabIndex];
