@@ -2,17 +2,18 @@ import React from 'react';
 import {
   Grid, List, ListItem, Typography,
 } from '@material-ui/core';
-import useAxios from 'axios-hooks';
-import { WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import RatingsListItem from './sub/RatingsListItem';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import { useRatingsListStyles } from './style/RatingList.style';
+import useRatingsWeeklyRankingList from '../../../utils/hooks/query/useRatingsList';
 
 export default function RatingsList(): JSX.Element {
   const classes = useRatingsListStyles();
-  const [{ data, loading, error }] = useAxios<WeeklyRatingRankingRes>({
-    url: '/ratings/weekly-ranking',
-  });
+
+  const {
+    data, isFetching, isLoading, error,
+  } = useRatingsWeeklyRankingList();
+  const loading = isFetching || isLoading;
 
   return (
     <section className={classes.ratingsListSection}>
