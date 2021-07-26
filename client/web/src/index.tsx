@@ -11,6 +11,7 @@ import { configure } from 'axios-hooks';
 import { SnackbarProvider } from 'notistack';
 import loadable from '@loadable/component';
 
+import { QueryClient, QueryClientProvider } from 'react-query';
 import axios from './utils/axios';
 import { onResponseFulfilled, makeResponseRejectedHandler } from './utils/interceptors/axiosInterceptor';
 // styles
@@ -87,29 +88,31 @@ function Index(): JSX.Element {
   // *******************************************
   // 화면 렌더링시 최상단 으로 고정
   // useScrollTop();
+
+  const queryClient = new QueryClient();
   return (
 
     <ThemeProvider<TruepointTheme> theme={truepointTheme}>
       <CssBaseline />
 
       <SnackbarProvider maxSnack={1} preventDuplicate>
+        <QueryClientProvider client={queryClient}>
+          {/* 로그인 여부 Context */}
+          <AuthContext.Provider value={{
+            user,
+            accessToken,
+            handleLogin,
+            handleLogout,
+            loginLoading,
+            handleLoginLoadingStart,
+            handleLoginLoadingEnd,
+            setUser,
+          }}
+          >
 
-        {/* 로그인 여부 Context */}
-        <AuthContext.Provider value={{
-          user,
-          accessToken,
-          handleLogin,
-          handleLogout,
-          loginLoading,
-          handleLoginLoadingStart,
-          handleLoginLoadingEnd,
-          setUser,
-        }}
-        >
-
-          <KakaoTalk />
-          {/* 페이지 컴포넌트 */}
-          {/* <SubscribeContext.Provider value={{
+            <KakaoTalk />
+            {/* 페이지 컴포넌트 */}
+            {/* <SubscribeContext.Provider value={{
             currUser,
             invalidSubscribeUserList,
             validSubscribeUserList,
@@ -120,37 +123,38 @@ function Index(): JSX.Element {
           }}
           > */}
 
-          <BrowserRouter>
+            <BrowserRouter>
 
-            <Switch>
-              <Route exact path="/" component={Ranking} />
-              <Route exact path="/about-us" component={Main} />
-              <Route exact path="/signup" component={Regist} />
-              <Route exact path="/signup/completed" component={Regist} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/find-id" component={FindId} />
-              <Route exact path="/find-pw" component={FindPassword} />
-              <Route exact path="/notice" component={Notice} />
-              <Route exact path="/notice/:id" component={Notice} />
-              <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
-              <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
-              <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
-              <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
-              <Route exact path="/privacypolicy" component={PrivacyPolicy} />
-              <Route exact path="/termsofuse" component={TermsOfUse} />
-              <Route path="/community-board" component={CommunityBoard} />
-              <Route path="/ranking" component={Ranking} />
-              <Route exact path="/creator-search" component={SearchCreator} />
-              <Route exact path="/highlight-list" component={YoutubeHighlightList} />
-              <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
-              {/* <Route path="/mypage" component={Mypage} /> */}
-              <Route path="/mypage" component={UserInfoPage} />
-              <Route component={PageNotFound} />
-            </Switch>
-            {/* 페이지 컴포넌트 */}
-          </BrowserRouter>
-          {/* </SubscribeContext.Provider> */}
-        </AuthContext.Provider>
+              <Switch>
+                <Route exact path="/" component={Ranking} />
+                <Route exact path="/about-us" component={Main} />
+                <Route exact path="/signup" component={Regist} />
+                <Route exact path="/signup/completed" component={Regist} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/find-id" component={FindId} />
+                <Route exact path="/find-pw" component={FindPassword} />
+                <Route exact path="/notice" component={Notice} />
+                <Route exact path="/notice/:id" component={Notice} />
+                <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
+                <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
+                <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
+                <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
+                <Route exact path="/privacypolicy" component={PrivacyPolicy} />
+                <Route exact path="/termsofuse" component={TermsOfUse} />
+                <Route path="/community-board" component={CommunityBoard} />
+                <Route path="/ranking" component={Ranking} />
+                <Route exact path="/creator-search" component={SearchCreator} />
+                <Route exact path="/highlight-list" component={YoutubeHighlightList} />
+                <Route path="/public-mypage/:type/:userId" component={PublickMypage} />
+                {/* <Route path="/mypage" component={Mypage} /> */}
+                <Route path="/mypage" component={UserInfoPage} />
+                <Route component={PageNotFound} />
+              </Switch>
+              {/* 페이지 컴포넌트 */}
+            </BrowserRouter>
+            {/* </SubscribeContext.Provider> */}
+          </AuthContext.Provider>
+        </QueryClientProvider>
       </SnackbarProvider>
     </ThemeProvider>
   );
