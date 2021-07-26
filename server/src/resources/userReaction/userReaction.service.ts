@@ -14,8 +14,8 @@ export class UserReactionService {
   ) {}
 
   /**
-   * 시청자반응 가장 최신 데이터 10개를 시간 오름차순으로 반환
-   * 최대 10개 반환함(데이터가 10개 미만인 경우 데이터가 존재하는 만큼 반환)
+   * 시청자반응 가장 최신 데이터 20개를 시간 오름차순으로 반환
+   * 최대 20개 반환함(데이터가 20개 미만인 경우 데이터가 존재하는 만큼 반환)
    * @return UserReactionEntity[]
    */
   async getUserReactions(): Promise<UserReactionEntity[]> {

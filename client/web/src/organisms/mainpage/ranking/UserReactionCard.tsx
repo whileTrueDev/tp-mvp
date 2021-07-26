@@ -3,18 +3,15 @@ import {
 } from '@material-ui/core';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SendIcon from '@material-ui/icons/Send';
-import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/createUserReaction.dto';
-import { UserReaction as IUserReaction } from '@truepoint/shared/dist/interfaces/UserReaction.interface';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useCallback, useEffect, useRef } from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { isAvailableNickname, UNAVAILABLE_NICKNAME_ERROR_MESSAGE } from '../../../utils/checkAvailableNickname';
+import useUserReactionMutation from '../../../utils/hooks/mutation/useUserReactionMutation';
+import useUserReactions from '../../../utils/hooks/query/useUserReaction';
 import { useUserReactionStyle } from './style/UserReactionCard.style';
 import UserReactionListItem from './sub/UserReactionListItem';
-
-const userReactionUrl = '/user-reactions';
 
 export default function UserReactionCard(): JSX.Element {
   const classes = useUserReactionStyle();
@@ -22,71 +19,62 @@ export default function UserReactionCard(): JSX.Element {
   const formRef = useRef<HTMLFormElement>(null);
   const listContainerRef = useRef<HTMLUListElement>(null);
 
-  const [{
-    data: userReactionData,
-    loading,
-  }, getUserReactions] = useAxios<IUserReaction[]>(userReactionUrl, { manual: true });
-  const [, postUserReaction] = useAxios<IUserReaction>({
-    url: userReactionUrl,
-    method: 'post',
-  }, { manual: true });
+  const scrollToBottom = useCallback(() => {
+    if (!listContainerRef.current) return;
+    const { scrollHeight, clientHeight } = listContainerRef.current;
+    listContainerRef.current.scrollTop = scrollHeight - clientHeight;
+  }, []);
 
-  // api요청 핸들러
+  const {
+    data: chatData, isFetching, isLoading, refetch,
+  } = useUserReactions();
+
+  const { mutateAsync } = useUserReactionMutation();
+
   const loadUserReactions = useCallback(() => {
-    getUserReactions().then(() => {
-      if (!listContainerRef.current) return;
-      const { scrollHeight, clientHeight } = listContainerRef.current;
-      listContainerRef.current.scrollTop = scrollHeight - clientHeight;
+    refetch().then(() => {
+      scrollToBottom();
     }).catch((e) => {
       console.error('시청자 반응 데이터 불러오기 오류', e);
     });
-  }, [getUserReactions]);
+  }, [refetch, scrollToBottom]);
 
-  const createUserReaction = useCallback((createUserReactionDto: CreateUserReactionDto) => {
-    postUserReaction({
-      data: createUserReactionDto,
+  useEffect(() => {
+    if (chatData) scrollToBottom();
+  }, [scrollToBottom, chatData]);
+
+  // 등록버튼 클릭 | 인풋창에서 엔터 누를 시 실행되는 핸들러
+  const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!formRef.current) return;
+
+    // 닉네임 확인
+    const userNickname = formRef.current.username.value.trim();
+    if (!isAvailableNickname(userNickname)) {
+      ShowSnack(UNAVAILABLE_NICKNAME_ERROR_MESSAGE, 'error', enqueueSnackbar);
+      return;
+    }
+    // 비밀번호 내용 확인
+    if (formRef.current.content.value.trim() === '' || formRef.current.password.value.trim() === '') {
+      ShowSnack('비밀번호와 내용을 입력해주세요', 'error', enqueueSnackbar);
+      return;
+    }
+
+    // 잡담방 데이터 생성 요청
+    await mutateAsync({
+      username: formRef.current.username.value.trim() || '시청자',
+      password: formRef.current.password.value,
+      content: formRef.current.content.value,
     }).then(() => {
+      scrollToBottom();
       if (formRef.current) {
         formRef.current.username.value = '';
         formRef.current.content.value = '';
         formRef.current.password.value = '';
         formRef.current.content.focus();
       }
-      loadUserReactions();
-    }).catch((err) => {
-      console.error('시청자 반응 생성 에러', err);
     });
-  }, [loadUserReactions, postUserReaction]);
-
-  // 마운트 시 한번만 실행
-  useEffect(() => {
-    loadUserReactions();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // 등록버튼 클릭 | 인풋창에서 엔터 누를 시 실행되는 핸들러
-  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!formRef.current) {
-      return;
-    }
-
-    const userNickname = formRef.current.username.value.trim();
-    if (!isAvailableNickname(userNickname)) {
-      ShowSnack(UNAVAILABLE_NICKNAME_ERROR_MESSAGE, 'error', enqueueSnackbar);
-      return;
-    }
-    if (formRef.current.content.value.trim() === '' || formRef.current.password.value.trim() === '') {
-      ShowSnack('비밀번호와 내용을 입력해주세요', 'error', enqueueSnackbar);
-      return;
-    }
-
-    createUserReaction({
-      username: formRef.current.username.value.trim() || '시청자',
-      password: formRef.current.password.value,
-      content: formRef.current.content.value,
-    });
-  }, [createUserReaction, enqueueSnackbar]);
+  }, [enqueueSnackbar, mutateAsync, scrollToBottom]);
 
   return (
     <section className={classes.userReactionContainer}>
@@ -99,18 +87,15 @@ export default function UserReactionCard(): JSX.Element {
       </header>
 
       <List className={classes.list} ref={listContainerRef}>
-        {loading && <CenterLoading />}
-        { userReactionData && userReactionData.length !== 0
-        /* 데이터가 있는 경우 */
-          ? userReactionData.map((data) => (
-            <UserReactionListItem
-              key={data.id}
-              data={data}
-              reloadItems={loadUserReactions}
-            />
-          ))
-        /* 데이터가 없는 경우 */
-          : <ListItem>데이터가 없습니다</ListItem>}
+        {(isFetching || isLoading) && <CenterLoading />}
+        {chatData && chatData.map((data) => (
+          <UserReactionListItem
+            key={data.id}
+            data={data}
+            reloadItems={loadUserReactions}
+          />
+        ))}
+        {!chatData && !isFetching && !isLoading && <ListItem>데이터가 없습니다</ListItem>}
       </List>
 
       <form className={classes.form} onSubmit={handleSubmit} ref={formRef}>
