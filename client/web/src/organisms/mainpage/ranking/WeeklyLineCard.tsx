@@ -6,13 +6,13 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 import { useSnackbar } from 'notistack';
-import useAxios from 'axios-hooks';
 import getPlatformColor from '../../../utils/getPlatformColor';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { useWeeklyLineCardStyle } from './style/WeeklyLineCard.style';
 import CarouselItemHeader from './sub/CarouselItemHeader';
 import { CAROUSEL_HEIGHT } from '../../../assets/constants';
+import useWeeklyAverageRatingByPlatform from '../../../utils/hooks/query/useWeeklyAverageRatingsByPlatform';
 
 function WeeklyLineCard(): JSX.Element {
   const classes = useWeeklyLineCardStyle();
@@ -22,11 +22,7 @@ function WeeklyLineCard(): JSX.Element {
   const chartRef = useRef<{chart: Highcharts.Chart, container: React.RefObject<HTMLDivElement>}>(null);
 
   // 주간 평점 평균 데이터
-  const [{ data: ratingData, error, loading }] = useAxios<{
-    dates: string[],
-    afreeca: number[],
-    twitch: number[]
-  }>('/ratings/weekly-average');
+  const { data: ratingData, error, isLoading: loading } = useWeeklyAverageRatingByPlatform();
 
   // 차트 옵션 state
   const [chartOptions, setChartOptions] = useState<Highcharts.Options>({
