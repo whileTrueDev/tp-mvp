@@ -2,13 +2,13 @@ import {
   Avatar, Card, Typography,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import useAxios from 'axios-hooks';
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { FirstPlacesRes, TopTenDataItem, Scores } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
 import { Link } from 'react-router-dom';
 import { afreecaItemBackgroundColor, CAROUSEL_HEIGHT, twitchItemBackgroundColor } from '../../../../assets/constants';
+import useTopCreatorsByCategory from '../../../../utils/hooks/query/useTopCreatorByCategory';
 
 export const useCreatorCardStyle = makeStyles((theme: Theme) => createStyles({
   link: {
@@ -103,10 +103,7 @@ export function FirstPlaceCreatorCard(props: FirstPlaceCreatorCardProps): JSX.El
 }
 
 export default function FirstPlaceCreators(): JSX.Element {
-  const [{ loading, data, error }] = useAxios<FirstPlacesRes>({
-    url: 'rankings/first-places-by-category',
-    method: 'get',
-  });
+  const { isLoading: loading, data, error } = useTopCreatorsByCategory();
   const firstPlaces: {category: keyof FirstPlacesRes, headerText: string}[] = [
     { category: 'viewer', headerText: '최고 시청자수 1위' },
     { category: 'rating', headerText: '시청자 평점 1위' },
