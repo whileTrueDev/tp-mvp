@@ -2,8 +2,6 @@ import { Typography } from '@material-ui/core';
 import blue from '@material-ui/core/colors/blue';
 import purple from '@material-ui/core/colors/purple';
 import { useTheme } from '@material-ui/core/styles';
-import { DailyTotalViewersResType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import useAxios from 'axios-hooks';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HCmore from 'highcharts/highcharts-more'; // polar area chart 사용 위해 필요
@@ -14,6 +12,7 @@ import React, {
 import { CAROUSEL_HEIGHT } from '../../../assets/constants';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import useViewerCompareData from '../../../utils/hooks/query/useViewerCompareByPlatform';
 import {
   createBackground,
   CustomPointOption, getCoordsAndPanes,
@@ -61,7 +60,11 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   const afreecaLogoRef = useRef<HTMLDivElement>(null); // 아프리카 로고 & 총 시청자수 컴포넌트 ref
   const twitchLogoRef = useRef<HTMLDivElement>(null); // 트위치 로고 & 총 시청자수 컴포넌트 ref
   // 플랫폼별 시청자수 상위 10인의 데이터
-  const [{ data, loading, error }] = useAxios<DailyTotalViewersResType>('/rankings/daily-total-viewers');
+  // const [{ data, loading, error }] = useAxios<DailyTotalViewersResType>('/rankings/daily-total-viewers');
+  const {
+    data, isLoading, isFetching, error,
+  } = useViewerCompareData();
+  const loading = isLoading || isFetching;
   const tickInterval = 360 / 10; // 원을 10개의 칸으로 나눔
   // 기본 차트 옵션
   const [options, setOptions] = useState<Highcharts.Options>({
