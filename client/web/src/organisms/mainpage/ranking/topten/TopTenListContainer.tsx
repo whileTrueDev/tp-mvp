@@ -11,15 +11,13 @@ export interface TopTenListProps{
   currentTab: 'smile' |'frustrate'|'cuss'|'admire'|'viewer'|'rating', // 'smile'|'frustrate'|'cuss'|'admire',
   data: undefined | RankingDataType,
   loading?: boolean,
-  tabChanging?: boolean,
   weeklyGraphLabel?: string
-  error?: AxiosError<any> | undefined
+  error?: AxiosError<any> | null
 }
 
 function TopTenListContainer(props: TopTenListProps): JSX.Element {
   const {
     loading, error, data, currentTab,
-    tabChanging = false,
     weeklyGraphLabel = '주간 점수 그래프',
   } = props;
   const classes = useTopTenList();
@@ -44,7 +42,7 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
 
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems} ref={containerRef}>
-        {!tabChanging && data && data.rankingData.map((d, index: number) => {
+        {data && data.rankingData.map((d, index: number) => {
           const currentScoreName = ['viewer', 'rating'].includes(currentTab)
             ? currentTab as keyof Scores
             : `${currentTab}Score` as keyof Scores;
@@ -60,10 +58,10 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
             />
           );
         })}
-        {(loading || tabChanging) && (Array.from(Array(10).keys())).map((v: number) => (
+        {(loading) && (Array.from(Array(10).keys())).map((v: number) => (
           <ListItemSkeleton key={v} />
         ))}
-        {!loading && !tabChanging && data
+        {!loading && data
         && data.rankingData.length === 0
         && <Typography className={classes.informationText}>데이터가 없습니다.</Typography>}
         {error && <Typography className={classes.informationText}>에러가 발생했습니다.</Typography>}
