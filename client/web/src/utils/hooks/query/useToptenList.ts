@@ -40,6 +40,7 @@ export default function useToptenList(filters: ToptenFilters): UseInfiniteQueryR
     ['topten', column, platform, categoryId],
     getToptenList,
     {
+      keepPreviousData: true,
       getNextPageParam: (lastPage, pages) => ({ skip: ((pages.length - 1) * 10) + lastPage.rankingData.length }),
       // select: (data) => {
       //   const { pages, pageParams } = data;
