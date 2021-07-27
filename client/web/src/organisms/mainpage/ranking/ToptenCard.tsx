@@ -15,12 +15,13 @@ import FrustratedIcon from '../../../atoms/svgIcons/FrustratedIcon';
 import TVIcon from '../../../atoms/svgIcons/TVIcon';
 import { useTopTenCard } from './style/TopTenCard.style';
 import TopTenListContainer from './topten/TopTenListContainer';
-import axios from '../../../utils/axios';
 import { CategoryTab, MainTab, PlatformTab } from './topten/filter';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import { dayjsFormatter } from '../../../utils/dateExpression';
 import RankingDropDown from './topten/filter/RankingDropDown';
 import useToptenList from '../../../utils/hooks/query/useToptenList';
+import useCreatorCategoryTabs from '../../../utils/hooks/query/useCreatorCategoryTab';
+import useRecentAnalysisDate from '../../../utils/hooks/query/useRecentAnalysisDate';
 
 export const Icons = {
   viewer: <TVIcon />,
@@ -68,8 +69,7 @@ function TopTenCard(): JSX.Element {
   ]);
 
   // 최근 분석날짜 요청
-  const [{ data: recentAnalysisDate },
-  ] = useAxios<Date>('/rankings/recent-analysis-date');
+  const { data: recentAnalysisDate } = useRecentAnalysisDate();
 
   // states
   // 메인 탭에서 선택된 탭의 인덱스
@@ -128,30 +128,22 @@ function TopTenCard(): JSX.Element {
     fetchNextPage();
   }, [fetchNextPage]);
 
-  const loadCategories = () => {
-    axios.get('/creator-category')
-      .then((res) => {
-        const categories = res.data.map((d: {categoryId: number; name: string;}) => (
-          { categoryId: d.categoryId, label: d.name }
-        ));
-        setCategoryTabColumns((prev) => ([...prev, ...categories]));
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  };
+  const { data: categoriesFromDB } = useCreatorCategoryTabs();
+
   useEffect(() => {
-    // 크리에이터 카테고리 불러옴
-    loadCategories();
+    if (categoriesFromDB) {
+      const categories = categoriesFromDB
+        .map((c) => ({ categoryId: c.categoryId, label: c.name }));
+
+      setCategoryTabColumns((prev) => ([...prev, ...categories]));
+    }
 
     return () => {
-      // 크리에이터 카테고리 초기화
-      setCategoryTabColumns([{ categoryId: 0, label: '전체' }]);
+      setCategoryTabColumns([
+        { categoryId: 0, label: '전체' },
+      ]);
     };
-
-  // 마운트 이후 한번만 실행될 훅
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [categoriesFromDB]);
 
   const toptenListContainer = useMemo(() => (
     <TopTenListContainer
