@@ -7,10 +7,10 @@ const getCreatorCategoryTabs = async () => {
   return data;
 };
 
-type Category = {categoryId: number, name: string}
+export type CategoryInDB = {categoryId: number, name: string}
 
-export default function useCreatorCategoryTabs(): UseQueryResult<Category[], AxiosError> {
-  return useQuery<Category[], AxiosError>(
+export default function useCreatorCategoryTabs(): UseQueryResult<CategoryInDB[], AxiosError> {
+  return useQuery<CategoryInDB[], AxiosError>(
     'creatorCategoryTabs',
     getCreatorCategoryTabs,
     {

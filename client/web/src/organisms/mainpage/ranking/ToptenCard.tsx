@@ -2,9 +2,8 @@ import {
   Button, Card, Grid, Typography,
 } from '@material-ui/core';
 
-import useAxios from 'axios-hooks';
 import React, {
-  useCallback, useEffect, useMemo, useRef, useState,
+  useCallback, useEffect, useMemo, useRef,
 } from 'react';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
@@ -22,6 +21,7 @@ import RankingDropDown from './topten/filter/RankingDropDown';
 import useToptenList from '../../../utils/hooks/query/useToptenList';
 import useCreatorCategoryTabs from '../../../utils/hooks/query/useCreatorCategoryTab';
 import useRecentAnalysisDate from '../../../utils/hooks/query/useRecentAnalysisDate';
+import { useToptenFilterButtonStore } from '../../../store/useToptenFilterButton';
 
 export const Icons = {
   viewer: <TVIcon />,
@@ -64,22 +64,19 @@ function TopTenCard(): JSX.Element {
   const classes = useTopTenCard();
   const scrollRef = useRef<any>(null);
 
-  const [categoryTabColumns, setCategoryTabColumns] = useState<{categoryId: number, label: string}[]>([
-    { categoryId: 0, label: '전체' },
-  ]);
-
-  // 최근 분석날짜 요청
-  const { data: recentAnalysisDate } = useRecentAnalysisDate();
-
   // states
-  // 메인 탭에서 선택된 탭의 인덱스
-  const [mainTabIndex, setMainTabIndex] = useState<number>(0);
-  // 하위카테고리 탭에서 선택된 탭의 인덱스
-  const [categoryTabIndex, setCategoryTabIndex] = useState<number>(0);
-  // 플랫폼 탭에서 선택된 탭의 인덱스
-  const [platformTabIndex, setPlatformTabIndex] = useState<number>(0);
-  // 랭킹목록 순위, 이름, 다음에 나오는 '주간 점수 그래프 | 주간 시청자수 그래프' 부분
-  const [weeklyGraphLabel, setWeeklyGraphLabel] = useState<string>('주간 점수 그래프');
+  const {
+    mainTabIndex, // 메인 탭에서 선택된 탭의 인덱스
+    categoryTabIndex, // 하위카테고리 탭에서 선택된 탭의 인덱스
+    platformTabIndex, // 플랫폼 탭에서 선택된 탭의 인덱스
+    weeklyGraphLabel, // 랭킹목록 순위, 이름, 다음에 나오는 '주간 점수 그래프 | 주간 시청자수 그래프' 부분
+    categoryTabColumns,
+    changeCategory,
+    changePlatform,
+    changeMain,
+    setCategoryTabColumns,
+    initializeCategoryTabColumns,
+  } = useToptenFilterButtonStore();
 
   // 탭 별 상위 10인 요청
   const {
@@ -94,6 +91,20 @@ function TopTenCard(): JSX.Element {
     skip: 0,
   });
 
+  // 최근 분석날짜 요청
+  const { data: recentAnalysisDate } = useRecentAnalysisDate();
+  // 카테고리 탭 목록 요청
+  const { data: categoriesFromDB } = useCreatorCategoryTabs();
+
+  useEffect(() => {
+    if (categoriesFromDB) {
+      setCategoryTabColumns(categoriesFromDB);
+    }
+    return () => {
+      initializeCategoryTabColumns();
+    };
+  }, [categoriesFromDB, initializeCategoryTabColumns, setCategoryTabColumns]);
+
   // 보여줄 데이터
   const datalist = useMemo(() => (data
     ? data.pages.reduce((acc, cur) => ({
@@ -103,47 +114,9 @@ function TopTenCard(): JSX.Element {
     }), { rankingData: [], weeklyTrends: {}, totalDataCount: 0 })
     : { rankingData: [], weeklyTrends: {}, totalDataCount: 0 }), [data]);
 
-  const changeMain = useCallback((index: number) => {
-    setMainTabIndex(index);
-    const { column } = mainTabColumns[index];
-
-    if (column === 'viewer') {
-      setWeeklyGraphLabel('주간 시청자수 추이');
-    } else if (column === 'rating') {
-      setWeeklyGraphLabel('일일 평균 평점 추이');
-    } else {
-      setWeeklyGraphLabel('주간 점수 그래프');
-    }
-  }, []);
-
-  const changeCategory = useCallback((index: number) => {
-    setCategoryTabIndex(index);
-  }, []);
-
-  const changePlatform = useCallback((index: number) => {
-    setPlatformTabIndex(index);
-  }, []);
-
   const loadMoreData = useCallback(() => {
     fetchNextPage();
   }, [fetchNextPage]);
-
-  const { data: categoriesFromDB } = useCreatorCategoryTabs();
-
-  useEffect(() => {
-    if (categoriesFromDB) {
-      const categories = categoriesFromDB
-        .map((c) => ({ categoryId: c.categoryId, label: c.name }));
-
-      setCategoryTabColumns((prev) => ([...prev, ...categories]));
-    }
-
-    return () => {
-      setCategoryTabColumns([
-        { categoryId: 0, label: '전체' },
-      ]);
-    };
-  }, [categoriesFromDB]);
 
   const toptenListContainer = useMemo(() => (
     <TopTenListContainer
