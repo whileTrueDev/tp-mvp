@@ -4,13 +4,15 @@ import { CreateUserReactionDto } from '@truepoint/shared/dist/dto/userReaction/c
 import { AxiosError } from 'axios';
 import axios from '../../axios';
 
-export default function useUserReactionMutation(): UseMutationResult<IUserReaction, AxiosError, CreateUserReactionDto> {
+async function addUserReaction(newChat: CreateUserReactionDto) {
+  const res = await axios.post('/user-reactions', newChat);
+  return res.data;
+}
+
+export default function useMutateUserReaction(): UseMutationResult<IUserReaction, AxiosError, CreateUserReactionDto> {
   const queryClient = useQueryClient();
   return useMutation<IUserReaction, AxiosError, CreateUserReactionDto>(
-    async (newChat) => {
-      const res = await axios.post('/user-reactions', newChat);
-      return res.data;
-    },
+    addUserReaction,
     {
       onSuccess: (newChat) => {
         queryClient.setQueryData<IUserReaction[] | undefined>('userReactions', (oldData) => {

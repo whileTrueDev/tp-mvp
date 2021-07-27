@@ -13,6 +13,7 @@ import useDialog from '../../../../utils/hooks/useDialog';
 import axios from '../../../../utils/axios';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import useRemoveUserReaction from '../../../../utils/hooks/mutation/useRemoveUserReaction';
 
 const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
   itemPrimaryText: {
@@ -40,13 +41,12 @@ const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
 
 export interface UserReactionListItemProps{
   data: IUserReaction,
-  reloadItems?: () => void
 }
 
 function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useUserReactionListItemStyle();
-  const { data, reloadItems } = props;
+  const { data } = props;
   const {
     username, content, id, createDate, userId,
   } = data;
@@ -86,18 +86,12 @@ function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
         }
       });
   };
+  const { mutate } = useRemoveUserReaction();
+
   const deleteItem = () => {
-    axios.delete(`/user-reactions/${id}`)
-      .then((res) => {
-        closeConfirmDialog();
-        if (res.status === 200) { // 삭제 성공한 경우
-          if (reloadItems) {
-            reloadItems();
-          }
-        }
-      })
-      .catch((error) => console.error(error));
+    mutate({ id, callback: closeConfirmDialog });
   };
+
   return (
     <>
       <ListItem alignItems="flex-start">

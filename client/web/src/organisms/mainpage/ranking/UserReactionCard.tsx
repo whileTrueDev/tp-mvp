@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { isAvailableNickname, UNAVAILABLE_NICKNAME_ERROR_MESSAGE } from '../../../utils/checkAvailableNickname';
-import useUserReactionMutation from '../../../utils/hooks/mutation/useUserReactionMutation';
+import useMutateUserReaction from '../../../utils/hooks/mutation/useMutateUserReaction';
 import useUserReactions from '../../../utils/hooks/query/useUserReaction';
 import { useUserReactionStyle } from './style/UserReactionCard.style';
 import UserReactionListItem from './sub/UserReactionListItem';
@@ -29,7 +29,7 @@ export default function UserReactionCard(): JSX.Element {
     data: chatData, isFetching, isLoading, refetch,
   } = useUserReactions();
 
-  const { mutateAsync } = useUserReactionMutation();
+  const { mutateAsync } = useMutateUserReaction();
 
   const loadUserReactions = useCallback(() => {
     refetch().then(() => {
@@ -92,7 +92,6 @@ export default function UserReactionCard(): JSX.Element {
           <UserReactionListItem
             key={data.id}
             data={data}
-            reloadItems={loadUserReactions}
           />
         ))}
         {!chatData && !isFetching && !isLoading && <ListItem>데이터가 없습니다</ListItem>}
