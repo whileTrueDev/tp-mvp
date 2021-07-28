@@ -1,6 +1,5 @@
-import useAxios from 'axios-hooks';
-import React, { useEffect } from 'react';
-import { Creator, CreatorListRes } from '@truepoint/shared/dist/res/CreatorList.interface';
+import React from 'react';
+import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import {
   Avatar, List, ListItem, Typography,
 } from '@material-ui/core';
@@ -10,25 +9,14 @@ import TitleWithLogo from '../../../mypage/userInfo/TitleWithLogo';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import { useMyRatingsCreatorBoxStyles } from '../../../mypage/userInfo/styles/MyRatings.style';
 import { useMostSearchedCreatorListStyle, useSearchTableStyle } from '../style/CreatorSearch.style';
+import { useMostSearchedCreators } from '../../../../utils/hooks/query/useCreatorSearchList';
 
 export default function MostSearchedCreatorList(): JSX.Element {
   const { box } = useMyRatingsCreatorBoxStyles();
   const { creatorName } = useSearchTableStyle();
   const classes = useMostSearchedCreatorListStyle();
   const history = useHistory();
-  const [{ data, loading, error }, refetch] = useAxios<CreatorListRes>({
-    url: 'users/creator-list',
-    method: 'get',
-    params: {
-      take: 20,
-      sort: 'searchCount',
-    },
-  });
-
-  useEffect(() => {
-    refetch();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data: queryData, isFetching: loading, error: queryError } = useMostSearchedCreators();
 
   const handleClick = (creator: Creator) => () => {
     const { creatorId } = creator;
@@ -69,8 +57,8 @@ export default function MostSearchedCreatorList(): JSX.Element {
       <TitleWithLogo text="많이 검색된 방송인 &gt;" />
       <List component="ol" className={classnames(box)} style={{ padding: 0 }} dense>
         {loading && <ListItem><CenterLoading /></ListItem>}
-        {!loading && data && renderList(data.data)}
-        {!loading && error && <ListItem>오류가 발생하였습니다</ListItem>}
+        {!loading && queryData && renderList(queryData.data)}
+        {!loading && queryError && <ListItem>오류가 발생하였습니다</ListItem>}
       </List>
     </div>
   );

@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Axios, { AxiosPromise, AxiosRequestConfig } from 'axios';
-import { RefetchOptions } from 'axios-hooks';
 import { useState, useRef, useEffect } from 'react';
 import { forceCheck } from 'react-lazyload';
 import { CreatorListRes } from '@truepoint/shared/dist/res/CreatorList.interface';
@@ -18,11 +15,10 @@ interface PaginationState {
 }
 
 interface Props{
-  getList: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>,
   itemPerPage?: number;
 }
-export const usePaginationState = (props: Props): PaginationState => {
-  const { getList, itemPerPage = 30 } = props;
+export const useCreatorSearchPagination = (props: Props): PaginationState => {
+  const { itemPerPage = 30 } = props;
   const [page, setPage] = useState(1);
   const [take, setTake] = useState(itemPerPage);
   const [search, setSearch] = useState(''); // 검색어
@@ -68,41 +64,6 @@ export const usePaginationState = (props: Props): PaginationState => {
     window.scrollTo(0, 0);
     setPage(value);
   };
-
-  // page 변경시 재요청
-  useEffect(() => {
-    getList({
-      params: {
-        page,
-        take,
-        search,
-      },
-    }).then((res) => {
-      // 목록 새로 불러온 후 아바타 이미지가 뷰포트에 들어와 있는지 재확인하여 lazyloading
-      forceCheck();
-    }).catch((error) => {
-      if (!Axios.isCancel(error)) {
-        console.error(error);
-      }
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getList, page, take]);
-
-  // search 변경시 첫페이지 요청
-  useEffect(() => {
-    getList({
-      params: {
-        page: 1,
-        take,
-        search,
-      },
-    }).catch((error) => {
-      if (!Axios.isCancel(error)) {
-        console.error(error);
-      }
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getList, search]);
 
   return {
     doSearch,

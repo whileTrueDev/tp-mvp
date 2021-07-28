@@ -5,15 +5,15 @@ import {
 import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
 import { Rating } from '@material-ui/lab';
-import { CreatorListRes, Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
+import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
 import useAxios from 'axios-hooks';
 import LazyLoad from 'react-lazyload';
 import MaterialTable from '../../../../atoms/Table/MaterialTable';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { useSearchTableStyle } from '../style/CreatorSearch.style';
-import { usePaginationState } from '../../../../utils/hooks/usePaginationState';
 import SearchInput from '../../shared/SearchInput';
 import CustomPagination from '../../../../atoms/CustomPagination';
+import { useCreatorSearchPagination } from '../../../../utils/hooks/useCreatorSearchPagination';
 
 function getCellStyle(isMobile: boolean): React.CSSProperties {
   return isMobile ? {
@@ -24,7 +24,6 @@ function getCellStyle(isMobile: boolean): React.CSSProperties {
 }
 
 export default function CreatorSearchTable(): JSX.Element {
-  const [{ data, loading }, getList] = useAxios<CreatorListRes>('users/creator-list');
   const [, increaseSearchCount] = useAxios({
     url: 'users/creator-list',
     method: 'post',
@@ -35,7 +34,9 @@ export default function CreatorSearchTable(): JSX.Element {
     clearSearchText,
     inputRef,
     handlePageChange,
-  } = usePaginationState({ getList, itemPerPage: 20 });
+    data: queryData,
+    isFetching,
+  } = useCreatorSearchPagination({ itemPerPage: 20 });
   const classes = useSearchTableStyle();
   const theme = useTheme();
   const history = useHistory();
@@ -149,9 +150,9 @@ export default function CreatorSearchTable(): JSX.Element {
             },
           },
         ]}
-        data={data ? data.data : []}
+        data={queryData ? queryData.data : []}
         onRowClick={onRowClick}
-        isLoading={loading}
+        isLoading={isFetching}
         title="방송인 검색"
         components={{
           Pagination: () => (
@@ -168,8 +169,8 @@ export default function CreatorSearchTable(): JSX.Element {
                 showFirstButton
                 showLastButton
                 onChange={handlePageChange}
-                count={data ? data.totalPage : 1}
-                page={data ? data.page : 1}
+                count={queryData ? queryData.totalPage : 1}
+                page={queryData ? queryData.page : 1}
               />
             </td>
           ),
