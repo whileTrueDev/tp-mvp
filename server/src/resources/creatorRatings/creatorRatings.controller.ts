@@ -2,7 +2,7 @@ import {
   Body, Controller, DefaultValuePipe, Delete, Get, Ip, Param, ParseIntPipe, Post, Query, UseGuards, ValidationPipe,
 } from '@nestjs/common';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
-import { CreatorRatingInfoRes, CreatorAverageRatings, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { CreatorAverageRatings, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { RankingDataType } from '@truepoint/shared/res/RankingsResTypes.interface';
 import { CreatorRatingsService } from './creatorRatings.service';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
@@ -65,20 +65,6 @@ export class CreatorRatingsController {
     @Body('userId') userId: string,
   ): Promise<string> {
     return this.ratingsService.deleteRatings(creatorId, userId);
-  }
-
-  /**
-   * 방송인 프로필 페이지에서 필요한 평균 평점, 감정점수, 방송인 정보 가져온다
-   * @param ip 
-   * @param platform 
-   * @param creatorId 
-   * @returns 
-   */
-  @Get('info/:creatorId')
-  getCreatorRatingInfo(
-    @Param('creatorId') creatorId: string,
-  ): Promise<CreatorRatingInfoRes> {
-    return this.ratingsService.getCreatorRatingInfo({ creatorId });
   }
 
   /**

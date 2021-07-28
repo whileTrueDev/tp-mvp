@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection, SelectQueryBuilder } from 'typeorm';
 import { RatingPostDto } from '@truepoint/shared/dist/dto/creatorRatings/ratings.dto';
 import { RankingDataType, WeeklyTrendsType } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { AverageRating, CreatorRatingInfoRes, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
+import { AverageRating, WeeklyRatingRankingRes } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import dayjs from 'dayjs';
 import { CreatorRatingsEntity } from './entities/creatorRatings.entity';
 import { DailyAverageRatingsEntity } from './entities/dailyAverageRatings.entity';
@@ -227,40 +227,6 @@ export class CreatorRatingsService {
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error in findOneRating, creatorId:${creatorId}`);
-    }
-  }
-
-  /**
-   * 방송인 정보페이지 상단에 사용될 정보
-   * @param creatorId 조회하려는 creatorId
-   * @returns 
-   * {
-      ratings: CreatorAverageRatings, // 해당 creator의 평균평점과 횟수 정보
-      scores: CreatorAverageScores, // 감탄, 웃음, 답답, 욕점수들
-    }
-   */
-  async getCreatorRatingInfo({ creatorId }: {
-    creatorId: string,
-  }): Promise<CreatorRatingInfoRes> {
-    try {
-      // creatorId의 평균 평점과 평가횟수를 찾는다
-      const { average, count } = await this.getAverageRatings(creatorId);
-
-      // 1달 내 방송한 전체 방송인 수
-      const total = await this.rankingsService.getCreatorCountWithin1Month();
-
-      // 해당 방송인의 평균감정점수와 순위
-      const scoresAndRanks = await this.rankingsService.getAverageScoresAndRank(creatorId);
-      return {
-        ratings: { average, count },
-        scores: {
-          ...scoresAndRanks,
-          total,
-        },
-      };
-    } catch (error) {
-      console.error(error);
-      throw new InternalServerErrorException(error, `error in getCreatorRatingInfo, creatorId : ${creatorId}`);
     }
   }
 

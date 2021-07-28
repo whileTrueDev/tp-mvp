@@ -10,21 +10,20 @@ import { CreatorAverageRatings } from '@truepoint/shared/dist/res/CreatorRatingR
 import { useSnackbar } from 'notistack';
 import { ResponseValues } from 'axios-hooks';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import axios from '../../../../utils/axios';
 import { useExLargeRatingStyle, useProfileSectionStyles } from '../style/CreatorInfoCard.style';
 import StarRating from './StarRating';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useUserRating from '../../../../utils/hooks/query/useUserRating';
+import useMutateRating from '../../../../utils/hooks/mutation/useMutateRating';
+import useRemoveRating from '../../../../utils/hooks/mutation/useRemoveRating';
 
 /**
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
  */
 export function ProfileSection({
-  userData,
-  updateAverageRating, ratings,
+  userData, ratings,
 }: {
   userData?: ResponseValues<User, any>
-  updateAverageRating?: () => void,
   ratings: CreatorAverageRatings
 }): JSX.Element {
   const classes = useProfileSectionStyles();
@@ -41,23 +40,10 @@ export function ProfileSection({
   const twitchChannelName = user?.twitch?.twitchChannelName;
 
   const { average: averageRating, count: ratingCount } = ratings;
-  // const [userRating, setUserRating] = useState<number|undefined>(); // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
   const { data: userRating } = useUserRating({ creatorId: creatorId || '', userId: authContext.user.userId });
+  const { mutate: createRating } = useMutateRating();
+  const { mutate: removeRating } = useRemoveRating();
 
-  // useEffect(() => {
-  //   const params = {
-  //     userId: authContext.user.userId,
-  //   };
-  //   axios.get(`ratings/${creatorId}`, {
-  //     params,
-  //   })
-  //     .then((res) => {
-  //       if (res.data) {
-  //         setUserRating(res.data.score);
-  //       }
-  //     })
-  //     .catch((err) => console.error(err));
-  // }, [authContext.user.userId, creatorId]);
   /**
    * 평점 생성, 수정 핸들러 함수
    * 평점을 매기고, 평균평점을 새로 불러온다
@@ -65,56 +51,34 @@ export function ProfileSection({
    * @param cb 버튼 눌렀을 때 loading 상태 제어할 콜백함수, () => setLoading(false)와 같은 함수가 들어올 예정
    */
   const createRatingHandler = useCallback((score: number|null, cb?: () => void) => {
+    if (!creatorId) return;
     if (!score) {
       ShowSnack('평점을 매겨주세요', 'error', enqueueSnackbar);
     } else {
-      axios.post(`ratings/${creatorId}`, {
-        rating: score,
-        userId: authContext.user.userId,
-        platform,
-      })
-        .then(() => {
-          if (updateAverageRating) {
-            updateAverageRating();
-          }
-          if (cb) {
-            cb();
-          }
-        })
-        .catch((err) => {
-          console.error(err, err.response);
-          if (cb) {
-            cb();
-          }
-        });
+      createRating({
+        creatorId,
+        ratingPostDto: {
+          rating: score,
+          userId: authContext.user.userId,
+          platform,
+        },
+        callback: cb,
+      });
     }
-  }, [authContext.user.userId, creatorId, enqueueSnackbar, platform, updateAverageRating]);
+  }, [authContext.user.userId, createRating, creatorId, enqueueSnackbar, platform]);
 
   /**
    * 평점 매긴거 취소하는 핸들러
    * @param cb 버튼 눌렀을 때 loading 상태 제어할 콜백함수, () => setLoading(false)와 같은 함수가 들어올 예정
    */
   const cancelRatingHandler = useCallback((cb?: () => void) => {
-    axios.delete(`ratings/${creatorId}`, {
-      data: {
-        userId: authContext.user.userId,
-      },
-    })
-      .then(() => {
-        if (updateAverageRating) {
-          updateAverageRating();
-        }
-        if (cb) {
-          cb();
-        }
-      })
-      .catch((err) => {
-        console.error(err, err.response);
-        if (cb) {
-          cb();
-        }
-      });
-  }, [authContext.user.userId, creatorId, updateAverageRating]);
+    if (!creatorId) return;
+    removeRating({
+      creatorId,
+      userId: authContext.user.userId,
+      callback: cb,
+    });
+  }, [authContext.user.userId, creatorId, removeRating]);
 
   return (
     <>

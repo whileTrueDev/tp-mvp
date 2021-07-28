@@ -20,11 +20,6 @@ export interface CreatorAverageScoresWithRank{
   frustrateRank: number,
   cussRank: number,
 }
-export interface CreatorRatingInfoRes {
-  ratings: CreatorAverageRatings,
-  scores: CreatorAverageScores | CreatorAverageScoresWithRank,
-}
-
 export interface WeeklyRatingRankingItem{
   creatorId: string,
   platform: 'afreeca'|'twitch',

@@ -7,7 +7,6 @@ import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
-import useRatingData from '../../../utils/hooks/useRatingData';
 import PageTitle from '../shared/PageTitle';
 import CreatorCommentList from './creatorInfo/CreatorCommentList';
 import { ProfileSection } from './creatorInfo/ProfileSection';
@@ -18,7 +17,6 @@ import { useRankingPageLayout } from './style/RankingPage.style';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
 import PageNotFound from '../../../pages/others/PageNotFound';
 import ScoresHistorySection from './creatorInfo/ScoresHistorySection';
-// import useCreatorRatingsAndScores from '../../../utils/hooks/query/useCreatorRatingsAndScres';
 import useCreatorAverageRatings from '../../../utils/hooks/query/useCreatorAverageRatings';
 import useCreatorAverageScores from '../../../utils/hooks/query/useCreatorAverageScores';
 
@@ -28,20 +26,13 @@ export default function CreatorDetails(): React.ReactElement {
   const classes = useCreatorInfoCardStyles();
   const { creatorId } = useParams<{creatorId: string}>();
   const { isMobile } = useMediaSize();
-  // const { data: ratingsAndScores } = useCreatorRatingsAndScores(creatorId);
   const { data: avgRatings } = useCreatorAverageRatings(creatorId);
   const { data: avgScores } = useCreatorAverageScores(creatorId);
-  const {
-    // ratings, scores, 
-    // fetchCreatorRatingInfo,
-    updateAverageRating,
-  } = useRatingData({ creatorId });
+
   const [userData] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
 
-  // 컴포넌트 마운트 이후 1회 실행, 크리에이터 초기 정보를 가져온다
+  // 컴포넌트 마운트 이후 1회 실행
   useEffect(() => {
-    // fetchCreatorRatingInfo();
-
     // 화면 상단으로 
     if (window.scrollY !== 0) {
       window.scrollTo(0, 0);
@@ -81,7 +72,6 @@ export default function CreatorDetails(): React.ReactElement {
             <ProfileSection
               userData={userData}
               ratings={ratings}
-              updateAverageRating={updateAverageRating}
             />
           </Grid>
           <ScoresHistorySection creatorId={creatorId} />
@@ -117,7 +107,6 @@ export default function CreatorDetails(): React.ReactElement {
               <ProfileSection
                 userData={userData}
                 ratings={ratings}
-                updateAverageRating={updateAverageRating}
               />
             </Grid>
             {/* 오른쪽 크리에이터 점수 */}
