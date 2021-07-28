@@ -74,7 +74,7 @@ export class HighlightController {
 
   /**
    * 유투브 편집점 페이지 편집점 제공 목록 요청
-   * GET /users/highlight-point-list/:platform
+   * GET /highlight/highlight-point-list/:platform
    * 플랫폼에 따라 최근 방송 종료순으로 
    * 크리에이터 활동명, userId, 최근방송제목, 최근방송종료시간, 플랫폼 정보를 반환한다
    * 

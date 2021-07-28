@@ -1,10 +1,8 @@
 import React, { useMemo } from 'react';
-import { HighlightPointListResType } from '@truepoint/shared/dist/res/HighlightPointListResType.interface';
-import useAxios from 'axios-hooks';
 import HighlightlistTable from './HighlightListTable';
 import BoardTitle from '../../communityBoard/share/BoardTitle';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
-import { usePaginationState } from '../../../../utils/hooks/usePaginationState';
+import { useHighlightPaginationState } from '../../../../utils/hooks/useHighlightPaginationState';
 import { useHighlightListStyle, StyleProps } from '../style/useHighLightListStyle';
 import SearchInput from '../../shared/SearchInput';
 
@@ -19,13 +17,11 @@ export default function HighlightListContainer({
   const styleProps: StyleProps = { platform, isMobile };
   const classes = useHighlightListStyle(styleProps);
 
-  const url = `/highlight/highlight-point-list/${platform}`;
-  const [{ loading, data }, getList] = useAxios<HighlightPointListResType>({ url }, { manual: true });
-
   const {
+    data: queryData, isFetching: loading,
     doSearch, searchText, clearSearchText,
     handlePageChange, take, inputRef,
-  } = usePaginationState({ getList, itemPerPage: isMobile ? 10 : 30 });
+  } = useHighlightPaginationState({ itemPerPage: isMobile ? 10 : 30, platform });
 
   const titleComponent = useMemo(() => (
     <BoardTitle boardType platform={platform} />
@@ -47,7 +43,7 @@ export default function HighlightListContainer({
       <tr className="tr">
         <th className="th" colSpan={3}>
           활동명
-          {data && <span className="totalCount">{`(${data.totalCount})`}</span>}
+          {queryData && <span className="totalCount">{`(${queryData.totalCount})`}</span>}
         </th>
       </tr>
     </thead>
@@ -60,7 +56,7 @@ export default function HighlightListContainer({
         {searchInput}
       </div>
       <HighlightlistTable
-        data={data}
+        data={queryData}
         loading={loading}
         handlePageChange={handlePageChange}
         header={customHeader}
