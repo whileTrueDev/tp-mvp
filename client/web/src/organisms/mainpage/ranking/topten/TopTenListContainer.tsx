@@ -42,7 +42,7 @@ function TopTenListContainer(props: TopTenListProps): JSX.Element {
 
       {/* 목록 아이템 컨테이너 */}
       <div className={classes.listItems} ref={containerRef}>
-        {data && data.rankingData.map((d, index: number) => {
+        {!loading && data && data.rankingData.map((d, index: number) => {
           const currentScoreName = ['viewer', 'rating'].includes(currentTab)
             ? currentTab as keyof Scores
             : `${currentTab}Score` as keyof Scores;
