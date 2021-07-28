@@ -1,8 +1,6 @@
 import {
   Container, Divider, Grid, Paper,
 } from '@material-ui/core';
-import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import useAxios from 'axios-hooks';
 import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
@@ -19,6 +17,7 @@ import PageNotFound from '../../../pages/others/PageNotFound';
 import ScoresHistorySection from './creatorInfo/ScoresHistorySection';
 import useCreatorAverageRatings from '../../../utils/hooks/query/useCreatorAverageRatings';
 import useCreatorAverageScores from '../../../utils/hooks/query/useCreatorAverageScores';
+import useCreatorDetailData from '../../../utils/hooks/query/useCreatorDetailData';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -28,8 +27,7 @@ export default function CreatorDetails(): React.ReactElement {
   const { isMobile } = useMediaSize();
   const { data: avgRatings } = useCreatorAverageRatings(creatorId);
   const { data: avgScores } = useCreatorAverageScores(creatorId);
-
-  const [userData] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
+  const { data: userData, isFetching } = useCreatorDetailData(creatorId);
 
   // 컴포넌트 마운트 이후 1회 실행
   useEffect(() => {
@@ -56,7 +54,8 @@ export default function CreatorDetails(): React.ReactElement {
   const ratings = useMemo(() => avgRatings || { average: 0, count: 0 }, [avgRatings]);
 
   // 로딩중이 아닌데 유저데이터 없을때 -> 존재하지 않는 유저
-  if (!userData.loading && !userData.data) {
+  // if (!userData.loading && !userData.data) {
+  if (!isFetching && !userData) {
     return <PageNotFound />;
   }
 

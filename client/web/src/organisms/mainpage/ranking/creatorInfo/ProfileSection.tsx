@@ -1,14 +1,10 @@
-import React, {
-  useCallback,
-  // useEffect, useState 
-} from 'react';
+import React, { useCallback } from 'react';
 import {
   Avatar, Chip, Grid, Typography,
 } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { CreatorAverageRatings } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import { useSnackbar } from 'notistack';
-import { ResponseValues } from 'axios-hooks';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import { useExLargeRatingStyle, useProfileSectionStyles } from '../style/CreatorInfoCard.style';
 import StarRating from './StarRating';
@@ -21,17 +17,15 @@ import useRemoveRating from '../../../../utils/hooks/mutation/useRemoveRating';
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
  */
 export function ProfileSection({
-  userData, ratings,
+  userData: user, ratings,
 }: {
-  userData?: ResponseValues<User, any>
+  userData?: User,
   ratings: CreatorAverageRatings
 }): JSX.Element {
   const classes = useProfileSectionStyles();
   const largeRating = useExLargeRatingStyle();
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-
-  const user = userData?.data;
 
   const platform = user?.afreeca ? 'afreeca' : 'twitch';
   const creatorId = user?.afreeca ? user?.afreeca?.afreecaId : user?.twitch?.twitchId;
