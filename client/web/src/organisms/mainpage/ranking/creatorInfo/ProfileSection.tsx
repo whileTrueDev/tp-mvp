@@ -1,4 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  // useEffect, useState 
+} from 'react';
 import {
   Avatar, Chip, Grid, Typography,
 } from '@material-ui/core';
@@ -11,6 +14,7 @@ import axios from '../../../../utils/axios';
 import { useExLargeRatingStyle, useProfileSectionStyles } from '../style/CreatorInfoCard.style';
 import StarRating from './StarRating';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
+import useUserRating from '../../../../utils/hooks/query/useUserRating';
 
 /**
  * 방송인 프로필 & 평점 매기는 부분 있는 카드
@@ -37,22 +41,23 @@ export function ProfileSection({
   const twitchChannelName = user?.twitch?.twitchChannelName;
 
   const { average: averageRating, count: ratingCount } = ratings;
-  const [userRating, setUserRating] = useState<number|undefined>(); // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
+  // const [userRating, setUserRating] = useState<number|undefined>(); // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
+  const { data: userRating } = useUserRating({ creatorId: creatorId || '', userId: authContext.user.userId });
 
-  useEffect(() => {
-    const params = {
-      userId: authContext.user.userId,
-    };
-    axios.get(`ratings/${creatorId}`, {
-      params,
-    })
-      .then((res) => {
-        if (res.data) {
-          setUserRating(res.data.score);
-        }
-      })
-      .catch((err) => console.error(err));
-  }, [authContext.user.userId, creatorId]);
+  // useEffect(() => {
+  //   const params = {
+  //     userId: authContext.user.userId,
+  //   };
+  //   axios.get(`ratings/${creatorId}`, {
+  //     params,
+  //   })
+  //     .then((res) => {
+  //       if (res.data) {
+  //         setUserRating(res.data.score);
+  //       }
+  //     })
+  //     .catch((err) => console.error(err));
+  // }, [authContext.user.userId, creatorId]);
   /**
    * 평점 생성, 수정 핸들러 함수
    * 평점을 매기고, 평균평점을 새로 불러온다
@@ -160,7 +165,7 @@ export function ProfileSection({
             <StarRating
               createRatingHandler={createRatingHandler}
               cancelRatingHandler={cancelRatingHandler}
-              score={userRating}
+              score={userRating ? userRating.score : undefined}
               ratingProps={{
                 classes: largeRating,
               }}

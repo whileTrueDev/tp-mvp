@@ -3,7 +3,7 @@ import {
 } from '@material-ui/core';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import useAxios from 'axios-hooks';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import GoBackButton from '../../../atoms/Button/GoBackButton';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
@@ -18,6 +18,7 @@ import { useRankingPageLayout } from './style/RankingPage.style';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
 import PageNotFound from '../../../pages/others/PageNotFound';
 import ScoresHistorySection from './creatorInfo/ScoresHistorySection';
+import useCreatorRatingsAndScores from '../../../utils/hooks/query/useCreatorRatingsAndScres';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -25,14 +26,17 @@ export default function CreatorDetails(): React.ReactElement {
   const classes = useCreatorInfoCardStyles();
   const { creatorId } = useParams<{creatorId: string}>();
   const { isMobile } = useMediaSize();
+  const { data: ratingsAndScores } = useCreatorRatingsAndScores(creatorId);
   const {
-    ratings, scores, updateAverageRating, fetchCreatorRatingInfo,
+    // ratings, scores, 
+    // fetchCreatorRatingInfo,
+    updateAverageRating,
   } = useRatingData({ creatorId });
   const [userData] = useAxios<User>({ url: '/users', method: 'get', params: { creatorId } });
 
   // 컴포넌트 마운트 이후 1회 실행, 크리에이터 초기 정보를 가져온다
   useEffect(() => {
-    fetchCreatorRatingInfo();
+    // fetchCreatorRatingInfo();
 
     // 화면 상단으로 
     if (window.scrollY !== 0) {
@@ -40,6 +44,23 @@ export default function CreatorDetails(): React.ReactElement {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const scores = useMemo(() => (ratingsAndScores
+    ? ratingsAndScores.scores
+    : {
+      smile: 0,
+      frustrate: 0,
+      admire: 0,
+      cuss: 0,
+      cussRank: 0,
+      smileRank: 0,
+      admireRank: 0,
+      frustrateRank: 0,
+      total: 0,
+    }), [ratingsAndScores]);
+  const ratings = useMemo(() => (ratingsAndScores
+    ? ratingsAndScores.ratings
+    : { average: 0, count: 0 }), [ratingsAndScores]);
 
   // 로딩중이 아닌데 유저데이터 없을때 -> 존재하지 않는 유저
   if (!userData.loading && !userData.data) {
