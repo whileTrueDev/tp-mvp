@@ -18,7 +18,9 @@ import { useRankingPageLayout } from './style/RankingPage.style';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
 import PageNotFound from '../../../pages/others/PageNotFound';
 import ScoresHistorySection from './creatorInfo/ScoresHistorySection';
-import useCreatorRatingsAndScores from '../../../utils/hooks/query/useCreatorRatingsAndScres';
+// import useCreatorRatingsAndScores from '../../../utils/hooks/query/useCreatorRatingsAndScres';
+import useCreatorAverageRatings from '../../../utils/hooks/query/useCreatorAverageRatings';
+import useCreatorAverageScores from '../../../utils/hooks/query/useCreatorAverageScores';
 
 export default function CreatorDetails(): React.ReactElement {
   const { container } = useRankingPageLayout();
@@ -26,7 +28,9 @@ export default function CreatorDetails(): React.ReactElement {
   const classes = useCreatorInfoCardStyles();
   const { creatorId } = useParams<{creatorId: string}>();
   const { isMobile } = useMediaSize();
-  const { data: ratingsAndScores } = useCreatorRatingsAndScores(creatorId);
+  // const { data: ratingsAndScores } = useCreatorRatingsAndScores(creatorId);
+  const { data: avgRatings } = useCreatorAverageRatings(creatorId);
+  const { data: avgScores } = useCreatorAverageScores(creatorId);
   const {
     // ratings, scores, 
     // fetchCreatorRatingInfo,
@@ -45,9 +49,8 @@ export default function CreatorDetails(): React.ReactElement {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const scores = useMemo(() => (ratingsAndScores
-    ? ratingsAndScores.scores
-    : {
+  const scores = useMemo(() => (avgScores
+    || {
       smile: 0,
       frustrate: 0,
       admire: 0,
@@ -57,10 +60,9 @@ export default function CreatorDetails(): React.ReactElement {
       admireRank: 0,
       frustrateRank: 0,
       total: 0,
-    }), [ratingsAndScores]);
-  const ratings = useMemo(() => (ratingsAndScores
-    ? ratingsAndScores.ratings
-    : { average: 0, count: 0 }), [ratingsAndScores]);
+    }), [avgScores]);
+
+  const ratings = useMemo(() => avgRatings || { average: 0, count: 0 }, [avgRatings]);
 
   // 로딩중이 아닌데 유저데이터 없을때 -> 존재하지 않는 유저
   if (!userData.loading && !userData.data) {

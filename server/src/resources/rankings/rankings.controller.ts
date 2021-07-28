@@ -1,10 +1,10 @@
 import {
-  Controller, DefaultValuePipe, Get, ParseIntPipe, Query, ValidationPipe,
+  Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Query, ValidationPipe,
 } from '@nestjs/common';
 import {
   DailyTotalViewersResType, RankingDataType, FirstPlacesRes,
 } from '@truepoint/shared/dist/res/RankingsResTypes.interface';
-import { ScoreHistoryData } from '@truepoint/shared/res/CreatorRatingResType.interface';
+import { CreatorAverageScoresWithRank, ScoreHistoryData } from '@truepoint/shared/res/CreatorRatingResType.interface';
 import { ColumnType, RankingsService, PlatformType } from './rankings.service';
 
 @Controller('rankings')
@@ -91,5 +91,12 @@ export class RankingsController {
     // @Query('startDate') startDate: Date, 조회 시작 날짜
   ): Promise<ScoreHistoryData[]> {
     return this.rankingsService.getScoresHistory(creatorId);
+  }
+
+  @Get('/:creatorId/averageScores')
+  getAverageScores(
+    @Param('creatorId') creatorId: string,
+  ): Promise<CreatorAverageScoresWithRank> {
+    return this.rankingsService.getAverageScoresAndRank(creatorId);
   }
 }

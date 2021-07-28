@@ -474,9 +474,12 @@ export class RankingsService {
         .where('T.creatorId = :creatorId', { creatorId })
         .getRawOne();
 
+      // 1달 내 방송한 전체 방송인 수
+      const total = await this.getCreatorCountWithin1Month();
+
       if (result) {
         delete result.creatorId;
-        return result;
+        return { ...result, total };
       }
       return {
         admire: 0,
