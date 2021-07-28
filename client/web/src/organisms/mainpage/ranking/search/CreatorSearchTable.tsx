@@ -2,11 +2,9 @@ import React, { useMemo } from 'react';
 import {
   Avatar, Chip, Typography,
 } from '@material-ui/core';
-import { useHistory } from 'react-router';
 import { useTheme } from '@material-ui/core/styles';
 import { Rating } from '@material-ui/lab';
 import { Creator } from '@truepoint/shared/dist/res/CreatorList.interface';
-import useAxios from 'axios-hooks';
 import LazyLoad from 'react-lazyload';
 import MaterialTable from '../../../../atoms/Table/MaterialTable';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
@@ -14,6 +12,7 @@ import { useSearchTableStyle } from '../style/CreatorSearch.style';
 import SearchInput from '../../shared/SearchInput';
 import CustomPagination from '../../../../atoms/CustomPagination';
 import { useCreatorSearchPagination } from '../../../../utils/hooks/useCreatorSearchPagination';
+import useMutateCreatorSearchCount from '../../../../utils/hooks/mutation/useMutateCreatorSearchCount';
 
 function getCellStyle(isMobile: boolean): React.CSSProperties {
   return isMobile ? {
@@ -24,10 +23,6 @@ function getCellStyle(isMobile: boolean): React.CSSProperties {
 }
 
 export default function CreatorSearchTable(): JSX.Element {
-  const [, increaseSearchCount] = useAxios({
-    url: 'users/creator-list',
-    method: 'post',
-  }, { manual: true });
   const {
     doSearch,
     searchText,
@@ -37,22 +32,16 @@ export default function CreatorSearchTable(): JSX.Element {
     data: queryData,
     isFetching,
   } = useCreatorSearchPagination({ itemPerPage: 20 });
+  const { mutate } = useMutateCreatorSearchCount();
   const classes = useSearchTableStyle();
   const theme = useTheme();
-  const history = useHistory();
   const { isMobile } = useMediaSize();
 
   const onRowClick = (event: React.MouseEvent<Element, MouseEvent> | undefined, rowData: Creator | undefined) => {
     if (!rowData) return;
     const creatorId = rowData?.creatorId;
     // 검색횟수 증가 요청
-    increaseSearchCount({
-      data: {
-        creatorId,
-      },
-    }).then(() => {
-      history.push(`/ranking/creator/${creatorId}`);
-    }).catch((error) => console.error(error));
+    mutate(creatorId);
   };
 
   const searchInput = useMemo(() => (

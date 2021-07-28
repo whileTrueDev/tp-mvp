@@ -600,7 +600,7 @@ export class UsersService {
   // 방송인 검색횟수 증가
   async increaseSearchCount({ creatorId }: {
     creatorId: string
-  }): Promise<any> {
+  }): Promise<UserEntity> {
     try {
       const target = await this.findOne({ creatorId });
       target.searchCount += 1;

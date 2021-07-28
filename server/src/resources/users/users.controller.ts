@@ -250,7 +250,7 @@ export class UsersController {
   @Post('/creator-list')
   increaseCreatorSearchCount(
     @Body('creatorId') creatorId: string,
-  ): Promise<any> {
+  ): Promise<UserEntity> {
     return this.usersService.increaseSearchCount({ creatorId });
   }
 
