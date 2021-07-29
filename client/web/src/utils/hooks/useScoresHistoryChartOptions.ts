@@ -1,12 +1,11 @@
-import useAxios from 'axios-hooks';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ScoreHistoryData } from '@truepoint/shared/dist/res/CreatorRatingResType.interface';
 import dayjs from 'dayjs';
 import Highcharts from 'highcharts';
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display';
 import { useScoresHistoryButton } from '../../store/scoresHistoryButton';
+import useCreatorScoresHistory from './query/useCreatorScoresHistory';
 
 // 데이터 없을때 문구 표시하기 위한 모듈
 NoDataToDisplay(Highcharts);
@@ -63,7 +62,6 @@ function dataLabelFormatter(this: Highcharts.PointLabelObject) {
 
 // series.data에 넣을 데이터 생성 함수
 // 감정점수 10점 이상 값인 경우 그래프에 표현되는 y값은 10점으로 넣고
-// originValue를 따로 저장하여 툴팁과 라벨에는 원래값이 표시되도록 한다
 // 10점 넘는 값에만 marker.enabled = true 설정함
 // x : xAxis.type == 'datetime'이므로 milliseconds 형태로 넣는다
 function makeSeriesData(
@@ -105,13 +103,7 @@ const ScoresHistorySectionHeight = 280;
 
 export default function useScoresHistoryChartOptions({ creatorId }: {creatorId: string}): any {
   const theme = useTheme();
-  const [{ data, loading }] = useAxios<ScoreHistoryData[]>({
-    url: '/rankings/scores/history',
-    method: 'get',
-    params: {
-      creatorId,
-    },
-  });
+  const { data, isFetching: loading } = useCreatorScoresHistory(creatorId);
 
   const { selectedButton } = useScoresHistoryButton();
 
@@ -190,7 +182,9 @@ export default function useScoresHistoryChartOptions({ creatorId }: {creatorId: 
         },
       },
     });
-  }, [data, selectedButton, theme.palette.background.paper, theme.palette.primary.dark]);
+  }, [
+    data,
+    selectedButton, theme.palette.background.paper, theme.palette.primary.dark]);
 
   return {
     chartOptions,
