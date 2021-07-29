@@ -10,7 +10,7 @@ import RegularButton from '../../../../atoms/Button/Button';
 import CommentForm from '../sub/CommentForm';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import useAuthContext from '../../../../utils/hooks/useAuthContext';
+// import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import CommentSortButtons, { filters } from '../sub/CommentSortButtons';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 import useCreatorCommentList from '../../../../utils/hooks/query/useCreatorCommentList';
