@@ -291,7 +291,7 @@ function PlatformRegistForm({
                 />
               </Grid>
               {/* 이름 인풋 */}
-              <Grid item className={classes.row}>
+              {/* <Grid item className={classes.row}>
                 <InputLabel shrink>이름</InputLabel>
                 <TextField
                   required
@@ -303,7 +303,7 @@ function PlatformRegistForm({
                   className={classes.textField}
                   placeholder="이름을 입력하세요."
                 />
-              </Grid>
+              </Grid> */}
               {/* 닉네임 인풋 */}
               <Grid item className={classes.row} style={{ marginBottom: 8 }}>
                 <InputLabel shrink>닉네임</InputLabel>

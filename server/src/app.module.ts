@@ -37,6 +37,7 @@ import { CreatorRatingsModule } from './resources/creatorRatings/creatorRatings.
 import { CreatorCommentModule } from './resources/creatorComment/creatorComment.module';
 import { CreatorCategoryModule } from './resources/creator-category/creator-category.module';
 import { S3Module } from './resources/s3/s3.module';
+import { ScheduleTaskModule } from './resources/schedule-task/schedule-task.module';
 
 Resource.validate = validate;
 AdminBro.registerAdapter({ Database, Resource });
@@ -77,6 +78,7 @@ AdminBro.registerAdapter({ Database, Resource });
       useFactory: getAdminOptions,
     }),
     ScheduleModule.forRoot(),
+    ScheduleTaskModule,
   ],
 })
 export class AppModule { }

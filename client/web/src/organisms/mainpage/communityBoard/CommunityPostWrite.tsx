@@ -23,6 +23,7 @@ import useSunEditor from '../../../utils/hooks/useSunEditor';
 import usePostWriteEditAPI from '../../../utils/hooks/usePostWriteEditAPI';
 import WritingInputFields from './write/WritingInputFields';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import { throwErrorIfNicknameOnBlacklist } from '../../../utils/checkAvailableNickname';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
@@ -142,6 +143,7 @@ export default function CommunityPostWrite(): JSX.Element {
     };
 
     try {
+      throwErrorIfNicknameOnBlacklist(createPostDto.nickname);
       const nowContents = getHtmlFromEditor(editor);
       const imageResoureces = replaceResources(nowContents);
       createPostDto.content = imageResoureces.content;

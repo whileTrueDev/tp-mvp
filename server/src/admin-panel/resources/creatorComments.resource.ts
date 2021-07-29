@@ -18,9 +18,17 @@ const CreatorCommentsResource: ResourceWithOptions = {
       'creatorId',
       'parentCommentId',
     ],
+    actions: {
+      new: { isVisible: false },
+    },
     properties: {
       commentId: { isId: true },
-      content: { isTitle: true },
+      content: { isTitle: true, position: 1 },
+      createComment: {
+        components: { show: AdminBro.bundle('../components/child-comment-for-creator-comment') },
+        isVisible: showOnly,
+        position: 2,
+      },
       link: {
         components: {
           show: LINK, // 댓글이 달린 방송인 프로필 페이지로 이동
