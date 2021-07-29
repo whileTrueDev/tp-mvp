@@ -38,7 +38,7 @@ export default function useToptenList(filters: ToptenFilters): UseInfiniteQueryR
     ['topten', queryKey],
     getToptenList,
     {
-      staleTime: 1000 * 60 * 60, // 5분간 fresh 상태 유지(refetch 발생 안함)
+      staleTime: 1000 * 60 * 30, // 30분간 fresh 상태 유지(refetch 발생 안함)
       keepPreviousData: true,
       getNextPageParam: (lastPage, pages) => ({ skip: ((pages.length - 1) * 10) + lastPage.rankingData.length }),
       // select: (data) => {

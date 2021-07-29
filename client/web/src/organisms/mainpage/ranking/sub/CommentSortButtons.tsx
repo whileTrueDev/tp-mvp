@@ -5,7 +5,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import { useCreatorCommentListStyle } from '../style/CreatorComment.style';
 
 export type CommentFilter = 'date' | 'recommend';
-export const filters = ['recommend', 'date'];
+export const filters: CommentFilter[] = ['recommend', 'date'];
 
 export interface CommentSortButtonsProps {
   clickedButtonIndex: number;

@@ -131,14 +131,16 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
   }, [childrenCount]);
 
   const handleVoteResult = useCallback((result: {like: number, hate: number}): void => {
-    setLikeClicked(result.like === 1);
-    setHateClicked(result.hate === 1);
-    if (result.like !== 0) {
-      setLikeNumber((prev) => prev + result.like);
-    }
-    if (result.hate !== 0) {
-      setHateNumber((prev) => prev + result.hate);
-    }
+    setLikeNumber(result.like);
+    setHateNumber(result.hate);
+    // setLikeClicked(result.like === 1);
+    // setHateClicked(result.hate === 1);
+    // if (result.like !== 0) {
+    //   setLikeNumber((prev) => prev + result.like);
+    // }
+    // if (result.hate !== 0) {
+    //   setHateNumber((prev) => prev + result.hate);
+    // }
   }, []);
 
   const clickLike = useCallback(() => {
@@ -235,9 +237,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
     if (onDelete) {
       onDelete(commentId)
         .then(() => {
-          if (reloadComments) {
-            reloadComments();
-          }
+          if (reloadComments) reloadComments();// 자유게시판 mutate 적용후 삭제
           closeConfirmDialog();
         });
     }
@@ -373,7 +373,6 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
                     onClickLike={onClickLike}
                     onClickHate={onClickHate}
                     onDelete={onDelete}
-                    // reloadComments={reloadComments}
                     reloadComments={getChildrenComments}
                     checkPasswordRequest={checkPasswordRequest}
                   />

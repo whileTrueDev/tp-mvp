@@ -4,6 +4,7 @@ import {
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
 import React from 'react';
+import { UseMutateFunction } from 'react-query';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import axios from '../../../../utils/axios';
 import { isAvailableNickname, UNAVAILABLE_NICKNAME_ERROR_MESSAGE } from '../../../../utils/checkAvailableNickname';
@@ -14,6 +15,7 @@ export interface CommentFormProps {
   /** */
   postUrl: string;
   callback?: () => void;
+  postRequest?: UseMutateFunction<any, any, any, any>;
 }
 
 /**
@@ -24,7 +26,7 @@ export interface CommentFormProps {
  * @returns 
  */
 export default function CommentForm(props: CommentFormProps): JSX.Element {
-  const { postUrl = '', callback } = props;
+  const { postUrl = '', callback, postRequest } = props;
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const formStyle = useCreatorCommentFormStyle();
@@ -70,17 +72,29 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
       return;
     }
 
-    axios.post(postUrl, { ...createCommentDto })
-      .then((res) => {
-        nicknameInput.value = authContext.user.nickName;
-        passwordInput.value = '';
-        contentInput.value = '';
+    if (postRequest) {
+      postRequest({
+        url: postUrl,
+        createCommentDto,
+        callback: () => {
+          nicknameInput.value = authContext.user.nickName;
+          passwordInput.value = '';
+          contentInput.value = '';
+        },
+      });
+    } else {
+      axios.post(postUrl, { ...createCommentDto })
+        .then((res) => {
+          nicknameInput.value = authContext.user.nickName;
+          passwordInput.value = '';
+          contentInput.value = '';
 
-        if (callback) {
-          callback();
-        }
-      })
-      .catch((error) => console.error(error));
+          if (callback) {
+            callback();
+          }
+        })
+        .catch((error) => console.error(error));
+    }
   };
   return (
     <form className={formStyle.form} onSubmit={onSubmit}>

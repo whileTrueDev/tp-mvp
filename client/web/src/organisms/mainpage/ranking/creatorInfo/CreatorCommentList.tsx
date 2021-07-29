@@ -1,13 +1,9 @@
 import { Typography } from '@material-ui/core';
-import useAxios from 'axios-hooks';
-import Axios from 'axios';
 import React, {
-  useCallback, useEffect, useState,
+  useCallback, useMemo, useState,
 } from 'react';
 import { useSnackbar } from 'notistack';
-import {
-  ICreatorCommentsRes, ICreatorCommentData,
-} from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import { useQueryClient } from 'react-query';
 import CommentItem from '../sub/CommentItem';
 import { useCreatorCommentListStyle, useCommentContainerStyles } from '../style/CreatorComment.style';
 import RegularButton from '../../../../atoms/Button/Button';
@@ -15,8 +11,12 @@ import CommentForm from '../sub/CommentForm';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
-import CommentSortButtons, { CommentFilter, filters } from '../sub/CommentSortButtons';
+import CommentSortButtons, { filters } from '../sub/CommentSortButtons';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
+import useCreatorCommentList from '../../../../utils/hooks/query/useCreatorCommentList';
+import useMutateCreatorComment from '../../../../utils/hooks/mutation/useMutateCreatorComment';
+import useRemoveCreatorComment from '../../../../utils/hooks/mutation/useRemoveCreatorComment';
+import useMutateCreatorCommentVote from '../../../../utils/hooks/mutation/useMutateCreatorCommentVote';
 
 export function isWithin24Hours(date: string): boolean {
   const now = dayjsFormatter();
@@ -31,67 +31,45 @@ export interface CreatorCommentListProps{
 export default function CreatorCommentList(props: CreatorCommentListProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const listStyle = useCreatorCommentListStyle();
-  const authContext = useAuthContext();
   const classes = useCommentContainerStyles();
   const { creatorId } = props;
-  const [commentList, setCommentList] = useState<ICreatorCommentData[]>([]);
-  const [clickedFilterButtonIndex, setClickedFilterButtonIndex] = useState<number>(0); //  0 : 인기순(recommend), 1 : 최신순(date)
-  const [{ data: commentData, loading }, getCommentData] = useAxios<ICreatorCommentsRes>({
-    url: `/creatorComment/${creatorId}`,
-    method: 'get',
-    params: {
-      skip: 0,
-      order: 'date',
-    },
+  const queryClient = useQueryClient();
+  const [clickedFilterButtonIndex, setClickedFilterButtonIndex] = useState<number>(0);
+  //  0 : 인기순(recommend), 1 : 최신순(date)
+
+  const { data: queryData, isFetching: loading, fetchNextPage } = useCreatorCommentList({
+    creatorId,
+    skip: 0,
+    order: filters[clickedFilterButtonIndex],
   });
-  const loadComments = useCallback((filter: CommentFilter) => {
-    getCommentData({
-      params: {
-        skip: 0,
-        order: filter,
-      },
-    }).then((res) => {
-      setCommentList(res.data.comments);
-    }).catch((error) => {
-      if (!Axios.isCancel(error)) {
-        console.error(error);
-      }
-    });
-  }, [getCommentData]);
+  // 댓글 데이터
+  const data = useMemo(() => {
+    const initialData = {
+      comments: [],
+      count: 0,
+    };
+    if (queryData) {
+      return queryData.pages.reduce((total, currentPage) => ({
+        comments: [...total.comments, ...currentPage.comments],
+        count: currentPage.count,
+      }), initialData);
+    }
+    return initialData;
+  }, [queryData]);
 
-  const loadMoreComments = useCallback(() => {
-    getCommentData({
-      params: {
-        skip: commentList.length,
-        order: filters[clickedFilterButtonIndex],
-      },
-    }).then((res) => {
-      setCommentList((prevList) => [...prevList, ...res.data.comments]);
-    }).catch((error) => {
-      console.error(error);
-    });
-  }, [clickedFilterButtonIndex, commentList.length, getCommentData]);
-
-  useEffect(() => {
-    loadComments('recommend');
-  // 한번만 실행
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const reloadComments = useCallback(() => {
-    loadComments(clickedFilterButtonIndex === 1 ? 'date' : 'recommend');
-  }, [clickedFilterButtonIndex, loadComments]);
-
+  // 인기순 정렬 버튼 핸들러
   const handleRecommendFilter = useCallback(() => {
     setClickedFilterButtonIndex(0);
-    loadComments('recommend');
-  }, [loadComments]);
+    queryClient.invalidateQueries(['creatorComment', { creatorId, order: 'recommend' }]);
+  }, [creatorId, queryClient]);
 
+  // 최신순 정렬 버튼 핸들러
   const handleDateFilter = useCallback(() => {
     setClickedFilterButtonIndex(1);
-    loadComments('date');
-  }, [loadComments]);
+    queryClient.invalidateQueries(['creatorComment', { creatorId, order: 'date' }]);
+  }, [creatorId, queryClient]);
 
+  // 방송인 프로필 댓글 신고 버튼 핸들러
   const onReport = useCallback((commentId: number) => {
     const CREATOR_COMMENT_REPORT_LIST_KEY = 'cretorCommentReport';
     const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(CREATOR_COMMENT_REPORT_LIST_KEY) || '[]');
@@ -103,7 +81,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     if (commentIds.includes(currentCommentId)) {
       ShowSnack('이미 신고한 댓글입니다', 'error', enqueueSnackbar);
       localStorage.setItem(CREATOR_COMMENT_REPORT_LIST_KEY, JSON.stringify([...commentsRecentlyReported]));
-      return new Promise((res, rej) => res(true));
+      return Promise.resolve(true);
     }
     // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
     return axios.post(`/creatorComment/report/${commentId}`)
@@ -113,7 +91,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
           CREATOR_COMMENT_REPORT_LIST_KEY,
           JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]),
         );
-        return new Promise((resolve, reject) => resolve(res));
+        return Promise.resolve(res);
       })
       .catch((err) => {
         ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);
@@ -121,35 +99,18 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
       });
   }, [enqueueSnackbar]);
 
-  const onClickLike = useCallback((commentId: number) => axios.post(
-    `creatorComment/vote/${commentId}`,
-    { vote: 1, userId: authContext.user.userId || null },
-  )
-    .then((res) => {
-      const result = res.data;
-      return new Promise(((resolve, reject) => {
-        resolve(result);
-      }));
-    })
-    .catch((error) => console.error(error)), [authContext.user.userId]);
-
-  const onClickHate = useCallback((commentId: number) => axios.post(
-    `creatorComment/vote/${commentId}`,
-    { vote: 0, userId: authContext.user.userId || null },
-  )
-    .then((res) => {
-      const result = res.data;
-      return new Promise(((resolve, reject) => {
-        resolve(result);
-      }));
-    })
-    .catch((error) => console.error(error)), [authContext.user.userId]);
-
-  const onDelete = useCallback((commentId: number) => (
-    axios.delete(`/creatorComment/${commentId}`)
-      .then((res) => new Promise((resolve, reject) => resolve(res)))
-      .catch((error) => console.error(error))
-  ), []);
+  // 댓글 좋아요, 싫어요 요청
+  const { mutateAsync: voteComment } = useMutateCreatorCommentVote();
+  // 댓글 좋아요 요청 핸들러
+  const onClickLike = useCallback(async (commentId: number) => {
+    const result = await voteComment({ url: `creatorComment/vote/${commentId}`, vote: 1 });
+    return Promise.resolve(result);
+  }, [voteComment]);
+  // 댓글 싫어요 요청 핸들러
+  const onClickHate = useCallback(async (commentId: number) => {
+    const result = await voteComment({ url: `creatorComment/vote/${commentId}`, vote: 0 });
+    return Promise.resolve(result);
+  }, [voteComment]);
 
   const loadChildrenComments = useCallback((commentId: number) => axios.get(`creatorComment/replies/${commentId}`)
     .then((res) => new Promise((resolve, reject) => {
@@ -157,17 +118,27 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     }))
     .catch((error) => console.error(error)), []);
 
+  // 방송인 프로필 페이지 댓글 비밀번호 확인 핸들러
   const checkPasswordRequest = useCallback((commentId, password) => axios.post(`/creatorComment/password/${commentId}`, { password })
-    .then((res) => new Promise((resolve, reject) => {
-      resolve(res);
-    })),
+    .then((res) => Promise.resolve(res)),
   []);
+
+  // 방송인 프로필 페이지 댓글 생성 요청
+  const { mutate: createComment } = useMutateCreatorComment();
+
+  // 방송인 프로필 페이지 댓글 삭제 요청 핸들러
+  const { mutateAsync: removeCreatorComment } = useRemoveCreatorComment();
+  const onDelete = useCallback(async (commentId: number) => (
+    removeCreatorComment({ commentId })
+      .then((res) => Promise.resolve(res))
+      .catch((error) => console.error(error))
+  ), [removeCreatorComment]);
 
   return (
     <div className={classes.commentSectionWrapper}>
       <CommentForm
         postUrl={`/creatorComment/${creatorId}`}
-        callback={reloadComments}
+        postRequest={createComment}
       />
 
       <div className={listStyle.commentsContainer}>
@@ -177,9 +148,8 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
           handleDateFilter={handleDateFilter}
         />
         <div className={listStyle.commentListContainer}>
-          {
-          commentList.length
-            ? commentList.map((d) => (
+          {data.comments.length !== 0
+            ? data.comments.map((d) => (
               <CommentItem
                 key={d.commentId}
                 {...d}
@@ -188,7 +158,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
                 onClickLike={onClickLike}
                 onClickHate={onClickHate}
                 onDelete={onDelete}
-                reloadComments={reloadComments}
                 checkPasswordRequest={checkPasswordRequest}
                 loadChildrenComments={loadChildrenComments}
                 childrenCommentPostBaseUrl="/creatorComment/replies"
@@ -196,16 +165,15 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
             ))
             : (
               <Typography className={listStyle.emptyList}>아직 댓글이 없어요! 첫 댓글을 남겨보세요.</Typography>
-            )
-        }
+            )}
         </div>
 
       </div>
 
       <div className={listStyle.buttonWrapper}>
-        {commentData
-        && (commentData.count > commentList.length)
-        && <RegularButton onClick={loadMoreComments} load={loading}>더보기</RegularButton>}
+        {queryData
+        && (data.count > data.comments.length)
+        && <RegularButton onClick={() => fetchNextPage()} load={loading}>더보기</RegularButton>}
       </div>
 
     </div>
