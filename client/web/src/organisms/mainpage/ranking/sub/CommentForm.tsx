@@ -4,7 +4,7 @@ import {
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { useSnackbar } from 'notistack';
 import React from 'react';
-import { UseMutateFunction } from 'react-query';
+import { QueryKey, UseMutateFunction, useQueryClient } from 'react-query';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import axios from '../../../../utils/axios';
 import { isAvailableNickname, UNAVAILABLE_NICKNAME_ERROR_MESSAGE } from '../../../../utils/checkAvailableNickname';
@@ -16,6 +16,7 @@ export interface CommentFormProps {
   postUrl: string;
   callback?: () => void;
   postRequest?: UseMutateFunction<any, any, any, any>;
+  invalidateQueryKey?: QueryKey
 }
 
 /**
@@ -26,10 +27,13 @@ export interface CommentFormProps {
  * @returns 
  */
 export default function CommentForm(props: CommentFormProps): JSX.Element {
-  const { postUrl = '', callback, postRequest } = props;
+  const {
+    postUrl = '', callback, postRequest, invalidateQueryKey,
+  } = props;
   const authContext = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const formStyle = useCreatorCommentFormStyle();
+  const queryClient = useQueryClient();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -80,9 +84,16 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
           nicknameInput.value = authContext.user.nickName;
           passwordInput.value = '';
           contentInput.value = '';
+          if (invalidateQueryKey) {
+            queryClient.invalidateQueries(invalidateQueryKey);
+          }
+          if (callback) {
+            callback(); // 대댓글 생성시 대댓글 창 여는 동작
+          }
         },
       });
     } else {
+      // react-query 적용하지 않은 컴포넌트를 위한 fallback
       axios.post(postUrl, { ...createCommentDto })
         .then((res) => {
           nicknameInput.value = authContext.user.nickName;

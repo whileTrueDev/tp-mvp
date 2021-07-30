@@ -1,4 +1,4 @@
-import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
+import { useMutation, UseMutationResult } from 'react-query';
 import { AxiosError } from 'axios';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { CreatorComments } from '@truepoint/shared/dist/interfaces/CreatorComments.interface';
@@ -17,14 +17,12 @@ async function addComment(props: Variables) {
 }
 
 export default function useMutateCreatorComment(): UseMutationResult<CreatorComments, AxiosError, Variables> {
-  const queryClient = useQueryClient();
   return useMutation<CreatorComments, AxiosError, Variables>(
     addComment,
     {
       onSuccess: (comment, variables) => {
         const { callback } = variables;
         if (callback) callback();
-        queryClient.invalidateQueries('creatorComment');
       },
     },
   );
