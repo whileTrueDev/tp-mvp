@@ -18,6 +18,7 @@ import useCreatorCommentList from '../../../../utils/hooks/query/useCreatorComme
 import useMutateCreatorComment from '../../../../utils/hooks/mutation/useMutateCreatorComment';
 import useRemoveCreatorComment from '../../../../utils/hooks/mutation/useRemoveCreatorComment';
 import useMutateCreatorCommentVote from '../../../../utils/hooks/mutation/useMutateCreatorCommentVote';
+import useReportCreatorComment from '../../../../utils/hooks/mutation/useReportCreatorComment';
 
 export function isWithin24Hours(date: string): boolean {
   const now = dayjsFormatter();
@@ -71,7 +72,8 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
   }, [creatorId, queryClient]);
 
   // 방송인 프로필 댓글 신고 버튼 핸들러
-  const onReport = useCallback((commentId: number) => {
+  const { mutateAsync: reportComment } = useReportCreatorComment();
+  const onReport = useCallback(async (commentId: number) => {
     const CREATOR_COMMENT_REPORT_LIST_KEY = 'cretorCommentReport';
     const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(CREATOR_COMMENT_REPORT_LIST_KEY) || '[]');
     const commentsRecentlyReported = reportList.filter((item) => isWithin24Hours(item.date));
@@ -85,7 +87,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
       return Promise.resolve(true);
     }
     // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
-    return axios.post(`/creatorComment/report/${commentId}`)
+    return reportComment(`/creatorComment/report/${commentId}`)
       .then((res) => {
         ShowSnack('댓글 신고 성공', 'info', enqueueSnackbar);
         localStorage.setItem(
@@ -98,7 +100,7 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
         ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);
         console.error(err);
       });
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, reportComment]);
 
   // 댓글 좋아요, 싫어요 요청
   const { mutateAsync: voteComment } = useMutateCreatorCommentVote();

@@ -206,7 +206,6 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
     if (onDelete) {
       onDelete(commentId)
         .then(() => {
-          if (reloadComments) reloadComments();// 자유게시판 mutate 적용후 삭제
           closeConfirmDialog();
         });
     }
