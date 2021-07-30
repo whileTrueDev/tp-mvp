@@ -4,7 +4,6 @@ import {
 import { Skeleton } from '@material-ui/lab';
 // 타입정의
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
-import { FindReplyResType } from '@truepoint/shared/dist/res/FindReplyResType.interface';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, {
@@ -24,6 +23,7 @@ import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
 import PostRecommandButtons from './postView/PostRecommandContainer';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import { useStyles, SUN_EDITOR_VIEWER_CLASSNAME } from './style/CommunityBoardView.style';
+import usePostCommentList from '../../../utils/hooks/query/usePostCommentList';
 
 // PostList 컴포넌트의 moveToPost 함수에서 history.push({state:})로 넘어오는 값들
 interface LocationState{
@@ -105,16 +105,21 @@ export default function CommunityPostView(): JSX.Element {
    */
   const maxReplyToDisplay = useRef<number>(10); // 댓글 최대 10개 표시
   const [replyPage, setReplyPage] = useState<number>(1); // 현재 댓글 페이지
+
   // 댓글 요청 함수
-  const [{ data: replies }, getReplies] = useAxios<FindReplyResType>({
-    url: '/community/replies',
-    params: {
-      postId,
-      take: maxReplyToDisplay.current,
-      page: replyPage,
+  const { data: replies } = usePostCommentList({
+    postId: Number(postId),
+    take: maxReplyToDisplay.current,
+    page: replyPage,
+  }, {
+    onError: (e) => {
+      if (e.response) {
+        console.error(e.response.data, e.response.status);
+        ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
+      }
+      console.error(e);
     },
   });
-
   // 댓글 페이지 변경 핸들러
   const changeReplyPage = (event: React.ChangeEvent<unknown>, newPage: number) => {
     if (replyPage === newPage) return;
@@ -138,29 +143,6 @@ export default function CommunityPostView(): JSX.Element {
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
-
-  useEffect(() => {
-    loadReplies();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [replyPage]);
-
-  // 댓글 다시 불러오는 함수
-  const loadReplies = useCallback(() => {
-    if (!currentPost) return;
-    getReplies({
-      params: {
-        postId,
-        take: maxReplyToDisplay.current,
-        page: replyPage,
-      },
-    }).catch((e) => {
-      if (e.response) {
-        console.error(e.response.data, e.response.status);
-        ShowSnack(snackMessages.error.getReplies, 'error', enqueueSnackbar);
-      }
-      console.error(e);
-    });
-  }, [currentPost, enqueueSnackbar, getReplies, postId, replyPage]);
 
   // 전체 게시판 페이지로 이동
   const moveToBoardList = useCallback(() => {
@@ -254,7 +236,6 @@ export default function CommunityPostView(): JSX.Element {
 
       <RepliesContainer
         replies={replies}
-        loadReplies={loadReplies}
         replyPage={replyPage}
         replyCountPerPage={maxReplyToDisplay.current}
         changeReplyPage={changeReplyPage}

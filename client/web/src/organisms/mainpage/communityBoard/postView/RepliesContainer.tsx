@@ -5,10 +5,10 @@ import RepliesSection from './RepliesSection';
 import CommentForm from '../../ranking/sub/CommentForm';
 import CustomPagination from '../../../../atoms/CustomPagination';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
+import useMutateCreatorComment from '../../../../utils/hooks/mutation/useMutateCreatorComment';
 
 export interface RepliesContainerProps {
   replies: FindReplyResType | undefined,
-  loadReplies: () => void,
   replyPage: number,
   replyCountPerPage: number,
   changeReplyPage: (event: React.ChangeEvent<unknown>, newPage: number) => void,
@@ -18,7 +18,7 @@ export interface RepliesContainerProps {
 
 export default function RepliesContainer(props: RepliesContainerProps): JSX.Element {
   const {
-    replies, loadReplies, replyPage,
+    replies, replyPage,
     replyCountPerPage,
     changeReplyPage, postId,
     setReplyPage,
@@ -44,13 +44,15 @@ export default function RepliesContainer(props: RepliesContainerProps): JSX.Elem
     }
   }, [replies, replyPage, setReplyPage]);
 
+  const { mutate: createPostReply } = useMutateCreatorComment();
+
   return (
     <div className={classes.repliesContainer}>
 
       <RepliesSection
         totalReplyCount={replies ? replies.total : 0}
         replies={replies ? replies.replies : []}
-        loadReplies={loadReplies}
+        postId={Number(postId)}
       />
       <CustomPagination
         className={classes.replyPagenation}
@@ -63,7 +65,8 @@ export default function RepliesContainer(props: RepliesContainerProps): JSX.Elem
       />
       <CommentForm
         postUrl={`/community/posts/${postId}/replies`}
-        callback={loadReplies}
+        postRequest={createPostReply}
+        invalidateQueryKey={['postComments', Number(postId)]}
       />
 
     </div>

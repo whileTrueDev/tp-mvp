@@ -11,11 +11,13 @@ import CommentItem from '../../ranking/sub/CommentItem';
 import { isWithin24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import useRemovePostComment from '../../../../utils/hooks/mutation/useRemovePostComment';
 
 interface SectionProps{
   totalReplyCount?: number,
   replies: CommunityReply[] | undefined,
-  loadReplies: () => void
+  postId: number,
+  // loadReplies?: () => void
 }
 
 export interface ReplyState{
@@ -58,7 +60,7 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
   const classes = useStyles();
   const {
     replies = [],
-    loadReplies,
+    postId,
   } = props;
 
   const checkPasswordRequest = useCallback((replyId, password) => (
@@ -68,12 +70,12 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
       }))
   ),
   []);
-
+  const { mutateAsync: deleteReply } = useRemovePostComment();
   const onDelete = useCallback((replyId: number) => (
-    axios.delete(`community/replies/${replyId}`)
-      .then((res) => new Promise((resolve, reject) => resolve(res)))
+    deleteReply({ replyId, postId })
+      .then((res) => Promise.resolve(res))
       .catch((error) => console.error(error))
-  ), []);
+  ), [deleteReply, postId]);
 
   const onReport = useCallback((replyId: number) => {
     const BOARD_REPLY_REPORT_LIST_KEY = 'communityReplyReport';
@@ -124,7 +126,6 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
             onDelete={onDelete}
             onReport={onReport}
             childrenCount={reply.childrenCommentCount}
-            reloadComments={loadReplies}
             checkPasswordRequest={checkPasswordRequest}
             loadChildrenComments={loadChildrenComments}
             childrenCommentPostBaseUrl="/community/replies/child"
