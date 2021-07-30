@@ -131,9 +131,9 @@ export class UsersController {
     if (query.impUid) {
       const { userDI }: CertificationInfo = await this.authService
         .getCertificationInfo(query.impUid);
-      return this.usersService.findID(null, null, userDI);
+      return this.usersService.findID({ userDI });
     }
-    return this.usersService.findID(query.name, query.mail, null);
+    return this.usersService.findID({ mail: query.mail });
   }
 
   // 1. ID 값을 통해서 ID의 존재여부 확인.
