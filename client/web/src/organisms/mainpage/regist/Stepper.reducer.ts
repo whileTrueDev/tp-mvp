@@ -90,7 +90,12 @@ export function myReducer(
       return { ...state, name: action.value };
     }
     case 'nickname': {
-      return { ...state, nickname: action.value, passNicknameDuplication: false };
+      return {
+        ...state,
+        nickname: action.value,
+        name: action.value, // 웹 회원가입 화면에서 이름 입력칸 주석처리 -> 이름 컬럼에 별명과 같은 값이 입력되도록 함
+        passNicknameDuplication: false,
+      };
     }
     case 'checkDuplication': {
       return { ...state, checkDuplication: action.value };
