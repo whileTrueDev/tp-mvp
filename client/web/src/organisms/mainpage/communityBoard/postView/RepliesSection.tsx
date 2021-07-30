@@ -7,11 +7,11 @@ import {
   Paper,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import CommentItem from '../../ranking/sub/CommentItem';
 import { isWithin24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
 import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useRemovePostComment from '../../../../utils/hooks/mutation/useRemovePostComment';
+import PostCommentItem from '../../ranking/sub/PostCommentItem';
 
 interface SectionProps{
   totalReplyCount?: number,
@@ -65,9 +65,7 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
 
   const checkPasswordRequest = useCallback((replyId, password) => (
     axios.post(`/community/replies/${replyId}/password`, { password })
-      .then((res) => new Promise((resolve, reject) => {
-        resolve(res);
-      }))
+      .then((res) => Promise.resolve(res))
   ),
   []);
   const { mutateAsync: deleteReply } = useRemovePostComment();
@@ -105,30 +103,22 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
       });
   }, [enqueueSnackbar]);
 
-  const loadChildrenComments = useCallback((commentId: number) => axios.get(`/community/replies/child/${commentId}`)
-    .then((res) => new Promise((resolve, reject) => {
-      resolve(res);
-    }))
-    .catch((error) => console.error(error)), []);
-
   return (
     <section className={classes.replyContainer}>
       <Paper>
         {/* 댓글목록 */}
         {replies.map((reply) => (
-          <CommentItem
+          <PostCommentItem
             key={reply.replyId}
             idProperty="replyId"
             {...reply}
             deleteFlag={reply.deleteFlag ? 1 : 0}
             commentId={reply.replyId}
-            targetId={reply.postId}
+            postId={reply.postId}
             onDelete={onDelete}
             onReport={onReport}
             childrenCount={reply.childrenCommentCount}
             checkPasswordRequest={checkPasswordRequest}
-            loadChildrenComments={loadChildrenComments}
-            childrenCommentPostBaseUrl="/community/replies/child"
           />
         ))}
       </Paper>

@@ -7,7 +7,6 @@ import { useSnackbar } from 'notistack';
 import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react';
-
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
@@ -21,15 +20,20 @@ import DeleteConfirmDialog from './DeleteConfirmDialog';
 import PasswordConfirmDialog from './PasswordConfirmDialog';
 import ReportConfirmDialog from './ReportConfirmDialog';
 import { displayNickname } from '../../../../utils/checkAvailableNickname';
-import useChildrenCreatorCommentList from '../../../../utils/hooks/query/useChildrenCreatorCommentList';
+import useChildrenPostCommentList from '../../../../utils/hooks/query/useChildrenPostCommentList';
 import useMutateCreatorComment from '../../../../utils/hooks/mutation/useMutateCreatorComment';
 
 export interface CommentItemProps extends Record<string, any>{
   /** 댓글 고유 id */
   commentId: number;
+  /** 댓글이 달린 글의 고유 id */
+  postId?: number;
 
   /** 댓글 삭제 여부 1이면 삭제된 댓글, 0이면 삭제 안된 댓글 */
   deleteFlag?: number;
+
+  /** 반복문에서 key 값으로 사용될 prop 명(commentId, replyId 등 고유 id 값의 프로퍼티명) */
+  idProperty?: string;
 
   /** 댓글 작성자 id */
   userId?: string;
@@ -68,9 +72,11 @@ export interface CommentItemProps extends Record<string, any>{
   onDelete?: (commentId: number) => Promise<any>;
   /** 비밀번호 확인 핸들러 */
   checkPasswordRequest?: (commentId: any, password: any) => Promise<any>;
+  /** 댓글 다시 불러오기 핸들러 */
+  reloadComments?: () => void;
 }
 
-export default function CreatorCommentItem(props: CommentItemProps): JSX.Element {
+export default function PostCommentItem(props: CommentItemProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const { isMobile } = useMediaSize();
   const authContext = useAuthContext();
@@ -94,6 +100,8 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
     onClickHate,
     onDelete,
     checkPasswordRequest,
+    reloadComments,
+    postId,
   } = props;
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -115,7 +123,7 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
 
   // 대댓글 목록 상태
   const enableLoadChildComment = !childComment && Boolean(childrenCount) && replyListOpen; // 부모댓글 && 자식댓글 개수가 있음 &&  대댓글 창이 열려있을때 fetch
-  const { data } = useChildrenCreatorCommentList(commentId, enableLoadChildComment);
+  const { data } = useChildrenPostCommentList(commentId, enableLoadChildComment);
   // 대댓글 개수
   const [repliesCount, setRepliesCount] = useState<number>(childrenCount);
 
@@ -131,7 +139,6 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
     setHateNumber(result.hate);
   }, []);
 
-  // 좋아요 버튼 핸들러
   const clickLike = useCallback(() => {
     if (onClickLike) {
       onClickLike(commentId)
@@ -139,7 +146,6 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
     }
   }, [commentId, handleVoteResult, onClickLike]);
 
-  // 싫어요 버튼 핸들러
   const clickHate = useCallback(() => {
     if (onClickHate) {
       onClickHate(commentId)
@@ -147,7 +153,6 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
     }
   }, [commentId, handleVoteResult, onClickHate]);
 
-  // 대댓글 삭제 버튼 핸들러
   const handleDeleteButton = useCallback(() => {
     if (authContext.user.userId && userId === authContext.user.userId) {
       // 로그인 되어 있는 경우 && 댓글작성자와 로그인유저가 동일한 경우
@@ -162,6 +167,10 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
       // 비밀번호 틀리면 비밀번호 틀렸습니다 스낵바
     }
   }, [authContext.user.userId, openConfirmDialog, openPasswordDialog, userId]);
+
+  const openCommentWriteForm = useCallback(() => {
+    handleCommentFormOpen();
+  }, [handleCommentFormOpen]);
 
   // 대댓글 생성 요청 성공 후 실행할 일들
   const replySubmitCallback = useCallback(() => {
@@ -201,17 +210,16 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
     }
   };
 
-  // 댓글 삭제
   const deleteComment = () => {
     if (onDelete) {
       onDelete(commentId)
         .then(() => {
+          if (reloadComments) reloadComments();// 자유게시판 mutate 적용후 삭제
           closeConfirmDialog();
         });
     }
   };
 
-  // 댓글 신고
   const reportComment = useCallback(() => {
     if (onReport) {
       onReport(commentId)
@@ -270,7 +278,7 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
         {!childComment && (
           <div className={classes.nestedComments}>
             <Button
-              onClick={handleCommentFormOpen}
+              onClick={openCommentWriteForm}
               startIcon={<ReplyIcon className={classes.replyIcon} />}
             >
               대댓글쓰기
@@ -325,29 +333,32 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
         <>
           <div className={classnames(classes.commentFormContainer, { open: commentFormOpen })}>
             <CommentForm
-              postUrl={`/creatorComment/replies/${commentId}`}
+              postUrl={`/community/replies/child/${commentId}`}
               postRequest={createComment}
-              invalidateQueryKey={['childrenCreatorComment', commentId]}
+              invalidateQueryKey={['postComments', postId]}
               callback={replySubmitCallback}
             />
           </div>
 
           <div className={classnames(classes.replyList, { open: replyListOpen })}>
-            {data && (
-              data.map((reply) => (
-                <CreatorCommentItem
-                  childComment
-                  key={reply.commentId}
-                  {...reply}
-                  commentId={reply.commentId}
-                  onReport={onReport}
-                  onClickLike={onClickLike}
-                  onClickHate={onClickHate}
-                  onDelete={onDelete}
-                  checkPasswordRequest={checkPasswordRequest}
-                />
-              ))
-            )}
+            {
+              (data && (
+                data.map((reply) => (
+                  <PostCommentItem
+                    childComment
+                    key={reply.replyId}
+                    {...reply}
+                    deleteFlag={reply.deleteFlag ? 1 : 0}
+                    commentId={reply.replyId}
+                    onReport={onReport}
+                    onClickLike={onClickLike}
+                    onClickHate={onClickHate}
+                    onDelete={onDelete}
+                  />
+                ))
+              )
+              )
+                }
           </div>
         </>
       )}
