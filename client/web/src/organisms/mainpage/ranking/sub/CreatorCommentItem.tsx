@@ -7,6 +7,7 @@ import { useSnackbar } from 'notistack';
 import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react';
+
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import useDialog from '../../../../utils/hooks/useDialog';
@@ -20,6 +21,7 @@ import DeleteConfirmDialog from './DeleteConfirmDialog';
 import PasswordConfirmDialog from './PasswordConfirmDialog';
 import ReportConfirmDialog from './ReportConfirmDialog';
 import { displayNickname } from '../../../../utils/checkAvailableNickname';
+import useChildrenCreatorCommentList from '../../../../utils/hooks/query/useChildrenCreatorCommentList';
 
 export interface CommentItemProps extends Record<string, any>{
   /** 대상이 되는 댓글(commentId), 글(postId), 크리에이터(creatorId) */
@@ -79,7 +81,7 @@ export interface CommentItemProps extends Record<string, any>{
   childrenCommentPostBaseUrl?: string;
 }
 
-export default function CommentItem(props: CommentItemProps): JSX.Element {
+export default function CreatorCommentItem(props: CommentItemProps): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const { isMobile } = useMediaSize();
   const authContext = useAuthContext();
@@ -126,9 +128,11 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
   const [replies, setReplies] = useState<CommentItemProps[]>([]);
   const [repliesCount, setRepliesCount] = useState<number>(childrenCount);
 
+  const { data } = useChildrenCreatorCommentList(commentId, replyListOpen);
+
   useEffect(() => {
-    setRepliesCount(childrenCount || 0);
-  }, [childrenCount]);
+    setRepliesCount(data ? data.length : childrenCount || 0);
+  }, [childrenCount, data]);
 
   const handleVoteResult = useCallback((result: {like: number, hate: number}): void => {
     setLikeNumber(result.like);
@@ -366,7 +370,7 @@ export default function CommentItem(props: CommentItemProps): JSX.Element {
             {
               (replies.length > 0) && (
                 replies.map((reply) => (
-                  <CommentItem
+                  <CreatorCommentItem
                     childComment
                     key={reply[idProperty]}
                     {...reply}

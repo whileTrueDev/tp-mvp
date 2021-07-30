@@ -2,36 +2,27 @@ import { AxiosError } from 'axios';
 import {
   QueryFunction, useQuery, UseQueryResult,
 } from 'react-query';
-import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import { ICreatorCommentData } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import axios from '../../axios';
 
-type Params = {
-  creatorId: string
-  skip: number;
-  order: 'date' | 'recommend';
-}
-type QueryKey = ['creatorComment', Params];
+type QueryKey = ['childrenCreatorComment', number];
 
-const getChildrenCreatorCommentList: QueryFunction<ICreatorCommentsRes, QueryKey> = async (context) => {
-  const { queryKey, pageParam = { skip: 0 } } = context;
-  const { creatorId, order } = queryKey[1];
-  const { data } = await axios.get(`/creatorComment/${creatorId}`, {
-    params: {
-      skip: pageParam.skip,
-      order,
-    },
-  });
+const getChildrenCreatorCommentList: QueryFunction<ICreatorCommentData[], QueryKey> = async (context) => {
+  const { queryKey } = context;
+  const commentId = queryKey[1];
+  const { data } = await axios.get(`creatorComment/replies/${commentId}`);
   return data;
 };
 
 export default function useChildrenCreatorCommentList(
-  params: Params,
-): UseQueryResult<ICreatorCommentsRes, AxiosError> {
+  commentId: number,
+  enabled = false,
+): UseQueryResult<ICreatorCommentData[], AxiosError> {
   return useQuery(
-    ['creatorComment', params],
+    ['childrenCreatorComment', commentId],
     getChildrenCreatorCommentList,
     {
-      staleTime: 1000 * 60 * 60 * 12, // 12시간 fresh 상태 유지(refetch 발생 안함)
+      enabled,
     },
   );
 }

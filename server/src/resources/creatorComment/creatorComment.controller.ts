@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
 import { CheckPasswordDto } from '@truepoint/shared/dist/dto/creatorComment/checkPassword.dto';
-import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import { ICreatorCommentData, ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentService } from './creatorComment.service';
 import { CreatorCommentVoteService } from './creatorCommentVote.service';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
@@ -102,7 +102,7 @@ export class CreatorCommentController {
   @Get('/replies/:commentId')
   async getReplies(
     @Param('commentId', ParseIntPipe) commentId: number,
-  ): Promise<any> {
+  ): Promise<ICreatorCommentData[]> {
     return this.creatorCommentService.getReplies(commentId);
   }
 

@@ -4,7 +4,8 @@ import React, {
 } from 'react';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from 'react-query';
-import CommentItem from '../sub/CommentItem';
+// import CommentItem from '../sub/CommentItem';
+import CommentItem from '../sub/CreatorCommentItem';
 import { useCreatorCommentListStyle, useCommentContainerStyles } from '../style/CreatorComment.style';
 import RegularButton from '../../../../atoms/Button/Button';
 import CommentForm from '../sub/CommentForm';

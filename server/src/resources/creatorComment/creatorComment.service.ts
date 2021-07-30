@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateCommentDto } from '@truepoint/shared/dist/dto/creatorComment/createComment.dto';
-import { ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
+import { ICreatorCommentData, ICreatorCommentsRes } from '@truepoint/shared/dist/res/CreatorCommentResType.interface';
 import { CreatorCommentsEntity } from './entities/creatorComment.entity';
 import { UserEntity } from '../users/entities/user.entity';
 
@@ -148,7 +148,7 @@ export class CreatorCommentService {
   }
 
   // 대댓글 목록 최신순 가져오기
-  async getReplies(commentId: number): Promise<any> {
+  async getReplies(commentId: number): Promise<ICreatorCommentData[]> {
     try {
       const commentBaseQuery = this.creatorCommentsRepository.createQueryBuilder('comment')
         .select([
