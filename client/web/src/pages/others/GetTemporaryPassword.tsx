@@ -51,13 +51,13 @@ export default function GetTemporaryPassword(): JSX.Element {
   // **************************************************
   // inputRef
   const userIdRef = useRef<HTMLInputElement>(null);
-  const usernameRef = useRef<HTMLInputElement>(null);
+  // const usernameRef = useRef<HTMLInputElement>(null);
   const usermailRef = useRef<HTMLInputElement>(null);
 
   // **************************************************
   // 임시 비밀번호 발급 요청
-  const requestTemporaryPassword = async ({ id, name, email }: {
-    id: string, name: string, email: string
+  const requestTemporaryPassword = async ({ id, email }: {
+    id: string, email: string
   }) => {
     setButtonLoadState(true);
     handleHelperClose();
@@ -68,7 +68,7 @@ export default function GetTemporaryPassword(): JSX.Element {
     try {
       const checkUserResponse = await axios.get('/users/check-exist-user', {
         params: {
-          id, name, email,
+          id, email,
         },
       });
       const userExist = checkUserResponse.data;
@@ -109,19 +109,23 @@ export default function GetTemporaryPassword(): JSX.Element {
   // 폼 제출 submit 핸들러
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    if (!userIdRef.current || !usernameRef.current || !usermailRef.current) {
+    if (!userIdRef.current || !usermailRef.current
+    // || !usernameRef.current
+    ) {
       return;
     }
     const id = userIdRef.current.value.trim();
-    const name = usernameRef.current.value.trim();
+    // const name = usernameRef.current.value.trim();
     const email = usermailRef.current.value.trim();
 
-    if (!id || !name || !email) {
+    if (!id || !email
+    // || !name 
+    ) {
       handleHelperOpen('아이디, 이름, 이메일을 입력해주세요');
       return;
     }
 
-    requestTemporaryPassword({ id, name, email });
+    requestTemporaryPassword({ id, email });
   };
 
   return (
@@ -130,7 +134,7 @@ export default function GetTemporaryPassword(): JSX.Element {
 
       <div className={classnames(classes.box, classes.content)}>
         <Typography variant="h6">회원 아이디와</Typography>
-        <Typography variant="h6">가입 시 사용한 이메일, 이름을 입력해주세요</Typography>
+        <Typography variant="h6">가입 시 사용한 이메일을 입력해주세요</Typography>
         <Typography className={classes.subcontent} variant="body2">
           가입시 입력한 이메일로 임시 비밀번호를 발송합니다.
         </Typography>
@@ -151,7 +155,7 @@ export default function GetTemporaryPassword(): JSX.Element {
             className={classes.inputField}
             inputProps={{ required: true }}
           />
-          <TextField
+          {/* <TextField
             name="name"
             color="primary"
             type="text"
@@ -160,7 +164,7 @@ export default function GetTemporaryPassword(): JSX.Element {
             autoComplete="off"
             className={classes.inputField}
             inputProps={{ required: true, minLength: 3 }}
-          />
+          /> */}
           <TextField
             name="email"
             color="primary"
