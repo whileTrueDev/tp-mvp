@@ -15,3 +15,5 @@ import Component7 from '../dist/admin-panel/components/child-comment-for-creator
 AdminBro.UserComponents.Component7 = Component7
 import Component8 from '../dist/admin-panel/components/featureSuggestion-state-label'
 AdminBro.UserComponents.Component8 = Component8
+import Component9 from '../dist/admin-panel/components/creator-link'
+AdminBro.UserComponents.Component9 = Component9
