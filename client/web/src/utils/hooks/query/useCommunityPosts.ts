@@ -25,3 +25,23 @@ export default function useCommunityPosts(props: Props): UseQueryResult<FindPost
     options,
   );
 }
+
+const MAX_HOT_POST_TAKE = 8;
+interface HotPostProps {
+  platform: 'twitch' | 'afreeca',
+  options?: UseQueryOptions<FindPostResType, AxiosError>
+}
+export function useHotPostsByPlatform(props: HotPostProps): UseQueryResult<FindPostResType, AxiosError> {
+  const { platform, options } = props;
+
+  return useQuery<FindPostResType, AxiosError>(
+    ['communityHotPosts', { platform }],
+    () => getPosts({
+      platform,
+      page: 0,
+      take: MAX_HOT_POST_TAKE,
+      category: 'recommended',
+    }),
+    options,
+  );
+}

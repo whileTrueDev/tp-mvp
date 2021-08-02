@@ -17,6 +17,7 @@ import useMediaSize from '../../../utils/hooks/useMediaSize';
 import {
   useStyles, useTabItem, useTabPanel, useTabs,
 } from './style/CommunityBoardList.style';
+import { useHotPostsByPlatform } from '../../../utils/hooks/query/useCommunityPosts';
 
 interface TabPanelProps {
   children?: React.ReactNode | JSX.Element | JSX.Element[];
@@ -62,8 +63,6 @@ const titleContents = {
   },
 };
 
-const MAX_HOT_POST_TAKE = 8;
-
 export default function CommunityBoardList(): JSX.Element {
   const classes = useStyles();
   const tabsClasses = useTabs();
@@ -72,32 +71,20 @@ export default function CommunityBoardList(): JSX.Element {
   const { platform: currentPlatform, changePlatform } = useBoardContext();
 
   // 아프리카 핫시청자 반응(추천글)
-  const [{
+  const {
     data: afreecaHotPosts,
-    loading: afreecaHotPostsLoading,
+    isFetching: afreecaHotPostsLoading,
     error: afreecaHotPostsError,
-  }] = useAxios<FindPostResType>({
-    url: '/community/posts',
-    params: {
-      platform: 'afreeca',
-      page: 0,
-      take: MAX_HOT_POST_TAKE,
-      category: 'recommended',
-    },
+  } = useHotPostsByPlatform({
+    platform: 'afreeca',
   });
-  // 트위치 핫시청자 반응(추천글)
-  const [{
+    // 트위치 핫시청자 반응(추천글)
+  const {
     data: twitchHotPosts,
-    loading: twitchHotPostsLoading,
+    isFetching: twitchHotPostsLoading,
     error: twitchHotPostsError,
-  }] = useAxios<FindPostResType>({
-    url: '/community/posts',
-    params: {
-      platform: 'twitch',
-      page: 0,
-      take: MAX_HOT_POST_TAKE,
-      category: 'recommended',
-    },
+  } = useHotPostsByPlatform({
+    platform: 'twitch',
   });
 
   const select = useRef<number[]>([15]); // 한 페이지당 보여질 글 개수 select 옵션

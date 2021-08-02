@@ -11,6 +11,8 @@ import SearchForm from './SearchForm';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { StyledToggleButton, useBoardContainerStyles, useToggleButtonGroupsStyle } from '../style/CommunityBoardList.style';
 import CustomPagination from '../../../../atoms/CustomPagination';
+import useCommunityPosts from '../../../../utils/hooks/query/useCommunityPosts';
+import useBoardContext from '../../../../utils/hooks/useBoardContext';
 
 const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
   { key: 'all', text: '전체글', class: 'all' },
@@ -54,8 +56,20 @@ export default function BoardContainer({
   const [searchText, setSearchText] = useState<string>('');
   const [searchType, setSearchType] = useState<string>('');
   const paginationCount = useMemo(() => Math.ceil(totalRows / take), [totalRows, take]);
+  const { platform: currentPlatform } = useBoardContext();
 
   const [{ loading, error }, getPostList] = useAxios('/community/posts', { manual: true });
+  const { data } = useCommunityPosts({
+    params: {
+      platform,
+      category: filter,
+      page,
+      take,
+      qtext: searchText,
+      qtype: searchType,
+    },
+    options: { enabled: currentPlatform === platform },
+  });
 
   useEffect(() => {
     const params: PostGetParam = {
