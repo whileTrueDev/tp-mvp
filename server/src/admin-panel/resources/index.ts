@@ -6,6 +6,7 @@ import CreatorCommentsResource from './creatorComments.resource';
 import FeatureSuggestionResource from './featureSuggestion.resource';
 import FeatureSuggestionReplyResource from './featurSuggestionReply.resource';
 import UserReactionResource from './userReaction.resource';
+import CreatorRatingsResource from './ratings.resource';
 
 export const Resources = [
   UserResource,
@@ -16,4 +17,5 @@ export const Resources = [
   FeatureSuggestionResource,
   FeatureSuggestionReplyResource,
   UserReactionResource,
+  CreatorRatingsResource,
 ];
