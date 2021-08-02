@@ -1,13 +1,14 @@
 import { CreatorRatings } from '@truepoint/shared/dist/interfaces/CreatorRatings.interface';
 import {
   Entity, Column,
-  CreateDateColumn, PrimaryGeneratedColumn, Unique, UpdateDateColumn,
+  CreateDateColumn, PrimaryGeneratedColumn, Unique, UpdateDateColumn, BaseEntity,
 } from 'typeorm';
 
 @Entity({ name: 'CreatorRatingsTest2' })
 @Unique('UX_creatorId_userId', ['creatorId', 'userId'])
-export class CreatorRatingsEntity implements CreatorRatings {
+export class CreatorRatingsEntity extends BaseEntity implements CreatorRatings {
   constructor(partial: Partial<CreatorRatingsEntity>) {
+    super();
     Object.assign(this, partial);
   }
 
