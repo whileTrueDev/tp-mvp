@@ -295,7 +295,7 @@ export class UsersService {
 
   // User의 ID를 찾는 동기 함수. 결과값으로는 UserEntity의 인스턴스를 반환받되, 전달하는 것은 ID이다.
   // ID가 존재하지 않으면, ID에 대한 값을 null으로 전달한다.
-  async findID(name: string, mail?: string, userDI?: string): Promise<Pick<UserEntity, 'userId'>> {
+  async findID({ mail, userDI }: {mail?: string, userDI?: string}): Promise<Pick<UserEntity, 'userId'>> {
     // userDI의 존재여부에 따라서 조회방식을 분기한다.
     try {
       if (userDI) {
@@ -307,7 +307,9 @@ export class UsersService {
         return { userId: null };
       }
       const user = await this.usersRepository
-        .findOne({ where: { name, mail } });
+        .findOne({
+          where: { mail },
+        });
       if (user) {
         return { userId: user.userId };
       }
@@ -348,16 +350,14 @@ export class UsersService {
     }
   }
 
-  // 이메일, 이름, id로 유저 존재하는지 파악
-  async checkExistUser({ email, name, id }: {
+  // 이메일, id로 유저 존재하는지 파악
+  async checkExistUser({ email, id }: {
     email: string,
-    name: string,
     id: string
   }): Promise<boolean> {
     const user = await this.usersRepository.findOne({
       where: {
         userId: id,
-        name,
         mail: email,
       },
     });
