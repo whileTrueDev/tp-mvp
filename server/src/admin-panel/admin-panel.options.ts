@@ -46,6 +46,7 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           FeatureSuggestionEntity: '기능제안 게시판 글',
           FeatureSuggestionReplyEntity: '기능제안 게시판 댓글',
           UserReactionEntity: '잡담방',
+          CreatorRatingsEntity: '평점',
         },
         properties: { // 모든 resource 의 property에 적용되는 이름
           title: '제목',
@@ -92,6 +93,15 @@ export const getAdminOptions = (...args: any[]): AdminModuleOptions | Promise<Ad
           CommunityReplyEntity: {
             properties: {
               postId: '연관글',
+            },
+          },
+          CreatorRatingsEntity: {
+            properties: {
+              creatorId: '방송인id',
+              updateDate: '평점생성일',
+              userId: '평점 매긴 유저 id',
+              userIp: '평점 매긴 유저 IP',
+              rating: '평점',
             },
           },
         },
