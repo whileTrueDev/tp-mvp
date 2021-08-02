@@ -350,16 +350,14 @@ export class UsersService {
     }
   }
 
-  // 이메일, 이름, id로 유저 존재하는지 파악
-  async checkExistUser({ email, name, id }: {
+  // 이메일, id로 유저 존재하는지 파악
+  async checkExistUser({ email, id }: {
     email: string,
-    name: string,
     id: string
   }): Promise<boolean> {
     const user = await this.usersRepository.findOne({
       where: {
         userId: id,
-        name,
         mail: email,
       },
     });

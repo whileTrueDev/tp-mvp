@@ -166,14 +166,13 @@ export class UsersController {
     return this.usersService.checkNickname(nickname);
   }
 
-  // id, 이메일, 이름으로 가입된 회원이 있는지 확인
+  // id, 이메일로 가입된 회원이 있는지 확인
   @Get('/check-exist-user')
   async checkExistUser(
     @Query('id') id: string,
-    @Query('name') name: string,
     @Query('email') email: string,
   ): Promise<boolean> {
-    return this.usersService.checkExistUser({ id, name, email });
+    return this.usersService.checkExistUser({ id, email });
   }
 
   // 비밀번호 변경
