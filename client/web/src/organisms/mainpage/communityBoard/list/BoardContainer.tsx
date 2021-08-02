@@ -9,7 +9,7 @@ import { FilterType, PostGetParam } from '../../../../utils/hooks/useBoardListSt
 import PostList from './PostList';
 import SearchForm from './SearchForm';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
-import { useStyles, StyledToggleButton, useToggleButtonGroupsStyle } from '../style/CommunityBoardList.style';
+import { StyledToggleButton, useBoardContainerStyles, useToggleButtonGroupsStyle } from '../style/CommunityBoardList.style';
 import CustomPagination from '../../../../atoms/CustomPagination';
 
 const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
@@ -45,7 +45,7 @@ export default function BoardContainer({
   titleComponent,
 }: BoardProps): JSX.Element {
   const history = useHistory();
-  const classes = useStyles();
+  const classes = useBoardContainerStyles();
   const { isMobile } = useMediaSize();
   const toggleButtonGroupClasses = useToggleButtonGroupsStyle();
   const {

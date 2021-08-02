@@ -4,7 +4,6 @@ import {
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import useAxios from 'axios-hooks';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import BoardContainer from './list/BoardContainer';
@@ -14,100 +13,11 @@ import BoardTitle from './share/BoardTitle';
 import HotPostBox from './list/HotPostBox';
 import useBoardContext from '../../../utils/hooks/useBoardContext';
 import BoardHeaderImage from './list/BoardHeaderImage';
-import { BOARD_PAGE_MAX_WIDTH } from '../../../assets/constants';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
+import {
+  useStyles, useTabItem, useTabPanel, useTabs,
+} from './style/CommunityBoardList.style';
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
-  communitySection: {
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  communityContainer: {
-    width: '100%',
-    maxWidth: BOARD_PAGE_MAX_WIDTH,
-  },
-  boardListSection: {
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
-  },
-  smallLogo: {
-    width: theme.spacing(4),
-    height: theme.spacing(4),
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    color: theme.palette.primary.main,
-    [theme.breakpoints.down('sm')]: {
-      width: theme.spacing(2),
-      height: theme.spacing(2),
-      marginRight: 0,
-    },
-  },
-  hotPostSection: {
-    '&>.MuiGrid-item': {
-      maxWidth: '48%',
-    },
-    justifyContent: 'space-between',
-    margin: theme.spacing(2, 0),
-  },
-  tabsSection: {
-  },
-}));
-
-const useTabs = makeStyles((theme: Theme) => ({
-  root: {
-    minHeight: 'auto',
-  },
-  flexContainer: {
-    justifyContent: 'flex-end',
-  },
-  indicator: {
-    display: 'none',
-  },
-}));
-
-const useTabItem = makeStyles((theme: Theme) => createStyles({
-  root: {
-    minHeight: 'auto',
-    borderTopRightRadius: theme.spacing(1),
-    borderTopLeftRadius: theme.spacing(1),
-    padding: theme.spacing(0, 2),
-    [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(0, 1),
-    },
-  },
-  wrapper: {
-    flexDirection: 'row',
-    color: theme.palette.text.secondary,
-    fontWeight: theme.typography.fontWeightBold,
-    fontSize: theme.typography.body1.fontSize,
-    [theme.breakpoints.down('sm')]: {
-      fontSize: theme.typography.body2.fontSize,
-    },
-    '& svg, & img': {
-      display: 'none',
-    },
-  },
-  selected: {
-    '&$root': {
-      backgroundColor: theme.palette.background.paper,
-    },
-    '& $wrapper': {
-      color: theme.palette.text.primary,
-      '& svg, & img': {
-        display: 'block',
-      },
-    },
-  },
-}));
-
-const useTabPanel = makeStyles((theme: Theme) => createStyles({
-  tabPanel: {
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
 interface TabPanelProps {
   children?: React.ReactNode | JSX.Element | JSX.Element[];
   index: any;

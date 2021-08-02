@@ -1,8 +1,103 @@
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
 import { ToggleButton } from '@material-ui/lab';
 import { withStyles } from '@material-ui/styles';
+import { BOARD_PAGE_MAX_WIDTH } from '../../../../assets/constants';
 
+// 자유게시판 목록 스타일
 export const useStyles = makeStyles((theme: Theme) => createStyles({
+  communitySection: {
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  communityContainer: {
+    width: '100%',
+    maxWidth: BOARD_PAGE_MAX_WIDTH,
+  },
+  boardListSection: {
+    backgroundColor: theme.palette.type === 'light' ? theme.palette.primary.main : theme.palette.background.default,
+  },
+  smallLogo: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    color: theme.palette.primary.main,
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing(2),
+      height: theme.spacing(2),
+      marginRight: 0,
+    },
+  },
+  hotPostSection: {
+    '&>.MuiGrid-item': {
+      maxWidth: '48%',
+    },
+    justifyContent: 'space-between',
+    margin: theme.spacing(2, 0),
+  },
+  tabsSection: {
+  },
+}));
+
+export const useTabs = makeStyles((theme: Theme) => ({
+  root: {
+    minHeight: 'auto',
+  },
+  flexContainer: {
+    justifyContent: 'flex-end',
+  },
+  indicator: {
+    display: 'none',
+  },
+}));
+
+export const useTabItem = makeStyles((theme: Theme) => createStyles({
+  root: {
+    minHeight: 'auto',
+    borderTopRightRadius: theme.spacing(1),
+    borderTopLeftRadius: theme.spacing(1),
+    padding: theme.spacing(0, 2),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(0, 1),
+    },
+  },
+  wrapper: {
+    flexDirection: 'row',
+    color: theme.palette.text.secondary,
+    fontWeight: theme.typography.fontWeightBold,
+    fontSize: theme.typography.body1.fontSize,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: theme.typography.body2.fontSize,
+    },
+    '& svg, & img': {
+      display: 'none',
+    },
+  },
+  selected: {
+    '&$root': {
+      backgroundColor: theme.palette.background.paper,
+    },
+    '& $wrapper': {
+      color: theme.palette.text.primary,
+      '& svg, & img': {
+        display: 'block',
+      },
+    },
+  },
+}));
+
+export const useTabPanel = makeStyles((theme: Theme) => createStyles({
+  tabPanel: {
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
+
+// 게시판 컨테이너 컴포넌트 스타일
+export const useBoardContainerStyles = makeStyles((theme: Theme) => createStyles({
   root: {
     height: '100%',
     width: '100%',
