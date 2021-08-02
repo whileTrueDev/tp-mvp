@@ -65,7 +65,6 @@ export default function FindAccountForm(): JSX.Element {
 
   // **************************************************
   // Input values
-  const usernameRef = useRef<HTMLInputElement>(null);
   const usermailRef = useRef<HTMLInputElement>(null);
 
   // **************************************************
@@ -76,11 +75,10 @@ export default function FindAccountForm(): JSX.Element {
   );
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    if (usernameRef.current && usermailRef.current) {
-      const username = usernameRef.current.value;
+    if (usermailRef.current) {
       const usermail = usermailRef.current.value;
       getRequest({
-        params: { name: username, mail: usermail },
+        params: { mail: usermail },
       }).then((res) => {
         if (res.data) {
           const { userId } = res.data;
@@ -145,7 +143,7 @@ export default function FindAccountForm(): JSX.Element {
             }}
             className={classes.selectButton}
           >
-            <Typography variant="body1">이메일 및 이름으로 아이디 찾기</Typography>
+            <Typography variant="body1">이메일로 아이디 찾기</Typography>
           </Button>
 
           {/* 휴대폰 본인인증은 추후 기획에 따라 지원 */}
@@ -161,25 +159,17 @@ export default function FindAccountForm(): JSX.Element {
       </div>
       )}
 
-      {/* 방법에 따른 정보 입력 - 이메일 및 이름 */}
+      {/* 방법에 따른 정보 입력 - 이메일 */}
       {activeStep === 1 && selectedMethod === '이메일' && (
       <div className={classnames(classes.box, classes.content)}>
-        <Typography variant="h6">이메일, 이름으로</Typography>
+        <Typography variant="h6">이메일로</Typography>
         <Typography variant="h6">아이디를 찾습니다.</Typography>
         <Typography className={classes.subcontent} variant="body2">
-          {/* 가입시 입력한 이메일과 본인인증시 사용된 본명으로 아이디를 찾습니다. */}
-          가입시 입력한 이메일과 이름으로 아이디를 찾습니다.
+          {/* 가입시 입력한 이메일로 아이디를 찾습니다. */}
+          가입시 입력한 이메일로 아이디를 찾습니다.
         </Typography>
         <form className={classes.content} onSubmit={handleSubmit}>
-          <TextField
-            color="primary"
-            type="text"
-            label="이름"
-            inputRef={usernameRef}
-            autoComplete="off"
-            className={classes.inputField}
-            inputProps={{ required: true, minLength: 3 }}
-          />
+
           <TextField
             color="primary"
             type="email"

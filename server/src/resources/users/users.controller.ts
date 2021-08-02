@@ -131,9 +131,9 @@ export class UsersController {
     if (query.impUid) {
       const { userDI }: CertificationInfo = await this.authService
         .getCertificationInfo(query.impUid);
-      return this.usersService.findID(null, null, userDI);
+      return this.usersService.findID({ userDI });
     }
-    return this.usersService.findID(query.name, query.mail, null);
+    return this.usersService.findID({ mail: query.mail });
   }
 
   // 1. ID 값을 통해서 ID의 존재여부 확인.
@@ -166,14 +166,13 @@ export class UsersController {
     return this.usersService.checkNickname(nickname);
   }
 
-  // id, 이메일, 이름으로 가입된 회원이 있는지 확인
+  // id, 이메일로 가입된 회원이 있는지 확인
   @Get('/check-exist-user')
   async checkExistUser(
     @Query('id') id: string,
-    @Query('name') name: string,
     @Query('email') email: string,
   ): Promise<boolean> {
-    return this.usersService.checkExistUser({ id, name, email });
+    return this.usersService.checkExistUser({ id, email });
   }
 
   // 비밀번호 변경
