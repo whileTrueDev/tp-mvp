@@ -12,6 +12,7 @@ import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useRemovePostComment from '../../../../utils/hooks/mutation/useRemovePostComment';
 import PostCommentItem from '../../ranking/sub/PostCommentItem';
+import useReportCreatorComment from '../../../../utils/hooks/mutation/useReportCreatorComment';
 
 interface SectionProps{
   totalReplyCount?: number,
@@ -69,12 +70,12 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
   ),
   []);
   const { mutateAsync: deleteReply } = useRemovePostComment();
-  const onDelete = useCallback((replyId: number) => (
-    deleteReply({ replyId, postId })
+  const onDelete = useCallback((replyId: number, parentReplyId?: number) => (
+    deleteReply({ replyId, postId, parentReplyId })
       .then((res) => Promise.resolve(res))
-      .catch((error) => console.error(error))
-  ), [deleteReply, postId]);
+      .catch((error) => console.error(error))), [deleteReply, postId]);
 
+  const { mutateAsync: reportComment } = useReportCreatorComment();
   const onReport = useCallback((replyId: number) => {
     const BOARD_REPLY_REPORT_LIST_KEY = 'communityReplyReport';
     const reportList: {id: number, date: string, }[] = JSON.parse(localStorage.getItem(BOARD_REPLY_REPORT_LIST_KEY) || '[]');
@@ -89,19 +90,20 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
       return new Promise((res, rej) => res(true));
     }
     // 현재  commentId가 로컬스토리지에 저장되어 있지 않다면 해당 글 신고하기 요청
-    return axios.post(`/community/replies/report/${replyId}`)
+    return reportComment(`/community/replies/report/${replyId}`)
       .then((res) => {
+        ShowSnack('댓글 신고 성공', 'info', enqueueSnackbar);
         localStorage.setItem(
           BOARD_REPLY_REPORT_LIST_KEY,
           JSON.stringify([...commentsRecentlyReported, { id: currentCommentId, date: new Date() }]),
         );
-        return new Promise((resolve, reject) => resolve(res));
+        return Promise.resolve(res);
       })
       .catch((err) => {
         ShowSnack('댓글 신고 오류', 'error', enqueueSnackbar);
         console.error(err);
       });
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, reportComment]);
 
   return (
     <section className={classes.replyContainer}>

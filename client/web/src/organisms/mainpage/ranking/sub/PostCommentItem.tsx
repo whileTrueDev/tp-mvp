@@ -69,11 +69,12 @@ export interface CommentItemProps extends Record<string, any>{
   /** 싫어요 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
   onClickHate?: (commentId: number) => Promise<any>;
   /** 삭제 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
-  onDelete?: (commentId: number) => Promise<any>;
+  onDelete?: (replyId: number, parentReplyId?: number) => Promise<any>;
   /** 비밀번호 확인 핸들러 */
   checkPasswordRequest?: (commentId: any, password: any) => Promise<any>;
-  /** 댓글 다시 불러오기 핸들러 */
-  reloadComments?: () => void;
+
+  /** 부모댓글 id */
+  parentCommentId?: number;
 }
 
 export default function PostCommentItem(props: CommentItemProps): JSX.Element {
@@ -100,8 +101,7 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
     onClickHate,
     onDelete,
     checkPasswordRequest,
-    reloadComments,
-    postId,
+    parentCommentId,
   } = props;
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -119,7 +119,7 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
 
   // 대댓글쓰기, 대댓글보기 열림 상태, 토글 핸들러
   const { toggle: commentFormOpen, handleToggle: handleCommentFormOpen } = useToggle();
-  const { toggle: replyListOpen, handleToggle: handleReplyListOpen } = useToggle();
+  const { open: replyListOpen, handleOpen: handleReplyListOpen, handleClose: handleReplyListClose } = useDialog();
 
   // 대댓글 목록 상태
   const enableLoadChildComment = !childComment && Boolean(childrenCount) && replyListOpen; // 부모댓글 && 자식댓글 개수가 있음 &&  대댓글 창이 열려있을때 fetch
@@ -212,9 +212,8 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
 
   const deleteComment = () => {
     if (onDelete) {
-      onDelete(commentId)
+      onDelete(commentId, parentCommentId)
         .then(() => {
-          if (reloadComments) reloadComments();// 자유게시판 mutate 적용후 삭제
           closeConfirmDialog();
         });
     }
@@ -283,7 +282,7 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
             >
               대댓글쓰기
             </Button>
-            <Button onClick={handleReplyListOpen}>{`댓글 ${repliesCount}개`}</Button>
+            <Button onClick={replyListOpen ? handleReplyListClose : handleReplyListOpen}>{`댓글 ${repliesCount}개`}</Button>
           </div>
         )}
 
@@ -335,7 +334,7 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
             <CommentForm
               postUrl={`/community/replies/child/${commentId}`}
               postRequest={createComment}
-              invalidateQueryKey={['postComments', postId]}
+              invalidateQueryKey={['childrenPostComment', commentId]}
               callback={replySubmitCallback}
             />
           </div>
@@ -354,6 +353,8 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
                     onClickLike={onClickLike}
                     onClickHate={onClickHate}
                     onDelete={onDelete}
+                    checkPasswordRequest={checkPasswordRequest}
+                    parentCommentId={commentId}
                   />
                 ))
               )

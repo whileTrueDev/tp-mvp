@@ -4,7 +4,8 @@ import axios from '../../axios';
 
 type Props = {
   replyId: number,
-  postId: number
+  postId: number,
+  parentReplyId?: number
 }
 
 async function removeCreatorComment({ replyId }: Props) {
@@ -18,8 +19,11 @@ export default function useRemovePostComment(): UseMutationResult<string, AxiosE
     removeCreatorComment,
     {
       onSuccess: (data, props) => {
-        const { postId } = props;
+        const { postId, parentReplyId } = props;
         queryClient.invalidateQueries(['postComments', postId]);
+        if (parentReplyId) {
+          queryClient.invalidateQueries(['childrenPostComment', parentReplyId]);
+        }
       },
     },
   );

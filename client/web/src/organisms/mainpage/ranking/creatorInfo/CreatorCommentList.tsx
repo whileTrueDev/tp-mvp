@@ -115,12 +115,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     return Promise.resolve(result);
   }, [voteComment]);
 
-  const loadChildrenComments = useCallback((commentId: number) => axios.get(`creatorComment/replies/${commentId}`)
-    .then((res) => new Promise((resolve, reject) => {
-      resolve(res);
-    }))
-    .catch((error) => console.error(error)), []);
-
   // 방송인 프로필 페이지 댓글 비밀번호 확인 핸들러
   const checkPasswordRequest = useCallback((commentId, password) => axios.post(`/creatorComment/password/${commentId}`, { password })
     .then((res) => Promise.resolve(res)),
@@ -163,7 +157,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
                 onClickHate={onClickHate}
                 onDelete={onDelete}
                 checkPasswordRequest={checkPasswordRequest}
-                loadChildrenComments={loadChildrenComments}
                 childrenCommentPostBaseUrl="/creatorComment/replies"
               />
             ))
