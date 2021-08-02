@@ -3,6 +3,14 @@ import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostR
 
 export type FilterType = 'all'|'notice'|'recommended';
 
+export type PostGetParam = {
+  platform: 'afreeca' | 'twitch' | 'free',
+  category: FilterType,
+  page: number,
+  take: number,
+  qtext?: string,
+  qtype?: string,
+}
 interface BoardListState{
   posts: PostFound[];
   setPosts: React.Dispatch<React.SetStateAction<any[]>>;

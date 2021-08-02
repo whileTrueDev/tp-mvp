@@ -5,7 +5,7 @@ import { Button, Typography } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import useAxios from 'axios-hooks';
 import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
-import { FilterType } from '../../../../utils/hooks/useBoardListState';
+import { FilterType, PostGetParam } from '../../../../utils/hooks/useBoardListState';
 import PostList from './PostList';
 import SearchForm from './SearchForm';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
@@ -34,15 +34,6 @@ interface BoardProps{
   titleComponent?: JSX.Element
 }
 
-type postGetParam = {
-  platform: 'afreeca' | 'twitch' | 'free',
-  category: FilterType,
-  page: number,
-  take: number,
-  qtext?: string,
-  qtype?: string,
-}
-
 export default function BoardContainer({
   platform,
   take,
@@ -67,7 +58,7 @@ export default function BoardContainer({
   const [{ loading, error }, getPostList] = useAxios('/community/posts', { manual: true });
 
   useEffect(() => {
-    const params: postGetParam = {
+    const params: PostGetParam = {
       platform,
       category: filter,
       page,
@@ -88,7 +79,7 @@ export default function BoardContainer({
     if (!searchText) {
       return;
     }
-    const params: postGetParam = {
+    const params: PostGetParam = {
       platform,
       category: filter,
       page,
