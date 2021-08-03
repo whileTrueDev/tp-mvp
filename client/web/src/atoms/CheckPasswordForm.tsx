@@ -1,7 +1,6 @@
 import { Button, TextField } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { AxiosPromise, AxiosRequestConfig } from 'axios';
-import { RefetchOptions } from 'axios-hooks';
+import { AxiosPromise } from 'axios';
 import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
 import ShowSnack from './snackbar/ShowSnack';
@@ -27,7 +26,7 @@ const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
 
 export interface CheckPasswordFormProps {
   closeDialog: () => void,
-  checkPassword: (config?: AxiosRequestConfig | undefined, options?: RefetchOptions | undefined) => AxiosPromise<any>;
+  checkPassword: (data?: any) => AxiosPromise<any>;
   successHandler: () => void,
   children?: React.ReactNode
 }
@@ -52,9 +51,7 @@ export default function CheckPasswordForm({
       return;
     }
 
-    checkPassword({
-      data: { password: passwordRef.current ? passwordRef.current.value : '' },
-    }).then((res) => {
+    checkPassword({ password: passwordRef.current ? passwordRef.current.value : '' }).then((res) => {
       if (res.data === true) {
         successHandler();
         closeDialog();
