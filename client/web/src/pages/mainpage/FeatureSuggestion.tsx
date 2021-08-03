@@ -2,8 +2,6 @@ import {
   CircularProgress, Paper, Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
@@ -18,6 +16,7 @@ import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import NoticeLayout from '../../organisms/mainpage/shared/NoticeLayout';
 import useMediaSize from '../../utils/hooks/useMediaSize';
+import { useFeatureSuggestionList } from '../../utils/hooks/query/useFeatureSuggestion';
 
 const useStyles = makeStyles((theme) => ({
   contents: { marginTop: theme.spacing(2) },
@@ -70,15 +69,7 @@ export default function FeatureSuggestionPage(): JSX.Element {
 
   // ******************************************************************
   // 데이터 요청
-  const [{ loading, data: featureListData }, featureListRefetch] = useAxios<Omit<FeatureSuggestion, 'content' | 'replies'>[]>({
-    url: '/feature-suggestion/list', method: 'GET',
-  });
-
-  // ******************************************************************
-  // 기능제아 데이터 요청 (글쓰기 -> 목록으로 돌아와도 새로운 기능제안을 재 요청하지 않는 현상을 수정하기 위해.)
-  useEffect(() => {
-    featureListRefetch();
-  }, [featureListRefetch]);
+  const { data: featureListData, isFetching: loading } = useFeatureSuggestionList();
 
   // 페이지네이션
   const [page, setPage] = React.useState(0);
@@ -119,7 +110,6 @@ export default function FeatureSuggestionPage(): JSX.Element {
                 ? row.category === selectedCategory : row))}
             onOtherFeatureClick={handleFeatureClick}
             onBackClick={handleResetFeatureSelect}
-            featureListRefetch={featureListRefetch}
           />
         </div>
         )}
