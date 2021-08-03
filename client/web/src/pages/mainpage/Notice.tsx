@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import useAxios from 'axios-hooks';
 import { useHistory, useParams } from 'react-router-dom';
-import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 import ProductHero from '../../organisms/mainpage/shared/ProductHero';
 import Appbar from '../../organisms/shared/Appbar';
 import NoticeTable from '../../organisms/mainpage/notice/NoticeTable';
@@ -11,6 +9,7 @@ import Footer from '../../organisms/shared/footer/Footer';
 import useScrollTop from '../../utils/hooks/useScrollTop';
 import NoticeLayout, { useContainerStyles } from '../../organisms/mainpage/shared/NoticeLayout';
 import useMediaSize from '../../utils/hooks/useMediaSize';
+import useNoticeList from '../../utils/hooks/query/useNoticeList';
 
 export default function Notice(): JSX.Element {
   const classes = useContainerStyles();
@@ -21,10 +20,7 @@ export default function Notice(): JSX.Element {
   // Notice number Param
   const { id: selectedNoticeId } = useParams<{ id: string}>();
 
-  // Data loading
-  const [{ loading, data }] = useAxios<NoticeData[]>({
-    url: '/notice', method: 'GET',
-  });
+  const { data, isFetching: loading } = useNoticeList();
 
   // Category 선택을 위한 스테이트 
   const [selectedCategory, setSelectedCategory] = React.useState<string>('전체');
