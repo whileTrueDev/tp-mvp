@@ -3,7 +3,6 @@ import {
 } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 // 타입정의
-import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, {
@@ -13,8 +12,8 @@ import { useHistory, useLocation, useParams } from 'react-router-dom';
 // 스타일
 import 'suneditor/dist/css/suneditor.min.css'; // suneditor로 작성된 컨텐츠를 표시하기 위해 필요함
 // 하위 컴포넌트
+import { useQueryClient } from 'react-query';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import useBoardState from '../../../utils/hooks/useBoardListState';
 import CheckPasswordDialog from '../shared/CheckPasswordDialog';
 import BoardContainer from './list/BoardContainer';
 import PostInfoCard from './postView/PostInfoCard';
@@ -24,6 +23,8 @@ import PostRecommandButtons from './postView/PostRecommandContainer';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import { useStyles, SUN_EDITOR_VIEWER_CLASSNAME } from './style/CommunityBoardView.style';
 import usePostCommentList from '../../../utils/hooks/query/usePostCommentList';
+import useOnePost from '../../../utils/hooks/query/useOnePost';
+import useDeletePost from '../../../utils/hooks/mutation/useDeletePost';
 
 // PostList 컴포넌트의 moveToPost 함수에서 history.push({state:})로 넘어오는 값들
 interface LocationState{
@@ -76,6 +77,7 @@ export default function CommunityPostView(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const history = useHistory();
+  const queryClient = useQueryClient();
   const { isMobile } = useMediaSize();
 
   const { postId, platform } = useParams<Params>();
@@ -85,20 +87,34 @@ export default function CommunityPostView(): JSX.Element {
   const initialPage = location.state ? location.state.page : 1;
   // 글수정,삭제버튼 눌렀을 때 어떤 버튼이 눌렸는지 상태 저장 && 다이얼로그 개폐 상태 저장
   const [dialogState, setDialogState] = useState<{open: boolean, context: 'edit'|'delete'}>({ open: false, context: 'edit' });
-  // 개별글 내용 요청
-  const [{ data: currentPost, loading: postLoading }, getPostForView] = useAxios<CommunityPost>({ url: `/community/posts/${postId}` }, { manual: true });
-  // 개별글 삭제 요청
-  const [, deletePost] = useAxios({ url: `/community/posts/${postId}`, method: 'delete' }, { manual: true });
-  // 게시판 상태
-  const {
-    pagenationHandler,
-    boardState,
-    changeFilter,
-    handlePostsLoad,
-  } = useBoardState({ page: initialPage });
 
   // 개별글 내용 post.content를 표시할 element
   const viewerRef = useRef<any>();
+
+  // 개별글 내용 요청
+  const { data: currentPost, isFetching: postLoading, refetch: getPostForView } = useOnePost(Number(postId), {
+    enabled: false,
+    onError: (e) => {
+      console.error('글 불러오기 오류', e);
+      ShowSnack(snackMessages.error.getPost, 'error', enqueueSnackbar);
+      history.push('/community-board');
+    },
+  });
+
+  // 컴포넌트 마운트 된 후 개별글 내용 표시
+  useEffect(() => {
+    const displayPost = async () => {
+      await getPostForView();
+      window.scrollTo({ left: 0, top: 0 });
+      if (viewerRef && viewerRef.current && currentPost) {
+        viewerRef.current.innerHTML = currentPost.content;
+      }
+    };
+    displayPost();
+  }, [currentPost, getPostForView, postId]);
+
+  // 개별글 삭제 요청
+  const { mutateAsync: deletePost } = useDeletePost();
 
   /**
    * 댓글 페이지네이션 관련
@@ -126,24 +142,6 @@ export default function CommunityPostView(): JSX.Element {
     setReplyPage(newPage);
   };
 
-  /**
-   * 페이지 마운트 된 후 postId로 글 내용 불러오기
-   */
-
-  useEffect(() => {
-    window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
-    getPostForView().then((res) => {
-      if (viewerRef && viewerRef.current) {
-        viewerRef.current.innerHTML = res.data.content;
-      }
-    }).catch((e) => {
-      console.error('글 불러오기 오류', e);
-      ShowSnack(snackMessages.error.getPost, 'error', enqueueSnackbar);
-      history.push('/community-board');
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postId]);
-
   // 전체 게시판 페이지로 이동
   const moveToBoardList = useCallback(() => {
     history.push('/community-board');
@@ -159,15 +157,16 @@ export default function CommunityPostView(): JSX.Element {
 
   // 글 삭제 요청 핸들러
   const doDeletePost = useCallback(() => {
-    deletePost().then(() => {
+    deletePost(Number(postId)).then(() => {
       ShowSnack(snackMessages.success.deletePost, 'info', enqueueSnackbar);
       setDialogState((prevState) => ({ ...prevState, open: false }));
+      queryClient.invalidateQueries(['community', { platform }]);
       history.push('/community-board');
     }).catch((e) => {
       console.error(e);
       ShowSnack(snackMessages.error.deletePost, 'error', enqueueSnackbar);
     });
-  }, [deletePost, enqueueSnackbar, history]);
+  }, [deletePost, enqueueSnackbar, history, platform, postId, queryClient]);
 
   // 글 수정버튼 눌렀을 때 다이얼로그 상태 변경
   const editPostButtonHandler = useCallback(() => {
@@ -196,7 +195,7 @@ export default function CommunityPostView(): JSX.Element {
   return (
     <Container maxWidth="md" className="postView">
       <BoardTitle platform={platform} title={`${PLATFORM_NAMES[platform]}게시판`} />
-
+      {postLoading && <Skeleton variant="rect" height="280px" />}
       {!postLoading && !!currentPost ? (
         <Paper className={classes.viewer}>
           <PostInfoCard
@@ -246,11 +245,8 @@ export default function CommunityPostView(): JSX.Element {
       <BoardContainer
         platform={platform}
         take={take}
-        pagenationHandler={pagenationHandler}
-        boardState={boardState}
-        postFilterHandler={changeFilter}
-        handlePostsLoad={handlePostsLoad}
         currentPostId={Number(postId)}
+        initialPage={initialPage}
       />
     </Container>
 

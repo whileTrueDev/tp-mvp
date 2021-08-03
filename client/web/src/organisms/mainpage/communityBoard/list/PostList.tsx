@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import { PostFound } from '@truepoint/shared/dist/res/FindPostResType.interface';
 // axios객체
 import { AxiosError } from 'axios';
-import axios from '../../../../utils/axios';
+import { useQueryClient } from 'react-query';
 // 컴포넌트
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import { useStyles, rowHeightBase } from '../style/PostList.style';
@@ -16,13 +16,14 @@ import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import SmileIcon from '../../../../atoms/svgIcons/SmileIcon';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 import { displayNickname } from '../../../../utils/checkAvailableNickname';
+import useHitPost from '../../../../utils/hooks/mutation/useHitPost';
 
 interface PostListProps {
   take: number,
   page: number,
   posts: PostFound[],
   loading?: boolean,
-  error?: AxiosError<any> | undefined,
+  error?: AxiosError<any> | null,
   currentPostId?: number
 }
 
@@ -97,11 +98,46 @@ interface ListProps {
   page: number,
   take: number
 }
+
+function useMoveToPost() {
+  const history = useHistory();
+  const { mutateAsync: increasePostHit } = useHitPost();
+  const queryClient = useQueryClient();
+
+  const moveToPost = ({
+    postId, platform, currentPage, currentTake,
+  }: {
+    postId: number | undefined,
+    platform: number | undefined,
+    currentPage: number,
+    currentTake: number
+  }) => async () => {
+    // 플랫폼 코드(숫자) -> 영문으로
+    const postPlatform = getBoardPlatformNameByCode(platform);
+    try {
+      if (postId) {
+        await increasePostHit(postId);
+        queryClient.invalidateQueries(['community', { page: currentPage, platform: postPlatform }]);
+        history.push({
+          pathname: `/community-board/${postPlatform}/view/${postId}`,
+          state: {
+            page: currentPage,
+            take: currentTake,
+          },
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  return { moveToPost };
+}
+
 function DesktopPostList({
   posts, currentPostId, page, take,
 }: ListProps): JSX.Element {
   const classes = useStyles();
-  const history = useHistory();
+  const { moveToPost } = useMoveToPost();
 
   // posts를 boardColumns의 key에 맞게 변형한다
   // boardColumns.key에 해당하는 값이 해당 열에 보여진다
@@ -122,26 +158,17 @@ function DesktopPostList({
       recommend: post.recommend,
     }))), [classes.replies, posts]);
 
-  const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
-    const postPlatform = getBoardPlatformNameByCode(platform);
-    axios.post(`/community/posts/${postId}/hit`).then(() => {
-      history.push({
-        pathname: `/community-board/${postPlatform}/view/${postId}`,
-        state: {
-          page,
-          take,
-        },
-      });
-    }).catch((e) => {
-      console.error(e);
-    });
-  };
   return (
     <>
       {postToDisplay.map((post) => (
       /** row 시작 */
         <button
-          onClick={moveToPost(post.postId, post.platform)}
+          onClick={moveToPost({
+            postId: post.postId,
+            platform: post.platform,
+            currentPage: page,
+            currentTake: take,
+          })}
           key={post.postId}
           className={classnames(
             classes.row,
@@ -173,23 +200,8 @@ function DesktopPostList({
 function MobilePostList({
   posts, currentPostId, page, take,
 }: ListProps): JSX.Element {
-  const history = useHistory();
   const classes = useStyles();
-
-  const moveToPost = (postId: number | undefined, platform: number | undefined) => () => {
-    const postPlatform = getBoardPlatformNameByCode(platform);
-    axios.post(`/community/posts/${postId}/hit`).then(() => {
-      history.push({
-        pathname: `/community-board/${postPlatform}/view/${postId}`,
-        state: {
-          page,
-          take,
-        },
-      });
-    }).catch((e) => {
-      console.error(e);
-    });
-  };
+  const { moveToPost } = useMoveToPost();
 
   const getPlatformImage = (platformCode: number | undefined): JSX.Element => {
     const width = 28;
@@ -209,7 +221,12 @@ function MobilePostList({
     <>
       {posts.map((post) => (
         <button
-          onClick={moveToPost(post.postId, post.platform)}
+          onClick={moveToPost({
+            postId: post.postId,
+            platform: post.platform,
+            currentPage: page,
+            currentTake: take,
+          })}
           className={classnames(
             classes.row,
             classes.listItem,
