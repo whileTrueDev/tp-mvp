@@ -1,8 +1,17 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
 import { AxiosError } from 'axios';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
-import { PostGetParam } from '../useBoardListState';
 import axios from '../../axios';
+import { FilterType } from '../../../store/useCommunityBoardState';
+
+export type PostGetParam = {
+  platform: 'afreeca' | 'twitch' | 'free',
+  category: FilterType,
+  page: number,
+  take: number,
+  qtext?: string,
+  qtype?: string,
+}
 
 async function getPosts(props: PostGetParam) {
   const { data } = await axios.get('/community/posts', {
@@ -18,14 +27,23 @@ interface Props {
 
 export default function useCommunityPosts(props: Props): UseQueryResult<FindPostResType, AxiosError> {
   const { params, options } = props;
-  const { platform, page, category } = params;
+  const {
+    platform, page, category, qtext,
+  } = params;
+  let key: Record<string, any>;
+  if (qtext) {
+    key = { page, platform, search: qtext };
+  } else {
+    key = { page, platform, category };
+  }
   return useQuery<FindPostResType, AxiosError>(
-    ['community', { platform, page, category }],
+    ['community', key],
     () => getPosts(params),
     options,
   );
 }
 
+// hot 게시물 요청
 const MAX_HOT_POST_TAKE = 8;
 interface HotPostProps {
   platform: 'twitch' | 'afreeca',
