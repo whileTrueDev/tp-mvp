@@ -20,10 +20,11 @@ import BoardTitle, { PLATFORM_NAMES } from './share/BoardTitle';
 // 훅
 import useScrollTop from '../../../utils/hooks/useScrollTop';
 import useSunEditor from '../../../utils/hooks/useSunEditor';
-import usePostWriteEditAPI from '../../../utils/hooks/usePostWriteEditAPI';
 import WritingInputFields from './write/WritingInputFields';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import { throwErrorIfNicknameOnBlacklist } from '../../../utils/checkAvailableNickname';
+import useOnePost from '../../../utils/hooks/query/useOnePost';
+import { useCreatePost, useUpdatePost } from '../../../utils/hooks/mutation/useMutatePost';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   title: {
@@ -97,13 +98,27 @@ export default function CommunityPostWrite(): JSX.Element {
 
   const { postId, platform } = useParams<Params>();
   const history = useHistory();
-  const { editorRef: editor, EditorContainer } = useSunEditor();
-  const { handleCreatePost, handleEditPost, handleLoadPost } = usePostWriteEditAPI(Number(postId));
   const { enqueueSnackbar } = useSnackbar();
+  const { editorRef: editor, EditorContainer } = useSunEditor();
+  const { mutateAsync: handleCreatePost } = useCreatePost();
+  const { mutateAsync: handleEditPost } = useUpdatePost();
 
   // postId의 여부로 글생성/글수정 모드 확인
   const isEditMode = useMemo(() => !!postId, [postId]);
-
+  const { data: cachedPostData } = useOnePost(Number(postId), { enabled: isEditMode });
+  // 글수정 모드인 경우 제목과 내용을 불러옴
+  useEffect(() => {
+    if (isEditMode && cachedPostData) {
+      setTimeout(() => {
+        if (titleRef.current) {
+          titleRef.current.value = cachedPostData.title;
+        }
+        if (editor.current) {
+          editor.current.setContents(cachedPostData.content);
+        }
+      }, 0);
+    }
+  }, [cachedPostData, editor, isEditMode]);
   useScrollTop();
 
   useEffect(() => {
@@ -112,23 +127,6 @@ export default function CommunityPostWrite(): JSX.Element {
       nicknameRef.current.value = (auth.user && auth.user.userId) ? auth.user.nickName : '';
     }
   }, [auth.user]);
-
-  useEffect(() => {
-    if (isEditMode) {
-      // 글 수정하는 경우 글 내용과 제목 가져와서 보여줌
-      handleLoadPost((res: { data: { content: any; title: any;}; }) => {
-        const { content, title } = res.data;
-        if (titleRef.current) {
-          titleRef.current.value = title;
-        }
-        if (editor.current) {
-          editor.current.setContents(content);
-        }
-      });
-    }
-  // 컴포넌트 마운트 시 한번만 실행되는 effect
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSubmit = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // '글 생성'
@@ -178,11 +176,11 @@ export default function CommunityPostWrite(): JSX.Element {
         checkedPostDto.resources = imageResoureces.resources;
       }
       // updatePostDto로 글 수정 요청
-      handleEditPost(checkedPostDto);
+      handleEditPost({ postId: Number(postId), updatePostDto: checkedPostDto });
     } catch (err) {
       ShowSnack(err.message, 'error', enqueueSnackbar);
     }
-  }, [handleEditPost, editor, enqueueSnackbar]);
+  }, [editor, handleEditPost, postId, enqueueSnackbar]);
 
   return (
     <Container maxWidth="md">
