@@ -4,20 +4,17 @@ import {
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
-import useAxios from 'axios-hooks';
-import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import BoardContainer from './list/BoardContainer';
-import useBoardState from '../../../utils/hooks/useBoardListState';
 import SmileIcon from '../../../atoms/svgIcons/SmileIcon';
 import BoardTitle from './share/BoardTitle';
 import HotPostBox from './list/HotPostBox';
-import useBoardContext from '../../../utils/hooks/useBoardContext';
 import BoardHeaderImage from './list/BoardHeaderImage';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import {
   useStyles, useTabItem, useTabPanel, useTabs,
 } from './style/CommunityBoardList.style';
 import { useHotPostsByPlatform } from '../../../utils/hooks/query/useCommunityPosts';
+import { useCommunityBoardState } from '../../../store/useCommunityBoardState';
 
 interface TabPanelProps {
   children?: React.ReactNode | JSX.Element | JSX.Element[];
@@ -68,7 +65,17 @@ export default function CommunityBoardList(): JSX.Element {
   const tabsClasses = useTabs();
   const tabItemClasses = useTabItem();
   const { isMobile } = useMediaSize();
-  const { platform: currentPlatform, changePlatform } = useBoardContext();
+  // const { platform: currentPlatform, changePlatform } = useBoardContext();
+  // 탭 인덱스
+  // 0번째 탭 : 자유게시판
+  // 1번째 탭 : 아프리카 게시판
+  // 2번째 탭 : 트위치 게시판
+  const {
+    changePlatform,
+    tabValue,
+    changeAfreecaToRecommended,
+    changeTwitchToRecommended,
+  } = useCommunityBoardState();
 
   // 아프리카 핫시청자 반응(추천글)
   const {
@@ -90,56 +97,9 @@ export default function CommunityBoardList(): JSX.Element {
   const select = useRef<number[]>([15]); // 한 페이지당 보여질 글 개수 select 옵션
   const [take] = useState<number>(select.current[0]); // 한 페이지당 보여질 글 개수
 
-  const {
-    boardState: freeBoard,
-    pagenationHandler: freePagenationHandler,
-    handlePostsLoad: freePostLoadHandler,
-    filter: freeboardFilter,
-    changeFilter: changeFreeFilter,
-  } = useBoardState({}); // 자유게시판 상태, 핸들러
-  const {
-    boardState: afreecaBoard,
-    pagenationHandler: afreecaPagenationHandler,
-    handlePostsLoad: afreecaPostLoadHandler,
-    filter: afreecaboardFilter,
-    changeFilter: changeAfreecaFilter,
-  } = useBoardState({}); // 아프리카 게시판 상태, 핸들러
-  const {
-    boardState: twitchBoard,
-    pagenationHandler: twitchPagenationHandler,
-    handlePostsLoad: twitchPostLoadHandler,
-    filter: twitchboardFilter,
-    changeFilter: changeTwitchFilter,
-  } = useBoardState({});// 트위치 게시판 상태, 핸들러
-
-  // 탭 인덱스
-  // 0번째 탭 : 자유게시판
-  // 1번째 탭 : 아프리카 게시판
-  // 2번째 탭 : 트위치 게시판
-  const [value, setValue] = React.useState<number>(0);
-  const handleChange = (_: any, newValue: number) => {
-    setValue(newValue);
-    if (newValue === 0) {
-      changePlatform('free');
-      if (freeboardFilter !== 'all') changeFreeFilter('all');
-    } else if (newValue === 1) {
-      changePlatform('afreeca');
-      if (afreecaboardFilter !== 'all') changeAfreecaFilter('all');
-    } else if (newValue === 2) {
-      changePlatform('twitch');
-      if (twitchboardFilter !== 'all') changeTwitchFilter('all');
-    }
+  const handleTabChange = (_: any, newValue: number) => {
+    changePlatform(newValue);
   };
-
-  useEffect(() => {
-    if (currentPlatform === 'free') {
-      setValue(0);
-    } else if (currentPlatform === 'afreeca') {
-      setValue(1);
-    } else if (currentPlatform === 'twitch') {
-      setValue(2);
-    }
-  }, [currentPlatform]);
 
   useEffect(() => {
     if (window.scrollY !== 0) {
@@ -152,6 +112,12 @@ export default function CommunityBoardList(): JSX.Element {
     afreeca: <img className={classes.smallLogo} alt="아프리카 로고" src="images/logo/afreecaLogo.png" />,
     twitch: <img className={classes.smallLogo} alt="트위치 로고" src="images/logo/twitchLogo.png" />,
   };
+
+  const boardTabs = [
+    { key: 'free', label: '자유게시판', icon: icons.free },
+    { key: 'afreeca', label: '아프리카 게시판', icon: icons.afreeca },
+    { key: 'twitch', label: '트위치 게시판', icon: icons.twitch },
+  ];
 
   // memo 적용한 컴포넌트들, dependencies에 포함된 값이 바뀔때만 리렌더링 되도록 한다
   const freeTitleComponent = useMemo(() => (
@@ -185,51 +151,34 @@ export default function CommunityBoardList(): JSX.Element {
       titleComponent={freeTitleComponent}
       platform="free"
       take={take}
-      pagenationHandler={freePagenationHandler}
-      boardState={freeBoard}
-      postFilterHandler={changeFreeFilter}
-      handlePostsLoad={freePostLoadHandler}
     />
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [take, freeBoard]);
+  ), [freeTitleComponent, take]);
   const AfreecaBoard = useMemo(() => (
     <BoardContainer
       titleComponent={afreecaTitleComponent}
       platform="afreeca"
       take={take}
-      pagenationHandler={afreecaPagenationHandler}
-      boardState={afreecaBoard}
-      postFilterHandler={changeAfreecaFilter}
-      handlePostsLoad={afreecaPostLoadHandler}
     />
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [take, afreecaBoard]);
+  ), [afreecaTitleComponent, take]);
 
   const TwitchBoard = useMemo(() => (
     <BoardContainer
       platform="twitch"
       titleComponent={twitchTitleComponent}
       take={take}
-      pagenationHandler={twitchPagenationHandler}
-      boardState={twitchBoard}
-      postFilterHandler={changeTwitchFilter}
-      handlePostsLoad={twitchPostLoadHandler}
     />
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [take, twitchBoard]);
-
+  ), [take, twitchTitleComponent]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const moveToAfreecaHotPostList = () => {
-    setValue(1);
-    changeAfreecaFilter('recommended');
+
+  const moveToAfreecaHotPostList = async () => {
+    await changeAfreecaToRecommended();
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView();
     }
   };
 
-  const moveToTwitchHotPostList = () => {
-    setValue(2);
-    changeTwitchFilter('recommended');
+  const moveToTwitchHotPostList = async () => {
+    await changeTwitchToRecommended();
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView();
     }
@@ -267,32 +216,27 @@ export default function CommunityBoardList(): JSX.Element {
           <div ref={scrollRef} className={classes.tabsSection}>
             <Tabs
               classes={tabsClasses}
-              value={value}
-              onChange={handleChange}
+              value={tabValue}
+              onChange={handleTabChange}
             >
-              <Tab
-                classes={tabItemClasses}
-                label="자유게시판"
-                icon={icons.free}
-              />
-              <Tab
-                classes={tabItemClasses}
-                label="아프리카 게시판"
-                icon={icons.afreeca}
-              />
-              <Tab
-                classes={tabItemClasses}
-                label="트위치 게시판"
-                icon={icons.twitch}
-              />
+              {
+                boardTabs.map((tab) => (
+                  <Tab
+                    key={tab.key}
+                    classes={tabItemClasses}
+                    label={tab.label}
+                    icon={tab.icon}
+                  />
+                ))
+              }
             </Tabs>
-            <TabPanel value={value} index={0}>
+            <TabPanel value={tabValue} index={0}>
               {FreeBoard}
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={tabValue} index={1}>
               {AfreecaBoard}
             </TabPanel>
-            <TabPanel value={value} index={2}>
+            <TabPanel value={tabValue} index={2}>
               {TwitchBoard}
             </TabPanel>
           </div>

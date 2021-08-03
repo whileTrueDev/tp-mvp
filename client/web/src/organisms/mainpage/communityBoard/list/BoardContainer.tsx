@@ -1,18 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback, useMemo, useState,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import { ToggleButtonGroup } from '@material-ui/lab';
 import { Button, Typography } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
-import useAxios from 'axios-hooks';
-import { PostFound, FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
-import { FilterType, PostGetParam } from '../../../../utils/hooks/useBoardListState';
 import PostList from './PostList';
 import SearchForm from './SearchForm';
 import useMediaSize from '../../../../utils/hooks/useMediaSize';
 import { StyledToggleButton, useBoardContainerStyles, useToggleButtonGroupsStyle } from '../style/CommunityBoardList.style';
 import CustomPagination from '../../../../atoms/CustomPagination';
 import useCommunityPosts from '../../../../utils/hooks/query/useCommunityPosts';
-import useBoardContext from '../../../../utils/hooks/useBoardContext';
+import { useCommunityBoardState, FilterType } from '../../../../store/useCommunityBoardState';
 
 const filterButtonValues: Array<{key: FilterType, text: string, class: string}> = [
   { key: 'all', text: '전체글', class: 'all' },
@@ -23,91 +22,57 @@ const filterButtonValues: Array<{key: FilterType, text: string, class: string}> 
 interface BoardProps{
   platform: 'afreeca' | 'twitch' | 'free',
   take: number,
-  pagenationHandler: (event: React.ChangeEvent<unknown>, newPage: number) => void;
-  postFilterHandler: (categoryFilter: FilterType) => void;
-  boardState: {
-    posts: PostFound[];
-    page: number;
-    totalRows: number;
-    filter: FilterType;
-  },
-  handlePostsLoad: (props: FindPostResType) => void;
   currentPostId?: number,
-  titleComponent?: JSX.Element
+  titleComponent?: JSX.Element,
+  initialPage?: number
 }
 
 export default function BoardContainer({
   platform,
   take,
-  pagenationHandler,
-  postFilterHandler,
-  handlePostsLoad,
-  boardState,
   currentPostId,
   titleComponent,
+  initialPage = 1,
 }: BoardProps): JSX.Element {
   const history = useHistory();
   const classes = useBoardContainerStyles();
   const { isMobile } = useMediaSize();
   const toggleButtonGroupClasses = useToggleButtonGroupsStyle();
-  const {
-    posts, page, totalRows, filter,
-  } = boardState;
   const [searchText, setSearchText] = useState<string>('');
   const [searchType, setSearchType] = useState<string>('');
-  const paginationCount = useMemo(() => Math.ceil(totalRows / take), [totalRows, take]);
-  const { platform: currentPlatform } = useBoardContext();
+  const [page, setPage] = useState<number>(initialPage || 1);
 
-  const [{ loading, error }, getPostList] = useAxios('/community/posts', { manual: true });
-  const { data } = useCommunityPosts({
+  const { currentPlatform, filter: filters, changeFilter } = useCommunityBoardState();
+
+  const { data, isFetching: loading, error } = useCommunityPosts({
     params: {
       platform,
-      category: filter,
+      category: filters[currentPlatform],
       page,
       take,
       qtext: searchText,
       qtype: searchType,
     },
-    options: { enabled: currentPlatform === platform },
+    options: {
+      enabled: currentPlatform === platform,
+      keepPreviousData: true,
+    },
   });
 
-  useEffect(() => {
-    const params: PostGetParam = {
-      platform,
-      category: filter,
-      page,
-      take,
-    };
-    getPostList({
-      params,
-    }).then((res) => {
-      handlePostsLoad(res.data);
-    }).catch((e) => {
-      console.error(e.response, e);
-    });
-  // 아래 변수가 바뀌는 경우에만 실행되는 이펙트
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, page, take]);
+  const postFilterHandler = useCallback((categoryFilter: FilterType) => {
+    setPage(1);
+    changeFilter(currentPlatform, categoryFilter);
+  }, [changeFilter, currentPlatform]);
 
-  useEffect(() => {
-    if (!searchText) {
-      return;
-    }
-    const params: PostGetParam = {
-      platform,
-      category: filter,
-      page,
-      take,
-      qtype: searchType,
-      qtext: searchText,
-    };
-    getPostList({ params })
-      .then((res) => {
-        handlePostsLoad(res.data);
-      })
-      .catch((e) => console.error(e.response, e));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchText]);
+  const pagenationHandler = (event: React.ChangeEvent<unknown>, newPage: number) => {
+    if (page === newPage) return;
+    setPage(newPage);
+  };
+
+  const paginationCount = useMemo(() => {
+    if (!data) return 1;
+    return Math.ceil(data.total / take);
+  }, [data, take]);
 
   const moveToWritePage = (event: React.MouseEvent<HTMLElement>) => {
     history.push({
@@ -140,7 +105,7 @@ export default function BoardContainer({
 
       <div className={classes.controls}>
         <ToggleButtonGroup
-          value={filter}
+          value={filters[currentPlatform]}
           onChange={onFilterChange}
           classes={toggleButtonGroupClasses}
           exclusive
@@ -173,7 +138,7 @@ export default function BoardContainer({
       <PostList
         take={take}
         page={page}
-        posts={posts}
+        posts={data ? data.posts : []}
         currentPostId={currentPostId}
         loading={loading}
         error={error}
