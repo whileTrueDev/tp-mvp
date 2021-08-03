@@ -2,10 +2,10 @@ import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
 import { AxiosError } from 'axios';
 import { FindPostResType } from '@truepoint/shared/dist/res/FindPostResType.interface';
 import axios from '../../axios';
-import { FilterType } from '../../../store/useCommunityBoardState';
+import { BoardPlatform, FilterType } from '../../../store/useCommunityBoardState';
 
 export type PostGetParam = {
-  platform: 'afreeca' | 'twitch' | 'free',
+  platform: BoardPlatform,
   category: FilterType,
   page: number,
   take: number,
