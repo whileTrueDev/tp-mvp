@@ -12,13 +12,12 @@ const createPost = async (createPostDto: CreateCommunityPostDto) => {
   return data;
 };
 
-// const platformLabelList: BoardPlatform[] = ['afreeca', 'twitch', 'free'];
-
 export const useCreatePost = (): UseMutationResult<
 any, AxiosError, CreateCommunityPostDto
 > => useMutation<any, AxiosError, CreateCommunityPostDto>(
   createPost,
 );
+
 type UpdateProps = {
   postId: number,
   updatePostDto: UpdateCommunityPostDto

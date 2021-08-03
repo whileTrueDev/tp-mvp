@@ -4,8 +4,10 @@ import { AxiosResponse } from 'axios';
 import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
+import { useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
+import { useCreatePost, useUpdatePost } from './mutation/useMutatePost';
 
 /**
  * CommunityPostWrite 컴포넌트에서 사용되는 axios 요청 핸들러
@@ -22,9 +24,10 @@ export default function usePostWriteEditAPI(postId: number): {
 } {
   const { enqueueSnackbar } = useSnackbar();
   const history = useHistory();
-  const [, createPost] = useAxios({ url: '/community/posts', method: 'post' }, { manual: true });
   const [, getPostForEdit] = useAxios({ url: `/community/posts/${postId}` }, { manual: true });
-  const [, editPost] = useAxios({ url: `/community/posts/${postId}`, method: 'put' }, { manual: true });
+  const queryClient = useQueryClient();
+  const { mutateAsync: createPost } = useCreatePost();
+  const { mutateAsync: editPost } = useUpdatePost();
 
   const handleLoadPost = useCallback((cb: (res: AxiosResponse<any>) => void) => {
     getPostForEdit()
@@ -45,10 +48,12 @@ export default function usePostWriteEditAPI(postId: number): {
   }, [enqueueSnackbar, getPostForEdit, history]);
 
   const handleCreatePost = useCallback((createPostDto: CreateCommunityPostDto) => {
-    createPost({ data: createPostDto })
+    const { platform: platformIndex } = createPostDto;
+    const platform = ['afreeca', 'twitch', 'free'][platformIndex];
+    createPost(createPostDto)
       .then((res) => {
+        queryClient.invalidateQueries(['community', { platform }], { refetchInactive: true });
         ShowSnack('글 작성 성공', 'info', enqueueSnackbar);
-        // history.push('/community-board');
         history.push({
           pathname: '/community-board',
         });
@@ -57,11 +62,13 @@ export default function usePostWriteEditAPI(postId: number): {
         console.error(error);
         ShowSnack('오류가 발생했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
       });
-  }, [createPost, enqueueSnackbar, history]);
+  }, [createPost, enqueueSnackbar, history, queryClient]);
 
   const handleEditPost = useCallback((updatePostDto: UpdateCommunityPostDto) => {
-    editPost({ data: updatePostDto })
-      .then((res) => {
+    editPost({ postId, updatePostDto })
+      .then(() => {
+        queryClient.invalidateQueries(['post', postId]);
+        queryClient.invalidateQueries(['community'], { refetchInactive: true });
         ShowSnack('글 수정 성공', 'info', enqueueSnackbar);
         history.goBack();
       })
@@ -69,7 +76,7 @@ export default function usePostWriteEditAPI(postId: number): {
         console.error(error);
         ShowSnack('오류가 발생했습니다. 잠시 후 다시 시도해주세요', 'error', enqueueSnackbar);
       });
-  }, [editPost, enqueueSnackbar, history]);
+  }, [editPost, enqueueSnackbar, history, postId, queryClient]);
 
   return {
     handleLoadPost, handleCreatePost, handleEditPost,
