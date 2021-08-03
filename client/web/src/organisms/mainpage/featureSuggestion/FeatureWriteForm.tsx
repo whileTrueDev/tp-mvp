@@ -22,6 +22,7 @@ import React, { useRef } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import { useCreateFeatureSuggestion } from '../../../utils/hooks/mutation/useMutateFeatureSuggestion';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import useToggle from '../../../utils/hooks/useToggle';
@@ -115,10 +116,7 @@ export default function FeatureWriteForm(): JSX.Element {
 
   // ******************************************************
   // 기능제안 등록
-  const [{ loading: postLoading }, postRequest] = useAxios(
-    { url: '/feature-suggestion', method: 'post' },
-    { manual: true },
-  );
+  const { mutateAsync: postRequest, isLoading: postLoading } = useCreateFeatureSuggestion();
 
   function handlePostSubmit() {
     if (
@@ -136,7 +134,7 @@ export default function FeatureWriteForm(): JSX.Element {
         content: contents,
       };
 
-      postRequest({ data })
+      postRequest(data)
         .then(() => ShowSnack('기능제안이 등록 되었습니다.', 'success', enqueueSnackbar))
         .then(() => history.push('/feature-suggestion'))
         .catch((err) => ShowSnack(
