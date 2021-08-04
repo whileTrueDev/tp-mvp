@@ -1,5 +1,5 @@
 import {
-  Avatar, Button, TextField, Typography,
+  Avatar, Button, TextField,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
@@ -10,8 +10,6 @@ import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
-import useDialog from '../../../../utils/hooks/useDialog';
-import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -34,13 +32,12 @@ const useStyles = makeStyles((theme) => ({
 
 export interface FeatureReplyInputProps {
   currentSuggestion: Omit<FeatureSuggestion, 'content' | 'replies'>;
-  refetch: () => void;
   avatarLogo?: string;
 }
 export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.Element {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const { currentSuggestion, refetch, avatarLogo } = props;
+  const { currentSuggestion, avatarLogo } = props;
   const auth = useAuthContext();
 
   const [lengthState, setLengthState] = React.useState(false);
@@ -72,19 +69,10 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
           content: replyText.current.value,
         };
         postReply({ data })
-          .then(() => refetch())
           .catch(() => ShowSnack('댓글 작성중 오류가 발생했습니다. 문의부탁드립니다.', 'error', enqueueSnackbar));
       }
     }
   }
-
-  // 기능제안 글의 비밀번호 확인 요청
-  const [, checkPassword] = useAxios({
-    url: `/feature-suggestion/${currentSuggestion.suggestionId}/password`, method: 'POST',
-  }, { manual: true });
-
-  // 비밀번호 확인 다이얼로그
-  const confirmDialog = useDialog();
 
   return (
     <div className={classes.container}>
@@ -119,18 +107,6 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
       >
         댓글 작성
       </Button>
-
-      <CheckPasswordDialog
-        open={confirmDialog.open}
-        onClose={confirmDialog.handleClose}
-        checkPassword={checkPassword}
-        successHandler={() => {
-          handleReplySubmit();
-          confirmDialog.handleClose();
-        }}
-      >
-        <Typography>글의 비밀번호를 입력해주세요.</Typography>
-      </CheckPasswordDialog>
 
     </div>
   );
