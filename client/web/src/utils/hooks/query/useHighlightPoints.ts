@@ -13,10 +13,10 @@ async function getHighlightPoints(params: HighLightparams) {
   return data;
 }
 
-export function useHighlightPoints({ params, options }: {
+export function useHighlightPoints(
   params: HighLightparams,
-  options?: UseQueryOptions<any, AxiosError>
-}): UseQueryResult<any, AxiosError> {
+  options?: UseQueryOptions<any, AxiosError>,
+): UseQueryResult<any, AxiosError> {
   return useQuery(
     ['highlightPoints', params],
     () => getHighlightPoints(params),

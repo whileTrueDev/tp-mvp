@@ -77,14 +77,16 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
     creatorId: '',
   });
   // 하이라이트 구간 데이터 - highLightparams가 모두 존재할때만 fetching 실행됨
-  const { data: highlightData, error: getHighLightError } = useHighlightPoints({
-    params: highLightparams,
-    options: { enabled: !!highLightparams.streamId && !!highLightparams.platform && !!highLightparams.creatorId },
-  });
-
-  if (getHighLightError) {
-    ShowSnack('분석 도중 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-  }
+  const { data: highlightData } = useHighlightPoints(
+    highLightparams,
+    {
+      enabled: !!highLightparams.streamId && !!highLightparams.platform && !!highLightparams.creatorId,
+      onError: (err) => {
+        console.error(err);
+        ShowSnack('분석 도중 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+      },
+    },
+  );
 
   // S3로부터 선택된 방송의 하이라이트 데이터 패칭
   const fetchHighlightData = async (streamId: string, platform: string, creatorId: string): Promise<void> => {
