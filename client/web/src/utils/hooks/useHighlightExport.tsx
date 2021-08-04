@@ -1,8 +1,8 @@
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import ShowSnack from '../../atoms/snackbar/ShowSnack';
+import { ExportParams, useExportHighlightQuery } from './query/useHighlightExportQuery';
 
 export interface HighlightExportProps {
   selectedStream: StreamDataType | null,
@@ -97,11 +97,6 @@ export default function useHighlightExport(
     setIsChecked({ ...isChecked, [e.target.name]: e.target.checked });
   };
 
-  // 편집점 내보내기 요청
-  const [, doExport] = useAxios(
-    { url: '/highlight/export', method: 'get', responseType: 'blob' }, { manual: true },
-  );
-
   let exportFileName = '트루포인트 편집점';
 
   switch (exportCategory) {
@@ -127,6 +122,32 @@ export default function useHighlightExport(
       break;
   }
 
+  const [enableExport, setEnableExport] = useState<boolean | 'partial'>(false);
+  const [exportParams, setExportParams] = useState<ExportParams>({
+    creatorId: '',
+    platform: 'afreeca',
+    streamId: '',
+    exportCategory: '',
+    srt: 0,
+    csv: 0,
+    startTime: '',
+  });
+  // 편집점 내보내기 요청
+  useExportHighlightQuery(exportParams, {
+    enabled: !!enableExport, // enableExport 값이 true이거나 'partial'일 때 요청 실행됨
+    onSuccess: (result) => {
+      if (enableExport === 'partial') {
+        exportFileName = `부분영상_${exportFileName}`;
+      }
+      downloadFile(result, exportFileName);
+      setEnableExport(false); // 파일 다운로드 후 exportEnable값을 false로 초기화 함
+    },
+    onError: (err) => {
+      console.error(err);
+      ShowSnack('지금은 다운로드 할 수 없습니다.', 'error', enqueueSnackbar);
+    },
+  });
+
   // 편집점 내보내기 버튼 클릭 시 실행함수
   // 부분 영상 편집점 내보내기 시 {partialExport : true} 옵션을 넘긴다
   const handleExportClick = async ({ partialExport = false }: {partialExport: boolean}) => {
@@ -141,27 +162,16 @@ export default function useHighlightExport(
         return;
       }
 
-      if (partialExport) {
-        exportFileName = `부분영상_${exportFileName}`;
-      }
-      doExport({
-        params: {
-          creatorId,
-          platform,
-          streamId,
-          exportCategory,
-          srt,
-          csv,
-          startTime: partialExport ? startTimeFormatter(time) : '',
-          // txt
-        },
-      })
-        .then((res) => {
-          downloadFile(res.data, exportFileName);
-        }).catch((err) => {
-          console.error(err);
-          ShowSnack('지금은 다운로드 할 수 없습니다.', 'error', enqueueSnackbar);
-        });
+      setExportParams({
+        creatorId,
+        platform,
+        streamId,
+        exportCategory,
+        srt,
+        csv,
+        startTime: partialExport ? startTimeFormatter(time) : '',
+      });
+      setEnableExport(partialExport ? 'partial' : true);
     } else {
       ShowSnack('내보내기 할 방송을 선택해주세요.', 'error', enqueueSnackbar);
     }
