@@ -27,10 +27,10 @@ import AfreecaIcon from '../../../atoms/stream-analysis-icons/AfreecaIcon';
 import StepGuideTooltip from '../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../atoms/Tooltip/StepGuideTooltip.text';
 import Loading from '../../shared/sub/Loading';
+import { HighLightparams, useHighlightPoints } from '../../../utils/hooks/query/useHighlightPoints';
 
 interface HighlightAnalysisLayoutProps {
   exampleMode?: boolean
-
 }
 
 export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalysisLayoutProps): JSX.Element {
@@ -71,31 +71,26 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
     }
   };
 
-  const [highlightData, setHighlightData] = React.useState(null);
   const [isClicked, setIsClicked] = React.useState(false);
 
-  // 하이라이트 구간 요청
-  const [, getHighlightPoints] = useAxios(
-    { url: '/highlight/highlight-points', method: 'get' }, { manual: true },
-  );
+  const [highLightparams, setHighLightParams] = React.useState<HighLightparams>({
+    streamId: '',
+    platform: '',
+    creatorId: '',
+  });
+  // 하이라이트 구간 데이터 - highLightparams가 모두 존재할때만 fetching 실행됨
+  const { data: highlightData, error: getHighLightError } = useHighlightPoints({
+    params: highLightparams,
+    options: { enabled: !!highLightparams.streamId && !!highLightparams.platform && !!highLightparams.creatorId },
+  });
+
+  if (getHighLightError) {
+    ShowSnack('분석 도중 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
+  }
 
   // S3로부터 선택된 방송의 하이라이트 데이터 패칭
   const fetchHighlightData = async (streamId: string, platform: string, creatorId: string): Promise<void> => {
-    setHighlightData(null);
-    getHighlightPoints({
-      params: {
-        streamId,
-        platform,
-        creatorId,
-      },
-    })
-      .then((res: any) => {
-        if (res.data) {
-          setHighlightData(res.data);
-        }
-      }).catch((err) => {
-        ShowSnack('분석 도중 오류가 발생했습니다. 잠시 후 다시 이용해주세요.', 'error', enqueueSnackbar);
-      });
+    setHighLightParams({ streamId, platform, creatorId });
   };
 
   // [분석하기] 버튼 클릭시 실행 함수
@@ -239,17 +234,17 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
       </Grid>
       <Loading clickOpen={isClicked} />
       { !isClicked && highlightData && categoriesData && (
-        <>
-          <TruepointHighlight
-            selectedStream={selectedStream}
-            highlightData={highlightData} // 해당 부분 S3와 연동
-          />
-          <MetricsAccordian
-            selectedStream={selectedStream}
-            highlightData={highlightData} // 해당 부분 S3와 연동
-            categories={categoriesData}
-          />
-        </>
+      <>
+        <TruepointHighlight
+          selectedStream={selectedStream}
+          highlightData={highlightData} // 해당 부분 S3와 연동
+        />
+        <MetricsAccordian
+          selectedStream={selectedStream}
+          highlightData={highlightData} // 해당 부분 S3와 연동
+          categories={categoriesData}
+        />
+      </>
       )}
     </Paper>
   );
