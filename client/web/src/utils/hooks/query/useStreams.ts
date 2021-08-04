@@ -4,7 +4,7 @@ import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType
 import { AxiosError } from 'axios';
 import axios from '../../axios';
 
-async function getStreams(params: SearchCalendarStreams) {
+async function getStreams(params: SearchCalendarStreams | null) {
   const { data } = await axios.get('/broadcast-info', {
     params,
   });
@@ -12,7 +12,7 @@ async function getStreams(params: SearchCalendarStreams) {
 }
 
 export function useStreams(
-  params: SearchCalendarStreams,
+  params: SearchCalendarStreams | null,
   options?: UseQueryOptions<StreamDataType[], AxiosError>,
 ): UseQueryResult<StreamDataType[], AxiosError> {
   return useQuery(

@@ -125,13 +125,13 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   const { user } = usePublicMainUser((state) => state);
 
   // startDate ~ endDate 기간 내 방송 목록 요청
-  const [streamsParams, setStreamsParams] = React.useState<SearchCalendarStreams>({
-    userId: '',
-    startDate: '',
-    endDate: '',
-  });
+  const [streamsParams, setStreamsParams] = React.useState<SearchCalendarStreams|null>(null);
+  const [queryEnabled, setQueryEnabled] = React.useState<boolean>(false);
   const { data: getStreamsData } = useStreams(streamsParams, {
-    enabled: !!streamsParams.userId && !!streamsParams.startDate && !!streamsParams.endDate,
+    enabled: queryEnabled,
+    onSuccess: () => {
+      setQueryEnabled(false);
+    },
     onError: (err) => {
       console.error(err);
       if (err.message) {
@@ -147,6 +147,7 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
     setStreamsParams(params);
+    setQueryEnabled(true);
   }, [exampleMode, auth.user.userId, user.userId, currMonth]);
 
   const hasStreamDays = React.useMemo<string[]>(() => {

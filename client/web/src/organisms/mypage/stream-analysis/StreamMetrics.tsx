@@ -89,7 +89,7 @@ export default function StreamAnalysis(
                                 {type ? '기준 기간' : <Typography className={classes.main} component="span">{`"${element.broad1Title}" `}</Typography> }
                                 이&nbsp;
                                 {type ? '비교 기간' : <Typography className={classes.main} component="span">{`"${element.broad2Title}" `}</Typography> }
-                                보다
+                                보다&nbsp;
                               </Typography>
                             </Grid>
                             <Grid item>

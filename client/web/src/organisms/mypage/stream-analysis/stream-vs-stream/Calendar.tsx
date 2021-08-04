@@ -15,7 +15,6 @@ import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysi
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // axios
-import useAxios from 'axios-hooks';
 // styles
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
@@ -28,6 +27,7 @@ import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import usePublicMainUser from '../../../../store/usePublicMainUser';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
+import { useStreams } from '../../../../utils/hooks/query/useStreams';
 
 const useStyles = makeStyles((theme: Theme) => ({
   hasStreamDayDot: {
@@ -45,11 +45,27 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
   },
 }));
+
+//---------------------------------------------------------------------
 /**
  * 캘린더 달력 정보 재요청 할 개월수 전 후 단위  
  * 3 -> 위치한 달 전 3개월, 후 3개월 총 6개월
  */
 const reRequest = 3;
+/**
+   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
+   * @param originDate 현재 달력이 위치한 달
+   */
+const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
+  if (originDate) {
+    const rangeStart = dayjsFormatter(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+    const rangeEnd = dayjsFormatter(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+    return [rangeStart, rangeEnd];
+  }
+
+  return [];
+};
+//---------------------------------------------------------------------
 
 function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const {
@@ -59,7 +75,6 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
   const { user } = usePublicMainUser((state) => state);
-  const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
@@ -67,12 +82,25 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   /**
    * 달력 구성을 위한 기간 내 방송 정보 요청
    */
-  const [
-    {
-      data: getStreamsData,
-    }, excuteGetStreams] = useAxios<StreamDataType[]>({
-      url: '/broadcast-info',
-    }, { manual: true });
+  const [streamsParams, setStreamsParams] = React.useState<SearchCalendarStreams|null>(null);
+  const [queryEnabled, setQueryEnabled] = React.useState<boolean>(false);
+  const { data: getStreamsData } = useStreams(streamsParams, {
+    enabled: queryEnabled,
+    onSuccess: () => {
+      setQueryEnabled(false);
+    },
+    onError: (err) => {
+      console.error(err);
+      if (err.message) {
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+      }
+    },
+  });
+
+  const hasStreamDays = React.useMemo<string[]>(() => {
+    if (!getStreamsData) return [];
+    return getStreamsData.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only'));
+  }, [getStreamsData]);
 
   /**
    * material ui picker 의 테마 오버라이딩 (달력 테마를 조정하기 위해 필요)
@@ -97,20 +125,6 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
   });
 
   /**
-   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
-   * @param originDate 현재 달력이 위치한 달
-   */
-  const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
-    if (originDate) {
-      const rangeStart = dayjsFormatter(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
-      const rangeEnd = dayjsFormatter(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
-      return [rangeStart, rangeEnd];
-    }
-
-    return [];
-  };
-
-  /**
    * 달력 선택 기간 (6개월) 변경에 따라 재요청
    */
   React.useEffect(() => {
@@ -119,19 +133,9 @@ function StreamCalendar(props: StreamCalendarProps): JSX.Element {
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
-
-    excuteGetStreams({
-      params,
-    }).then((result) => {
-      setHasStreamDays(
-        result.data.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only')),
-      );
-    }).catch((err) => {
-      if (err.message) {
-        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-      }
-    });
-  }, [exampleMode, auth.user.userId, currMonth, excuteGetStreams, enqueueSnackbar, user.userId]);
+    setStreamsParams(params);
+    setQueryEnabled(true);
+  }, [exampleMode, auth.user.userId, currMonth, user.userId]);
 
   /**
    * 달력 날짜 선택 핸들러
