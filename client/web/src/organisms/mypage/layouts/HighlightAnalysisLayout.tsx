@@ -2,11 +2,8 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import useAxios from 'axios-hooks';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
-import { CategoryGetRequest } from '@truepoint/shared/dist/dto/category/categoryGet.dto';
-// import * as down from 'js-file-download';
 import { useSnackbar } from 'notistack';
 import { Chip } from '@material-ui/core';
 import Calendar from '../highlightAnalysis/Calendar';
@@ -28,6 +25,7 @@ import StepGuideTooltip from '../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../atoms/Tooltip/StepGuideTooltip.text';
 import Loading from '../../shared/sub/Loading';
 import { HighLightparams, useHighlightPoints } from '../../../utils/hooks/query/useHighlightPoints';
+import useCategories from '../../../utils/hooks/query/useCategories';
 
 interface HighlightAnalysisLayoutProps {
   exampleMode?: boolean
@@ -110,9 +108,7 @@ export default function HighlightAnalysisLayout({ exampleMode }: HighlightAnalys
     }
   };
 
-  const [{ data: categoriesData }] = useAxios<CategoryGetRequest[]>({
-    url: '/category',
-  });
+  const { data: categoriesData } = useCategories();
 
   return (
     <Paper className={classes.root}>
