@@ -16,13 +16,13 @@ import { Theme } from '@material-ui/core/styles';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 // atoms
-import useAxios from 'axios-hooks';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import SelectDateIcon from '../../../atoms/stream-analysis-icons/SelectDateIcon';
 // hooks
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import usePublicMainUser from '../../../store/usePublicMainUser';
 import { dayjsFormatter } from '../../../utils/dateExpression';
+import { useStreams } from '../../../utils/hooks/query/useStreams';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -69,6 +69,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//----------------------------------------------------------------------------------
+const reRequest = 3;
+/**
+   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
+   * @param originDate 현재 달력이 위치한 달
+   */
+const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
+  if (originDate) {
+    let rangeStart = dayjsFormatter(originDate);
+    rangeStart = rangeStart.subtract(reRequest, 'month').toISOString();
+    let rangeEnd = dayjsFormatter(originDate);
+    rangeEnd = rangeEnd.add(reRequest, 'month').toISOString();
+    return [rangeStart, rangeEnd];
+  }
+
+  return [];
+};
+//----------------------------------------------------------------------------------
 export interface StreamCalenderProps {
   exampleMode?: boolean;
   clickedDate: Date;
@@ -103,33 +121,24 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
   });
 
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
-  const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
   const auth = useAuthContext();
   const { user } = usePublicMainUser((state) => state);
 
-  const reRequest = 3;
-  const [
-    {
-      data: getStreamsData,
-    }, excuteGetStreams] = useAxios<StreamDataType[]>({
-      url: '/broadcast-info',
-    }, { manual: true });
-
-  /**
-   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
-   * @param originDate 현재 달력이 위치한 달
-   */
-  const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
-    if (originDate) {
-      let rangeStart = dayjsFormatter(originDate);
-      rangeStart = rangeStart.subtract(reRequest, 'month').toISOString();
-      let rangeEnd = dayjsFormatter(originDate);
-      rangeEnd = rangeEnd.add(reRequest, 'month').toISOString();
-      return [rangeStart, rangeEnd];
-    }
-
-    return [];
-  };
+  // startDate ~ endDate 기간 내 방송 목록 요청
+  const [streamsParams, setStreamsParams] = React.useState<SearchCalendarStreams>({
+    userId: '',
+    startDate: '',
+    endDate: '',
+  });
+  const { data: getStreamsData } = useStreams(streamsParams, {
+    enabled: !!streamsParams.userId && !!streamsParams.startDate && !!streamsParams.endDate,
+    onError: (err) => {
+      console.error(err);
+      if (err.message) {
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+      }
+    },
+  });
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
@@ -137,19 +146,13 @@ function StreamCalendar(props: StreamCalenderProps): JSX.Element {
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
+    setStreamsParams(params);
+  }, [exampleMode, auth.user.userId, user.userId, currMonth]);
 
-    excuteGetStreams({
-      params,
-    }).then((result) => {
-      setHasStreamDays(
-        result.data.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only')),
-      );
-    }).catch((err) => {
-      if (err.message) {
-        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-      }
-    });
-  }, [exampleMode, auth.user.userId, user.userId, currMonth, excuteGetStreams, enqueueSnackbar]);
+  const hasStreamDays = React.useMemo<string[]>(() => {
+    if (!getStreamsData) return [];
+    return getStreamsData.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only'));
+  }, [getStreamsData]);
 
   const handleDayChange = (newDate: MaterialUiPickersDate) => {
     if (newDate) handleClickedDate(newDate);
