@@ -84,7 +84,7 @@ export default function Inquiry(): JSX.Element {
                     <Typography variant="caption" color="error">(필수)</Typography>
                   </Typography>
                   <Input
-                    className={classes.datailContent}
+                    className={classes.detailContent}
                     classes={{ focused: classes.inputStyle }}
                     autoComplete="off"
                     disableUnderline
@@ -99,7 +99,7 @@ export default function Inquiry(): JSX.Element {
                     <Typography variant="caption" color="error">(필수)</Typography>
                   </Typography>
                   <Input
-                    className={classes.datailContent}
+                    className={classes.detailContent}
                     classes={{ focused: classes.inputStyle }}
                     type="email"
                     placeholder="email@email.com"
@@ -120,7 +120,7 @@ export default function Inquiry(): JSX.Element {
                   </Typography>
                   <Input
                     classes={{ focused: classes.inputStyle }}
-                    className={classes.datailContent}
+                    className={classes.detailContent}
                     disableUnderline
                     onChange={onChange}
                     multiline

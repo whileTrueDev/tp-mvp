@@ -53,12 +53,13 @@ const styles = makeStyles((theme) => ({
   cardContent: {
     marginBottom: theme.spacing(5),
   },
-  datailContent: {
+  detailContent: {
     minWidth: 30,
     marginTop: theme.spacing(2),
     borderRadius: 3,
     border: `1px solid ${theme.palette.primary.main}`,
     width: '100%',
+    padding: theme.spacing(1),
     '&:hover': {
       border: `1px solid ${theme.palette.primary.main}`,
     },
@@ -95,7 +96,6 @@ const styles = makeStyles((theme) => ({
     },
   },
   detailTitle: {
-
     fontWeight: 600,
     color: theme.palette.primary.main,
     [theme.breakpoints.down('sm')]: {
