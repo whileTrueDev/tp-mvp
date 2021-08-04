@@ -5,19 +5,17 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import styles from '../style/Inquiry.style';
-import axios from '../../../../utils/axios';
 import useDialog from '../../../../utils/hooks/useDialog';
 import Dialog from '../../../../atoms/Dialog/Dialog';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import { useCreateInquiry } from '../../../../utils/hooks/mutation/useMutateInquiry';
 
 const initialContent = {
-  name: '',
+  author: '',
   content: '',
   privacyAgreement: false,
   email: '',
 };
-
-const InquiryResult: any = {};
 
 export default function Inquiry(): JSX.Element {
   const classes = styles();
@@ -34,43 +32,36 @@ export default function Inquiry(): JSX.Element {
   const [inquiryContent, setInquiryContent] = useState(initialContent);
   function onChange(e: React.ChangeEvent<HTMLInputElement>): void {
     const { name, value } = e.currentTarget;
-    InquiryResult[name] = value;
-    setInquiryContent(InquiryResult);
+    setInquiryContent((inquiry) => ({ ...inquiry, [name]: value }));
   }
 
   // 문의 form ref
   const formRef = useRef<HTMLFormElement | null>(null);
-  // 문의 요청 중 로딩에 대한 상태
-  const [loading, setLoading] = React.useState(false);
+
+  // 문의 생성 요청
+  const { mutateAsync: createInquiry, isLoading: loading } = useCreateInquiry();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    const AnonymousUser = inquiryContent;
-    setLoading(true);
-
     if (!checked) {
-      setLoading(false);
       ShowSnack('개인정보수집 및 이용안내에 동의해주세요', 'info', enqueueSnackbar);
-    } else {
-      AnonymousUser.privacyAgreement = true;
-      // 아래 요청 보내는 곳 수정해야함 Done! - from hwasurr
-      axios.post('/inquiry', AnonymousUser)
-        .then(() => {
-          confirmDialog.handleOpen();
-          setInquiryContent(initialContent);
-          setChecked(false);
-          setLoading(false);
-          // Reset all of the input values in this form
-          if (formRef && formRef.current) {
-            formRef.current.reset();
-          }
-        })
-        .catch((err) => {
-          // console.log(err.response);
-          setLoading(false);
-          ShowSnack('불편을 드려 대단히 죄송합니다.\n문의 요청중 오류가 발생했습니다.\ntruepointceo@gmail.com 메일로 보내주시면 감사하겠습니다.', 'error', enqueueSnackbar);
-        });
+      return;
     }
+    const AnonymousInquiry = { ...inquiryContent, privacyAgreement: checked };
+    createInquiry(AnonymousInquiry)
+      .then(() => {
+        confirmDialog.handleOpen();
+        setInquiryContent(initialContent);
+        setChecked(false);
+        // Reset all of the input values in this form
+        if (formRef && formRef.current) {
+          formRef.current.reset();
+        }
+      })
+      .catch((err) => {
+        console.error(err.response);
+        ShowSnack('불편을 드려 대단히 죄송합니다.\n문의 요청중 오류가 발생했습니다.\ntruepointceo@gmail.com 메일로 보내주시면 감사하겠습니다.', 'error', enqueueSnackbar);
+      });
   }
 
   return (
