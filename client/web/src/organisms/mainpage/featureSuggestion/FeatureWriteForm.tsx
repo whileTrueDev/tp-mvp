@@ -15,14 +15,13 @@ import { Editor } from '@toast-ui/react-editor';
 import { FeatureSuggestionPatchDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPatch.dto';
 import { FeatureSuggestionPostDto } from '@truepoint/shared/dist/dto/featureSuggestion/featureSuggestionPost.dto';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import Button from '../../../atoms/Button/Button';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import { useCreateFeatureSuggestion } from '../../../utils/hooks/mutation/useMutateFeatureSuggestion';
+import { useCreateFeatureSuggestion, useEditFeatureSuggestion } from '../../../utils/hooks/mutation/useMutateFeatureSuggestion';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import useToggle from '../../../utils/hooks/useToggle';
@@ -155,10 +154,7 @@ export default function FeatureWriteForm(): JSX.Element {
 
   // ******************************************************
   // 기존 기능제안 수정
-  const [{ loading: patchLoading }, editPatchRequest] = useAxios(
-    { url: '/feature-suggestion', method: 'patch' },
-    { manual: true },
-  );
+  const { mutateAsync: editPatchRequest, isLoading: patchLoading } = useEditFeatureSuggestion();
 
   function handlePatchSubmit(targetSuggestionId: string | number) {
     if (
@@ -177,9 +173,9 @@ export default function FeatureWriteForm(): JSX.Element {
         content: contents,
       };
 
-      editPatchRequest({ data })
+      editPatchRequest(data)
         .then((res) => {
-          if (res.data) {
+          if (res) {
             ShowSnack(
               '기능제안이 수정 되었습니다.',
               'success',

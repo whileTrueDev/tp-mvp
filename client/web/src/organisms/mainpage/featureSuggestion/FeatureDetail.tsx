@@ -8,17 +8,19 @@ import {
 import LockIcon from '@material-ui/icons/Lock';
 import { Viewer } from '@toast-ui/react-editor';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import { useSnackbar } from 'notistack';
 import React, {
-  useCallback, useEffect, useMemo, useState,
+  useCallback, useMemo, useState,
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import axios from '../../../utils/axios';
 import dateExpression from '../../../utils/dateExpression';
+import useDeleteFeatureSuggestion from '../../../utils/hooks/mutation/useDeleteFeatureSuggestion';
+import useOneFeatureSuggestion from '../../../utils/hooks/query/useOneFeatureSuggestion';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import CheckPasswordDialog from '../shared/CheckPasswordDialog';
@@ -101,11 +103,11 @@ export interface FeatureDetailProps {
   selectedSuggestionId: string;
   onBackClick: () => void;
   onOtherFeatureClick: (num: number) => void;
-  featureListRefetch: () => void;
+  featureListRefetch?: () => void;
 }
 export default function FeatureDetail({
   data, onBackClick, selectedSuggestionId,
-  onOtherFeatureClick, featureListRefetch,
+  onOtherFeatureClick,
 }: FeatureDetailProps): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
@@ -114,21 +116,13 @@ export default function FeatureDetail({
 
   // ******************************************************************
   // 개별 세부 데이터 요청 (답변 목록 및 개별 답변 정보, 내용 정보를 포함하는 데이터 요청)
-  const [{ loading, data: featureDetailData }, doGetRequest] = useAxios<FeatureSuggestion>(
-    { url: '/feature-suggestion', method: 'get', params: { id: selectedSuggestionId } },
-  );
-  useEffect(() => {
-    doGetRequest();
-  }, [selectedSuggestionId, doGetRequest]);
+  const { data: featureDetailData, isFetching: loading } = useOneFeatureSuggestion(selectedSuggestionId);
 
-  const [, deleteRequest] = useAxios(
-    { url: '/feature-suggestion', method: 'delete' }, { manual: true },
-  );
+  // 삭제 요청
+  const { mutateAsync: deleteRequest } = useDeleteFeatureSuggestion();
   // 비밀번호 확인 요청
-  const [, checkPassword] = useAxios({
-    url: `/feature-suggestion/${selectedSuggestionId}/password`, method: 'POST',
-  }, { manual: true });
-  // length of title to render on Next/Previous button
+  const checkPassword = (pdata: {password: string}) => axios.post(`/feature-suggestion/${selectedSuggestionId}/password`, pdata);
+
   const TITLE_LENGTH = 15;
 
   // ******************************************************************
@@ -176,13 +170,12 @@ export default function FeatureDetail({
       .then(() => {
         handleCheckDialogClose();
         ShowSnack('올바르게 삭제되었습니다.', 'success', enqueueSnackbar);
-        featureListRefetch();
         history.push('/feature-suggestion');
       })
       .catch(() => {
         ShowSnack('삭제 도중 오류가 발생했습니다. 잠시후 다시 시도해주세요.', 'error', enqueueSnackbar);
       });
-  }, [deleteRequest, enqueueSnackbar, featureListRefetch, history, selectedSuggestionId]);
+  }, [deleteRequest, enqueueSnackbar, history, selectedSuggestionId]);
 
   const dialogSubmitFunction = useMemo(() => {
     if (dialogState.context === 'previous-move') {
@@ -288,7 +281,6 @@ export default function FeatureDetail({
       {/* 댓글 작성하기 */}
       <FeatureReplyInput
         currentSuggestion={currentFeatureData}
-        refetch={featureListRefetch}
         avatarLogo=""
       />
       {!loading && featureDetailData && (
@@ -300,7 +292,6 @@ export default function FeatureDetail({
               key={reply.replyId}
               suggestionId={featureDetailData.suggestionId}
               reply={reply}
-              refetch={featureListRefetch}
             />
           ))}
       </div>
