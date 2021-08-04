@@ -4,11 +4,10 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { ReplyPost } from '@truepoint/shared/dist/dto/featureSuggestion/replyPost.dto';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import { useCreateFeatureSuggestionReply } from '../../../../utils/hooks/mutation/useMutateFeatureSuggestionReply';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -52,10 +51,7 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
   const replyText = useRef<HTMLInputElement>(null);
 
   // 댓글 작성 요청
-  const [, postReply] = useAxios<FeatureSuggestionReply>({
-    method: 'POST',
-    url: '/feature-suggestion/reply',
-  }, { manual: true });
+  const { mutateAsync: postReply } = useCreateFeatureSuggestionReply();
 
   // "댓글 작성" 핸들러
   function handleReplySubmit() {
@@ -68,7 +64,7 @@ export default function FeatureReplyInput(props: FeatureReplyInputProps): JSX.El
           author: auth.user.userId,
           content: replyText.current.value,
         };
-        postReply({ data })
+        postReply(data)
           .catch(() => ShowSnack('댓글 작성중 오류가 발생했습니다. 문의부탁드립니다.', 'error', enqueueSnackbar));
       }
     }
