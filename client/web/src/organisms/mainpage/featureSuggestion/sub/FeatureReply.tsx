@@ -2,7 +2,6 @@ import { Avatar, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { FeatureSuggestionReply } from '@truepoint/shared/dist/interfaces/FeatureSuggestionReply.interface';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React from 'react';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
@@ -10,6 +9,8 @@ import useDialog from '../../../../utils/hooks/useDialog';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
+import axios from '../../../../utils/axios';
+import { useDeleteFeatureReply } from '../../../../utils/hooks/mutation/useDeleteFeatureReply';
 
 const useStyles = makeStyles((theme) => ({
   container: { width: '100%', marginTop: theme.spacing(3) },
@@ -22,34 +23,23 @@ const useStyles = makeStyles((theme) => ({
 export interface FeatureReplyProps {
   suggestionId: number;
   reply: FeatureSuggestionReply;
-  refetch?: () => void;
 }
 export default function FeatureReply({
   suggestionId,
   reply,
-  refetch,
 }: FeatureReplyProps): JSX.Element {
   const classes = useStyles();
-  // const { user } = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   const confirmDialog = useDialog();
 
-  const [, deleteRequest] = useAxios({
-    url: '/feature-suggestion/reply',
-    method: 'DELETE',
-  }, { manual: true });
+  const { mutateAsync: deleteRequest } = useDeleteFeatureReply();
 
   // 기능제안 글의 비밀번호 확인 요청
-  const [, checkPassword] = useAxios({
-    url: `/feature-suggestion/${suggestionId}/password`, method: 'POST',
-  }, { manual: true });
+  const checkPassword = (pdata: {password: string}) => axios.post(`/feature-suggestion/${suggestionId}/password`, pdata);
 
   // 자기가 남긴 댓글 삭제 클릭
   function handleDeleteClick(id: number) {
-    deleteRequest({ data: { id } })
-      .then(() => {
-        if (refetch) refetch();
-      })
+    deleteRequest({ replyId: id, suggestionId })
       .catch(() => ShowSnack('댓글 작성중 오류가 발생했습니다. 문의부탁드립니다.', 'error', enqueueSnackbar));
   }
 
