@@ -5,10 +5,7 @@ import {
   Grid,
   Button,
 } from '@material-ui/core';
-// axios
-import useAxios from 'axios-hooks';
 // shared dto and interface
-import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // styles

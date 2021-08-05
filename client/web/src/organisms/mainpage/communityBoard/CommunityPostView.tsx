@@ -92,8 +92,7 @@ export default function CommunityPostView(): JSX.Element {
   const viewerRef = useRef<any>();
 
   // 개별글 내용 요청
-  const { data: currentPost, isFetching: postLoading, refetch: getPostForView } = useOnePost(Number(postId), {
-    enabled: false,
+  const { data: currentPost, isLoading: postLoading } = useOnePost(Number(postId), {
     onError: (e) => {
       console.error('글 불러오기 오류', e);
       ShowSnack(snackMessages.error.getPost, 'error', enqueueSnackbar);
@@ -103,15 +102,15 @@ export default function CommunityPostView(): JSX.Element {
 
   // 컴포넌트 마운트 된 후 개별글 내용 표시
   useEffect(() => {
-    const displayPost = async () => {
-      await getPostForView();
+    if (currentPost) {
       window.scrollTo({ left: 0, top: 0 });
-      if (viewerRef && viewerRef.current && currentPost) {
-        viewerRef.current.innerHTML = currentPost.content;
-      }
-    };
-    displayPost();
-  }, [currentPost, getPostForView, postId]);
+      setTimeout(() => {
+        if (viewerRef && viewerRef.current) {
+          viewerRef.current.innerHTML = currentPost.content;
+        }
+      }, 0);
+    }
+  }, [currentPost, postId]);
 
   // 개별글 삭제 요청
   const { mutateAsync: deletePost } = useDeletePost();

@@ -113,27 +113,17 @@ export class CommunityBoardController {
   }
 
   /**
-   * 게시글 추천 POST /community/posts/:postId/recommend
+   * 게시글 추천, 비추천 POST /community/posts/:postId/recommend
    * 
    * @param postId 
-   * @return 새로운 추천수 리턴
+   * @return 새로운 추천수, 비추천수 리턴
    */
   @Post('posts/:postId/recommend')
   recommendPost(
     @Param('postId', ParseIntPipe) postId: number,
+    @Body('vote', ParseIntPipe) vote: 1|0, // vote:1 이면 추천, vote:0이면 비추천
   ): Promise<number> {
-    return this.communityBoardService.recommendPost(postId);
-  }
-
-  /**
-   * 게시글 비추천 POST /community/posts/:postId/notRecommend
-   * @param postId 
-   * @returns 
-   */
-  @Post('posts/:postId/notRecommend')
-  notRecommendPost(
-    @Param('postId', ParseIntPipe) postId: number,
-  ): Promise<number> {
+    if (vote === 1) return this.communityBoardService.recommendPost(postId);
     return this.communityBoardService.notRecommendPost(postId);
   }
 

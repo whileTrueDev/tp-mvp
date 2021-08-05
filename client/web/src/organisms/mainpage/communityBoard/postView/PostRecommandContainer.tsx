@@ -1,16 +1,13 @@
 // 추천 관련 버튼들 컴포넌트
 import { Typography, Button } from '@material-ui/core';
 import classnames from 'classnames';
-import React, {
-  useCallback,
-// useEffect, useMemo, useRef, useState,
-} from 'react';
+import React, { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
-import useAxios from 'axios-hooks';
 import { CommunityPost } from '@truepoint/shared/dist/interfaces/CommunityPost.interface';
 import { useStyles } from '../style/PostRecommandContainer.style';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import { isWithin24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
+import { useMutatePostVote } from '../../../../utils/hooks/mutation/useMutatePostVote';
 
 interface RecommandProps{
   postId: string | undefined,
@@ -32,15 +29,7 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
   const classes = useStyles();
   const { postId, currentPost, isMobile } = props;
 
-  const [{ data: recommendCount }, postRecommend] = useAxios<number>({
-    url: `/community/posts/${postId}/recommend`,
-    method: 'post',
-  }, { manual: true });
-
-  const [{ data: notRecommendCount }, postNotRecommend] = useAxios<number>({
-    url: `/community/posts/${postId}/notRecommend`,
-    method: 'post',
-  }, { manual: true });
+  const { mutateAsync: vote } = useMutatePostVote();
 
   // 글 추천버튼 핸들러(하루 한번만 추천하도록)
   const handleRecommend = useCallback(() => {
@@ -57,7 +46,7 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
       return;
     }
     // 현재 postId가 로컬스토리지에 저장되어 있지 않다면 해당 글 추천하기 요청
-    postRecommend()
+    vote({ postId: Number(postId), vote: 1 })
       .then((res) => {
         localStorage.setItem(RECOMMEND_LIST_KEY,
           JSON.stringify([
@@ -69,7 +58,7 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
         ShowSnack(snackMessages.error.postRecommend, 'error', enqueueSnackbar);
         console.error(err);
       });
-  }, [enqueueSnackbar, postId, postRecommend]);
+  }, [enqueueSnackbar, postId, vote]);
 
   // 글 비추천버튼 핸들러
   const handleNotRecommend = useCallback(() => {
@@ -85,7 +74,7 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
       return;
     }
 
-    postNotRecommend()
+    vote({ postId: Number(postId), vote: 0 })
       .then((res) => {
         localStorage.setItem(NOT_RECOMMEND_LIST_KEY,
           JSON.stringify([
@@ -97,12 +86,14 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
         ShowSnack(snackMessages.error.postNotRecommend, 'error', enqueueSnackbar);
         console.error(err);
       });
-  }, [enqueueSnackbar, postId, postNotRecommend]);
+  }, [enqueueSnackbar, postId, vote]);
 
   return (
     <div className={classes.recommendContainer}>
       <div className={classes.recommendButtons}>
-        <Typography className={classes.recommandText}>{recommendCount || (currentPost.recommend) || 0}</Typography>
+        <Typography className={classes.recommandText}>
+          {(currentPost.recommend) || 0}
+        </Typography>
         <Button
           size="small"
           className={classnames(classes.recommendButton)}
@@ -134,7 +125,7 @@ export default function PostRecommandButtons(props: RecommandProps): JSX.Element
           <Typography className="buttonText">비추</Typography>
         </Button>
         <Typography className={classes.recommandText}>
-          {notRecommendCount || (currentPost.notRecommendCount) || 0}
+          {(currentPost.notRecommendCount) || 0}
         </Typography>
       </div>
     </div>
