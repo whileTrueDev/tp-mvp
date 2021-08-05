@@ -10,10 +10,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { useHistory } from 'react-router-dom';
-import { Notice as NoticeData } from '@truepoint/shared/dist/interfaces/Notice.interface';
 // 날짜표현추가
-import useAxios from 'axios-hooks';
 import { dayjsFormatter } from '../../../utils/dateExpression';
+import { useNoticeOutline } from '../../../utils/hooks/query/useNoticeList';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -27,11 +26,7 @@ export default function SimpleNoticeTable(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
   // Notice data
-  const [{ loading, data }] = useAxios<NoticeData[]>({
-    url: '/notice/outline',
-    method: 'GET',
-    params: { important: 2 },
-  });
+  const { data, isFetching: loading } = useNoticeOutline();
 
   return (
     <Paper className={classes.container}>
