@@ -122,7 +122,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
-    console.log({ exampleMode }, params);
     setStreamsParams(params);
     setQueryEnabled(true);
   }, [exampleMode, auth.user, user.userId, currMonth]);

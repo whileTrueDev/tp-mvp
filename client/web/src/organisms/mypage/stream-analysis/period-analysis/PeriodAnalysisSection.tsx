@@ -41,6 +41,7 @@ import SectionTitle from '../../../shared/sub/SectionTitles';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import PeriodSelectDialog from '../shared/PeriodSelectDialog';
 import usePublicMainUser from '../../../../store/usePublicMainUser';
+import { useStreams } from '../../../../utils/hooks/query/useStreams';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
@@ -102,9 +103,24 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
   };
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [, excuteGetStreams] = useAxios<StreamDataType[]>({
-    url: '/broadcast-info',
-  }, { manual: true });
+  const [streamsParams, setStreamsParams] = React.useState<SearchCalendarStreams|null>(null);
+  const [queryEnabled, setQueryEnabled] = React.useState<boolean>(false);
+  useStreams(streamsParams, {
+    enabled: queryEnabled,
+    onSuccess: (resData) => {
+      setQueryEnabled(false);
+      const result = resData.map((row) => ({
+        ...row, isRemoved: false, title: exampleMode ? '예시 방송입니다' : row.title,
+      }));
+      setTermStreamsList(result);
+    },
+    onError: (err) => {
+      console.error(err);
+      if (err.message) {
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+      }
+    },
+  });
 
   React.useEffect(() => {
     if (period[0] && period[1]) {
@@ -113,20 +129,10 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         startDate: period[0].toISOString(),
         endDate: period[1].toISOString(),
       };
-      excuteGetStreams({
-        params: searchParam,
-      }).then((res) => {
-        const result = res.data.map((row) => ({
-          ...row, isRemoved: false, title: exampleMode ? '예시 방송입니다' : row.title,
-        }));
-        setTermStreamsList(result);
-      }).catch((err) => {
-        if (err.response) {
-          ShowSnack('방송 정보 구성에 문제가 발생했습니다. 다시 시도해 주세요.', 'error', enqueueSnackbar);
-        }
-      });
+      setStreamsParams(searchParam);
+      setQueryEnabled(true);
     }
-  }, [exampleMode, period, auth.user, user.userId, excuteGetStreams, enqueueSnackbar]);
+  }, [exampleMode, period, auth.user, user.userId]);
 
   /* 네비바 유저 전환시 이전 값 초기화 -> CBT 주석 사항 */
   // React.useEffect(() => {
