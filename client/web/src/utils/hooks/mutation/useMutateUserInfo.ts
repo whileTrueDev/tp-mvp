@@ -3,11 +3,11 @@ import { useMutation, UseMutationResult } from 'react-query';
 import axios from '../../axios';
 
 // 닉네임 변경
-type ChangeNicknameParam = {userId: string, nickname: string};
+type ChangeNicknameParam = {userId: string, nickName: string};
 
-async function changeNickname({ userId, nickname }: ChangeNicknameParam) {
+async function changeNickname({ userId, nickName }: ChangeNicknameParam) {
   const { data } = await axios.patch('/users/nickname', {
-    userId, nickname,
+    userId, nickName,
   });
   return data;
 }

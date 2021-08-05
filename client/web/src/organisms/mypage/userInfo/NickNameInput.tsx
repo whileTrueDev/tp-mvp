@@ -37,7 +37,7 @@ export default function NickNameInput(props: NickNameInputProps): JSX.Element {
     if (!user.userId || !nickName) return;
 
     // 변경요청
-    changeNickname({ userId: user.userId, nickname: nickName })
+    changeNickname({ userId: user.userId, nickName })
       .then(() => {
         setUser((prevUser) => ({ ...prevUser, nickName }));
         ShowSnack('닉네임이 성공적으로 변경되었습니다.', 'success', enqueueSnackbar);
