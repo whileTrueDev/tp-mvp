@@ -3,8 +3,6 @@ import {
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import { Link as RouterLink } from 'react-router-dom';
-
-import useAxios from 'axios-hooks';
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
@@ -12,6 +10,7 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 import TitleWithLogo from './TitleWithLogo';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import { useMyRatingsCreatorBoxStyles } from './styles/MyRatings.style';
+import { useMyRatings } from '../../../utils/hooks/query/useMyRatingsQuery';
 
 // avatar + 플랫폼 배지 컴포넌트
 export function AvatarWithPlatformBadge({
@@ -116,7 +115,7 @@ export function CreatorsBox(props: CreatorsBoxProps): JSX.Element {
     <div className={classes.box}>
       {loading && <CenterLoading />}
       {/* 평점 매긴 방송인이 있을 경우 목록 렌더링 */}
-      {!loading && creators && creators.map((d: any) => (<CreatorAvatarWithRating key={d.creatorId} {...d} />))}
+      {creators && creators.map((d: any) => (<CreatorAvatarWithRating key={d.creatorId} {...d} />))}
       {/* 평점 매긴 방송인이 없는 경우 */}
       {!loading && creators && !creators.length && (
         <Typography style={{ padding: '40px' }}>평점을 매긴 방송인이 없습니다</Typography>
@@ -138,14 +137,11 @@ export default function MyRatings(): JSX.Element {
   const { isMobile } = useMediaSize();
   const [page, setPage] = useState<number>(1);
   const [itemPerPage, setItemPerPage] = useState<number>(isMobile ? 5 : 12);
-  const [{ loading, data, error }, getMyRatingCreators] = useAxios<{hasMore: boolean; creators: CreatorAvatarProps[]}>({
-    url: 'ratings/mypage',
-    method: 'get',
-    params: {
-      userId: auth.user.userId,
-      page,
-      itemPerPage,
-    },
+
+  const { data, isFetching: loading, error } = useMyRatings({
+    userId: auth.user.userId,
+    page,
+    itemPerPage,
   });
 
   const moveToPrevPage = () => {
@@ -156,16 +152,6 @@ export default function MyRatings(): JSX.Element {
     if (!data || !(data?.hasMore)) return;
     setPage((prevPage) => prevPage + 1);
   };
-
-  useEffect(() => {
-    getMyRatingCreators({
-      params: {
-        userId: auth.user.userId,
-        page,
-        itemPerPage,
-      },
-    });
-  }, [auth.user.userId, getMyRatingCreators, itemPerPage, page]);
 
   useEffect(() => {
     setItemPerPage(isMobile ? 5 : 12);
