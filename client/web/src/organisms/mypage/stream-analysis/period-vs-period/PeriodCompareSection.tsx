@@ -33,10 +33,11 @@ import SectionTitle from '../../../shared/sub/SectionTitles';
 // attoms snackbar
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import usePublicMainUser from '../../../../store/usePublicMainUser';
+import { useStreams } from '../../../../utils/hooks/query/useStreams';
 
 export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Element {
   const {
-    loading, error, handleSubmit, exampleMode,
+    loading, error, handleSubmit, exampleMode = false,
   } = props;
   const classes = usePeriodCompareStyles();
   // const subscribe = useContext(SubscribeContext);
@@ -61,9 +62,72 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
   const [compareStreamsList, setCompareStreamsList] = React.useState<StreamsListItem[]>([]);
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [, excuteGetStreams] = useAxios<StreamDataType[]>({
-    url: '/broadcast-info',
-  }, { manual: true });
+  // 기준 방송 목록 요청
+  const [baseStreamsParams, setBaseStreamsParams] = React.useState<SearchCalendarStreams|null>(null);
+  const [baseQueryEnabled, setBaseQueryEnabled] = React.useState<boolean>(false);
+  useStreams(baseStreamsParams, {
+    enabled: baseQueryEnabled,
+    onSuccess: (resData) => {
+      setBaseQueryEnabled(false);
+      const result = resData.map((row) => ({
+        ...row,
+        title: exampleMode ? '예시 방송1 입니다' : row.title,
+        isRemoved: false,
+      }));
+      setBaseStreamsList(result);
+    },
+    onError: (err) => {
+      console.error(err);
+      if (err.message) {
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+      }
+    },
+  });
+
+  // 비교 방송 목록 요청
+  const [compareStreamsParams, setCompareStreamsParams] = React.useState<SearchCalendarStreams|null>(null);
+  const [compareQueryEnabled, setCompareQueryEnabled] = React.useState<boolean>(false);
+  useStreams(compareStreamsParams, {
+    enabled: compareQueryEnabled,
+    onSuccess: (resData) => {
+      setCompareQueryEnabled(false);
+      const result = resData.map((row) => ({
+        ...row,
+        title: exampleMode ? '예시 방송1 입니다' : row.title,
+        isRemoved: false,
+      }));
+      setCompareStreamsList(result);
+    },
+    onError: (err) => {
+      console.error(err);
+      if (err.message) {
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+      }
+    },
+  });
+  React.useEffect(() => {
+    if (basePeriod[0] && basePeriod[1]) {
+      const searchParam: SearchCalendarStreams = {
+        userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
+        startDate: basePeriod[0].toISOString(),
+        endDate: basePeriod[1].toISOString(),
+      };
+      setBaseStreamsParams(searchParam);
+      setBaseQueryEnabled(true);
+    }
+  }, [exampleMode, basePeriod, auth.user, user.userId]);
+
+  React.useEffect(() => {
+    if (comparePeriod[0] && comparePeriod[1]) {
+      const searchParam: SearchCalendarStreams = {
+        userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
+        startDate: comparePeriod[0].toISOString(),
+        endDate: comparePeriod[1].toISOString(),
+      };
+      setCompareStreamsParams(searchParam);
+      setCompareQueryEnabled(true);
+    }
+  }, [exampleMode, comparePeriod, auth.user, user.userId]);
 
   /* 체크박스 상태값 핸들러 */
   const handleCheckStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,54 +239,6 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
       }
     }
   };
-
-  React.useEffect(() => {
-    if (basePeriod[0] && basePeriod[1]) {
-      const searchParam: SearchCalendarStreams = {
-        userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
-        startDate: basePeriod[0].toISOString(),
-        endDate: basePeriod[1].toISOString(),
-      };
-      excuteGetStreams({
-        params: searchParam,
-      }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-        const result = res.data.map((row) => ({
-          ...row,
-          title: exampleMode ? '예시 방송1 입니다' : row.title,
-          isRemoved: false,
-        }));
-        setBaseStreamsList(result);
-      }).catch((err) => {
-        if (err.response) {
-          ShowSnack('방송 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-        }
-      });
-    }
-  }, [exampleMode, basePeriod, auth.user, user.userId, excuteGetStreams, enqueueSnackbar]);
-
-  React.useEffect(() => {
-    if (comparePeriod[0] && comparePeriod[1]) {
-      const searchParam: SearchCalendarStreams = {
-        userId: exampleMode ? 'sal_gu' : (user.userId || auth.user.userId),
-        startDate: comparePeriod[0].toISOString(),
-        endDate: comparePeriod[1].toISOString(),
-      };
-      excuteGetStreams({
-        params: searchParam,
-      }).then((res) => { // LOGIN ERROR -> 리다이렉트 필요
-        const result = res.data.map((row) => ({
-          ...row,
-          title: exampleMode ? '예시 방송2 입니다' : row.title,
-          isRemoved: false,
-        }));
-        setCompareStreamsList(result);
-      }).catch((err) => {
-        if (err.response) {
-          ShowSnack('방송 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-        }
-      });
-    }
-  }, [exampleMode, comparePeriod, auth.user, user.userId, excuteGetStreams, enqueueSnackbar]);
 
   return (
     <div className={classes.root}>
@@ -375,6 +391,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         handleClose={baseDialog.handleClose}
         handlePeriod={handlePeriod}
         base
+        exampleMode={exampleMode}
       />
       )}
 
@@ -386,6 +403,7 @@ export default function PeriodCompareSection(props: PeriodCompareProps): JSX.Ele
         handleStreamList={handleCompareStreamList}
         handleClose={compareDialog.handleClose}
         handlePeriod={handlePeriod}
+        exampleMode={exampleMode}
       />
       )}
     </div>

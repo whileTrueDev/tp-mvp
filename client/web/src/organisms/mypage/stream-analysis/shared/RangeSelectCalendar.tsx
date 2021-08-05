@@ -51,7 +51,7 @@ const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] =>
 
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
-    period, handlePeriod, base, exampleMode,
+    period, handlePeriod, base, exampleMode = false,
     handleDialogOpen, removeFunc,
   } = props;
   const classes = useAllCalendarStyles();
@@ -122,6 +122,7 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
+    console.log({ exampleMode }, params);
     setStreamsParams(params);
     setQueryEnabled(true);
   }, [exampleMode, auth.user, user.userId, currMonth]);
