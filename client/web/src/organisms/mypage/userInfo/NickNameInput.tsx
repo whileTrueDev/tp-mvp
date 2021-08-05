@@ -5,9 +5,9 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { useStyle } from './styles/UpdateUserInfoDialog.style';
-import axios from '../../../utils/axios';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import { useMutateNickname } from '../../../utils/hooks/mutation/useMutateUserInfo';
 
 interface NickNameInputProps{
   setHiddenFlag: React.Dispatch<React.SetStateAction<boolean>>,
@@ -28,6 +28,7 @@ export default function NickNameInput(props: NickNameInputProps): JSX.Element {
   const classes = useStyle();
   const { enqueueSnackbar } = useSnackbar();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: changeNickname } = useMutateNickname();
 
   // 닉네임을 변경하는 함수
   const handleChangeNickname = () => {
@@ -36,14 +37,7 @@ export default function NickNameInput(props: NickNameInputProps): JSX.Element {
     if (!user.userId || !nickName) return;
 
     // 변경요청
-    axios({
-      method: 'patch',
-      url: 'users/nickname',
-      data: {
-        userId: user.userId,
-        nickName,
-      },
-    })
+    changeNickname({ userId: user.userId, nickname: nickName })
       .then(() => {
         setUser((prevUser) => ({ ...prevUser, nickName }));
         ShowSnack('닉네임이 성공적으로 변경되었습니다.', 'success', enqueueSnackbar);
