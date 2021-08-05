@@ -127,7 +127,7 @@ export class UsersController {
   @Get('/id')
   async findId(
     @Query() query: CertificationType,
-  ): Promise<Pick<UserEntity, 'userId'>> {
+  ): Promise<Pick<UserEntity, 'userId' | 'provider'>> {
     if (query.impUid) {
       const { userDI }: CertificationInfo = await this.authService
         .getCertificationInfo(query.impUid);

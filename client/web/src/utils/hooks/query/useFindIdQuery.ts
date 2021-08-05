@@ -28,8 +28,8 @@ async function findId(param: QueryParam) {
 
 export function useFindIdQuery(
   param: QueryParam,
-  options?: UseQueryOptions<Pick<User, 'userId'>, AxiosError>,
-): UseQueryResult<Pick<User, 'userId'>, AxiosError> {
+  options?: UseQueryOptions<Pick<User, 'userId' | 'provider'>, AxiosError>,
+): UseQueryResult<Pick<User, 'userId' | 'provider'>, AxiosError> {
   return useQuery(
     ['findId', param],
     () => findId(param),

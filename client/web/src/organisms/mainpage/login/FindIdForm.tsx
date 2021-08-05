@@ -11,6 +11,7 @@ import { QueryParam, useFindIdQuery } from '../../../utils/hooks/query/useFindId
 import useDialog from '../../../utils/hooks/useDialog';
 // import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
+import { KakaoLoginButton, NaverLoginButton } from './SNSLoginButton';
 
 export const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -106,6 +107,59 @@ export default function FindAccountForm(): JSX.Element {
   //     setQueryParam({ column: 'impUid', value: impUid });
   //   }
   // });
+
+  // **************************************************
+  //* 카카오, 네이버 로그인 사용자의 경우 해당 플랫폼으로 로그인하기 버튼을 렌더링한다
+  function renderIdInfoByPlatform() {
+    if (!data || !queryParam) return null;
+    const { userId, provider } = data;
+    const { value } = queryParam;
+    if (provider === 'kakao') {
+      return (
+        <>
+          <Typography variant="h6">카카오 계정으로 가입된 회원입니다.</Typography>
+          <div className={classes.content}>
+            <Typography variant="h6">입력한 이메일 : </Typography>
+            <Typography variant="h6" gutterBottom>{value}</Typography>
+            <KakaoLoginButton />
+          </div>
+        </>
+      );
+    }
+    if (provider === 'naver') {
+      return (
+        <>
+          <Typography variant="h6">네이버 계정으로 가입된 회원입니다.</Typography>
+          <div className={classes.content}>
+            <Typography variant="h6">입력한 이메일 : </Typography>
+            <Typography variant="h6" gutterBottom>{value}</Typography>
+            <NaverLoginButton />
+          </div>
+        </>
+      );
+    }
+    return (
+      <>
+        <Typography variant="h6">입력한 정보를 통해 찾은</Typography>
+        <Typography variant="h6">트루포인트 아이디 정보입니다.</Typography>
+        <div className={classes.content}>
+          <Typography variant="h6">
+            {transformIdToAsterisk(userId)}
+          </Typography>
+          <Button
+            component={Link}
+            to="/login"
+            color="primary"
+            variant="contained"
+            style={{ color: 'white' }}
+            className={classes.fullButton}
+          >
+            <Typography variant="body1">로그인 하러 가기</Typography>
+          </Button>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -223,23 +277,7 @@ export default function FindAccountForm(): JSX.Element {
       {/* 찾은 아이디 정보 렌더링 */}
       {activeStep === 2 && data && (
       <div className={classnames(classes.box, classes.content)}>
-        <Typography variant="h6">입력한 정보를 통해 찾은</Typography>
-        <Typography variant="h6">트루포인트 아이디 정보입니다.</Typography>
-        <div className={classes.content}>
-          <Typography variant="h6">
-            {transformIdToAsterisk(data.userId)}
-          </Typography>
-          <Button
-            component={Link}
-            to="/login"
-            color="primary"
-            variant="contained"
-            style={{ color: 'white' }}
-            className={classes.fullButton}
-          >
-            <Typography variant="body1">로그인 하러 가기</Typography>
-          </Button>
-        </div>
+        {renderIdInfoByPlatform()}
       </div>
       )}
 
