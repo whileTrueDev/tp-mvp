@@ -1,9 +1,8 @@
-import { TodayTopViewerUsersRes } from '@truepoint/shared/dist/res/TodayTopViewerUsersRes.interface';
 import React, { useMemo } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import useAxios from 'axios-hooks';
 import { BOARD_PAGE_MAX_WIDTH } from '../../../../assets/constants';
+import { useTodayTopViewer } from '../../../../utils/hooks/query/useTodayTopViewer';
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   bg: {
@@ -70,7 +69,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export default function BoardHeaderImage(): JSX.Element {
   const classes = useStyles();
-  const [{ data }] = useAxios<TodayTopViewerUsersRes>('broadcast-info/today-top-viewer');
+  const { data } = useTodayTopViewer();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const twitchTopUser = useMemo(() => data?.find((x) => x.platform === 'twitch'), [data]);
