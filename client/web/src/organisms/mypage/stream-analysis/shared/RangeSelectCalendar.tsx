@@ -13,13 +13,10 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 // date libary
 import DateFnsUtils from '@date-io/date-fns';
 import koLocale from 'date-fns/locale/ko';
-// axios
-import useAxios from 'axios-hooks';
 // styles
 import { Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 // shared dtos , interfaces
-import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // icon
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
@@ -34,8 +31,24 @@ import StepGuideTooltip from '../../../../atoms/Tooltip/StepGuideTooltip';
 import { stepguideSource } from '../../../../atoms/Tooltip/StepGuideTooltip.text';
 import usePublicMainUser from '../../../../store/usePublicMainUser';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
+import { useStreams } from '../../../../utils/hooks/query/useStreams';
 
+//----------------------------------------------------------------------------------
 const reRequest = 3;
+/**
+   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
+   * @param originDate 현재 달력이 위치한 달
+   */
+const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
+  if (originDate) {
+    const rangeStart = dayjsFormatter(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+    const rangeEnd = dayjsFormatter(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
+    return [rangeStart, rangeEnd];
+  }
+  return [];
+};
+//----------------------------------------------------------------------------------
+
 function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const {
     period, handlePeriod, base, exampleMode,
@@ -53,9 +66,6 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   const [currMonth, setCurrMonth] = React.useState<MaterialUiPickersDate>(new Date());
   const [point1, setPoint1] = React.useState<MaterialUiPickersDate>(null);
   const [point2, setPoint2] = React.useState<MaterialUiPickersDate>(null);
-
-  /* 방송이 존재하는 날짜 date string 배열 */
-  const [hasStreamDays, setHasStreamDays] = React.useState<string[]>([]);
 
   /**
    * date picker 오버라이딩 theme
@@ -85,23 +95,26 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
   });
 
   /* 기간 내 존재 모든 방송 리스트 요청 */
-  const [, excuteGetStreams] = useAxios<StreamDataType[]>({
-    url: '/broadcast-info',
-  }, { manual: true });
+  const [streamsParams, setStreamsParams] = React.useState<SearchCalendarStreams|null>(null);
+  const [queryEnabled, setQueryEnabled] = React.useState<boolean>(false);
+  const { data: getStreamsData } = useStreams(streamsParams, {
+    enabled: queryEnabled,
+    onSuccess: () => {
+      setQueryEnabled(false);
+    },
+    onError: (err) => {
+      console.error(err);
+      if (err.message) {
+        ShowSnack('달력 정보구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
+      }
+    },
+  });
 
-  /**
-   * 달을 기준으로 3개월 이전 date, 3개월 이후 datestring 배열로 리턴
-   * @param originDate 현재 달력이 위치한 달
-   */
-  const handleSubtractCurrMonth = (originDate: MaterialUiPickersDate): string[] => {
-    if (originDate) {
-      const rangeStart = dayjsFormatter(originDate).subtract(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
-      const rangeEnd = dayjsFormatter(originDate).add(reRequest, 'month').format('YYYY-MM-DDThh:mm:ss');
-      return [rangeStart, rangeEnd];
-    }
-
-    return [];
-  };
+  /* 방송이 존재하는 날짜 date string 배열 */
+  const hasStreamDays = React.useMemo<string[]>(() => {
+    if (!getStreamsData) return [];
+    return getStreamsData.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only'));
+  }, [getStreamsData]);
 
   React.useEffect(() => {
     const params: SearchCalendarStreams = {
@@ -109,19 +122,9 @@ function RangeSelectCaledar(props: RangeSelectCaledarProps): JSX.Element {
       startDate: handleSubtractCurrMonth(currMonth)[0],
       endDate: handleSubtractCurrMonth(currMonth)[1],
     };
-
-    excuteGetStreams({
-      params,
-    }).then((result) => {
-      setHasStreamDays(
-        result.data.map((streamInfo) => dayjsFormatter(streamInfo.startDate, 'date-only')),
-      );
-    }).catch((err) => {
-      if (err.response) {
-        ShowSnack('달력 정보 구성에 문제가 발생했습니다.', 'error', enqueueSnackbar);
-      }
-    });
-  }, [exampleMode, auth.user, user.userId, excuteGetStreams, enqueueSnackbar, currMonth]);
+    setStreamsParams(params);
+    setQueryEnabled(true);
+  }, [exampleMode, auth.user, user.userId, currMonth]);
 
   React.useEffect(() => {
     if (period.length > 1 && period[0] && period[1]) {

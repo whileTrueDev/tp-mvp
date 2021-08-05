@@ -17,8 +17,12 @@ export function usePeriodAnalysisQuery(
   params: SearchEachS3StreamData[] | null,
   options?: UseQueryOptions<PeriodAnalysisResType, AxiosError>,
 ): UseQueryResult<PeriodAnalysisResType, AxiosError> {
+  const key = params?.map(param => {
+    const {platform, streamId} = param;
+    return {platform, streamId};
+    });
   return useQuery(
-    ['periodAnalysis', params],
+    ['periodAnalysis', key],
     () => getPeriodAnalysis(params),
     options,
   );

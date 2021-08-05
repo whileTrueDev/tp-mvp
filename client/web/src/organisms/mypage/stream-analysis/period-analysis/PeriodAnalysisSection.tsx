@@ -295,6 +295,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         handleClose={handleClose}
         handlePeriod={handlePeriod}
         base
+        exampleMode
       />
       )}
 
