@@ -1,11 +1,11 @@
 import {
   Button, Dialog, DialogActions, DialogContent, makeStyles, Typography,
 } from '@material-ui/core';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import PasswordTextField from '../../../../atoms/Input/PasswordTextField';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import { useMutatePassword } from '../../../../utils/hooks/mutation/useMutateUserInfo';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import PasswordConfirmForm from './PasswordConfirmForm';
 
@@ -55,16 +55,11 @@ export default function PasswordChangeDialog({
     setNewPwCheck(e.target.value);
   }
   // 비밀번호 변경 요청
-  const [newPasswordObject, newPasswordRequest] = useAxios({
-    method: 'patch', url: '/users/password',
-  }, { manual: true });
-
+  const { mutateAsync: newPasswordRequest, isLoading: loading } = useMutatePassword();
   // 비밀번호 변경 form 핸들러
   function handleNewPasswordSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
-    newPasswordRequest({
-      data: { userDI: auth.user.userDI, password: newPw },
-    })
+    newPasswordRequest({ userDI: auth.user.userDI, password: newPw })
       .then(() => {
         ShowSnack('비밀번호가 성공적으로 변경되었습니다.', 'success', enqueueSnackbar);
         allReset();
@@ -134,7 +129,7 @@ export default function PasswordChangeDialog({
         <DialogActions>
           <Button
             variant="contained"
-            disabled={newPasswordObject.loading}
+            disabled={loading}
             onClick={() => {
               onClose(); allReset();
             }}
