@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import useAxios from 'axios-hooks';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Grid, Card, CardContent,
@@ -16,6 +15,7 @@ import RedProgressBar from '../../../atoms/Progressbar/RedProgressBar';
 import UserMetricsChart from './sub/UserMetricsChart';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import usePublicMainUser from '../../../store/usePublicMainUser';
+import { useUserMetricsQuery } from '../../../utils/hooks/query/useUserMetricsQuery';
 
 const useStyles = makeStyles((theme) => ({
   chartContainer: { padding: theme.spacing(4), height: 575, overflow: 'hidden' },
@@ -67,14 +67,7 @@ export default function UserMetricsSection(): JSX.Element {
 
   // **************************************************
   // Data fetching from backend
-  const [{ loading, data }, refetch] = useAxios<UserMetrics[]>({
-    url: 'stream-analysis/user-statistics',
-    method: 'GET',
-    params: { userId: user.userId || auth.user.userId },
-  });
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
+  const { data, isFetching: loading } = useUserMetricsQuery(user.userId || auth.user.userId);
 
   // **************************************************
   // Selected Platform
