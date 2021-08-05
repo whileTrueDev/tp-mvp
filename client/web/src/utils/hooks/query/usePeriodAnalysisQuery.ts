@@ -13,16 +13,24 @@ async function getPeriodAnalysis(params: SearchEachS3StreamData[] | null) {
   return data;
 }
 
-export function usePeriodAnalysisQuery(
-  params: SearchEachS3StreamData[] | null,
-  options?: UseQueryOptions<PeriodAnalysisResType, AxiosError>,
-): UseQueryResult<PeriodAnalysisResType, AxiosError> {
+type Key = {
+  platform: string;
+  streamId: string;
+}[] | undefined;
+export function makeKey(params: SearchEachS3StreamData[] | null): Key {
   const key = params?.map(param => {
     const {platform, streamId} = param;
     return {platform, streamId};
     });
+  return key;
+}
+
+export function usePeriodAnalysisQuery(
+  params: SearchEachS3StreamData[] | null,
+  options?: UseQueryOptions<PeriodAnalysisResType, AxiosError>,
+): UseQueryResult<PeriodAnalysisResType, AxiosError> {
   return useQuery(
-    ['periodAnalysis', key],
+    ['periodAnalysis', makeKey(params)],
     () => getPeriodAnalysis(params),
     options,
   );

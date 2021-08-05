@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-// axios
-import useAxios from 'axios-hooks';
 // material - ui core
 import { Grid, Paper } from '@material-ui/core';
 // shared
 import { SearchEachS3StreamData } from '@truepoint/shared/dist/dto/stream-analysis/searchS3StreamData.dto';
-import { PeriodAnalysisResType } from '@truepoint/shared/dist/res/PeriodAnalysisResType.interface';
 // attoms
 import { useSnackbar } from 'notistack';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
@@ -21,32 +18,32 @@ import textSource from '../../../organisms/shared/source/MypageHeroText';
 import useStreamAnalysisStyles from './streamAnalysisLayout.style';
 // hook
 import useScrollTop from '../../../utils/hooks/useScrollTop';
+import { usePeriodAnalysisQuery } from '../../../utils/hooks/query/usePeriodAnalysisQuery';
 
 export default function PeriodAnalysis(): JSX.Element {
   const classes = useStreamAnalysisStyles();
-  const [data, setData] = useState<PeriodAnalysisResType>();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedMetric, selectMetric] = useState<string[]>([]);
   /* 기간 추이 분석 분석 결과 요청 */
-  const [{ error, loading }, getRequest] = useAxios<PeriodAnalysisResType>(
-    '/stream-analysis/period', { manual: true },
-  );
+  const [queryEnabled, setQueryEnabled] = useState<boolean>(false);
+  const [queryParams, setQueryParams] = useState<SearchEachS3StreamData[] | null>(null);
+  const { data, error, isFetching: loading } = usePeriodAnalysisQuery(queryParams, {
+    enabled: queryEnabled,
+    onSuccess: () => {
+      setOpen(true);
+      setQueryEnabled(false);
+    },
+    onError: () => {
+      ShowSnack('분석 과정에서 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
+    },
+  });
   const subscribe = React.useContext(SubscribeContext);
   const { enqueueSnackbar } = useSnackbar();
   const handleSubmit = ({ category, params }: {category: string[]; params: SearchEachS3StreamData[]}) => {
+    setQueryParams(params);
+    setQueryEnabled(true);
+
     selectMetric(category);
-    getRequest({
-      params: {
-        streams: params,
-      },
-    })
-      .then((res) => {
-        setData(res.data);
-        setOpen(true);
-      })
-      .catch(() => {
-        ShowSnack('분석 과정에서 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
-      });
   };
 
   React.useEffect(() => {
