@@ -3,10 +3,7 @@ import React, { useState } from 'react';
 import {
   Typography, Grid, Button,
 } from '@material-ui/core';
-// axios
-import useAxios from 'axios-hooks';
 // shared dtos , interfaces
-import { StreamDataType } from '@truepoint/shared/dist/interfaces/StreamDataType.interface';
 import { SearchStreamInfoByPeriods } from '@truepoint/shared/dist/dto/stream-analysis/searchStreamInfoByPeriods.dto';
 import { SearchCalendarStreams } from '@truepoint/shared/dist/dto/stream-analysis/searchCalendarStreams.dto';
 // notistack snackbar
