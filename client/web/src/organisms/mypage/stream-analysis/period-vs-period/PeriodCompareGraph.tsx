@@ -165,7 +165,7 @@ export default function PeriodCompareGraph(props: PeriodCompareGraphProps): JSX.
         </Grid>
       </Grid>
 
-      <Grid item container>
+      <Grid item container direction="column">
         {metricOpen && metricData && (
         <StreamMetrics
           open={metricOpen}
