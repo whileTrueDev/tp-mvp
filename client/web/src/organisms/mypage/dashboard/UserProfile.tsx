@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   Avatar, CircularProgress, Paper, Typography,
 } from '@material-ui/core';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 // 클로즈베타 - 구독관련 기능 X 주석처리
 // import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import useAxios from 'axios-hooks';
 import useDialog from '../../../utils/hooks/useDialog';
 import MainDialog from './MainDialog';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import usePublicMainUser from '../../../store/usePublicMainUser';
+import { useUserProfileQuery } from '../../../utils/hooks/query/useUserProfileQuery';
 
 export const useStyles = makeStyles((theme) => ({
   container: {
@@ -31,28 +30,24 @@ export default function UserProfile(): JSX.Element {
   const classes = useStyles();
   const auth = useAuthContext();
   const { user } = usePublicMainUser((state) => state);
-  const [profileRequestObject, refetch] = useAxios<User>({
-    url: 'users', method: 'GET', params: { userId: user.userId || auth.user.userId },
+  const { data, isFetching: loading } = useUserProfileQuery(user.userId || auth.user.userId, {
+    enabled: !!(user.userId || auth.user.userId),
   });
 
   const { open, handleOpen, handleClose } = useDialog();
 
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
   return (
     <Paper className={classes.container}>
       {/* 로딩중 */}
-      {profileRequestObject.loading && (
+      {loading && (
       <div className={classes.loading}><CircularProgress /></div>
       )}
 
-      {!profileRequestObject.loading
-      && profileRequestObject.data
+      {!loading
+      && data
       && (
       <>
-        <Avatar className={classes.avatar} src={profileRequestObject.data.profileImage || ''} />
+        <Avatar className={classes.avatar} src={data.profileImage || ''} />
 
         <div>
           {/* 연동된 플랫폼 목록 */}
@@ -62,35 +57,35 @@ export default function UserProfile(): JSX.Element {
               src="/images/logo/afreecaLogo.png"
               alt=""
               draggable={false}
-              style={{ filter: profileRequestObject.data.afreeca?.afreecaId ? 'none' : 'grayscale(100%)' }}
+              style={{ filter: data.afreeca?.afreecaId ? 'none' : 'grayscale(100%)' }}
             />
             <img
               className={classes.platformLogo}
               src="/images/logo/twitchLogo.png"
               alt=""
               draggable={false}
-              style={{ filter: profileRequestObject.data.twitch?.twitchId ? 'none' : 'grayscale(100%)' }}
+              style={{ filter: data.twitch?.twitchId ? 'none' : 'grayscale(100%)' }}
             />
             <img
               className={classes.platformLogo}
               src="/images/logo/youtubeLogo.png"
               alt=""
               draggable={false}
-              style={{ filter: profileRequestObject.data.youtube?.youtubeId ? 'none' : 'grayscale(100%)' }}
+              style={{ filter: data.youtube?.youtubeId ? 'none' : 'grayscale(100%)' }}
             />
           </div>
           {/* 이름 */}
           <div className={classes.flexBox}>
             <Typography variant="h4" className={classes.bold}>
-              {`${profileRequestObject.data.nickName || profileRequestObject.data.userId}`}
+              {`${data.nickName || data.userId}`}
               <Typography className={classes.bold} component="span" variant="h6">&nbsp;님</Typography>
             </Typography>
           </div>
 
           <div>
             {/* 이메일 */}
-            {profileRequestObject.data.mail && (
-              <Typography>{profileRequestObject.data.mail}</Typography>
+            {data.mail && (
+              <Typography>{data.mail}</Typography>
             )}
 
             {/* 요금제 */}
@@ -109,10 +104,10 @@ export default function UserProfile(): JSX.Element {
       </>
       )}
       {/* 아프리카 / 트위치 / 유튜브 중 아이디가 한개도 없는 경우 */}
-      {!profileRequestObject.loading && profileRequestObject.data
-      && !(profileRequestObject.data.afreeca?.afreecaId
-          || profileRequestObject.data.youtube?.youtubeId
-          || profileRequestObject.data.twitch?.twitchId
+      {!loading && data
+      && !(data.afreeca?.afreecaId
+          || data.youtube?.youtubeId
+          || data.twitch?.twitchId
       ) && (
       <MainDialog
         open={open}
