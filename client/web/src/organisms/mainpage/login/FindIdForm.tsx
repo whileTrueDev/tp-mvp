@@ -1,6 +1,5 @@
 import { Button, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,8 +7,9 @@ import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import { QueryParam, useFindIdQuery } from '../../../utils/hooks/query/useFindIdQuery';
 import useDialog from '../../../utils/hooks/useDialog';
-import useIamportCertification from '../../../utils/hooks/useIamportCertification';
+// import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
 
 export const useStyles = makeStyles((theme) => ({
@@ -69,58 +69,43 @@ export default function FindAccountForm(): JSX.Element {
 
   // **************************************************
   // Request for finding Id
-  const [foundedId, setFoundedId] = React.useState<string>();
-  const [{ loading }, getRequest] = useAxios(
-    '/users/id', { manual: true },
-  );
+  const [queryParam, setQueryParam] = React.useState<QueryParam | null>(null);
+  const { data, isFetching: loading } = useFindIdQuery(queryParam, {
+    enabled: !!queryParam,
+    onSuccess: (resData) => {
+      if (resData) {
+        const { userId } = resData;
+        if (userId) {
+          // Handle to next step
+          handleNext();
+        } else {
+          // 계정이 존재하지 않으므로
+          setHelperText('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
+          helperTextDialog.handleOpen();
+        }
+      }
+    },
+    onError: () => {
+      helperTextDialog.handleOpen();
+    },
+  });
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     if (usermailRef.current) {
       const usermail = usermailRef.current.value;
-      getRequest({
-        params: { mail: usermail },
-      }).then((res) => {
-        if (res.data) {
-          const { userId } = res.data;
-          if (userId) {
-            const asteriskedUserId = transformIdToAsterisk(userId);
-            setFoundedId(asteriskedUserId);
-            // Handle to next step
-            handleNext();
-          } else {
-            // 계정이 존재하지 않으므로
-            setHelperText('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
-            helperTextDialog.handleOpen();
-          }
-        }
-      }).catch(() => {
-        helperTextDialog.handleOpen();
-      });
+      setQueryParam({ column: 'mail', value: usermail });
     }
   }
 
   // **************************************************
   // iamport 본인인증 
-  const iamport = useIamportCertification((impUid) => {
-    // iamport 본인인증 이후 실행될 Id 조회 함수
-    getRequest({
-      params: { impUid },
-    }).then((res) => {
-      if (res.data) {
-        const { userId } = res.data;
-        if (userId) {
-          const asteriskedUserId = transformIdToAsterisk(userId);
-          setFoundedId(asteriskedUserId);
-          // Handle to next step
-          handleNext();
-        } else {
-          setHelperText('본인인증된 정보로 가입된 계정이 존재하지 않습니다. \n 다시 입력해 주세요.');
-        }
-      }
-    }).catch(() => {
-      helperTextDialog.handleOpen();
-    });
-  });
+  // const iamport = useIamportCertification((impUid) => {
+  //   // iamport 본인인증 이후 실행될 Id 조회
+  //   if (impUid) {
+  //     setQueryParam({ column: 'impUid', value: impUid });
+  //   }
+  // });
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -165,7 +150,6 @@ export default function FindAccountForm(): JSX.Element {
         <Typography variant="h6">이메일로</Typography>
         <Typography variant="h6">아이디를 찾습니다.</Typography>
         <Typography className={classes.subcontent} variant="body2">
-          {/* 가입시 입력한 이메일로 아이디를 찾습니다. */}
           가입시 입력한 이메일로 아이디를 찾습니다.
         </Typography>
         <form className={classes.content} onSubmit={handleSubmit}>
@@ -204,7 +188,8 @@ export default function FindAccountForm(): JSX.Element {
       )}
 
       {/* 방법에 따른 정보 입력 - 본인 인증 */}
-      {activeStep === 1 && selectedMethod === '본인인증' && (
+      {/* 휴대폰 본인인증은 추후 기획에 따라 지원 */}
+      {/* {activeStep === 1 && selectedMethod === '본인인증' && (
       <div className={classnames(classes.box, classes.content)}>
         <Typography variant="h6">휴대폰 본인인증을 통해</Typography>
         <Typography variant="h6">아이디를 찾습니다.</Typography>
@@ -233,15 +218,17 @@ export default function FindAccountForm(): JSX.Element {
           </Button>
         </div>
       </div>
-      )}
+      )} */}
 
       {/* 찾은 아이디 정보 렌더링 */}
-      {activeStep === 2 && foundedId && (
+      {activeStep === 2 && data && (
       <div className={classnames(classes.box, classes.content)}>
         <Typography variant="h6">입력한 정보를 통해 찾은</Typography>
         <Typography variant="h6">트루포인트 아이디 정보입니다.</Typography>
         <div className={classes.content}>
-          <Typography variant="h6">{foundedId}</Typography>
+          <Typography variant="h6">
+            {transformIdToAsterisk(data.userId)}
+          </Typography>
           <Button
             component={Link}
             to="/login"
@@ -256,7 +243,7 @@ export default function FindAccountForm(): JSX.Element {
       </div>
       )}
 
-      {!(activeStep === 2 && foundedId) && (
+      {!(activeStep === 2 && data) && (
       <div className={classes.subcontent}>
         <Button component={Link} to="/login">로그인 하러 가기</Button>
       </div>
