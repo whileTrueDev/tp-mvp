@@ -1,7 +1,5 @@
-import useAxios from 'axios-hooks';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Grid, Link, Typography } from '@material-ui/core';
-import { MyPostsRes } from '@truepoint/shared/dist/res/UserPropertiesResType.interface';
 import { Link as RouterLink } from 'react-router-dom';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import TitleWithLogo from './TitleWithLogo';
@@ -12,6 +10,7 @@ import { useMyPostsItemStyle } from './styles/MyPosts.style';
 import { dayjsFormatter } from '../../../utils/dateExpression';
 import CustomPagination, { CustomPatinationProps } from '../../../atoms/CustomPagination';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
+import { useMyPostsQuery } from '../../../utils/hooks/query/useMyPostsQuery';
 
 //* *내가 쓴 글 && 댓글 페이지네이션 컴포넌트********************* */
 export function MyPostPagination(props: CustomPatinationProps): JSX.Element {
@@ -60,27 +59,13 @@ export default function MyPosts(): JSX.Element {
     page, itemPerPage, handlePageChange,
   } = usePage({ defaultItemPerPage: 10 });
 
-  const [{ data, loading, error }, getMyPosts] = useAxios<MyPostsRes>({
-    url: 'users/properties/posts',
-    method: 'get',
-    params: {
-      userId: auth.user.userId,
-      page,
-      itemPerPage,
-    },
-  }, { manual: true });
-
-  useEffect(() => {
-    if (auth.user.userId) {
-      getMyPosts({
-        params: {
-          userId: auth.user.userId,
-          page,
-          itemPerPage,
-        },
-      });
-    }
-  }, [auth.user.userId, getMyPosts, itemPerPage, page]);
+  const { data, isFetching: loading, error } = useMyPostsQuery({
+    userId: auth.user.userId,
+    page,
+    itemPerPage,
+  }, {
+    enabled: !!auth.user.userId,
+  });
 
   return (
     <div>

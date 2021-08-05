@@ -3,7 +3,7 @@ import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
 import { CreatorAvatarProps } from '../../../organisms/mypage/userInfo/MyRatings';
 import axios from '../../axios';
 
-type Params = {
+export type UserPropertyParams = {
   userId: string,
   page: number,
   itemPerPage: number
@@ -14,7 +14,7 @@ type Return = {
   creators: CreatorAvatarProps[]
 }
 
-async function getRatedCreators(params: Params) {
+async function getRatedCreators(params: UserPropertyParams) {
   const { data } = await axios.get('/ratings/mypage', {
     params,
   });
@@ -22,7 +22,7 @@ async function getRatedCreators(params: Params) {
 }
 
 export function useMyRatings(
-  params: Params,
+  params: UserPropertyParams,
   options?: UseQueryOptions<Return, AxiosError>,
 ): UseQueryResult<Return, AxiosError> {
   return useQuery(
