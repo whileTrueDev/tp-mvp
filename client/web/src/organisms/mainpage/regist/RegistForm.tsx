@@ -14,7 +14,6 @@ import {
   OutlinedInput,
   CircularProgress,
 } from '@material-ui/core';
-import useAxios from 'axios-hooks';
 import Done from '@material-ui/icons/Done';
 import classnames from 'classnames';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
@@ -27,6 +26,8 @@ import {
 import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import axios from '../../../utils/axios';
 import PageTitle from '../shared/PageTitle';
+import { useCheckIdDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedId';
+import { useCheckNicknameDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedNickname';
 
 export interface Props {
   handleBack: () => void;
@@ -44,56 +45,69 @@ function PlatformRegistForm({
   const [loading, setLoading] = useState(0);
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [, getRequest] = useAxios(
-    '/users/check-id', { manual: true },
-  );
-  const [, requestNicknameDuplicate] = useAxios(
-    '/users/check-nickname', { manual: true },
-  );
+
+  // id, nickname 중복확인 위한 param state
+  const [checkValues, setCheckValues] = useState<{
+    id: string,
+    nickname: string
+  }>({
+    id: '',
+    nickname: '',
+  });
+
+  // 아이디 중복확인 요청
+  useCheckIdDuplicate(checkValues.id, {
+    enabled: !!checkValues.id,
+    onSuccess: (isDuplicated) => {
+      if (isDuplicated) {
+        ShowSnack('ID가 중복되었습니다. 다른 ID를 사용해주세요.', 'warning', enqueueSnackbar);
+      }
+      dispatch({ type: 'checkDuplication', value: isDuplicated });
+    },
+    onError: (e) => {
+      console.error('아이디 중복 조회 오류', e);
+      ShowSnack('아이디 중복 조회 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
+    },
+    onSettled: () => setCheckValues((prev) => ({ ...prev, id: '' })),
+  });
+
+  // 닉네임 중복확인 요청
+  useCheckNicknameDuplicate(checkValues.nickname, {
+    enabled: !!checkValues.nickname,
+    onSuccess: (isDuplicated) => {
+      if (isDuplicated) { // 중복시 리턴값 true, 중복 안됐으면 false
+        ShowSnack('닉네임이 중복되었습니다. 다른 닉네임을 사용해주세요.', 'warning', enqueueSnackbar);
+      }
+      dispatch({ type: 'isNicknameDuplicated', value: isDuplicated });
+    },
+    onError: (e) => {
+      console.error('닉네임 중복 조회 오류', e);
+      ShowSnack('닉네임 중복 조회 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
+    },
+    onSettled: () => setCheckValues((prev) => ({ ...prev, nickname: '' })),
+  });
 
   const handleChange = (name: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ type: name, value: event.target.value });
   };
 
-  //* ***************** 아이디 중복확인 함수 ******************
+  //* ***************** 아이디 중복확인 실행 함수 ******************
   function checkDuplicateID(): void {
     const { idValue } = state;
     if (state.id || idValue === '') {
       ShowSnack('ID를 올바르게 입력해주세요.', 'warning', enqueueSnackbar);
     } else {
-      getRequest({
-        params: { userId: idValue },
-      }).then((res) => {
-        if (res.data) {
-          ShowSnack('ID가 중복되었습니다. 다른 ID를 사용해주세요.', 'warning', enqueueSnackbar);
-          dispatch({ type: 'checkDuplication', value: true });
-        } else {
-          dispatch({ type: 'checkDuplication', value: false });
-        }
-      }).catch((e) => {
-        console.error('id 중복 조회 오류', e);
-        ShowSnack('id 중복 조회 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
-      });
+      setCheckValues((prev) => ({ ...prev, id: idValue }));
     }
   }
 
-  //* ***************** 닉네임 중복확인 함수 ******************
+  //* ***************** 닉네임 중복확인 실행 함수 ******************
   function checkDuplicateNickname(): void {
     const { nickname } = state;
     if (!nickname.trim()) {
       ShowSnack('닉네임을 올바르게 입력해주세요.', 'warning', enqueueSnackbar);
     } else {
-      requestNicknameDuplicate({
-        params: { nickname },
-      }).then((res) => {
-        const isDuplicateNickname = res.data;// 중복시 리턴값 true, 중복 안됐으면 false
-        if (isDuplicateNickname) {
-          ShowSnack('닉네임이 중복되었습니다. 다른 닉네임을 사용해주세요.', 'warning', enqueueSnackbar);
-          dispatch({ type: 'passNicknameDuplication', value: false });
-        } else {
-          dispatch({ type: 'passNicknameDuplication', value: true });
-        }
-      });
+      setCheckValues((prev) => ({ ...prev, nickname: nickname.trim() }));
     }
   }
 
@@ -103,14 +117,14 @@ function PlatformRegistForm({
 
     const {
       id, password, repasswd, checkDuplication, emailVerified, passEmailDuplication, email,
-      passNicknameDuplication,
+      isNicknameDuplicated,
     } = state;
 
     if (checkDuplication) {
       ShowSnack('ID 중복 조회를 해야합니다.', 'warning', enqueueSnackbar);
       return;
     }
-    if (!passNicknameDuplication) {
+    if (isNicknameDuplicated) {
       ShowSnack('닉네임 중복 조회를 해야합니다.', 'warning', enqueueSnackbar);
       return;
     }
@@ -321,7 +335,7 @@ function PlatformRegistForm({
                         <Button onClick={() => checkDuplicateNickname()}>
                           중복확인
                         </Button>
-                        {state.passNicknameDuplication && <div className={classes.successText}><Done /></div>}
+                        {!state.isNicknameDuplicated && <div className={classes.successText}><Done /></div>}
                       </InputAdornment>
                     )}
                   />
@@ -415,8 +429,14 @@ function PlatformRegistForm({
                     type="submit"
                     value="submit"
                     disabled={(
-                      !!state.id || !!state.password || !!state.repasswd || !!state.checkDuplication // 값이 false여야 함
-                      || !state.name || !state.nickname || !state.emailVerified || !state.passNicknameDuplication// 값이 true여야함
+                      state.password
+                      || state.repasswd
+                      || state.checkDuplication
+                      || state.isNicknameDuplicated
+                      || Boolean(state.id)
+                      || !state.name
+                      || !state.nickname
+                      || !state.emailVerified
                       )}
                   >
                     가입

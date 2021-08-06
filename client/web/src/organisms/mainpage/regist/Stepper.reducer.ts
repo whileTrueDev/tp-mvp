@@ -12,7 +12,7 @@ export interface StepState {
   isValidEmail: boolean; // 유효한 이메일 주소인지 확인여부 - true 이면 유효한 이메일, false이면 유효하지 않은 이메일
   nickname: string;
   passEmailDuplication: boolean; // 이메일 중복 여부 - true이면 중복확인 완료 && 중복안됨,  false 이면 중복 혹은 중복미확인
-  passNicknameDuplication: boolean; // 닉네임 중복 여부 - trued이면 중복확인 완료 && 중복안됨, false이면 중복 혹은 중복미확인
+  isNicknameDuplicated: boolean; // 닉네임 중복 여부 - true이면 닉네임 중복이거나 확인 안함, false 이면 중복안됨
 }
 
 export const initialState: StepState = {
@@ -29,7 +29,7 @@ export const initialState: StepState = {
   emailVerified: false,
   isValidEmail: false,
   passEmailDuplication: false,
-  passNicknameDuplication: false,
+  isNicknameDuplicated: true,
 };
 
 export type StepAction = { type: 'id'; value: string }
@@ -43,7 +43,7 @@ export type StepAction = { type: 'id'; value: string }
   | { type: 'nickname'; value: string }
   | { type: 'verifyEmail'; value: boolean}
   | { type: 'passEmailDuplication'; value: boolean}
-  | { type: 'passNicknameDuplication'; value: boolean}
+  | { type: 'isNicknameDuplicated'; value: boolean}
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -94,7 +94,7 @@ export function myReducer(
         ...state,
         nickname: action.value,
         name: action.value, // 웹 회원가입 화면에서 이름 입력칸 주석처리 -> 이름 컬럼에 별명과 같은 값이 입력되도록 함
-        passNicknameDuplication: false,
+        isNicknameDuplicated: true, // 입력된 닉네임 변경시 중복확인 다시하도록 함
       };
     }
     case 'checkDuplication': {
@@ -109,8 +109,8 @@ export function myReducer(
     case 'passEmailDuplication': {
       return { ...state, passEmailDuplication: action.value };
     }
-    case 'passNicknameDuplication': {
-      return { ...state, passNicknameDuplication: action.value };
+    case 'isNicknameDuplicated': {
+      return { ...state, isNicknameDuplicated: action.value };
     }
     default: {
       return state;
