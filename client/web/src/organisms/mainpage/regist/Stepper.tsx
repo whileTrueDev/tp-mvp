@@ -1,14 +1,13 @@
 import {
   Grid, Hidden,
 } from '@material-ui/core';
-import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useReducer, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import { useRegistUser } from '../../../utils/hooks/mutation/useMutateUser';
 import PageTitle from '../shared/PageTitle';
 // import IdentityVerification from './IdentityVerification';
 import PaperSheet from './Paper';
@@ -33,9 +32,7 @@ function RegistStepper(): JSX.Element {
   // }
 
   // 회원가입 요청 객체
-  const [, postRequest] = useAxios<User>(
-    { url: '/users', method: 'post' }, { manual: true },
-  );
+  const { mutateAsync: postRegistUser } = useRegistUser();
 
   // 스텝 next
   function handleNext(): void {
@@ -82,14 +79,14 @@ function RegistStepper(): JSX.Element {
       };
     }
 
-    postRequest({ data: returnUser })
-      .then((res) => {
-        if (res.data) {
+    postRegistUser(returnUser)
+      .then((resData) => {
+        if (resData) {
           // 회원가입 완료 페이지 추가로 주석처리 from @hwasurr, 20.12.04
           // ShowSnack('회원가입이 완료되었습니다. 로그인해주세요.', 'success', enqueueSnackbar);
           // **************************************************************************
           // 회원가입 완료 페이지 추가로 /login 으로 이동 대신 회원가입 완료 페이지 로 이동
-          setGeneratedUserId(res.data.userId);
+          setGeneratedUserId(resData.userId);
           history.push('/signup/completed');
         } else {
           ShowSnack('회원가입 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
