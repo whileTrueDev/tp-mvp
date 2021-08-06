@@ -5,9 +5,10 @@ import { Button, TextField, Typography } from '@material-ui/core';
 import classnames from 'classnames';
 import TruepointLogo from '../../atoms/TruepointLogo';
 import LoginHelper from '../../atoms/LoginHelper';
-import axios from '../../utils/axios';
 import RegularButton from '../../atoms/Button/Button';
 import { LOGIN_PAGE_LOGO_SIZE } from '../../assets/constants';
+import { useCheckUserExist } from '../../utils/hooks/query/useCheckUserExist';
+import { useTemporaryPasswordEmail } from '../../utils/hooks/query/useTemporaryPasswordEmail';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -37,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function GetTemporaryPassword(): JSX.Element {
   const classes = useStyles();
-  const [buttonLoadState, setButtonLoadState] = useState<boolean>(false);
 
   // 에러 알림창 렌더링을 위한 스테이트
   const [helperText, setHelperOpen] = React.useState<string>();
@@ -56,54 +56,56 @@ export default function GetTemporaryPassword(): JSX.Element {
 
   // **************************************************
   // 임시 비밀번호 발급 요청
+  const [params, setParams] = useState<{id: string, email: string}>({
+    id: '',
+    email: '',
+  });
+  const [enableEmailSend, setEnableEmailSend] = useState(false);
+
   const requestTemporaryPassword = async ({ id, email }: {
     id: string, email: string
   }) => {
-    setButtonLoadState(true);
+    setParams({ id, email });
     handleHelperClose();
-    /**
+  };
+  /**
      * 아이디, 이름, 이메일로 회원정보 검색
      * 존재하지 않는 회원인경우 에러메시지 보여주기
      */
-    try {
-      const checkUserResponse = await axios.get('/users/check-exist-user', {
-        params: {
-          id, email,
-        },
-      });
-      const userExist = checkUserResponse.data;
+  const { isFetching: checkingUserExist } = useCheckUserExist(params, {
+    enabled: !!params.id && !!params.email,
+    onSuccess: (userExist) => {
       if (!userExist) {
         handleHelperOpen('존재하지 않는 회원입니다. 아이디, 이름, 이메일을 다시 확인 해주세요');
-        return;
+      } else {
+        setEnableEmailSend(true);
       }
-    } catch (userExistError) {
-      setButtonLoadState(false);
-      console.error(userExistError);
-    }
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
 
-    /** 존재하는 회원인 경우 해당 이메일로 임시 비밀번호 발송
+  /** 존재하는 회원인 경우 해당 이메일로 임시 비밀번호 발송
      * 비밀번호 수정,
      * 로그인 후 비밀번호 수정 유도하기
      */
-    try {
-      const response = await axios.get('/auth/email/temporary-password', {
-        params: {
-          id, email,
-        },
-      });
-      const result = response.data;
+  const { isFetching: sendingEmail } = useTemporaryPasswordEmail(params, {
+    enabled: enableEmailSend,
+    onSuccess: (result) => {
       if (result) {
-        alert(`${email}로 임시 비밀번호가 발급되었습니다. 로그인 후 비밀번호를 변경해주세요.`);
+        alert(`${params.email}로 임시 비밀번호가 발급되었습니다. 로그인 후 비밀번호를 변경해주세요.`);
       } else {
         handleHelperOpen('회원 정보를 찾을 수 없습니다. 고객센터로 문의 바랍니다.');
-        return;
       }
-      setButtonLoadState(false);
-    } catch (emailError) {
-      setButtonLoadState(false);
-      console.error(emailError);
-    }
-  };
+    },
+    onSettled: () => {
+      setEnableEmailSend(false);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
 
   // **************************************************
   // 폼 제출 submit 핸들러
@@ -187,7 +189,7 @@ export default function GetTemporaryPassword(): JSX.Element {
             className={classes.fullButton}
             style={{ color: 'white' }}
             type="submit"
-            load={buttonLoadState}
+            load={sendingEmail && checkingUserExist}
           >
             <Typography>임시 비밀번호 받기</Typography>
           </RegularButton>

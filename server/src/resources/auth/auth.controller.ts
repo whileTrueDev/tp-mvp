@@ -72,12 +72,11 @@ export class AuthController {
   async sendTemporaryPassword(
     @Query('email') email: string,
     @Query('id') id: string,
-  ): Promise<any> {
+  ): Promise<boolean> {
     // 임시 비밀번호 생성
     const tempPassword = this.authService.createTempPassword();
     // 이메일로 임시 비밀번호 전송
     const emailSent = await this.emailVerificationService.sendTemporaryPassword(email, tempPassword);
-
     // 이메일 코드 인증으로 가입한 유저의 userDI는 userId_mail의 형태로 저장하고 있음(RegistStepper.tsx)
     const userDI = `${id}_${email}`;
     // 유저 비밀번호를 임시 비밀번호로 변경하여 저장

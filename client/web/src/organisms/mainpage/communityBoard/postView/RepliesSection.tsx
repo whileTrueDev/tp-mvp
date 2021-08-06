@@ -8,7 +8,6 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { isWithin24Hours } from '../../ranking/creatorInfo/CreatorCommentList';
-import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useRemovePostComment from '../../../../utils/hooks/mutation/useRemovePostComment';
 import PostCommentItem from '../../ranking/sub/PostCommentItem';
