@@ -4,12 +4,10 @@ import React, {
 } from 'react';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from 'react-query';
-// import CommentItem from '../sub/CommentItem';
 import CreatorCommentItem from '../sub/CreatorCommentItem';
 import { useCreatorCommentListStyle, useCommentContainerStyles } from '../style/CreatorComment.style';
 import RegularButton from '../../../../atoms/Button/Button';
 import CommentForm from '../sub/CommentForm';
-import axios from '../../../../utils/axios';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 // import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import CommentSortButtons, { filters } from '../sub/CommentSortButtons';
@@ -115,11 +113,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
     return Promise.resolve(result);
   }, [voteComment]);
 
-  // 방송인 프로필 페이지 댓글 비밀번호 확인 핸들러
-  const checkPasswordRequest = useCallback((commentId, password) => axios.post(`/creatorComment/password/${commentId}`, { password })
-    .then((res) => Promise.resolve(res)),
-  []);
-
   // 방송인 프로필 페이지 댓글 생성 요청
   const { mutate: createComment } = useMutateCreatorComment();
 
@@ -156,7 +149,6 @@ export default function CreatorCommentList(props: CreatorCommentListProps): JSX.
                 onClickLike={onClickLike}
                 onClickHate={onClickHate}
                 onDelete={onDelete}
-                checkPasswordRequest={checkPasswordRequest}
                 childrenCommentPostBaseUrl="/creatorComment/replies"
               />
             ))

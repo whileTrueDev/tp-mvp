@@ -23,6 +23,7 @@ import ReportConfirmDialog from './ReportConfirmDialog';
 import { displayNickname } from '../../../../utils/checkAvailableNickname';
 import useChildrenCreatorCommentList from '../../../../utils/hooks/query/useChildrenCreatorCommentList';
 import useMutateCreatorComment from '../../../../utils/hooks/mutation/useMutateCreatorComment';
+import { useCheckPassword } from '../../../../utils/hooks/mutation/useCheckPassword';
 
 export interface CommentItemProps extends Record<string, any>{
   /** 댓글 고유 id */
@@ -66,8 +67,6 @@ export interface CommentItemProps extends Record<string, any>{
   onClickHate?: (commentId: number) => Promise<any>;
   /** 삭제 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
   onDelete?: (commentId: number) => Promise<any>;
-  /** 비밀번호 확인 핸들러 */
-  checkPasswordRequest?: (commentId: any, password: any) => Promise<any>;
 }
 
 export default function CreatorCommentItem(props: CommentItemProps): JSX.Element {
@@ -93,7 +92,6 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
     onClickLike,
     onClickHate,
     onDelete,
-    checkPasswordRequest,
   } = props;
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -172,6 +170,7 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
   }, [handleCommentFormOpen, handleReplyListOpen, replyListOpen]);
 
   // 비밀번호 확인 요청
+  const { mutateAsync: checkPassword } = useCheckPassword(`/creatorComment/password/${commentId}`);
   const checkPasswordBeforeDelete = () => {
     if (!passwordInputRef.current) return;
 
@@ -181,24 +180,22 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
       return;
     }
 
-    if (checkPasswordRequest) {
-      checkPasswordRequest(commentId, password)
-        .then((res) => {
-          const passwordMatch: boolean = res.data;
-          if (passwordMatch) {
-            closePasswordDialog();
-            openConfirmDialog();
-          } else {
-            if (passwordInputRef.current) {
-              passwordInputRef.current.value = '';
-            }
-            ShowSnack('비밀번호가 틀렸습니다. 다시 확인해주세요', 'error', enqueueSnackbar);
+    checkPassword({ password })
+      .then((res) => {
+        const passwordMatch: boolean = res;
+        if (passwordMatch) {
+          closePasswordDialog();
+          openConfirmDialog();
+        } else {
+          if (passwordInputRef.current) {
+            passwordInputRef.current.value = '';
           }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+          ShowSnack('비밀번호가 틀렸습니다. 다시 확인해주세요', 'error', enqueueSnackbar);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   // 댓글 삭제
@@ -344,7 +341,6 @@ export default function CreatorCommentItem(props: CommentItemProps): JSX.Element
                   onClickLike={onClickLike}
                   onClickHate={onClickHate}
                   onDelete={onDelete}
-                  checkPasswordRequest={checkPasswordRequest}
                 />
               ))
             )}
