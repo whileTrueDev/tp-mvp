@@ -1,6 +1,5 @@
 import { Button, TextField } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { AxiosPromise } from 'axios';
 import { useSnackbar } from 'notistack';
 import React, { useRef } from 'react';
 import ShowSnack from './snackbar/ShowSnack';
@@ -26,7 +25,7 @@ const useCheckPasswordFormStyle = makeStyles((theme: Theme) => createStyles({
 
 export interface CheckPasswordFormProps {
   closeDialog: () => void,
-  checkPassword: (data?: any) => AxiosPromise<any>;
+  checkPassword: (data?: any) => Promise<any>;
   successHandler: () => void,
   children?: React.ReactNode
 }
@@ -43,6 +42,7 @@ export default function CheckPasswordForm({
   const handleCancel = () => {
     closeDialog();
   };
+
   const handleSubmitPassword = () => {
     if (passwordRef.current && passwordRef.current.value.trim() === '') {
       // 비밀번호가 빈칸인 경우
@@ -51,7 +51,9 @@ export default function CheckPasswordForm({
       return;
     }
 
-    checkPassword({ password: passwordRef.current ? passwordRef.current.value : '' }).then((res) => {
+    checkPassword({
+      password: passwordRef.current ? passwordRef.current.value : '',
+    }).then((res) => {
       if (res.data === true) {
         successHandler();
         closeDialog();

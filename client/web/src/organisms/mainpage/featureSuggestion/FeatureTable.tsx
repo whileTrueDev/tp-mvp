@@ -7,13 +7,13 @@ import {
 } from '@material-ui/core/styles';
 import LockIcon from '@material-ui/icons/Lock';
 import { FeatureSuggestion } from '@truepoint/shared/dist/interfaces/FeatureSuggestion.interface';
-import useAxios from 'axios-hooks';
 import React, { useState } from 'react';
 import shortid from 'shortid';
 import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
 import { dayjsFormatter } from '../../../utils/dateExpression';
+import { useCheckSuggestionPassword } from '../../../utils/hooks/mutation/useCheckSuggestionPassword';
 import useDialog from '../../../utils/hooks/useDialog';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
@@ -179,10 +179,7 @@ export default function FeatureTable({
   function handleSelect(suggestionId: number) {
     setSelectedSuggestionId(suggestionId);
   }
-  const [, checkPassword] = useAxios({
-    url: `/feature-suggestion/${selectedSuggestionId}/password`, method: 'POST',
-  }, { manual: true });
-
+  const { mutateAsync: checkPassword } = useCheckSuggestionPassword(Number(selectedSuggestionId));
   return (
     <>
       <Table<Omit<FeatureSuggestion, 'content' | 'replies'>>
