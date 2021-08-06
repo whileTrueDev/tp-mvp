@@ -36,6 +36,7 @@ export interface Props {
   handleUserSubmit: (user: any) => void;
   state: StepState;
   dispatch: (state: StepAction) => void;
+  loading?: boolean;
 }
 
 function PlatformRegistForm({
@@ -43,8 +44,8 @@ function PlatformRegistForm({
   handleUserSubmit,
   state,
   dispatch,
+  loading = false,
 }: Props): JSX.Element {
-  const [loading, setLoading] = useState(0);
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -138,7 +139,7 @@ function PlatformRegistForm({
       return;
     }
 
-    if (!emailVerified || !isEmailDuplicated) {
+    if (!emailVerified || isEmailDuplicated) {
       ShowSnack('E-mail 인증이 완료되지 않았습니다.', 'warning', enqueueSnackbar);
       return;
     }
@@ -158,7 +159,6 @@ function PlatformRegistForm({
         mail: email,
         phone,
       };
-      setLoading(1);
       handleUserSubmit(user);
     } else {
       ShowSnack('입력이 올바르지 않습니다.', 'error', enqueueSnackbar);

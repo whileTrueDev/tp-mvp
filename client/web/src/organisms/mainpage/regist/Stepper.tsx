@@ -20,7 +20,7 @@ function RegistStepper(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [activeStep, setStep] = useState(0);
+  const [activeStep, setStep] = useState(1);
   const [marketingAgreement, setAgreement] = useState(false);
   const [state, dispatch] = useReducer(myReducer, initialState);
   const [certificationInfo] = useState({}); // 휴대폰 인증 후 받은 인증유저정보
@@ -32,7 +32,7 @@ function RegistStepper(): JSX.Element {
   // }
 
   // 회원가입 요청 객체
-  const { mutateAsync: postRegistUser } = useRegistUser();
+  const { mutateAsync: postRegistUser, isLoading } = useRegistUser();
 
   // 스텝 next
   function handleNext(): void {
@@ -134,6 +134,7 @@ function RegistStepper(): JSX.Element {
             handleUserSubmit={handleUserSubmit}
             state={state}
             dispatch={dispatch}
+            loading={isLoading}
           />
         );
       default:
