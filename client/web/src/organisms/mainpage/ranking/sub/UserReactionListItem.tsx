@@ -10,10 +10,10 @@ import DeleteButton from './DeleteButton';
 import PasswordConfirmDialog from './PasswordConfirmDialog';
 import DeleteConfirmDialog from './DeleteConfirmDialog';
 import useDialog from '../../../../utils/hooks/useDialog';
-import axios from '../../../../utils/axios';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
 import useRemoveUserReaction from '../../../../utils/hooks/mutation/useRemoveUserReaction';
+import { useCheckPassword } from '../../../../utils/hooks/mutation/useCheckPassword';
 
 const useUserReactionListItemStyle = makeStyles((theme: Theme) => createStyles({
   itemPrimaryText: {
@@ -60,15 +60,17 @@ function UserReactionListItem(props: UserReactionListItemProps): JSX.Element {
     openPasswordDialog();
   }, [openPasswordDialog]);
 
+  const { mutateAsync: postCheckPassword } = useCheckPassword(`/user-reactions/password/${id}`);
+
   const checkPassword = () => {
     if (!inputRef.current) return;
     const password = inputRef.current.value.trim();
     if (!password || password.length === 0) {
       ShowSnack('비밀번호를 입력해주세요', 'error', enqueueSnackbar);
     }
-    axios.post(`/user-reactions/password/${id}`, { password })
+    postCheckPassword({ password })
       .then((res) => {
-        const result = res.data;
+        const result = res;
         if (!result) {
           ShowSnack('비밀번호가 틀렸습니다. 다시 확인해주세요', 'error', enqueueSnackbar);
           if (inputRef.current) {
