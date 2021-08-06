@@ -63,7 +63,7 @@ export class AuthController {
   async checkVerificationCode(
     @Query('email') email: string,
     @Query('code') code: string,
-  ): Promise<any> {
+  ): Promise<boolean> {
     return this.emailVerificationService.checkVerificationCode(email, code);
   }
 

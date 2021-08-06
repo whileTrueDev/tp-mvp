@@ -24,12 +24,12 @@ import {
   StepAction, StepState,
 } from './Stepper.reducer';
 import PasswordTextField from '../../../atoms/Input/PasswordTextField';
-import axios from '../../../utils/axios';
 import PageTitle from '../shared/PageTitle';
 import { useCheckIdDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedId';
 import { useCheckNicknameDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedNickname';
 import { useCheckEmailDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedEmail';
 import { useSendEmailQuery } from '../../../utils/hooks/query/useEmailVerify';
+import { useCheckValidEmailCode } from '../../../utils/hooks/query/useCheckValidEmailCode';
 
 export interface Props {
   handleBack: () => void;
@@ -49,15 +49,17 @@ function PlatformRegistForm({
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  // id, nickname, email 중복확인 위한 param state
+  // id, nickname, email 중복확인, code유효성 확인 위한 param state
   const [checkValues, setCheckValues] = useState<{
     id: string,
     nickname: string,
-    email: string
+    email: string,
+    code: string,
   }>({
     id: '',
     nickname: '',
     email: '',
+    code: '',
   });
 
   // 아이디 중복확인 요청
@@ -215,7 +217,6 @@ function PlatformRegistForm({
       }
     },
     onSettled: () => {
-      setCheckValues((prev) => ({ ...prev, email: '' })); // 이메일 인증코드 보내고 나서 초기화
       setEmailSendEnable(false);
     },
   });
@@ -225,18 +226,19 @@ function PlatformRegistForm({
     if (!codeInputRef || !codeInputRef.current) return;
     const code = codeInputRef.current.value;
     if (code.trim() === '' || code.length < 6) return;
-
-    const email = getFullEmail();
-    axios.get('/auth/email/code/verify', { params: { email, code } })
-      .then((res) => {
-        if (res.data.result === true) {
-          dispatch({ type: 'verifyEmail', value: true });
-        } else {
-          dispatch({ type: 'verifyEmail', value: false });
-          alert('잘못되거나 유효하지 않은 코드입니다. 올바른 코드를 입력했는지 확인해주세요. 이메일을 받지 못한 경우 인증 코드 재전송을 눌러주세요.');
-        }
-      });
+    setCheckValues((prev) => ({ ...prev, code }));
   };
+
+  useCheckValidEmailCode({ email: checkValues.email, code: checkValues.code }, {
+    enabled: !!checkValues.code,
+    onSuccess: (isValid) => {
+      if (!isValid) {
+        alert('잘못되거나 유효하지 않은 코드입니다. 올바른 코드를 입력했는지 확인해주세요. 이메일을 받지 못한 경우 인증 코드 재전송을 눌러주세요.');
+      }
+      dispatch({ type: 'verifyEmail', value: isValid });
+      setCheckValues((prev) => ({ ...prev, email: isValid ? '' : prev.email, code: '' }));
+    },
+  });
 
   // 인증코드 한글자씩 입력할때마다 매번 실행되지 않고
   // 일정 시간 후에만 checkVerificationCode가 실행되도록 지연시키는 함수

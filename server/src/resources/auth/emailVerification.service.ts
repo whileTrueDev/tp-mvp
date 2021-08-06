@@ -91,17 +91,17 @@ export class EmailVerificationService {
   }
 
   // 인증코드가 유효한지 확인
-  async checkVerificationCode(email: string, code: string): Promise<any> {
+  async checkVerificationCode(email: string, code: string): Promise<boolean> {
     try {
       // 이메일 인증 테이블에서 code 찾기
       const codeEntity = await this.findVerificationCode(email);
 
       // 해당 코드 없거나, 코드가 동일하지 않거나, 유효시간(1시간) 지났거나
       if (!codeEntity || codeEntity.code !== code || !codeEntity.isValidCode()) {
-        return { result: false };
+        return false;
       }
 
-      return { result: true };
+      return true;
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException(error, `error verify code, email address: ${email}`);
