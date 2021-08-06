@@ -120,7 +120,7 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
   const { open: replyListOpen, handleOpen: handleReplyListOpen, handleClose: handleReplyListClose } = useDialog();
 
   // 대댓글 목록 상태
-  const enableLoadChildComment = !childComment && Boolean(childrenCount) && replyListOpen; // 부모댓글 && 자식댓글 개수가 있음 &&  대댓글 창이 열려있을때 fetch
+  const enableLoadChildComment = !childComment && replyListOpen; // 부모댓글 && 자식댓글 개수가 있음 &&  대댓글 창이 열려있을때 fetch
   const { data } = useChildrenPostCommentList(commentId, enableLoadChildComment);
   // 대댓글 개수
   const [repliesCount, setRepliesCount] = useState<number>(childrenCount);
