@@ -3,11 +3,12 @@ import { PostFound } from '@truepoint/shared/res/FindPostResType.interface';
 import { Button, Divider, Typography } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
+import { useQueryClient } from 'react-query';
 import CenterLoading from '../../../../atoms/Loading/CenterLoading';
 import HotPostItem from './HotPostItem';
 import { getBoardPlatformNameByCode } from './PostList';
-import axios from '../../../../utils/axios';
 import createPostItStyles from '../../../../utils/style/createPostitStyles';
+import useHitPost from '../../../../utils/hooks/mutation/useHitPost';
 
 const useHotPostBoxStyle = makeStyles((theme: Theme) => createStyles({
   hotPostBox: {
@@ -49,21 +50,27 @@ export interface HotPostBoxProps {
 
 export default function HotPostBox(props: HotPostBoxProps): JSX.Element {
   const classes = useHotPostBoxStyle();
+  const queryClient = useQueryClient();
   const history = useHistory();
   const {
     posts, error, loading, platform, buttonHandler,
   } = props;
 
   const icon = <img src={`images/logo/${platform}Logo.png`} alt="로고" width="18" height="15" />;
+
+  const { mutateAsync: increasePostHit } = useHitPost();
   const moveToPost = (postId: number | undefined, platformCode: number | undefined) => () => {
     const postPlatform = getBoardPlatformNameByCode(platformCode);
-    axios.post(`/community/posts/${postId}/hit`).then(() => {
-      history.push({
-        pathname: `/community-board/${postPlatform}/view/${postId}`,
+    increasePostHit(Number(postId))
+      .then((res) => {
+        queryClient.invalidateQueries(['post', postId], { exact: true, refetchInactive: true });
+        queryClient.invalidateQueries(['community', { platform: postPlatform }], { refetchInactive: true });
+        history.push({
+          pathname: `/community-board/${postPlatform}/view/${postId}`,
+        });
+      }).catch((e) => {
+        console.error(e);
       });
-    }).catch((e) => {
-      console.error(e);
-    });
   };
 
   return (

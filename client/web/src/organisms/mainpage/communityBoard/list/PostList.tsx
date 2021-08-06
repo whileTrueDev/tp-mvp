@@ -117,6 +117,7 @@ function useMoveToPost() {
     try {
       if (postId) {
         await increasePostHit(postId);
+        queryClient.invalidateQueries(['post', postId], { exact: true });
         queryClient.invalidateQueries(['community', { page: currentPage, platform: postPlatform }]);
         history.push({
           pathname: `/community-board/${postPlatform}/view/${postId}`,
