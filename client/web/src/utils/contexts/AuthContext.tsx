@@ -1,7 +1,11 @@
 import React from 'react';
 import jwtDecode from 'jwt-decode';
+import { configure } from 'axios-hooks';
 import { LoginUser } from '../../interfaces/LoginUser';
 import axios from '../axios';
+import useAutoLogin from '../hooks/useAutoLogin';
+import { onResponseFulfilled, makeResponseRejectedHandler } from '../interceptors/axiosInterceptor';
+import { useLogoutQuery } from '../hooks/mutation/useLogoutQuery';
 
 export interface LoginRequestUserInfo {
   userId: string;
@@ -38,7 +42,6 @@ export function useLogin(): AuthContextValue {
   const [user, setUser] = React.useState<LoginUser>(defaultUserValue);
   const [loginLoading, setLoginLoading] = React.useState<boolean>(false);
   const [accessTokenState, setAccessToken] = React.useState<string>();
-
   async function handleLogin(accessToken: string): Promise<void> {
     setAccessToken(accessToken);
     const u = jwtDecode<LoginUser>(accessToken);
@@ -52,14 +55,16 @@ export function useLogin(): AuthContextValue {
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
   }
 
+  const { mutateAsync: logout } = useLogoutQuery();
+
   function handleLogout(): void {
     setAccessToken(undefined);
     setUser(defaultUserValue);
     // 백엔드 요청
     // 로그아웃 요청으로 서버 DB에 적재된 refresh token을 삭제.
-    axios.post('/auth/logout', { userId: user.userId })
+    logout({ userId: user.userId })
       .then((res) => {
-        if (res.data && res.data.success) {
+        if (res && res.success) {
           window.location.href = '/';
         }
       })
@@ -91,3 +96,41 @@ export function useLogin(): AuthContextValue {
 }
 
 export default AuthContext;
+
+export function AuthContextProvider({ children }: {
+  children: React.ReactNode
+}): JSX.Element {
+  // *******************************************
+  // 로그인 관련 변수 및 함수 세트 가져오기
+  const {
+    user, accessToken, handleLogout, handleLogin,
+    loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd, setUser,
+  } = useLogin();
+    // *******************************************
+  // axios-hooks configuration
+  // 토큰 자동 새로고침을 위한 인터셉터 설정
+  axios.interceptors.response.use(
+    onResponseFulfilled,
+    makeResponseRejectedHandler(handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd),
+  );
+  configure({ axios });
+  // *******************************************
+  // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
+  useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      accessToken,
+      handleLogin,
+      handleLogout,
+      loginLoading,
+      handleLoginLoadingStart,
+      handleLoginLoadingEnd,
+      setUser,
+    }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
