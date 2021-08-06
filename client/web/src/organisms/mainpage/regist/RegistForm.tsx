@@ -28,6 +28,7 @@ import axios from '../../../utils/axios';
 import PageTitle from '../shared/PageTitle';
 import { useCheckIdDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedId';
 import { useCheckNicknameDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedNickname';
+import { useCheckEmailDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedEmail';
 
 export interface Props {
   handleBack: () => void;
@@ -46,13 +47,15 @@ function PlatformRegistForm({
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  // id, nickname 중복확인 위한 param state
+  // id, nickname, email 중복확인 위한 param state
   const [checkValues, setCheckValues] = useState<{
     id: string,
-    nickname: string
+    nickname: string,
+    email: string
   }>({
     id: '',
     nickname: '',
+    email: '',
   });
 
   // 아이디 중복확인 요청
@@ -116,7 +119,7 @@ function PlatformRegistForm({
     event.preventDefault();
 
     const {
-      id, password, repasswd, checkDuplication, emailVerified, passEmailDuplication, email,
+      id, password, repasswd, checkDuplication, emailVerified, isEmailDuplicated, email,
       isNicknameDuplicated,
     } = state;
 
@@ -134,7 +137,7 @@ function PlatformRegistForm({
       return;
     }
 
-    if (!emailVerified || !passEmailDuplication) {
+    if (!emailVerified || !isEmailDuplicated) {
       ShowSnack('E-mail 인증이 완료되지 않았습니다.', 'warning', enqueueSnackbar);
       return;
     }
@@ -168,15 +171,39 @@ function PlatformRegistForm({
   const codeInputRef = useRef<HTMLInputElement>(null);
   const getFullEmail = () => state.email;
 
+  // 2. 이미 회원가입에 사용된 이메일인지 확인
+  useCheckEmailDuplicate(checkValues.email, {
+    enabled: !!checkValues.email,
+    onSuccess: (isDuplicated) => {
+      dispatch({ type: 'isEmailDuplicated', value: isDuplicated });
+      if (isDuplicated) { // 중복시 리턴값 true, 중복 안됐으면 false
+        ShowSnack('중복된 이메일입니다. 다른 이메일을 사용해주세요.', 'warning', enqueueSnackbar);
+      } else {
+        // 이메일 주소로 코드 보내기 요청 실행
+      }
+    },
+    onError: (e) => {
+      console.error('이메일 중복 조회 오류', e);
+      ShowSnack('이메일 중복 조회 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
+    },
+    onSettled: () => setCheckValues((prev) => ({ ...prev, email: '' })),
+  });
+
+  // 3. 이메일 주소로 코드 보내기 요청
+  // const {isFetching:loadingemailSending} = useSendEmailQuery(checkValues.email, {
+  //   enabled: 
+  // })
+
   //* ***************** 이메일 인증코드 요청 함수 ******************
   const requestEmailVerifyCode = async () => {
     // 1. 이메일 주소 가져오기
     const email = getFullEmail();
 
     // 2. 이미 회원가입에 사용된 이메일인지 확인
+    setCheckValues((prev) => ({ ...prev, email }));
     const response = await axios.get('/users/check-email', { params: { email } });
     const isEmailAlreadyRegistered = response.data;
-    dispatch({ type: 'passEmailDuplication', value: !isEmailAlreadyRegistered });
+    dispatch({ type: 'isEmailDuplicated', value: isEmailAlreadyRegistered });
 
     if (isEmailAlreadyRegistered) {
       alert('이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.');
