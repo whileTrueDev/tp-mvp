@@ -54,7 +54,7 @@ export default function CheckPasswordForm({
     checkPassword({
       password: passwordRef.current ? passwordRef.current.value : '',
     }).then((res) => {
-      if (res.data === true) {
+      if (res === true) {
         successHandler();
         closeDialog();
         // 글수정인 경우 비밀번호 맞음 -> write/postId로 이동

@@ -13,7 +13,7 @@ import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 import Table from '../../../atoms/Table/MaterialTable';
 // 날짜표현 컴포넌트 추가
 import { dayjsFormatter } from '../../../utils/dateExpression';
-import { useCheckSuggestionPassword } from '../../../utils/hooks/mutation/useCheckSuggestionPassword';
+import { useCheckPassword } from '../../../utils/hooks/mutation/useCheckPassword';
 import useDialog from '../../../utils/hooks/useDialog';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
 import transformIdToAsterisk from '../../../utils/transformAsterisk';
@@ -179,7 +179,7 @@ export default function FeatureTable({
   function handleSelect(suggestionId: number) {
     setSelectedSuggestionId(suggestionId);
   }
-  const { mutateAsync: checkPassword } = useCheckSuggestionPassword(Number(selectedSuggestionId));
+  const { mutateAsync: checkPassword } = useCheckPassword(`/feature-suggestion/${selectedSuggestionId}/password`);
   return (
     <>
       <Table<Omit<FeatureSuggestion, 'content' | 'replies'>>

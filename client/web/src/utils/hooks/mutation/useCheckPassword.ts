@@ -5,11 +5,11 @@ import axios from '../../axios';
 type CheckPasswordDto = {
   password: string
 }
-export function useCheckSuggestionPassword(
-  suggestionId: number,
+export function useCheckPassword(
+  url: string,
 ): UseMutationResult<boolean, AxiosError, CheckPasswordDto> {
   async function checkPassword(checkPassowrdDto: CheckPasswordDto) {
-    const { data } = await axios.post(`/feature-suggestion/${suggestionId}/password`, checkPassowrdDto);
+    const { data } = await axios.post(url, checkPassowrdDto);
     return data;
   }
 

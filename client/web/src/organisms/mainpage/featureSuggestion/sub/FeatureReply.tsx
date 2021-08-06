@@ -9,8 +9,8 @@ import useDialog from '../../../../utils/hooks/useDialog';
 import transformIdToAsterisk from '../../../../utils/transformAsterisk';
 import { dayjsFormatter } from '../../../../utils/dateExpression';
 import CheckPasswordDialog from '../../shared/CheckPasswordDialog';
-import axios from '../../../../utils/axios';
 import { useDeleteFeatureReply } from '../../../../utils/hooks/mutation/useDeleteFeatureReply';
+import { useCheckPassword } from '../../../../utils/hooks/mutation/useCheckPassword';
 
 const useStyles = makeStyles((theme) => ({
   container: { width: '100%', marginTop: theme.spacing(3) },
@@ -35,7 +35,7 @@ export default function FeatureReply({
   const { mutateAsync: deleteRequest } = useDeleteFeatureReply();
 
   // 기능제안 글의 비밀번호 확인 요청
-  const checkPassword = (pdata: {password: string}) => axios.post(`/feature-suggestion/${suggestionId}/password`, pdata);
+  const { mutateAsync: checkPassword } = useCheckPassword(`/feature-suggestion/${suggestionId}/password`);
 
   // 자기가 남긴 댓글 삭제 클릭
   function handleDeleteClick(id: number) {

@@ -17,8 +17,8 @@ import { useHistory } from 'react-router-dom';
 import { FeatureProgressChip } from '../../../atoms/Chip/FeatureProgressChip';
 // attoms snackbar
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
-import axios from '../../../utils/axios';
 import dateExpression from '../../../utils/dateExpression';
+import { useCheckPassword } from '../../../utils/hooks/mutation/useCheckPassword';
 import useDeleteFeatureSuggestion from '../../../utils/hooks/mutation/useDeleteFeatureSuggestion';
 import useOneFeatureSuggestion from '../../../utils/hooks/query/useOneFeatureSuggestion';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
@@ -121,7 +121,7 @@ export default function FeatureDetail({
   // 삭제 요청
   const { mutateAsync: deleteRequest } = useDeleteFeatureSuggestion();
   // 비밀번호 확인 요청
-  const checkPassword = (pdata: {password: string}) => axios.post(`/feature-suggestion/${selectedSuggestionId}/password`, pdata);
+  const { mutateAsync: checkPassword } = useCheckPassword(`/feature-suggestion/${featureDetailData?.suggestionId}/password`);
 
   const TITLE_LENGTH = 15;
 

@@ -24,7 +24,7 @@ import { useStyles, SUN_EDITOR_VIEWER_CLASSNAME } from './style/CommunityBoardVi
 import usePostCommentList from '../../../utils/hooks/query/usePostCommentList';
 import useOnePost from '../../../utils/hooks/query/useOnePost';
 import useDeletePost from '../../../utils/hooks/mutation/useDeletePost';
-import axios from '../../../utils/axios';
+import { useCheckPassword } from '../../../utils/hooks/mutation/useCheckPassword';
 
 // PostList 컴포넌트의 moveToPost 함수에서 history.push({state:})로 넘어오는 값들
 interface LocationState{
@@ -189,7 +189,7 @@ export default function CommunityPostView(): JSX.Element {
   // 다이얼로그 닫기 위한 함수, 다이얼로그 상태 open : false로 바꾼다
   const closeDialog = useCallback(() => setDialogState((prevState) => ({ ...prevState, open: false })), []);
 
-  const checkPassword = (data?: any) => axios.post(`/community/posts/${postId}/password`, data);
+  const { mutateAsync: checkPassword } = useCheckPassword(`/community/posts/${postId}/password`);
 
   return (
     <Container maxWidth="md" className="postView">
