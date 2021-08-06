@@ -4,7 +4,6 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import CheckedCheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CheckCircleIcon from '@material-ui/icons/CheckCircleOutline';
-import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -12,6 +11,7 @@ import { LOGIN_PAGE_LOGO_SIZE } from '../../../assets/constants';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import { useLoginQuery } from '../../../utils/hooks/mutation/useLoginQuery';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import useDialog from '../../../utils/hooks/useDialog';
 import { KakaoLoginButton, NaverLoginButton } from './SNSLoginButton';
@@ -73,24 +73,19 @@ export default function LoginForm(): JSX.Element {
   }
 
   // API Requests
-  const [{ loading }, executePost] = useAxios(
-    { method: 'POST', url: '/auth/login' },
-    { manual: true },
-  );
+  const { mutateAsync: localLogin, isLoading: loading } = useLoginQuery();
 
   // Handle login form submit
   function handleLoginSubmit(e: React.FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     if (userIdRef.current && passwordRef.current) {
-      executePost({
-        data: {
-          userId: userIdRef.current.value,
-          password: passwordRef.current.value,
-          stayLogedIn, // 자동 로그인 여부
-        },
-      }).then((res) => {
-        if (res && res.data) {
-          authContext.handleLogin(res.data.access_token)
+      localLogin({
+        userId: userIdRef.current.value,
+        password: passwordRef.current.value,
+        stayLogedIn, // 자동 로그인 여부
+      }).then((resData) => {
+        if (resData) {
+          authContext.handleLogin(resData.access_token)
             .then(() => history.push('/mypage/main'));
         } else {
           // 올바르지 못한 요청 ( 없는 아이디인 경우 또는 비밀번호가 틀린경우)
