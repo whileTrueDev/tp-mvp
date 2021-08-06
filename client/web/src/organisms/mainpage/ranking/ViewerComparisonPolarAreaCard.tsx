@@ -60,7 +60,6 @@ function ViewerComparisonPolarAreaCard(): JSX.Element {
   const afreecaLogoRef = useRef<HTMLDivElement>(null); // 아프리카 로고 & 총 시청자수 컴포넌트 ref
   const twitchLogoRef = useRef<HTMLDivElement>(null); // 트위치 로고 & 총 시청자수 컴포넌트 ref
   // 플랫폼별 시청자수 상위 10인의 데이터
-  // const [{ data, loading, error }] = useAxios<DailyTotalViewersResType>('/rankings/daily-total-viewers');
   const {
     data, isLoading, isFetching, error,
   } = useViewerCompareData();

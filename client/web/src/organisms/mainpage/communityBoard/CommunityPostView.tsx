@@ -189,7 +189,6 @@ export default function CommunityPostView(): JSX.Element {
   // 다이얼로그 닫기 위한 함수, 다이얼로그 상태 open : false로 바꾼다
   const closeDialog = useCallback(() => setDialogState((prevState) => ({ ...prevState, open: false })), []);
 
-  // const [, checkPassword] = useAxios({ url: `/community/posts/${postId}/password`, method: 'post' }, { manual: true });
   const checkPassword = (data?: any) => axios.post(`/community/posts/${postId}/password`, data);
 
   return (

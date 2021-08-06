@@ -6,7 +6,6 @@ import { useSnackbar } from 'notistack';
 import React from 'react';
 import { QueryKey, UseMutateFunction, useQueryClient } from 'react-query';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
-import axios from '../../../../utils/axios';
 import { isAvailableNickname, UNAVAILABLE_NICKNAME_ERROR_MESSAGE } from '../../../../utils/checkAvailableNickname';
 import useAuthContext from '../../../../utils/hooks/useAuthContext';
 import { useCreatorCommentFormStyle } from '../style/CreatorComment.style';
@@ -92,19 +91,6 @@ export default function CommentForm(props: CommentFormProps): JSX.Element {
           }
         },
       });
-    } else {
-      // react-query 적용하지 않은 컴포넌트를 위한 fallback
-      axios.post(postUrl, { ...createCommentDto })
-        .then((res) => {
-          nicknameInput.value = authContext.user.nickName;
-          passwordInput.value = '';
-          contentInput.value = '';
-
-          if (callback) {
-            callback();
-          }
-        })
-        .catch((error) => console.error(error));
     }
   };
   return (
