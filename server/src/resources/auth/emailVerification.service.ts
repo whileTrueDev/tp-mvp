@@ -47,7 +47,7 @@ export class EmailVerificationService {
   }
 
   // 이메일 인증코드 보내기
-  async sendVerificationCodeMail(email: string): Promise<any> {
+  async sendVerificationCodeMail(email: string): Promise<boolean> {
     // 0 테이블에 해당 이메일로 생성된 코드가 있는지 확인
     const existCode = await this.findVerificationCode(email);
     if (existCode) {

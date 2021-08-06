@@ -54,7 +54,7 @@ export class AuthController {
   @Get('email/code')
   async sendVerificationCode(
     @Query('email') email: string,
-  ): Promise<any> {
+  ): Promise<boolean> {
     return this.emailVerificationService.sendVerificationCodeMail(email);
   }
 

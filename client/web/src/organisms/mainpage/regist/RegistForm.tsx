@@ -29,6 +29,7 @@ import PageTitle from '../shared/PageTitle';
 import { useCheckIdDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedId';
 import { useCheckNicknameDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedNickname';
 import { useCheckEmailDuplicate } from '../../../utils/hooks/query/useCheckDuplicatedEmail';
+import { useSendEmailQuery } from '../../../utils/hooks/query/useEmailVerify';
 
 export interface Props {
   handleBack: () => void;
@@ -144,8 +145,8 @@ function PlatformRegistForm({
 
     // 모든 state가 false가 되어야한다. (리듀서에서 입력값 유효성 확인 후 false로 처리함)
     if (!(id || password || repasswd || checkDuplication)) {
-      const userId = state.idValue;
-      const nickName = state.nickname;
+      const userId = state.idValue.trim();
+      const nickName = state.nickname.trim();
       const { name } = state;
       const phone = state.phoneNum;
       const rawPassword = state.passwordValue;
@@ -166,72 +167,58 @@ function PlatformRegistForm({
 
   // ***********************************************************
   // 이메일 인증관련 ***********************************************
+  const [emailSendEnable, setEmailSendEnable] = useState<boolean>(false); // 이메일 중복이 아닐 때 코드발송 실행
   const [emailSent, setEmailSent] = useState<boolean>(false); // 이메일이 발송여부 상태 저장, 해당 값이 true일 때 코드입력창을 보여준다
-  const [emailSending, setEmailSending] = useState<boolean>(false); // 이메일 발송중인지 여부(로딩상태)
   const codeInputRef = useRef<HTMLInputElement>(null);
   const getFullEmail = () => state.email;
 
-  // 2. 이미 회원가입에 사용된 이메일인지 확인
+  //* ***************** 이메일 인증코드 요청 함수 ******************
+  const requestEmailVerifyCode = async () => {
+    // 이미 회원가입에 사용된 이메일인지 확인 - useCheckEmailDuplicate 요청 실행됨
+    setCheckValues((prev) => ({ ...prev, email: getFullEmail() }));
+  };
+
+  // 1. 이미 회원가입에 사용된 이메일인지 확인
   useCheckEmailDuplicate(checkValues.email, {
     enabled: !!checkValues.email,
     onSuccess: (isDuplicated) => {
       dispatch({ type: 'isEmailDuplicated', value: isDuplicated });
       if (isDuplicated) { // 중복시 리턴값 true, 중복 안됐으면 false
         ShowSnack('중복된 이메일입니다. 다른 이메일을 사용해주세요.', 'warning', enqueueSnackbar);
+        setCheckValues((prev) => ({ ...prev, email: '' }));
       } else {
-        // 이메일 주소로 코드 보내기 요청 실행
+        setEmailSendEnable(true); // 2. 이메일 주소로 코드 보내기 요청
       }
     },
     onError: (e) => {
       console.error('이메일 중복 조회 오류', e);
       ShowSnack('이메일 중복 조회 중 오류가 발생했습니다. 잠시후 시도해주세요.', 'error', enqueueSnackbar);
     },
-    onSettled: () => setCheckValues((prev) => ({ ...prev, email: '' })),
   });
 
-  // 3. 이메일 주소로 코드 보내기 요청
-  // const {isFetching:loadingemailSending} = useSendEmailQuery(checkValues.email, {
-  //   enabled: 
-  // })
-
-  //* ***************** 이메일 인증코드 요청 함수 ******************
-  const requestEmailVerifyCode = async () => {
-    // 1. 이메일 주소 가져오기
-    const email = getFullEmail();
-
-    // 2. 이미 회원가입에 사용된 이메일인지 확인
-    setCheckValues((prev) => ({ ...prev, email }));
-    const response = await axios.get('/users/check-email', { params: { email } });
-    const isEmailAlreadyRegistered = response.data;
-    dispatch({ type: 'isEmailDuplicated', value: isEmailAlreadyRegistered });
-
-    if (isEmailAlreadyRegistered) {
-      alert('이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.');
-      return;
-    }
-
-    setEmailSending(true);
-    // 3. 이메일 주소로 코드 보내기 요청
-    axios.get('/auth/email/code', { params: { email } })
-      .then((res) => {
-        alert(`${email}로 인증코드가 전송되었습니다. 이메일을 받지 못한 경우 스팸메일함을 확인해주세요.`);
-        // 코드 입력창 보이기
-        setEmailSent(true);
-        // 해당 코드는 일정 시간만 유효함 && 이메일을 받지 못했을 경우 다시 이메일 요청하라고 알리기
-      })
-      .catch((e) => {
-        console.error(e);
-        if (e.response) {
-          if (e.response.status === 400) { // 3분 내로 이메일 코드 인증을 다시 한 경우
-            alert(e.response.data.message);
-          }
-          if (e.response.status === 500) {
-            alert('이메일 코드 전송 에러가 발생했습니다. 문제가 계속되는 경우 고객센터로 문의 바랍니다.');
-          }
+  // 2. 이메일 주소로 코드 보내기 요청
+  const { isFetching: emailSending } = useSendEmailQuery(checkValues.email, {
+    enabled: emailSendEnable,
+    onSuccess: () => {
+      alert(`${checkValues.email}로 인증코드가 전송되었습니다. 이메일을 받지 못한 경우 스팸메일함을 확인해주세요.`);
+      setEmailSent(true); // 코드 입력창 보이기
+    },
+    onError: (e) => {
+      console.error(e);
+      if (e.response) {
+        if (e.response.status === 400) { // 3분 내로 이메일 코드 인증을 다시 한 경우
+          alert(e.response.data.message);
         }
-      })
-      .finally(() => setEmailSending(false));
-  };
+        if (e.response.status === 500) {
+          alert('이메일 코드 전송 에러가 발생했습니다. 문제가 계속되는 경우 고객센터로 문의 바랍니다.');
+        }
+      }
+    },
+    onSettled: () => {
+      setCheckValues((prev) => ({ ...prev, email: '' })); // 이메일 인증코드 보내고 나서 초기화
+      setEmailSendEnable(false);
+    },
+  });
 
   //* ***************** 이메일 인증코드 유효한지 확인하는 함수 ******************
   const checkVerificationCode = () => {
