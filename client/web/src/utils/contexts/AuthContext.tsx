@@ -1,6 +1,5 @@
 import React from 'react';
 import jwtDecode from 'jwt-decode';
-import useAxios from 'axios-hooks';
 import { LoginUser } from '../../interfaces/LoginUser';
 import axios from '../axios';
 
@@ -53,16 +52,12 @@ export function useLogin(): AuthContextValue {
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
   }
 
-  // 로그아웃 요청으로 서버 DB에 적재된 refresh token을 삭제.
-  const [, doPostRequest] = useAxios({
-    url: '/auth/logout', method: 'POST',
-  }, { manual: true });
-
   function handleLogout(): void {
     setAccessToken(undefined);
     setUser(defaultUserValue);
     // 백엔드 요청
-    doPostRequest({ data: { userId: user.userId } })
+    // 로그아웃 요청으로 서버 DB에 적재된 refresh token을 삭제.
+    axios.post('/auth/logout', { userId: user.userId })
       .then((res) => {
         if (res.data && res.data.success) {
           window.location.href = '/';

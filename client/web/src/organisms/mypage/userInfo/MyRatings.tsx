@@ -142,7 +142,7 @@ export default function MyRatings(): JSX.Element {
     userId: auth.user.userId,
     page,
     itemPerPage,
-  });
+  }, { enabled: !!auth.user.userId });
 
   const moveToPrevPage = () => {
     if (page <= 1) return;
