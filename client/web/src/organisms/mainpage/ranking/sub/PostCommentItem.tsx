@@ -22,6 +22,7 @@ import ReportConfirmDialog from './ReportConfirmDialog';
 import { displayNickname } from '../../../../utils/checkAvailableNickname';
 import useChildrenPostCommentList from '../../../../utils/hooks/query/useChildrenPostCommentList';
 import useMutateCreatorComment from '../../../../utils/hooks/mutation/useMutateCreatorComment';
+import { useCheckPassword } from '../../../../utils/hooks/mutation/useCheckPassword';
 
 export interface CommentItemProps extends Record<string, any>{
   /** 댓글 고유 id */
@@ -70,8 +71,6 @@ export interface CommentItemProps extends Record<string, any>{
   onClickHate?: (commentId: number) => Promise<any>;
   /** 삭제 버튼 핸들러 resolve(res)리턴하는 Promise를 반환한다 */
   onDelete?: (replyId: number, parentReplyId?: number) => Promise<any>;
-  /** 비밀번호 확인 핸들러 */
-  checkPasswordRequest?: (commentId: any, password: any) => Promise<any>;
 
   /** 부모댓글 id */
   parentCommentId?: number;
@@ -100,7 +99,6 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
     onClickLike,
     onClickHate,
     onDelete,
-    checkPasswordRequest,
     parentCommentId,
   } = props;
 
@@ -181,6 +179,7 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
   }, [handleCommentFormOpen, handleReplyListOpen, replyListOpen]);
 
   // 비밀번호 확인 요청
+  const { mutateAsync: checkPassword } = useCheckPassword(`/community/replies/${commentId}/password`);
   const checkPasswordBeforeDelete = () => {
     if (!passwordInputRef.current) return;
 
@@ -190,24 +189,22 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
       return;
     }
 
-    if (checkPasswordRequest) {
-      checkPasswordRequest(commentId, password)
-        .then((res) => {
-          const passwordMatch: boolean = res.data;
-          if (passwordMatch) {
-            closePasswordDialog();
-            openConfirmDialog();
-          } else {
-            if (passwordInputRef.current) {
-              passwordInputRef.current.value = '';
-            }
-            ShowSnack('비밀번호가 틀렸습니다. 다시 확인해주세요', 'error', enqueueSnackbar);
+    checkPassword({ password })
+      .then((res) => {
+        const passwordMatch: boolean = res;
+        if (passwordMatch) {
+          closePasswordDialog();
+          openConfirmDialog();
+        } else {
+          if (passwordInputRef.current) {
+            passwordInputRef.current.value = '';
           }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+          ShowSnack('비밀번호가 틀렸습니다. 다시 확인해주세요', 'error', enqueueSnackbar);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const deleteComment = () => {
@@ -353,7 +350,6 @@ export default function PostCommentItem(props: CommentItemProps): JSX.Element {
                     onClickLike={onClickLike}
                     onClickHate={onClickHate}
                     onDelete={onDelete}
-                    checkPasswordRequest={checkPasswordRequest}
                     parentCommentId={commentId}
                   />
                 ))

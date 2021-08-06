@@ -64,11 +64,6 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
     postId,
   } = props;
 
-  const checkPasswordRequest = useCallback((replyId, password) => (
-    axios.post(`/community/replies/${replyId}/password`, { password })
-      .then((res) => Promise.resolve(res))
-  ),
-  []);
   const { mutateAsync: deleteReply } = useRemovePostComment();
   const onDelete = useCallback((replyId: number, parentReplyId?: number) => (
     deleteReply({ replyId, postId, parentReplyId })
@@ -120,7 +115,6 @@ export default function RepliesSection(props: SectionProps): JSX.Element {
             onDelete={onDelete}
             onReport={onReport}
             childrenCount={reply.childrenCommentCount}
-            checkPasswordRequest={checkPasswordRequest}
           />
         ))}
       </Paper>
