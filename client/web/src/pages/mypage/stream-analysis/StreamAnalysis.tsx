@@ -78,7 +78,6 @@ export default function StreamAnalysis(): JSX.Element {
               <StreamMetrics open={open} metricData={data || []} />
             </Paper>
           )}
-          ß
         </Grid>
       </MypageSectionWrapper>
     </>

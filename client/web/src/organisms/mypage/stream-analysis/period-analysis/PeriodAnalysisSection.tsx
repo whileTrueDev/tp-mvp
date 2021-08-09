@@ -42,7 +42,7 @@ import { useStreams } from '../../../../utils/hooks/query/useStreams';
 
 export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.Element {
   const {
-    loading, error, handleSubmit, exampleMode,
+    loading, error, handleSubmit, exampleMode = false,
   } = props;
   const classes = usePeriodAnalysisHeroStyle();
   const [period, setPeriod] = React.useState<Date[]>(new Array<Date>(2));
@@ -298,7 +298,7 @@ export default function PeriodAnalysisSection(props: PeriodAnalysisProps): JSX.E
         handleClose={handleClose}
         handlePeriod={handlePeriod}
         base
-        exampleMode
+        exampleMode={exampleMode}
       />
       )}
 

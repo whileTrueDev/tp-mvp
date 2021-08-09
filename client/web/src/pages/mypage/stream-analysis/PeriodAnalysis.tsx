@@ -64,6 +64,7 @@ export default function PeriodAnalysis(): JSX.Element {
           <Paper className={classes.analysisSectionPaper}>
             {/* Analysis Section */}
             <PeriodAnalysisSection
+              exampleMode={false}
               error={error ? ({ isError: true, helperText: '분석과정에서 문제가 발생했습니다.' }) : undefined}
               loading={loading}
               handleSubmit={handleSubmit}
