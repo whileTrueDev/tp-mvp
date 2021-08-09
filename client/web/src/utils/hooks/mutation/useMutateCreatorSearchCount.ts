@@ -16,7 +16,7 @@ export default function useMutateCreatorSearchCount(): UseMutationResult<User, A
     increaseCreatorSearch,
     {
       onSuccess: (user, creatorId) => {
-        queryClient.invalidateQueries('creatorSearch');
+        queryClient.invalidateQueries(['creatorSearch']);
         queryClient.invalidateQueries('mostSearchedCreators');
         history.push(`/ranking/creator/${creatorId}`);
       },

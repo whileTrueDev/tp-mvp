@@ -67,7 +67,9 @@ export default function UserMetricsSection(): JSX.Element {
 
   // **************************************************
   // Data fetching from backend
-  const { data, isFetching: loading } = useUserMetricsQuery(user.userId || auth.user.userId);
+  const { data, isFetching: loading } = useUserMetricsQuery(user.userId || auth.user.userId, {
+    enabled: !!(user.userId || auth.user.userId),
+  });
 
   // **************************************************
   // Selected Platform
