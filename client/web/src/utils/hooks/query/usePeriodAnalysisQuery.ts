@@ -18,10 +18,11 @@ type Key = {
   streamId: string;
 }[] | undefined;
 export function makeKey(params: SearchEachS3StreamData[] | null): Key {
-  const key = params?.map((param) => {
+  if (!params) return undefined;
+  const key = params.map((param) => {
     const { platform, streamId } = param;
     return { platform, streamId };
-    });
+  });
   return key;
 }
 
