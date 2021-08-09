@@ -1,5 +1,5 @@
 import {
-  Button, Card, Grid, Typography,
+  Button, Card, CircularProgress, Grid, Typography,
 } from '@material-ui/core';
 
 import React, {
@@ -140,12 +140,23 @@ function TopTenCard(): JSX.Element {
             color="primary"
           >
             더보기
+            {isFetching && (
+            <CircularProgress
+              disableShrink
+              size={10}
+              thickness={5}
+              variant="indeterminate"
+            />
+            )}
           </Button>
         )
         : null}
     </div>
-  ), [classes.loadMoreButton, classes.loadMoreButtonContainer,
-    datalist.rankingData.length, datalist.totalDataCount, loadMoreData]);
+  ), [classes.loadMoreButton,
+    classes.loadMoreButtonContainer,
+    datalist.rankingData.length,
+    datalist.totalDataCount,
+    isFetching, loadMoreData]);
 
   if (queryError) {
     console.error(queryError);
