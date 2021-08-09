@@ -1,6 +1,5 @@
 import React from 'react';
 import jwtDecode from 'jwt-decode';
-import { configure } from 'axios-hooks';
 import { LoginUser } from '../../interfaces/LoginUser';
 import axios from '../axios';
 import useAutoLogin from '../hooks/useAutoLogin';
@@ -107,13 +106,11 @@ export function AuthContextProvider({ children }: {
     loginLoading, handleLoginLoadingStart, handleLoginLoadingEnd, setUser,
   } = useLogin();
     // *******************************************
-  // axios-hooks configuration
   // 토큰 자동 새로고침을 위한 인터셉터 설정
   axios.interceptors.response.use(
     onResponseFulfilled,
     makeResponseRejectedHandler(handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd),
   );
-  configure({ axios });
   // *******************************************
   // 자동로그인 훅. 반환값 없음. 해당 함수는 useLayoutEffect 만을 포함함.
   useAutoLogin(user.userId, handleLogin, handleLoginLoadingStart, handleLoginLoadingEnd);

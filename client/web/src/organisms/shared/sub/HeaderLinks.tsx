@@ -8,7 +8,6 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 // @material-ui/icons
 import Notifications from '@material-ui/icons/Notifications';
-// axios-hooks
 import { useSnackbar } from 'notistack';
 // shared dtos and interfaces
 import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/notificationGet.dto';
