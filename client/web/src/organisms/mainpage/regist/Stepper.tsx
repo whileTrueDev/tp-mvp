@@ -20,7 +20,7 @@ function RegistStepper(): JSX.Element {
   const history = useHistory();
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [activeStep, setStep] = useState(1);
+  const [activeStep, setStep] = useState(0);
   const [marketingAgreement, setAgreement] = useState(false);
   const [state, dispatch] = useReducer(myReducer, initialState);
   const [certificationInfo] = useState({}); // 휴대폰 인증 후 받은 인증유저정보
