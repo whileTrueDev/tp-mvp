@@ -2,7 +2,6 @@ import {
   Avatar, Button, capitalize, makeStyles, Typography,
 } from '@material-ui/core';
 import { Check, OpenInNew } from '@material-ui/icons';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { Platform } from '@truepoint/shared/dist/interfaces/Platform.interface';
@@ -11,6 +10,7 @@ import useAuthContext from '../../../utils/hooks/useAuthContext';
 import useDialog from '../../../utils/hooks/useDialog';
 import PlatformDeleteConfirmDialog from './sub/PlatformDeleteConfirmDialog';
 import { getApiHost } from '../../../utils/getApiHost';
+import axios from '../../../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -44,15 +44,9 @@ export default function ManagePlatformLink({
   // 연동 해제 확인 다이얼로그
   const confirmDialog = useDialog();
 
-  // *******************************
-  // 연동 "제거" 요청
-  const [, linkDeleteRequest] = useAxios({
-    method: 'DELETE', url: '/auth/link',
-  }, { manual: true });
-
   // 연동 해제 버튼 핸들러
   function handleLinkDelete(platform: Platform) {
-    linkDeleteRequest({ data: { platform } })
+    axios.delete('/auth/link', { data: { platform } })
       .then(() => {
         userDataRefetch();
         ShowSnack(`${capitalize(platform)} 연동 해제 되었습니다.`, 'success', enqueueSnackbar);

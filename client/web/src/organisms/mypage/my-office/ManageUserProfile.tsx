@@ -5,7 +5,6 @@ import {
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { OpenInNew } from '@material-ui/icons';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import useDialog from '../../../utils/hooks/useDialog';
 import PasswordChangeDialog from './sub/PasswordChangeDialog';
@@ -16,6 +15,7 @@ import { dayjsFormatter } from '../../../utils/dateExpression';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import ProfileImageChangeDialog from './sub/ProfileImageChangeDialog';
 import NickNameChangeDialog from './sub/NicknameChangeDialog';
+import axios from '../../../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   container: { display: 'flex', alignItems: 'center', padding: theme.spacing(2) },
@@ -47,17 +47,12 @@ export default function ManageUserProfile({
   // 닉네임 변경 다이얼로그
   const nickNameChangeDialog = useDialog();
 
-  // 유저 정보 변경 요청 함수를 생성
-  const [, updateRequest] = useAxios<number>({
-    method: 'PATCH', url: 'users',
-  }, { manual: true });
-
   // 실제 사용되는 유저 정보 변경 요청 함수
   async function editUserData(
     field: keyof Omit<UpdateUserDto, 'userId'>, value: string,
   ): Promise<any> {
     const data: UpdateUserDto = { userId: auth.user.userId, [field]: value };
-    return updateRequest({ data })
+    return axios.patch('/users', { data })
       .then((res) => {
         doUserFetch();
         if (res.data) {

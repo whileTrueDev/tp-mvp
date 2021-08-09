@@ -5,16 +5,16 @@ import {
   Typography, Divider, Badge, List, ListSubheader, Popover,
 } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
-// axios hooks
-import useAxios from 'axios-hooks';
 // snackbar
 import { useSnackbar } from 'notistack';
 // shared dtos and interfaces
 import { ChangeReadState } from '@truepoint/shared/dist/dto/notification/changeReadState.dto';
 // context
+import { useMutation } from 'react-query';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import { dayjsFormatter } from '../../../utils/dateExpression';
+import axios from '../../../utils/axios';
 
 export interface Notification {
   index: number;
@@ -69,10 +69,14 @@ function NotificationPopper({
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
   // 알림 목록 불러오기
-  const [{ loading: patchLoading, error: patchError }, excutePatch] = useAxios({
-    url: '/notification',
-    method: 'patch',
-  }, { manual: true });
+  const { mutateAsync: excutePatch, isLoading: patchLoading, error: patchError } = useMutation(
+    async (param: ChangeReadState) => {
+      const { data } = await axios.patch('/notification', {
+        data: param,
+      });
+      return data;
+    },
+  );
 
   // 알림 클릭 핸들러
   const handleNotificationListItemClick = (notification: Notification) => {
@@ -81,9 +85,7 @@ function NotificationPopper({
         userId: auth.user.userId, // userId (client login user)
         index: notification.index,
       };
-      excutePatch({
-        data: changeReqParam,
-      }).then(() => {
+      excutePatch(changeReqParam).then(() => {
         setChangeReadState(true);
       }).catch((err) => {
         if (err.response) {

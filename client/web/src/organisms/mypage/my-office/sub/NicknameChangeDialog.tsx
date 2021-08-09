@@ -4,10 +4,10 @@ import {
 } from '@material-ui/core';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import { ChannelNames } from '@truepoint/shared/dist/res/ChannelNames.interface';
-import useAxios from 'axios-hooks';
 import React, { useEffect } from 'react';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { useQuery } from 'react-query';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   titleSection: { padding: `${theme.spacing(2)}px ${theme.spacing(3)}px` },
@@ -31,12 +31,15 @@ export default function NickNameChangeDialog({
   open, onClose, userProfileData, onEdit,
 }: NickNameChangeDialogProps): JSX.Element {
   const classes = useStyles();
-
   // ***********************************
   // 플랫폼별 프로필 사진 목록 요청
-  const [{ loading, data }, refetch] = useAxios<ChannelNames>({
-    method: 'GET', url: '/users/platform-names',
-  });
+  const { data, isFetching: loading, refetch } = useQuery(
+    'platform-names',
+    async () => {
+      const { data: platformData } = await axios.get('/users/platform-names');
+      return platformData;
+    },
+  );
   useEffect(() => {
     if (userProfileData) {
       refetch();

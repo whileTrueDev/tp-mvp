@@ -9,11 +9,12 @@ import IconButton from '@material-ui/core/IconButton';
 // @material-ui/icons
 import Notifications from '@material-ui/icons/Notifications';
 // axios-hooks
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 // shared dtos and interfaces
 import { NotificationGetRequest } from '@truepoint/shared/dist/dto/notification/notificationGet.dto';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
+import { useQuery } from 'react-query';
+import { AxiosError } from 'axios';
 import useAnchorEl from '../../../utils/hooks/useAnchorEl';
 // notificaiton list component
 import NotificationPopper, { Notification } from './NotificationPopper';
@@ -21,6 +22,7 @@ import NotificationPopper, { Notification } from './NotificationPopper';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
 import UserMenuPopover from './UserMenuPopover';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
+import axios from '../../../utils/axios';
 
 const useStyles = makeStyles((theme: Theme) => ({
   icon: {
@@ -44,37 +46,36 @@ function HeaderLinks(): JSX.Element {
     anchorEl, handleAnchorOpen, handleAnchorClose,
   } = useAnchorEl();
 
-  // 개인 알림 - GET Request
-  const [{ data: getData, loading: getLoading, error: getError }, executeGet] = useAxios<Notification[]>({
-    url: '/notification',
-  }, { manual: true });
+  const {
+    data: getData, isFetching: getLoading, error: getError, refetch: executeGet,
+  } = useQuery(
+    ['notifications', auth.user.userId],
+    async () => {
+      const params: NotificationGetRequest = { userId: auth.user.userId };
+      const { data: notiData } = await axios.get('/notification', {
+        params,
+      });
+      return notiData;
+    },
+    {
+      enabled: !!auth.user.userId,
+      onError: (err: AxiosError) => {
+        if (err.response) {
+          ShowSnack('새로운 알림을 가져오는 동안 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
+        }
+      },
+    },
+  );
 
   // 자식 컴포넌트에서 안읽은 알림을 클릭했는지를 검사하기 위한 state
   const [changeReadState, setChangeReadState] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const findReqParam: NotificationGetRequest = {
-      userId: auth.user.userId,
-    };
-    executeGet({
-      params: findReqParam,
-    })
-      .catch((err) => {
-        if (err.response) {
-          ShowSnack('새로운 알림을 가져오는 동안 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
-        }
-      });
     if (changeReadState) {
-      executeGet({ params: findReqParam })
-        .catch((err) => {
-          if (err.response) {
-            ShowSnack('새로운 알림을 가져오는 동안 문제가 발생했습니다. 다시 시도해주세요', 'error', enqueueSnackbar);
-          }
-        });
-
+      executeGet();
       setChangeReadState(false);
     }
-  }, [changeReadState, executeGet, auth.user.userId, enqueueSnackbar]);
+  }, [changeReadState, executeGet, enqueueSnackbar]);
 
   // ******************************************************************
   // 유저 로고 버튼 및 메뉴
@@ -88,11 +89,14 @@ function HeaderLinks(): JSX.Element {
   const UserMenuOpen = Boolean(UserMenuAnchorEl);
   // ******************************************************************
   // 유저 프로필 사진 이미지 조회
-  const [profile, profileRefetch] = useAxios<User>({ method: 'get', url: 'users' });
-  React.useEffect(() => {
-    profileRefetch();
-  }, [profileRefetch]);
-
+  const { data: profileData, isFetching: loading } = useQuery(
+    ['user', auth.user.userId],
+    async () => {
+      const { data: userData } = await axios.get<User>('/users');
+      return userData;
+    },
+    { enabled: !!auth.user.userId },
+  );
   return (
     <Grid container alignItems="flex-end" justify="flex-end">
 
@@ -122,8 +126,8 @@ function HeaderLinks(): JSX.Element {
       <IconButton onClick={handleClick}>
         <Avatar
           className={classes.icon}
-          src={(!profile.loading && profile.data && profile.data.profileImage)
-            ? profile.data.profileImage : ''}
+          src={(!loading && profileData && profileData.profileImage)
+            ? profileData.profileImage : ''}
         />
       </IconButton>
 
@@ -135,12 +139,12 @@ function HeaderLinks(): JSX.Element {
         onClose={handleAnchorClose}
       />
       )}
-      {UserMenuAnchorEl && !profile.loading && profile.data && (
+      {UserMenuAnchorEl && !loading && profileData && (
       <UserMenuPopover
-        avatarSrc={(!profile.loading && profile.data && profile.data.profileImage)
-          ? profile.data.profileImage : ''}
-        nickName={!profile.loading && profile.data && profile.data.nickName}
-        email={!profile.loading && profile.data && profile.data.mail}
+        avatarSrc={(!loading && profileData && profileData.profileImage)
+          ? profileData.profileImage : ''}
+        nickName={!loading && profileData && profileData.nickName}
+        email={!loading && profileData && profileData.mail}
         open={UserMenuOpen}
         anchorEl={UserMenuAnchorEl}
         onClose={handleClose}

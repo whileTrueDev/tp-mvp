@@ -1,4 +1,3 @@
-import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import {
@@ -13,6 +12,7 @@ import { User } from '@truepoint/shared/dist/interfaces/User.interface';
 import { useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { Refresh } from '@material-ui/icons';
+import { useMutation, useQuery } from 'react-query';
 import MypageSectionWrapper from '../../../atoms/MypageSectionWrapper';
 import ManagePlatformLink from '../../../organisms/mypage/my-office/ManagePlatformLink';
 import ManageUserProfile from '../../../organisms/mypage/my-office/ManageUserProfile';
@@ -23,6 +23,7 @@ import transformIdToAsterisk from '../../../utils/transformAsterisk';
 import getJosa from '../../../utils/getJosa';
 import PlatformLinkErrorAlert from '../../../organisms/mypage/my-office/PlatformLinkErrorAlert';
 import useScrollTop from '../../../utils/hooks/useScrollTop';
+import axios from '../../../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   container: { padding: theme.spacing(6) },
@@ -35,9 +36,11 @@ export default function Settings(): JSX.Element {
 
   // ******************************************
   // 유저 정보 조회
-  const [userDataRequest, doUserFetch] = useAxios<User>({
-    method: 'get', url: '/users',
-  });
+  const { data, isFetching: loading, refetch: doUserFetch } = useQuery('user',
+    async () => {
+      const response = await axios.get<User>('/users');
+      return response.data;
+    });
 
   // ******************************************
   // 유저 - 플랫폼 연동 정보 생성
@@ -47,9 +50,12 @@ export default function Settings(): JSX.Element {
   const [alreadyLinkedWithOther, setAlreadyLinkedWithOther] = useState('');
   // ******************************************
   // 연동 요청
-  const [, linkToUserRequest] = useAxios<LinkPlatformRes>({
-    method: 'POST', url: '/auth/link',
-  }, { manual: true });
+  const { mutateAsync: linkToUserRequest } = useMutation(
+    async (params: { [key: string]: any }) => {
+      const { data: resData } = await axios.post<LinkPlatformRes>('/auth/link', params);
+      return resData;
+    },
+  );
 
   // 연동 작업
   useEffect(() => {
@@ -72,10 +78,10 @@ export default function Settings(): JSX.Element {
       } else {
         // 플랫폼 연동 요청 -> callback으로 부터 url 파라미터로 에러가 오지 않은 경우
         // 즉, 연동 정보는 DB에 있음. -> 유저와 링크할 차례.
-        linkToUserRequest({ data: { ...params } })
+        linkToUserRequest({ ...params })
           .then((res) => {
           // 이미 같은 플랫폼/고유아이디로 연동되어있는 경우는 제외.
-            if (!(res.data === 'already-linked')) {
+            if (!(res === 'already-linked')) {
               doUserFetch(); // 링크 성공
               ShowSnack(`${capitalize(params.platform)} 성공적으로 연동되었습니다.`, 'success', enqueueSnackbar);
             }
@@ -119,11 +125,11 @@ export default function Settings(): JSX.Element {
               }}
             />
           )}
-          {!userDataRequest.loading ? (
+          {!loading ? (
             <ManagePlatformLink
-              twitchId={userDataRequest.data?.twitch?.twitchId}
-              afreecaId={userDataRequest.data?.afreeca?.afreecaId}
-              youtubeId={userDataRequest.data?.youtube?.youtubeId}
+              twitchId={data?.twitch?.twitchId}
+              afreecaId={data?.afreeca?.afreecaId}
+              youtubeId={data?.youtube?.youtubeId}
               userDataRefetch={doUserFetch}
             />
           ) : (<CircularProgress />)}
@@ -134,7 +140,7 @@ export default function Settings(): JSX.Element {
           <div className={classes.content}>
             <SectionTitle mainTitle="내 정보 관리" />
           </div>
-          {!userDataRequest.loading ? (
+          {!loading ? (
             <>
               <div className={classes.content}>
                 <Button
@@ -149,8 +155,8 @@ export default function Settings(): JSX.Element {
                   새로고침
                 </Button>
               </div>
-              {userDataRequest.data && (
-                <ManageUserProfile userProfileData={userDataRequest.data} doUserFetch={doUserFetch} />
+              {data && (
+                <ManageUserProfile userProfileData={data} doUserFetch={doUserFetch} />
               )}
             </>
           ) : (<CircularProgress />)}

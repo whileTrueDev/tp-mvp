@@ -5,10 +5,10 @@ import {
   Button, Typography,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import ShowSnack from '../../../atoms/snackbar/ShowSnack';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
+import axios from '../../../utils/axios';
 
 interface Props {
   handleBack: () => void;
@@ -56,25 +56,17 @@ function IndentityVerification({
   const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [, getRequest] = useAxios(
-    '/users/check-id', { manual: true },
-  );
-
-  // Request auth/certification
-  const [, getCertificationRequest] = useAxios(
-    '/auth/certification', { manual: true },
-  );
-
   const iamport = useIamportCertification((impUid) => {
     // iamport 본인인증 이후 실행될 Id 조회 함수
-    getRequest({
+    axios.get('/users/check-id', {
       params: { impUid },
     }).then((res) => {
       if (res.data) {
         ShowSnack('기존에 가입된 ID가 존재합니다. ID 찾기로 이동합니다.', 'info', enqueueSnackbar);
         history.replace('/find-id');
       } else {
-        getCertificationRequest({
+        // Request auth/certification
+        axios.get('/auth/certification', {
           params: { impUid },
         })
           .then((inres) => {

@@ -2,10 +2,11 @@ import {
   Button, CircularProgress, DialogActions, DialogContent, IconButton, InputAdornment, makeStyles, TextField, Typography,
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import useAxios from 'axios-hooks';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useMutation } from 'react-query';
 import ShowSnack from '../../../../atoms/snackbar/ShowSnack';
+import axios from '../../../../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   titleSection: { padding: `${theme.spacing(2)}px ${theme.spacing(3)}px` },
@@ -40,14 +41,17 @@ export default function PasswordConfirmForm({
     if (currentPwErrMsg) handleErrMsgReset(); // 패스워드를 쓰기 시작하면 기존 에러메시지 제거
   }
   // 패스워드 체크 요청
-  const [checkPwObject, checkPwRequest] = useAxios({
-    url: '/auth/check-pw', method: 'post',
-  }, { manual: true });
+  const { mutateAsync: checkPwRequest, isLoading: checkPwLoading } = useMutation(
+    async (checkPwDto: {password: string}) => {
+      const { data } = await axios.post('/auth/check-pw', checkPwDto);
+      return data;
+    },
+  );
 
   // 비밀번호 확인 form 핸들러
   function handlePasswordCheckSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
-    checkPwRequest({ data: { password: currentPw } })
+    checkPwRequest({ password: currentPw })
       .then(() => {
         setCurrentPw('');
         successCallback();
@@ -92,13 +96,13 @@ export default function PasswordConfirmForm({
               </InputAdornment>),
           }}
         />
-        {checkPwObject.loading && (
+        {checkPwLoading && (
         <CircularProgress />
         )}
       </DialogContent>
       <DialogActions>
         <Button
-          disabled={checkPwObject.loading}
+          disabled={checkPwLoading}
           variant="contained"
           onClick={() => {
             onClose();

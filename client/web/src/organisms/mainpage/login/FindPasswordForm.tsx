@@ -1,6 +1,5 @@
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import useAxios from 'axios-hooks';
 import classnames from 'classnames';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -9,6 +8,8 @@ import PasswordTextField from '../../../atoms/Input/PasswordTextField';
 import CenterLoading from '../../../atoms/Loading/CenterLoading';
 import LoginHelper from '../../../atoms/LoginHelper';
 import TruepointLogo from '../../../atoms/TruepointLogo';
+import axios from '../../../utils/axios';
+import { useMutatePassword } from '../../../utils/hooks/mutation/useMutateUserInfo';
 import useIamportCertification from '../../../utils/hooks/useIamportCertification';
 
 const useStyles = makeStyles((theme) => ({
@@ -51,14 +52,7 @@ export default function FindAccountForm(): JSX.Element {
 
   // **************************************************
   // Request auth/certification
-  const [certificateRequest, doGetRequest] = useAxios(
-    '/auth/certification', { manual: true },
-  );
-
-  // Check registed user
-  const [, checkIdRequest] = useAxios(
-    '/users/check-id', { manual: true },
-  );
+  const [certificationLoading, setcertificationLoading] = React.useState(false);
 
   // **************************************************
   // iamport 본인인증 
@@ -66,12 +60,15 @@ export default function FindAccountForm(): JSX.Element {
   const iamport = useIamportCertification((impUid) => {
     // iamport 본인인증 이후 실행될 new password 조회 함수
     handleHelperClose();
-    doGetRequest({ params: { impUid } })
+
+    setcertificationLoading(true);
+    axios.get('/auth/certification', { params: { impUid } })
       .then((res) => {
         if (res.data) {
           // user 고유 아이디
           const { userDI } = res.data;
-          checkIdRequest({
+          // Check registed user
+          axios.get('/users/check-id', {
             params: { userDI },
           }).then((inres) => {
             if (inres.data) {
@@ -89,16 +86,17 @@ export default function FindAccountForm(): JSX.Element {
       .catch(() => {
         // 본인인증 DI 요청에서 400 에러인 경우 = 본인 인증한 유저 정보가 DB에 없는 경우
         handleHelperOpen('본인인증 정보를 불러오는 도중에 오류가 발생했습니다.\nsupport@mytruepoint.com으로 문의바랍니다.');
-      });
+      })
+      .finally(() => setcertificationLoading(false));
   });
 
   // **************************************************
   // Request users/pw
   const passwordRef = React.useRef<HTMLInputElement>(null);
   const passwordConfirmRef = React.useRef<HTMLInputElement>(null);
-  const [changePWRequest, doChangePWRequest] = useAxios({
-    url: '/users/password', method: 'PATCH',
-  }, { manual: true });
+
+  const { mutateAsync: doChangePWRequest, isLoading: changePwLoading } = useMutatePassword();
+
   // **************************************************
   // Handle change pw request
   function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
@@ -107,17 +105,16 @@ export default function FindAccountForm(): JSX.Element {
       const pw = passwordRef.current.value;
       const confirmPw = passwordConfirmRef.current.value;
       if (pw === confirmPw) {
-        doChangePWRequest({
-          data: { userDI: userDIState, password: pw },
-        }).then((res) => {
-          if (res.data) {
-            handleNext();
-          } else {
-            handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다.');
-          }
-        }).catch(() => {
-          handleHelperOpen('비밀번호를 변경하는 도중에 오류가 발생했습니다.\nsupport@mytruepoint.com으로 문의바랍니다.');
-        });
+        doChangePWRequest({ userDI: userDIState || '', password: pw })
+          .then((res) => {
+            if (res) {
+              handleNext();
+            } else {
+              handleHelperOpen('본인인증된 정보로 가입된 계정이 존재하지 않습니다.');
+            }
+          }).catch(() => {
+            handleHelperOpen('비밀번호를 변경하는 도중에 오류가 발생했습니다.\nsupport@mytruepoint.com으로 문의바랍니다.');
+          });
       } else {
         handleHelperOpen('비밀번호가 일치하지 않습니다.\n비밀번호를 올바르게 입력해주시기 바랍니다.');
       }
@@ -147,7 +144,7 @@ export default function FindAccountForm(): JSX.Element {
             onClick={() => {
               iamport.startCert();
             }}
-            disabled={certificateRequest.loading}
+            disabled={certificationLoading}
           >
             <Typography>휴대폰 본인인증</Typography>
           </Button>
@@ -184,7 +181,7 @@ export default function FindAccountForm(): JSX.Element {
             color="primary"
             className={classes.fullButton}
             style={{ color: 'white' }}
-            disabled={activeStep === 1 && changePWRequest.loading}
+            disabled={activeStep === 1 && changePwLoading}
             type="submit"
           >
             <Typography>비밀번호 변경하기</Typography>
@@ -217,8 +214,8 @@ export default function FindAccountForm(): JSX.Element {
       </div>
 
       {/* 데이터 불러오는 중 로딩 컴포넌트 */}
-      {((activeStep === 0 && certificateRequest.loading)
-        || (activeStep === 1 && changePWRequest.loading
+      {((activeStep === 0 && certificationLoading)
+        || (activeStep === 1 && changePwLoading
         )) && (<CenterLoading position="relative" />)}
     </div>
   );

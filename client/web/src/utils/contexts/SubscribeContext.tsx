@@ -1,6 +1,7 @@
 import React from 'react';
-import useAxios from 'axios-hooks';
 import { AxiosError } from 'axios';
+import { useQuery } from 'react-query';
+import axios from '../axios';
 
 export interface SubscribeUserInfo {
   userId: string;
@@ -15,7 +16,7 @@ export interface SubscribeContextValue {
   invalidSubscribeUserList: SubscribeUserInfo[];
   handleCurrTargetUser: (changeUser: SubscribeUserInfo) => void;
   handleLoginUserId: (userId: string) => void;
-  error: AxiosError<any> | undefined;
+  error: AxiosError<any> | null;
   loading: boolean;
 }
 
@@ -34,7 +35,7 @@ const SubscribeContext = React.createContext<SubscribeContextValue>({
   handleCurrTargetUser: () => {},
   handleLoginUserId: () => {},
   /* eslint-enable @typescript-eslint/no-empty-function */
-  error: undefined,
+  error: null,
   loading: false,
 });
 
@@ -62,23 +63,28 @@ export function useSubscribe(): SubscribeContextValue {
     setCurrUser(newTagetUser);
   }
 
-  const [{ error, loading }, excuteGetSubscribeData] = useAxios<{
-      validUserList: SubscribeUserInfo[];
-      inValidUserList: SubscribeUserInfo[];}>({
-        url: '/users/subscribe-users',
-      }, { manual: true });
-
-  React.useEffect(() => {
-    excuteGetSubscribeData({
-      params: {
-        userId: loginUserId, // logined user id
+  const { error, isFetching: loading } = useQuery<
+  {
+    validUserList: SubscribeUserInfo[];
+    inValidUserList: SubscribeUserInfo[];},
+    AxiosError
+  >(
+    'subscribe-users',
+    async () => {
+      const { data } = await axios.get('/users/subscribe-users', {
+        params: { userId: loginUserId },
+      });
+      return data;
+    },
+    {
+      enabled: !!loginUserId,
+      onSuccess: (subscribeData) => {
+        setValidSubscribeUSerList(subscribeData.validUserList);
+        setInvalidSubscribeUserList(subscribeData.inValidUserList);
+        setCurrUser(subscribeData.validUserList[0]);
       },
-    }).then((res) => {
-      setValidSubscribeUSerList(res.data.validUserList);
-      setInvalidSubscribeUserList(res.data.inValidUserList);
-      setCurrUser(res.data.validUserList[0]);
-    });
-  }, [excuteGetSubscribeData, loginUserId]);
+    },
+  );
 
   return {
     currUser,

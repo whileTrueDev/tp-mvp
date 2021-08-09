@@ -4,11 +4,11 @@ import {
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { Alert } from '@material-ui/lab';
-import useAxios from 'axios-hooks';
 import { useHistory } from 'react-router-dom';
 import useDialog from '../../../utils/hooks/useDialog';
 import PasswordConfirmForm from './sub/PasswordConfirmForm';
 import useAuthContext from '../../../utils/hooks/useAuthContext';
+import axios from '../../../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   container: { margin: theme.spacing(2), textAlign: 'right' },
@@ -61,10 +61,6 @@ export default function DeleteUser(): JSX.Element {
   // *********************************
   // 회원 탈퇴 요청
   const history = useHistory();
-  const [, userDeleteRequest] = useAxios({
-    url: 'users', method: 'delete',
-  }, { manual: true });
-
   // *********************************
   // 로그아웃 을 위해
   const auth = useAuthContext();
@@ -165,7 +161,7 @@ export default function DeleteUser(): JSX.Element {
               <Button
                 variant="contained"
                 color="default"
-                onClick={() => userDeleteRequest()
+                onClick={() => axios.delete('/users')
                   .then(() => {
                     auth.handleLogout();
                     history.push('/');

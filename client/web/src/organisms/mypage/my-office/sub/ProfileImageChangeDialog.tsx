@@ -5,10 +5,10 @@ import {
 } from '@material-ui/core';
 import { UpdateUserDto } from '@truepoint/shared/dist/dto/users/updateUser.dto';
 import { User } from '@truepoint/shared/dist/interfaces/User.interface';
-import { ProfileImages } from '@truepoint/shared/dist/res/ProfileImages.interface';
-import useAxios from 'axios-hooks';
 import React, { useEffect } from 'react';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { useQuery } from 'react-query';
+import axios from '../../../../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   titleSection: { padding: `${theme.spacing(2)}px ${theme.spacing(3)}px` },
@@ -33,9 +33,11 @@ export default function ProfileImageChangeDialog({
 
   // ***********************************
   // 플랫폼별 프로필 사진 목록 요청
-  const [{ loading, data }, refetch] = useAxios<ProfileImages>({
-    method: 'GET', url: '/users/profile-images',
-  });
+  const { data, isFetching: loading, refetch } = useQuery('profile-images',
+    async () => {
+      const { data: resultData } = await axios.get('/users/profile-images');
+      return resultData;
+    });
   useEffect(() => {
     if (userProfileData) {
       refetch();
