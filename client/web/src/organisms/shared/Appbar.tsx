@@ -60,9 +60,10 @@ export default function AppBar({
   const links = [
     { name: '인방랭킹', path: '/ranking', activeRouteString: ['/ranking', '/'] },
     { name: '방송인검색', path: '/creator-search', activeRouteString: '/creator-search' },
-    { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
-    { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
-    { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
+    // tp 서비스 축소 및 유지보수 최소화를 위해 자유게시판, 공지사항, 기능제안 게시판 닫음 21.09.27 @Joni 
+    // { name: '자유게시판', path: '/community-board', activeRouteString: '/community-board' },
+    // { name: '공지사항', path: '/notice', activeRouteString: '/notice' },
+    // { name: '기능제안', path: '/feature-suggestion', activeRouteString: '/feature-suggestion' },
     { name: '유튜브 편집점', path: '/highlight-list', activeRouteString: '/highlight-list' },
     { name: 'About us', path: '/about-us', activeRouteString: '/about-us' },
   ];
