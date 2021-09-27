@@ -35,15 +35,15 @@ const Login = loadable(() => import('./pages/mainpage/Login'));
 const Regist = loadable(() => import('./pages/mainpage/Regist'));
 const FindId = loadable(() => import('./pages/others/FindId'));
 const FindPassword = loadable(() => import('./pages/others/FindPassword'));
-const FeatureSuggestion = loadable(() => import('./pages/mainpage/FeatureSuggestion'));
-const FeatureSuggestionWrite = loadable(() => import('./pages/mainpage/FeatureSuggestionWrite'));
-const CommunityBoard = loadable(() => import('./pages/mainpage/CommunityBoard'));
+// const FeatureSuggestion = loadable(() => import('./pages/mainpage/FeatureSuggestion'));
+// const FeatureSuggestionWrite = loadable(() => import('./pages/mainpage/FeatureSuggestionWrite'));
+// const CommunityBoard = loadable(() => import('./pages/mainpage/CommunityBoard'));
 const PageNotFound = loadable(() => import('./pages/others/PageNotFound'));
 const Ranking = loadable(() => import('./pages/mainpage/Ranking'));
 const YoutubeHighlightList = loadable(() => import('./pages/mainpage/YoutubeHighlightList'));
 const SearchCreator = loadable(() => import('./pages/mainpage/SearchCreator'));
 const UserInfoPage = loadable(() => import('./pages/mypage/UserInfoPage'));
-const Notice = loadable(() => import('./pages/mainpage/Notice'));
+// const Notice = loadable(() => import('./pages/mainpage/Notice'));
 
 function Index(): JSX.Element {
   // *******************************************
@@ -130,15 +130,16 @@ function Index(): JSX.Element {
               <Route exact path="/login" component={Login} />
               <Route exact path="/find-id" component={FindId} />
               <Route exact path="/find-pw" component={FindPassword} />
-              <Route exact path="/notice" component={Notice} />
-              <Route exact path="/notice/:id" component={Notice} />
-              <Route exact path="/feature-suggestion" component={FeatureSuggestion} />
-              <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} />
-              <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} />
-              <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} />
+              {/* tp 서비스 축소 및 유지보수 최소화를 위해 자유게시판, 공지사항, 기능제안 게시판 닫음 21.09.27 @Joni */}
+              {/* <Route exact path="/notice" component={Notice} /> */}
+              {/* <Route exact path="/notice/:id" component={Notice} /> */}
+              {/* <Route exact path="/feature-suggestion" component={FeatureSuggestion} /> */}
+              {/* <Route exact path="/feature-suggestion/read/:id" component={FeatureSuggestion} /> */}
+              {/* <Route exact path="/feature-suggestion/write" component={FeatureSuggestionWrite} /> */}
+              {/* <Route exact path="/feature-suggestion/write/:id" component={FeatureSuggestionWrite} /> */}
+              {/* <Route path="/community-board" component={CommunityBoard} /> */}
               <Route exact path="/privacypolicy" component={PrivacyPolicy} />
               <Route exact path="/termsofuse" component={TermsOfUse} />
-              <Route path="/community-board" component={CommunityBoard} />
               <Route path="/ranking" component={Ranking} />
               <Route exact path="/creator-search" component={SearchCreator} />
               <Route exact path="/highlight-list" component={YoutubeHighlightList} />
