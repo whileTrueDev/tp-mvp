@@ -37,7 +37,8 @@ export function ProfileSection({
   const twitchChannelName = user?.twitch?.twitchChannelName;
 
   const { average: averageRating, count: ratingCount } = ratings;
-  const [userRating, setUserRating] = useState<number|undefined>(); // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
+  const [userRating, setUserRating] = useState<number|undefined>();
+  // useAuthContext.user.userId로 매긴 별점// 혹은 userIp로 매겨진 별점 가져오기
 
   useEffect(() => {
     const params = {

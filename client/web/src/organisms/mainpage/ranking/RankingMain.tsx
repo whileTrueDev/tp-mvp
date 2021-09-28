@@ -10,7 +10,7 @@ import UserReactionCard from './UserReactionCard';
 import ViewerComparisonPolarAreaCard from './ViewerComparisonPolarAreaCard';
 import WeeklyLineCard from './WeeklyLineCard';
 import useMediaSize from '../../../utils/hooks/useMediaSize';
-import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
+// import SearchGuideBannerSlide from './sub/SearchGuideBannerSlide';
 import PageTitle from '../shared/PageTitle';
 import FirstPlaceCreators from './sub/FirstPlaceCreators';
 import RankingPageCommonLayout from './RankingPageCommonLayout';
@@ -40,7 +40,7 @@ export function CarouselSection(): JSX.Element {
         >
           <FirstPlaceCreators />
           <RatingGuideBannerSlide />
-          <SearchGuideBannerSlide />
+          {/* <SearchGuideBannerSlide /> */}
           <ViewerComparisonPolarAreaCard />
           <WeeklyLineCard />
         </Carousel>
