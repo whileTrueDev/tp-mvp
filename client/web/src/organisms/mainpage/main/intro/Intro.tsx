@@ -64,7 +64,7 @@ export default function ProductHero(): JSX.Element {
           <Grid item md={7} sm={6} xs={12}>
             <div className={classes.introVideoWrap}>
               <iframe
-                src="https://www.youtube.com/embed/ANBakGw49hI"
+                src="https://www.youtube.com/embed/ftCLRqZkPZk"
                 title="IntroVideo"
                 frameBorder="0"
                 id="introVideo"
