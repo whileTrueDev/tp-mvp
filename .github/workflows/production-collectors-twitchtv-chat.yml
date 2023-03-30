@@ -29,7 +29,7 @@ jobs:
           yarn build
 
       - name: Build, tag, and push image to Docker Hub
-        uses: elgohr/Publish-Docker-Github-Action@2.14
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: ${{ secrets.DOCKER_USERNAME }}/whiletrue-twitch-chat
           username: ${{ secrets.DOCKER_USERNAME }}
